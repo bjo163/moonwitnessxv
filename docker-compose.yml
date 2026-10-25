@@ -1,0 +1,194 @@
+name: moonwitness
+
+# Every secret/credential comes from the environment or the .env file next to
+# this compose file — never from a value committed here. Missing ones fail the
+# `:?` check with a readable message instead of booting a known-password stack.
+#
+#   POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB   database identity
+#   MOONQL_AUTH_ADMIN_PASSWORD                        seeded HQ admin
+#   WHATSAPP_ENABLED / WHATSAPP_AUTO_CONNECT          IM channel
+#   DENPA_ENABLED / DENPA_TOKEN                       inbound webhook
+#   CORS_ORIGIN                                       comma-separated allow-list
+
+x-db-identity: &db-identity
+  POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+  POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: moonwitness-db
+    restart: unless-stopped
+    environment: *db-identity
+    ports:
+      # loopback only: local `pnpm dev` connects here, the internet cannot
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:?set POSTGRES_USER in .env} -d ${POSTGRES_DB:?set POSTGRES_DB in .env}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  radio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: moonwitness
+    container_name: moonwitness
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      <<: *db-identity
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      RADIO_TITLE: Moonwitness Hub API
+      # the two frontends by default; "*" reflects every origin and must be a
+      # deliberate choice, not the shipped default
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3001,http://localhost:3002}
+      DATABASE_URL: postgresql://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}
+      MOONQL_AUTOSYNC: "true"
+      # addon-declared crons (e.g. auth session purge, ops retention) arm at boot
+      MOONQL_CRON_ENABLED: "true"
+      # no empty tables: warn | require (fail boot) | off
+      MOONQL_SEED_POLICY: warn
+      # a REST model without a write rule is anonymous-writable -> refuse to boot
+      MOONQL_ACL_POLICY: require
+      # only trust X-Forwarded-* when a real proxy terminates in front of the hub
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      # moonql-auth: admin password seeded once (change it for every deployment)
+      MOONQL_AUTH_ADMIN_PASSWORD: ${MOONQL_AUTH_ADMIN_PASSWORD:?set MOONQL_AUTH_ADMIN_PASSWORD in .env}
+      # the hub advertises both frontends on GET /
+      DOCK_URL: ${DOCK_URL:-http://localhost:3001}
+      HQ_URL: ${HQ_URL:-http://localhost:3002}
+      # moonql-ops: retention windows (days) for the two log tables
+      OPS_AUDIT_RETENTION_DAYS: "14"
+      OPS_JOB_RETENTION_DAYS: "7"
+      # moonql-playlog: listen events hold visitor-derived data
+      PLAYLOG_RETENTION_DAYS: "90"
+      # opt-in outbound fetches (station probe + now-playing metadata)
+      EGRESS_ENABLED: ${EGRESS_ENABLED:-false}
+      # WhatsApp (Baileys) — persist the multi-device session on a volume.
+      WHATSAPP_ENABLED: ${WHATSAPP_ENABLED:-false}
+      WHATSAPP_AUTO_CONNECT: ${WHATSAPP_AUTO_CONNECT:-false}
+      WHATSAPP_AUTH_DIR: /data/whatsapp-auth
+      # DENPA 電波 inbound webhook: off unless a token is supplied (see module).
+      DENPA_ENABLED: ${DENPA_ENABLED:-false}
+      DENPA_TOKEN: ${DENPA_TOKEN:-}
+    volumes:
+      - whatsapp-session:/data
+    healthcheck:
+      # the liveness route says nothing about the database; readiness does
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/v1/health/ready').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  headquarters:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        APP: headquarters
+        APP_PORT: "3002"
+    image: moonwitness-headquarters
+    container_name: moonwitness-headquarters
+    restart: unless-stopped
+    depends_on:
+      radio:
+        condition: service_healthy
+    ports:
+      - "3002:3002"
+    environment:
+      NODE_ENV: production
+      RADIO_API_URL: http://radio:3000/api/v1
+      SITE_NAME: ${SITE_NAME:-Moonwitness}
+      HQ_URL: ${HQ_URL:-http://localhost:3002}
+      DOCK_URL: ${DOCK_URL:-http://localhost:3001}
+      # plain HTTP inside compose: a secure cookie would never come back.
+      # Put the app behind TLS and set HQ_COOKIE_SECURE=true.
+      HQ_COOKIE_SECURE: ${HQ_COOKIE_SECURE:-false}
+
+  dock:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        APP: dock
+        APP_PORT: "3001"
+    image: moonwitness-dock
+    container_name: moonwitness-dock
+    restart: unless-stopped
+    depends_on:
+      radio:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      RADIO_API_URL: http://radio:3000/api/v1
+      SITE_NAME: ${SITE_NAME:-Moonwitness}
+      DOCK_URL: ${DOCK_URL:-http://localhost:3001}
+      # origins allowed to frame /embed/*; empty keeps 'none' everywhere
+      EMBED_ORIGINS: ${EMBED_ORIGINS:-}
+
+  # Backup lives here and not in a moonql cron for two reasons the ORM enforces:
+  # CronDef.run only receives orm/env/log (no driver connection), and parseEvery
+  # speaks intervals, not wall-clock times. A sidecar on the same image the db
+  # already uses needs no new dependency, and its dumps land on a named volume.
+  backup:
+    image: postgres:17-alpine
+    container_name: moonwitness-backup
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # pg_dump reads PG*, not the POSTGRES_* bootstrap vars; both come from .env
+      PGHOST: db
+      PGPORT: "5432"
+      PGUSER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      PGDATABASE: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-3600}
+      BACKUP_KEEP: ${BACKUP_KEEP:-48}
+    command:
+      - sh
+      - -ec
+      - |
+        mkdir -p /backups
+        while true; do
+          stamp="$$(date -u +%Y%m%dT%H%M%SZ)"
+          file="/backups/$$PGDATABASE-$${stamp}.dump"
+          if pg_dump -Fc -f "$${file}" 2>/tmp/pgdump.err && [ -s "$${file}" ]; then
+            echo "written $${file} ($$(wc -c < "$${file}") bytes)"
+            ls -1t /backups/*.dump | tail -n +$$((BACKUP_KEEP + 1)) | xargs -r rm -f
+          else
+            echo "pg_dump failed: $$(cat /tmp/pgdump.err)"
+          fi
+          sleep "$$BACKUP_INTERVAL_SECONDS"
+        done
+    volumes:
+      - db-backups:/backups
+    healthcheck:
+      # a backup that has not run recently is not a backup: freshness is the signal
+      test: ["CMD-SHELL", "f=$$(ls -1t /backups/*.dump 2>/dev/null | head -1); [ -n \"$${f}\" ] && [ $$(( $$(date +%s) - $$(stat -c %Y \"$${f}\") )) -le $$(( ${BACKUP_INTERVAL_SECONDS:-3600} * 3 )) ]"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  pgdata:
+    name: moonwitness_pgdata
+  db-backups:
+    name: moonwitness_db_backups
+  whatsapp-session:

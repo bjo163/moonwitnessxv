@@ -1,0 +1,11 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Satu sumber versi untuk perkakas yang dipakai di seluruh workspace. Paket
+# Individual menulis `catalog:` alih-alih menyalin angka versi, sehingga
+# `pnpm lint` dan `pnpm typecheck` tidak pernah berjalan di dua versi ESLint.
+catalog:
+  eslint: ^9.39.5
+  typescript-eslint: ^8.72.0
+  eslint-plugin-react-hooks: ^7.1.1

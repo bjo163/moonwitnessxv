@@ -1,0 +1,103 @@
+# syntax=docker/dockerfile:1
+#
+# One image definition for both Next apps:
+#   docker build -f Dockerfile.web --build-arg APP=dock -t moonwitness-dock .
+#   docker build -f Dockerfile.web --build-arg APP=headquarters -t moonwitness-hq .
+#
+# No `output: 'standalone'` on purpose: tracing a pnpm workspace is fragile,
+# a plain `--prod` install + `next start` is predictable.
+
+ARG APP=headquarters
+
+# ---- Base ----
+FROM node:22-slim AS base
+# two instructions: PATH cannot reference PNPM_HOME while it is being defined
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+WORKDIR /repo
+
+# ---- Install deps (all workspace manifests are required by the lockfile) ----
+FROM base AS deps
+ARG APP
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY apps/radio/package.json apps/radio/
+COPY apps/dock/package.json apps/dock/
+COPY apps/headquarters/package.json apps/headquarters/
+COPY packages/core/package.json packages/core/
+COPY packages/moonql/package.json packages/moonql/
+COPY packages/moonql-client/package.json packages/moonql-client/
+COPY packages/moonui/package.json packages/moonui/
+COPY packages/moonql-base/package.json packages/moonql-base/
+COPY packages/moonql-auth/package.json packages/moonql-auth/
+COPY packages/moonql-stations/package.json packages/moonql-stations/
+COPY packages/moonql-schedule/package.json packages/moonql-schedule/
+COPY packages/moonql-playlog/package.json packages/moonql-playlog/
+COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
+COPY packages/moonql-settings/package.json packages/moonql-settings/
+COPY packages/moonql-ops/package.json packages/moonql-ops/
+COPY packages/whatsapp/package.json packages/whatsapp/
+COPY packages/denpa/package.json packages/denpa/
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
+
+# ---- Build the libraries, then the selected app ----
+# Root `pnpm build` would also build @moonwitness/radio, whose sources are not
+# copied into this stage (only apps/${APP}) — the filter would match nothing and
+# the image build would fail. Build the libs, then exactly one frontend.
+FROM deps AS build
+ARG APP
+COPY tsconfig.base.json ./
+# the app configs import the shared loader/header set from here
+COPY scripts ./scripts
+COPY packages ./packages
+COPY apps/${APP} ./apps/${APP}
+RUN pnpm build:libs && pnpm --filter @moonwitness/${APP} build
+
+# ---- Production deps only ----
+FROM base AS prod-deps
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY apps/radio/package.json apps/radio/
+COPY apps/dock/package.json apps/dock/
+COPY apps/headquarters/package.json apps/headquarters/
+COPY packages/core/package.json packages/core/
+COPY packages/moonql/package.json packages/moonql/
+COPY packages/moonql-client/package.json packages/moonql-client/
+COPY packages/moonui/package.json packages/moonui/
+COPY packages/moonql-base/package.json packages/moonql-base/
+COPY packages/moonql-auth/package.json packages/moonql-auth/
+COPY packages/moonql-stations/package.json packages/moonql-stations/
+COPY packages/moonql-schedule/package.json packages/moonql-schedule/
+COPY packages/moonql-playlog/package.json packages/moonql-playlog/
+COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
+COPY packages/moonql-settings/package.json packages/moonql-settings/
+COPY packages/moonql-ops/package.json packages/moonql-ops/
+COPY packages/whatsapp/package.json packages/whatsapp/
+COPY packages/denpa/package.json packages/denpa/
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --prod
+
+# ---- Runtime ----
+FROM node:22-slim AS runtime
+ARG APP
+ARG APP_PORT=3002
+ENV NODE_ENV=production
+# an ARG is not visible to the container shell: without this the CMD's
+# `-p ${APP_PORT}` expanded to nothing and `next start` refused to boot
+ENV APP_PORT=${APP_PORT}
+WORKDIR /repo
+COPY --from=prod-deps /repo ./
+# next.config.mjs is also read by `next start`, so the shared config pieces must exist at runtime
+COPY --from=build /repo/scripts ./scripts
+# the two libraries the app imports at runtime (their dist is ESM)
+COPY --from=build /repo/packages/core/dist packages/core/dist
+COPY --from=build /repo/packages/moonql-client/dist packages/moonql-client/dist
+COPY --from=build /repo/packages/moonui/dist packages/moonui/dist
+COPY --from=build /repo/packages/moonui/moon.css packages/moonui/moon.css
+# the app itself: manifest, config, build output
+COPY --from=build /repo/apps/${APP}/package.json apps/${APP}/package.json
+COPY --from=build /repo/apps/${APP}/next.config.mjs apps/${APP}/next.config.mjs
+COPY --from=build /repo/apps/${APP}/.next apps/${APP}/.next
+EXPOSE ${APP_PORT}
+WORKDIR /repo/apps/${APP}
+CMD ["sh", "-c", "exec ./node_modules/.bin/next start -p ${APP_PORT}"]

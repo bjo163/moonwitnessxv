@@ -1,0 +1,39 @@
+# Postgres ONLY — for local development.
+#
+# `docker-compose.yml` builds and runs the three apps; this file starts just the
+# database the hub can point at while everything else runs on the host:
+#
+#   pnpm db:up      # = docker compose -f docker-compose.db.yml up -d
+#   pnpm db:down    # = docker compose -f docker-compose.db.yml down
+#
+# Then point the root .env at it (the identity comes from the same three vars):
+#   DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}
+# Leave DATABASE_URL empty to keep the zero-config in-memory engine.
+#
+# The volume name is pinned to the one used by the full compose file, so the
+# same data is visible to both definitions.
+name: moonwitness
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: moonwitness-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    ports:
+      # loopback only: the host toolchain connects here, the internet cannot
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:?set POSTGRES_USER in .env} -d ${POSTGRES_DB:?set POSTGRES_DB in .env}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
+    name: moonwitness_pgdata

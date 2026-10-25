@@ -1,0 +1,22 @@
+{
+  // Proyek khusus berkas tes.
+  //
+  // `apps/radio/tsconfig.json` ber-`rootDir: ./src` karena itulah yang dipancarkan
+  // ke `dist/` dan dijalankan di produksi; tes tidak boleh ikut terkirim ke image.
+  // Tapi tes juga tidak boleh tanpa-check: ia memakai API yang sama dengan hub, dan
+  // tanpa proyek sendiri ia tidak terlihat oleh TypeScript maupun ESLint type-checked.
+  // Karena itu: noEmit di sini, dan `pnpm --filter @moonwitness/radio typecheck`
+  // memanggil kedua proyek.
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "types": ["node"],
+    "rootDir": "..",
+    "lib": ["ES2022"]
+  },
+  "include": ["./**/*.ts"],
+  "references": [{ "path": "../tsconfig.json" }]
+}

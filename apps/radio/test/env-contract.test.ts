@@ -1,0 +1,92 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { PORTS } from '@moonwitness/core'
+import { ADDON_ENV_KEY_LIST, RADIO_ENV_KEYS } from '../src/config.js'
+
+/**
+ * The env contract.
+ *
+ * `.env.example` used to document a variable the hub never read, omit half of
+ * what the frontends need, and carry a different API title than the defaults —
+ * exactly the drift that makes "works on my machine" permanent. These tests tie
+ * the template (and the local .env) to the schema that actually validates them.
+ */
+
+/** Variables consumed outside apps/radio (compose + Next apps). */
+const FOREIGN_ENV_KEYS = [
+  'POSTGRES_USER',
+  'POSTGRES_PASSWORD',
+  'POSTGRES_DB',
+  'SITE_NAME',
+  'RADIO_API_URL',
+  'HQ_COOKIE_SECURE',
+  // read by apps/dock/src/middleware.ts to allow-list framers of /embed/*
+  'EMBED_ORIGINS',
+  // read by the compose backup sidecar's shell loop, never by the hub
+  'BACKUP_INTERVAL_SECONDS',
+  'BACKUP_KEEP',
+] as const
+
+const ALLOWED = new Set<string>([...RADIO_ENV_KEYS, ...ADDON_ENV_KEY_LIST, ...FOREIGN_ENV_KEYS])
+
+function keysOf(file: string): string[] | null {
+  const path = join(process.cwd(), '..', '..', file)
+  if (!existsSync(path)) return null
+  return readFileSync(path, 'utf8')
+    .split(/\r?\n/)
+    .map((line) => /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=/.exec(line)?.[1])
+    .filter((key): key is string => Boolean(key))
+}
+
+test('.env.example only names variables the code actually reads', () => {
+  const keys = keysOf('.env.example')
+  assert.ok(keys, '.env.example must exist at the repo root')
+  const unknown = keys!.filter((key) => !ALLOWED.has(key))
+  assert.deepEqual(unknown, [], `undocumented/renamed keys in .env.example: ${unknown.join(', ')}`)
+})
+
+test('.env.example documents every hub variable (no hidden defaults)', () => {
+  // RADIO_* are deliberate override aliases of PORT/PREFIX/TITLE: documenting them
+  // as active lines would invite setting the same value twice.
+  const OVERRIDE_ALIASES = new Set(['RADIO_PORT', 'RADIO_PREFIX', 'RADIO_TITLE'])
+  const keys = new Set(keysOf('.env.example') ?? [])
+  const missing = RADIO_ENV_KEYS.filter((key) => !keys.has(key) && !OVERRIDE_ALIASES.has(key))
+  assert.deepEqual(missing, [], `.env.example is missing: ${missing.join(', ')}`)
+})
+
+test('the retired WHATSAPP_PREFIX does not come back', () => {
+  for (const file of ['.env.example', '.env']) {
+    assert.ok(!(keysOf(file) ?? []).includes('WHATSAPP_PREFIX'), `${file} still sets WHATSAPP_PREFIX`)
+  }
+})
+
+test('.env.example ships placeholders, not credentials', () => {
+  const path = join(process.cwd(), '..', '..', '.env.example')
+  const text = readFileSync(path, 'utf8')
+  for (const key of ['POSTGRES_PASSWORD', 'MOONQL_AUTH_ADMIN_PASSWORD', 'DENPA_TOKEN']) {
+    const value = new RegExp(`^${key}=(.*)$`, 'm').exec(text)?.[1] ?? null
+    assert.ok(value !== null, `${key} must be documented`)
+    assert.ok(value === '' || value === 'change-me', `${key} must stay a placeholder, found "${value}"`)
+  }
+})
+
+test('a local .env (when present) uses only known keys', () => {
+  const keys = keysOf('.env')
+  if (!keys) return // CI and container builds have no .env — that is the point
+  const unknown = keys.filter((key) => !ALLOWED.has(key))
+  assert.deepEqual(unknown, [], `unknown keys in .env: ${unknown.join(', ')}`)
+})
+
+test('the dev scripts agree with the shared port contract', () => {
+  // scripts/*.mjs are plain JS: they cannot import core before it is built, so
+  // they keep literals. This test is what keeps those literals honest.
+  const root = join(process.cwd(), '..', '..')
+  for (const file of ['scripts/dev.mjs', 'scripts/free-ports.mjs']) {
+    const text = readFileSync(join(root, file), 'utf8')
+    for (const port of Object.values(PORTS)) {
+      assert.ok(text.includes(String(port)), `${file} no longer mentions port ${port}`)
+    }
+  }
+})

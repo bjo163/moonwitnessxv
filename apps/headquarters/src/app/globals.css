@@ -1,0 +1,15 @@
+/* HQ-only additions on top of @moonwitness/moonui/moon.css */
+html,
+body {
+  min-height: 100%;
+}
+
+@media (max-width: 900px) {
+  .m-shell {
+    grid-template-columns: 1fr;
+  }
+  .m-sidebar {
+    border-right: none;
+    border-bottom: var(--line);
+  }
+}

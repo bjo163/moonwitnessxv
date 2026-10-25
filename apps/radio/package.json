@@ -1,0 +1,45 @@
+{
+  "name": "@moonwitness/radio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/server.js",
+  "scripts": {
+    "dev": "node --watch --import tsx --env-file-if-exists=../../.env src/server.ts",
+    "dev:clean": "node --watch --import tsx src/server.ts",
+    "build": "tsc -b",
+    "start": "node --env-file-if-exists=../../.env dist/server.js",
+    "start:clean": "node dist/server.js",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
+    "test": "tsx --test test/**/*.test.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.1",
+    "@fastify/helmet": "^13.0.0",
+    "@fastify/swagger": "^9.4.0",
+    "@fastify/swagger-ui": "^5.2.0",
+    "@fastify/type-provider-json-schema-to-ts": "^5.0.1",
+    "@moonwitness/core": "workspace:*",
+    "@moonwitness/denpa": "workspace:*",
+    "@moonwitness/moonql": "workspace:*",
+    "@moonwitness/moonql-auth": "workspace:*",
+    "@moonwitness/moonql-base": "workspace:*",
+    "@moonwitness/moonql-stations": "workspace:*",
+    "@moonwitness/moonql-schedule": "workspace:*",
+    "@moonwitness/moonql-playlog": "workspace:*",
+    "@moonwitness/moonql-apikeys": "workspace:*",
+    "@moonwitness/moonql-settings": "workspace:*",
+    "@moonwitness/moonql-ops": "workspace:*",
+    "@moonwitness/whatsapp": "workspace:*",
+    "fastify": "^5.2.1",
+    "fastify-plugin": "^5.0.1",
+    "json-schema-to-ts": "^3.1.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@moonwitness/moonql-client": "workspace:*",
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

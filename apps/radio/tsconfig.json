@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/moonql" },
+    { "path": "../../packages/moonql-stations" },
+    { "path": "../../packages/moonql-auth" },
+    { "path": "../../packages/moonql-base" },
+    { "path": "../../packages/moonql-schedule" },
+    { "path": "../../packages/moonql-playlog" },
+    { "path": "../../packages/moonql-apikeys" },
+    { "path": "../../packages/moonql-settings" },
+    { "path": "../../packages/moonql-ops" },
+    { "path": "../../packages/whatsapp" },
+    { "path": "../../packages/denpa" }
+  ]
+}

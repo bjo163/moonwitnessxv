@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    // DOM types are for the WHATWG globals Node 18+ always has (fetch, URL,
+    // AbortSignal, TextDecoder) — web-fetch.ts is runtime-agnostic about where
+    // they come from, so the type surface is declared rather than faked.
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src"]
+}

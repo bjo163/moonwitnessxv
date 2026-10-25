@@ -1,0 +1,45 @@
+{
+  "name": "moonwitness-xv",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Moonwitness - modular TypeScript Fastify monorepo with OpenAPI, a plugin system, and a WhatsApp (Baileys) plugin",
+  "packageManager": "pnpm@10.33.4",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm --filter @moonwitness/radio build && pnpm --filter @moonwitness/moonql-client build && pnpm --filter @moonwitness/moonui build",
+    "build:libs": "pnpm --filter @moonwitness/moonql-client build && pnpm --filter @moonwitness/moonui build",
+    "build:web": "pnpm --filter @moonwitness/headquarters build && pnpm --filter @moonwitness/dock build",
+    "clean": "node -e \"const{rmSync,readdirSync,statSync}=require('fs');const{join}=require('path');const walk=(d)=>{for(const e of readdirSync(d)){if(e==='node_modules'||e==='.git')continue;const p=join(d,e);const s=statSync(p);if(s.isDirectory()){if(e==='dist'||e==='.next'){rmSync(p,{recursive:true,force:true});continue}walk(p)}else if(e.endsWith('.tsbuildinfo'))rmSync(p,{force:true})}};walk('.')/* also wipe the root-level buildinfo files */\"",
+    "dev": "pnpm build:libs && node scripts/dev.mjs",
+    "ports:free": "node scripts/free-ports.mjs",
+    "verify:docker": "docker build -t moonwitness . && docker build -f Dockerfile.web --build-arg APP=dock --build-arg APP_PORT=3001 -t moonwitness-dock . && docker build -f Dockerfile.web --build-arg APP=headquarters --build-arg APP_PORT=3002 -t moonwitness-headquarters .",
+    "dev:hub": "pnpm --filter @moonwitness/radio dev",
+    "dev:dock": "pnpm --filter @moonwitness/dock dev",
+    "dev:hq": "pnpm --filter @moonwitness/headquarters dev",
+    "start": "pnpm --filter @moonwitness/radio start",
+    "start:dock": "pnpm --filter @moonwitness/dock start",
+    "start:hq": "pnpm --filter @moonwitness/headquarters start",
+    "test": "pnpm --filter @moonwitness/radio test",
+    "gen:sdk": "pnpm --filter @moonwitness/radio exec tsx src/tools/gen-sdk.ts",
+    "gen:sdk:check": "pnpm --filter @moonwitness/radio exec tsx src/tools/gen-sdk.ts --check",
+    "db:up": "docker compose -f docker-compose.db.yml up -d",
+    "db:down": "docker compose -f docker-compose.db.yml down",
+    "db:generate": "pnpm --filter @moonwitness/moonql db:generate",
+    "db:push": "pnpm --filter @moonwitness/moonql db:push",
+    "db:studio": "pnpm --filter @moonwitness/moonql db:studio",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "verify": "pnpm build && pnpm lint && pnpm gen:sdk:check && pnpm test && pnpm build:web",
+    "docker:build": "docker build -t moonwitness .",
+    "docker:up": "docker compose up --build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}
