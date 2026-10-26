@@ -22,6 +22,7 @@
     "@moonwitness/core": "workspace:*",
     "@moonwitness/denpa": "workspace:*",
     "@moonwitness/moonql": "workspace:*",
+    "@moonwitness/moonql-actors": "workspace:*",
     "@moonwitness/moonql-auth": "workspace:*",
     "@moonwitness/moonql-base": "workspace:*",
     "@moonwitness/moonql-stations": "workspace:*",
