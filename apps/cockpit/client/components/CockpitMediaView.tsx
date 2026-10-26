@@ -14,6 +14,7 @@ import {
 import { AudioVisualizer } from '@moonwitness/moonui/client'
 import { CockpitTunerSection } from './CockpitTunerSection'
 import type { ChannelItem, ChannelMediaType } from '../types'
+import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
 export interface CockpitMediaViewProps {
   currentChannel: ChannelItem
@@ -46,6 +47,7 @@ export interface CockpitMediaViewProps {
   customGenre: string
   setCustomGenre: (s: string) => void
   addCustomChannel: (e: React.FormEvent) => Promise<void>
+  copy: CockpitCopyCatalog
 }
 
 export function CockpitMediaView({
@@ -79,6 +81,7 @@ export function CockpitMediaView({
   customGenre,
   setCustomGenre,
   addCustomChannel,
+  copy,
 }: CockpitMediaViewProps): ReactNode {
   return (
     <div className="tab-content" style={{ display: 'flex', flexDirection: 'row', overflow: 'hidden' }}>
@@ -105,9 +108,30 @@ export function CockpitMediaView({
             padding: '0 16px',
           }}
         >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <StationSeal
+              name={currentChannel.name}
+              type={currentChannel.type}
+              genre={currentChannel.genre}
+              size={28}
+            />
+            <div>
+              <span style={{ fontWeight: 800, fontSize: 13, color: 'var(--fg)', display: 'block' }}>
+                {currentChannel.name}
+              </span>
+              <span style={{ fontSize: 10, color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>
+                {currentChannel.genre} {currentChannel.country ? `// ${currentChannel.country}` : ''}
+              </span>
+            </div>
+          </div>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 18 }}>{currentChannel.icon}</span>
-            <strong style={{ fontSize: 14, color: 'var(--fg)' }}>{currentChannel.name}</strong>
+            {nowPlayingTrack ? (
+              <Badge tone="cyan">
+                ♪ {nowPlayingTrack.artist ? `${nowPlayingTrack.artist} - ` : ''}
+                {nowPlayingTrack.title}
+              </Badge>
+            ) : null}
             <Badge
               tone={
                 currentChannel.type === 'bgm'
@@ -120,99 +144,90 @@ export function CockpitMediaView({
               {currentChannel.type.toUpperCase()}
             </Badge>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>
-              GENRE: {currentChannel.genre}
-            </span>
-            <LiveDot state={isPlaying ? 'live' : 'down'} />
-          </div>
         </div>
 
-        {/* Main Screen: Video for IPTV, Oscilloscope Graphic for Audio/BGM */}
+        {/* Video / Visualizer Display Screen */}
         <div
           style={{
             flex: 1,
             position: 'relative',
+            background: '#000',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'var(--night)',
-            overflowY: 'auto',
-            overflowX: 'hidden',
+            overflow: 'hidden',
           }}
         >
-          {/* IPTV Video Player */}
-          <video
-            ref={videoRef}
-            playsInline
-            controls
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              display: currentChannel.type === 'iptv' ? 'block' : 'none',
-            }}
-          />
-
-          {/* Audio / BGM Visualizer Display */}
-          {currentChannel.type !== 'iptv' ? (
+          {currentChannel.type === 'iptv' ? (
+            <video
+              ref={videoRef}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }}
+              playsInline
+              controls={false}
+            />
+          ) : (
             <div
               style={{
+                width: '100%',
+                height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 16,
-                padding: 24,
-                textAlign: 'center',
+                background: 'radial-gradient(circle at center, #181424 0%, #08060d 100%)',
+                position: 'relative',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
-                <StationSeal stationId={currentChannel.id} name={currentChannel.name} genre={currentChannel.genre} size={96} />
-              </div>
-
-              <div style={{ maxWidth: 450 }}>
-                <h2 style={{ margin: '0 0 6px 0', color: 'var(--fg)', fontSize: 20 }}>
-                  {currentChannel.name}
-                </h2>
-                <div style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 12 }}>
-                  {currentChannel.description || currentChannel.genre}
-                </div>
-                <Tape tone={currentChannel.type === 'bgm' ? 'pink' : 'cyan'}>
-                  {isPlaying ? 'ON-AIR AUDIO STREAMING' : 'STREAM PAUSED'}
-                </Tape>
-                <div style={{ width: '100%', maxWidth: 380, margin: '12px auto 0 auto' }}>
-                  <AudioVisualizer audioElement={audioRef.current} active={isPlaying} height={32} barCount={28} />
-                </div>
-                {nowPlayingTrack?.title ? (
-                  <div
-                    style={{
-                      marginTop: 10,
-                      fontSize: 12,
-                      color: 'var(--cyan)',
-                      fontFamily: 'var(--font-mono)',
-                      background: 'rgba(0, 212, 255, 0.08)',
-                      padding: '4px 8px',
-                      borderRadius: 4,
-                      border: '1px solid rgba(0, 212, 255, 0.2)',
-                    }}
-                  >
-                    NOW PLAYING: {nowPlayingTrack.artist ? `${nowPlayingTrack.artist} - ` : ''}{nowPlayingTrack.title}
-                  </div>
-                ) : null}
-
-                <CockpitTunerSection
-                  channels={channels}
-                  activeChannelIndex={activeChannelIndex}
+              <StationSeal
+                name={currentChannel.name}
+                type={currentChannel.type}
+                genre={currentChannel.genre}
+                size={140}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 20,
+                  width: '80%',
+                  height: 60,
+                }}
+              >
+                <AudioVisualizer
+                  analyser={null}
                   isPlaying={isPlaying}
-                  selectChannel={selectChannel}
+                  bars={32}
+                  height={60}
+                  color="cyan"
                 />
               </div>
             </div>
-          ) : null}
+          )}
+
+          {/* Hidden Audio Tag for BGM/Radio Audio Streams */}
+          <audio ref={audioRef} playsInline style={{ display: 'none' }} />
         </div>
 
-        {/* Bottom Screen Bar */}
+        {/* Shortwave Analog Dial Tuner Section */}
+        <div
+          style={{
+            padding: '12px 16px',
+            background: 'var(--surface-2)',
+            borderTop: '1px solid var(--chalk-dim)',
+          }}
+        >
+          <CockpitTunerSection
+            channels={channels}
+            activeChannelIndex={activeChannelIndex}
+            isPlaying={isPlaying}
+            selectChannel={selectChannel}
+          />
+        </div>
+
+        {/* Hardware Action & Control Deck */}
         <div
           style={{
             height: 52,
@@ -224,31 +239,33 @@ export function CockpitMediaView({
             padding: '0 16px',
           }}
         >
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <Button variant="ghost" size="sm" onClick={prevChannel}>
-              Previous
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+            <Button variant="ghost" size="sm" onClick={prevChannel} title="Previous Channel ([)">
+              Prev
             </Button>
             <Button
               variant={isPlaying ? 'danger' : 'primary'}
               size="sm"
               onClick={togglePlayPause}
+              style={{ minWidth: 80, fontWeight: 800 }}
+              title="Play/Pause (Space)"
             >
-              {isPlaying ? 'Pause' : 'Play Stream'}
+              {isPlaying ? '■ STOP' : '▶ PLAY'}
             </Button>
-            <Button variant="ghost" size="sm" onClick={nextChannel}>
+            <Button variant="ghost" size="sm" onClick={nextChannel} title="Next Channel (])">
               Next
             </Button>
-            {currentChannel.type === 'iptv' ? (
-              <Button variant="ghost" size="sm" onClick={() => void togglePip()}>
-                PiP
-              </Button>
-            ) : null}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-              VOL: {Math.round(volume * 100)}%
-            </span>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMuted((prev) => !prev)}
+              title="Toggle Audio Mute (M)"
+            >
+              {isMuted ? 'Muted' : 'Volume'}
+            </Button>
             <input
               type="range"
               min="0"
@@ -256,49 +273,36 @@ export function CockpitMediaView({
               step="0.05"
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
-              style={{ width: 80, accentColor: 'var(--cyan)' }}
+              style={{
+                width: 90,
+                height: 6,
+                accentColor: 'var(--cyan)',
+                cursor: 'pointer',
+              }}
             />
-            <Button variant="ghost" size="sm" onClick={() => setIsMuted((prev) => !prev)}>
-              {isMuted ? 'Muted' : 'Vol'}
-            </Button>
+            {currentChannel.type === 'iptv' ? (
+              <Button variant="paper" size="sm" onClick={() => void togglePip()} title="Picture-in-Picture (P)">
+                PiP
+              </Button>
+            ) : null}
           </div>
-        </div>
-
-        {/* Hotkey Indicator Strip */}
-        <div
-          style={{
-            padding: '4px 16px',
-            background: 'var(--panel)',
-            borderTop: '1px solid var(--chalk-dim)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            fontSize: 10,
-            color: 'var(--muted)',
-          }}
-        >
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>Space</Kbd> Play/Pause</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>M</Kbd> Mute</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>[</Kbd><Kbd>]</Kbd> Prev/Next</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>P</Kbd> PiP</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>1-5</Kbd> Tabs</span>
         </div>
       </div>
 
-      {/* Right Playlist & Station Catalog */}
+      {/* Right Column: Station/Channel Selector List & Custom Stream Input */}
       <div
         style={{
-          flex: 1,
+          flex: 0.9,
           display: 'flex',
           flexDirection: 'column',
-          background: 'var(--surface)',
+          background: 'var(--surface-2)',
           overflow: 'hidden',
         }}
       >
-        {/* Playlist Toolbar */}
+        {/* Filter Pills & Channel Search */}
         <div
           style={{
-            padding: '10px 14px',
+            padding: '12px 14px 8px 14px',
             borderBottom: '1px solid var(--chalk-dim)',
             display: 'flex',
             flexDirection: 'column',
@@ -306,46 +310,44 @@ export function CockpitMediaView({
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: 13, textTransform: 'uppercase' }}>
-                Channel Directory
-              </span>
-              <Badge tone="cyan">{channels.length} TOTAL</Badge>
-            </div>
-
-            <PillGroup label="Type:">
-              <Pill
-                label="ALL"
-                active={channelCategory === 'all'}
-                tone="cyan"
-                onClick={() => setChannelCategory('all')}
-              />
-              <Pill
-                label="BGM"
-                active={channelCategory === 'bgm'}
-                tone="pink"
-                onClick={() => setChannelCategory('bgm')}
-              />
-              <Pill
-                label="RADIO"
-                active={channelCategory === 'radio'}
-                tone="cyan"
-                onClick={() => setChannelCategory('radio')}
-              />
-              <Pill
-                label="IPTV"
-                active={channelCategory === 'iptv'}
-                tone="accent"
-                onClick={() => setChannelCategory('iptv')}
-              />
-            </PillGroup>
+            <Tape tone="accent">{copy.sectionTitle}</Tape>
+            <span style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>
+              {filteredChannels.length} / {channels.length}
+            </span>
           </div>
 
+          <PillGroup label="Kind:">
+            <Pill
+              label={copy.categoryAll}
+              active={channelCategory === 'all'}
+              tone="cyan"
+              onClick={() => setChannelCategory('all')}
+            />
+            <Pill
+              label={copy.categoryBgm}
+              active={channelCategory === 'bgm'}
+              tone="pink"
+              onClick={() => setChannelCategory('bgm')}
+            />
+            <Pill
+              label={copy.categoryRadio}
+              active={channelCategory === 'radio'}
+              tone="cyan"
+              onClick={() => setChannelCategory('radio')}
+            />
+            <Pill
+              label={copy.categoryIptv}
+              active={channelCategory === 'iptv'}
+              tone="accent"
+              onClick={() => setChannelCategory('iptv')}
+            />
+          </PillGroup>
+
           <TextInput
-            placeholder="Search radio or IPTV channels..."
+            placeholder="Search stations, genre, or country..."
             value={channelSearch}
             onChange={(e) => setChannelSearch(e.target.value)}
-            style={{ height: 32, fontSize: 12 }}
+            style={{ height: 28, fontSize: 11 }}
           />
         </div>
 
@@ -391,11 +393,11 @@ export function CockpitMediaView({
           }}
         >
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 11, textTransform: 'uppercase', color: 'var(--muted)' }}>
-            + Register Custom Radio / IPTV Stream
+            + {copy.addCustomChannel}
           </span>
           <div style={{ display: 'flex', gap: 6 }}>
             <TextInput
-              placeholder="Station/Channel Name..."
+              placeholder={copy.channelNamePlaceholder}
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
               style={{ height: 30, fontSize: 12, flex: 1 }}
@@ -420,20 +422,20 @@ export function CockpitMediaView({
           </div>
           <div style={{ display: 'flex', gap: 6 }}>
             <TextInput
-              placeholder="Stream URL (m3u8, mp3, aac, mp4)..."
+              placeholder={copy.channelUrlPlaceholder}
               value={customUrl}
               onChange={(e) => setCustomUrl(e.target.value)}
               style={{ height: 30, fontSize: 12, flex: 2 }}
               required
             />
             <TextInput
-              placeholder="Genre..."
+              placeholder={copy.channelGenrePlaceholder}
               value={customGenre}
               onChange={(e) => setCustomGenre(e.target.value)}
               style={{ height: 30, fontSize: 12, flex: 1 }}
             />
             <Button variant="primary" size="sm" type="submit" style={{ height: 30 }}>
-              + Add
+              {copy.btnAddChannel}
             </Button>
           </div>
         </form>

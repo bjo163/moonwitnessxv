@@ -1,16 +1,19 @@
 import type { ReactNode } from 'react'
 import { Badge, Button } from '@moonwitness/moonui'
+import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
 export interface CockpitLedgerViewProps {
   errorLines: string[]
   loadLedger: () => Promise<void>
   clearLedger: () => Promise<void>
+  copy: CockpitCopyCatalog
 }
 
 export function CockpitLedgerView({
   errorLines,
   loadLedger,
   clearLedger,
+  copy,
 }: CockpitLedgerViewProps): ReactNode {
   return (
     <div className="tab-content">
@@ -29,10 +32,10 @@ export function CockpitLedgerView({
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <Button variant="primary" size="sm" onClick={() => void loadLedger()}>
-            Refresh
+            {copy.btnRefresh}
           </Button>
           <Button variant="danger" size="sm" onClick={() => void clearLedger()}>
-            Clear Log File
+            {copy.btnClearLedger}
           </Button>
         </div>
       </div>
@@ -40,7 +43,7 @@ export function CockpitLedgerView({
       <div className="m-terminal-viewer" style={{ flex: 1, maxHeight: 'none' }}>
         {errorLines.length === 0 ? (
           <div style={{ color: 'var(--ok)', padding: 16 }}>
-            No errors recorded in dev-errors.log. All systems nominal.
+            {copy.emptyLedger}
           </div>
         ) : (
           errorLines.map((line, idx) => (

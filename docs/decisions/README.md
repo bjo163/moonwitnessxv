@@ -1,3 +1,3 @@
 # ADR index
-**ACCEPTED:** [ARSY ADR-0001](ADR-0001-arsy-is-xv-hub.md), [MoonQL ADR-0002](ADR-0002-additive-moonql-domains.md), [source rights ADR-0003](ADR-0003-source-rights-and-consent.md), [ADR-0005 shared locale](ADR-0005-locale.md).
-**PROPOSED, not accepted:** [ADR-0004 app boundaries](ADR-0004-empire-surfaces.md), [ADR-0006 SKYLINK communication surface](ADR-0006-skylink-communication-surface.md). A decision's acceptance never proves its implementation. No separate micro-ADRs for tiny code choices.
+**ACCEPTED:** [ARSY ADR-0001](ADR-0001-arsy-is-xv-hub.md), [MoonQL ADR-0002](ADR-0002-additive-moonql-domains.md), [source rights ADR-0003](ADR-0003-source-rights-and-consent.md), [ADR-0005 shared locale](ADR-0005-locale.md), [ADR-0006 SKYLINK communication surface](ADR-0006-skylink-communication-surface.md), [ADR-0007 ECHOLOG storage](ADR-0007-echolog-storage.md), [ADR-0008 Cockpit mission supervisor](ADR-0008-cockpit-mission-supervisor.md).
+**PROPOSED, not accepted:** [ADR-0004 app boundaries](ADR-0004-empire-surfaces.md). A decision's acceptance never proves its implementation. No separate micro-ADRs for tiny code choices.

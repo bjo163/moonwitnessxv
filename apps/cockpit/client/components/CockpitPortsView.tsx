@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Badge, Button, Card, CardBody, CardHeader, LiveDot } from '@moonwitness/moonui'
 import type { ServiceState } from '../types'
+import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
 export interface PortEntry {
   port: number
@@ -21,11 +22,13 @@ export const COCKPIT_PORT_MAP: PortEntry[] = [
 export interface CockpitPortsViewProps {
   serviceStates: Record<string, ServiceState>
   openPreview: (url: string) => void
+  copy: CockpitCopyCatalog
 }
 
 export function CockpitPortsView({
   serviceStates,
   openPreview,
+  copy,
 }: CockpitPortsViewProps): ReactNode {
   return (
     <div className="ports-container">
@@ -51,7 +54,7 @@ export function CockpitPortsView({
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <LiveDot state={isRunning ? 'live' : 'down'} />
                   <Badge tone={isRunning ? 'ok' : 'night'}>
-                    {isRunning ? 'BOUND' : 'IDLE'}
+                    {isRunning ? copy.statusBound : copy.statusIdle}
                   </Badge>
                 </div>
               }
@@ -81,7 +84,7 @@ export function CockpitPortsView({
                 size="sm"
                 onClick={() => openPreview(`http://127.0.0.1:${p.port}`)}
               >
-                Open In Preview
+                {copy.btnOpenPreview}
               </Button>
             </CardBody>
           </Card>

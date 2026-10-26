@@ -20,6 +20,7 @@ import {
 } from '@moonwitness/moonui'
 import type { ProgressPayload, TodoTask } from '../types'
 import type { TaskStatusFilter, TodoProgressFilters } from '../hooks/useTodoProgress'
+import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
 export interface CockpitProgressViewProps {
   payload: ProgressPayload | null
@@ -32,12 +33,12 @@ export interface CockpitProgressViewProps {
   error: string | null
   lastReceived: string | null
   netClosedSinceOpen: number
+  copy: CockpitCopyCatalog
 }
 
 const STATUS_OPTIONS: TaskStatusFilter[] = ['open', 'done', 'all']
 const PRIORITY_OPTIONS = ['P0', 'P1', 'P2', 'P3']
-// Paired so the bar tone and the label colour always name a token that exists
-// in moon.css; 'purple' has no CSS variable and maps to --moon.
+
 const GROUP_STYLES: ReadonlyArray<{ tone: ProgressTone; color: string }> = [
   { tone: 'cyan', color: 'var(--cyan)' },
   { tone: 'pink', color: 'var(--pink)' },
@@ -72,12 +73,6 @@ function truncate(text: string, max = 120): string {
   return text.length > max ? `${text.slice(0, max - 1)}…` : text
 }
 
-/**
- * Compact absolute-scale bar list. MoonUI `ChartList` scales each row against
- * the highest value in the set, which would show the best-performing group as
- * full regardless of how much is actually done, so progress uses `ProgressBar`
- * against a fixed max of 100 instead.
- */
 function GroupRollup({ payload }: { payload: ProgressPayload }): ReactNode {
   return (
     <div className="progress-grid">
@@ -100,19 +95,17 @@ function GroupRollup({ payload }: { payload: ProgressPayload }): ReactNode {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'baseline',
-                gap: 8,
-                marginBottom: 6,
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11,
+                marginBottom: 4,
               }}
             >
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 800, color: 'var(--fg)' }}>
-                {group.id} {group.label}
-              </span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)' }}>
-                {String(group.done)}/{String(group.total)} ·{' '}
-                <b style={{ color: unmapped ? 'var(--hot)' : style.color }}>{String(group.percent)}%</b>
+              <strong style={{ color: 'var(--fg)' }}>{group.label}</strong>
+              <span style={{ color: 'var(--muted)' }}>
+                {String(group.done)}/{String(group.total)} ({String(group.percent)}%)
               </span>
             </div>
-            <ProgressBar value={group.percent} max={100} tone={unmapped ? 'pink' : style.tone} size="sm" />
+            <ProgressBar value={group.percent} max={100} tone={style.tone} size="sm" />
           </div>
         )
       })}
@@ -159,6 +152,7 @@ export function CockpitProgressView({
   error,
   lastReceived,
   netClosedSinceOpen,
+  copy,
 }: CockpitProgressViewProps): ReactNode {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
@@ -208,13 +202,13 @@ export function CockpitProgressView({
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 16 }}>
           <div className="progress-grid">
-            <StatCard label="Tasks closed" value={`${String(payload.done)} / ${String(payload.total)}`} hint={`${String(payload.open)} open`} />
+            <StatCard label={copy.closedTasks} value={`${String(payload.done)} / ${String(payload.total)}`} hint={`${String(payload.open)} open`} />
             <div>
-              <StatCard label="Completion" value={`${String(payload.percent)}%`} hint="checked boxes in the register" />
+              <StatCard label={copy.overallProgress} value={`${String(payload.percent)}%`} hint="checked boxes in the register" />
               <ProgressBar value={payload.percent} max={100} tone="ok" size="sm" />
             </div>
             <StatCard
-              label="Open P0 blockers"
+              label={copy.openBlockersHeader}
               value={
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {String(payload.openP0.length)}

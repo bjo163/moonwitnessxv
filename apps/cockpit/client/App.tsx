@@ -11,6 +11,9 @@ import { CockpitPortsView } from './components/CockpitPortsView'
 import { CockpitLedgerView } from './components/CockpitLedgerView'
 import { CockpitProgressView } from './components/CockpitProgressView'
 import { CockpitFooter } from './components/CockpitFooter'
+import { CockpitConfirmModal } from './components/CockpitConfirmModal'
+import { CockpitHelpModal } from './components/CockpitHelpModal'
+import { useCockpitLocale } from './hooks/useCockpitLocale'
 import { useCockpitSync } from './hooks/useCockpitSync'
 import { useCockpitActions } from './hooks/useCockpitActions'
 import { useTodoProgress } from './hooks/useTodoProgress'
@@ -124,6 +127,7 @@ export const DEFAULT_CHANNELS: ChannelItem[] = [
 ]
 
 export function App(): ReactNode {
+  const { locale, setLocale, copy } = useCockpitLocale()
   const [activeTab, setActiveTab] = useState<CockpitTab>('logs')
   const [filterTag, setFilterTag] = useState<string>('all')
   const [showErrorsOnly, setShowErrorsOnly] = useState(false)
@@ -132,6 +136,14 @@ export function App(): ReactNode {
   const [previewUrl, setPreviewUrl] = useState('http://127.0.0.1:3001')
   const [errorLines, setErrorLines] = useState<string[]>([])
   const [crtShader, setCrtShader] = useState(false)
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean
+    title: string
+    description: string
+    onConfirm: () => void
+    isDestructive?: boolean
+  } | null>(null)
 
   // Media Player State
   const [channels, setChannels] = useState<ChannelItem[]>(DEFAULT_CHANNELS)
@@ -189,6 +201,32 @@ export function App(): ReactNode {
     setServiceStates,
     setErrorLines,
   })
+
+  const requestStopAll = () => {
+    setConfirmModal({
+      isOpen: true,
+      title: copy.stopAllTitle,
+      description: copy.stopAllDesc,
+      isDestructive: true,
+      onConfirm: () => {
+        setConfirmModal(null)
+        void stopAll()
+      },
+    })
+  }
+
+  const requestFreePorts = () => {
+    setConfirmModal({
+      isOpen: true,
+      title: copy.freePortsTitle,
+      description: copy.freePortsDesc,
+      isDestructive: true,
+      onConfirm: () => {
+        setConfirmModal(null)
+        void freePorts()
+      },
+    })
+  }
 
   // Playback Engine: Synchronizes current channel with HTML5 Audio / Video + HLS.js
   useEffect(() => {
@@ -413,6 +451,9 @@ export function App(): ReactNode {
       } else if (e.key === '`' || e.key === '~') {
         triggerHaptic('toggle')
         actions.setActiveTab((prev) => (prev === 'logs' ? 'media' : 'logs'))
+      } else if (e.key === '?') {
+        e.preventDefault()
+        setIsHelpOpen(true)
       }
     }
 
@@ -458,13 +499,23 @@ export function App(): ReactNode {
   }, [channels, channelCategory, channelSearch])
 
   const cockpitTabs: TabItem[] = useMemo(() => [
-    { id: 'logs', label: 'Terminal & Logs', tone: 'cyan' },
-    { id: 'preview', label: 'In-App Web Preview', tone: 'accent' },
-    { id: 'media', label: 'Media & IPTV Player', count: channels.length, tone: 'pink' },
-    { id: 'ledger', label: 'Error Ledger', count: errorLines.length > 0 ? errorLines.length : undefined, tone: 'accent' },
-    { id: 'ports', label: 'Network & Ports', tone: 'cyan' },
-    { id: 'progress', label: 'Mission Progress', count: progress.payload?.open, tone: 'ok' },
-  ], [channels.length, errorLines.length, progress.payload?.open])
+    { id: 'logs', label: copy.tabLogs, tone: 'cyan' },
+    { id: 'preview', label: copy.tabPreview, tone: 'accent' },
+    { id: 'media', label: copy.tabMedia, count: channels.length, tone: 'pink' },
+    { id: 'ledger', label: copy.tabLedger, count: errorLines.length > 0 ? errorLines.length : undefined, tone: 'accent' },
+    { id: 'ports', label: copy.tabPorts, tone: 'cyan' },
+    { id: 'progress', label: copy.tabProgress, count: progress.payload?.open, tone: 'ok' },
+  ], [
+    copy.tabLogs,
+    copy.tabPreview,
+    copy.tabMedia,
+    copy.tabLedger,
+    copy.tabPorts,
+    copy.tabProgress,
+    channels.length,
+    errorLines.length,
+    progress.payload?.open,
+  ])
 
   return (
     <div className="cockpit-shell">
@@ -482,12 +533,20 @@ export function App(): ReactNode {
         setVolume={setVolume}
         setActiveTab={setActiveTab}
         startAll={startAll}
-        stopAll={stopAll}
-        freePorts={freePorts}
+        stopAll={async () => {
+          requestStopAll()
+        }}
+        freePorts={async () => {
+          requestFreePorts()
+        }}
         isFreeingPorts={isFreeingPorts}
         crtShader={crtShader}
         setCrtShader={setCrtShader}
         progressPercent={progress.payload?.percent ?? null}
+        locale={locale}
+        setLocale={setLocale}
+        copy={copy}
+        onOpenHelp={() => setIsHelpOpen(true)}
       />
 
       <div className="cockpit-body">
@@ -497,6 +556,7 @@ export function App(): ReactNode {
           controlService={controlService}
           openPreview={openPreview}
           formatUptime={formatUptime}
+          copy={copy}
         />
 
         <main className="cockpit-main">
@@ -524,6 +584,7 @@ export function App(): ReactNode {
               setAutoScroll={setAutoScroll}
               setLogs={setLogs}
               filteredLogs={filteredLogs}
+              copy={copy}
             />
           ) : null}
 
@@ -533,6 +594,7 @@ export function App(): ReactNode {
               setPreviewUrl={setPreviewUrl}
               openPreview={openPreview}
               previewFrameRef={previewFrameRef}
+              copy={copy}
             />
           ) : null}
 
@@ -568,6 +630,7 @@ export function App(): ReactNode {
               customGenre={customGenre}
               setCustomGenre={setCustomGenre}
               addCustomChannel={addCustomChannel}
+              copy={copy}
             />
           ) : null}
 
@@ -576,6 +639,7 @@ export function App(): ReactNode {
               errorLines={errorLines}
               loadLedger={loadLedger}
               clearLedger={clearLedger}
+              copy={copy}
             />
           ) : null}
 
@@ -583,6 +647,7 @@ export function App(): ReactNode {
             <CockpitPortsView
               serviceStates={serviceStates}
               openPreview={openPreview}
+              copy={copy}
             />
           ) : null}
 
@@ -598,12 +663,35 @@ export function App(): ReactNode {
               error={progress.error}
               lastReceived={progress.lastReceived}
               netClosedSinceOpen={progress.netClosedSinceOpen}
+              copy={copy}
             />
           ) : null}
         </main>
       </div>
 
-      <CockpitFooter crtShader={crtShader} />
+      <CockpitFooter
+        crtShader={crtShader}
+        copy={copy}
+        onOpenHelp={() => setIsHelpOpen(true)}
+      />
+
+      <CockpitHelpModal
+        isOpen={isHelpOpen}
+        copy={copy}
+        onClose={() => setIsHelpOpen(false)}
+      />
+
+      <CockpitConfirmModal
+        isOpen={Boolean(confirmModal?.isOpen)}
+        title={confirmModal?.title ?? ''}
+        description={confirmModal?.description ?? ''}
+        confirmLabel={copy.confirmBtn}
+        cancelLabel={copy.cancelBtn}
+        onConfirm={() => {
+          confirmModal?.onConfirm()
+        }}
+        onCancel={() => setConfirmModal(null)}
+      />
     </div>
   )
 }

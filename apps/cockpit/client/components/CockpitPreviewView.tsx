@@ -1,5 +1,6 @@
 import type { ReactNode, RefObject } from 'react'
 import { Button, TextInput } from '@moonwitness/moonui'
+import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
 export interface PreviewShortcut {
   label: string
@@ -19,6 +20,7 @@ export interface CockpitPreviewViewProps {
   setPreviewUrl: (url: string) => void
   openPreview: (url: string) => void
   previewFrameRef: RefObject<HTMLIFrameElement | null>
+  copy: CockpitCopyCatalog
 }
 
 export function CockpitPreviewView({
@@ -26,6 +28,7 @@ export function CockpitPreviewView({
   setPreviewUrl,
   openPreview,
   previewFrameRef,
+  copy,
 }: CockpitPreviewViewProps): ReactNode {
   return (
     <div className="tab-content">
@@ -35,6 +38,7 @@ export function CockpitPreviewView({
             style={{ height: 32, fontSize: 12, flex: 1, color: 'var(--cyan)' }}
             value={previewUrl}
             onChange={(e) => setPreviewUrl(e.target.value)}
+            placeholder={copy.urlPlaceholder}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && previewFrameRef.current) {
                 previewFrameRef.current.src = previewUrl
@@ -48,7 +52,7 @@ export function CockpitPreviewView({
               if (previewFrameRef.current) previewFrameRef.current.src = previewUrl
             }}
           >
-            Go
+            {copy.go}
           </Button>
           <Button
             variant="ghost"
@@ -57,14 +61,14 @@ export function CockpitPreviewView({
               if (previewFrameRef.current) previewFrameRef.current.src = previewUrl
             }}
           >
-            Reload
+            {copy.reload}
           </Button>
           <Button
             variant="paper"
             size="sm"
             onClick={() => window.open(previewUrl, '_blank')}
           >
-            External
+            {copy.externalWindow}
           </Button>
         </div>
 
@@ -87,7 +91,7 @@ export function CockpitPreviewView({
         ref={previewFrameRef}
         className="preview-iframe"
         src={previewUrl}
-        title="Cockpit Preview"
+        title={copy.iframeTitle}
       />
     </div>
   )

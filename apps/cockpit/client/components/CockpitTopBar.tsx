@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Badge, BrandLogo, Button, LiveDot, MoonAvatar, Tape } from '@moonwitness/moonui'
 import { MtsTelemetryClock, triggerHaptic } from '@moonwitness/moonui/client'
 import type { ChannelItem, CockpitTab } from '../types'
+import type { CockpitLocale, CockpitCopyCatalog } from '../lib/cockpit-copy'
 
 export interface CockpitTopBarProps {
   clock: string
@@ -23,6 +24,10 @@ export interface CockpitTopBarProps {
   crtShader: boolean
   setCrtShader: (fn: (prev: boolean) => boolean) => void
   progressPercent?: number | null
+  locale: CockpitLocale
+  setLocale: (loc: CockpitLocale) => void
+  copy: CockpitCopyCatalog
+  onOpenHelp: () => void
 }
 
 export function CockpitTopBar({
@@ -45,6 +50,10 @@ export function CockpitTopBar({
   crtShader,
   setCrtShader,
   progressPercent,
+  locale,
+  setLocale,
+  copy,
+  onOpenHelp,
 }: CockpitTopBarProps): ReactNode {
   return (
     <header className="cockpit-topbar">
@@ -52,8 +61,8 @@ export function CockpitTopBar({
         <BrandLogo size="sm" />
         <MoonAvatar seed="cockpit-supervisor" variant="crown" size={32} />
         <div className="cockpit-title">
-          <span>MOONDECK</span>
-          <Tape tone="accent">DESKTOP COCKPIT</Tape>
+          <span>{copy.brandTitle}</span>
+          <Tape tone="accent">{copy.brandSubtitle}</Tape>
         </div>
       </div>
 
@@ -66,7 +75,7 @@ export function CockpitTopBar({
           UPTIME: <strong style={{ color: 'var(--fg)' }}>{uptime}s</strong>
         </div>
         <div>
-          STATUS: <LiveDot state="live" /> <strong style={{ color: 'var(--ok)' }}>NOMINAL</strong>
+          STATUS: <LiveDot state="live" /> <strong style={{ color: 'var(--ok)' }}>SUPERVISED</strong>
         </div>
         <div>
           TODO:{' '}
@@ -124,36 +133,36 @@ export function CockpitTopBar({
             size="sm"
             style={{ padding: '2px 5px', fontSize: 10, height: 22 }}
             onClick={prevChannel}
-            title="Previous Channel"
+            title={copy.shortcutChannel}
           >
-            Prev
+            ‹
           </Button>
           <Button
             variant={isPlaying ? 'danger' : 'primary'}
             size="sm"
             style={{ padding: '2px 8px', fontSize: 10, height: 22 }}
             onClick={togglePlayPause}
-            title={isPlaying ? 'Pause' : 'Play'}
+            title={isPlaying ? copy.quickPlayerPause : copy.quickPlayerPlay}
           >
-            {isPlaying ? 'Pause' : 'Play'}
+            {isPlaying ? '■' : '▶'}
           </Button>
           <Button
             variant="ghost"
             size="sm"
             style={{ padding: '2px 5px', fontSize: 10, height: 22 }}
             onClick={nextChannel}
-            title="Next Channel"
+            title={copy.shortcutChannel}
           >
-            Next
+            ›
           </Button>
           <Button
             variant="ghost"
             size="sm"
             style={{ padding: '2px 5px', fontSize: 10, height: 22 }}
             onClick={() => setIsMuted((prev) => !prev)}
-            title={isMuted ? 'Unmute' : 'Mute'}
+            title={isMuted ? copy.quickPlayerUnmute : copy.quickPlayerMute}
           >
-            {isMuted ? 'Muted' : 'Vol'}
+            {isMuted ? 'MUTE' : 'VOL'}
           </Button>
           <input
             type="range"
@@ -168,27 +177,27 @@ export function CockpitTopBar({
               cursor: 'pointer',
               accentColor: 'var(--cyan)',
             }}
-            title="Media Volume"
+            title={copy.quickPlayerVolume}
           />
           <Button
             variant="paper"
             size="sm"
             style={{ padding: '2px 6px', fontSize: 10, height: 22 }}
             onClick={() => setActiveTab('media')}
-            title="Open Media & IPTV Station Tab"
+            title={copy.tabMedia}
           >
-            Player
+            RACK
           </Button>
         </div>
       </div>
 
-      {/* Global Dev Actions */}
+      {/* Global Dev Actions & Locale Switcher */}
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
         <Button variant="primary" size="sm" onClick={() => void startAll()}>
-          Start All
+          {copy.startAll}
         </Button>
         <Button variant="danger" size="sm" onClick={() => void stopAll()}>
-          Stop All
+          {copy.stopAll}
         </Button>
         <Button
           variant="accent"
@@ -196,7 +205,7 @@ export function CockpitTopBar({
           disabled={isFreeingPorts}
           onClick={() => void freePorts()}
         >
-          {isFreeingPorts ? 'Freeing...' : 'Free Ports'}
+          {isFreeingPorts ? '...' : copy.freePorts}
         </Button>
         <Button
           variant={crtShader ? 'accent' : 'ghost'}
@@ -205,9 +214,74 @@ export function CockpitTopBar({
             triggerHaptic('toggle')
             setCrtShader((prev) => !prev)
           }}
-          title="Toggle Retro CRT Phosphor Scanline Shader"
+          title={copy.crtFilter}
         >
-          {crtShader ? 'CRT: ON' : 'CRT: OFF'}
+          {crtShader ? copy.crtFilterActive : copy.crtFilter}
+        </Button>
+
+        {/* Accessible Language Switcher (M19-29) */}
+        <div
+          role="group"
+          aria-label={copy.selectLanguage}
+          style={{
+            display: 'inline-flex',
+            borderRadius: 4,
+            border: '1px solid var(--border)',
+            overflow: 'hidden',
+          }}
+        >
+          <button
+            type="button"
+            aria-pressed={locale === 'id'}
+            onClick={() => {
+              triggerHaptic('tap')
+              setLocale('id')
+            }}
+            style={{
+              padding: '3px 8px',
+              fontSize: 10,
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 800,
+              background: locale === 'id' ? 'var(--cyan)' : 'var(--surface-2)',
+              color: locale === 'id' ? 'var(--ink)' : 'var(--muted)',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            ID
+          </button>
+          <button
+            type="button"
+            aria-pressed={locale === 'en'}
+            onClick={() => {
+              triggerHaptic('tap')
+              setLocale('en')
+            }}
+            style={{
+              padding: '3px 8px',
+              fontSize: 10,
+              fontFamily: 'var(--font-mono)',
+              fontWeight: 800,
+              background: locale === 'en' ? 'var(--cyan)' : 'var(--surface-2)',
+              color: locale === 'en' ? 'var(--ink)' : 'var(--muted)',
+              border: 'none',
+              borderLeft: '1px solid var(--border)',
+              cursor: 'pointer',
+            }}
+          >
+            EN
+          </button>
+        </div>
+
+        {/* Help Operator Modal Button (M19-28) */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onOpenHelp}
+          title={copy.shortcutHelp}
+          style={{ minWidth: 26, padding: '0 6px', fontWeight: 900 }}
+        >
+          ?
         </Button>
       </div>
     </header>

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Button, Pill, PillGroup, TerminalViewer, TextInput } from '@moonwitness/moonui'
 import type { AppConfig, LogEntry } from '../types'
+import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
 export interface CockpitLogsViewProps {
   config: AppConfig | null
@@ -14,6 +15,7 @@ export interface CockpitLogsViewProps {
   setAutoScroll: (val: boolean) => void
   setLogs: (logs: LogEntry[]) => void
   filteredLogs: string[]
+  copy: CockpitCopyCatalog
 }
 
 export function CockpitLogsView({
@@ -28,13 +30,14 @@ export function CockpitLogsView({
   setAutoScroll,
   setLogs,
   filteredLogs,
+  copy,
 }: CockpitLogsViewProps): ReactNode {
   return (
     <div className="tab-content">
       <div className="terminal-bar">
         <PillGroup label="Filter:">
           <Pill
-            label="ALL"
+            label={copy.filterAll}
             active={filterTag === 'all'}
             tone="cyan"
             onClick={() => setFilterTag('all')}
@@ -53,7 +56,7 @@ export function CockpitLogsView({
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <TextInput
             style={{ height: 30, fontSize: 12, width: 180 }}
-            placeholder="Search logs..."
+            placeholder={copy.searchLogsPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -62,17 +65,17 @@ export function CockpitLogsView({
             size="sm"
             onClick={() => setShowErrorsOnly(!showErrorsOnly)}
           >
-            Errors Only
+            {copy.errorsOnly}
           </Button>
           <Button
             variant={autoScroll ? 'cyan' : 'ghost'}
             size="sm"
             onClick={() => setAutoScroll(!autoScroll)}
           >
-            Auto-Scroll
+            {copy.autoScroll}
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setLogs([])}>
-            Clear
+            {copy.clearLogs}
           </Button>
         </div>
       </div>

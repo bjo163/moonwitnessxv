@@ -61,7 +61,7 @@ export const GROUP_DEFS: ReadonlyArray<{ id: string; label: string; milestones: 
   { id: 'G1', label: 'Source', milestones: ['M06', 'M07', 'M08', 'M09', 'M10', 'M11'] },
   { id: 'G2', label: 'Research', milestones: ['M12', 'M13', 'M14', 'M15'] },
   { id: 'G3', label: 'Witness & Creative', milestones: ['M16', 'M17', 'M18', 'M19'] },
-  { id: 'G4', label: 'Operations', milestones: ['M20', 'M21', 'M22', 'M23'] },
+  { id: 'G4', label: 'Operations', milestones: ['M20', 'M21', 'M22', 'M23', 'M38', 'M39'] },
   { id: 'G5', label: 'Optional Research', milestones: ['M24', 'M25', 'M26'] },
   { id: 'G6', label: 'Release', milestones: ['M27'] },
   { id: 'G7', label: 'Ecosystem', milestones: ['M29', 'M30', 'M31', 'M32', 'M33', 'M34', 'M35', 'M36', 'M37'] },

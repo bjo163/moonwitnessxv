@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Badge, Button, Card, CardBody, CardHeader, LiveDot } from '@moonwitness/moonui'
 import type { AppConfig, ServiceState } from '../types'
+import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
 export interface CockpitSidebarProps {
   config: AppConfig | null
@@ -8,6 +9,7 @@ export interface CockpitSidebarProps {
   controlService: (tag: string, action: 'start' | 'stop' | 'restart') => Promise<void>
   openPreview: (url: string) => void
   formatUptime: (seconds: number) => string
+  copy: CockpitCopyCatalog
 }
 
 export function CockpitSidebar({
@@ -16,12 +18,13 @@ export function CockpitSidebar({
   controlService,
   openPreview,
   formatUptime,
+  copy,
 }: CockpitSidebarProps): ReactNode {
   return (
     <aside className="cockpit-sidebar">
       <div className="sidebar-header">
-        <span className="sidebar-title">Microservices</span>
-        <Badge tone="cyan">LIVE CONTROL</Badge>
+        <span className="sidebar-title">{copy.microservices}</span>
+        <Badge tone="cyan">{copy.liveControl}</Badge>
       </div>
 
       <div className="services-list">
@@ -43,6 +46,15 @@ export function CockpitSidebar({
               : state.status === 'ERROR'
               ? 'hot'
               : 'night'
+
+          const statusText =
+            state.status === 'RUNNING'
+              ? copy.statusOnline
+              : state.status === 'STARTING'
+              ? copy.statusStarting
+              : state.status === 'ERROR'
+              ? copy.statusError
+              : copy.statusOffline
 
           return (
             <div key={svc.tag} className="service-card-wrapper">
@@ -72,7 +84,7 @@ export function CockpitSidebar({
                             : 'connecting'
                         }
                       />
-                      <Badge tone={badgeTone}>{state.status}</Badge>
+                      <Badge tone={badgeTone}>{statusText}</Badge>
                     </div>
                   }
                 />
@@ -89,19 +101,19 @@ export function CockpitSidebar({
                   >
                     {svc.port ? (
                       <span>
-                        PORT: <b style={{ color: 'var(--cyan)' }}>{svc.port}</b>
+                        {copy.port}: <b style={{ color: 'var(--cyan)' }}>{svc.port}</b>
                       </span>
                     ) : (
                       <span>TYPE: WORKER</span>
                     )}
                     {state.pid ? (
                       <span>
-                        PID: <b style={{ color: 'var(--fg)' }}>{state.pid}</b>
+                        {copy.pid}: <b style={{ color: 'var(--fg)' }}>{state.pid}</b>
                       </span>
                     ) : null}
                     {state.uptimeSeconds > 0 ? (
                       <span>
-                        UP: <b style={{ color: 'var(--ok)' }}>{formatUptime(state.uptimeSeconds)}</b>
+                        {copy.uptime}: <b style={{ color: 'var(--ok)' }}>{formatUptime(state.uptimeSeconds)}</b>
                       </span>
                     ) : null}
                   </div>
@@ -125,14 +137,14 @@ export function CockpitSidebar({
                           size="sm"
                           onClick={() => void controlService(svc.tag, 'stop')}
                         >
-                          Stop
+                          {copy.actionStop}
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => void controlService(svc.tag, 'restart')}
                         >
-                          Restart
+                          {copy.actionRestart}
                         </Button>
                       </>
                     ) : (
@@ -141,7 +153,7 @@ export function CockpitSidebar({
                         size="sm"
                         onClick={() => void controlService(svc.tag, 'start')}
                       >
-                        Start
+                        {copy.actionStart}
                       </Button>
                     )}
                     {svc.url ? (
@@ -152,7 +164,7 @@ export function CockpitSidebar({
                           if (svc.url) openPreview(svc.url)
                         }}
                       >
-                        Preview
+                        {copy.actionPreview}
                       </Button>
                     ) : null}
                   </div>
