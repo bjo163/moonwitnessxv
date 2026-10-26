@@ -26,6 +26,19 @@ export interface StorageDriver {
   delete(objectKey: string): Promise<void>
 }
 
+export { FsStorageDriver, ObjectHeldError, QuotaExceededError } from './driver/fs.js'
+export type { FsStorageDriverOptions, GcResult } from './driver/fs.js'
+
+export interface ObjectMetadataInput {
+  filename: string
+  content_type: string
+  uploader: string
+  retention_until?: string | null
+  legal_hold?: boolean
+  scan?: ScanStatus
+  tags?: string[]
+}
+
 /** SHA-256 digest helper using the standard Web Crypto API, without Node imports. */
 export async function sha256Hex(bytes: Uint8Array): Promise<string> {
   const input = new Uint8Array(bytes.byteLength)
