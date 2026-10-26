@@ -78,13 +78,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M02-01** — Disambiguate ALLAH/A-L-L-A-H, ZILL, SHADOW and numeric registries | P0 | D2 | M00-07 | No false sameAs or fictional authority |
-| - [ ] | **M02-02** — Assign D00–D13 to existing and proposed modules | P0 | D3 | M00-02,M02-01 | One canonical owner per data class |
-| - [ ] | **M02-03** — Draft XV ADR for additive MoonQL domain architecture | P0 | D3 | M02-02 | Alternatives and backward-compatible tests |
-| - [ ] | **M02-04** — Draft XV ADR for source rights, consent and publishing storage | P0 | D3 | M02-02 | Original bytes vs metadata ownership explicit |
-| - [ ] | **M02-05** — Specify stable IDs and versioned legacy refs | P0 | D3 | M02-03 | Foreign/source IDs never silently overwritten |
-| - [ ] | **M02-06** — Fix single task/status/document hierarchy | P0 | D1 | M02-01 | No duplicative TODO in vision and README |
-| - [ ] | **M02-07** — Review XIV/Empire decisions as historical, not current mandates | P0 | D2 | M02-03,M02-04 | Adopt/adapt/reject/open evidence matrix |
+| - [x] | **M02-01** — Disambiguate ALLAH/A-L-L-A-H, ZILL, SHADOW and numeric registries | P0 | D2 | M00-07 | Documented in `docs/decisions/M02-01-disambiguation-registry.md` |
+| - [x] | **M02-02** — Assign D00–D13 to existing and proposed modules | P0 | D3 | M00-02,M02-01 | Documented in `docs/decisions/M02-02-domain-assignments.md` |
+| - [x] | **M02-03** — Draft XV ADR for additive MoonQL domain architecture | P0 | D3 | M02-02 | Ratified in `docs/decisions/ADR-0002-additive-moonql-domains.md` |
+| - [x] | **M02-04** — Draft XV ADR for source rights, consent and publishing storage | P0 | D3 | M02-02 | Ratified in `docs/decisions/ADR-0003-source-rights-and-consent.md` |
+| - [x] | **M02-05** — Specify stable IDs and versioned legacy refs | P0 | D3 | M02-03 | Documented in `docs/decisions/M02-05-stable-ids-and-legacy-refs.md` |
+| - [x] | **M02-06** — Fix single task/status/document hierarchy | P0 | D1 | M02-01 | Documented in `docs/decisions/M02-06-document-hierarchy.md` |
+| - [x] | **M02-07** — Review XIV/Empire decisions as historical, not current mandates | P0 | D2 | M02-03,M02-04 | Documented in `docs/decisions/M02-07-historical-decisions-matrix.md` (Exit Gate Verified) |
 
 
 ## M03 — ACL, privacy, consent and abuse prevention

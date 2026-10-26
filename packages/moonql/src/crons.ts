@@ -67,7 +67,7 @@ export function startCrons(instance: MoonQlInstance, registry: MoonRegistry, log
       running = true
       const started = Date.now()
       Promise.resolve()
-        .then(() => def.run(ctx))
+        .then(() => def.run(cronCtx))
         .then((result) => {
           instance.bus.emit('cron.run', {
             addon,
