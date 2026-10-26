@@ -140,4 +140,4 @@ Cleanup: `docker rm -f moonwitness-m09-unilex-pg`; container list count 0; port 
 - The PG drill used a disposable database and a small fixture; it validates schema, joins, ACL and reviewer flow, not production volume.
 - The Docker image was not rebuilt in this milestone. `Dockerfile`/`Dockerfile.web` now carry the unilex manifest, build sources and runtime `dist`, but the build-stage copy list predates the ecosystem apps added on main, so a full `pnpm verify:docker` remains a separate deployment gate.
 - The 71-concept seed is a proposal. Promotion to an approved vocabulary needs source-by-source review and must not treat this milestone as validation.
-- CI evidence is recorded after the M09 evidence commit; local gates above were run on `9fde13f` plus the isolated evidence changes.
+- Local gates above were run on `9fde13f` plus the isolated evidence changes. CI on the final M09 head `77b96d0` passed ([run 40272393554](https://github.com/bjo163/moonwitnessxv/actions/runs/40272393554)) after declaring `typescript`/`@types/node` for the new `moonql-unilex` package, whose build had failed with `tsc: not found`.
