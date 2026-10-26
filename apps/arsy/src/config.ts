@@ -21,9 +21,12 @@ const EnvSchema = z.object({
     // `*` reflects every origin: possible, but a deliberate opt-in, never the default
     .default(`${FRONTEND_URLS.dock},${FRONTEND_URLS.headquarters}`),
 
+  ARSY_PORT: z.coerce.number().int().positive().optional(),
   RADIO_PORT: z.coerce.number().int().positive().optional(),
+  ARSY_PREFIX: z.string().optional(),
   RADIO_PREFIX: z.string().optional(),
   API_PREFIX: z.string().default(API_PREFIX_DEFAULT),
+  ARSY_TITLE: z.string().optional(),
   RADIO_TITLE: z.string().optional(),
   API_TITLE: z.string().default(`${SITE_NAME} Hub API`),
   API_VERSION: z.string().default('1.0.0'),
@@ -119,10 +122,10 @@ export interface RadioConfig {
   frontends: { dock: string; headquarters: string }
 }
 
-export function loadConfig(): RadioConfig {
+export function parseConfig(environment: Record<string, string | undefined>): RadioConfig {
   // Treat empty strings (e.g. `PORT=` in .env) as "not set".
   const cleaned = Object.fromEntries(
-    Object.entries(process.env).filter(([, v]) => v !== ''),
+    Object.entries(environment).filter(([, v]) => v !== ''),
   )
   const parsed = EnvSchema.safeParse(cleaned)
   if (!parsed.success) {
@@ -132,6 +135,9 @@ export function loadConfig(): RadioConfig {
     throw new Error(`Invalid environment configuration:\n${issues}`)
   }
   const e = parsed.data
+  const port = resolveAlias('ARSY_PORT', ['ARSY_PORT', 'RADIO_PORT', 'PORT'], [e.ARSY_PORT, e.RADIO_PORT, e.PORT], cleaned)
+  const prefix = resolveAlias('ARSY_PREFIX', ['ARSY_PREFIX', 'RADIO_PREFIX', 'API_PREFIX'], [e.ARSY_PREFIX, e.RADIO_PREFIX, e.API_PREFIX], cleaned)
+  const title = resolveAlias('ARSY_TITLE', ['ARSY_TITLE', 'RADIO_TITLE', 'API_TITLE'], [e.ARSY_TITLE, e.RADIO_TITLE, e.API_TITLE], cleaned)
 
   // M04-01: In production, PostgreSQL is strictly required to prevent accidental ephemeral storage.
   if (e.NODE_ENV === 'production' && !e.DATABASE_URL) {
@@ -145,13 +151,13 @@ export function loadConfig(): RadioConfig {
 
   return {
     host: e.HOST,
-    port: e.RADIO_PORT ?? e.PORT,
+    port,
     env: e.NODE_ENV,
     logLevel: e.LOG_LEVEL,
     cors: { origin: corsOrigin },
     api: {
-      prefix: e.RADIO_PREFIX ?? e.API_PREFIX,
-      title: e.RADIO_TITLE ?? e.API_TITLE,
+      prefix,
+      title,
       version: e.API_VERSION,
     },
     database: { url: e.DATABASE_URL, autoSync: e.MOONQL_AUTOSYNC },
@@ -173,7 +179,34 @@ export function loadConfig(): RadioConfig {
     },
     denpa: { enabled: e.DENPA_ENABLED, token: e.DENPA_TOKEN },
     egress: { denyHosts: e.EGRESS_DENY_HOSTS.split(',').map((host) => host.trim()).filter(Boolean) },
-    addonEnv: Object.fromEntries(ADDON_ENV_KEYS.map((key) => [key, process.env[key]])),
+    addonEnv: Object.fromEntries(ADDON_ENV_KEYS.map((key) => [key, environment[key]])),
     frontends: { dock: e.DOCK_URL, headquarters: e.HQ_URL },
   }
+}
+
+export function loadConfig(): RadioConfig {
+  return parseConfig(process.env)
+}
+
+function resolveAlias<T>(
+  preferredName: string,
+  keys: readonly string[],
+  values: readonly (T | undefined)[],
+  environment: Record<string, unknown>,
+): T {
+  const configured = keys.flatMap((key, index) => {
+    if (environment[key] === undefined || environment[key] === '') return []
+    const value = values[index]
+    return value === undefined ? [] : [{ key, value }]
+  })
+  const first = configured[0]
+  if (!first) {
+    const fallback = values.at(-1)
+    if (fallback === undefined) throw new Error(`Missing default for ${preferredName}`)
+    return fallback
+  }
+  if (configured.some(({ value }) => !Object.is(value, first.value))) {
+    throw new Error(`Conflicting environment aliases for ${preferredName}: ${configured.map(({ key }) => key).join(', ')} must have the same value.`)
+  }
+  return first.value
 }

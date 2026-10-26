@@ -19,7 +19,12 @@ import { createMoonClient, type MoonClient, type MoonClientOptions } from './cli
  * any token header) to the visitor.
  */
 export function apiBaseUrl(env: Record<string, string | undefined>): string {
-  return String(env.RADIO_API_URL ?? HUB_API_DEFAULT).replace(/\/+$/, '')
+  const preferred = env.ARSY_API_URL
+  const legacy = env.RADIO_API_URL
+  if (preferred !== undefined && legacy !== undefined && preferred !== legacy) {
+    throw new Error('Conflicting Hub URL settings: ARSY_API_URL and RADIO_API_URL must have the same value.')
+  }
+  return String(preferred ?? legacy ?? HUB_API_DEFAULT).replace(/\/+$/, '')
 }
 
 /** A server-side client, configured the same way on both surfaces. */

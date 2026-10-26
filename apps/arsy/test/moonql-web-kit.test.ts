@@ -48,10 +48,16 @@ function fakeStreamClient(attempts: Attempt[], opts: { fail?: boolean; failAfter
 
 test('apiBaseUrl: one rule for the hub URL, default and trailing slashes included', () => {
   assert.equal(apiBaseUrl({}), HUB_API_DEFAULT)
+  assert.equal(apiBaseUrl({ ARSY_API_URL: 'http://arsy:3000/api/v1/' }), 'http://arsy:3000/api/v1')
+  assert.equal(apiBaseUrl({ ARSY_API_URL: 'http://arsy:3000/api/v1', RADIO_API_URL: 'http://arsy:3000/api/v1' }), 'http://arsy:3000/api/v1')
   assert.equal(apiBaseUrl({ RADIO_API_URL: 'http://hub:3000/api/v1/' }), 'http://hub:3000/api/v1')
   assert.equal(apiBaseUrl({ RADIO_API_URL: 'http://hub:3000/api/v1///' }), 'http://hub:3000/api/v1')
   // an empty value is not "unset": it must not silently become the default
   assert.equal(apiBaseUrl({ RADIO_API_URL: '' }), '')
+  assert.throws(
+    () => apiBaseUrl({ ARSY_API_URL: 'http://arsy:3000/api/v1', RADIO_API_URL: 'http://radio:3000/api/v1' }),
+    /Conflicting Hub URL settings: ARSY_API_URL and RADIO_API_URL/,
+  )
 })
 
 test('openLiveStream: reports live on open, then reconnects after the feed ends', async () => {

@@ -1,5 +1,5 @@
-import { API_PREFIX, PORTS } from '@moonwitness/core'
-import { createMoonClient, type MoonClient } from '@moonwitness/moonql-client'
+import { API_PREFIX } from '@moonwitness/core'
+import { apiBaseUrl, createMoonClient, type MoonClient } from '@moonwitness/moonql-client'
 import { apiDriver, parseFeedXml, scoreHeadline, youtubeRssDriver } from './drivers/youtube-rss.js'
 import { playwrightDriver } from './drivers/playwright.js'
 import { openclawDriver } from './drivers/openclaw.js'
@@ -171,7 +171,7 @@ export async function runSentinelCycle(client: MoonClient, config: SentinelConfi
 }
 
 export function loadSentinelConfig(env: Record<string, string | undefined> = process.env): SentinelConfig {
-  const hubBase = env.RADIO_API_URL ?? `http://127.0.0.1:${PORTS.hub}${API_PREFIX}`
+  const hubBase = apiBaseUrl(env)
   const driversRaw = env.SENTINEL_DRIVERS ?? 'rss,api,playwright,openclaw,agent'
   const drivers = driversRaw
     .split(',')

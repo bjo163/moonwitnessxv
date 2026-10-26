@@ -21,6 +21,7 @@ const FOREIGN_ENV_KEYS = [
   'POSTGRES_DB',
   'SITE_NAME',
   'RADIO_API_URL',
+  'ARSY_API_URL',
   'HQ_COOKIE_SECURE',
   // read by apps/dock/src/middleware.ts to allow-list framers of /embed/*
   'EMBED_ORIGINS',
@@ -37,6 +38,8 @@ const FOREIGN_ENV_KEYS = [
   'ECHOLOG_STORAGE_QUOTA_BYTES',
   'ECHOLOG_MAX_UPLOAD_BYTES',
   'ECHOLOG_ALLOWED_MIME_TYPES',
+  'ECHOLOG_MINIO_ROOT_USER',
+  'ECHOLOG_MINIO_ROOT_PASSWORD',
 ] as const
 
 const ALLOWED = new Set<string>([...RADIO_ENV_KEYS, ...ADDON_ENV_KEY_LIST, ...FOREIGN_ENV_KEYS])
@@ -58,9 +61,12 @@ test('.env.example only names variables the code actually reads', () => {
 })
 
 test('.env.example documents every hub variable (no hidden defaults)', () => {
-  // RADIO_* are deliberate override aliases of PORT/PREFIX/TITLE: documenting them
-  // as active lines would invite setting the same value twice.
-  const OVERRIDE_ALIASES = new Set(['RADIO_PORT', 'RADIO_PREFIX', 'RADIO_TITLE'])
+  // ARSY_* and RADIO_* are deliberate override aliases of the generic defaults;
+  // documenting every spelling as active would invite conflicting values.
+  const OVERRIDE_ALIASES = new Set([
+    'ARSY_PORT', 'RADIO_PORT', 'ARSY_PREFIX', 'RADIO_PREFIX',
+    'ARSY_TITLE', 'RADIO_TITLE',
+  ])
   const keys = new Set(keysOf('.env.example') ?? [])
   const missing = RADIO_ENV_KEYS.filter((key) => !keys.has(key) && !OVERRIDE_ALIASES.has(key))
   assert.deepEqual(missing, [], `.env.example is missing: ${missing.join(', ')}`)
@@ -75,7 +81,7 @@ test('the retired WHATSAPP_PREFIX does not come back', () => {
 test('.env.example ships placeholders, not credentials', () => {
   const path = join(process.cwd(), '..', '..', '.env.example')
   const text = readFileSync(path, 'utf8')
-  for (const key of ['POSTGRES_PASSWORD', 'MOONQL_AUTH_ADMIN_PASSWORD', 'DENPA_TOKEN', 'ECHOLOG_SERVICE_KEY', 'ECHOLOG_GRANT_SECRET']) {
+  for (const key of ['POSTGRES_PASSWORD', 'MOONQL_AUTH_ADMIN_PASSWORD', 'DENPA_TOKEN', 'ECHOLOG_SERVICE_KEY', 'ECHOLOG_GRANT_SECRET', 'ECHOLOG_MINIO_ROOT_PASSWORD']) {
     const value = new RegExp(`^${key}=(.*)$`, 'm').exec(text)?.[1] ?? null
     assert.ok(value !== null, `${key} must be documented`)
     assert.ok(value === '' || value === 'change-me', `${key} must stay a placeholder, found "${value}"`)
