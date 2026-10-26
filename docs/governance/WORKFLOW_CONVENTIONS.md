@@ -39,14 +39,13 @@ Breaking changes use `!` before the colon (`feat(api)!: ...`) and a `BREAKING CH
 
 Proposed PR titles use the same format as commits. The existing [PR template](../../.github/PULL_REQUEST_TEMPLATE.md) remains the detail checklist: task ID or explicit `NON-TODO GOVERNANCE PREPARATION`, bounded scope and paths, linked Issues/contracts, actual commands/results, evidence, compatibility and security/rights/privacy/localization impact, rollback, and required reviewers. Record exact baseline SHA only after observing it. A PR or passing CI does not itself authorize implementation or close a task.
 
-## Integration flow: enforced & streamlined
+## Integration flow: direct & automated
 
-The required path is `topic branch → PR to dev → verified merge → automatic fast-forward to main`. `main` is the GitHub default branch; `dev` is the active integration branch. Both `dev` and `main` reject direct force-pushes and deletion.
+The required path is `push to dev (direct or PR) → verified push to dev → automatic fast-forward to main`. `main` is the GitHub default branch; `dev` is the active integration branch. Both `dev` and `main` reject direct force-pushes and deletion.
 
 1. **Development into `dev`:**
-   - Topic branches target `dev` via Pull Request.
-   - PRs into `dev` run the `Monorepo Verification & Safety Gates` check.
-   - Merging into `dev` triggers the single verified integration run.
+   - Changes can be committed and pushed directly to `dev`. Intermediate topic branches and pull requests are optional, not enforced by repository rules.
+   - On each push to `dev`, the `Monorepo Verification & Safety Gates` check runs.
 
 2. **Automatic Fast-Forward to `main` (Zero-Approval, Zero-Duplicate):**
    - After verification succeeds on `dev`, the `promote` job immediately fast-forwards `main` to that exact verified commit.
@@ -55,4 +54,4 @@ The required path is `topic branch → PR to dev → verified merge → automati
 
 ## Enforcement state
 
-There is no commit-message validator, branch-name validator, PR-title validator, or TODO-to-Issue synchronizer. These conventions remain guidance, while branch routing, PR gating on `dev`, and automated promotion to `main` are enforced by repository rules and CI.
+There is no commit-message validator, branch-name validator, PR-title validator, or TODO-to-Issue synchronizer. These conventions remain guidance, while branch protection and automated promotion to `main` are enforced by repository rules and CI.
