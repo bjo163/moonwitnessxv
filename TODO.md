@@ -520,7 +520,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M22-01** — Freeze actual station seed/catalog response before change | P0 | D2 | M00-03 | Source fixture and known stream state recorded ; [packet](docs/tasks/M22/M22-01.md) |
+| - [x] | **M22-01** — Freeze actual station seed/catalog response before change | P0 | D2 | M00-03 | **Closed 2026-10-27:** normalized in-memory response fixtures captured for stations, weeklySchedule, nowPlaying and listen beacon; generated IDs/timestamps, stream URLs and pseudonym withheld. Tests verify public reads, active-only catalog, privacy beacon, missing station, invalid stream URI and anonymous write. Radio suite 305 passed, 9 optional PostgreSQL skips, 0 failed. No live stream claim; unsupported listen-event remains a documented limit. Exact fixture/test SHA `a1e384ef083ecf3c6fe4aae2b70acbdd6f2620cc`; [audit](docs/audit/M22-01-radio-baseline.md). |
 | - [ ] | **M22-02** — Test player, playlog pseudonyms, listening beacons and schedules | P0 | D3 | M22-01 | No listener identity or playback regression ; [packet](docs/tasks/M22/M22-02.md) |
 | - [ ] | **M22-03** — Verify DENPA opt-in, webhook token and payload validation | P0 | D3 | M03-07 | Unauthenticated inbound cannot write ; [packet](docs/tasks/M22/M22-03.md) |
 | - [ ] | **M22-04** — Review WhatsApp QR/session lifecycle and disabled-default behavior | P0 | D3 | M03-07 | Credentials protected and no surprise channel startup ; [packet](docs/tasks/M22/M22-04.md) |
