@@ -17,6 +17,8 @@
     { "path": "../../packages/moonql-apikeys" },
     { "path": "../../packages/moonql-settings" },
     { "path": "../../packages/moonql-ops" },
+    { "path": "../../packages/moonql-monitor" },
+    { "path": "../../packages/moonql-corpus" },
     { "path": "../../packages/whatsapp" },
     { "path": "../../packages/denpa" }
   ]

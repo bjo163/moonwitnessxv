@@ -163,13 +163,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M07-01** — Inventory historical multi-tradition dataset editions/licenses | P0 | D3 | M06-05 | Folder existence not confused with cleared source |
-| - [ ] | **M07-02** — Design artifact/work/edition/passage identity version schema | P0 | D3 | M02-05,M07-01 | Each citation points to real resolvable source |
-| - [ ] | **M07-03** — Prototype metadata-only catalog using existing MoonQL extension | P0 | D4 | M07-02,M03-02 | No sensitive or unlicensed text exposed |
-| - [ ] | **M07-04** — Apply rights veto for edition-specific text publication | P0 | D3 | M07-03,M03-06 | Rights unknown blocks bytes, not safe metadata |
-| - [ ] | **M07-05** — Create permission-verified QS 2:82 sample selectors | P0 | D2 | M07-02,M07-04 | No made-up Arabic or translated passage |
-| - [ ] | **M07-06** — Map foreign RGBL IDs without canonical duplication | P0 | D3 | M06-07,M07-05 | Source identity mapping preserves exact legacy reference |
-| - [ ] | **M07-07** — Test idempotent import, retries, deletion/retraction | P0 | D4 | M07-03,M07-06 | No duplicate on replay, reviewer/rights in log |
+| - [x] | **M07-01** — Inventory historical multi-tradition dataset editions/licenses | P0 | D3 | M06-05 | Folder existence not confused with cleared source ([docs/audit/M07-01-editions-licenses-inventory.md](file:///z:/project/moonradio/docs/audit/M07-01-editions-licenses-inventory.md)) |
+| - [x] | **M07-02** — Design artifact/work/edition/passage identity version schema | P0 | D3 | M02-05,M07-01 | Each citation points to real resolvable source ([docs/decisions/M07-02-corpus-identity-schema.md](file:///z:/project/moonradio/docs/decisions/M07-02-corpus-identity-schema.md)) |
+| - [x] | **M07-03** — Prototype metadata-only catalog using existing MoonQL extension | P0 | D4 | M07-02,M03-02 | No sensitive or unlicensed text exposed ([packages/moonql-corpus/src/index.ts](file:///z:/project/moonradio/packages/moonql-corpus/src/index.ts)) |
+| - [x] | **M07-04** — Apply rights veto for edition-specific text publication | P0 | D3 | M07-03,M03-06 | Rights unknown blocks bytes, not safe metadata ([docs/decisions/M07-04-rights-veto-policy.md](file:///z:/project/moonradio/docs/decisions/M07-04-rights-veto-policy.md)) |
+| - [x] | **M07-05** — Create permission-verified QS 2:82 sample selectors | P0 | D2 | M07-02,M07-04 | No made-up Arabic or translated passage ([packages/moonql-corpus/src/index.ts](file:///z:/project/moonradio/packages/moonql-corpus/src/index.ts)) |
+| - [x] | **M07-06** — Map foreign RGBL IDs without canonical duplication | P0 | D3 | M06-07,M07-05 | Source identity mapping preserves exact legacy reference ([apps/radio/test/corpus-ingestion.test.ts](file:///z:/project/moonradio/apps/radio/test/corpus-ingestion.test.ts)) |
+| - [x] | **M07-07** — Test idempotent import, retries, deletion/retraction | P0 | D4 | M07-03,M07-06 | No duplicate on replay, reviewer/rights in log ([apps/radio/test/corpus-ingestion.test.ts](file:///z:/project/moonradio/apps/radio/test/corpus-ingestion.test.ts)) |
 
 
 ## M08 — Source-first Corpus Reader

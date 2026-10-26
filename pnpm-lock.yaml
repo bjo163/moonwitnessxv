@@ -136,6 +136,12 @@ importers:
       '@moonwitness/moonql-base':
         specifier: workspace:*
         version: link:../../packages/moonql-base
+      '@moonwitness/moonql-corpus':
+        specifier: workspace:*
+        version: link:../../packages/moonql-corpus
+      '@moonwitness/moonql-monitor':
+        specifier: workspace:*
+        version: link:../../packages/moonql-monitor
       '@moonwitness/moonql-ops':
         specifier: workspace:*
         version: link:../../packages/moonql-ops
@@ -170,6 +176,28 @@ importers:
       '@moonwitness/moonql-client':
         specifier: workspace:*
         version: link:../../packages/moonql-client
+      '@moonwitness/sentinel':
+        specifier: workspace:*
+        version: link:../sentinel
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.15
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  apps/sentinel:
+    dependencies:
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@moonwitness/moonql-client':
+        specifier: workspace:*
+        version: link:../../packages/moonql-client
+    devDependencies:
       '@types/node':
         specifier: ^22.10.5
         version: 22.20.5
@@ -280,6 +308,31 @@ importers:
       '@moonwitness/core':
         specifier: workspace:*
         version: link:../core
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  packages/moonql-corpus:
+    dependencies:
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../core
+      '@moonwitness/moonql':
+        specifier: workspace:*
+        version: link:../moonql
+
+  packages/moonql-monitor:
+    dependencies:
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../core
+      '@moonwitness/moonql':
+        specifier: workspace:*
+        version: link:../moonql
     devDependencies:
       '@types/node':
         specifier: ^22.10.5
