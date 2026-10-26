@@ -4,7 +4,7 @@
 - **Worker:** `/root/m19_09_dock_routes`.
 - **Baseline/source SHA:** `a1e384ef083ecf3c6fe4aae2b70acbdd6f2620cc`.
 - **Branch:** `codex/m05-08-locale-audit-387f784`.
-- **Result SHA:** pending integrator commit; the work is uncommitted.
+- **Result SHA:** `3a350d11ae2d3704af62b6a4d8c843af85b971ea`.
 - **Claimed/actual paths:** `apps/dock/src/middleware.ts`, `apps/dock/test/locale-routes.test.mjs`, `apps/dock/package.json`, root `package.json` (adds Dock focused tests to the CI test path), this report.
 
 ## Route behavior
@@ -19,13 +19,13 @@
 - `pnpm --filter @moonwitness/dock test` — exit 0; 5 tests passed, 0 failed. Coverage includes root negotiation, persisted preference, invalid preference fallback, query preservation, both canonical prefixes, unsupported locale rejection, prefixed API rejection, legacy route/API continuation, matcher asset exclusion, manifest rewrite, and localized embed CSP.
 - `pnpm --filter @moonwitness/dock typecheck` — exit 0.
 - `pnpm --filter @moonwitness/dock build` — exit 0; Next.js 16.4.3 compiled, typechecked, generated static pages, and listed the existing API/route set.
-- `pnpm test` — exit 0; core and Dock focused suites passed, Radio 314 total with 305 passed, 0 failed, 9 optional PostgreSQL skips.
+- `pnpm test` — exit 0 at the integrated tree; core 10/10, Dock 5/5, Radio 314 total with 305 passed, 0 failed, 9 optional PostgreSQL skips.
 - `git diff --check` — exit 0.
 
 ## Safety, rollback, and limits
 
 Locale selection only changes route choice. It does not change authorization, API identifiers, response envelopes, source text, or rights decisions. Invalid explicit locale paths fail closed. Rollback reverts the Dock middleware/test/script and root test-script wiring; there are no migrations or stored-data changes.
 
-No independent reviewer or result commit SHA is available yet. Next build emitted Next's deprecation warning that the existing `middleware` convention will move to `proxy`; this task retains the existing middleware entry point, and the build succeeded. The test runner also emitted Node's module-typeless warning for direct TypeScript stripping; the repo's Node 24 runtime handled it, and the production Next build is clean apart from the framework deprecation notice. HTML language metadata and translated UI copy remain in their respective later Dock localization tasks.
+Independent read-only review found no blocking issues and recommended closure after recording the exact result SHA. Next build emitted Next's deprecation warning that the existing `middleware` convention will move to `proxy`; this task retains the existing middleware entry point, and the build succeeded. The test runner also emitted Node's module-typeless warning for direct TypeScript stripping; the repo's Node 24 runtime handled it, and the production Next build is clean apart from the framework deprecation notice. HTML language metadata and translated UI copy remain in their respective later Dock localization tasks.
 
 Next eligible Dock leaves after integration: M19-10 and M19-12, subject to their other prerequisites.
