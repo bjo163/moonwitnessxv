@@ -235,3 +235,105 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 | - [ ] | **M11-06** — Test role/alias collisions and religious ranking failures | P1 | D3 | M11-05,M10-06 | Same named figure not automatically same referent |
 | - [ ] | **M11-07** — Document 25 avatars as pedagogy, no religious authority | P2 | D2 | M11-06 | No AI claiming to be a prophet |
 
+
+## M12 — Typed correlation and evidence graph
+
+**Group:** G2 · **Priority:** P1 · **Prerequisites:** M10,M11 · **Scope:** Source-aware graph relation contracts and projections.
+
+**Exit gate:** Candidate edges and reviewed graph releases separated. Evidence at exact SHA required.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M12-01** — Audit Rocksoul STORY/EVENT/PERSON/TEXT/LAW/PERSPECTIVE boundaries | P1 | D2 | M06-05 | No source owner duplication |
+| - [ ] | **M12-02** — Define typed candidate edge with evidence span and frame | P1 | D3 | M10-03,M12-01 | Missing evidence cannot be approved edge |
+| - [ ] | **M12-03** — Design immutable graph release pointer and rollback | P1 | D3 | M12-02,M02-05 | Exactly one versioned active release at a time |
+| - [ ] | **M12-04** — Implement rebuildable adjacency/search view from canonical records | P1 | D4 | M12-03 | Derived graph can be dropped and reconstructed |
+| - [ ] | **M12-05** — Add false identity and chronology counterexample fixtures | P1 | D3 | M12-02 | Similarity and co-occurrence never auto sameAs |
+| - [ ] | **M12-06** — Build Constellation relation detail with provenance and unknown | P1 | D3 | M12-04,M12-05 | Candidate and approved relation clearly labeled |
+| - [ ] | **M12-07** — Test export/replay/dedup and revoked edge visibility | P1 | D4 | M12-03,M12-06 | Graph release and source lineage correct |
+
+
+## M13 — SRGBL v8, Key Witness and SWING
+
+**Group:** G2 · **Priority:** P1 · **Prerequisites:** M07,M12 · **Scope:** Bounded method contracts and evidence-linked analysis.
+
+**Exit gate:** S1–L5 and independent scores with fail-closed UNKNOWN. Evidence at exact SHA required.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M13-01** — Read SRGBL P19 specs, issue register and unresolved gates | P1 | D2 | M07-07 | Engineering commit not mistaken for human review |
+| - [ ] | **M13-02** — Implement S1 exact edition, rights and source sense gate | P1 | D3 | M13-01 | Unresolved source stays unknown |
+| - [ ] | **M13-03** — Implement R2 text claim and G3 defensible relation checks | P1 | D3 | M13-02,M12-05 | Speculation never presented as source |
+| - [ ] | **M13-04** — Implement B4 actor/recipient/context and research lens | P1 | D3 | M13-03,M11-06 | Blank frame and unsupported identity rejected |
+| - [ ] | **M13-05** — Implement L5 scoped derived interpretation and trace | P1 | D3 | M13-04 | One cited conclusion with limits, not divine judgment |
+| - [ ] | **M13-06** — Keep maturity/15, quality/40, witness/100, direction separate | P1 | D3 | M13-05 | No theological truth ranking or score merge |
+| - [ ] | **M13-07** — Test SWING, Positive Correction, OFFSIDE adversarial hypotheses | P1 | D4 | M13-06 | Hypothesis must cite and cannot self-validate |
+
+
+## M14 — MIZAN and human research review
+
+**Group:** G2 · **Priority:** P1 · **Prerequisites:** M03,M13 · **Scope:** Reviewer workflow, counterevidence, decisions, retractions.
+
+**Exit gate:** No source or AI candidate auto-approved. Evidence at exact SHA required.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M14-01** — Design role-scoped draft/submitted/reviewed/disputed machine | P1 | D3 | M13-05,M03-04 | Named human actor transitions only |
+| - [ ] | **M14-02** — Build evidence/counterevidence reviewer detail | P1 | D3 | M14-01 | Exact source ID and version inspectable |
+| - [ ] | **M14-03** — Prepare real paired human annotator pilot process | P1 | D4 | M14-02 | Independent agreement actually recorded or BLOCKED |
+| - [ ] | **M14-04** — Implement bounded MIZAN method version and explanation | P1 | D3 | M13-06,M14-01 | Explicit criterion and context for score |
+| - [ ] | **M14-05** — Add rejection/revision/retraction with immutable decision trail | P1 | D3 | M14-02 | Old decisions preserved while correcting |
+| - [ ] | **M14-06** — Test wrong-role, forged evidence and concurrent approval | P1 | D4 | M14-03,M14-05 | No unapproved publish on race |
+| - [ ] | **M14-07** — Define human release criteria for reviewed knowledge claims | P1 | D2 | M14-04,M14-06 | Incomplete pilot remains not-public |
+
+
+## M15 — Interdisciplinary historical comparison pilot
+
+**Group:** G2 · **Priority:** P1 · **Prerequisites:** M12,M14 · **Scope:** Reviewed case narrative and separated source domains.
+
+**Exit gate:** Jerusalem 70 CE case makes TEXT, EVENT, PERSON, STORY distinct. Evidence at exact SHA required.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M15-01** — Resolve Mark 13:2 exact edition and rights | P1 | D2 | M07-05 | Correct source reference with permission |
+| - [ ] | **M15-02** — Record Jerusalem 70 CE event attestation and counterevidence | P1 | D3 | M15-01 | Historical chronology distinct from religious claim |
+| - [ ] | **M15-03** — Record Josephus source and transmission scope | P1 | D2 | M11-03,M15-02 | Actor report has explicit source attribution |
+| - [ ] | **M15-04** — Define attributed prophecy interpretation and opposing frames | P1 | D3 | M13-07,M15-03 | No automatic miraculous-fulfillment verdict |
+| - [ ] | **M15-05** — Link TEXT/EVENT/PERSON/STORY typed reviewed candidates | P1 | D4 | M12-06,M15-04 | Cross-domain identities not merged |
+| - [ ] | **M15-06** — Build evidence-centered public explanatory case view | P1 | D3 | M15-05,M14-07 | Review state and uncertainties visible |
+| - [ ] | **M15-07** — Test false temporal matches and unsupported identity edges | P1 | D4 | M15-06 | Adversarial cases cannot pass as proof |
+
+
+## M16 — Private witness archive and consent lifecycle
+
+**Group:** G3 · **Priority:** P1 · **Prerequisites:** M03,M04,M06 · **Scope:** Private witness addon and protected editor.
+
+**Exit gate:** Original, reported times, consent/correction and withdrawal honored. Evidence at exact SHA required.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M16-01** — Specify private witness object and provenance categories | P1 | D3 | M03-06,M06-07 | Default private, no automatic public original |
+| - [ ] | **M16-02** — Preserve occurred/observed/recorded/written dates separately | P1 | D3 | M16-01 | Tick-Tock corrected chronology remains exact |
+| - [ ] | **M16-03** — Implement immutable original and appended correction lineage | P1 | D4 | M16-02,M04-02 | Original bytes not overwritten by summary |
+| - [ ] | **M16-04** — Gate upload and viewing by consent and explicit ACL | P1 | D4 | M16-03,M03-02 | No anonymous access or media link leakage |
+| - [ ] | **M16-05** — Provide redacted derivative preview for human publishing request | P1 | D3 | M16-04 | Privacy review before any public output |
+| - [ ] | **M16-06** — Test consent withdrawal, retention and search/export purge | P1 | D4 | M16-05 | Withdrawn testimony not retrievable publicly |
+| - [ ] | **M16-07** — Label testimony vs empirical claim vs fiction in every projection | P1 | D2 | M16-06 | No unverified spiritual message asserted as fact |
+
+
+## M17 — Story canon, characters, four books and SHADOW
+
+**Group:** G3 · **Priority:** P1 · **Prerequisites:** M06,M16 · **Scope:** Story addon, HQ creative workbench, asset provenance.
+
+**Exit gate:** Canonical story versions and source gaps remain transparent. Evidence at exact SHA required.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M17-01** — Map II eight eras, crew and XII/XIV story versions to identities | P1 | D3 | M06-03,M16-01 | Separate character/actor IDs with source locator |
+| - [ ] | **M17-02** — Implement false-alias prevention for Shadow/Batteries/Honey/ZILL | P1 | D3 | M17-01,M10-04 | No phonetic or mystical sameAs |
+| - [ ] | **M17-03** — Define story world, arc, episode, scene and version graph | P1 | D3 | M17-02 | 99 chapter headings not treated as 99 originals |
+| - [ ] | **M17-04** — Record four-book THE BATTERIES and separate NPD variants gaps | P1 | D2 | M17-03 | Missing scene/pages marked NEEDS_SOURCE |
+| - [ ] | **M17-05** — Build SHADOW editor as HQ workspace on shared auth | P1 | D4 | M17-03,M03-02 | Private drafts and revision permissions controlled |
+| - [ ] | **M17-06** — Track original poster/music/derived media license and manifests | P1 | D3 | M17-05 | No unlicensed lyrics or external artwork |
+| - [ ] | **M17-07** — Test chronology, alias conflict and unpublished image access | P1 | D4 | M17-06,M16-06 | Draft never visible in public Story |
+
