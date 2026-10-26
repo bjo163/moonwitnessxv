@@ -182,6 +182,45 @@ test('@ref: seeds resolve, malformed refs die at compile, strict data refs fail 
   assert.throws(() => installAddons([matsAddon, tagsPosts, broken]), /malformed reference/)
 })
 
+test('@ref: content that merely starts with "@" stays data', async (t) => {
+  // A social handle is not a broken reference. Reading every '@' as a reference
+  // made the hub refuse to boot over one string in a catalogue row, which is the
+  // kind of failure that teaches people to delete the check rather than fix the row.
+  const handles = defineAddon({
+    name: 'handlelab',
+    models: {
+      channels: defineModel({
+        label: 'Channel',
+        rest: true,
+        fields: { name: str({ maxLength: 40 }), handle: str({ maxLength: 60, null: true }) },
+        unique: [['name']],
+        seedless: true,
+        seed: [{ name: 'main', handle: '@witness.id' }],
+      }),
+    },
+  })
+  const { app } = await makeApp([handles])
+  t.after(() => app.close())
+
+  const rows = (await app.inject().get('/orm/channels').end()).json().data as Array<Record<string, unknown>>
+  assert.equal(rows[0]?.handle, '@witness.id', 'the literal survived the seed walk')
+
+  // and the typo it must still catch: '@channels' names an installed model
+  const typos = defineAddon({
+    name: 'typolab',
+    depends: ['handlelab'],
+    models: {
+      typo_rows: defineModel({
+        label: 'Typo',
+        fields: { ref: m2o('channels', { null: true }) },
+        seed: [{ ref: '@channels' }],
+        seedless: true,
+      }),
+    },
+  })
+  assert.throws(() => installAddons([handles, typos]), /malformed reference "@channels"/)
+})
+
 test('seed policy: require fails boot listing offenders; warn logs instead', async () => {
   const naked = defineAddon({
     name: 'nakedlab',

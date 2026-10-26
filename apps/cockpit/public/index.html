@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moondeck // Mission Cockpit</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/cockpit.css">
+</head>
+<body>
+  <!-- Header Bar -->
+  <header class="cockpit-header">
+    <div class="brand-section">
+      <img src="/favicon.svg" alt="Moondeck Logo" class="brand-logo">
+      <div class="brand-title">
+        <span id="brandTitle">MOONDECK</span>
+        <span class="brand-badge">DESKTOP GUI</span>
+      </div>
+    </div>
+
+    <div class="system-telemetry">
+      <div class="telemetry-item">
+        <span>SYS TIME:</span>
+        <span class="telemetry-value" id="sysClock">--:--:--</span>
+      </div>
+      <div class="telemetry-item">
+        <span>UPTIME:</span>
+        <span class="telemetry-value" id="sysUptime">0s</span>
+      </div>
+      <div class="telemetry-item">
+        <span>PORT:</span>
+        <span class="telemetry-value">:3004</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="startAll()">▶ Start All</button>
+      <button class="btn btn-danger" onclick="stopAll()">⏹ Stop All</button>
+      <button class="btn btn-amber" id="btnFreePorts" onclick="freePorts()">⚡ Free Ports</button>
+    </div>
+  </header>
+
+  <!-- Container -->
+  <div class="cockpit-container">
+    <!-- Sidebar: Service Rail -->
+    <aside class="service-rail">
+      <div class="rail-section-header">
+        <span>Microservices Control</span>
+        <span class="brand-badge">LIVE</span>
+      </div>
+      <div class="service-cards" id="serviceCards">
+        <!-- Rendered via JS -->
+      </div>
+    </aside>
+
+    <!-- Main Stage -->
+    <main class="cockpit-stage">
+      <nav class="stage-tabs">
+        <div class="stage-tab active" data-target="tabLogs">
+          <span>📟 TERMINAL & LOGS</span>
+        </div>
+        <div class="stage-tab" data-target="tabPreview">
+          <span>🌐 WEB PREVIEW</span>
+        </div>
+        <div class="stage-tab" data-target="tabLedger">
+          <span>🚨 ERROR LEDGER</span>
+          <span class="tab-badge" id="ledgerCount">0</span>
+        </div>
+        <div class="stage-tab" data-target="tabPorts">
+          <span>🔌 NETWORK & PORTS</span>
+        </div>
+      </nav>
+
+      <!-- Panel 1: Terminal Logs -->
+      <section class="tab-panel active" id="tabLogs">
+        <div class="terminal-toolbar">
+          <div class="toolbar-group">
+            <span style="font-size:11px; font-weight:700; color:var(--text-muted);">FILTER:</span>
+            <div class="tag-filter-pills" id="tagFilterPills">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+          <div class="toolbar-group">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search logs...">
+            <button class="btn btn-sm" id="btnErrorsOnly">Errors Only</button>
+            <button class="btn btn-sm active" id="btnAutoScroll">Auto-Scroll</button>
+            <button class="btn btn-sm" id="btnClearLogs">Clear</button>
+          </div>
+        </div>
+        <div class="terminal-viewport" id="terminalViewport">
+          <!-- Real-time log entries streamed here -->
+        </div>
+      </section>
+
+      <!-- Panel 2: Web Preview -->
+      <section class="tab-panel" id="tabPreview">
+        <div class="preview-toolbar">
+          <div class="preview-address-bar">
+            <input type="text" id="previewUrlInput" class="preview-input" value="http://localhost:3001" onkeydown="if(event.key==='Enter') navigatePreview()">
+            <button class="btn btn-sm btn-primary" onclick="navigatePreview()">Go</button>
+            <button class="btn btn-sm" onclick="reloadPreview()">↻</button>
+            <button class="btn btn-sm" onclick="openExternal()">↗ External</button>
+          </div>
+          <div class="toolbar-group" id="previewShortcuts">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+        <div class="preview-container">
+          <iframe id="previewFrame" class="preview-frame" src="http://localhost:3001"></iframe>
+        </div>
+      </section>
+
+      <!-- Panel 3: Error Ledger -->
+      <section class="tab-panel" id="tabLedger">
+        <div class="terminal-toolbar">
+          <div class="toolbar-group">
+            <span style="font-size:11px; font-weight:700; color:var(--text-muted);">SOURCE: dev-errors.log</span>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn btn-sm btn-primary" id="btnRefreshLedger">↻ Refresh</button>
+            <button class="btn btn-sm btn-danger" id="btnClearLedger">Clear Log File</button>
+          </div>
+        </div>
+        <div class="ledger-viewport" id="ledgerViewport">
+          <!-- Loaded via JS -->
+        </div>
+      </section>
+
+      <!-- Panel 4: Network & Ports -->
+      <section class="tab-panel" id="tabPorts">
+        <div class="ports-grid" id="portsGrid">
+          <!-- Loaded via JS -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/cockpit.js"></script>
+</body>
+</html>

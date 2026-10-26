@@ -70,7 +70,7 @@ test('the field table has exactly one home', () => {
   assert.match(core, /export const FIELD_INPUT_SPEC/, 'core must be the owner')
 })
 
-test('moonui centralizes UI and punk-zine primitives across dock and headquarters', () => {
+test('moonui centralizes UI and punk-zine primitives across dock, headquarters, and cockpit', () => {
   const index = source('packages/moonui/src/index.ts')
   for (const symbol of [
     'Button',
@@ -92,11 +92,16 @@ test('moonui centralizes UI and punk-zine primitives across dock and headquarter
     'ZineNote',
     'ModuleCard',
     'PosterCard',
+    'Tabs',
+    'Pill',
+    'PillGroup',
+    'StationCard',
+    'TerminalViewer',
   ]) {
     assert.match(index, new RegExp(`\\b${symbol}\\b`), `@moonwitness/moonui must export ${symbol}`)
   }
 
-  // Every surface in dock and headquarters must import from @moonwitness/moonui
+  // Every surface in dock, headquarters, and cockpit must import from @moonwitness/moonui
   const surfaces = [
     'apps/dock/src/ui/components/shell.tsx',
     'apps/dock/src/ui/components/sections.tsx',
@@ -111,6 +116,8 @@ test('moonui centralizes UI and punk-zine primitives across dock and headquarter
     'apps/headquarters/src/layouts/vertical.tsx',
     'apps/headquarters/src/app/login/page.tsx',
     'apps/headquarters/src/app/(admin)/page.tsx',
+    'apps/headquarters/src/app/(admin)/world-monitor/page.tsx',
+    'apps/cockpit/client/App.tsx',
   ]
   for (const file of surfaces) {
     assert.match(source(file), /from '@moonwitness\/moonui'/, `${file} must consume @moonwitness/moonui`)
@@ -119,6 +126,7 @@ test('moonui centralizes UI and punk-zine primitives across dock and headquarter
   // Local app stylesheets must not re-declare shared primitives
   const dockCss = source('apps/dock/src/app/globals.css')
   const hqCss = source('apps/headquarters/src/app/globals.css')
+  const cockpitCss = source('apps/cockpit/client/cockpit-layout.css')
   for (const forbidden of [
     /\.dk-btn-/,
     /\.dk-pager\b/,
@@ -139,5 +147,12 @@ test('moonui centralizes UI and punk-zine primitives across dock and headquarter
     /@keyframes\b/,
   ]) {
     assert.equal(forbidden.test(hqCss), false, `headquarters/globals.css re-declared shared primitive ${forbidden}`)
+  }
+  for (const forbidden of [
+    /\.tab-btn\b/,
+    /\.terminal-scroll\b/,
+    /\.log-entry\b/,
+  ]) {
+    assert.equal(forbidden.test(cockpitCss), false, `cockpit-layout.css re-declared shared primitive ${forbidden}`)
   }
 })

@@ -24,6 +24,7 @@ const GLOBAL_IGNORES = [
   '**/next-env.d.ts',
   '**/.next/types/**',
   'coverage/**',
+  '**/public/**',
 ]
 
 /** Aturan yang sama untuk semua berkas TypeScript di apps dan packages. */

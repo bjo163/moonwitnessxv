@@ -12,11 +12,17 @@ export const SITE_NAME = 'Moonwitness'
 /** API mount prefix of the hub (every REST route lives under it). */
 export const API_PREFIX = '/api/v1'
 
-/** Fixed dev/preview ports: hub :3000, public site :3001, command center :3002. */
-export const PORTS = { hub: 3000, dock: 3001, headquarters: 3002 } as const
+/** Fixed dev/preview ports: hub :3000, public site :3001, command center :3002, ai gateway :3003, cockpit :3004. */
+export const PORTS = { hub: 3000, dock: 3001, headquarters: 3002, aigateway: 3003, cockpit: 3004 } as const
 
 /** Loopback origin of the hub, as the host-side frontends reach it. */
 export const HUB_API_DEFAULT = `http://127.0.0.1:${PORTS.hub}${API_PREFIX}`
+
+/** Default loopback origin of the AI Gateway router. */
+export const AI_GATEWAY_URL_DEFAULT = `http://127.0.0.1:${PORTS.aigateway}`
+
+/** Default loopback origin of the Moondeck GUI Cockpit. */
+export const COCKPIT_URL_DEFAULT = `http://127.0.0.1:${PORTS.cockpit}`
 
 /** Public URLs the hub advertises on its service index. */
 export const FRONTEND_URLS = {

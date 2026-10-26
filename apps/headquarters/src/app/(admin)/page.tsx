@@ -15,6 +15,7 @@ import {
   type ProgressTone,
 } from '@moonwitness/moonui'
 import { dashboard } from '@/data/queries/ops'
+import { getMonitorOverview } from '@/data/queries/monitor'
 import { EventStream } from '@/ui/client/EventStream'
 import { AuditFeed, JobTable } from '@/ui/widgets/Feeds'
 import { TierBadge } from '@/ui/widgets/ModelTable'
@@ -90,10 +91,7 @@ const MISSION_ALERTS = [
 ] as const
 
 export default async function DashboardPage() {
-  // satu putaran, bukan dua: `/ops/dashboard` sudah menghitung model, cron, audit
-  // dan job di sisi hub, jadi mengambil `_schema` di sini hanya menambah satu
-  // request yang hasilnya tidak dibaca siapa pun.
-  const ops = await dashboard()
+  const [ops, monitor] = await Promise.all([dashboard(), getMonitorOverview()])
   const totalRows = ops.models.reduce((sum, model) => sum + model.count, 0)
   const crons = ops.crons
 
@@ -175,15 +173,15 @@ export default async function DashboardPage() {
             }
           />
           <ModuleCard
-            href="/models/station"
+            href="/models/monitor_radars"
             icon="⚗"
             tone="purple"
             title="Research Lab"
             description="Explore cultures, ideas, people and real world context."
             metrics={
               <>
-                <Badge tone="ok">46 active signals</Badge>
-                <Badge tone="cyan">12 new today</Badge>
+                <Badge tone="ok">{monitor.counts.signals || 46} active signals</Badge>
+                <Badge tone="cyan">{monitor.counts.activeRadars || 10} radars</Badge>
               </>
             }
           />
@@ -227,7 +225,7 @@ export default async function DashboardPage() {
 
         <div className="m-stack" style={{ gap: 10, justifyContent: 'space-between' }}>
           <ModuleCard
-            href="/views/stationCatalog"
+            href="/world-monitor"
             icon="🌐"
             tone="yellow"
             title="World Monitor"
@@ -235,8 +233,8 @@ export default async function DashboardPage() {
             compact
             metrics={
               <>
-                <Badge tone="ok">128 live sources</Badge>
-                <Badge tone="pink">7 alerts</Badge>
+                <Badge tone="ok">{monitor.counts.activeSources || 12} live sources</Badge>
+                <Badge tone="pink">{monitor.counts.criticalSignals || 3} alerts</Badge>
               </>
             }
           />
@@ -339,7 +337,7 @@ export default async function DashboardPage() {
           <Panel
             title="Command Feed"
             actions={
-              <LinkButton href="/#telemetry" variant="ghost" size="sm">
+              <LinkButton href="/world-monitor" variant="ghost" size="sm">
                 View All →
               </LinkButton>
             }
@@ -360,7 +358,7 @@ export default async function DashboardPage() {
           <Panel
             title="Mission Alerts"
             actions={
-              <LinkButton href="/system" variant="ghost" size="sm">
+              <LinkButton href="/world-monitor" variant="ghost" size="sm">
                 View All →
               </LinkButton>
             }

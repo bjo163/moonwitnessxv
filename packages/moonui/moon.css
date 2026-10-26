@@ -1105,3 +1105,304 @@ pre,
   border-left-color: var(--accent);
   background: rgba(255, 212, 0, 0.12);
 }
+
+/* =====================================================================
+   Tabs (Controlled Client Tabs)
+   ===================================================================== */
+.m-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 4px;
+  overflow-x: auto;
+}
+.m-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+.m-tab-btn:hover {
+  color: var(--fg);
+  background: var(--surface-2);
+}
+.m-tab-btn[data-active="true"] {
+  color: #ffffff;
+  background: var(--surface);
+  border-color: var(--border);
+  border-bottom: 2px solid var(--cyan);
+}
+.m-tab-btn[data-active="true"][data-tone="pink"] {
+  border-bottom-color: var(--pink);
+  color: var(--pink);
+}
+.m-tab-btn[data-active="true"][data-tone="cyan"] {
+  border-bottom-color: var(--cyan);
+  color: var(--cyan);
+}
+.m-tab-btn[data-active="true"][data-tone="accent"] {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+.m-tab-btn[data-active="true"][data-tone="ok"] {
+  border-bottom-color: var(--ok);
+  color: var(--ok);
+}
+.m-tab-icon {
+  font-size: 14px;
+  display: inline-flex;
+}
+.m-tab-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--night);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.m-tab-btn[data-active="true"] .m-tab-badge {
+  background: var(--ink);
+  color: var(--fg);
+}
+
+/* =====================================================================
+   Pill & PillGroup
+   ===================================================================== */
+.m-pill-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.m-pill-group-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.m-pill-group-items {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.m-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--surface-2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+.m-pill:hover {
+  color: var(--fg);
+  border-color: var(--chalk);
+}
+.m-pill[data-active="true"] {
+  color: #07060b;
+  font-weight: 700;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.35);
+}
+.m-pill[data-active="true"][data-tone="cyan"] {
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+.m-pill[data-active="true"][data-tone="pink"] {
+  background: var(--pink);
+  border-color: var(--pink);
+  color: #ffffff;
+}
+.m-pill[data-active="true"][data-tone="accent"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #07060b;
+}
+.m-pill[data-active="true"][data-tone="ok"] {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: #07060b;
+}
+.m-pill[data-active="true"][data-tone="hot"] {
+  background: var(--hot);
+  border-color: var(--hot);
+  color: #ffffff;
+}
+.m-pill[data-active="true"][data-tone="night"] {
+  background: var(--surface);
+  border-color: var(--chalk);
+  color: var(--fg);
+}
+.m-pill-badge {
+  font-size: 10px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* =====================================================================
+   StationCard (Media / Radio / IPTV / BGM Item)
+   ===================================================================== */
+.m-station-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+.m-station-card:hover {
+  background: var(--surface-2);
+  border-color: var(--cyan);
+  transform: translateY(-1px);
+}
+.m-station-card[data-active="true"] {
+  border-color: var(--cyan);
+  background: rgba(0, 212, 255, 0.07);
+  box-shadow: 2px 2px 0 var(--cyan);
+}
+.m-station-card[data-playing="true"] {
+  border-color: var(--ok);
+  box-shadow: 2px 2px 0 var(--ok);
+}
+.m-station-card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+.m-station-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.m-station-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.m-station-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.m-station-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.m-station-country {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.m-station-genre {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.m-station-card-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* =====================================================================
+   TerminalViewer (ANSI / Log / Stream Console)
+   ===================================================================== */
+.m-terminal-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  background: var(--night);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-y: auto;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.m-terminal-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  word-break: break-all;
+}
+.m-terminal-time {
+  color: var(--muted);
+  font-size: 11px;
+  flex-shrink: 0;
+  user-select: none;
+}
+.m-terminal-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  user-select: none;
+  background: var(--surface-2);
+  color: var(--fg);
+}
+.m-terminal-msg {
+  color: var(--fg);
+  flex: 1;
+}
+.m-terminal-info .m-terminal-tag {
+  background: rgba(0, 212, 255, 0.2);
+  color: var(--cyan);
+}
+.m-terminal-warn .m-terminal-tag {
+  background: rgba(255, 212, 0, 0.2);
+  color: var(--accent);
+}
+.m-terminal-warn .m-terminal-msg {
+  color: var(--accent);
+}
+.m-terminal-error .m-terminal-tag {
+  background: rgba(255, 30, 86, 0.2);
+  color: var(--hot);
+}
+.m-terminal-error .m-terminal-msg {
+  color: var(--hot);
+  font-weight: 600;
+}

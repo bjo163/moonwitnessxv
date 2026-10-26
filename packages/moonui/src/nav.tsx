@@ -51,6 +51,51 @@ export function TabBar({ tabs, activeKey }: { tabs: NavItem[]; activeKey?: strin
   )
 }
 
+export interface TabItem {
+  id: string
+  label: ReactNode
+  icon?: ReactNode
+  count?: number
+  tone?: 'pink' | 'cyan' | 'accent' | 'ok'
+}
+
+/** Controlled client tab switcher with punk-zine styling */
+export function Tabs({
+  items,
+  activeId,
+  onChange,
+  className,
+}: {
+  items: TabItem[]
+  activeId: string
+  onChange: (id: string) => void
+  className?: string
+}): ReactNode {
+  return (
+    <div className={cn('m-tabs', className)} role="tablist">
+      {items.map((tab) => {
+        const isActive = tab.id === activeId
+        return (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            className="m-tab-btn"
+            data-active={isActive ? 'true' : 'false'}
+            data-tone={tab.tone ?? 'cyan'}
+            onClick={() => onChange(tab.id)}
+          >
+            {tab.icon ? <span className="m-tab-icon">{tab.icon}</span> : null}
+            <span>{tab.label}</span>
+            {typeof tab.count === 'number' ? <span className="m-tab-badge">{tab.count}</span> : null}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 export function UserChip({ name, detail }: { name: string; detail?: string }): ReactNode {
   const initials = name
     .split(/\s+/)

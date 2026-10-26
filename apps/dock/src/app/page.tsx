@@ -1,4 +1,4 @@
-import { Card, CardBody, LinkButton, Tape } from '@moonwitness/moonui'
+import { Badge, Card, CardBody, LinkButton, Tape, type BadgeTone } from '@moonwitness/moonui'
 import { homePayload } from '@/data/queries/program'
 import { Player } from '@/ui/client/Player'
 import { LiveTicker } from '@/ui/client/LiveTicker'
@@ -36,6 +36,73 @@ export default async function HomePage() {
       <ArchiveTimeline slotCount={payload.week.length} />
 
       <ZineSkaPosterSection />
+
+      {payload.signals?.length ? (
+        <Card id="world-monitor">
+          <CardBody className="m-stack" style={{ gap: 16 }}>
+            <div className="dk-deck-header">
+              <div>
+                <Tape tone="accent">WORLD MONITOR · OSINT RADAR INTERCEPT</Tape>
+                <h2 className="dk-section-heading">GLOBAL PULSE & INTELLIGENCE.</h2>
+              </div>
+              <span className="m-muted" style={{ fontSize: 13 }}>
+                LIVE FEED · AI TRIAGED
+              </span>
+            </div>
+
+            <div className="m-grid m-grid-3" style={{ gap: 14 }}>
+              {payload.signals.slice(0, 6).map((sig) => {
+                const badgeTone: BadgeTone =
+                  sig.sentiment === 'alert' || sig.sentiment === 'critical'
+                    ? 'hot'
+                    : sig.sentiment === 'positive'
+                    ? 'accent'
+                    : 'night'
+                return (
+                  <div
+                    key={sig.id}
+                    className="m-stack"
+                    style={{
+                      border: '1px solid var(--m-border)',
+                      padding: 14,
+                      background: 'rgba(255,255,255,0.02)',
+                      gap: 8,
+                    }}
+                  >
+                    <div className="m-row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span className="m-muted" style={{ fontSize: 11, textTransform: 'uppercase' }}>
+                        {sig.platform} · {sig.radarRefRecord?.name ?? 'Radar'}
+                      </span>
+                      <Badge tone={badgeTone}>{sig.sentiment.toUpperCase()}</Badge>
+                    </div>
+                    <div style={{ fontWeight: 600, fontSize: 14, lineHeight: 1.3 }}>
+                      <a
+                        href={sig.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: 'inherit', textDecoration: 'none' }}
+                      >
+                        {sig.title}
+                      </a>
+                    </div>
+                    {sig.aiSummary ? (
+                      <p className="m-muted" style={{ fontSize: 12, margin: 0, lineHeight: 1.4 }}>
+                        {sig.aiSummary}
+                      </p>
+                    ) : null}
+                    <div className="m-row" style={{ justifyContent: 'space-between', fontSize: 11, marginTop: 'auto' }}>
+                      <span className="m-muted">Urgency: {sig.urgencyScore}%</span>
+                      {sig.viewsCount ? (
+                        <span className="m-muted">👁 {(sig.viewsCount / 1000).toFixed(1)}k</span>
+                      ) : null}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </CardBody>
+        </Card>
+      ) : null}
 
       <Card id="signals">
         <CardBody className="m-stack" style={{ gap: 18 }}>

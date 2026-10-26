@@ -39,6 +39,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@moonwitness/aigateway": "workspace:*",
     "@moonwitness/moonql-client": "workspace:*",
     "@moonwitness/sentinel": "workspace:*",
     "@types/node": "^22.10.5",

@@ -27,15 +27,17 @@ export function Card({
   variant = 'default',
   bgImage,
   id,
+  style,
 }: {
   children: ReactNode
   className?: string
   variant?: CardVariant
   bgImage?: string
   id?: string
+  style?: CSSProperties
 }): ReactNode {
   return (
-    <section className={cn('m-card', className)} data-variant={variant} id={id}>
+    <section className={cn('m-card', className)} data-variant={variant} id={id} style={style}>
       {bgImage ? (
         <>
           <div className="m-card-art" style={{ backgroundImage: `url(${bgImage})` }} aria-hidden="true" />

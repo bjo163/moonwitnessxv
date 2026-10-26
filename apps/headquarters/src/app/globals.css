@@ -255,10 +255,34 @@
   white-space: nowrap;
 }
 
+/* ---------- 3. World Monitor 3-Tier Hierarchy Layout ---------- */
+.hq-wm-hierarchy {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1.45fr;
+  gap: 12px;
+  align-items: start;
+}
+.hq-wm-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-strong);
+  background: rgba(14, 12, 22, 0.85);
+  text-decoration: none;
+  color: var(--fg);
+}
+.hq-wm-item[data-selected='true'] {
+  border-color: var(--accent);
+  background: rgba(255, 212, 0, 0.08);
+  box-shadow: 3px 3px 0 #000000;
+}
+
 @media (max-width: 1120px) {
   .hq-auth-stage,
   .hq-mc-bento,
-  .hq-mc-bottom-grid {
+  .hq-mc-bottom-grid,
+  .hq-wm-hierarchy {
     grid-template-columns: 1fr;
   }
   .hq-universe-cards {

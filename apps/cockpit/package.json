@@ -1,0 +1,42 @@
+{
+  "name": "@moonwitness/cockpit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build:client": "vite build",
+    "build:server": "tsc -b",
+    "build": "vite build && tsc -b",
+    "dev": "vite build && node --import tsx --env-file-if-exists=../../.env src/index.ts",
+    "gui": "vite build && node --import tsx --env-file-if-exists=../../.env src/index.ts --open",
+    "test": "tsx --test test/**/*.test.ts",
+    "start": "node --env-file-if-exists=../../.env dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.1",
+    "@moonwitness/core": "workspace:*",
+    "@moonwitness/moonui": "workspace:*",
+    "fastify": "^5.2.1",
+    "hls.js": "^1.7.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vite": "^8.3.5"
+  }
+}

@@ -54,7 +54,18 @@ export {
   type FieldOption,
   type FieldWidgetProps,
 } from './fields.js'
-export { Nav, TabBar, UserChip, type NavGroup, type NavItem } from './nav.js'
+export {
+  Nav,
+  TabBar,
+  Tabs,
+  UserChip,
+  type NavGroup,
+  type NavItem,
+  type TabItem,
+} from './nav.js'
+export { Pill, PillGroup, type PillTone } from './pills.js'
+export { StationCard, type StationCardProps } from './media.js'
+export { TerminalViewer, type TerminalLine } from './terminal.js'
 export {
   BrandLogo,
   Crown,

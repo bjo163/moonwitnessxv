@@ -7,6 +7,7 @@ import { bootMoonQl, moonqlRest } from '@moonwitness/moonql'
 import { loadPlugins, loadModules, loadChannels } from './lib/loader.js'
 import { installEgress } from './lib/egress.js'
 import { ChannelManager } from './lib/channels.js'
+import { renderLaunchpadHtml } from './lib/launchpad.js'
 import { addons } from './addons.js'
 import type { RadioConfig } from './config.js'
 
@@ -58,6 +59,7 @@ export async function buildApp(config: RadioConfig) {
     requirePg: config.env === 'production',
     log: app.log,
   })
+
   app.decorate('moonql', moonql)
   app.addHook('onClose', async () => moonql.close())
 
@@ -71,20 +73,31 @@ export async function buildApp(config: RadioConfig) {
 
   // Service index: one place that answers "what runs where?" for operators and
   // the two frontends (root is free — every module mounts under the api prefix).
-  app.get('/', { schema: { tags: ['system'], summary: 'Service index' } }, async () => ({
-    name: config.api.title,
-    version: config.api.version,
-    engine: moonql.engine,
-    api: config.api.prefix,
-    docs: '/docs',
-    // the machine-readable face of the same document: frontends and codegen tools
-    // should not have to know that swagger-ui serves its spec under /docs/json
-    openapi: '/docs/json',
-    health: `${config.api.prefix}/health`,
-    metrics: `${config.api.prefix}/metrics`,
-    studio: `${config.api.prefix}/studio`,
-    frontends: config.frontends,
-  }))
+  // Browser visitors (Accept: text/html) receive a sleek visual Launchpad portal.
+  app.get('/', { schema: { tags: ['system'], summary: 'Service index' } }, async (req, reply) => {
+    const isBrowser = Boolean(req.headers.accept?.startsWith('text/html'))
+    const payload = {
+      name: config.api.title,
+      version: config.api.version,
+      engine: moonql.engine,
+      api: config.api.prefix,
+      docs: '/docs',
+      // the machine-readable face of the same document: frontends and codegen tools
+      // should not have to know that swagger-ui serves its spec under /docs/json
+      openapi: '/docs/json',
+      health: `${config.api.prefix}/health`,
+      metrics: `${config.api.prefix}/metrics`,
+      studio: `${config.api.prefix}/studio`,
+      frontends: config.frontends,
+    }
+
+    if (isBrowser) {
+      reply.type('text/html; charset=utf-8')
+      return renderLaunchpadHtml(payload)
+    }
+
+    return payload
+  })
 
   // Release channel resources on shutdown.
   app.addHook('onClose', async () => app.channels.shutdownAll())
