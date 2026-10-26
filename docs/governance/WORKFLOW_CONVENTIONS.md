@@ -1,6 +1,6 @@
-# Proposed repository workflow conventions
+# Repository workflow conventions
 
-**Status: proposal for owner review.** These naming conventions are not currently enforced by a hook, workflow, repository rule, or task validator. `TODO.md` remains the only task/status register. An Issue, branch, commit, or PR does not authorize implementation or prove completion.
+**Status: active integration policy.** Branch/commit naming conventions remain guidance; the `dev` → `main` integration path is enforced by GitHub rulesets and Actions. `TODO.md` remains the only task/status register. An Issue, branch, commit, or PR does not authorize implementation or prove completion.
 
 ## Issue titles and contents
 
@@ -39,10 +39,12 @@ Breaking changes use `!` before the colon (`feat(api)!: ...`) and a `BREAKING CH
 
 Proposed PR titles use the same format as commits. The existing [PR template](../../.github/PULL_REQUEST_TEMPLATE.md) remains the detail checklist: task ID or explicit `NON-TODO GOVERNANCE PREPARATION`, bounded scope and paths, linked Issues/contracts, actual commands/results, evidence, compatibility and security/rights/privacy/localization impact, rollback, and required reviewers. Record exact baseline SHA only after observing it. A PR or passing CI does not itself authorize implementation or close a task.
 
-## Integration flow: target only
+## Integration flow: enforced
 
-The proposed future path is `topic branch → dev → main`, with a reviewed PR at each integration boundary. The repository snapshot on 26 October 2026 has default branch `main`; remote branches do not include `dev`. The active `main-release-protection` ruleset requires one approving review, resolved threads, and the strict `Monorepo Verification & Safety Gates` check. The current [AI execution contract](../planning/AI_EXECUTION_CONTRACT.md) instead assigns one serialized integrator to update shared files and push `main`. These policies conflict with making `dev` an active integration route. Do not create `dev`, change protections/default branch, or rewrite the execution contract until the owner resolves the conflict and separately authorizes the required policy changes.
+The required path is `topic branch → PR to dev → verified push to dev → automatic fast-forward to main`. The `dev` branch is the GitHub default branch. Both `dev` and `main` reject direct pushes and force-pushes. PRs into `dev` require the `Monorepo Verification & Safety Gates` check, with no required human approval. PRs into `main` are accepted only from this repository's `dev` branch; ordinary development should target `dev` directly. After a push to `dev`, the same workflow runs the full verification and promotes that exact SHA only if the check succeeds, `dev` has not moved, and `main` is its ancestor.
+
+The `main-release-protection` ruleset continues to require PR and CI protections for humans. The GitHub Actions integration is its only bypass actor, used by the promotion job; only that job receives `contents: write`. A bot push uses `GITHUB_TOKEN`, so it does not start another push workflow. Failed checks, stale commits, or non-fast-forward history leave `main` unchanged. If this workflow changes, retain the guard and the least-privilege job permissions.
 
 ## Enforcement state
 
-As of the snapshot date, the observed repository has no commit-message validator, branch-name validator, PR-title validator, TODO-to-Issue synchronizer, release automation, tags, or published GitHub Releases. This page is guidance only. Recheck the live rules and tooling before relying on this snapshot.
+There is no commit-message validator, branch-name validator, PR-title validator, or TODO-to-Issue synchronizer. These conventions remain guidance, while branch routing and promotion are enforced by repository rules and CI.
