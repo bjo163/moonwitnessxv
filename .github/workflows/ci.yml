@@ -2,9 +2,12 @@ name: CI Verify & Gate
 
 on:
   push:
-    branches: [main]
+    branches: [dev, main]
   pull_request:
-    branches: [main]
+    branches: [dev, main]
+
+permissions:
+  contents: read
 
 jobs:
   verify:
@@ -12,6 +15,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Restrict main pull requests to the dev branch
+        if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main'
+        env:
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          if [[ "$HEAD_BRANCH" != "dev" || "$HEAD_REPOSITORY" != "$REPOSITORY" ]]; then
+            echo "Pull requests into main must come from this repository's dev branch."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -32,3 +47,44 @@ jobs:
 
       - name: Run Monorepo Verification (build, lint, gen:sdk:check, test, build:web)
         run: pnpm verify
+
+  promote:
+    name: Promote verified dev to main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    needs: verify
+    runs-on: ubuntu-latest
+    concurrency:
+      group: promote-dev-to-main
+      cancel-in-progress: false
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout verified commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Confirm dev has not moved and main can fast-forward
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          git fetch --no-tags origin dev main
+          current_dev="$(git rev-parse refs/remotes/origin/dev)"
+          current_main="$(git rev-parse refs/remotes/origin/main)"
+
+          if [[ "$current_dev" != "$EXPECTED_SHA" ]]; then
+            echo "dev moved after verification; refusing to promote a stale commit."
+            exit 1
+          fi
+
+          if ! git merge-base --is-ancestor "$current_main" "$EXPECTED_SHA"; then
+            echo "main is not an ancestor of the verified dev commit; refusing promotion."
+            exit 1
+          fi
+
+      - name: Fast-forward main to the verified dev commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: git push origin "$EXPECTED_SHA:refs/heads/main"
