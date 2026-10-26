@@ -141,6 +141,28 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
+  apps/echolog:
+    dependencies:
+      '@moonwitness/echolog-core':
+        specifier: workspace:*
+        version: link:../../packages/echolog-core
+      fastify:
+        specifier: ^5.2.1
+        version: 5.12.7
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.15
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
   apps/headquarters:
     dependencies:
       '@moonwitness/core':
@@ -374,6 +396,12 @@ importers:
       fastify:
         specifier: ^5.2.1
         version: 5.12.7
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  packages/echolog-core:
+    devDependencies:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
