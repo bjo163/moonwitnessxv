@@ -4,7 +4,7 @@
 - **Worker:** `/root/m19_09_dock_routes`.
 - **Baseline/source SHA:** `a1e384ef083ecf3c6fe4aae2b70acbdd6f2620cc`.
 - **Branch:** `codex/m05-08-locale-audit-387f784`.
-- **Result SHA:** `3a350d11ae2d3704af62b6a4d8c843af85b971ea`.
+- **Integrated result SHA:** `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa`.
 - **Claimed/actual paths:** `apps/dock/src/middleware.ts`, `apps/dock/test/locale-routes.test.mjs`, `apps/dock/package.json`, root `package.json` (adds Dock focused tests to the CI test path), this report.
 
 ## Route behavior
@@ -28,4 +28,6 @@ Locale selection only changes route choice. It does not change authorization, AP
 
 Independent read-only review found no blocking issues and recommended closure after recording the exact result SHA. Next build emitted Next's deprecation warning that the existing `middleware` convention will move to `proxy`; this task retains the existing middleware entry point, and the build succeeded. The test runner also emitted Node's module-typeless warning for direct TypeScript stripping; the repo's Node 24 runtime handled it, and the production Next build is clean apart from the framework deprecation notice. HTML language metadata and translated UI copy remain in their respective later Dock localization tasks.
 
-Next eligible Dock leaves after integration: M19-10 and M19-12, subject to their other prerequisites.
+The integrator fixed the prior lint error by adding the explicit `node:process` import. `pnpm verify` passed on the exact integrated source SHA above, and CI run [`40378453247`](https://github.com/bjo163/moonwitnessxv/actions/runs/40378453247) passed for the same SHA. The promote-to-main job was skipped on the pull-request branch; no deployment is claimed.
+
+Next eligible Dock leaves after integration: M19-10, M19-11, and M19-12, subject to their other prerequisites.
