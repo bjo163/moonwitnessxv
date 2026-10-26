@@ -3,7 +3,7 @@
 - **Task:** M05-11, add locale resolution and persistence negative tests.
 - **Owner/worker:** platform/i18n; `/root/m05_11_resolver`.
 - **Baseline SHA:** `e73e156bf4616131152ff865b3f6f67658a92d77`.
-- **Result SHA:** pending integrator commit; these changes are uncommitted.
+- **Result SHA:** `dae3c9042d721af4481a430316617b660d7952a1`.
 - **Claimed/actual files:** `packages/core/src/locale-resolution.ts`, `packages/core/src/index.ts`, `packages/core/test/locale-resolution.test.mjs`, `packages/core/package.json`, this report.
 
 ## Behavior
@@ -18,6 +18,8 @@ An unsupported explicit URL locale returns a distinct `unsupported-url-locale` o
 - `pnpm --filter @moonwitness/core typecheck` — exit 0.
 - `pnpm exec eslint packages/core/src/locale-resolution.ts packages/core/src/index.ts` — exit 0.
 - `git diff --check` — exit 0.
+
+Independent review matched the resolver to ADR-0005 and requested an equal-quality header-order case. That tie case was added, and the final focused suite passed 7/7.
 
 ## Safety, rollback, and limits
 
