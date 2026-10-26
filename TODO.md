@@ -322,15 +322,17 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 **Exit gate:** Jerusalem 70 CE case makes TEXT, EVENT, PERSON, STORY distinct. Evidence at exact SHA required.
 
+**Revalidasi 2026-10-26 (M15 historical comparison pilot):** addon `@moonwitness/moonql-research` diperluas dengan subsistem pilot komparasi interdisipliner Jerusalem 70 CE (`historical-pilot.ts`) yang memisahkan secara ketat domain `TEXT`, `EVENT`, `PERSON`, dan `STORY`. Edisi Mark 13:2 diselesaikan pada edisi SBLGNT / Westcott-Hort 1881 berstatus `PUBLIC_DOMAIN` dengan SHA persis (`e7b8…284c`). Attestasi peristiwa 70 CE dipisahkan dari klaim teologis/mukjizat dengan strata arkeologi Robinson's Arch dan Arch of Titus (`a5f4…1863`), disertai counterevidence kelestarian batuan fondasi Western Wall (`CE-RETAINING-WALL-STONES`). Sumber Flavius Josephus BJ VI.4.5-7 (`b348…a954`, Loeb 1928) memuat transmisi istana Flavian dan counterevidence tradisi Sulpicius Severus / Tacitus. Endpoint publik `GET /research/comparative-case` menyajikan tampilan eksplanatori berbasis bukti lengkap dengan ketidakpastian epistemik dan review state. Upaya penggabungan identitas lintas domain (`link-identity`) atau penyatuan tokoh historis (`SAME_AS`) serta vonis pemenuhan mukjizat otomatis (`assert-fulfillment`) secara ketat ditolak (`400`). Pengujian kecocokan temporal adversarial tanpa bukti manuskrip pra-peristiwa ditolak sebagai bukti historis (`200`, `valid: false`, `requiresCounterevidence: true`). Suite M15 7/7 lulus, committed SDK agrees with live contract, dan monorepo lint 0 error.
+
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M15-01** — Resolve Mark 13:2 exact edition and rights | P1 | D2 | M07-05 | Correct source reference with permission |
-| - [ ] | **M15-02** — Record Jerusalem 70 CE event attestation and counterevidence | P1 | D3 | M15-01 | Historical chronology distinct from religious claim |
-| - [ ] | **M15-03** — Record Josephus source and transmission scope | P1 | D2 | M11-03,M15-02 | Actor report has explicit source attribution |
-| - [ ] | **M15-04** — Define attributed prophecy interpretation and opposing frames | P1 | D3 | M13-07,M15-03 | No automatic miraculous-fulfillment verdict |
-| - [ ] | **M15-05** — Link TEXT/EVENT/PERSON/STORY typed reviewed candidates | P1 | D4 | M12-06,M15-04 | Cross-domain identities not merged |
-| - [ ] | **M15-06** — Build evidence-centered public explanatory case view | P1 | D3 | M15-05,M14-07 | Review state and uncertainties visible |
-| - [ ] | **M15-07** — Test false temporal matches and unsupported identity edges | P1 | D4 | M15-06 | Adversarial cases cannot pass as proof |
+| - [x] | **M15-01** — Resolve Mark 13:2 exact edition and rights | P1 | D2 | M07-05 | Correct source reference with permission |
+| - [x] | **M15-02** — Record Jerusalem 70 CE event attestation and counterevidence | P1 | D3 | M15-01 | Historical chronology distinct from religious claim |
+| - [x] | **M15-03** — Record Josephus source and transmission scope | P1 | D2 | M11-03,M15-02 | Actor report has explicit source attribution |
+| - [x] | **M15-04** — Define attributed prophecy interpretation and opposing frames | P1 | D3 | M13-07,M15-03 | No automatic miraculous-fulfillment verdict |
+| - [x] | **M15-05** — Link TEXT/EVENT/PERSON/STORY typed reviewed candidates | P1 | D4 | M12-06,M15-04 | Cross-domain identities not merged |
+| - [x] | **M15-06** — Build evidence-centered public explanatory case view | P1 | D3 | M15-05,M14-07 | Review state and uncertainties visible |
+| - [x] | **M15-07** — Test false temporal matches and unsupported identity edges | P1 | D4 | M15-06 | Adversarial cases cannot pass as proof |
 
 
 ## M16 — Private witness archive and consent lifecycle

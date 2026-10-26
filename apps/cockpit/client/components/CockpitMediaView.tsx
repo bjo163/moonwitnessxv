@@ -12,6 +12,7 @@ import {
   TextInput,
 } from '@moonwitness/moonui'
 import { AudioVisualizer } from '@moonwitness/moonui/client'
+import { CockpitTunerSection } from './CockpitTunerSection'
 import type { ChannelItem, ChannelMediaType } from '../types'
 
 export interface CockpitMediaViewProps {
@@ -136,7 +137,8 @@ export function CockpitMediaView({
             alignItems: 'center',
             justifyContent: 'center',
             background: 'var(--night)',
-            overflow: 'hidden',
+            overflowY: 'auto',
+            overflowX: 'hidden',
           }}
         >
           {/* IPTV Video Player */}
@@ -198,6 +200,13 @@ export function CockpitMediaView({
                     NOW PLAYING: {nowPlayingTrack.artist ? `${nowPlayingTrack.artist} - ` : ''}{nowPlayingTrack.title}
                   </div>
                 ) : null}
+
+                <CockpitTunerSection
+                  channels={channels}
+                  activeChannelIndex={activeChannelIndex}
+                  isPlaying={isPlaying}
+                  selectChannel={selectChannel}
+                />
               </div>
             </div>
           ) : null}

@@ -63,3 +63,17 @@ export {
   type TapeSettings,
   type DspPreset,
 } from './dsp.js'
+
+export {
+  SMeterGauge,
+  type SMeterGaugeProps,
+} from './s-meter.js'
+
+export {
+  AnalogTuner,
+  RADIO_BANDS,
+  type AnalogTunerProps,
+  type RadioBand,
+  type BandConfig,
+  type TunedStation,
+} from './analog-tuner.js'

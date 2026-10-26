@@ -137,7 +137,14 @@ export default async function HomePage() {
         </CardBody>
       </Card>
 
-      {live ? <Player stationId={live.id} stationName={live.name} streamUrl={live.streamUrl} /> : null}
+      {live ? (
+        <Player
+          stationId={live.id}
+          stationName={live.name}
+          streamUrl={live.streamUrl}
+          availableStations={payload.stations}
+        />
+      ) : null}
     </div>
   )
 }

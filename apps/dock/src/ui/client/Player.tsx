@@ -1,15 +1,18 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback, type ReactNode } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo, type ReactNode } from 'react'
 import { Badge, Button, LiveDot, StationSeal } from '@moonwitness/moonui'
 import {
   LivingBackdrop,
+  AnalogTuner,
   AudioVisualizer,
   triggerHaptic,
   getOrCreateDspRack,
   DSP_PRESETS,
   type EqSettings,
   type TapeSettings,
+  type RadioBand,
+  type TunedStation,
 } from '@moonwitness/moonui/client'
 import { TimeShiftPlayer } from './TimeShiftPlayer'
 
@@ -32,10 +35,12 @@ export function Player({
   stationId,
   stationName,
   streamUrl,
+  availableStations = [],
 }: {
   stationId: string
   stationName: string
   streamUrl: string
+  availableStations?: Array<{ id: string; name: string; streamUrl: string; genre?: string | null; country?: string | null }>
 }): ReactNode {
   const audio = useRef<HTMLAudioElement | null>(null)
   const [playing, setPlaying] = useState(false)
@@ -51,6 +56,42 @@ export function Player({
   const [selectedPreset, setSelectedPreset] = useState<string>('flat')
   const [eq, setEq] = useState<EqSettings>({ low: 0, lowMid: 0, mid: 0, highMid: 0, high: 0 })
   const [tape, setTape] = useState<TapeSettings>({ enabled: false, saturation: 0, hiss: 0, crackle: 0 })
+
+  // Analog Shortwave Tuner state
+  const [tunerOpen, setTunerOpen] = useState(false)
+  const [tunerBand, setTunerBand] = useState<RadioBand>('FM')
+  const [tunerFreq, setTunerFreq] = useState<number>(94.7)
+
+  const tunedStations: TunedStation[] = useMemo(() => {
+    const list = availableStations.length > 0
+      ? availableStations
+      : [{ id: stationId, name: stationName, streamUrl }]
+
+    return list.map((st, idx) => {
+      let hash = 0
+      for (let i = 0; i < st.id.length; i++) {
+        hash = (hash * 31 + st.id.charCodeAt(i)) >>> 0
+      }
+      const ratio = ((hash + idx * 67) % 1000) / 1000
+      const bands: RadioBand[] = ['FM', 'SW1', 'SW2']
+      const band = bands[idx % 3] ?? 'FM'
+      let frequency: number
+      if (band === 'FM') {
+        frequency = Number((88.0 + ratio * 19.5).toFixed(1))
+      } else if (band === 'SW1') {
+        frequency = Number((3.5 + ratio * 3.8).toFixed(2))
+      } else {
+        frequency = Number((7.2 + ratio * 8.0).toFixed(2))
+      }
+      return {
+        id: st.id,
+        name: st.name,
+        frequency,
+        band,
+        genre: st.genre ?? undefined,
+      }
+    })
+  }, [availableStations, stationId, stationName, streamUrl])
 
   const activeSrc = isFailover ? AMBIENT_FAILOVER_URL : streamUrl
 
@@ -267,19 +308,62 @@ export function Player({
             </div>
           </div>
 
-          {/* DSP FX Rack Toggle */}
+          {/* DSP FX Rack & SW Tuner Controls */}
           <div className="m-col" style={{ alignItems: 'flex-end', gap: 6 }}>
-            <Button
-              type="button"
-              variant={tape.enabled ? 'primary' : 'ghost'}
-              size="sm"
-              onClick={() => setDspOpen(!dspOpen)}
-              title="Tactical WebAudio DSP FX & Parametric EQ Rack"
-            >
-              DSP FX {tape.enabled ? '● TAPE' : ''}
-            </Button>
+            <div className="m-row" style={{ gap: 6 }}>
+              <Button
+                type="button"
+                variant={tunerOpen ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => {
+                  triggerHaptic('switch')
+                  setTunerOpen(!tunerOpen)
+                }}
+                title="Analog Shortwave Dial & S-Meter Galvanometer"
+              >
+                SW TUNER {tunerOpen ? '▼' : '▲'}
+              </Button>
+              <Button
+                type="button"
+                variant={tape.enabled ? 'primary' : 'ghost'}
+                size="sm"
+                onClick={() => {
+                  triggerHaptic('switch')
+                  setDspOpen(!dspOpen)
+                }}
+                title="Tactical WebAudio DSP FX & Parametric EQ Rack"
+              >
+                DSP FX {tape.enabled ? '● TAPE' : ''}
+              </Button>
+            </div>
           </div>
         </div>
+
+        {/* Analog Shortwave & Broadcast Frequency Tuner Drawer */}
+        {tunerOpen ? (
+          <div
+            style={{
+              marginTop: 14,
+              paddingTop: 12,
+              borderTop: '1px solid var(--border)',
+            }}
+          >
+            <AnalogTuner
+              band={tunerBand}
+              frequency={tunerFreq}
+              onBandChange={setTunerBand}
+              onFrequencyChange={setTunerFreq}
+              stations={tunedStations}
+              onSelectStation={(st) => {
+                if (st.id !== stationId) {
+                  window.location.href = `/stations/${st.id}`
+                }
+              }}
+              showSMeter={true}
+              signalStrength={playing ? 80 : 14}
+            />
+          </div>
+        ) : null}
 
         {/* DSP Acoustic Conditioner Drawer */}
         {dspOpen ? (

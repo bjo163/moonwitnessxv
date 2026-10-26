@@ -73,6 +73,7 @@ import {
   reviewHooks,
   reviewModels,
 } from './review-subsystem.js'
+import { comparativeEndpoints } from './historical-pilot.js'
 const caseRows = async ({ orm }: { orm: Orm }) => {
   const [editions, passages, translations] = await Promise.all([
     listAll(orm, 'corpus_editions'),
@@ -645,6 +646,7 @@ export const research = defineAddon({
     ...(reviewHooks as unknown as Record<string, never>),
   },
   endpoints: {
+    ...comparativeEndpoints,
     overview: {
       method: 'GET',
       path: '/research/overview',
@@ -1264,3 +1266,4 @@ export {
 
 export * from './common.js'
 export * from './review-subsystem.js'
+export * from './historical-pilot.js'
