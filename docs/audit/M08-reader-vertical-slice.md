@@ -91,4 +91,4 @@ Cleanup: `docker rm -f moonwitness-m08-reader-pg`; container list count 0; port 
 - UI verification is build + server-render markup + CSS assertions; no browser session was left running (owner preference). Keyboard behavior is covered by native form controls, focusable citation block and documented `:focus-visible` styles, not by an automated browser.
 - The PG drill used a disposable database; it validates schema, join and rights behavior, not production data volume.
 - Docker images were not rebuilt in this milestone; the Dockerfiles now include the corpus manifest and runtime `dist` needed by the hub.
-- CI evidence for commit `9a31351` is recorded in TODO.md after the push; local gates above are from the same tree.
+- CI evidence: [run 40265719999](https://github.com/bjo163/moonwitnessxv/actions/runs/40265719999) on `61cc3ef` — success; local gates above are from the same tree.
