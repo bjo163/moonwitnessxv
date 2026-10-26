@@ -1,6 +1,6 @@
 # Repository workflow conventions
 
-**Status: active integration policy.** Branch/commit naming conventions remain guidance; the `main` integration path is enforced by GitHub rulesets and CI. `TODO.md` remains the only task/status register. An Issue, branch, commit, or PR does not authorize implementation or prove completion.
+**Status: active integration policy.** Branch/commit naming conventions remain guidance; the `dev` → `main` integration path is enforced by GitHub rulesets and CI. `TODO.md` remains the only task/status register. An Issue, branch, commit, or PR does not authorize implementation or prove completion.
 
 ## Issue titles and contents
 
@@ -41,10 +41,19 @@ Proposed PR titles use the same format as commits. The existing [PR template](..
 
 ## Integration flow: enforced
 
-The required path is `topic branch → PR to main → verified merge`. `main` is the GitHub default branch and the only long-lived branch. It rejects direct pushes, force-pushes, and deletion. PRs into `main` require the `Monorepo Verification & Safety Gates` check, with no required human approval; merge after the check passes and review threads are resolved.
+The required path is `topic branch → PR to dev → verified merge → automated PR to main → release merge`. The `dev` branch is the GitHub default branch and the primary staging integration branch. Both `dev` and `main` reject direct pushes, force-pushes, and deletion.
 
-The `main-release-protection` ruleset has no bypass actors. CI runs with a read-only `GITHUB_TOKEN`. There is no `dev` branch, promotion job, bot push, or automatic merge. A failing check leaves `main` unchanged; a merged PR is the only way to update it.
+1. **Development into `dev`:**
+   - Topic branches target `dev` via Pull Request.
+   - PRs into `dev` require the `Monorepo Verification & Safety Gates` check to pass before merging.
+   - Merging into `dev` stages features together for end-to-end integration.
+
+2. **Promotion from `dev` to `main`:**
+   - PRs into `main` are restricted strictly to this repository's `dev` branch.
+   - Pushes to `dev` trigger the `Auto PR dev to main` workflow. If `dev` contains commits ahead of `main`, it ensures an open sync PR (`chore(release): sync dev to main`) exists.
+   - The sync PR automatically receives subsequent `dev` commits and runs the `Monorepo Verification & Safety Gates` check.
+   - When ready for a production release, the maintainer reviews the sync PR and merges it into `main`.
 
 ## Enforcement state
 
-There is no commit-message validator, branch-name validator, PR-title validator, TODO-to-Issue synchronizer, or promotion automation. These conventions remain guidance, while PR gating and CI are enforced by repository rules.
+There is no commit-message validator, branch-name validator, PR-title validator, or TODO-to-Issue synchronizer. These conventions remain guidance, while branch routing, PR gating, and automated sync PR management are enforced by repository rules and CI.

@@ -2,9 +2,9 @@ name: CI Verify & Gate
 
 on:
   push:
-    branches: [main]
+    branches: [dev, main]
   pull_request:
-    branches: [main]
+    branches: [dev, main]
 
 permissions:
   contents: read
@@ -15,6 +15,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Restrict main pull requests to the dev branch
+        if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main'
+        env:
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          if [[ "$HEAD_BRANCH" != "dev" || "$HEAD_REPOSITORY" != "$REPOSITORY" ]]; then
+            echo "Pull requests into main must come from this repository's dev branch."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
 

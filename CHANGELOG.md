@@ -9,11 +9,9 @@ available.
 
 ### Added
 - Release and changelog guidance in `docs/audit/M01-05-release-lifecycle.md`.
+- Automated staging-to-production synchronization PR workflow (`.github/workflows/sync-dev-to-main.yml`).
+- Staging integration branch `dev` with PR gating and safety checks.
 
 ### Changed
-- Repository integration is main-only: pull requests into `main` require the
-  `Monorepo Verification & Safety Gates` check, with no required human approval
-  and no bypass actors. Direct pushes, force-pushes, and deletion are blocked by
-  the active `main-release-protection` ruleset.
-- Removed the temporary `dev` branch, promotion job, and
-  `dev-integration-protection` ruleset.
+- Integration flow routes topic branches into `dev` via Pull Request; direct pushes to `dev` and `main` are blocked.
+- Pull requests targeting `main` must originate from `dev`.
