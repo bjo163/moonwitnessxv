@@ -1,6 +1,6 @@
 # Repository workflow conventions
 
-**Status: active integration policy.** Branch/commit naming conventions remain guidance; the `dev` → `main` integration path is enforced by GitHub rulesets and Actions. `TODO.md` remains the only task/status register. An Issue, branch, commit, or PR does not authorize implementation or prove completion.
+**Status: active integration policy.** Branch/commit naming conventions remain guidance; the `main` integration path is enforced by GitHub rulesets and CI. `TODO.md` remains the only task/status register. An Issue, branch, commit, or PR does not authorize implementation or prove completion.
 
 ## Issue titles and contents
 
@@ -41,10 +41,10 @@ Proposed PR titles use the same format as commits. The existing [PR template](..
 
 ## Integration flow: enforced
 
-The required path is `topic branch → PR to dev → verified push to dev → automatic fast-forward to main`. The `dev` branch is the GitHub default branch. Both `dev` and `main` reject direct pushes and force-pushes. PRs into `dev` require the `Monorepo Verification & Safety Gates` check, with no required human approval. PRs into `main` are accepted only from this repository's `dev` branch; ordinary development should target `dev` directly. After a push to `dev`, the same workflow runs the full verification and promotes that exact SHA only if the check succeeds, `dev` has not moved, and `main` is its ancestor.
+The required path is `topic branch → PR to main → verified merge`. `main` is the GitHub default branch and the only long-lived branch. It rejects direct pushes, force-pushes, and deletion. PRs into `main` require the `Monorepo Verification & Safety Gates` check, with no required human approval; merge after the check passes and review threads are resolved.
 
-The `main-release-protection` ruleset continues to require PR and CI protections for humans. The GitHub Actions integration is its only bypass actor, used by the promotion job; only that job receives `contents: write`. A bot push uses `GITHUB_TOKEN`, so it does not start another push workflow. Failed checks, stale commits, or non-fast-forward history leave `main` unchanged. If this workflow changes, retain the guard and the least-privilege job permissions.
+The `main-release-protection` ruleset has no bypass actors. CI runs with a read-only `GITHUB_TOKEN`. There is no `dev` branch, promotion job, bot push, or automatic merge. A failing check leaves `main` unchanged; a merged PR is the only way to update it.
 
 ## Enforcement state
 
-There is no commit-message validator, branch-name validator, PR-title validator, or TODO-to-Issue synchronizer. These conventions remain guidance, while branch routing and promotion are enforced by repository rules and CI.
+There is no commit-message validator, branch-name validator, PR-title validator, TODO-to-Issue synchronizer, or promotion automation. These conventions remain guidance, while PR gating and CI are enforced by repository rules.
