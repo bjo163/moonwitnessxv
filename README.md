@@ -1,5 +1,12 @@
 # Moonwitness
 
+
+## MoonWitness XV — master program documents
+
+**Official XV planning flow:** [Master Vision Narrative](docs/vision/MASTER_VISION_NARRATIVE_XV.md) → [MASTER BLUEPRINT](BLUEPRINT.md) → [MASTER TODO / 28 milestones and 196 task IDs](TODO.md). **New unified MoonWitness work belongs in this repository only.** Earlier MoonWitness, Corpus, A-L-L-A-H, Empire and Rocksoul repositories remain historical/source references or individually reviewed import candidates.
+
+The current applications below are **existing Radio/MoonQL functionality**. Corpus, ontology, comparative research, SHADOW, 100CENTER, World Monitor and Journey are **planned capability areas**, **not automatically live features** merely because they appear in the vision. Use the TODO evidence gates before declaring a task complete; source/privacy/security/recovery checks are mandatory before importing sensitive content.
+
 Modular **TypeScript** monorepo with **three apps and one contract**:
 
 | App | Port | Role |
