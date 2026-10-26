@@ -1,9 +1,10 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 import Fastify, { type FastifyInstance } from 'fastify'
 import { ADMIN_FULL, bootMoonQl, defineAddon, defineModel, moonqlRest, str, type MoonQlInstance } from '@moonwitness/moonql'
 import auth from '@moonwitness/moonql-auth'
-import { clearKeyCache, getCachedApiKeyUser, setCachedApiKeyUser } from '@moonwitness/moonql-apikeys'
 import envelope from '../src/plugins/envelope.js'
 
 const vaultAddon = defineAddon({
@@ -101,9 +102,12 @@ test('M03-05: identity cache evicts the oldest token when its 500-entry ceiling 
   assert.equal(counter.reads() - readsBeforeNewest, 1, 'the newest identity remains cached')
 })
 
-test('M03-05: API key cache expires entries and stays within its 5,000-entry ceiling', () => {
-  clearKeyCache()
-  try {
+test('M03-05: API key cache TTL and capacity are isolated from parallel test clocks', () => {
+  const script = `
+    import assert from 'node:assert/strict'
+    import { clearKeyCache, getCachedApiKeyUser, setCachedApiKeyUser } from '@moonwitness/moonql-apikeys'
+
+    clearKeyCache()
     const originalNow = Date.now
     const start = originalNow()
     const firstHash = 'synthetic-api-key-hash-0'
@@ -118,16 +122,25 @@ test('M03-05: API key cache expires entries and stays within its 5,000-entry cei
     const capacity = 5_000
     for (let index = 0; index <= capacity; index += 1) {
       const suffix = String(index)
-      setCachedApiKeyUser(`synthetic-api-key-hash-${suffix}`, {
-        id: `synthetic-user-${suffix}`,
+      setCachedApiKeyUser('synthetic-api-key-hash-' + suffix, {
+        id: 'synthetic-user-' + suffix,
         roles: ['bot'],
-        meta: { keyId: `synthetic-key-${suffix}`, name: 'fixture' },
+        meta: { keyId: 'synthetic-key-' + suffix, name: 'fixture' },
       })
     }
 
-    assert.equal(getCachedApiKeyUser(`synthetic-api-key-hash-${capacity}`)?.id, `synthetic-user-${capacity}`)
+    assert.equal(getCachedApiKeyUser('synthetic-api-key-hash-' + capacity)?.id, 'synthetic-user-' + capacity)
     assert.equal(getCachedApiKeyUser('synthetic-api-key-hash-0'), null, 'the oldest entry must be evicted at capacity')
-  } finally {
     clearKeyCache()
-  }
+    console.log('PASS: API key TTL expiration and 5,000-entry eviction cap')
+  `
+  const child = spawnSync(process.execPath, ['--import', 'tsx', '--input-type=module', '-e', script], {
+    cwd: fileURLToPath(new URL('..', import.meta.url)),
+    encoding: 'utf8',
+    timeout: 10_000,
+  })
+
+  assert.equal(child.error, undefined, child.error?.message)
+  assert.equal(child.status, 0, `isolated API key cache test failed\n${child.stdout}\n${child.stderr}`)
+  assert.match(child.stdout, /PASS: API key TTL expiration and 5,000-entry eviction cap/)
 })

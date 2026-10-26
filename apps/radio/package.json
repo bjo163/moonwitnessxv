@@ -11,7 +11,8 @@
     "start": "node --env-file-if-exists=../../.env dist/server.js",
     "start:clean": "node dist/server.js",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
-    "test": "tsx --test --test-concurrency=2 test/**/*.test.ts"
+    "test": "pnpm test:regression",
+    "test:regression": "tsx --test --test-concurrency=2 test/**/*.test.ts"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",
