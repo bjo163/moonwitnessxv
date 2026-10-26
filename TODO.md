@@ -337,3 +337,105 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 | - [ ] | **M17-06** — Track original poster/music/derived media license and manifests | P1 | D3 | M17-05 | No unlicensed lyrics or external artwork |
 | - [ ] | **M17-07** — Test chronology, alias conflict and unpublished image access | P1 | D4 | M17-06,M16-06 | Draft never visible in public Story |
 
+
+## M18 — One publication and retraction gate
+
+**Group:** G3 · **Priority:** P1 · **Prerequisites:** M03,M14,M17 · **Scope:** Source rights, review release and public projections.
+
+**Exit gate:** Only reviewed/consented versions visible and retractable. Do not infer completion from code inventory alone.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M18-01** — Specify single publish state machine for text, testimony and story | P1 | D3 | M14-07,M17-07 | One approval path with type-specific rights veto |
+| - [ ] | **M18-02** — Store edition/body license, media consent and reviewer evidence | P1 | D3 | M18-01 | No unknown-rights byte published |
+| - [ ] | **M18-03** — Create immutable release manifest and current-version pointer | P1 | D3 | M18-01,M12-03 | Public read refers to one approved revision |
+| - [ ] | **M18-04** — Implement withdrawal, correction, takedown and appeal process | P1 | D4 | M18-03,M03-06 | Revoked content ceases public availability |
+| - [ ] | **M18-05** — Invalidate search, preview, export and generated cache on revoke | P1 | D4 | M18-04 | No revoked content leaks from projections |
+| - [ ] | **M18-06** — Display reviewer scope, source and original-vs-derivative label | P1 | D3 | M18-03 | No AI or copywriting masquerades as original source |
+| - [ ] | **M18-07** — Test concurrent publish, wrong role and rollback/replay | P1 | D4 | M18-05,M18-06 | Unapproved public data remains denied |
+
+
+## M19 — Design system, accessibility and frontend experience
+
+**Group:** G3 · **Priority:** P1 · **Prerequisites:** M05,M08 · **Scope:** MoonUI, Dock, HQ and external design references.
+
+**Exit gate:** Accessible four interaction modes without breaking old radio design. Do not infer completion from code inventory alone.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M19-01** — Audit MoonUI vs Moonframe vs Rocksoul asset ownership | P1 | D2 | M05-07 | One UI component contract with checked external rights |
+| - [ ] | **M19-02** — Define Reader/Research/Story/Operator layout/typography tokens | P1 | D3 | M19-01 | Design intentional differences without semantic drift |
+| - [ ] | **M19-03** — Map public information architecture and responsive search flows | P1 | D3 | M08-02,M19-02 | Reader not buried under 30 equal nav labels |
+| - [ ] | **M19-04** — Implement keyboard/focus/errors/reduced motion accessibility | P1 | D3 | M19-03 | Basic WCAG-oriented interactions functional |
+| - [ ] | **M19-05** — Test Arabic/Hebrew/Greek scripts, RTL and diacritics | P1 | D3 | M19-04 | Unicode and text-selection meaning retained |
+| - [ ] | **M19-06** — Create screenshot and behavioral baseline across experience modes | P1 | D3 | M19-03,M19-05 | Visual snapshots complement behavioral tests |
+| - [ ] | **M19-07** — Run browser acceptance for J01/J03/J05 on mobile and desktop | P1 | D4 | M19-06 | Actual user flows pass with accessible components |
+
+
+## M20 — Headquarters and 100CENTER human governance
+
+**Group:** G4 · **Priority:** P1 · **Prerequisites:** M14,M18 · **Scope:** Existing HQ, models/views, audit and proposed review areas.
+
+**Exit gate:** Single admin authorization, task and review workspace. Do not infer completion from code inventory alone.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M20-01** — Audit HQ generic model UI, route guards and existing ops widgets | P1 | D2 | M00-02,M14-01 | Existing features reused, not duplicate admin app |
+| - [ ] | **M20-02** — Design role-scoped review queue and work item lifecycle | P1 | D3 | M20-01,M18-01 | No account may approve its own restricted submission |
+| - [ ] | **M20-03** — Display rights/import blockers and reviewed source status | P1 | D3 | M20-02 | Editors can distinguish metadata-only vs released |
+| - [ ] | **M20-04** — Create identity/alias and evidence reviewer panels | P1 | D3 | M20-02,M10-06 | Reviewer resolves with source and conflict links |
+| - [ ] | **M20-05** — Improve audit actor attribution, retention and reliability contract | P1 | D4 | M20-02,M03-07 | No assumption existing async audit is immutable |
+| - [ ] | **M20-06** — Build 100CENTER view for ordinary human task/incident decisions | P1 | D3 | M20-03,M20-05 | No supernatural mandate or automatic irreversible action |
+| - [ ] | **M20-07** — Test direct URL, API role and stale-cookie access to HQ sections | P1 | D3 | M20-06 | Server denies unauthorized operations |
+
+
+## M21 — Optional local AI research assistant candidate workflow
+
+**Group:** G4 · **Priority:** P2 · **Prerequisites:** M03,M14 · **Scope:** Optional AI execution, candidate inbox and source-grounded retrieval.
+
+**Exit gate:** No hidden remote fallback, no auto write/publish, deterministic fallback. Do not infer completion from code inventory alone.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M21-01** — Evaluate local model constraints, runtime/privacy and disable switch | P2 | D3 | M14-07,M03-07 | Service operates correctly with AI absent |
+| - [ ] | **M21-02** — Define versioned AI candidate and tool-call evidence schema | P2 | D3 | M21-01 | Records model, prompt, data provenance and user consent |
+| - [ ] | **M21-03** — Prototype source-permission-aware retrieval, not open private files | P2 | D4 | M07-07,M21-02 | Restricted bytes cannot reach unauthorized model/user |
+| - [ ] | **M21-04** — Guard prompt injection, egress and tool permissions | P2 | D4 | M21-03 | Untrusted source cannot issue executable instructions |
+| - [ ] | **M21-05** — Implement HQ review inbox for AI-suggested claims or edits | P2 | D3 | M21-02,M20-02 | Human reviewer required for canonical action |
+| - [ ] | **M21-06** — Prove source/research UI usable with AI unavailable | P2 | D2 | M21-01 | No critical path depends on AI inference |
+| - [ ] | **M21-07** — Test forged citations, scope bypass and auto-publication denial | P2 | D4 | M21-04,M21-05,M21-06 | Unauthorized requests blocked and recorded |
+
+
+## M22 — Radio, channels and Signal backward compatibility
+
+**Group:** G4 · **Priority:** P0 · **Prerequisites:** M00,M01,M03 · **Scope:** Existing radio, addons, Dock, WhatsApp and DENPA.
+
+**Exit gate:** All current Signal flows remain functional while XV grows. Do not infer completion from code inventory alone.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M22-01** — Freeze actual station seed/catalog response before change | P0 | D2 | M00-03 | Source fixture and known stream state recorded |
+| - [ ] | **M22-02** — Test player, playlog pseudonyms, listening beacons and schedules | P0 | D3 | M22-01 | No listener identity or playback regression |
+| - [ ] | **M22-03** — Verify DENPA opt-in, webhook token and payload validation | P0 | D3 | M03-07 | Unauthenticated inbound cannot write |
+| - [ ] | **M22-04** — Review WhatsApp QR/session lifecycle and disabled-default behavior | P0 | D3 | M03-07 | Credentials protected and no surprise channel startup |
+| - [ ] | **M22-05** — Protect OpenAPI and root Hub service discovery contracts | P0 | D2 | M05-07,M22-01 | No renamed existing API or SDK entries |
+| - [ ] | **M22-06** — Test private playlogs, admin metrics and public catalogue isolation | P0 | D3 | M22-02,M03-02 | No private model data via list/search |
+| - [ ] | **M22-07** — Publish reusable Radio regression suite for all future gates | P0 | D2 | M22-03,M22-04,M22-05,M22-06 | Run before and after each integration |
+
+
+## M23 — Voluntary Journey, Missions, 33 Patches and Empire vocabulary
+
+**Group:** G4 · **Priority:** P2 · **Prerequisites:** M18,M20 · **Scope:** Optional journey module and editorial registry.
+
+**Exit gate:** Human action tracked voluntarily without faith/salvation rankings. Do not infer completion from code inventory alone.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M23-01** — Preserve 33 patch titles, 014 conflict and all reported statuses | P2 | D2 | M06-04 | No fabricated divine approval or external submission |
+| - [ ] | **M23-02** — Define self/community/global consent and member scopes | P2 | D3 | M03-06,M20-06 | Global cannot imply authority over personal accounts |
+| - [ ] | **M23-03** — Model Path/Journey/Milestone/expiring human Mandate | P2 | D3 | M23-02 | Consent, revoke and responsible operator recorded |
+| - [ ] | **M23-04** — Index nine Prime Code, 10 WINGS and GOD99 as separate metadata | P2 | D2 | M06-05 | No programmatic angel/god identities |
+| - [ ] | **M23-05** — Prototype human-owned mission checklist with rollback | P2 | D3 | M23-03 | No automatic high-consequence world patch |
+| - [ ] | **M23-06** — Keep AETHERION 10 realms and 100 levels as fictional game system | P2 | D2 | M23-04 | XP never equated with human age, holiness or heaven |
+| - [ ] | **M23-07** — Adversarial test for spiritual ranking, unauthorized mission actions | P2 | D3 | M23-05,M23-06 | Human agency and stated metaphoric boundaries enforced |
+
