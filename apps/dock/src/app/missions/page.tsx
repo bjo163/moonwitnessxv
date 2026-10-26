@@ -2,6 +2,9 @@ import { MoonApiError } from '@moonwitness/moonql-client'
 import { Alert, Badge, Button, Field, PageHeader, Pagination, Panel, SelectInput, TextInput } from '@moonwitness/moonui'
 import { readMissions, type MissionTable } from '@/data/queries/actors'
 import { MissionTableView } from '@/ui/components/actors'
+import { headers } from 'next/headers'
+import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,6 +36,10 @@ function missionsHref(filters: Record<string, string>, page: number): string {
 }
 
 export default async function MissionsPageView({ searchParams }: { searchParams: Promise<MissionSearchParams> }) {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const copy = getStatesCopy(locale)
+
   const params = await searchParams
   const filters = {
     q: stringOf(params.q),
@@ -48,7 +55,7 @@ export default async function MissionsPageView({ searchParams }: { searchParams:
   try {
     table = await readMissions({ ...filters, limit: PAGE_SIZE, offset })
   } catch (err) {
-    error = err instanceof MoonApiError ? err.message : 'The Prophetic Mission Table is unavailable.'
+    error = err instanceof MoonApiError ? err.message : copy.errorMissionsUnavailable
   }
 
   return (
@@ -72,43 +79,43 @@ export default async function MissionsPageView({ searchParams }: { searchParams:
         subtitle="Search matches the claim title, problem, community and figure labels. Nothing is widened silently."
       >
         <form className="dk-actors-filter-form" method="get" action="/missions" role="search">
-          <Field label="Search" htmlFor="missions-q" hint="Title, problem, community or figure">
-            <TextInput id="missions-q" name="q" defaultValue={filters.q} placeholder="mercy" maxLength={120} />
+          <Field label={copy.formSearch} htmlFor="missions-q" hint={copy.formMissionsSearchHint}>
+            <TextInput id="missions-q" name="q" defaultValue={filters.q} placeholder={copy.formMissionsSearchPlaceholder} maxLength={120} />
           </Field>
-          <Field label="Tradition" htmlFor="missions-tradition">
+          <Field label={copy.formTradition} htmlFor="missions-tradition">
             <SelectInput
               id="missions-tradition"
               name="tradition"
               defaultValue={filters.tradition}
-              placeholder="All traditions"
+              placeholder={copy.formAllTraditions}
               options={(table?.options.traditions ?? [])
                 .filter((tradition): tradition is NonNullable<typeof tradition> => tradition !== null)
                 .map((tradition) => ({ value: tradition.code, label: `${tradition.label} · ${tradition.scope}` }))}
             />
           </Field>
-          <Field label="Figure" htmlFor="missions-figure">
+          <Field label={copy.formFigure} htmlFor="missions-figure">
             <SelectInput
               id="missions-figure"
               name="figure"
               defaultValue={filters.figure}
-              placeholder="All figures"
+              placeholder={copy.formAllFigures}
               options={(table?.options.figures ?? []).map((figure) => ({
                 value: figure.code,
                 label: `${figure.label} · ${figure.code}`,
               }))}
             />
           </Field>
-          <Field label="Confidence" htmlFor="missions-confidence">
+          <Field label={copy.formConfidence} htmlFor="missions-confidence">
             <SelectInput
               id="missions-confidence"
               name="confidence"
               defaultValue={filters.confidence}
-              placeholder="All confidence labels"
+              placeholder={copy.formAllConfidence}
               options={(table?.options.confidences ?? []).map((status) => ({ value: status, label: status }))}
             />
           </Field>
           <Button type="submit" variant="accent">
-            APPLY FILTERS
+            {copy.formApplyFilters}
           </Button>
         </form>
       </Panel>

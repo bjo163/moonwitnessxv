@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { Card, CardBody, CardHeader, Crown, Tape, Badge, ZineNote } from '@moonwitness/moonui'
-import { SiteLayout } from '@/layouts/site'
 
 interface PrismFunction {
   num: string
@@ -27,8 +26,7 @@ const PRISMS: PrismFunction[] = [
 
 export default function PrismsPage(): ReactNode {
   return (
-    <SiteLayout>
-      <div className="m-stack" style={{ gap: 20, maxWidth: 1100, margin: '0 auto', padding: '20px 16px' }}>
+    <div className="m-stack" style={{ gap: 20, maxWidth: 1100, margin: '0 auto', padding: '20px 16px' }}>
         <div className="m-row" style={{ justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14 }}>
           <div>
             <div className="m-row" style={{ gap: 8, alignItems: 'center' }}>
@@ -71,6 +69,5 @@ export default function PrismsPage(): ReactNode {
           </ZineNote>
         </div>
       </div>
-    </SiteLayout>
   )
 }

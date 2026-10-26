@@ -2,11 +2,15 @@ import { loadMoondeckConfig } from './config.js'
 import { ProcessSupervisor } from './supervisor.js'
 import { createCockpitServer } from './server.js'
 import { launchDesktopApp } from './launcher.js'
+import { ProgressTracker } from './progressTracker.js'
+import { resolveRegisterPath } from './paths.js'
 
 async function main() {
   const config = await loadMoondeckConfig()
   const supervisor = new ProcessSupervisor(config)
-  const app = createCockpitServer(config, supervisor)
+  const tracker = new ProgressTracker({ filePath: resolveRegisterPath() })
+  tracker.start()
+  const app = createCockpitServer(config, supervisor, tracker)
 
   const host = '127.0.0.1'
   const port = config.port || 3004
@@ -39,6 +43,7 @@ async function main() {
   // Graceful exit handler
   const shutdown = async () => {
     console.info(`\n\x1b[1;33m[MOONDECK]\x1b[0m Shutting down services and desktop engine...`)
+    tracker.stop()
     supervisor.stopAll()
     try {
       await app.close()

@@ -164,3 +164,17 @@ body,
   padding: 20px;
   overflow-y: auto;
 }
+
+/* Mission Progress: headline stat strip and milestone-group rollup share one grid */
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.progress-flips {
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}

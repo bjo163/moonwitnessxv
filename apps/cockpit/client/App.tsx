@@ -9,9 +9,11 @@ import { CockpitPreviewView } from './components/CockpitPreviewView'
 import { CockpitMediaView } from './components/CockpitMediaView'
 import { CockpitPortsView } from './components/CockpitPortsView'
 import { CockpitLedgerView } from './components/CockpitLedgerView'
+import { CockpitProgressView } from './components/CockpitProgressView'
 import { CockpitFooter } from './components/CockpitFooter'
 import { useCockpitSync } from './hooks/useCockpitSync'
 import { useCockpitActions } from './hooks/useCockpitActions'
+import { useTodoProgress } from './hooks/useTodoProgress'
 import type {
   ChannelItem,
   ChannelMediaType,
@@ -161,6 +163,7 @@ export function App(): ReactNode {
 
   // Data sync hook
   const { config, serviceStates, setServiceStates, logs, setLogs, clock, uptime } = useCockpitSync(setChannels)
+  const progress = useTodoProgress()
 
   // Actions hook
   const {
@@ -405,6 +408,8 @@ export function App(): ReactNode {
         actions.setActiveTab('ledger')
       } else if (e.key === '5') {
         actions.setActiveTab('ports')
+      } else if (e.key === '6') {
+        actions.setActiveTab('progress')
       } else if (e.key === '`' || e.key === '~') {
         triggerHaptic('toggle')
         actions.setActiveTab((prev) => (prev === 'logs' ? 'media' : 'logs'))
@@ -458,7 +463,8 @@ export function App(): ReactNode {
     { id: 'media', label: 'Media & IPTV Player', count: channels.length, tone: 'pink' },
     { id: 'ledger', label: 'Error Ledger', count: errorLines.length > 0 ? errorLines.length : undefined, tone: 'accent' },
     { id: 'ports', label: 'Network & Ports', tone: 'cyan' },
-  ], [channels.length, errorLines.length])
+    { id: 'progress', label: 'Mission Progress', count: progress.payload?.open, tone: 'ok' },
+  ], [channels.length, errorLines.length, progress.payload?.open])
 
   return (
     <div className="cockpit-shell">
@@ -481,6 +487,7 @@ export function App(): ReactNode {
         isFreeingPorts={isFreeingPorts}
         crtShader={crtShader}
         setCrtShader={setCrtShader}
+        progressPercent={progress.payload?.percent ?? null}
       />
 
       <div className="cockpit-body">
@@ -576,6 +583,21 @@ export function App(): ReactNode {
             <CockpitPortsView
               serviceStates={serviceStates}
               openPreview={openPreview}
+            />
+          ) : null}
+
+          {activeTab === 'progress' ? (
+            <CockpitProgressView
+              payload={progress.payload}
+              rows={progress.rows}
+              rowsMatched={progress.rowsMatched}
+              rowsLoading={progress.rowsLoading}
+              filters={progress.filters}
+              setFilters={progress.setFilters}
+              live={progress.live}
+              error={progress.error}
+              lastReceived={progress.lastReceived}
+              netClosedSinceOpen={progress.netClosedSinceOpen}
             />
           ) : null}
         </main>

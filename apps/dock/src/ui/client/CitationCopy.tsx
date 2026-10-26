@@ -1,15 +1,44 @@
 'use client'
 
-import { useState } from 'react'
-import type { ReactNode } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { Button } from '@moonwitness/moonui'
+import type { Locale } from '@moonwitness/core'
+import { getStatesCopy } from '@/lib/states-copy'
 
 type CopyStatus = 'idle' | 'copied' | 'failed'
 
-export function CitationCopy({ text, citationKey }: { text: string; citationKey: string }): ReactNode {
+function detectClientLocale(): Locale {
+  if (typeof document !== 'undefined') {
+    const lang = document.documentElement.lang
+    if (lang === 'id' || lang === 'en') return lang
+    if (window.location.pathname.startsWith('/id')) return 'id'
+  }
+  return 'en'
+}
+
+export function CitationCopy({
+  text,
+  citationKey,
+  locale,
+}: {
+  text: string
+  citationKey: string
+  locale?: Locale
+}): ReactNode {
+  const [activeLocale, setActiveLocale] = useState<Locale>(() => locale ?? detectClientLocale())
   const [status, setStatus] = useState<CopyStatus>('idle')
 
-  async function copy(): Promise<void> {
+  useEffect(() => {
+    if (locale) {
+      setActiveLocale(locale)
+    } else {
+      setActiveLocale(detectClientLocale())
+    }
+  }, [locale])
+
+  const copy = getStatesCopy(activeLocale)
+
+  async function copyText(): Promise<void> {
     try {
       await navigator.clipboard.writeText(text)
       setStatus('copied')
@@ -25,15 +54,15 @@ export function CitationCopy({ text, citationKey }: { text: string; citationKey:
         variant="paper"
         size="sm"
         onClick={() => {
-          void copy()
+          void copyText()
         }}
         aria-label={`Copy citation for ${citationKey}`}
       >
-        COPY CITATION
+        {copy.formCopyCitation}
       </Button>
       <span className="dk-reader-copy-status" role="status" aria-live="polite">
-        {status === 'copied' ? 'Citation copied to clipboard.' : null}
-        {status === 'failed' ? 'Clipboard unavailable — select the citation text below and copy it manually.' : null}
+        {status === 'copied' ? copy.formCopySuccess : null}
+        {status === 'failed' ? copy.formCopyFailure : null}
       </span>
     </div>
   )

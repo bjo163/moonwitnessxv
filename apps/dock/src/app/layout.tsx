@@ -1,26 +1,33 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import { headers } from 'next/headers'
 import '@moonwitness/moonui/moon.css'
 import './globals.css'
 import { SiteLayout } from '@/layouts/site'
-import { SITE_NAME, SITE_TAGLINE } from '@/lib/env'
+import { getDockMetadata } from '@/lib/metadata'
+import {
+  DOCK_LOCALE_HEADER,
+  DOCK_ROUTE_PATH_HEADER,
+  localeFromMiddlewareHeader,
+} from '@/lib/locale-context.mjs'
 
-export const metadata: Metadata = {
-  title: `${SITE_NAME} — late-night radio`,
-  description: SITE_TAGLINE,
-  // app/manifest.ts is what Next serves at /manifest.webmanifest; these lines are
-  // the parts a browser only reads from the document (and what iOS asks for).
-  applicationName: SITE_NAME,
-  appleWebApp: { capable: true, title: SITE_NAME, statusBarStyle: 'black-translucent' },
-  formatDetection: { telephone: false },
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const routePath = requestHeaders.get(DOCK_ROUTE_PATH_HEADER) ?? (locale === 'id' ? '/id' : '/en')
+  return getDockMetadata(locale, routePath)
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>
         <SiteLayout>{children}</SiteLayout>
       </body>
     </html>
   )
 }
+

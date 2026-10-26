@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
-import { SiteLayout } from '@/layouts/site'
 import { GeneratorStudio } from '@/ui/client/GeneratorStudio'
 
 export const metadata: Metadata = {
@@ -10,9 +9,5 @@ export const metadata: Metadata = {
 }
 
 export default function StudioPage(): ReactNode {
-  return (
-    <SiteLayout>
-      <GeneratorStudio />
-    </SiteLayout>
-  )
+  return <GeneratorStudio />
 }

@@ -11,6 +11,9 @@ import {
 import { listStations } from '@/data/queries/catalog'
 import { PAGE_SIZE } from '@/lib/env'
 import { StationGrid } from '@/ui/components/sections'
+import { headers } from 'next/headers'
+import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,6 +22,10 @@ export default async function StationsPage({
 }: {
   searchParams: Promise<{ q?: string; genre?: string; country?: string; page?: string }>
 }) {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const copy = getStatesCopy(locale)
+
   const filters = await searchParams
   const page = await listStations(filters)
 
@@ -44,37 +51,37 @@ export default async function StationsPage({
 
       <Panel title="Filter Signals" subtitle="search by station name, genre, or origin country">
         <form className="m-row" style={{ alignItems: 'flex-end', gap: 14 }} method="get" action="/stations">
-          <Field label="Search" htmlFor="q">
-            <TextInput id="q" name="q" defaultValue={filters.q ?? ''} placeholder="name or genre" icon="FIND" />
+          <Field label={copy.formSearch} htmlFor="q">
+            <TextInput id="q" name="q" defaultValue={filters.q ?? ''} placeholder={copy.formSearchStationPlaceholder} icon="FIND" />
           </Field>
-          <Field label="Genre" htmlFor="genre">
+          <Field label={copy.formGenre} htmlFor="genre">
             <SelectInput
               id="genre"
               name="genre"
               defaultValue={filters.genre ?? ''}
-              placeholder="all genres"
+              placeholder={copy.formAllGenres}
               options={page.genres.map((genre) => ({ value: genre, label: genre }))}
             />
           </Field>
-          <Field label="Country" htmlFor="country">
+          <Field label={copy.formCountry} htmlFor="country">
             <SelectInput
               id="country"
               name="country"
               defaultValue={filters.country ?? ''}
-              placeholder="all countries"
+              placeholder={copy.formAllCountries}
               options={page.countries.map((country) => ({ value: country.id, label: country.name }))}
             />
           </Field>
           <Button type="submit" variant="accent">
-            Filter
+            {copy.formFilter}
           </Button>
           <LinkButton href="/stations" variant="ghost">
-            Reset
+            {copy.formReset}
           </LinkButton>
         </form>
       </Panel>
 
-      <StationGrid stations={page.rows} />
+      <StationGrid stations={page.rows} locale={locale} />
 
       <Pagination page={page.page} pageSize={PAGE_SIZE} total={page.total} hrefFor={hrefFor} />
     </div>

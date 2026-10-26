@@ -1,7 +1,11 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { statSync } from 'node:fs'
 import { loadMoondeckConfig, DEFAULT_CONFIG } from '../src/config.js'
 import { ProcessSupervisor } from '../src/supervisor.js'
+import { ProgressTracker } from '../src/progressTracker.js'
+import { resolveRegisterPath } from '../src/paths.js'
+import type { ProgressPayload } from '../src/progressTracker.js'
 import { createCockpitServer } from '../src/server.js'
 
 void test('Moondeck Config: loads configuration with 5 services and port 3004', async () => {
@@ -27,7 +31,11 @@ void test('ProcessSupervisor: initializes states for all services', () => {
 
 void test('Cockpit Fastify Server: serves API and static assets', async () => {
   const supervisor = new ProcessSupervisor(DEFAULT_CONFIG)
-  const app = createCockpitServer(DEFAULT_CONFIG, supervisor)
+  const registerPath = resolveRegisterPath()
+  const registerBefore = statSync(registerPath)
+  const tracker = new ProgressTracker({ filePath: registerPath })
+  tracker.start()
+  const app = createCockpitServer(DEFAULT_CONFIG, supervisor, tracker)
 
   // /health
   const healthRes = await app.inject({ method: 'GET', url: '/health' })
@@ -100,6 +108,50 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
   const invalidAction = await app.inject({ method: 'POST', url: '/api/services/radio/invalid' })
   assert.equal(invalidAction.statusCode, 400)
 
+  // TODO register progress is a read-only projection of the real TODO.md
+  const progressRes = await app.inject({ method: 'GET', url: '/api/progress' })
+  assert.equal(progressRes.statusCode, 200)
+  const progressBody = JSON.parse(progressRes.body) as ProgressPayload
+  assert.ok(progressBody.total > 0, 'the register must parse')
+  assert.equal(progressBody.done + progressBody.open, progressBody.total)
+  assert.equal(typeof progressBody.percent, 'number')
+  assert.ok(progressBody.milestones.length >= 29, 'every established milestone should appear')
+  assert.equal(progressBody.source, 'TODO.md')
+  assert.ok(progressBody.groups.length >= 8)
+  assert.equal(
+    progressBody.groups.reduce((sum, g) => sum + g.total, 0),
+    progressBody.total,
+    'group buckets must account for every row',
+  )
+
+  const deltaRes = await app.inject({
+    method: 'GET',
+    url: `/api/progress?since=${encodeURIComponent(new Date(Date.now() - 60_000).toISOString())}`,
+  })
+  assert.equal(deltaRes.statusCode, 200)
+  assert.ok('delta' in (JSON.parse(deltaRes.body) as Record<string, unknown>))
+
+  const tasksRes = await app.inject({ method: 'GET', url: '/api/todo/tasks?milestone=M27&status=open' })
+  assert.equal(tasksRes.statusCode, 200)
+  const tasksBody = JSON.parse(tasksRes.body) as { rows: Array<{ milestone: string; status: string }> }
+  assert.ok(tasksBody.rows.length > 0, 'M27 has open rows')
+  assert.ok(tasksBody.rows.every((r) => r.milestone === 'M27' && r.status === 'open'))
+
+  const closedRes = await app.inject({ method: 'GET', url: '/api/todo/tasks?milestone=M00&status=done' })
+  assert.equal(closedRes.statusCode, 200)
+  const closedBody = JSON.parse(closedRes.body) as { rows: Array<{ status: string }> }
+  assert.ok(closedBody.rows.every((r) => r.status === 'done'))
+
+  const oversizedRes = await app.inject({ method: 'GET', url: '/api/todo/tasks?status=all&limit=9999' })
+  assert.equal(oversizedRes.statusCode, 200)
+  const oversizedBody = JSON.parse(oversizedRes.body) as { returned: number }
+  assert.ok(oversizedBody.returned <= 400, 'the drill-down must stay bounded')
+
+  // Reading the register must never write to it
+  const registerAfter = statSync(registerPath)
+  assert.equal(registerAfter.size, registerBefore.size, 'TODO.md size must be untouched')
+  assert.equal(registerAfter.mtimeMs, registerBefore.mtimeMs, 'TODO.md mtime must be untouched')
+
   // Vite Client bundle verification
   const scriptMatch = htmlRes.body.match(/src="(\/assets\/[^"]+\.js)"/)
   if (scriptMatch) {
@@ -111,4 +163,5 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
   }
 
   await app.close()
+  tracker.stop()
 })

@@ -31,3 +31,17 @@ Independent read-only review found no blocking issues and recommended closure af
 The integrator fixed the prior lint error by adding the explicit `node:process` import. `pnpm verify` passed on the exact integrated source SHA above, and CI run [`40378453247`](https://github.com/bjo163/moonwitnessxv/actions/runs/40378453247) passed for the same SHA. The promote-to-main job was skipped on the pull-request branch; no deployment is claimed.
 
 Next eligible Dock leaves after integration: M19-10, M19-11, and M19-12, subject to their other prerequisites.
+
+## Reopened and resolved after Next server probe — 2026-10-27
+
+An exact Next server probe added during M19-16 received `redirect count exceeded` for `GET /id` before the home page rendered. The cause was middleware re-entry: localized `/id` rewrites to `/`, then the root locale negotiation redirected to `/id` again. Furthermore, localized subpaths (e.g. `/id/terms` rewriting to `/terms`) re-entered middleware and reverted the locale context to default English.
+
+The middleware now implements generalized `isLocalizedRewrite(request, pathname)`. When trusted forwarded headers (`DOCK_LOCALE_HEADER`, `DOCK_ROUTE_PATH_HEADER`, `DOCK_ROUTE_SEARCH_HEADER`) match the internal rewrite destination (`/` or `/${locale}${pathname}`), middleware yields `NextResponse.next()`, serving the rewritten destination directly without triggering redirect loops or overwriting the forwarded locale context.
+
+Evidence:
+- `apps/dock/test/locale-routes.test.mjs`: Added unit test `middleware re-entry serves internal destination without redirect loops or context loss` asserting that root and subpath re-entries yield `NextResponse.next()`, preserve forwarded headers, and reject mismatched queries/paths. Exit 0 (12/12 passed).
+- `apps/dock/test/home-offline.test.mjs`: HTTP assertions for `/id` (200), `/en` (200), `/` (307 negotiation preserving query), and `/fr` (404) executed against live Next server, exiting cleanly with code 0 in ~2.0s.
+- `pnpm --filter @moonwitness/dock test`: All 24 tests passed, 0 failed across 5 suites.
+- `pnpm --filter @moonwitness/dock typecheck`: Passed cleanly with code 0.
+- `pnpm --filter @moonwitness/dock build`: Next.js 16.4.3 production build compiled all 27 routes cleanly.
+- M19-09 is fully resolved, verified, and ready for closure in TODO.md.

@@ -7,6 +7,9 @@ import {
   type TermsPage,
 } from '@/data/queries/terms'
 import { MatchPreviewView, TermList } from '@/ui/components/terms'
+import { headers } from 'next/headers'
+import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,6 +48,10 @@ export default async function TermsPageView({
 }: {
   searchParams: Promise<TermsSearchParams>
 }) {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const copy = getStatesCopy(locale)
+
   const params = await searchParams
   const filters = {
     q: stringOf(params.q),
@@ -61,7 +68,7 @@ export default async function TermsPageView({
   try {
     termsPage = await readTerms({ ...filters, limit: PAGE_SIZE, offset })
   } catch (err) {
-    termsError = err instanceof MoonApiError ? err.message : 'The UNILEX projection is unavailable.'
+    termsError = err instanceof MoonApiError ? err.message : copy.errorTermsUnavailable
   }
 
   const left = stringOf(params.left)
@@ -72,7 +79,7 @@ export default async function TermsPageView({
     try {
       preview = await readMatchPreview(left, right)
     } catch (err) {
-      previewError = err instanceof MoonApiError ? err.message : 'The match preview is unavailable.'
+      previewError = err instanceof MoonApiError ? err.message : copy.errorMatchPreviewUnavailable
     }
   }
 
@@ -120,42 +127,42 @@ export default async function TermsPageView({
 
       <Panel title="Filter the Terms Table" subtitle="Search matches IDs, labels, definitions and recorded forms.">
         <form className="dk-terms-filter-form" method="get" action="/terms" role="search">
-          <Field label="Search" htmlFor="terms-q" hint="Stable ID, label, definition or form">
-            <TextInput id="terms-q" name="q" defaultValue={filters.q} placeholder="P004 or shadow" maxLength={80} />
+          <Field label={copy.formSearch} htmlFor="terms-q" hint={copy.formTermsSearchHint}>
+            <TextInput id="terms-q" name="q" defaultValue={filters.q} placeholder={copy.formTermsSearchPlaceholder} maxLength={80} />
           </Field>
-          <Field label="Lane" htmlFor="terms-lane">
+          <Field label={copy.formLane} htmlFor="terms-lane">
             <SelectInput
               id="terms-lane"
               name="lane"
               defaultValue={filters.lane}
-              placeholder="All lanes"
+              placeholder={copy.formAllLanes}
               options={(termsPage?.options.lanes ?? []).map((lane) => ({ value: lane, label: lane }))}
             />
           </Field>
-          <Field label="Sense scope" htmlFor="terms-scope">
+          <Field label={copy.formScope} htmlFor="terms-scope">
             <SelectInput
               id="terms-scope"
               name="scope"
               defaultValue={filters.scope}
-              placeholder="All scopes"
+              placeholder={copy.formAllScopes}
               options={(termsPage?.options.scopes ?? []).map((scope) => ({ value: scope, label: scope }))}
             />
           </Field>
-          <Field label="Editorial status" htmlFor="terms-status">
+          <Field label={copy.formEditorialStatus} htmlFor="terms-status">
             <SelectInput
               id="terms-status"
               name="status"
               defaultValue={filters.status}
-              placeholder="All statuses"
+              placeholder={copy.formAllStatuses}
               options={(termsPage?.options.statuses ?? []).map((status) => ({ value: status, label: status }))}
             />
           </Field>
-          <Field label="Source" htmlFor="terms-source">
+          <Field label={copy.formSource} htmlFor="terms-source">
             <SelectInput
               id="terms-source"
               name="source"
               defaultValue={filters.source}
-              placeholder="All approved sources"
+              placeholder={copy.formAllSources}
               options={(termsPage?.options.sources ?? [])
                 .filter((source) => source.code)
                 .map((source) => ({
@@ -165,7 +172,7 @@ export default async function TermsPageView({
             />
           </Field>
           <Button type="submit" variant="accent">
-            APPLY FILTERS
+            {copy.formApplyFilters}
           </Button>
         </form>
       </Panel>
@@ -193,14 +200,14 @@ export default async function TermsPageView({
             value !== '' ? <input key={key} type="hidden" name={key} value={value} /> : null,
           )}
           {page > 1 ? <input type="hidden" name="page" value={String(page)} /> : null}
-          <Field label="Left surface" htmlFor="terms-left">
+          <Field label={copy.formLeftSurface} htmlFor="terms-left">
             <TextInput id="terms-left" name="left" defaultValue={left} placeholder="ZILL" maxLength={160} />
           </Field>
-          <Field label="Right surface" htmlFor="terms-right">
+          <Field label={copy.formRightSurface} htmlFor="terms-right">
             <TextInput id="terms-right" name="right" defaultValue={right} placeholder="ZIIL" maxLength={160} />
           </Field>
           <Button type="submit" variant="paper">
-            PREVIEW MATCH
+            {copy.formPreviewMatch}
           </Button>
         </form>
         {previewError ? <Alert tone="hot">{previewError}</Alert> : null}

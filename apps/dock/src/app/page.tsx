@@ -17,15 +17,36 @@ import {
 } from '@/ui/components/sections'
 import { todayWeekday } from '@/lib/time'
 import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
-import { getLandingCopy } from '@/lib/landing-copy'
+import { getLandingCopy, type LandingCopy } from '@/lib/landing-copy'
 
 export const dynamic = 'force-dynamic'
+
+function OfflineLanding({ copy }: { copy: LandingCopy }) {
+  return (
+    <section className="dk-hero" aria-labelledby="offline-home-title">
+      <div className="dk-hero-art" aria-hidden="true" />
+      <div className="dk-hero-overlay" />
+      <div className="dk-hero-content">
+        <div className="dk-hero-left">
+          <Tape tone="accent">{copy.heroEyebrow}</Tape>
+          <h1 id="offline-home-title" className="dk-hero-title">MOONWITNESS</h1>
+          <p className="dk-hero-sub">{copy.heroNetwork}<br />{copy.heroAudience}<br />{copy.heroMoon}<br />{copy.heroPerspective}</p>
+          <p className="dk-hero-sub">{copy.approvedMission}</p>
+          <p className="m-muted" role="status">{copy.liveDataUnavailable}</p>
+        </div>
+      </div>
+    </section>
+  )
+}
 
 export default async function HomePage() {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
   const copy = getLandingCopy(locale)
   const payload = await homePayload()
+  if (!payload.liveDataAvailable) {
+    return <div className="dk-home-stack"><OfflineLanding copy={copy} /></div>
+  }
   const live = payload.stations.find((station) => station.id === payload.now?.stationId) ?? payload.stations[0]
 
   return (

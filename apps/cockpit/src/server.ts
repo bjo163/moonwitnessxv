@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
 import { fetchIcyMetadata } from '@moonwitness/core'
 import { DEFAULT_MEDIA_CHANNELS, type ChannelItem } from './channels.js'
+import type { ProgressTracker } from './progressTracker.js'
 import type { MoondeckConfig } from './types.js'
 import type { ProcessSupervisor } from './supervisor.js'
 
@@ -26,7 +27,11 @@ function findPublicDir(): string {
   return resolve(current, '../public')
 }
 
-export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessSupervisor) {
+export function createCockpitServer(
+  config: MoondeckConfig,
+  supervisor: ProcessSupervisor,
+  progress: ProgressTracker,
+) {
   const app = Fastify({
     logger: false,
   })
@@ -186,6 +191,33 @@ export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessS
     return newChannel
   })
 
+  // TODO register progress — a read-only projection of TODO.md. There is no
+  // write path here on purpose: TODO.md stays the sole task/status register.
+  app.get('/api/progress', async (req, reply) => {
+    const query = req.query as { since?: string }
+    const payload = progress.buildPayload()
+    const delta = query.since ? progress.getDelta(query.since) : null
+    if (!progress.hasSnapshot()) {
+      return reply.code(503).send({ ...payload, error: payload.error ?? 'Register not readable yet' })
+    }
+    return delta ? { ...payload, delta } : payload
+  })
+
+  app.get('/api/todo/tasks', async (req, reply) => {
+    const query = req.query as { milestone?: string; status?: string; priority?: string; limit?: string }
+    if (!progress.hasSnapshot()) {
+      return reply.code(503).send({ error: 'Register not readable yet', rows: [] })
+    }
+    const snapshot = progress.buildPayload()
+    const result = progress.queryTasks({
+      status: query.status,
+      milestone: query.milestone,
+      priority: query.priority,
+      limit: query.limit ? Number(query.limit) : undefined,
+    })
+    return { ...result, total: snapshot.total, done: snapshot.done, open: snapshot.open }
+  })
+
   // Status of all services
   app.get('/api/status', async () => {
     return {
@@ -206,7 +238,7 @@ export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessS
     return supervisor.getRecentLogs(limit, query.tag)
   })
 
-  // SSE Stream for Real-time logs and state changes
+  // SSE Stream for Real-time logs, state changes and register progress
   app.get('/api/logs/stream', (req, reply) => {
     reply.raw.setHeader('Content-Type', 'text/event-stream; charset=utf-8')
     reply.raw.setHeader('Cache-Control', 'no-cache, no-transform')
@@ -218,6 +250,10 @@ export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessS
     const initialLogs = supervisor.getRecentLogs(80)
     reply.raw.write(`event: init\ndata: ${JSON.stringify(initialLogs)}\n\n`)
 
+    // Progress is pushed only when it changes, so an open panel stays current
+    // without any client-side polling of the register itself.
+    reply.raw.write(`event: progress\ndata: ${JSON.stringify(progress.buildPayload())}\n\n`)
+
     const onLog = (entry: unknown) => {
       reply.raw.write(`event: log\ndata: ${JSON.stringify(entry)}\n\n`)
     }
@@ -226,8 +262,13 @@ export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessS
       reply.raw.write(`event: state\ndata: ${JSON.stringify(state)}\n\n`)
     }
 
+    const onProgress = (payload: unknown) => {
+      reply.raw.write(`event: progress\ndata: ${JSON.stringify(payload)}\n\n`)
+    }
+
     supervisor.on('log', onLog)
     supervisor.on('state', onState)
+    progress.on('progress', onProgress)
 
     // Heartbeat to prevent connection drop
     const heartbeat = setInterval(() => {
@@ -238,6 +279,7 @@ export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessS
       clearInterval(heartbeat)
       supervisor.off('log', onLog)
       supervisor.off('state', onState)
+      progress.off('progress', onProgress)
     })
   })
 

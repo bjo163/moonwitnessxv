@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useTransition, type ReactNode } from 'react'
+import { useState, useTransition, useEffect, type ReactNode } from 'react'
 import type { PublicLiveTransmissionsOutput } from '@moonwitness/moonql-client'
+import type { Locale } from '@moonwitness/core'
+import { getStatesCopy } from '@/lib/states-copy'
 import {
   Alert,
   Badge,
@@ -26,9 +28,30 @@ export interface StationOption {
 export interface DenpaTransceiverProps {
   initialTransmissions: PublicLiveTransmissionsOutput[]
   stations: StationOption[]
+  locale?: Locale
 }
 
-export function DenpaTransceiver({ initialTransmissions, stations }: DenpaTransceiverProps): ReactNode {
+function detectClientLocale(): Locale {
+  if (typeof document !== 'undefined') {
+    const lang = document.documentElement.lang
+    if (lang === 'id' || lang === 'en') return lang
+    if (window.location.pathname.startsWith('/id')) return 'id'
+  }
+  return 'en'
+}
+
+export function DenpaTransceiver({ initialTransmissions, stations, locale }: DenpaTransceiverProps): ReactNode {
+  const [activeLocale, setActiveLocale] = useState<Locale>(() => locale ?? detectClientLocale())
+
+  useEffect(() => {
+    if (locale) {
+      setActiveLocale(locale)
+    } else {
+      setActiveLocale(detectClientLocale())
+    }
+  }, [locale])
+
+  const copy = getStatesCopy(activeLocale)
   const [transmissions, setTransmissions] = useState<PublicLiveTransmissionsOutput[]>(initialTransmissions)
   const [message, setMessage] = useState('')
   const [pseudonym, setPseudonym] = useState('')
@@ -60,7 +83,7 @@ export function DenpaTransceiver({ initialTransmissions, stations }: DenpaTransc
         if (res.ok && body.ok) {
           playUiSound('toggle')
           triggerHaptic('switch')
-          setStatusMsg({ tone: 'ok', text: 'Transmission broadcasted on-air into the denpa shortwave network.' })
+          setStatusMsg({ tone: 'ok', text: copy.formDenpaSuccess })
           setMessage('')
           if (body.data) {
             const newRow = body.data
@@ -69,18 +92,18 @@ export function DenpaTransceiver({ initialTransmissions, stations }: DenpaTransc
         } else {
           triggerHaptic('alert')
           playUiSound('alert')
-          setStatusMsg({ tone: 'hot', text: body.error || 'Failed to transmit signal.' })
+          setStatusMsg({ tone: 'hot', text: body.error || copy.formDenpaError })
         }
       } catch (err) {
         triggerHaptic('alert')
         playUiSound('alert')
-        setStatusMsg({ tone: 'hot', text: err instanceof Error ? err.message : 'Transmission failure.' })
+        setStatusMsg({ tone: 'hot', text: err instanceof Error ? err.message : copy.formDenpaFailure })
       }
     })
   }
 
   const stationSelectOptions = [
-    { value: '', label: 'Global Network Broadcast' },
+    { value: '', label: copy.formDenpaGlobal },
     ...stations.map((st) => ({ value: st.id, label: st.name })),
   ]
 
@@ -99,12 +122,12 @@ export function DenpaTransceiver({ initialTransmissions, stations }: DenpaTransc
           subtitle="Inbound shortwave message broadcast deck · Broadcast directly into live DJ queues"
         >
           <form onSubmit={(e) => void handleTransmit(e)} className="m-stack" style={{ gap: 14 }}>
-            <Field label="Transmission Content (Max 500 characters)" htmlFor="denpa-msg">
+            <Field label={copy.formDenpaContent} htmlFor="denpa-msg">
               <Textarea
                 id="denpa-msg"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Type your message, frequency callsign, or request..."
+                placeholder={copy.formDenpaPlaceholder}
                 rows={4}
                 maxLength={500}
                 required
@@ -112,24 +135,24 @@ export function DenpaTransceiver({ initialTransmissions, stations }: DenpaTransc
             </Field>
 
             <div className="m-row" style={{ justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--muted)' }}>
-              <span>ENCRYPTED PSEUDONYMIZATION APPLIED</span>
+              <span>{copy.formDenpaEncrypted}</span>
               <span>{message.length} / 500</span>
             </div>
 
             <div className="m-row" style={{ gap: 12, flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 160 }}>
-                <Field label="Handle / Callsign (Optional)" htmlFor="denpa-pseudo">
+                <Field label={copy.formDenpaPseudonym} htmlFor="denpa-pseudo">
                   <TextInput
                     id="denpa-pseudo"
                     value={pseudonym}
                     onChange={(e) => setPseudonym(e.target.value)}
-                    placeholder="e.g. Luna_Pilot_7"
+                    placeholder={copy.formDenpaPseudonymPlaceholder}
                   />
                 </Field>
               </div>
 
               <div style={{ flex: 1, minWidth: 160 }}>
-                <Field label="Target Station (Optional)" htmlFor="denpa-station">
+                <Field label={copy.formDenpaTargetStation} htmlFor="denpa-station">
                   <SelectInput
                     id="denpa-station"
                     options={stationSelectOptions}
@@ -146,7 +169,7 @@ export function DenpaTransceiver({ initialTransmissions, stations }: DenpaTransc
               size="md"
               disabled={isPending || !message.trim()}
             >
-              {isPending ? 'TRANSMITTING SIGNAL...' : 'TRANSMIT SHORTWAVE SIGNAL'}
+              {isPending ? copy.formDenpaTransmitting : copy.formDenpaTransmit}
             </Button>
           </form>
         </Panel>
@@ -159,7 +182,7 @@ export function DenpaTransceiver({ initialTransmissions, stations }: DenpaTransc
           <div className="m-stack" style={{ gap: 12, maxHeight: 460, overflowY: 'auto' }}>
             {transmissions.length === 0 ? (
               <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)', fontSize: '0.9rem' }}>
-                No active transmissions captured on this frequency band. Be the first to transmit!
+                {copy.emptyDenpaTransmissions}
               </div>
             ) : (
               transmissions.map((t) => (

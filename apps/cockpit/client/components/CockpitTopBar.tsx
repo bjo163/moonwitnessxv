@@ -22,6 +22,7 @@ export interface CockpitTopBarProps {
   isFreeingPorts: boolean
   crtShader: boolean
   setCrtShader: (fn: (prev: boolean) => boolean) => void
+  progressPercent?: number | null
 }
 
 export function CockpitTopBar({
@@ -43,6 +44,7 @@ export function CockpitTopBar({
   isFreeingPorts,
   crtShader,
   setCrtShader,
+  progressPercent,
 }: CockpitTopBarProps): ReactNode {
   return (
     <header className="cockpit-topbar">
@@ -65,6 +67,12 @@ export function CockpitTopBar({
         </div>
         <div>
           STATUS: <LiveDot state="live" /> <strong style={{ color: 'var(--ok)' }}>NOMINAL</strong>
+        </div>
+        <div>
+          TODO:{' '}
+          <strong style={{ color: progressPercent == null ? 'var(--muted)' : 'var(--cyan)' }}>
+            {progressPercent == null ? '—' : `${String(progressPercent)}%`}
+          </strong>
         </div>
       </div>
 

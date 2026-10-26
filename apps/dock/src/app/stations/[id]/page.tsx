@@ -3,10 +3,17 @@ import { Badge, LinkButton, PageHeader, Panel, StatCard, Chevron } from '@moonwi
 import { getStation } from '@/data/queries/catalog'
 import { clock } from '@/lib/time'
 import { Player } from '@/ui/client/Player'
+import { headers } from 'next/headers'
+import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
 
 export default async function StationPage({ params }: { params: Promise<{ id: string }> }) {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const copy = getStatesCopy(locale)
+
   const { id } = await params
   const detail = await getStation(id)
   if (!detail) notFound()
@@ -17,7 +24,7 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
     <div className="m-stack" style={{ gap: 20 }}>
       <PageHeader
         title={station.name}
-        subtitle={`${station.genre ?? 'unformatted'} · ${station.countryRefRecord?.name ?? 'unknown country'} · ${plays} logged play${plays === 1 ? '' : 's'}`}
+        subtitle={`${station.genre ?? copy.fallbackUnformatted} · ${station.countryRefRecord?.name ?? copy.fallbackUnknownCountry} · ${plays} logged play${plays === 1 ? '' : 's'}`}
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Signals', href: '/stations' }, { label: station.name }]}
         actions={
           <span className="m-row">
@@ -44,13 +51,13 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
             <StatCard label="logged plays" value={plays} />
           </div>
         ) : (
-          <p className="m-muted">This station has no country reference.</p>
+          <p className="m-muted">{copy.emptyStationNoCountry}</p>
         )}
       </Panel>
 
       <Panel title={`Schedule (${slots.length} slots)`} subtitle="weekly transmission windows in UTC">
         {slots.length === 0 ? (
-          <p className="m-muted">No slots scheduled for this station yet.</p>
+          <p className="m-muted">{copy.emptyStationNoSchedule}</p>
         ) : (
           <div className="dk-grid">
             {slots.map((slot) => (
@@ -63,7 +70,7 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
                   {clock(slot.startMin)}–{clock(slot.endMin)}
                 </div>
                 <div className="m-muted" style={{ fontSize: 12 }}>
-                  {slot.host ? `hosted by ${slot.host}` : 'no host'}
+                  {slot.host ? `hosted by ${slot.host}` : copy.emptyStationNoHost}
                 </div>
               </div>
             ))}

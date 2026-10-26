@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { Card, CardBody, CardHeader, Crown, Tape, Badge, ZineNote } from '@moonwitness/moonui'
-import { SiteLayout } from '@/layouts/site'
 
 interface NarrativeEra {
   eraNum: number
@@ -23,8 +22,7 @@ const ERAS: NarrativeEra[] = [
 
 export default function TimelinePage(): ReactNode {
   return (
-    <SiteLayout>
-      <div className="m-stack" style={{ gap: 24, maxWidth: 900, margin: '0 auto', padding: '24px 16px' }}>
+    <div className="m-stack" style={{ gap: 24, maxWidth: 900, margin: '0 auto', padding: '24px 16px' }}>
         <div>
           <div className="m-row" style={{ gap: 10, alignItems: 'center' }}>
             <Crown tone="cyan" size="md" />
@@ -66,6 +64,5 @@ export default function TimelinePage(): ReactNode {
           CHRONOLOGY NOTICE: Eras represent narrative phases of consciousness, not Gregorian historical epochs.
         </ZineNote>
       </div>
-    </SiteLayout>
   )
 }

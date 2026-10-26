@@ -29,7 +29,7 @@ export function CockpitFooter({ crtShader }: CockpitFooterProps): ReactNode {
           <span><Kbd>M</Kbd> Mute</span>
           <span><Kbd>[</Kbd> / <Kbd>]</Kbd> Channel</span>
           <span><Kbd>P</Kbd> PiP</span>
-          <span><Kbd>1</Kbd>–<Kbd>5</Kbd> Tabs</span>
+          <span><Kbd>1</Kbd>–<Kbd>6</Kbd> Tabs</span>
           <span><Kbd>~</Kbd> Toggle Terminal</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

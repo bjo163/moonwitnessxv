@@ -2,6 +2,9 @@ import type { ReactNode } from 'react'
 import { Alert, Badge, PageHeader } from '@moonwitness/moonui'
 import { readPatchesRegistry, type PatchesRegistry } from '@/data/queries/journey'
 import { PatchesExplorer } from '@/ui/client/PatchesExplorer'
+import { headers } from 'next/headers'
+import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,13 +14,17 @@ export const metadata = {
 }
 
 export default async function PatchesPage(): Promise<ReactNode> {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const copy = getStatesCopy(locale)
+
   let registry: PatchesRegistry | null = null
   let error: string | null = null
 
   try {
     registry = await readPatchesRegistry()
   } catch (err) {
-    error = err instanceof Error ? err.message : 'Unable to load World Patches.'
+    error = err instanceof Error ? err.message : copy.errorPatchesUnavailable
   }
 
   return (

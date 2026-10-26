@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { Card, CardBody, CardHeader, Tape, Badge, ZineNote, PageHeader } from '@moonwitness/moonui'
-import { SiteLayout } from '@/layouts/site'
 import { createPassageCitation } from '@moonwitness/core'
 
 interface ParallelEdition {
@@ -84,8 +83,7 @@ export default async function ComparePage(): Promise<ReactNode> {
   )
 
   return (
-    <SiteLayout>
-      <div className="m-stack" style={{ gap: 24, maxWidth: 1200, margin: '0 auto', padding: '24px 16px' }}>
+    <div className="m-stack" style={{ gap: 24, maxWidth: 1200, margin: '0 auto', padding: '24px 16px' }}>
         <PageHeader
           title="Comparative 1·6·3 Workbench"
           subtitle="One Passage (QS 2:82) · Six Parallel Editions · Three Analytical Dimensions"
@@ -163,6 +161,5 @@ export default async function ComparePage(): Promise<ReactNode> {
           EPISTEMIC GUARDRAIL: Comparative viewing preserves parallel textual witnesses side-by-side without asserting false identity or erasing translator lineages.
         </ZineNote>
       </div>
-    </SiteLayout>
   )
 }

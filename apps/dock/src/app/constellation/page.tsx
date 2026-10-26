@@ -4,6 +4,9 @@ import { readConstellation, type ConstellationProjection } from '@/data/queries/
 import { readGraphOverview, type GraphOverview } from '@/data/queries/graph'
 import { ConstellationView } from '@/ui/components/constellation'
 import { GraphReleasePanel } from '@/ui/components/graph-relation'
+import { headers } from 'next/headers'
+import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,12 +16,16 @@ export const metadata = {
 }
 
 export default async function ConstellationPage() {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const copy = getStatesCopy(locale)
+
   let projection: ConstellationProjection | null = null
   let error: string | null = null
   try {
     projection = await readConstellation()
   } catch (err) {
-    error = err instanceof MoonApiError ? err.message : 'The Constellation projection is unavailable.'
+    error = err instanceof MoonApiError ? err.message : copy.errorConstellationUnavailable
   }
 
   let overview: GraphOverview | null = null
@@ -26,7 +33,7 @@ export default async function ConstellationPage() {
   try {
     overview = await readGraphOverview()
   } catch (err) {
-    graphError = err instanceof MoonApiError ? err.message : 'The graph release overview is unavailable.'
+    graphError = err instanceof MoonApiError ? err.message : copy.errorGraphUnavailable
   }
 
   return (

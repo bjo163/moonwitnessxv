@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server.js'
 // both Next configs use. `core` is linted to stay free of Node built-ins precisely so
 // this edge entry point can import it.
 import { EMBED_PATH, embedOrigins, isLocale, resolveLocale, securityHeaders } from '@moonwitness/core'
-import { DOCK_LOCALE_HEADER } from './lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, DOCK_ROUTE_PATH_HEADER, DOCK_ROUTE_SEARCH_HEADER } from './lib/locale-context.mjs'
 
 /**
  * Framing is decided per path, here, rather than in `next.config.mjs`.
@@ -21,7 +21,12 @@ export function middleware(request: NextRequest): NextResponse {
   let routePath = pathname
   let response: NextResponse
 
-  if (pathname === '/') {
+  if (isLocalizedRewrite(request, pathname)) {
+    // `/id/*` and `/en/*` rewrite to internal destinations (`/`, `/terms`, etc.).
+    // Next runs middleware again for the internal destination, so serve it directly
+    // to preserve forwarded locale headers and prevent redirect loops.
+    response = NextResponse.next()
+  } else if (pathname === '/') {
     const resolution = resolveLocale({
       persistedLocale: request.cookies.get('mw_locale')?.value,
       acceptLanguage: request.headers.get('accept-language'),
@@ -50,16 +55,52 @@ export function middleware(request: NextRequest): NextResponse {
       const destination = request.nextUrl.clone()
       destination.pathname = remainder
       routePath = remainder
-      const forwardedHeaders = new Headers(request.headers)
-      // Overwrite any client-supplied value before forwarding trusted route context.
-      forwardedHeaders.set(DOCK_LOCALE_HEADER, localeSegment)
+      const forwardedHeaders = pageRequestHeaders(request, pathname, localeSegment)
       response = NextResponse.rewrite(destination, { request: { headers: forwardedHeaders } })
     } else {
-      response = NextResponse.next()
+      if (pathname === '/api' || pathname.startsWith('/api/')) {
+        response = NextResponse.next()
+      } else {
+        const resolution = resolveLocale({
+          persistedLocale: request.cookies.get('mw_locale')?.value,
+          acceptLanguage: request.headers.get('accept-language'),
+        })
+        const locale = 'status' in resolution ? 'en' : resolution.locale
+        response = NextResponse.next({
+          request: { headers: pageRequestHeaders(request, pathname, locale) },
+        })
+        response.headers.set('Vary', 'Accept-Language')
+        if (request.cookies.has('mw_locale')) {
+          response.headers.set('Cache-Control', 'private, no-store')
+          response.headers.append('Vary', 'Cookie')
+        }
+      }
     }
   }
 
   return withSecurity(response, routePath)
+}
+
+function isLocalizedRewrite(request: NextRequest, pathname: string): boolean {
+  if (pathname === '/api' || pathname.startsWith('/api/')) return false
+  const locale = request.headers.get(DOCK_LOCALE_HEADER)
+  const sourcePath = request.headers.get(DOCK_ROUTE_PATH_HEADER)
+  const sourceSearch = request.headers.get(DOCK_ROUTE_SEARCH_HEADER)
+  if (!isLocale(locale) || sourceSearch !== request.nextUrl.search || !sourcePath) return false
+
+  if (pathname === '/') {
+    return sourcePath === `/${locale}` || sourcePath === `/${locale}/`
+  }
+  return sourcePath === `/${locale}${pathname}`
+}
+
+function pageRequestHeaders(request: NextRequest, pathname: string, locale: string): Headers {
+  const forwardedHeaders = new Headers(request.headers)
+  // Always overwrite the client-controlled locale and route metadata before RSC reads it.
+  forwardedHeaders.set(DOCK_LOCALE_HEADER, locale)
+  forwardedHeaders.set(DOCK_ROUTE_PATH_HEADER, pathname)
+  forwardedHeaders.set(DOCK_ROUTE_SEARCH_HEADER, request.nextUrl.search)
+  return forwardedHeaders
 }
 
 function withSecurity(response: NextResponse, routePath: string): NextResponse {

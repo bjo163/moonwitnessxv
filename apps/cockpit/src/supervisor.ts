@@ -1,23 +1,14 @@
 import { spawn, type ChildProcess, execFileSync } from 'node:child_process'
 import { createInterface } from 'node:readline'
-import { appendFileSync, existsSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { appendFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { EventEmitter } from 'node:events'
+import { findRepoRoot } from './paths.js'
 import type { MoondeckConfig, ServiceState, LogEntry } from './types.js'
 
 const isWindows = process.platform === 'win32'
 const ERROR_PATTERN = /("level":(50|60)|"statusCode":(4\d\d|5\d\d)|\b(error|fatal|exception|failed|failure|eaddrinuse|econnrefused|unauthorized|rejected)\b|^error\b)/i
 const WARN_PATTERN = /("level":40|\b(warn|warning)\b)/i
-
-function findRepoRoot(): string {
-  let curr = dirname(fileURLToPath(import.meta.url))
-  for (let i = 0; i < 5; i++) {
-    if (existsSync(join(curr, 'pnpm-workspace.yaml'))) return curr
-    curr = dirname(curr)
-  }
-  return process.cwd()
-}
 
 export class ProcessSupervisor extends EventEmitter {
   private config: MoondeckConfig

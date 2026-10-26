@@ -2,6 +2,9 @@ import { MoonApiError } from '@moonwitness/moonql-client'
 import { Alert, Badge, PageHeader } from '@moonwitness/moonui'
 import { readFigures, type FigureRegistry } from '@/data/queries/actors'
 import { FigureRegistryView } from '@/ui/components/actors'
+import { headers } from 'next/headers'
+import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,12 +14,16 @@ export const metadata = {
 }
 
 export default async function FiguresPageView() {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const copy = getStatesCopy(locale)
+
   let registry: FigureRegistry | null = null
   let error: string | null = null
   try {
     registry = await readFigures()
   } catch (err) {
-    error = err instanceof MoonApiError ? err.message : 'The Figure Registry is unavailable.'
+    error = err instanceof MoonApiError ? err.message : copy.errorFiguresUnavailable
   }
 
   return (

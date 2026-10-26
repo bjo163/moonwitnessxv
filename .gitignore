@@ -16,3 +16,5 @@ coverage/
 .next/
 out/
 .vercel/
+.agents/teamwork/
+PROJECT.md
