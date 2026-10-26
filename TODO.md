@@ -27,6 +27,8 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 | **G5 — OPTIONAL RESEARCH** | M24–M26 | World monitoring, Science/Time, legacy registries and source recovery |
 | **G6 — RELEASE** | M27 | Real full-stack tests, privacy, rights and approved launch |
 
+**Scope gate:** The first Reader release does not require Story/SHADOW or AI. Publishing a Story does additionally require M17 source/consent approval; using AI does additionally require M21 security and candidate approval. Do not conflate optional feature gating with first-release gating.
+
 **P0 crosscut:** M22 protects Radio from the first engineering change even though grouped in G4. `M03` precedes any private source ingestion, `M04` before production, `M06` before historical data transfer, `M18` before public release. First useful scope is Radio unchanged + QS 2:82 licensed/metadata-only reader + one typed source/term + explicitly reviewed evidence + secure admin and actual restore. G5 must not block that release.
 
 ---
@@ -340,13 +342,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 ## M18 — One publication and retraction gate
 
-**Group:** G3 · **Priority:** P1 · **Prerequisites:** M03,M14,M17 · **Scope:** Source rights, review release and public projections.
+**Group:** G3 · **Priority:** P1 · **Prerequisites:** M03,M14,M07 · **Scope:** Source rights, review release and public projections.
 
 **Exit gate:** Only reviewed/consented versions visible and retractable. Do not infer completion from code inventory alone.
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M18-01** — Specify single publish state machine for text, testimony and story | P1 | D3 | M14-07,M17-07 | One approval path with type-specific rights veto |
+| - [ ] | **M18-01** — Specify single publish state machine for text, testimony and story | P1 | D3 | M14-07,M07-07 | One approval path with type-specific rights veto; Story-specific release additionally needs M17 |
 | - [ ] | **M18-02** — Store edition/body license, media consent and reviewer evidence | P1 | D3 | M18-01 | No unknown-rights byte published |
 | - [ ] | **M18-03** — Create immutable release manifest and current-version pointer | P1 | D3 | M18-01,M12-03 | Public read refers to one approved revision |
 | - [ ] | **M18-04** — Implement withdrawal, correction, takedown and appeal process | P1 | D4 | M18-03,M03-06 | Revoked content ceases public availability |
@@ -369,7 +371,7 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 | - [ ] | **M19-04** — Implement keyboard/focus/errors/reduced motion accessibility | P1 | D3 | M19-03 | Basic WCAG-oriented interactions functional |
 | - [ ] | **M19-05** — Test Arabic/Hebrew/Greek scripts, RTL and diacritics | P1 | D3 | M19-04 | Unicode and text-selection meaning retained |
 | - [ ] | **M19-06** — Create screenshot and behavioral baseline across experience modes | P1 | D3 | M19-03,M19-05 | Visual snapshots complement behavioral tests |
-| - [ ] | **M19-07** — Run browser acceptance for J01/J03/J05 on mobile and desktop | P1 | D4 | M19-06 | Actual user flows pass with accessible components |
+| - [ ] | **M19-07** — Run J01/J03 browser acceptance; J05 only when Story is in release scope | P1 | D4 | M19-06 | Selected-scope flows pass with accessibility; optional Story cannot block Reader |
 
 
 ## M20 — Headquarters and 100CENTER human governance
