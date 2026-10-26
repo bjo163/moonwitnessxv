@@ -10,6 +10,7 @@ import monitor from '@moonwitness/moonql-monitor'
 import corpus from '@moonwitness/moonql-corpus'
 import unilex from '@moonwitness/moonql-unilex'
 import ontology from '@moonwitness/moonql-ontology'
+import actors from '@moonwitness/moonql-actors'
 import type { AnyAddon } from '@moonwitness/moonql'
 
 /**
@@ -30,4 +31,5 @@ export const addons: AnyAddon[] = [
   corpus,
   unilex,
   ontology,
+  actors,
 ]
