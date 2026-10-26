@@ -1,10 +1,10 @@
 # M19-25 — Cockpit locale scope audit
 
-**Task:** M19-25, Audit actual Cockpit Vite UI and optional CLI help  
-**Worker:** `/root/m19_25_cockpit_audit`  
-**Baseline/source SHA:** `c1f828b69c81e6ab039a9606597f658d3a38a1f9`  
-**Working branch:** `codex/m05-08-locale-audit-387f784`  
-**Result SHA:** pending integrator commit (this artifact is uncommitted)  
+**Task:** M19-25, Audit actual Cockpit Vite UI and optional CLI help
+**Worker:** `/root/m19_25_cockpit_audit`
+**Baseline/source SHA:** `c1f828b69c81e6ab039a9606597f658d3a38a1f9`
+**Working branch:** `codex/m05-08-locale-audit-387f784`
+**Result SHA:** `e73e156bf4616131152ff865b3f6f67658a92d77`
 **Changed path:** `docs/audit/M19-25-cockpit-locale-scope.md`
 
 ## Finding

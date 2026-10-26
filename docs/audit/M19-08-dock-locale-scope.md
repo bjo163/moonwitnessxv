@@ -1,7 +1,7 @@
 # M19-08 — Dock route and public-content locale audit
 
-**Audit baseline:** `c1f828b69c81e6ab039a9606597f658d3a38a1f9`  
-**Audit date:** 2026-10-27 (Asia/Jakarta)  
+**Audit baseline:** `c1f828b69c81e6ab039a9606597f658d3a38a1f9`
+**Audit date:** 2026-10-27 (Asia/Jakarta)
 **Scope:** `apps/dock/src/app`, `apps/dock/src/ui/components`, routing/protection and locale-sensitive source projections. This is an inventory of current code, not a claim that Dock is localized.
 
 ## Findings
@@ -73,6 +73,6 @@ M19-08's inventory and source-boundary review are complete. The task's evidence 
 
 Next eligible route implementation is **M19-09**, subject to its listed prerequisites M05-11 and this audit being accepted. M19-10/11 content work follows route support and must preserve the source-language/right boundaries above. M19-18 (nested `SiteLayout` removal) also depends on M19-08 and can proceed independently after this audit is accepted.
 
-**Result source SHA:** `c1f828b69c81e6ab039a9606597f658d3a38a1f9` (unchanged; artifact is uncommitted).  
-**Files changed:** `docs/audit/M19-08-dock-locale-scope.md` only.  
+**Result source SHA:** `c1f828b69c81e6ab039a9606597f658d3a38a1f9` (unchanged; artifact is uncommitted).
+**Files changed:** `docs/audit/M19-08-dock-locale-scope.md` only.
 **Limitations:** no production/browser request was made; route protection assessment is limited to inspected application code; no locale-routing tests exist among the focused scripts run.
