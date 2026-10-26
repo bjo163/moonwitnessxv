@@ -286,13 +286,15 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M13-01** — Read SRGBL P19 specs, issue register and unresolved gates | P1 | D2 | M07-07 | Engineering commit not mistaken for human review |
-| - [ ] | **M13-02** — Implement S1 exact edition, rights and source sense gate | P1 | D3 | M13-01 | Unresolved source stays unknown |
-| - [ ] | **M13-03** — Implement R2 text claim and G3 defensible relation checks | P1 | D3 | M13-02,M12-05 | Speculation never presented as source |
-| - [ ] | **M13-04** — Implement B4 actor/recipient/context and research lens | P1 | D3 | M13-03,M11-06 | Blank frame and unsupported identity rejected |
-| - [ ] | **M13-05** — Implement L5 scoped derived interpretation and trace | P1 | D3 | M13-04 | One cited conclusion with limits, not divine judgment |
-| - [ ] | **M13-06** — Keep maturity/15, quality/40, witness/100, direction separate | P1 | D3 | M13-05 | No theological truth ranking or score merge |
-| - [ ] | **M13-07** — Test SWING, Positive Correction, OFFSIDE adversarial hypotheses | P1 | D4 | M13-06 | Hypothesis must cite and cannot self-validate |
+| - [x] | **M13-01** — Read SRGBL P19 specs, issue register and unresolved gates | P1 | D2 | M07-07 | Engineering commit not mistaken for human review |
+| - [x] | **M13-02** — Implement S1 exact edition, rights and source sense gate | P1 | D3 | M13-01 | Unresolved source stays unknown |
+| - [x] | **M13-03** — Implement R2 text claim and G3 defensible relation checks | P1 | D3 | M13-02,M12-05 | Speculation never presented as source |
+| - [x] | **M13-04** — Implement B4 actor/recipient/context and research lens | P1 | D3 | M13-03,M11-06 | Blank frame and unsupported identity rejected |
+| - [x] | **M13-05** — Implement L5 scoped derived interpretation and trace | P1 | D3 | M13-04 | One cited conclusion with limits, not divine judgment |
+| - [x] | **M13-06** — Keep maturity/15, quality/40, witness/100, direction separate | P1 | D3 | M13-05 | No theological truth ranking or score merge |
+| - [x] | **M13-07** — Test SWING, Positive Correction, OFFSIDE adversarial hypotheses | P1 | D4 | M13-06 | Hypothesis must cite and cannot self-validate |
+
+**Revalidasi 2026-10-26 (`3d88850`, baseline `1f80229`):** addon `@moonwitness/moonql-research` terpasang di hub dengan 7 model dan seed terpin: 3 case (Arab exact, terjemahan berlisensi, edisi tak teresolusi), 3 frame, 5 klaim R2, 2 relasi G3, 2 Key Witness, 1 quality run dan 3 hipotesis. Stage S1–L5 fail-closed: S1 menuntut edisi/passage/citation/rights/rights snapshot/SHA-256 persis/source sense; R2 hanya menerima klaim `OBSERVED_TEXT` ber-span dan ber-SHA; G3 menolak spekulasi sebagai sumber; B4 menolak frame kosong, aktor tak teresolusi dan `UNSPECIFIED` tanpa alasan; L5 hanya boleh satu bacaan turunan berlimit — tidak pernah divine judgment atau human review. Maturity/15 (prefiks `PASS` bersambung), quality/40 (10 dimensi pada bundle lengkap), witness/100 (kandidat; ≥70 hanya `eligible-for-review`), dan direction −2..2 (bobot nol = `UNKNOWN`) tetap terpisah tanpa skor gabungan, ranking atau merge. SWING memakai 7 operator kedalaman ≤3 dan berhenti pada duplikat/siklus; Positive Correction menuntut lensa non-netral + counter-reading; OFFSIDE tidak mengedit frame; hipotesis wajib mengutip, tidak dapat memvalidasi diri, dan corroboration menuntut validator berbeda + sumber independen. Pin P19 (specs/register/status) dibaca pada SHA persis; pin XIV tetap `UNAVAILABLE_AT_PIN` dan empat temuan register tetap terbuka dengan `p19ReleaseDecision: BLOCKED`. Suite M13 8/8, Dockerfile contract 6/6, suite penuh 287 test (279 pass, 8 skipped, 0 fail), drill PG nyata `engine=pg` lulus dua kali, `pnpm build`, `pnpm build:web`, `ui:check` (77 file, 0 violation), `gen:sdk:check` dan lint 0 error lulus; manifest + dist `moonql-research` ditambahkan ke kedua Dockerfile agar gate image tetap lengkap. Bukti lengkap: [laporan M13](file:///z:/project/moonradio/docs/audit/M13-research-contracts.md); keputusan: [ADR M13-01](file:///z:/project/moonradio/docs/decisions/M13-01-srgbgl-p19-gates.md).
 
 
 ## M14 — MIZAN and human research review
