@@ -1,14 +1,17 @@
 import type { ReactNode } from 'react'
 import { BrandLogo, Crown, LinkButton, ZineNote, Chevron } from '@moonwitness/moonui'
+import type { Locale } from '@moonwitness/core'
 import { SITE_NAME } from '@/lib/env'
+import { loginCopy } from '@/lib/login-copy'
 
 /**
  * The "Enter SHADOW" punk-zine login surface matching reference Image 3:
  * built from @moonwitness/moonui primitives (BrandLogo, Crown, LinkButton, ZineNote).
  */
-export function AuthLayout({ children }: { children: ReactNode }) {
+export function AuthLayout({ children, locale }: { children: ReactNode; locale: Locale }) {
+  const copy = loginCopy(locale)
   return (
-    <div className="hq-auth-shell">
+    <div className="hq-auth-shell" lang={locale}>
       <header className="hq-auth-topbar">
         <div className="m-row" style={{ gap: 16 }}>
           <Crown tone="cyan" size="lg" />
@@ -17,7 +20,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
             size="lg"
             subtitle={
               <span>
-                EMPIRE OF THE LIGHT · <strong>A-L-L-A-H</strong>
+                {copy.brandSubtitle} · <strong>A-L-L-A-H</strong>
               </span>
             }
           />
@@ -25,10 +28,10 @@ export function AuthLayout({ children }: { children: ReactNode }) {
 
         <div className="m-row" style={{ gap: 18 }}>
           <ZineNote tone="dark" tilt="left">
-            SAME MOON · DIFFERENT PEOPLE
+            {copy.sameMoon}
           </ZineNote>
           <LinkButton href="/" variant="accent" size="md">
-            FOLLOW THE SIGNAL <Chevron dir="right" />
+            {copy.followSignal} <Chevron dir="right" />
           </LinkButton>
         </div>
       </header>
@@ -37,17 +40,17 @@ export function AuthLayout({ children }: { children: ReactNode }) {
         {/* Left decorative punk-zine strip */}
         <aside className="hq-auth-zine-left" aria-hidden="true">
           <ZineNote tone="dark" tilt="left">
-            DIFFERENT
+            {copy.leftDifferent}
             <br />
-            PEOPLE
+            {copy.leftPeople}
             <br />
-            SAME SKY
+            {copy.leftSky}
             <br />
-            STORIES
+            {copy.leftStories}
             <br />
-            BEYOND
+            {copy.leftBeyond}
             <br />
-            BORDERS.
+            {copy.leftBorders}
             <div style={{ marginTop: 6 }}>
               <Crown tone="gold" size="sm" />
             </div>
@@ -56,9 +59,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
           <div>
             <img src="/art/manga-eye.jpg" alt="" className="hq-zine-eye-img" />
             <ZineNote tone="pink" tilt="left">
-              WITNESS
-              <br />
-              THE REAL.
+              {copy.witnessReal}
             </ZineNote>
           </div>
 
@@ -71,36 +72,30 @@ export function AuthLayout({ children }: { children: ReactNode }) {
         <main className="hq-auth-card-wrap">{children}</main>
 
         {/* Right cyberpunk moon watcher illustration */}
-        <section className="hq-auth-watcher" aria-label="Moonwitness rooftop artwork">
+        <section className="hq-auth-watcher" aria-label={copy.artworkLabel}>
           <img
             src="/art/login-watcher.jpg"
-            alt="Moonwitness watcher on a rooftop overlooking a cyberpunk city and giant blue moon"
+            alt={copy.artworkLabel}
             className="hq-watcher-img"
           />
           <div className="hq-watcher-tag-top">
             <ZineNote tone="dark" tilt="left">
-              SAME MOON
-              <br />
-              DIFFERENT PEOPLE
+              {copy.sameMoon}
             </ZineNote>
           </div>
           <div className="hq-watcher-tag-right">
             <ZineNote tone="dark" tilt="right">
-              STORIES · PEOPLE · WORLDS IN MOTION.
+              {copy.storiesBeyond}
             </ZineNote>
           </div>
           <div className="hq-watcher-poster">
             <ZineNote tone="paper" tilt="left">
-              A BRIGHTER
-              <br />
-              TOMORROW FOR A
-              <br />
-              BOLDER HUMANITY. <Crown tone="gold" size="sm" />
+              {copy.brighterTomorrow} <Crown tone="gold" size="sm" />
             </ZineNote>
           </div>
           <div className="hq-watcher-follow">
             <ZineNote tone="accent" tilt="left">
-              FOLLOW THE SIGNAL
+              {copy.followSignal}
             </ZineNote>
           </div>
         </section>
@@ -108,12 +103,12 @@ export function AuthLayout({ children }: { children: ReactNode }) {
 
       <footer className="hq-auth-footer">
         <div>
-          <strong>Moonwitness</strong> // Create · Curate · Publish · <span className="m-muted">{SITE_NAME}</span>
+          <strong>Moonwitness</strong> // {copy.footerMission} · <span className="m-muted">{SITE_NAME}</span>
         </div>
         <div className="m-row m-muted" style={{ gap: 16 }}>
-          <span>Privacy</span>
-          <span>Terms</span>
-          <span>Support</span>
+          <span>{copy.privacy}</span>
+          <span>{copy.terms}</span>
+          <span>{copy.support}</span>
           <Crown tone="gold" size="sm" />
         </div>
       </footer>

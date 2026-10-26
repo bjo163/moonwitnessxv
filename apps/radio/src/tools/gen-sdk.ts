@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { cliMessage, resolveCliLocale } from '@moonwitness/cli'
 import { buildSchemaDocument, gateDecision, classifySchema, generateClientSource, installAddons, parseVersion } from '@moonwitness/moonql'
 import { canonicalJson, type SchemaDocument } from '@moonwitness/core'
 import { addons } from '../addons.js'
@@ -113,24 +114,24 @@ export function appendHistory(history: readonly HistoryEntry[], doc: SchemaDocum
 }
 
 /** `--check` verdict: drift, then the breaking-change gate. */
-function check(out: string): boolean {
+function check(out: string, locale: 'id' | 'en'): boolean {
   const doc = currentDocument()
   const source = generateClientSource(doc)
   const snapshot = stableJson(doc)
   let ok = true
 
   if (readFileSync(resolve(process.cwd(), out), 'utf8') !== source) {
-    console.error(`moonql: SDK drift — run \`pnpm gen:sdk\` (${out})`)
+    console.error(cliMessage(locale, 'sdkDrift', { path: out }))
     ok = false
   }
 
   const committed = readSnapshot()
   if (!committed) {
-    console.error(`moonql: no committed schema snapshot at ${SNAPSHOT_OUT} — run \`pnpm gen:sdk\``)
+    console.error(cliMessage(locale, 'sdkSnapshotMissing', { path: SNAPSHOT_OUT }))
     return false
   }
   if (JSON.stringify(committed) !== JSON.stringify(JSON.parse(snapshot))) {
-    console.error(`moonql: schema snapshot is stale (${resolve(process.cwd(), SNAPSHOT_OUT)}) — run \`pnpm gen:sdk\``)
+    console.error(cliMessage(locale, 'sdkSnapshotStale', { path: resolve(process.cwd(), SNAPSHOT_OUT) }))
     ok = false
   }
 
@@ -138,7 +139,7 @@ function check(out: string): boolean {
   // recorded means one of the two was edited by hand
   const lastRelease = readHistory().at(-1)
   if (lastRelease && lastRelease.schemaHash !== committed.schemaHash) {
-    console.error(`moonql: ${HISTORY_OUT} does not record the committed snapshot — run \`pnpm gen:sdk\``)
+    console.error(cliMessage(locale, 'sdkHistoryStale', { path: HISTORY_OUT }))
     ok = false
   }
 
@@ -148,44 +149,87 @@ function check(out: string): boolean {
   const decision = gateDecision(committed, doc)
   for (const line of decision.breaking) console.error(`BREAKING  ${line}`)
   if (!decision.ok) {
-    console.error(`moonql: ${decision.reason}`)
+    console.error(cliMessage(locale, 'sdkGateRejected'))
     return false
   }
-  if (decision.breaking.length > 0) console.log(`moonql: ${decision.reason}`)
+  if (decision.breaking.length > 0) console.log(cliMessage(locale, 'sdkGateAccepted'))
   const grouped = classifySchema(committed, doc)
-  if (grouped.added.length) console.log(`moonql: additive — ${grouped.added.join(', ')}`)
+  if (grouped.added.length) console.log(cliMessage(locale, 'sdkAdditive', { items: grouped.added.join(', ') }))
   return ok
 }
 
+export function formatPlanNotice(
+  locale: 'id' | 'en',
+  plan: WritePlan,
+  previousVersion: string | null,
+  nextVersion: string,
+  options: WriteOptions,
+): string | undefined {
+  if (plan.write && plan.breaking.length === 0) return undefined
+  if (options.force && plan.write) return cliMessage(locale, 'sdkForced')
+
+  if (!plan.write && options.allowBreaking) {
+    const before = previousVersion ? parseVersion(previousVersion) : null
+    const after = parseVersion(nextVersion)
+    if (!before || !after || after.major <= before.major) {
+      return cliMessage(locale, 'sdkMajorRequired', {
+        required: (before?.major ?? 0) + 1,
+        version: nextVersion,
+      })
+    }
+  }
+  if (!plan.write) return cliMessage(locale, 'sdkRaiseMajor')
+
+  const before = previousVersion ? parseVersion(previousVersion) : null
+  const after = parseVersion(nextVersion)
+  if (options.allowBreaking && before && after) {
+    return cliMessage(locale, 'sdkBreakingAccepted', { before: before.major, after: after.major })
+  }
+  return cliMessage(locale, 'sdkForced')
+}
+
 async function main(): Promise<void> {
-  const args = process.argv.slice(2)
+  const localeArgs = resolveCliLocale(process.argv.slice(2), process.env.MW_LOCALE)
+  if (!localeArgs.ok) {
+    console.error(localeArgs.error === 'missing'
+      ? cliMessage(localeArgs.locale, 'localeMissing')
+      : cliMessage(localeArgs.locale, 'localeInvalid', { locale: localeArgs.value ?? '' }))
+    process.exitCode = 1
+    return
+  }
+  const { args, locale } = localeArgs
   const isCheck = args.includes('--check')
   const explicit = args.find((arg) => !arg.startsWith('--'))
   const out = resolve(process.cwd(), explicit ?? DEFAULT_OUT)
 
   if (isCheck) {
-    process.exitCode = check(out) ? 0 : 1
-    if (process.exitCode === 0) console.log('moonql: generated SDK is up to date')
+    process.exitCode = check(out, locale) ? 0 : 1
+    if (process.exitCode === 0) console.log(cliMessage(locale, 'sdkUpToDate'))
     return
   }
 
   const doc = currentDocument()
-  const plan = planWrite(readSnapshot(), doc, {
+  const previous = readSnapshot()
+  const options = {
     allowBreaking: args.includes('--allow-breaking'),
     force: args.includes('--force'),
-  })
+  }
+  const plan = planWrite(previous, doc, options)
   for (const line of plan.breaking) console.error(`BREAKING  ${line}`)
   if (!plan.write) {
-    console.error(`moonql: refusing to write — ${plan.reason}`)
+    console.error(cliMessage(locale, 'sdkRefusing', {
+      reason: formatPlanNotice(locale, plan, previous?.apiVersion ?? null, doc.apiVersion, options) ?? '',
+    }))
     process.exitCode = 1
     return
   }
-  if (plan.breaking.length > 0) console.warn(`moonql: ${plan.reason}`)
+  const notice = formatPlanNotice(locale, plan, previous?.apiVersion ?? null, doc.apiVersion, options)
+  if (notice) console.warn(`moonql: ${notice}`)
 
   writeFileSync(out, generateClientSource(doc))
   writeFileSync(resolve(process.cwd(), SNAPSHOT_OUT), `${stableJson(doc)}\n`)
   writeFileSync(resolve(process.cwd(), HISTORY_OUT), `${JSON.stringify(appendHistory(readHistory(), doc, new Date().toISOString()), null, 2)}\n`)
-  console.log(`moonql: generated SDK -> ${out}`)
+  console.log(cliMessage(locale, 'sdkGenerated', { path: out }))
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) void main()

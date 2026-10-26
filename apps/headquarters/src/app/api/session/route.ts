@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
-import { errorMessage } from '@moonwitness/moonql-client'
 import { login, logout } from '@/data/queries/session'
 import { SESSION_COOKIE, sessionCookieOptions } from '@/lib/session'
+import { loginErrorCode } from '@/lib/login-copy'
 
 /** login + logout are the ONLY places the token crosses the server boundary */
 async function readFields(request: Request): Promise<Record<string, string>> {
@@ -51,7 +51,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   const loginName = (fields.login ?? '').trim()
   const password = fields.password ?? ''
   if (!loginName || !password) {
-    return backTo('/login?error=Login%20and%20password%20are%20required')
+    return backTo('/login?error=required')
   }
 
   try {
@@ -60,7 +60,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     response.cookies.set(SESSION_COOKIE, session.token, sessionCookieOptions)
     return response
   } catch (error) {
-    return backTo(`/login?error=${encodeURIComponent(errorMessage(error))}`)
+    return backTo(`/login?error=${loginErrorCode(error)}`)
   }
 }
 
