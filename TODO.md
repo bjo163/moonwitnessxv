@@ -129,13 +129,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M05-01** — Record existing OpenAPI, envelope and error fixtures | P0 | D2 | M00-02 | Pinned current response contracts |
-| - [ ] | **M05-02** — Test duplicate model/view/manual route rejection | P0 | D2 | M05-01 | Collision fails boot and has regression test |
-| - [ ] | **M05-03** — Define future addon namespace and registration standard | P0 | D2 | M02-02,M05-02 | New feature cannot shadow old radio endpoints |
-| - [ ] | **M05-04** — Verify SDK codegen deterministic hash and API version | P0 | D2 | M01-04,M05-01 | Repeat generation gives stable client |
-| - [ ] | **M05-05** — Define pagination, filter/expand, locale and UNKNOWN | P1 | D3 | M05-01 | Bounded and source-safe query behavior |
-| - [ ] | **M05-06** — Document approved old-repo adapter boundaries | P1 | D3 | M02-07,M05-03 | No implicit historical runtime dependency |
-| - [ ] | **M05-07** — Add compatibility smoke for existing clients | P0 | D3 | M05-04,M05-06 | Current Radio tests keep passing |
+| - [x] | **M05-01** — Record existing OpenAPI, envelope and error fixtures | P0 | D2 | M00-02 | Pinned current response contracts ([docs/audit/M05-01-api-fixtures.md](file:///z:/project/moonradio/docs/audit/M05-01-api-fixtures.md)) |
+| - [x] | **M05-02** — Test duplicate model/view/manual route rejection | P0 | D2 | M05-01 | Collision fails boot and has regression test ([apps/radio/test/api-contracts.test.ts](file:///z:/project/moonradio/apps/radio/test/api-contracts.test.ts)) |
+| - [x] | **M05-03** — Define future addon namespace and registration standard | P0 | D2 | M02-02,M05-02 | New feature cannot shadow old radio endpoints ([docs/decisions/M05-03-addon-namespace-standards.md](file:///z:/project/moonradio/docs/decisions/M05-03-addon-namespace-standards.md)) |
+| - [x] | **M05-04** — Verify SDK codegen deterministic hash and API version | P0 | D2 | M01-04,M05-01 | Repeat generation gives stable client ([apps/radio/test/api-contracts.test.ts](file:///z:/project/moonradio/apps/radio/test/api-contracts.test.ts)) |
+| - [x] | **M05-05** — Define pagination, filter/expand, locale and UNKNOWN | P1 | D3 | M05-01 | Bounded and source-safe query behavior ([docs/decisions/M05-05-query-standards.md](file:///z:/project/moonradio/docs/decisions/M05-05-query-standards.md)) |
+| - [x] | **M05-06** — Document approved old-repo adapter boundaries | P1 | D3 | M02-07,M05-03 | No implicit historical runtime dependency ([docs/decisions/M05-06-adapter-boundaries.md](file:///z:/project/moonradio/docs/decisions/M05-06-adapter-boundaries.md)) |
+| - [x] | **M05-07** — Add compatibility smoke for existing clients | P0 | D3 | M05-04,M05-06 | Current Radio tests keep passing ([apps/radio/test/stations.test.ts](file:///z:/project/moonradio/apps/radio/test/stations.test.ts)) |
 
 
 ## M06 — Source crosswalk and historical recovery

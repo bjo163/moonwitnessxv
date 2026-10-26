@@ -6,7 +6,7 @@ import { hasColumn } from './fields.js'
 import { buildTable, columnName } from './table.js'
 import { attachRelations, buildSchemas, buildViewQuery, buildViewRead, type ModelSchemas } from './jsonschema.js'
 import { normalizeWhere, queryableFields, type Domain } from './domain.js'
-import { parseRef } from './refs.js'
+import { looksLikeRefAttempt, parseRef } from './refs.js'
 import type { CompiledMetric } from './engines/engine.js'
 import type { View } from './view.js'
 
@@ -171,8 +171,15 @@ export function installAddons(
     for (const row of rows ?? []) {
       for (const value of Object.values(row)) {
         if (typeof value !== 'string' || !value.startsWith('@')) continue
-        const target = parseRef(value) // throws on malformed syntax
-        if (!target) continue
+        const target = parseRef(value)
+        if (!target) {
+          // '@tags' is a typo while 'tags' is an installed model and must die here;
+          // '@witness.id' is a social handle in someone's content and stays data.
+          if (looksLikeRefAttempt(value, models)) {
+            throw new Error(`moonql: malformed reference "${value}" in ${modelName} — expected @model[.field]:value`)
+          }
+          continue
+        }
         const dest = models.get(target.model)
         if (!dest) continue // resolved (strictly) at boot with a clear "install the addon" error
         const field = target.field ?? dest.unique.find((p) => p.length === 1)?.[0]

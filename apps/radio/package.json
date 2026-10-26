@@ -11,7 +11,7 @@
     "start": "node --env-file-if-exists=../../.env dist/server.js",
     "start:clean": "node dist/server.js",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
-    "test": "tsx --test test/**/*.test.ts"
+    "test": "tsx --test --test-concurrency=2 test/**/*.test.ts"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",
@@ -30,6 +30,7 @@
     "@moonwitness/moonql-apikeys": "workspace:*",
     "@moonwitness/moonql-settings": "workspace:*",
     "@moonwitness/moonql-ops": "workspace:*",
+    "@moonwitness/moonql-monitor": "workspace:*",
     "@moonwitness/whatsapp": "workspace:*",
     "fastify": "^5.2.1",
     "fastify-plugin": "^5.0.1",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@moonwitness/moonql-client": "workspace:*",
+    "@moonwitness/sentinel": "workspace:*",
     "@types/node": "^22.10.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"

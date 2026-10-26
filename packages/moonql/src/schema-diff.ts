@@ -57,6 +57,14 @@ interface ModelShape {
   updateSchema?: ObjectSchemaShape
   readSchema?: ObjectSchemaShape
   acl?: unknown
+  /** the ceiling on ?limit for this model's list route */
+  maxLimit?: number
+  /** declared unique pairs; a new one can fail on rows that already exist */
+  unique?: string[][]
+  /** declared indexes; dropping one is a promise about performance broken */
+  indexes?: string[][]
+  /** a view's own row ceiling */
+  limit?: number
 }
 
 /** the JSON Schema type of a property, with `null` from a nullable union removed */
@@ -142,6 +150,26 @@ export function classifySchema(prev: SchemaDocument, next: SchemaDocument): Sche
           op === 'create' ? after?.createSchema : after?.updateSchema,
         )
         if (gained.length) breaking.push(`${kind}: ${name} now requires ${gained.join(', ')} on ${op}`)
+      }
+      // ceiling on ?limit: lowering it makes a client's existing request fail
+      if (typeof before?.maxLimit === 'number' && typeof after?.maxLimit === 'number' && after.maxLimit < before.maxLimit) {
+        breaking.push(`${kind}: ${name} ?limit ceiling shrank to ${after.maxLimit}`)
+      }
+      // a new unique pair is a constraint the stored rows never agreed to
+      const pairs = (list: string[][] | undefined): string[] => (list ?? []).map((p) => p.join('+'))
+      const beforePairs = pairs(before?.unique)
+      for (const pair of pairs(after?.unique)) {
+        if (!beforePairs.includes(pair)) breaking.push(`${kind}: ${name} added a unique constraint on [${pair.split('+').join(', ')}]`)
+      }
+      // an index is invisible to a caller, so adding one is noise and removing one
+      // is a broken performance promise rather than a broken request
+      const beforeIdx = pairs(before?.indexes)
+      for (const pair of beforeIdx) {
+        if (!pairs(after?.indexes).includes(pair)) breaking.push(`${kind}: ${name} dropped its index on [${pair.split('+').join(', ')}]`)
+      }
+      // a view that returns more rows than advertised is a caller surprise, not an outage
+      if (typeof before?.limit === 'number' && typeof after?.limit === 'number' && after.limit !== before.limit) {
+        changed.push(`${kind}.${name} limit ${before.limit} -> ${after.limit}`)
       }
       for (const [op, beforeRule] of Object.entries(aclRules(before?.acl))) {
         const afterRules = aclRules(after?.acl)

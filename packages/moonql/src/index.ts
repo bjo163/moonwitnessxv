@@ -59,7 +59,7 @@ export { buildSchemaDocument, type SchemaDocumentOptions } from './introspect.js
 export { classifySchema, gateDecision, parseVersion, type SchemaDiff, type GateDecision, type ParsedVersion } from './schema-diff.js'
 export { generateClientSource } from './codegen.js'
 export { startCrons, parseEvery, type CronHandle } from './crons.js'
-export { parseRef, defaultRefField, createRefResolver, REF_RE, type RefTarget, type RefResolver, type RefModelInfo } from './refs.js'
+export { parseRef, looksLikeRefAttempt, defaultRefField, createRefResolver, REF_RE, type RefTarget, type RefResolver, type RefModelInfo } from './refs.js'
 export { syncModelData, type SyncResult } from './datasync.js'
 export { autoSync } from './sync.js'
 export { buildTable, columnName, createdAtIndexName, modelledIndexName, hasPartialUnique } from './table.js'

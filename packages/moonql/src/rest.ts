@@ -126,8 +126,10 @@ export const moonqlRest: FastifyPluginAsync<MoonqlRestOptions> = async (fastify,
   }
 
   // the metadata document is per-instance and immutable: build it at most once
+  // — with the same apiVersion the hub advertises on /_schema, or an addon reading
+  // ctx.schema() would see the placeholder "0.0.0" while the route says 1.4.0
   let schemaCache: SchemaDocument | undefined
-  const schemaOf = (): SchemaDocument => (schemaCache ??= buildSchemaDocument(registry))
+  const schemaOf = (): SchemaDocument => (schemaCache ??= buildSchemaDocument(registry, { apiVersion: opts.apiVersion }))
 
   // endpoints that are not streams share one signal that never aborts
   const neverAborted = new AbortController().signal
@@ -232,7 +234,12 @@ export const moonqlRest: FastifyPluginAsync<MoonqlRestOptions> = async (fastify,
         preHandler: guard(model.acl.create),
       }, async (request, reply) => {
         const row = await repo.create(request.body as Record<string, unknown>)
-        reply.code(201).header('location', `${request.url}/${row.id}`)
+        // Location comes from the matched route, not from `request.url` (which
+        // carries the POST's query string) and not from `base` alone (which is
+        // prefix-relative: `/baskets/<id>` would drop `/orm` and resolve to a URL
+        // that does not exist). The route url is the one thing that is always right.
+        const routePath = request.routeOptions.url ?? base
+        reply.code(201).header('location', `${routePath}/${row.id}`)
         return row
       })
     }
