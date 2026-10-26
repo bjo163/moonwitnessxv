@@ -36,6 +36,7 @@ COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/moonql-ontology/package.json packages/moonql-ontology/
 COPY packages/moonql-actors/package.json packages/moonql-actors/
 COPY packages/moonql-graph/package.json packages/moonql-graph/
+COPY packages/moonql-research/package.json packages/moonql-research/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 # The remaining workspace members. This list is pnpm-lock.yaml's `importers:`
@@ -90,6 +91,7 @@ COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/moonql-ontology/package.json packages/moonql-ontology/
 COPY packages/moonql-actors/package.json packages/moonql-actors/
 COPY packages/moonql-graph/package.json packages/moonql-graph/
+COPY packages/moonql-research/package.json packages/moonql-research/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 # same completeness rule as `deps`: --prod still resolves every importer
@@ -130,6 +132,7 @@ COPY --from=build /repo/packages/moonql-unilex/dist packages/moonql-unilex/dist
 COPY --from=build /repo/packages/moonql-ontology/dist packages/moonql-ontology/dist
 COPY --from=build /repo/packages/moonql-actors/dist packages/moonql-actors/dist
 COPY --from=build /repo/packages/moonql-graph/dist packages/moonql-graph/dist
+COPY --from=build /repo/packages/moonql-research/dist packages/moonql-research/dist
 COPY --from=build /repo/packages/whatsapp/dist packages/whatsapp/dist
 COPY --from=build /repo/packages/denpa/dist packages/denpa/dist
 COPY --from=build /repo/apps/radio/dist apps/radio/dist
