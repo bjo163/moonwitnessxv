@@ -3,20 +3,23 @@
 
 ## MoonWitness XV — master program documents
 
-**Official XV planning flow:** [Master Vision Narrative](docs/vision/MASTER_VISION_NARRATIVE_XV.md) → [MASTER BLUEPRINT](BLUEPRINT.md) → [MASTER TODO / 28 milestones and 196 task IDs](TODO.md). **New unified MoonWitness work belongs in this repository only.** Earlier MoonWitness, Corpus, A-L-L-A-H, Empire and Rocksoul repositories remain historical/source references or individually reviewed import candidates.
+**Official XV planning flow:** [Master Vision Narrative](docs/vision/MASTER_VISION_NARRATIVE_XV.md) → [MASTER BLUEPRINT](BLUEPRINT.md) → [MASTER TODO / 29 milestones and 203 task IDs](TODO.md). **New unified MoonWitness work belongs in this repository only.** Earlier MoonWitness, Corpus, A-L-L-A-H, Empire and Rocksoul repositories remain historical/source references or individually reviewed import candidates.
 
-The current applications below are **existing Radio/MoonQL functionality**. Corpus, ontology, comparative research, SHADOW, 100CENTER, World Monitor and Journey are **planned capability areas**, **not automatically live features** merely because they appear in the vision. Use the TODO evidence gates before declaring a task complete; source/privacy/security/recovery checks are mandatory before importing sensitive content.
+**Accepted naming decision:** the backend currently called `apps/radio` / `@moonwitness/radio` is now **ARSY — MoonWitness Application & Orchestration Hub** as a product/architecture name. Its **physical rename** to `apps/arsy` / `@moonwitness/arsy` is tracked by [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md) and [M28](TODO.md#m28--arsy-hub-rename-and-compatibility-migration) and **has not yet been executed**. Existing Radio stations/schedule/listening are retained as the **SIGNAL/RADIO** domain inside ARSY. No new Fastify backend is created; port 3000 and existing API routes remain compatible. **Current code and examples below still use the old identifiers until M28 is verified.**
+
+The current applications below are **existing ARSY-Hub-as-`radio` / MoonQL functionality**. Corpus, ontology, comparative research, SHADOW, 100CENTER, World Monitor and Journey are **planned capability areas**, **not automatically live features** merely because they appear in the vision. Use the TODO evidence gates before declaring a task complete; source/privacy/security/recovery checks are mandatory before importing sensitive content.
 
 Modular **TypeScript** monorepo with **three apps and one contract**:
 
 | App | Port | Role |
 |---|---|---|
-| **`@moonwitness/radio`** | 3000 | API/ORM hub — the only process that touches the database |
+| **ARSY Hub (currently `@moonwitness/radio`)** | 3000 | Single Fastify + MoonQL API/ORM hub; migration target `@moonwitness/arsy` (M28) |
 | **`@moonwitness/headquarters`** | 3002 | Admin command center (Next.js 16, RSC + server actions) |
 | **`@moonwitness/dock`** | 3001 | Public homepage, station catalog and schedule (Next.js 16, RSC) |
 
 The hub behind everything:
 
+- **ARSY** — name/ownership of this already existing central API/ORM/plugin runtime (filesystem change pending M28)
 - **stations** — radio station management (CRUD)
 - **moonql addons** — declarative ORM features (schedule, playlog, settings, auth, api keys, ops) with auto-REST, views and a metadata-driven Studio admin
 - **channels** — outbound IM channels (WhatsApp first, add more as plugins)
@@ -33,12 +36,12 @@ exactly as it was. Clean, minimal, plugin-system driven, Docker-ready.
 moonwitness/
 ├─ pnpm-workspace.yaml        # apps/* + packages/*
 ├─ tsconfig.base.json         # shared TS config (NodeNext, strict)
-├─ Dockerfile                 # radio: multi-stage, one image
+├─ Dockerfile                 # ARSY Hub (current code path radio): multi-stage, one image
 ├─ Dockerfile.web             # dock / headquarters (ARG APP)
-├─ docker-compose.yml         # full stack: db + radio :3000 + dock :3001 + hq :3002
+├─ docker-compose.yml         # current db + radio-name Hub :3000 + dock :3001 + hq :3002; target Compose service arsy
 ├─ docker-compose.db.yml      # Postgres only (pnpm db:up) for host-side development
 ├─ apps/
-│  ├─ radio/                  # @moonwitness/radio — the API/ORM hub
+│  ├─ radio/                  # CURRENT path; ARSY Hub target apps/arsy / @moonwitness/arsy (M28)
 │  │  └─ src/
 │  │     ├─ server.ts · app.ts · config.ts · fastify.d.ts
 │  │     ├─ lib/  channels.ts (Channel contract + ChannelManager) · types.ts (TypedModule) · loader.ts
