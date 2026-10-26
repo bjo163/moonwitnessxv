@@ -82,7 +82,14 @@ const cronAddon = defineAddon({
 
 test('cron with startImmediately runs on the next tick after boot', async () => {
   const moonql = await bootMoonQl({ addons: [cronAddon], seedPolicy: 'off', log: quiet })
-  await new Promise((resolve) => setImmediate(resolve))
+  // A 0ms timer and setImmediate land in either order depending on the current
+  // event-loop phase; wait for the tick itself instead of guessing that order.
+  await new Promise<void>((resolve) => {
+    const off = moonql.bus.on('cron.run', () => {
+      off()
+      resolve()
+    })
+  })
   assert.equal(bootTicks, 1)
   await moonql.close()
 })
