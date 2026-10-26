@@ -137,6 +137,10 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 **Release stages are distinct:** \`CI_VERIFIED\` ≠ \`BUILD_VERIFIED\` ≠ \`DEPLOYMENT_READY\` ≠ \`DEPLOYED_VERIFIED\` ≠ \`RELEASE_ACCEPTED\`. Full XV M27 acceptance still requires its separate human rights, security, restore and publication gates.
 
 
+## 2B — Modular contracts and project decomposition
+
+[Master Design](MASTER_DESIGN.md) owns shared UI semantics; [architecture contracts](docs/architecture/README.md) detail app/data boundaries, [ADRs](docs/decisions/README.md) record accepted versus proposed decisions, [AI execution](docs/planning/AI_EXECUTION_CONTRACT.md) governs small-agent handoff. Existing M00–M28 are preserved; M29–M37 define independent design and product discovery/adoption boundaries, **not already created applications**. Lighthouse reuses Dock until a reviewed decision; Harbor, SHADOW, MoonLab, WORKS and HELIOGRID cannot acquire independent data or IAM owners by default.
+
 ## 3 — Target architecture (logical, not already deployed)
 
     apps/dock (public Next.js)

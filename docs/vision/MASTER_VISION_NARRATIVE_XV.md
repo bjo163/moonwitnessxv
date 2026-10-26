@@ -26,6 +26,10 @@
 
 ---
 
+## Modular navigation map (the original archive remains intact)
+
+Short reader companions: [Mission](chapters/MISSION.md), [Empire economy/energy](chapters/EMPIRE.md), [ZILL/SHADOW](chapters/IDENTITY.md), [Source/research ethics](chapters/RESEARCH.md) and [source-section crosswalk](chapters/README.md). None replace the unabridged 99-chapter index or §21A historical audit. Technical authority: [BLUEPRINT](../../BLUEPRINT.md); visual contract: [Master Design](../../MASTER_DESIGN.md); task status: [TODO](../../TODO.md).
+
 # 00 — Executive decision: what are we building?
 
 **MOONWITNESS XV is to become a human-governed knowledge, witness, research, storytelling, and action ecosystem that connects source-grounded texts, events, people, traditions, lived experience, and creative works without erasing the boundaries between them.**

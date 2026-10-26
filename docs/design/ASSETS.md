@@ -1,0 +1,2 @@
+# Asset, icon and vector pipeline
+Audit original and licensed assets first. Inspect `apps/dock/src/ui/client/GeneratorStudio.tsx` before considering SHADOW reuse; never copy renderer as a second canon. SVG has safe viewBox, accessible title or aria-hidden, no untrusted embedded script/external URL, semantic color/focus in button wrapper, scaling/contrast variants, no automatic sound or motion. Preserve asset author, license, digest/source and consent. Do not redistribute fonts or unlicensed music/lyrics. M30 and D08 govern acceptance.

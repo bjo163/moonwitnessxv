@@ -1,0 +1,2 @@
+# Research, review and provenance guide
+From [Vision](../MASTER_VISION_NARRATIVE_XV.md). Exact edition, source bytes and license precede attributed interpretation. Personal testimony, historical event, scientific simulation, fictional work, AI candidate and human review are not interchangeable. D08 approves only rights-cleared consented derivatives and handles corrections/takedown; UI id/en cannot silently change cited original texts.

@@ -3,7 +3,10 @@
 
 ## MoonWitness XV — master program documents
 
-**Official XV planning flow:** [Master Vision Narrative](docs/vision/MASTER_VISION_NARRATIVE_XV.md) → [MASTER BLUEPRINT](BLUEPRINT.md) → [MASTER TODO / 29 milestones and 203 task IDs](TODO.md). **New unified MoonWitness work belongs in this repository only.** Earlier MoonWitness, Corpus, A-L-L-A-H, Empire and Rocksoul repositories remain historical/source references or individually reviewed import candidates.
+**Low-context AI docs:** [Master Design](MASTER_DESIGN.md) · [Architecture](docs/architecture/README.md) · [AI execution contract](docs/planning/AI_EXECUTION_CONTRACT.md). Nine new milestone scopes remain planning-only; no new product app is claimed implemented.
+
+
+**Official XV planning flow:** [Master Vision Narrative](docs/vision/MASTER_VISION_NARRATIVE_XV.md) → [MASTER BLUEPRINT](BLUEPRINT.md) → [MASTER TODO / 38 milestones and 311 task IDs](TODO.md). **New unified MoonWitness work belongs in this repository only.** Earlier MoonWitness, Corpus, A-L-L-A-H, Empire and Rocksoul repositories remain historical/source references or individually reviewed import candidates.
 
 **Accepted naming decision:** the backend currently called `apps/radio` / `@moonwitness/radio` is now **ARSY — MoonWitness Application & Orchestration Hub** as a product/architecture name. Its **physical rename** to `apps/arsy` / `@moonwitness/arsy` is tracked by [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md) and [M28](TODO.md#m28--arsy-hub-rename-and-compatibility-migration) and **has not yet been executed**. Existing Radio stations/schedule/listening are retained as the **SIGNAL/RADIO** domain inside ARSY. No new Fastify backend is created; port 3000 and existing API routes remain compatible. **Current code and examples below still use the old identifiers until M28 is verified.**
 

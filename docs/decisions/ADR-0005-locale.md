@@ -1,0 +1,2 @@
+# ADR-0005 — Shared locale and App Factory
+**Status: PROPOSED, owner ratification required.** Choose small shared id/en typed catalogs and runtime adapters over divergent per-app translation or universal framework. Explicit URL language wins. Dock /id /en, HQ user UI, Cockpit Vite GUI, ARSY human messages and future App Factory templates participate appropriately. API IDs and corpus originals are never translated as UI labels. Security proxy, SSR persistence, accessibility and source-script tests must pass. M05/M19.

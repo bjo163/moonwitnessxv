@@ -7,6 +7,8 @@
 
 > **Revalidasi M01–M05 (2026-10-26, final):** temuan awal di HEAD `3822657` sudah ditindaklanjuti. Seluruh sisi memakai Node 24 LTS; checkout bersih dan CI pada `fa0f1b5` lulus `pnpm install --frozen-lockfile` + `pnpm verify` (199 test, 197 pass, 2 skipped, 0 fail; [run 40263464402](https://github.com/bjo163/moonwitnessxv/actions/runs/40263464402)). M01-01 dan M01-03 ditutup kembali; M01-05, M01-06, M01-07, M03-03, M03-05, dan M04-05 tetap terbuka. Rincian: [docs/audit/M01-M05-revalidation-2026-10-26.md](docs/audit/M01-M05-revalidation-2026-10-26.md). Checkbox `[x]` yang bergantung pada test kini diverifikasi di SHA bersih.
 
+**Planning references:** [Master Design](MASTER_DESIGN.md) · [Architecture](docs/architecture/README.md) · [ADR index](docs/decisions/README.md) · [AI execution contract](docs/planning/AI_EXECUTION_CONTRACT.md). These are specifications, not additional task/status registers. G7 does not block a scope-limited bilingual public preview.
+
 ## How to interpret and execute
 
 **Priority:** `P0` blocker (security, compatibility, provenance, release); `P1` core product; `P2` improvement/next horizon; `P3` speculative optional research. **Difficulty:** `D1` isolated, `D2` small, `D3` bounded multi-file, `D4` complex with cross-domain tests/review, `D5` high-uncertainty that must first be broken into smaller work packets. These are relative estimates, not promises of elapsed time.
@@ -56,6 +58,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 | **G4 — OPERATIONS** | M20–M23 | 100CENTER, optional AI, existing Radio/WA/DENPA, Journey |
 | **G5 — OPTIONAL RESEARCH** | M24–M26 | World monitoring, Science/Time, legacy registries and source recovery |
 | **G6 — RELEASE** | M27 | Real full-stack tests, privacy, rights and approved launch |
+| **G7 — ECOSYSTEM** | M29–M37 | AI handoffs, Master Design, Lighthouse, Harbor, SHADOW, MoonLab, WORKS, HELIOGRID, cross-app identity |
 
 **Scope gate:** The first Reader release does not require Story/SHADOW or AI. Publishing a Story does additionally require M17 source/consent approval; using AI does additionally require M21 security and candidate approval. Do not conflate optional feature gating with first-release gating.
 
@@ -651,7 +654,132 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 **Operator instruction:** do not implement ARSY as a second Fastify service or create a new repository; migrate the existing one with compatible aliases. The older term ARSY Research Compute is retained as a **future optional capability in this same Hub**, not a separate running agent and not a claim of theological authority. **M28 is planned early after compatibility baselines; its rename must be tested before any release claiming the renamed ARSY identity. Existing addon work predates physical rename and must be preserved.**
 
-## Consistency controls for the 29-milestone register
+## M29 — AI execution and planning integrity
+
+**Group:** G7 · **Prerequisite:** M02-06 · **Status:** PLANNED, no implementation implied. **Outcome:** AI execution and planning integrity. **Gate:** all leaves pass relevant decision, rights/privacy, i18n, security, regression, operational-cost and human-adoption checks. **Rollback:** document tested recovery before any risky change. This is a distinct milestone; future apps/finance/energy remain proposal-gated.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M29-01** — Classify every task's leaf or umbrella role | P1 | D2 | M02-06 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M29-02** — Ratify one multi-agent task lease contract | P1 | D2 | M29-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M29-03** — Specify ID/dependency/Markdown-link validator | P1 | D3 | M29-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M29-04** — Prove validator on invalid fixtures | P1 | D3 | M29-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M29-05** — Verify one low-context agent handoff | P1 | D4 | M29-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+
+---
+
+## M30 — Master Design and shared MoonUI behaviors
+
+**Group:** G7 · **Prerequisite:** M19-01 · **Status:** PLANNED, no implementation implied. **Outcome:** Master Design and shared MoonUI behaviors. **Gate:** all leaves pass relevant decision, rights/privacy, i18n, security, regression, operational-cost and human-adoption checks. **Rollback:** document tested recovery before any risky change. This is a distinct milestone; future apps/finance/energy remain proposal-gated.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M30-01** — Inventory real MoonUI tokens and components | P1 | D2 | M19-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M30-02** — Specify semantic typography/color/spacing tokens | P1 | D2 | M30-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M30-03** — Specify forms tabs menus keyboard and error states | P1 | D3 | M30-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M30-04** — Specify bilingual skin/RTL/vector/media pipeline | P1 | D3 | M30-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M30-05** — Certify behavior and screenshot tests | P1 | D4 | M30-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+
+---
+
+## M31 — LIGHTHOUSE Empire public gateway
+
+**Group:** G7 · **Prerequisite:** M19-10,M19-11 · **Status:** PLANNED, no implementation implied. **Outcome:** LIGHTHOUSE Empire public gateway. **Gate:** all leaves pass relevant decision, rights/privacy, i18n, security, regression, operational-cost and human-adoption checks. **Rollback:** document tested recovery before any risky change. This is a distinct milestone; future apps/finance/energy remain proposal-gated.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M31-01** — Decide brand hierarchy and public domain purpose | P1 | D2 | M19-10,M19-11 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M31-02** — Design gateway journeys and available/planned states | P1 | D2 | M31-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M31-03** — Decide reuse Dock vs extra frontend | P1 | D3 | M31-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M31-04** — Write accessible id/en gateway copy and metadata | P1 | D3 | M31-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M31-05** — Test correct links permissions and offline fallback | P1 | D4 | M31-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+
+---
+
+## M32 — HARBOR member and community privacy
+
+**Group:** G7 · **Prerequisite:** M03-06 · **Status:** PLANNED, no implementation implied. **Outcome:** HARBOR member and community privacy. **Gate:** all leaves pass relevant decision, rights/privacy, i18n, security, regression, operational-cost and human-adoption checks. **Rollback:** document tested recovery before any risky change. This is a distinct milestone; future apps/finance/energy remain proposal-gated.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M32-01** — Validate first-member need and opt-in journey | P1 | D2 | M03-06 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M32-02** — Decide D14 ownership and D00 session reuse | P1 | D2 | M32-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M32-03** — Specify private library and consented contributions | P1 | D3 | M32-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M32-04** — Specify moderation reporting and appeals | P1 | D3 | M32-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M32-05** — Verify authorized privacy-first community MVP | P1 | D4 | M32-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+
+---
+
+## M33 — SHADOW creative authoring surface
+
+**Group:** G7 · **Prerequisite:** M17-03 · **Status:** PLANNED, no implementation implied. **Outcome:** SHADOW creative authoring surface. **Gate:** all leaves pass relevant decision, rights/privacy, i18n, security, regression, operational-cost and human-adoption checks. **Rollback:** document tested recovery before any risky change. This is a distinct milestone; future apps/finance/energy remain proposal-gated.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M33-01** — Inventory existing generator and HQ Story plans | P1 | D2 | M17-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M33-02** — Decide HQ embedded versus separate SHADOW UI | P1 | D2 | M33-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M33-03** — Specify D07 scene version and media rights | P1 | D3 | M33-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M33-04** — Specify single renderer and HQ review handoff | P1 | D3 | M33-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M33-05** — Verify private poster access and attribution | P1 | D4 | M33-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+
+---
+
+## M34 — MOONLAB research workbench
+
+**Group:** G7 · **Prerequisite:** M14-07 · **Status:** PLANNED, no implementation implied. **Outcome:** MOONLAB research workbench. **Gate:** all leaves pass relevant decision, rights/privacy, i18n, security, regression, operational-cost and human-adoption checks. **Rollback:** document tested recovery before any risky change. This is a distinct milestone; future apps/finance/energy remain proposal-gated.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M34-01** — Inventory D05 MIZAN and raw Research exposure | P1 | D2 | M14-07 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M34-02** — Decide standalone MoonLab or HQ desk | P1 | D2 | M34-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M34-03** — Specify source-linked case and hypothesis drafts | P1 | D3 | M34-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M34-04** — Specify D08 released research projection | P1 | D3 | M34-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M34-05** — Test reviewer separation and wrong-role access | P1 | D4 | M34-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+
+---
+
+## M35 — WORKS economic and financial operations pilot
+
+**Group:** G7 · **Prerequisite:** M02-02 · **Status:** PLANNED, no implementation implied. **Outcome:** WORKS economic and financial operations pilot. **Gate:** all leaves pass relevant decision, rights/privacy, i18n, security, regression, operational-cost and human-adoption checks. **Rollback:** document tested recovery before any risky change. This is a distinct milestone; future apps/finance/energy remain proposal-gated.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M35-01** — Validate one real service and potential buyer | P1 | D2 | M02-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M35-02** — Decide merchant legal/payment and D15/D16 owners | P1 | D2 | M35-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M35-03** — Specify quote order delivery invoice and refund | P1 | D3 | M35-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M35-04** — Specify Treasury roles and payment idempotency | P1 | D3 | M35-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M35-05** — Verify sandbox-to-real evidence and unit economics | P1 | D4 | M35-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+
+---
+
+## M36 — HELIOGRID measured read-only energy pilot
+
+**Group:** G7 · **Prerequisite:** M25-03 · **Status:** PLANNED, no implementation implied. **Outcome:** HELIOGRID measured read-only energy pilot. **Gate:** all leaves pass relevant decision, rights/privacy, i18n, security, regression, operational-cost and human-adoption checks. **Rollback:** document tested recovery before any risky change. This is a distinct milestone; future apps/finance/energy remain proposal-gated.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M36-01** — Identify approved physical meter site and technician | P3 | D2 | M25-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M36-02** — Specify calibration units and timestamp provenance | P3 | D2 | M36-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M36-03** — Decide D17 owner and read-only data boundary | P3 | D3 | M36-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M36-04** — Specify telemetry cost dashboard and failure states | P3 | D3 | M36-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M36-05** — Verify safety and post-pilot feasibility gate | P3 | D4 | M36-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+
+---
+
+## M37 — Cross-app identity and deployment boundaries
+
+**Group:** G7 · **Prerequisite:** M03-03,M05-09 · **Status:** PLANNED, no implementation implied. **Outcome:** Cross-app identity and deployment boundaries. **Gate:** all leaves pass relevant decision, rights/privacy, i18n, security, regression, operational-cost and human-adoption checks. **Rollback:** document tested recovery before any risky change. This is a distinct milestone; future apps/finance/energy remain proposal-gated.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M37-01** — Classify six app deployment/security surfaces | P1 | D2 | M03-03,M05-09 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M37-02** — Specify SSO session and safe redirect boundary | P1 | D2 | M37-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M37-03** — Specify tenant/role capability access | P1 | D3 | M37-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M37-04** — Specify locale-preserving links and event owner | P1 | D3 | M37-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+| - [ ] | **M37-05** — Test cross-app token expiry and role isolation | P1 | D4 | M37-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented |
+---
+
+## Consistency controls for 38-milestone plan
 
 **Priority order:** rename the **Hub application** to ARSY only after M28 compatibility gates; always protect the independent **Radio/SIGNAL feature**, permissions, sources, persistence, review and production restoration before adding unrelated surfaces. Although M22 appears under G4, run its P0 suite from the beginning. Stated milestone dependencies are conceptual gates: a task must also respect source rights and privacy even if its individual row does not restate them.
 
@@ -663,6 +791,6 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 **Progress evidence to capture when work begins:** `task-id`, `source-SHA`, `files`, `tests and logs`, `source/rights` where applicable, `reviewer/decision`, `blocked/risks`, `new-SHA`, `date/timezone`. A future agent must not tick unchecked boxes simply because similar files or issues exist in XII/XIV/Corpus.
 
-**Target register:** 29 stable milestone identities; historical base = 203 task IDs, supplemented by explicitly versioned unique execution microtasks for the i18n/Factory/ARSY/preview gaps. This file is the **only** active task register, not a GitHub-issue count, implementation claim or promise of elapsed time.
+**Target register:** 38 milestones (29 preserved M00–M28 plus M29–M37), 266 preserved task IDs plus 45 newly scoped leaf IDs = **311 unique tasks**. Prior checkmarks keep scoped historical evidence. This file is the **only** active task register, not a GitHub-issue count, implementation claim or promise of elapsed time.
 
-**End of XV Master TODO — reconciled planning update, 26 October 2026.**
+**End of XV Master TODO — modular planning v2, 26 October 2026.**

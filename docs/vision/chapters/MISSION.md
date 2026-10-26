@@ -1,0 +1,2 @@
+# Mission guide
+From [Vision](../MASTER_VISION_NARRATIVE_XV.md). The stated devotional intent is to glorify ALLAH through beneficial knowledge, care, correction and justice, respectfully acknowledging Nabi Muhammad SAW and Nabi Isa AS, with no claim of divine authorization or forced participation. A-L-L-A-H is technical acronym, not the divine referent; public knowledge remains open to global languages and voluntary users.

@@ -1,0 +1,2 @@
+# Master Vision section crosswalk
+The full [Vision](../MASTER_VISION_NARRATIVE_XV.md) retains its 99 chapter editorial index, Section 21A audit, chronology and unresolved source distinctions. These are *reader aids*: [Mission](MISSION.md) ← §§00–04,11–12; [Empire](EMPIRE.md) ← §§00.3,12,14,16; [ZILL](IDENTITY.md) ← §§01,03,06,09–10; [Research](RESEARCH.md) ← §§05–08,17–18,21A. No original text deleted or fabricated.

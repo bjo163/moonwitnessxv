@@ -1,0 +1,2 @@
+# App Factory — planned, not implemented
+Inspect actual pnpm workspace, Next/Vite/Fastify packages, Dockerfiles and existing scripts before creating proposed `pnpm app:create`. Generator must reject unsafe/reserved names, path traversal, overwrite and port collisions, support dry-run and minimal app variants, reuse MoonUI, D00 and id/en for GUI. No per-app database or public port by default. Prove isolated generated fixture builds/tests, locale negative checks and relevant Docker artifact. M05-17–22.
