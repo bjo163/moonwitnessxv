@@ -114,6 +114,93 @@ function aclRules(spec: unknown): Record<string, unknown> {
   return spec as Record<string, unknown>
 }
 
+function diffAcl(
+  kind: string,
+  name: string,
+  beforeAcl: unknown,
+  afterAcl: unknown,
+  breaking: string[],
+  changed: string[],
+): void {
+  const beforeMap = aclRules(beforeAcl)
+  const afterMap = aclRules(afterAcl)
+  for (const [op, beforeRule] of Object.entries(beforeMap)) {
+    if (!(op in afterMap)) {
+      breaking.push(`${kind}: ${name} lost its ${op} acl rule`)
+    } else if (isPublic(beforeRule) && !isPublic(afterMap[op])) {
+      breaking.push(`${kind}: ${name} ${op} is no longer public`)
+    } else if (JSON.stringify(beforeRule) !== JSON.stringify(afterMap[op])) {
+      changed.push(`${kind}.${name} ${op} acl`)
+    }
+  }
+  for (const op of Object.keys(afterMap)) {
+    if (!(op in beforeMap)) changed.push(`${kind}.${name} ${op} acl added`)
+  }
+}
+
+function diffConstraints(
+  kind: string,
+  name: string,
+  before: ModelShape,
+  after: ModelShape,
+  breaking: string[],
+  changed: string[],
+): void {
+  for (const op of ['create', 'update'] as const) {
+    const gained = newlyRequired(
+      op === 'create' ? before?.createSchema : before?.updateSchema,
+      op === 'create' ? after?.createSchema : after?.updateSchema,
+    )
+    if (gained.length) breaking.push(`${kind}: ${name} now requires ${gained.join(', ')} on ${op}`)
+  }
+  if (typeof before?.maxLimit === 'number' && typeof after?.maxLimit === 'number' && after.maxLimit < before.maxLimit) {
+    breaking.push(`${kind}: ${name} ?limit ceiling shrank to ${after.maxLimit}`)
+  }
+  const pairs = (list: string[][] | undefined): string[] => (list ?? []).map((p) => p.join('+'))
+  const beforePairs = pairs(before?.unique)
+  for (const pair of pairs(after?.unique)) {
+    if (!beforePairs.includes(pair)) breaking.push(`${kind}: ${name} added a unique constraint on [${pair.split('+').join(', ')}]`)
+  }
+  const beforeIdx = pairs(before?.indexes)
+  for (const pair of beforeIdx) {
+    if (!pairs(after?.indexes).includes(pair)) breaking.push(`${kind}: ${name} dropped its index on [${pair.split('+').join(', ')}]`)
+  }
+  if (typeof before?.limit === 'number' && typeof after?.limit === 'number' && after.limit !== before.limit) {
+    changed.push(`${kind}.${name} limit ${before.limit} -> ${after.limit}`)
+  }
+}
+
+function diffModelShape(
+  kind: string,
+  name: string,
+  before: ModelShape,
+  after: ModelShape,
+  breaking: string[],
+  changed: string[],
+): void {
+  breaking.push(...diffFieldShapes(before?.fields, after?.fields).map((line) => `${kind}: ${name} ${line}`))
+  breaking.push(...diffFieldShapes(before?.readSchema?.properties, after?.readSchema?.properties).map((line) => `${kind}: ${name} reads ${line}`))
+  diffConstraints(kind, name, before, after, breaking, changed)
+  diffAcl(kind, name, before?.acl, after?.acl, breaking, changed)
+}
+
+function diffEndpoints(
+  prev: SchemaDocument,
+  next: SchemaDocument,
+  breaking: string[],
+  added: string[],
+): void {
+  const pathOf = (e: { method: string; path: string }): string => `${e.method} ${e.path}`
+  const beforePaths = new Set((prev.endpoints ?? []).map(pathOf))
+  const afterPaths = new Set((next.endpoints ?? []).map(pathOf))
+  for (const path of beforePaths) if (!afterPaths.has(path)) breaking.push(`endpoint: ${path} removed`)
+  for (const path of afterPaths) if (!beforePaths.has(path)) added.push(`endpoint: ${path}`)
+  for (const endpoint of prev.endpoints ?? []) {
+    const same = (next.endpoints ?? []).find((e) => pathOf(e) === pathOf(endpoint))
+    if (same && isPublic(endpoint.acl) && !isPublic(same.acl)) breaking.push(`endpoint: ${pathOf(endpoint)} is no longer public`)
+  }
+}
+
 /**
  * Compare two `_schema` documents: the committed contract and the one the code would
  * produce now. Only `prev` drives removals — a new name is additive by definition.
@@ -142,63 +229,12 @@ export function classifySchema(prev: SchemaDocument, next: SchemaDocument): Sche
         added.push(`${kind}: ${name} added`)
         continue
       }
-      breaking.push(...diffFieldShapes(before?.fields, after?.fields).map((line) => `${kind}: ${name} ${line}`))
-      breaking.push(...diffFieldShapes(before?.readSchema?.properties, after?.readSchema?.properties).map((line) => `${kind}: ${name} reads ${line}`))
-      for (const op of ['create', 'update'] as const) {
-        const gained = newlyRequired(
-          op === 'create' ? before?.createSchema : before?.updateSchema,
-          op === 'create' ? after?.createSchema : after?.updateSchema,
-        )
-        if (gained.length) breaking.push(`${kind}: ${name} now requires ${gained.join(', ')} on ${op}`)
-      }
-      // ceiling on ?limit: lowering it makes a client's existing request fail
-      if (typeof before?.maxLimit === 'number' && typeof after?.maxLimit === 'number' && after.maxLimit < before.maxLimit) {
-        breaking.push(`${kind}: ${name} ?limit ceiling shrank to ${after.maxLimit}`)
-      }
-      // a new unique pair is a constraint the stored rows never agreed to
-      const pairs = (list: string[][] | undefined): string[] => (list ?? []).map((p) => p.join('+'))
-      const beforePairs = pairs(before?.unique)
-      for (const pair of pairs(after?.unique)) {
-        if (!beforePairs.includes(pair)) breaking.push(`${kind}: ${name} added a unique constraint on [${pair.split('+').join(', ')}]`)
-      }
-      // an index is invisible to a caller, so adding one is noise and removing one
-      // is a broken performance promise rather than a broken request
-      const beforeIdx = pairs(before?.indexes)
-      for (const pair of beforeIdx) {
-        if (!pairs(after?.indexes).includes(pair)) breaking.push(`${kind}: ${name} dropped its index on [${pair.split('+').join(', ')}]`)
-      }
-      // a view that returns more rows than advertised is a caller surprise, not an outage
-      if (typeof before?.limit === 'number' && typeof after?.limit === 'number' && after.limit !== before.limit) {
-        changed.push(`${kind}.${name} limit ${before.limit} -> ${after.limit}`)
-      }
-      for (const [op, beforeRule] of Object.entries(aclRules(before?.acl))) {
-        const afterRules = aclRules(after?.acl)
-        if (!(op in afterRules)) {
-          // the rule disappeared: 'none' means the route is gone, and anything else
-          // means it fell back to whatever the model defaults to — both are surprises
-          breaking.push(`${kind}: ${name} lost its ${op} acl rule`)
-        } else if (isPublic(beforeRule) && !isPublic(afterRules[op])) {
-          breaking.push(`${kind}: ${name} ${op} is no longer public`)
-        } else if (JSON.stringify(beforeRule) !== JSON.stringify(afterRules[op])) {
-          changed.push(`${kind}.${name} ${op} acl`)
-        }
-      }
-      for (const op of Object.keys(aclRules(after?.acl))) {
-        if (!(op in aclRules(before?.acl))) changed.push(`${kind}.${name} ${op} acl added`)
-      }
+      if (!after) continue
+      diffModelShape(kind, name, before, after, breaking, changed)
     }
   }
 
-  const pathOf = (e: { method: string; path: string }): string => `${e.method} ${e.path}`
-  const beforePaths = new Set((prev.endpoints ?? []).map(pathOf))
-  const afterPaths = new Set((next.endpoints ?? []).map(pathOf))
-  for (const path of beforePaths) if (!afterPaths.has(path)) breaking.push(`endpoint: ${path} removed`)
-  for (const path of afterPaths) if (!beforePaths.has(path)) added.push(`endpoint: ${path}`)
-  // an endpoint that stayed but stopped answering anonymous callers
-  for (const endpoint of prev.endpoints ?? []) {
-    const same = (next.endpoints ?? []).find((e) => pathOf(e) === pathOf(endpoint))
-    if (same && isPublic(endpoint.acl) && !isPublic(same.acl)) breaking.push(`endpoint: ${pathOf(endpoint)} is no longer public`)
-  }
+  diffEndpoints(prev, next, breaking, added)
 
   return { breaking, added, removed, changed }
 }

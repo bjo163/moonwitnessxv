@@ -1,5 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { EMBED_PATH, embedOrigins, securityHeaders } from '../../../scripts/security-headers.mjs'
+// The framing rules come from @moonwitness/core by name — the same owner the hub and
+// both Next configs use. `core` is linted to stay free of Node built-ins precisely so
+// this edge entry point can import it.
+import { EMBED_PATH, embedOrigins, securityHeaders } from '@moonwitness/core'
 
 /**
  * Framing is decided per path, here, rather than in `next.config.mjs`.

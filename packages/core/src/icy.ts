@@ -56,6 +56,68 @@ export interface FetchIcyOptions {
  * Fetches stream headers and sniffs the first ICY metadata chunk with bounds & SSRF safety.
  * Aborts connection as soon as first title is received or timeout is reached.
  */
+interface AudioChunkState {
+  audioBufferCount: number
+  offset: number
+  readingMeta: boolean
+  metaLength: number
+}
+
+function consumeAudio(
+  value: Uint8Array,
+  state: AudioChunkState,
+  metaint: number,
+  metaChunks: Uint8Array[],
+): void {
+  const neededAudio = metaint - state.audioBufferCount
+  const available = value.length - state.offset
+  if (available < neededAudio) {
+    state.audioBufferCount += available
+    state.offset += available
+    return
+  }
+
+  state.offset += neededAudio
+  state.audioBufferCount = 0
+
+  if (state.offset >= value.length) return
+  const lenByte = value[state.offset]
+  state.offset += 1
+  if (lenByte === undefined) return
+
+  state.metaLength = lenByte * 16
+  if (state.metaLength > 0) {
+    state.readingMeta = true
+    metaChunks.length = 0
+  }
+}
+
+function consumeMeta(
+  value: Uint8Array,
+  state: AudioChunkState,
+  metaChunks: Uint8Array[],
+): string | null {
+  const currentMetaRead = metaChunks.reduce((acc, c) => acc + c.length, 0)
+  const neededMeta = state.metaLength - currentMetaRead
+  const available = value.length - state.offset
+  const toTake = Math.min(available, neededMeta)
+  metaChunks.push(value.slice(state.offset, state.offset + toTake))
+  state.offset += toTake
+
+  if (currentMetaRead + toTake < state.metaLength) return null
+
+  // Done reading metadata block!
+  const fullMetaBytes = new Uint8Array(state.metaLength)
+  let p = 0
+  for (const chunk of metaChunks) {
+    fullMetaBytes.set(chunk, p)
+    p += chunk.length
+  }
+  const metaString = new TextDecoder('utf-8').decode(fullMetaBytes)
+  const parsed = parseIcyBlock(metaString)
+  return parsed.StreamTitle ?? null
+}
+
 export async function fetchIcyMetadata(
   streamUrl: string,
   options: FetchIcyOptions = {},
@@ -95,62 +157,27 @@ export async function fetchIcyMetadata(
     if (metaint > 0 && res.body) {
       const reader = res.body.getReader()
       let totalBytesRead = 0
-      let audioBufferCount = 0
-      let metaLength = 0
+      const state: AudioChunkState = {
+        audioBufferCount: 0,
+        offset: 0,
+        readingMeta: false,
+        metaLength: 0,
+      }
       const metaChunks: Uint8Array[] = []
-      let readingMeta = false
 
       try {
         while (totalBytesRead < (options.maxAudioBytes ?? 65536)) {
           const { value, done } = await reader.read()
           if (done || !value) break
 
-          let offset = 0
-          while (offset < value.length) {
-            if (!readingMeta) {
-              const neededAudio = metaint - audioBufferCount
-              const available = value.length - offset
-              if (available < neededAudio) {
-                audioBufferCount += available
-                offset += available
-              } else {
-                offset += neededAudio
-                audioBufferCount = 0
-                // Next byte is meta length byte (length in 16-byte blocks)
-                if (offset < value.length) {
-                  const lenByte = value[offset]
-                  offset += 1
-                  if (lenByte !== undefined) {
-                    metaLength = lenByte * 16
-                    if (metaLength > 0) {
-                      readingMeta = true
-                      metaChunks.length = 0
-                    }
-                  }
-                }
-              }
+          state.offset = 0
+          while (state.offset < value.length) {
+            if (!state.readingMeta) {
+              consumeAudio(value, state, metaint, metaChunks)
             } else {
-              const currentMetaRead = metaChunks.reduce((acc, c) => acc + c.length, 0)
-              const neededMeta = metaLength - currentMetaRead
-              const available = value.length - offset
-              const toTake = Math.min(available, neededMeta)
-              metaChunks.push(value.slice(offset, offset + toTake))
-              offset += toTake
-
-              if (currentMetaRead + toTake >= metaLength) {
-                // Done reading metadata block!
-                const fullMetaBytes = new Uint8Array(metaLength)
-                let p = 0
-                for (const chunk of metaChunks) {
-                  fullMetaBytes.set(chunk, p)
-                  p += chunk.length
-                }
-                const metaString = new TextDecoder('utf-8').decode(fullMetaBytes)
-                const parsed = parseIcyBlock(metaString)
-                if (parsed.StreamTitle) {
-                  rawTitle = parsed.StreamTitle
-                }
-                // We got the metadata, terminate stream immediately
+              const streamTitle = consumeMeta(value, state, metaChunks)
+              if (streamTitle) {
+                rawTitle = streamTitle
                 break
               }
             }

@@ -1,9 +1,10 @@
 // @ts-check
-import { loadRootEnv, securityHeaders } from '../../scripts/next-config-shared.mjs'
+import { loadRootEnv, securityHeaders } from '@moonwitness/web-config'
 
 /**
  * One `.env` for the whole monorepo (the same file apps/radio reads); the loader
- * and header set are shared with apps/dock so neither app can drift ahead.
+ * and header set come from @moonwitness/web-config, which re-exports the rules
+ * @moonwitness/core owns — so neither app can drift ahead of the other.
  * Plain .mjs on purpose: production containers install without TypeScript,
  * and `node --env-file` is rejected by Next's build workers via NODE_OPTIONS.
  * In the images there is no .env to read — compose provides the environment.
@@ -18,7 +19,7 @@ const config = {
   // see apps/dock/next.config.mjs: 127.0.0.1 is not `localhost` to the dev server
   allowedDevOrigins: ['127.0.0.1', 'localhost', '127.0.0.1:3004', 'localhost:3004'],
   async headers() {
-    // eval only where React Refresh needs it (see security-headers.mjs)
+    // eval only where React Refresh needs it (see securityHeaders in @moonwitness/core)
     return [{ source: '/:path*', headers: securityHeaders(["'none'"], { dev: process.env.NODE_ENV !== 'production' }) }]
   },
 }

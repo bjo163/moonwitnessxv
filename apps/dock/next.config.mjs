@@ -1,9 +1,10 @@
 // @ts-check
-import { loadRootEnv, NON_FRAMING_HEADERS } from '../../scripts/next-config-shared.mjs'
+import { loadRootEnv, NON_FRAMING_HEADERS } from '@moonwitness/web-config'
 
 /**
  * One `.env` for the whole monorepo; the loader and the header vocabulary are shared
- * with apps/headquarters so the two configs cannot drift.
+ * with apps/headquarters through @moonwitness/web-config so the two configs cannot
+ * drift. That package re-exports the rules from @moonwitness/core, which owns them.
  * Plain .mjs on purpose: production containers install without TypeScript,
  * and `node --env-file` is rejected by Next's build workers via NODE_OPTIONS.
  * In the images there is no .env to read — compose provides the environment.

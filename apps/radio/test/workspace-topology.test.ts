@@ -118,6 +118,7 @@ test('topology: addons.ts is exactly the addons the hub depends on', () => {
     .map((m) => m[1]!)
     .filter((name) => name !== '@moonwitness/moonql') // the ORM itself, not an addon
   const declared = Object.keys(byName.get('@moonwitness/radio')!.pkg.dependencies ?? {})
+    .filter((name) => name.startsWith('@moonwitness/'))
     .filter((name) => name !== '@moonwitness/moonql' && name !== '@moonwitness/core')
     // whatsapp/denpa are channels mounted outside the addon registry
     .filter((name) => name !== '@moonwitness/whatsapp' && name !== '@moonwitness/denpa')

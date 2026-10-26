@@ -5,5 +5,5 @@
     "outDir": "./dist"
   },
   "include": ["src"],
-  "references": [{ "path": "../moonql" }]
+  "references": [{ "path": "../core" }, { "path": "../moonql" }]
 }

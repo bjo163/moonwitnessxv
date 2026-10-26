@@ -3,9 +3,10 @@
  *
  * It used to live in `scripts/security-headers.mjs` — a Node build file — which
  * meant the hub could not use it at runtime even though it is pure strings. It is
- * dependency-free and imports no Node built-in, so both a Next middleware (edge)
- * and the Fastify hub can import it; `scripts/security-headers.mjs` re-exports this
- * module so the Next configs keep working without a second definition.
+ * dependency-free and imports no Node built-in (the lint config enforces that for
+ * `core`), so the Fastify hub, the dock's edge middleware and both Next configs all
+ * reach the same rules through `@moonwitness/core` — `@moonwitness/web-config` only
+ * re-exports them for the config files.
  */
 
 export interface HeaderPair {

@@ -91,23 +91,20 @@ test('docker: the importer scan is the workspace, not an empty match', () => {
   assert.ok(importers.length > 20, `only ${importers.length} importers parsed: the lockfile shape changed`)
 })
 
-test('docker: every workspace member has a manifest in both install stages', () => {
+test('docker: the install stages derive the member manifests', () => {
+  // Enumeration is what broke twice (see the header note). The stages must build
+  // the manifest set from the context, so a new workspace member needs no
+  // Dockerfile edit at all — and a reappearing hand list must fail the suite.
   for (const [file, source] of [['Dockerfile', dockerfile], ['Dockerfile.web', dockerfileWeb]] as const) {
     const byStage = stages(source)
-    const missing: string[] = []
     for (const stage of ['deps', 'prod-deps']) {
       const text = byStage.get(stage)
       assert.ok(text, `${file} has a ${stage} stage`)
-      for (const path of importers) {
-        if (!text!.includes(`COPY ${path}/package.json ${path}/`)) missing.push(`${stage}: ${path}`)
-      }
+      assert.ok(text!.includes('COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./'), `${file} ${stage} must install from the root manifests`)
+      assert.match(text!, /--mount=type=bind,source=\.,target=\/ctx/, `${file} ${stage} must bind-mount the context to reach member manifests`)
+      assert.match(text!, /find apps packages -mindepth 2 -maxdepth 2 -name package\.json/, `${file} ${stage} must derive the manifest set`)
+      assert.doesNotMatch(text!, /^COPY (?:apps|packages)\/[\w-]+\/package\.json/m, `${file} ${stage} enumerates member manifests again — derive them`)
     }
-    assert.deepEqual(
-      missing,
-      [],
-      `${file} copies an incomplete workspace: pnpm refuses --frozen-lockfile when an\n` +
-        `importer has no manifest. Add the missing COPY lines to ${file}:\n  ${missing.join('\n  ')}`,
-    )
   }
 })
 
@@ -136,8 +133,12 @@ test('docker: the web image copies what next start reads off disk', () => {
   assert.ok(runtime, 'Dockerfile.web has a runtime stage')
   // public/ is not bundled into .next: artwork and the PWA icon 404 without it
   assert.ok(runtime!.includes('COPY --from=build /repo/apps/${APP}/public apps/${APP}/public'), 'public/ is served by next start')
-  assert.ok(runtime!.includes('COPY --from=build /repo/scripts ./scripts'), 'next.config.mjs imports the shared loader from scripts/')
   assert.ok(runtime!.includes('COPY --from=build /repo/apps/${APP}/.next apps/${APP}/.next'), 'the build output is copied')
+  // next.config.mjs imports @moonwitness/web-config, and `next start` re-reads that
+  // config: the package's dist has to exist, exactly like core's and moonui's.
+  assert.ok(runtime!.includes('COPY --from=build /repo/packages/web-config/dist packages/web-config/dist'), 'web-config ships as a package')
+  // ... and repo-root scripts must NOT be dragged in to substitute for one
+  assert.doesNotMatch(runtime!, /COPY --from=build \/repo\/scripts/, 'runtime must not depend on repo-root scripts/')
 })
 
 test('docker: the radio build stage compiles only what it copied', () => {

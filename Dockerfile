@@ -12,46 +12,19 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /repo
 
 # ---- Install deps (needs only manifests for a locked, cached layer) ----
-# EVERY workspace manifest must be present or `pnpm install --frozen-lockfile`
-# fails: apps/* and packages/* are all workspace members.
+# Every workspace member's manifest, DERIVED from the build context instead of
+# listed here. `pnpm install --frozen-lockfile` demands a manifest for every
+# `importers:` entry of the lockfile, and the hand-written list drifted twice —
+# while BuildKit cannot preserve `<dir>/package.json` structure through one glob
+# COPY. A read-only bind mount of the context plus a find loop makes the set
+# self-maintaining: adding a package now costs zero Dockerfile edits.
 FROM base AS deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY apps/radio/package.json apps/radio/
-COPY apps/dock/package.json apps/dock/
-COPY apps/headquarters/package.json apps/headquarters/
-COPY packages/core/package.json packages/core/
-COPY packages/moonql/package.json packages/moonql/
-COPY packages/moonql-client/package.json packages/moonql-client/
-COPY packages/moonui/package.json packages/moonui/
-COPY packages/moonql-base/package.json packages/moonql-base/
-COPY packages/moonql-auth/package.json packages/moonql-auth/
-COPY packages/moonql-stations/package.json packages/moonql-stations/
-COPY packages/moonql-schedule/package.json packages/moonql-schedule/
-COPY packages/moonql-playlog/package.json packages/moonql-playlog/
-COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
-COPY packages/moonql-settings/package.json packages/moonql-settings/
-COPY packages/moonql-ops/package.json packages/moonql-ops/
-COPY packages/moonql-corpus/package.json packages/moonql-corpus/
-COPY packages/moonql-unilex/package.json packages/moonql-unilex/
-COPY packages/moonql-ontology/package.json packages/moonql-ontology/
-COPY packages/moonql-journey/package.json packages/moonql-journey/
-COPY packages/moonql-actors/package.json packages/moonql-actors/
-COPY packages/moonql-graph/package.json packages/moonql-graph/
-COPY packages/moonql-research/package.json packages/moonql-research/
-COPY packages/whatsapp/package.json packages/whatsapp/
-COPY packages/denpa/package.json packages/denpa/
-# The remaining workspace members. This list is pnpm-lock.yaml's `importers:`
-# block, not a convenience: `--frozen-lockfile` refuses to install when an
-# importer has no manifest, so one forgotten line fails every image build.
-# apps/radio/test/dockerfile-contract.test.ts holds both stages to it.
-COPY apps/aigateway/package.json apps/aigateway/
-COPY apps/cockpit/package.json apps/cockpit/
-COPY apps/sentinel/package.json apps/sentinel/
-COPY packages/cli/package.json packages/cli/
-COPY packages/eslint-config/package.json packages/eslint-config/
-COPY packages/moonql-monitor/package.json packages/moonql-monitor/
-COPY packages/testing/package.json packages/testing/
-COPY packages/types/package.json packages/types/
+RUN --mount=type=bind,source=.,target=/ctx,readonly \
+    cd /ctx \
+    && find apps packages -mindepth 2 -maxdepth 2 -name package.json | while read -r m; do \
+         mkdir -p "/repo/$(dirname "$m")" && cp "/ctx/$m" "/repo/$m"; \
+       done
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile
 
@@ -70,41 +43,14 @@ COPY packages ./packages
 RUN pnpm --filter @moonwitness/radio build
 
 # ---- Production deps only ----
+# same derivation rule as `deps`: --prod still has to see every importer
 FROM base AS prod-deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY apps/radio/package.json apps/radio/
-COPY apps/dock/package.json apps/dock/
-COPY apps/headquarters/package.json apps/headquarters/
-COPY packages/core/package.json packages/core/
-COPY packages/moonql/package.json packages/moonql/
-COPY packages/moonql-client/package.json packages/moonql-client/
-COPY packages/moonui/package.json packages/moonui/
-COPY packages/moonql-base/package.json packages/moonql-base/
-COPY packages/moonql-auth/package.json packages/moonql-auth/
-COPY packages/moonql-stations/package.json packages/moonql-stations/
-COPY packages/moonql-schedule/package.json packages/moonql-schedule/
-COPY packages/moonql-playlog/package.json packages/moonql-playlog/
-COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
-COPY packages/moonql-settings/package.json packages/moonql-settings/
-COPY packages/moonql-ops/package.json packages/moonql-ops/
-COPY packages/moonql-corpus/package.json packages/moonql-corpus/
-COPY packages/moonql-unilex/package.json packages/moonql-unilex/
-COPY packages/moonql-ontology/package.json packages/moonql-ontology/
-COPY packages/moonql-journey/package.json packages/moonql-journey/
-COPY packages/moonql-actors/package.json packages/moonql-actors/
-COPY packages/moonql-graph/package.json packages/moonql-graph/
-COPY packages/moonql-research/package.json packages/moonql-research/
-COPY packages/whatsapp/package.json packages/whatsapp/
-COPY packages/denpa/package.json packages/denpa/
-# same completeness rule as `deps`: --prod still resolves every importer
-COPY apps/aigateway/package.json apps/aigateway/
-COPY apps/cockpit/package.json apps/cockpit/
-COPY apps/sentinel/package.json apps/sentinel/
-COPY packages/cli/package.json packages/cli/
-COPY packages/eslint-config/package.json packages/eslint-config/
-COPY packages/moonql-monitor/package.json packages/moonql-monitor/
-COPY packages/testing/package.json packages/testing/
-COPY packages/types/package.json packages/types/
+RUN --mount=type=bind,source=.,target=/ctx,readonly \
+    cd /ctx \
+    && find apps packages -mindepth 2 -maxdepth 2 -name package.json | while read -r m; do \
+         mkdir -p "/repo/$(dirname "$m")" && cp "/ctx/$m" "/repo/$m"; \
+       done
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile --prod
 

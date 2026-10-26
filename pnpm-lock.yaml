@@ -109,6 +109,9 @@ importers:
       '@moonwitness/moonui':
         specifier: workspace:*
         version: link:../../packages/moonui
+      '@moonwitness/web-config':
+        specifier: workspace:*
+        version: link:../../packages/web-config
       next:
         specifier: ^16.4.3
         version: 16.4.3(@types/node@22.20.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -143,6 +146,9 @@ importers:
       '@moonwitness/moonui':
         specifier: workspace:*
         version: link:../../packages/moonui
+      '@moonwitness/web-config':
+        specifier: workspace:*
+        version: link:../../packages/web-config
       next:
         specifier: ^16.4.3
         version: 16.4.3(@types/node@22.20.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -466,6 +472,13 @@ importers:
       '@moonwitness/moonql':
         specifier: workspace:*
         version: link:../moonql
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
 
   packages/moonql-graph:
     dependencies:
@@ -683,6 +696,19 @@ importers:
 
   packages/types:
     devDependencies:
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  packages/web-config:
+    dependencies:
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
       typescript:
         specifier: ^5.7.3
         version: 5.9.3

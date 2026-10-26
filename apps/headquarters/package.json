@@ -12,6 +12,7 @@
     "@moonwitness/core": "workspace:*",
     "@moonwitness/moonql-client": "workspace:*",
     "@moonwitness/moonui": "workspace:*",
+    "@moonwitness/web-config": "workspace:*",
     "next": "^16.4.3",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"

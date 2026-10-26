@@ -21,44 +21,16 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /repo
 
 # ---- Install deps (all workspace manifests are required by the lockfile) ----
+# The member manifests are DERIVED from the context: `--frozen-lockfile` needs one
+# per lockfile importer, and a hand-kept list drifts every time a package joins.
 FROM base AS deps
 ARG APP
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY apps/radio/package.json apps/radio/
-COPY apps/dock/package.json apps/dock/
-COPY apps/headquarters/package.json apps/headquarters/
-COPY packages/core/package.json packages/core/
-COPY packages/moonql/package.json packages/moonql/
-COPY packages/moonql-client/package.json packages/moonql-client/
-COPY packages/moonui/package.json packages/moonui/
-COPY packages/moonql-base/package.json packages/moonql-base/
-COPY packages/moonql-auth/package.json packages/moonql-auth/
-COPY packages/moonql-stations/package.json packages/moonql-stations/
-COPY packages/moonql-schedule/package.json packages/moonql-schedule/
-COPY packages/moonql-playlog/package.json packages/moonql-playlog/
-COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
-COPY packages/moonql-settings/package.json packages/moonql-settings/
-COPY packages/moonql-ops/package.json packages/moonql-ops/
-COPY packages/moonql-corpus/package.json packages/moonql-corpus/
-COPY packages/moonql-unilex/package.json packages/moonql-unilex/
-COPY packages/moonql-ontology/package.json packages/moonql-ontology/
-COPY packages/moonql-journey/package.json packages/moonql-journey/
-COPY packages/moonql-actors/package.json packages/moonql-actors/
-COPY packages/moonql-graph/package.json packages/moonql-graph/
-COPY packages/moonql-research/package.json packages/moonql-research/
-COPY packages/whatsapp/package.json packages/whatsapp/
-COPY packages/denpa/package.json packages/denpa/
-# The remaining workspace members: this list is pnpm-lock.yaml's `importers:`
-# block, and `--frozen-lockfile` refuses to install when one has no manifest.
-# apps/radio/test/dockerfile-contract.test.ts holds both stages to it.
-COPY apps/aigateway/package.json apps/aigateway/
-COPY apps/cockpit/package.json apps/cockpit/
-COPY apps/sentinel/package.json apps/sentinel/
-COPY packages/cli/package.json packages/cli/
-COPY packages/eslint-config/package.json packages/eslint-config/
-COPY packages/moonql-monitor/package.json packages/moonql-monitor/
-COPY packages/testing/package.json packages/testing/
-COPY packages/types/package.json packages/types/
+RUN --mount=type=bind,source=.,target=/ctx,readonly \
+    cd /ctx \
+    && find apps packages -mindepth 2 -maxdepth 2 -name package.json | while read -r m; do \
+         mkdir -p "/repo/$(dirname "$m")" && cp "/ctx/$m" "/repo/$m"; \
+       done
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile
 
@@ -69,48 +41,22 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 FROM deps AS build
 ARG APP
 COPY tsconfig.base.json ./
-# the app configs import the shared loader/header set from here
-COPY scripts ./scripts
+# `packages` carries @moonwitness/web-config, which the app configs import by name.
+# The repo-root scripts/ directory is deliberately NOT copied: it is dev tooling, and
+# the shared config pieces it used to hold now live in a real package.
 COPY packages ./packages
 COPY apps/${APP} ./apps/${APP}
 RUN pnpm build:libs && pnpm --filter @moonwitness/${APP} build
 
 # ---- Production deps only ----
+# same derivation rule as `deps`: --prod still has to see every importer
 FROM base AS prod-deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY apps/radio/package.json apps/radio/
-COPY apps/dock/package.json apps/dock/
-COPY apps/headquarters/package.json apps/headquarters/
-COPY packages/core/package.json packages/core/
-COPY packages/moonql/package.json packages/moonql/
-COPY packages/moonql-client/package.json packages/moonql-client/
-COPY packages/moonui/package.json packages/moonui/
-COPY packages/moonql-base/package.json packages/moonql-base/
-COPY packages/moonql-auth/package.json packages/moonql-auth/
-COPY packages/moonql-stations/package.json packages/moonql-stations/
-COPY packages/moonql-schedule/package.json packages/moonql-schedule/
-COPY packages/moonql-playlog/package.json packages/moonql-playlog/
-COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
-COPY packages/moonql-settings/package.json packages/moonql-settings/
-COPY packages/moonql-ops/package.json packages/moonql-ops/
-COPY packages/moonql-corpus/package.json packages/moonql-corpus/
-COPY packages/moonql-unilex/package.json packages/moonql-unilex/
-COPY packages/moonql-ontology/package.json packages/moonql-ontology/
-COPY packages/moonql-journey/package.json packages/moonql-journey/
-COPY packages/moonql-actors/package.json packages/moonql-actors/
-COPY packages/moonql-graph/package.json packages/moonql-graph/
-COPY packages/moonql-research/package.json packages/moonql-research/
-COPY packages/whatsapp/package.json packages/whatsapp/
-COPY packages/denpa/package.json packages/denpa/
-# same completeness rule as `deps`: --prod still resolves every importer
-COPY apps/aigateway/package.json apps/aigateway/
-COPY apps/cockpit/package.json apps/cockpit/
-COPY apps/sentinel/package.json apps/sentinel/
-COPY packages/cli/package.json packages/cli/
-COPY packages/eslint-config/package.json packages/eslint-config/
-COPY packages/moonql-monitor/package.json packages/moonql-monitor/
-COPY packages/testing/package.json packages/testing/
-COPY packages/types/package.json packages/types/
+RUN --mount=type=bind,source=.,target=/ctx,readonly \
+    cd /ctx \
+    && find apps packages -mindepth 2 -maxdepth 2 -name package.json | while read -r m; do \
+         mkdir -p "/repo/$(dirname "$m")" && cp "/ctx/$m" "/repo/$m"; \
+       done
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile --prod
 
@@ -124,10 +70,11 @@ ENV NODE_ENV=production
 ENV APP_PORT=${APP_PORT}
 WORKDIR /repo
 COPY --from=prod-deps /repo ./
-# next.config.mjs is also read by `next start`, so the shared config pieces must exist at runtime
-COPY --from=build /repo/scripts ./scripts
-# the two libraries the app imports at runtime (their dist is ESM)
+# the libraries the app imports at runtime (their dist is ESM). web-config is one of
+# them: `next start` re-reads next.config.mjs, which imports it, so it must be present
+# as a real package — not as repo files copied in beside the image.
 COPY --from=build /repo/packages/core/dist packages/core/dist
+COPY --from=build /repo/packages/web-config/dist packages/web-config/dist
 COPY --from=build /repo/packages/moonql-client/dist packages/moonql-client/dist
 COPY --from=build /repo/packages/moonui/dist packages/moonui/dist
 COPY --from=build /repo/packages/moonui/moon.css packages/moonui/moon.css
