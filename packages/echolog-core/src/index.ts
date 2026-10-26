@@ -28,6 +28,8 @@ export interface StorageDriver {
 
 export { FsStorageDriver, ObjectHeldError, QuotaExceededError } from './driver/fs.js'
 export type { FsStorageDriverOptions, GcResult } from './driver/fs.js'
+export { createS3ClientFromEnvironment, S3StorageDriver } from './driver/s3.js'
+export type { S3ClientEnvironment, S3StorageDriverOptions } from './driver/s3.js'
 
 export interface ObjectMetadataInput {
   filename: string

@@ -42,10 +42,32 @@ export async function createChannelAccount(db: SkylinkDatabase, input: NewChanne
   return row
 }
 
+export async function findChannelAccount(
+  db: SkylinkDatabase,
+  provider: string,
+  externalAccountId: string,
+): Promise<ChannelAccount | null> {
+  const [row] = await db.select().from(channelAccounts)
+    .where(and(eq(channelAccounts.provider, provider), eq(channelAccounts.externalAccountId, externalAccountId)))
+    .limit(1)
+  return row ?? null
+}
+
 export async function createConversation(db: SkylinkDatabase, input: NewConversation): Promise<Conversation> {
   const [row] = await db.insert(conversations).values(input).returning()
   if (!row) throw new Error('Failed to create conversation')
   return row
+}
+
+export async function findConversation(
+  db: SkylinkDatabase,
+  channelAccountId: string,
+  externalId: string,
+): Promise<Conversation | null> {
+  const [row] = await db.select().from(conversations)
+    .where(and(eq(conversations.channelAccountId, channelAccountId), eq(conversations.externalId, externalId)))
+    .limit(1)
+  return row ?? null
 }
 
 export async function appendMessage(db: SkylinkDatabase, input: NewMessage): Promise<Message> {

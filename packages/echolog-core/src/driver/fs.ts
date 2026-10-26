@@ -57,8 +57,11 @@ export class FsStorageDriver implements StorageDriver {
       await handle.writeFile(new Uint8Array())
       await handle.sync()
     } finally {
-      await handle.close()
-      await rm(probePath, { force: true })
+      try {
+        await handle.close()
+      } finally {
+        await rm(probePath, { force: true })
+      }
     }
   }
 

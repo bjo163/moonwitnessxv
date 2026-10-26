@@ -20,3 +20,5 @@ export interface ProviderAdapter {
   start(): Promise<void>
   stop(): Promise<void>
 }
+
+export * from './verify.js'

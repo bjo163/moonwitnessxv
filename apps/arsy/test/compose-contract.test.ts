@@ -65,6 +65,16 @@ test('compose: every service declares a healthcheck', () => {
   assert.deepEqual(missing, [], `services without a healthcheck: ${missing.join(', ')}`)
 })
 
+test('compose: MinIO is loopback-only, profiled, persistent and healthchecked', () => {
+  const minio = blocks.get('echolog-minio')
+  assert.ok(minio, 'optional MinIO service exists')
+  assert.match(minio, /profiles:\s*\["echolog-s3"\]/, 'MinIO is opt-in')
+  assert.match(minio, /127\.0\.0\.1:9000:9000/, 'S3 API is loopback-only')
+  assert.match(minio, /echolog-minio-data:\/data/, 'MinIO data has a named volume')
+  assert.match(minio, /healthcheck:[\s\S]*mc", "ready", "local/, 'MinIO readiness is checked')
+  assert.match(minio, /MINIO_ROOT_PASSWORD:\s*\$\{ECHOLOG_MINIO_ROOT_PASSWORD:-\}/, 'root credentials come from environment')
+})
+
 test('compose: the database name each service dials is actually defined for it', () => {
   const db = blocks.get('db')
   assert.ok(db, 'db service exists')
