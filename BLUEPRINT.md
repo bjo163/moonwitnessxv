@@ -6,6 +6,35 @@
 
 **Document hierarchy:** [Master Vision Narrative XV](docs/vision/MASTER_VISION_NARRATIVE_XV.md) = why/what/history/99 chapters; **BLUEPRINT.md** = owner boundaries, desired behavior and architecture; [TODO.md](TODO.md) = unique execution task IDs, gates, priorities, dependencies, status. Code + actual SHA-specific test results = what works. An approved future XV ADR supersedes design proposals. Historical repository ADRs do not automatically become XV ADRs.
 
+## ARSY — accepted central Hub identity (ADR-0001)
+
+**Owner-approved naming decision, 26 October 2026:** **ARSY = the single existing Fastify + MoonQL + API + plugins + channel backend currently implemented at `apps/radio` / `@moonwitness/radio`.** It is a **rename/migration of that SAME service**, not an extra backend. **Radio becomes the bounded `SIGNAL/RADIO` service/domain within ARSY**; station/player/schedule/playlog/WhatsApp/DENPA functionality remains supported where actually implemented.
+
+| Architectural label | Current implementation (source-audit fact) | **Accepted future identifier** |
+|---|---|---|
+| Hub application | `apps/radio` | **`apps/arsy`** |
+| Hub pnpm package | `@moonwitness/radio` | **`@moonwitness/arsy`** |
+| Compose Hub service | `radio` | **`arsy`**, with tested temporary internal DNS compatibility for Dock/HQ |
+| Operational label | radio Hub | **ARSY — MoonWitness Application & Orchestration Hub** |
+| Radio capability | station/schedule/playlog, signal & channels | **SIGNAL/RADIO module**, not a separately duplicated API |
+| Port / public API | `3000` / `/api/v1` / `/docs` | **Stay stable by default** |
+| Hub environment names | `RADIO_API_URL`, `RADIO_PORT`, `RADIO_PREFIX`, `RADIO_TITLE` | Preferred `ARSY_*` only with documented, tested legacy aliases; old values not broken silently |
+
+**Source-of-truth ADR:** [ADR-0001 — ARSY is the XV Hub](docs/decisions/ADR-0001-arsy-is-xv-hub.md). **Implementation backlog:** [TODO milestone M28](TODO.md#M28--arsy-hub-rename-and-compatibility-migration). The decision is accepted, **physical code rename is pending and not claimed shipped**.
+
+Current files and tables with `radio` in their paths/names are **historically correct runtime observations** until the physical migration is tested. New architectural plans should use **ARSY** as the hub, but implementation references must use the current actual path until M28 completes.
+
+**Role separation:** ARSY = backend/runtime and future bounded orchestration; 100CENTER = governed operator experience inside Headquarters; SHADOW = creative/editorial workspace; MoonQL = existing ORM; Radio = domain feature; historical ARSY Research Compute ambitions are *extensions not yet implemented*. ARSY is an application name, not religious al-'Arsh, divine authority, supernatural mechanism or self-governing AI.
+
+### ARSY non-breaking migration contract
+
+- **One running Hub before and after**, one MoonQL bootstrap, one database authority; **never start apps/radio and apps/arsy as two parallel production services**.
+- Move the directory and package instead of copying; **preserve `/api/v1`, port 3000, table IDs, radio media/player routes, clients, auth, Swagger, and error envelope**.
+- Update root pnpm filters, `pnpm-lock.yaml` through pnpm regeneration, Dockerfiles and Compose DNS, runners, app manifests, generated SDK, test fixtures, config aliases and docs as **one tested migration**.
+- If a new `ARSY_API_URL` or `ARSY_PORT` is introduced, accept the old Radio-specific environment names during a documented compatibility window and **fail on conflicting simultaneous values**, rather than silently changing destinations.
+- Run Hub/PG/Radio/Dock/HQ/SDK/ACL/WA/DENPA/Docker smoke and actual fallback/rollback checks before marking M28 complete.
+- **No new source code rename has been executed as part of this architecture decision.**
+
 ## 0 — Decision and acceptance horizon
 
 **North star:** People can inspect a source, its exact edition, context, witnesses, relationships, attributed interpretations, uncertainty, and its creative derivatives without confusing sacred text, historical evidence, personal testimony, AI conjecture or fiction. The product provides **knowledge, witness, research, creation and accountable action**, not algorithmic divine authority.
@@ -30,7 +59,7 @@ At master audit commit `43dfcdebfbaa1a7a078d2a0657a10cfdae2ce298`, XV tree conta
 
 **Proven risk:** `packages/moonql/src/acl.ts` treats undefined ACL as public. `apps/radio/src/config.ts` defaults `MOONQL_ACL_POLICY=warn`, whereas Docker Compose sets `require` for anonymous REST writes. That guard **does not prove GET/list/views/expand/export of sensitive models are protected**. `apps/headquarters/src/middleware.ts` tests cookie presence, not credential validity (Hub enforces actual authorization); generic MoonQL ops audits are asynchronous and not tamper-proof. The restore runbook has an empty execution ledger. All require gates before restricted data enters XV.
 
-**Existing route convention** is the Hub `/api/v1` prefix, with `/docs` OpenAPI; do not rename `apps/radio` just to sound more universal. No second public API or ORM stack until an XV ADR establishes a measurable need.
+**Existing route convention** is the Hub `/api/v1` prefix, with `/docs` OpenAPI. **ADR-0001 supersedes the previous advice against renaming `apps/radio`: the owner selected ARSY as the Hub name.** Perform the physical rename **only with M28's compatibility and test gates**. Never create a second API/ORM authority merely to rename the existing Hub.
 
 ## 2 — Experience architecture: one discoverable product
 
@@ -42,7 +71,7 @@ At master audit commit `43dfcdebfbaa1a7a078d2a0657a10cfdae2ce298`, XV tree conta
 | **RESEARCH** | Compare, Key Witness, SRGBL, MIZAN, counterevidence | reviewer desk, decision/retract | RESEARCH |
 | **WITNESS** | Consented archive, event, fault line, past presence, correction | private witness editor | WITNESS |
 | **STORIES** | Four creative lenses, 99-chapter archive, crew, episodes, posters | SHADOW story studio | STORY + MEDIA |
-| **SIGNAL** | **Existing** Radio stations, schedule, player | existing radio admin/channel ops | SIGNAL (existing) |
+| **SIGNAL / RADIO** | **Existing** Radio stations, schedule, player | existing radio admin/channel ops | SIGNAL (existing) |
 | **WORLD** | Future Earth Monitor, time/cosmos, experiments | World-source quality | WORLD (optional) |
 | **JOURNEY** | Future voluntary paths, 33 patch archive, AETHERION fiction | 100CENTER mandate/mission | JOURNEY (optional) |
 
@@ -56,7 +85,7 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
            |
       typed API/SDK
            |
-      apps/radio Fastify Hub
+      ARSY Fastify Hub (currently apps/radio)
       / plugins / modules / MoonQL REST / channel gateway
            |
       packages/moonql (one model/ACL/relations/addon boundary)
