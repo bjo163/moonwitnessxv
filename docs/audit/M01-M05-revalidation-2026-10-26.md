@@ -5,6 +5,8 @@
 - **Lingkup:** 35 task M01–M05 (7 task per milestone).
 - **Sifat:** kode/konfigurasi tidak diubah. Hanya dokumen status, dokumen bukti, dan checkbox TODO yang direkonsiliasi.
 
+> **Tindak lanjut (2026-10-26):** temuan di bawah sudah ditindaklanjuti. Node diseragamkan ke 24 LTS (`b9f527b`), source data dan salt `pseudonym()` dipulihkan (`b058ee3`), addon monitor yang sudah ada di kontrak SDK di-wire (`2726ebd`), dan artefak kontrak SDK dipaku ke LF (`fb6a548`). Checkout bersih `fb6a548` lulus `pnpm install --frozen-lockfile` dan `pnpm verify` (199 test, 197 pass, 2 skipped, 0 fail), termasuk `gen:sdk:check` dan `build:web`. Bagian historis di bawah tetap dipertahankan sebagai catatan temuan awal.
+
 > **Kesimpulan utama:** exit gate M01–M05 **belum terbukti di HEAD**. CI berakhir `failure` pada 7/7 run terakhir; run terakhir (`40256992028`, SHA `3822657`) gagal di langkah `Install dependencies`, sehingga `pnpm verify` tidak pernah dieksekusi. Checkout bersih di HEAD juga gagal `build`, `test`, dan `gen:sdk:check` karena `data/` di-ignore dan perbaikan `pseudonym()` masih uncommitted. Di worktree saat ini, build, `gen:sdk:check`, dan 196 test lulus.
 
 ## 1. Ringkasan verdict
