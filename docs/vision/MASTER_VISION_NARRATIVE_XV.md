@@ -16,7 +16,9 @@
 | Research baseline | Review of XV, MOONWITNESS II/XII/XIV, MOONWITNESS Corpus, A-L-L-A-H, Empire, ROCKSOUL family, Moonframe, Moonwitness Time System and earlier narrative handoffs |
 | Priority | **Preserve first → map sources → reconcile semantics → ratify boundaries → build in XV → verify** |
 
-**XV execution handoff (26 October 2026):** This narrative governs scope and historical/source interpretation. The unique architecture/owner decisions are tracked in [`BLUEPRINT.md`](../../BLUEPRINT.md), and the **sole task ID/status plan** lives in [`TODO.md`](../../TODO.md) (G0–G6, M00–M27). If high-level stage lists in this narrative appear to overlap with the more detailed milestone work, **TODO owns execution status, BLUEPRINT owns technical boundaries, and this narrative owns vision**. Neither document confers source rights or certifies implemented runtime behavior.
+**Final XV application naming decision (26 October 2026): ARSY is the existing backend Hub, currently physically located at `apps/radio` / `@moonwitness/radio`.** Its accepted target identity is **`apps/arsy` / `@moonwitness/arsy`**, and the existing Radio/stations/schedules/playback functionality becomes **SIGNAL/RADIO**, a bounded domain inside the same service. **One ARSY backend only; no second Hub.** The package/filesystem/Docker/CI migration is **not yet implemented** and is tracked by [ADR-0001](../../docs/decisions/ADR-0001-arsy-is-xv-hub.md) + [TODO M28](../../TODO.md#m28--arsy-hub-rename-and-compatibility-migration). Historical statements that ARSY is only "proposed orchestration" reflect an **earlier meaning**: future orchestration capabilities will extend this same ARSY Hub, not create another runtime. Radio media remains usable; no theological al-'Arsh representation or divine authority is claimed.
+
+**XV execution handoff (26 October 2026):** This narrative governs scope and historical/source interpretation. The unique architecture/owner decisions are tracked in [`BLUEPRINT.md`](../../BLUEPRINT.md), and the **sole task ID/status plan** lives in [`TODO.md`](../../TODO.md) (G0–G6, M00–M28; M28 is the foundation ARSY rename, and M27 remains the release gate). If high-level stage lists in this narrative appear to overlap with the more detailed milestone work, **TODO owns execution status, BLUEPRINT owns technical boundaries, and this narrative owns vision**. Neither document confers source rights or certifies implemented runtime behavior.
 
 **Deep audit v1.1:** Section **21A** is the source-specific expansion covering II's 13 functions and eight eras, Corpus dataset inventory, XIV V10.1, A-L-L-A-H operational research, the 14 Empire system names, 25 Amanah recovery gap, all 33 patch rows, XV ACL and seven end-to-end journeys. This remains a vision and source inventory, **not a claim of completed migration or production capability**.
 
@@ -404,7 +406,7 @@ They are **project-authored human principles**, not a new scriptural source. Thi
 
 `WINGS 10` = ten **fictional/specialist organizational departments** that may borrow imagery from religious history; never angel identities or powers.
 
-`ARSY` = proposed software orchestration: tools, job state, permissions, reviewed workflows, local AI candidates, rollback, monitoring. It is not the theological al-'Arsh.
+**ARSY** is **now the ratified application name for XV's existing Fastify/MoonQL/API Hub** (current code `apps/radio`, future migration `apps/arsy`). Its earlier *proposed orchestration* role—tools, review workflows, approved AI candidates, rollback and monitoring—becomes a **future set of bounded capabilities inside this same Hub**, not a separate backend. **Radio remains an existing service domain**, and ARSY is not the theological al-'Arsh.
 
 `100CENTER` = human command/operations center, approvals, reports, work queues, audit and system health. `SHADOW` = creative/editorial space or character (depending namespace). `AMANAH` = scoped responsibility; `SHURA` = human consultation/appeal; not supernatural appointment.
 
@@ -473,7 +475,7 @@ The checked XV `main` baseline is initial commit `0e0b3b8de0b39d1fee01589e939cca
 
 | Runtime piece | Actual documented role | Default development port |
 |---|---|---|
-| `apps/radio` (`@moonwitness/radio`) | **The DB-touching Fastify API + MoonQL ORM hub**, plugins, model registry, channels, Swagger/OpenAPI | `3000` |
+| `apps/radio` (`@moonwitness/radio`) **— current path, ARSY target** | **ARSY: the existing DB-touching Fastify API + MoonQL ORM Hub**; physical target `apps/arsy` / `@moonwitness/arsy`, pending M28; radio functions retained as SIGNAL/RADIO | `3000` |
 | `apps/dock` | **Public Next.js Dock**: stations, schedule, now-playing/catalog/embedding | `3001` |
 | `apps/headquarters` | **Next.js admin command center**, login, systems, generic models, data views | `3002` |
 | `packages/moonql` | Declarative model descriptors, additive schema sync, repository, auto-REST, views, events, generated schema | internal |
@@ -535,9 +537,9 @@ A single design language may support multiple **experience modes**—cinematic s
 
 ## 17.1 Existing runtime before speculative upgrades
 
-**The current XV MoonQL + Fastify hub is the starting point.** Do not replace it just because XIV documents Fastify/Objection/Knex or A-L-L-A-H uses Batteries/Knex. These histories demonstrate **multiple competing technology lineages**. Choose each future component after compatibility and bounded migration tests.
+**The current XV MoonQL + Fastify Hub (accepted name: ARSY; code-name/path still radio until M28) is the starting point.** Do not replace it just because XIV documents Fastify/Objection/Knex or A-L-L-A-H uses Batteries/Knex. These histories demonstrate **multiple competing technology lineages**. Choose each future component after compatibility and bounded migration tests.
 
-**The XV radio hub must remain operational while knowledge modules are added**. Prefer addon boundaries through existing MoonQL contracts for future `corpus`, `ontology`, `research`, `witness`, `story`, `publication`, `journey` and `governance`; **these names are proposed**—not an implementation declaration.
+**The XV ARSY Hub (currently named `apps/radio`) must remain operational, including all Radio features, while knowledge modules are added**. Prefer addon boundaries through existing MoonQL contracts for future `corpus`, `ontology`, `research`, `witness`, `story`, `publication`, `journey` and `governance`; **these names are proposed**—not an implementation declaration.
 
 ## 17.2 Authority boundary
 
@@ -995,7 +997,7 @@ Unlike the historical XIV runtime, XV `apps/radio/src/app.ts` actually boots **M
 - messaging/channel, DENPA;
 - Postgres/Compose backup definitions and restore runbook.
 
-**No live Corpus, Key Witness, SRGBL, 25 Amanah, 10 Wings or 100CENTER integration was found in the observed XV tree.** Do not advertise them as shipped. XV has a backup/restore runbook but the runbook's drill ledger explicitly records **no performed restore test** at that snapshot.
+**No live Corpus, Key Witness, SRGBL, 25 Amanah, 10 Wings or 100CENTER integration was found in the observed XV tree. ARSY is the accepted **name** of the existing API Hub, not evidence that future ARSY research-compute features are implemented.** Do not advertise them as shipped. XV has a backup/restore runbook but the runbook's drill ledger explicitly records **no performed restore test** at that snapshot.
 
 Recommended architecture approach: protect existing stations/API clients, add one constrained read-only study module at a time, verify permission and source rights, implement per-domain owner contracts, and keep radio operational throughout. **No ORM rewrite, no new identity provider, and no new DB by default**.
 
