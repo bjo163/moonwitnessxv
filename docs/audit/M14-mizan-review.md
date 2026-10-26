@@ -111,6 +111,7 @@ Semua perintah dijalankan dari root worktree `moonradio-m14`; Node 24 LTS, pnpm 
 | `pnpm --filter @moonwitness/radio exec tsx --test test/dockerfile-contract.test.ts test/moonql-compat.test.ts` | 10 test, 10 pass |
 | `pnpm --filter @moonwitness/radio test` | 302 test, 293 pass, 0 fail, 9 skipped |
 | `PARITY_DATABASE_URL=… tsx --test test/mizan-pg.test.ts` | 1 test, 1 pass, `moonql.engine === 'pg'`; diulang sekali, lulus dengan angka sama |
+| CI run 40294309739 pada `6ed2540` (main) | pass ([run 40294309739](https://github.com/bjo163/moonwitnessxv/actions/runs/40294309739)) |
 
 ### PostgreSQL vertical slice
 
