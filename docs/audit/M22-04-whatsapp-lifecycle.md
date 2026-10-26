@@ -6,7 +6,7 @@
 - **Prerequisite:** M03-07 is checked in TODO at the captured baseline.
 - **Task-owned code paths:** none; this is a read-only lifecycle review and evidence report.
 - **Report:** this file.
-- **Result SHA:** pending integration; no commit or TODO edit was made.
+- **Result SHA:** `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa` (integrated and rechecked).
 
 ## Lifecycle and access review
 
@@ -34,4 +34,4 @@ Commands run on the shared dirty worktree:
 
 This proves default configuration, factory opt-out, control-plane route authorization, and synthetic QR/JID projection boundaries. It does not connect to WhatsApp, exercise a real QR or Baileys reconnect/logout exchange, or validate credentials on disk. The ignore gap was remediated in the shared tree; retain the focused check above in CI review.
 
-Rollback by removing this report. The production channel implementation, tests, and auth/config contracts remain unchanged.
+The integrator rechecked the ignore paths and reviewed the report at the result SHA above. Rollback by removing this report. The production channel implementation, tests, and auth/config contracts remain unchanged.

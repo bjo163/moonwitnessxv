@@ -6,7 +6,7 @@
 - **Current `dev` SHA checked:** `d8c5bfa2e61f7d797d9478de0522514048a93886`; the task branch is based on it.
 - **Prerequisites:** TODO rows M05-07 and M22-01 are checked at the captured baseline.
 - **Changed paths:** `apps/radio/test/m22-05-service-contracts.test.ts`, this report. No runtime route, OpenAPI schema, generated SDK, or package manifest changed.
-- **Result SHA/reviewer:** pending integrator commit and review.
+- **Result SHA/reviewer:** `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa`; integrator reviewed and reran `pnpm verify`.
 
 ## Contract coverage
 

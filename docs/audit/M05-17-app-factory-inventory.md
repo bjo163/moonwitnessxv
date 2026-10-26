@@ -5,6 +5,7 @@
 - **Task:** M05-17 (P0), inventory existing app creation and deployment conventions.
 - **Worker:** `/root/m05_17_factory_inventory`; integrator reviewed the report.
 - **Baseline branch/SHA:** `codex/m05-08-locale-audit-387f784` / `7625bf8f94e33e02709bfec64bcac7f69363cd29`.
+- **Integrated result SHA:** `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa`.
 - **Worktree:** dirty at inspection because independent Dock, Radio, M01, and other audit changes were in progress; none were modified by the inventory worker.
 - **Prerequisites:** M05-08 and M28-01 are checked at the baseline.
 - **Scope:** source/config inventory only. No runtime, build, container, or scaffolder implementation is claimed.
@@ -78,6 +79,6 @@ The first directory-level check failed because `apps/api` lacked a package manif
 
 ## Evidence limits, rollback, and next work
 
-This is an inventory artifact. It does not establish that each app starts, ports are free at runtime, Docker builds pass, or deployed services match configuration. No application tests/builds/containers ran. The source/config assertions support the inventory and its positive/negative design examples, but they are not behavioral tests for the future scaffolder. That behavior belongs to M05-18.
+This is an inventory artifact. It does not establish that each app starts, ports are free at runtime, Docker builds pass, or deployed services match configuration. No task-specific application tests/builds/containers ran. The source/config assertions support the inventory and its positive/negative design examples, but they are not behavioral tests for the future scaffolder. The integrator reviewed and accepted this inventory-specific evidence at the exact result SHA above. That behavior belongs to M05-18.
 
 Rollback is limited to removing this audit report; no runtime path, API, database, or deployment configuration changed. Integrator should record the integrated source SHA and decide closure against M05-17's inventory-specific DoD. Once accepted, M05-18 is the next App Factory task; M05-19/M05-20 follow it and can be developed in parallel, then M05-21/M05-22.

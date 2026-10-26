@@ -5,7 +5,7 @@
 - **Baseline branch/SHA:** `codex/m05-08-locale-audit-387f784` / `7625bf8f94e33e02709bfec64bcac7f69363cd29`.
 - **Prerequisite:** M03-07 is checked in TODO. The M03 milestone still has other open gates; this test claims only the M22-03 acceptance.
 - **Actual task files:** `apps/radio/test/m22-03-denpa-gate.test.ts`, this report.
-- **Result SHA:** pending integrator commit/review. No runtime code or TODO status was changed by this task.
+- **Result SHA:** `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa` (integrated and rerun).
 
 ## Evidence
 
@@ -22,4 +22,4 @@ An initial test run used `?limit=100` on `publicLiveTransmissions`, which return
 
 ## Safety, rollback, and limits
 
-Only an in-memory app and dummy token are used; no real webhook or credential is contacted. Public assertions inspect the safe transmission projection and do not expose internal token hashes or sender identity. Rollback removes the new test and this report. The focused result does not establish production deployment or external webhook operation. Independent integrator review and exact result SHA remain pending.
+Only an in-memory app and dummy token are used; no real webhook or credential is contacted. Public assertions inspect the safe transmission projection and do not expose internal token hashes or sender identity. The integrator reviewed the diff and reran `pnpm verify` at the result SHA above. Rollback removes the new test and this report. The focused result does not establish production deployment or external webhook operation.

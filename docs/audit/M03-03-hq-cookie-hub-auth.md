@@ -4,6 +4,7 @@
 
 - **Task:** M03-03 (P0), forged/expired Headquarters cookie versus Hub auth.
 - **Baseline SHA:** `7625bf8f94e33e02709bfec64bcac7f69363cd29`.
+- **Integrated result SHA:** `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa`.
 - **Working branch:** `codex/m05-08-locale-audit-387f784`.
 - **Prerequisite:** M03-01 is checked in TODO and its denial tests were revalidated in the 2026-10-26 audit.
 - **Changed paths:** `apps/headquarters/src/data/sdk.ts`, `apps/headquarters/src/data/server-sdk.mjs`, `apps/headquarters/src/data/queries/session.ts`, `apps/headquarters/src/lib/session-auth.mjs`, `apps/headquarters/test/session-auth.test.ts`.
@@ -26,6 +27,6 @@ Actual Hub denial evidence was also rerun from its own app suite: an unknown bea
 
 ## Evidence limits, rollback, and status
 
-The HQ test's Hub responses are injected; they do not run an end-to-end request from the HQ cookie reader into a live Hub instance. The actual Hub suite independently confirms rejection and revocation, but does not use HQ's cookie reader. A true elapsed-time/expiry database scenario is not claimed here and remains within M03-05. There was no browser deployment test. The root integrator must review whether this compositional evidence satisfies the task before updating TODO.
+The HQ test's Hub responses are injected; they do not run an end-to-end request from the HQ cookie reader into a live Hub instance. The actual Hub suite independently confirms rejection and revocation, but does not use HQ's cookie reader. A true elapsed-time/expiry database scenario is not claimed here and remains within M03-05. There was no browser deployment test. The root integrator reviewed the compositional evidence and reran `pnpm verify` at the integrated source SHA above.
 
-Rollback by reverting the five listed paths together. Runtime API, cookie name/options, Hub token format, and role rules are unchanged. No TODO status or commit was changed; result SHA is pending integration.
+Rollback by reverting the five listed paths together. Runtime API, cookie name/options, Hub token format, and role rules are unchanged.

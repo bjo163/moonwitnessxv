@@ -5,7 +5,7 @@
 - **Baseline branch/SHA:** `codex/m05-08-locale-audit-387f784` / `7625bf8f94e33e02709bfec64bcac7f69363cd29`.
 - **Prerequisite:** M05-10 is checked at the captured baseline.
 - **Actual task files:** `apps/dock/test/required-landing-ui-keys.mjs`, `apps/dock/test/landing-copy-required-keys.test.mjs`, this report.
-- **Result SHA:** pending integrator commit and exact-SHA review. No commit or TODO edit was made by this worker.
+- **Result SHA:** `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa` (integrated and rerun).
 
 ## Gate behavior
 
@@ -25,4 +25,4 @@ The positive test checks required labels in both real locales. The negative test
 
 ## Privacy, rollback, and next work
 
-The manifest contains UI key names only; no user data, source text, or credentials are added. Rollback removes the two test files and this report. No runtime behavior, locale decision, or package dependency changes. Independent integrator review and result-SHA recording remain pending. M05-14 is still gated on M28-05; after M05-17 is reviewed and closed, M05-18 is the next App Factory leaf.
+The manifest contains UI key names only; no user data, source text, or credentials are added. The integrator reviewed the diff and reran `pnpm verify` at the result SHA above. Rollback removes the two test files and this report. No runtime behavior, locale decision, or package dependency changes. M05-14 is still gated on M28-05; after M05-17 is reviewed and closed, M05-18 is the next App Factory leaf.

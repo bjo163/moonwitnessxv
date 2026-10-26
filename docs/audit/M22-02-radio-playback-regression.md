@@ -4,7 +4,7 @@
 - **Worker:** `/root/m22_02_playback`.
 - **Baseline branch/SHA:** `codex/m05-08-locale-audit-387f784` / `7625bf8f94e33e02709bfec64bcac7f69363cd29`.
 - **Prerequisite:** M22-01 checked at the captured baseline; its pinned fixture source SHA is `a1e384ef083ecf3c6fe4aae2b70acbdd6f2620cc`.
-- **Result SHA:** pending integrator commit; no commit made by this worker.
+- **Result SHA:** `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa` (integrated; worker made no commit).
 - **Actual task-owned code file:** `apps/radio/test/m22-02-listen-validation.test.ts`.
 - **Report:** `docs/audit/M22-02-radio-playback-regression.md`.
 
@@ -27,4 +27,4 @@ One initial focused run used `recentPlays?limit=100`, which the endpoint rejecte
 
 ## Safety, rollback, limitations
 
-The negative case proves schema rejection and no persistence of an unsupported event. Existing tests supply the positive beacon and playback/schedule assertions described above. This is injected in-memory evidence only; it does not prove browser audio playback, external stream availability, PostgreSQL parity, deployment, or live broadcast state. Rollback is limited to removing the new test and this report. Independent integrator review and exact result SHA remain pending.
+The negative case proves schema rejection and no persistence of an unsupported event. Existing tests supply the positive beacon and playback/schedule assertions described above. The integrator reviewed the diff and reran `pnpm verify` successfully on the exact integrated source SHA above. This is injected in-memory evidence only; it does not prove browser audio playback, external stream availability, PostgreSQL parity, deployment, or live broadcast state. Nine optional PostgreSQL cases were skipped because no database URL was configured. Rollback is limited to removing the new test and this report.
