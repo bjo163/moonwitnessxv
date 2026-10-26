@@ -140,10 +140,16 @@ function EdgeRow({ edge }: { edge: GraphEdge }): ReactNode {
   return (
     <li className="dk-graph-edge" data-verified={edge.verified ? 'true' : 'false'}>
       <div className="dk-graph-edge-head">
-        <span className="dk-graph-edge-route">
-          <strong>{edge.fromLabel}</strong> <code>{edge.from}</code> — <em>{edge.relationType}</em> →{' '}
-          <strong>{edge.toLabel}</strong> <code>{edge.to}</code>
-        </span>
+        <a
+          className="dk-graph-edge-link"
+          href={`/constellation/relations/${edge.edgeCode}`}
+          aria-label={`Open relation detail for ${edge.edgeCode}`}
+        >
+          <span className="dk-graph-edge-route">
+            <strong>{edge.fromLabel}</strong> <code>{edge.from}</code> — <em>{edge.relationType}</em> →{' '}
+            <strong>{edge.toLabel}</strong> <code>{edge.to}</code>
+          </span>
+        </a>
         <div className="m-row" style={{ gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <Badge tone="night">{edge.perspective}</Badge>
           <Badge tone={toneFor(EPISTEMIC_TONE, edge.epistemicStatus)}>{edge.epistemicStatus}</Badge>

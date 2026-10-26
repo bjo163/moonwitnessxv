@@ -238,6 +238,7 @@ function relationView(context: Context, relation: Row, inActiveRelease: boolean)
     epistemicStatus,
     epistemicLabel: epistemicLabel(epistemicStatus),
     statusLabel: verified ? 'Reviewed relation — verified' : `Reviewed relation — ${epistemicLabel(epistemicStatus)}`,
+    verified,
     approved: verified,
     inActiveRelease,
     unknown: resolved(epistemicStatus),
@@ -619,13 +620,19 @@ export async function exportRelease(orm: GraphOrm, code: string | null): Promise
 }
 
 export type BuildResult =
-  | { state: 'blocked'; blocked: Array<{ code: string; reason: string }> }
+  | { state: 'blocked'; blocked: Array<{ code: string; reason: string }>; message: string }
   | { state: 'built' | 'existing'; release: Record<string, unknown>; dedup: boolean; delta: Record<string, unknown> }
 
 export async function buildRelease(orm: GraphOrm, builtBy: string, note: string | null): Promise<BuildResult> {
   const context = await loadContext(orm)
   const { input, blocked } = collectReleaseInput(context)
-  if (blocked.length) return { state: 'blocked', blocked }
+  if (blocked.length) {
+    return {
+      state: 'blocked',
+      blocked,
+      message: `release blocked: ${blocked.map((item) => `${item.code} (${item.reason})`).join('; ')}`,
+    }
+  }
 
   const built = buildReleaseManifest(input)
   const activeCode = context.active ? text(context.active.releaseCode) : null
@@ -668,6 +675,7 @@ export type ActivateResult = {
   release?: Record<string, unknown> | null
   currentVersion?: number
   expectedVersion?: number
+  message?: string
   notice?: string
 }
 
@@ -684,7 +692,12 @@ export async function activateRelease(
   const pointer = context.pointer
   const currentVersion = Number(pointer?.version ?? 0)
   if (expectedVersion !== null && expectedVersion !== currentVersion) {
-    return { state: 'conflict', currentVersion, expectedVersion }
+    return {
+      state: 'conflict',
+      currentVersion,
+      expectedVersion,
+      message: `the active graph pointer is at version ${currentVersion}, not ${expectedVersion}`,
+    }
   }
 
   if (pointer && text(pointer.releaseRef) === text(release.id)) {
@@ -884,10 +897,11 @@ export async function decideCandidate(
       decisionNote: input.reason,
       decidedAt: new Date().toISOString(),
     })
+    const nextContext = await loadContext(orm)
     return {
       state: 'recorded',
       decision: 'APPROVED',
-      candidate: candidateView(await loadContext(orm), saved, false),
+      candidate: candidateView(nextContext, saved, activeSets(nextContext).candidates.has(input.candidateCode)),
       notice: 'Approved candidates still need a release build and activation before they appear in the reviewed graph.',
       policy: GRAPH_POLICY,
     }
@@ -905,10 +919,11 @@ export async function decideCandidate(
     decisionNote: input.reason,
     decidedAt: new Date().toISOString(),
   })
+  const nextContext = await loadContext(orm)
   return {
     state: 'recorded',
     decision: input.decision,
-    candidate: candidateView(await loadContext(orm), saved, false),
+    candidate: candidateView(nextContext, saved, activeSets(nextContext).candidates.has(input.candidateCode)),
     notice:
       input.decision === 'REVOKED'
         ? 'The candidate stays visible for the record and is excluded from future releases.'

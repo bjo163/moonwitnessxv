@@ -1,7 +1,9 @@
 import { MoonApiError } from '@moonwitness/moonql-client'
 import { Alert, Badge, PageHeader } from '@moonwitness/moonui'
 import { readConstellation, type ConstellationProjection } from '@/data/queries/constellation'
+import { readGraphOverview, type GraphOverview } from '@/data/queries/graph'
 import { ConstellationView } from '@/ui/components/constellation'
+import { GraphReleasePanel } from '@/ui/components/graph-relation'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,6 +21,14 @@ export default async function ConstellationPage() {
     error = err instanceof MoonApiError ? err.message : 'The Constellation projection is unavailable.'
   }
 
+  let overview: GraphOverview | null = null
+  let graphError: string | null = null
+  try {
+    overview = await readGraphOverview()
+  } catch (err) {
+    graphError = err instanceof MoonApiError ? err.message : 'The graph release overview is unavailable.'
+  }
+
   return (
     <div className="m-stack" style={{ gap: 20 }}>
       <PageHeader
@@ -29,7 +39,9 @@ export default async function ConstellationPage() {
       />
 
       {error ? <Alert tone="hot">{error}</Alert> : null}
+      {graphError ? <Alert tone="hot">{graphError}</Alert> : null}
       {projection ? <ConstellationView projection={projection} /> : null}
+      {overview ? <GraphReleasePanel overview={overview} /> : null}
     </div>
   )
 }
