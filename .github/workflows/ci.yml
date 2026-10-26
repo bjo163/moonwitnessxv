@@ -8,11 +8,14 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   verify:
     name: Monorepo Verification & Safety Gates
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Restrict main pull requests to the dev branch
@@ -89,20 +92,24 @@ jobs:
           fi
 
           echo "No open sync PR found. Creating a new PR from dev to main..."
-          gh pr create \
-            --base main \
-            --head dev \
-            --title "chore(release): sync dev to main" \
-            --body "## Summary
+          PR_BODY=$(cat <<'EOF'
+## Summary
 Automated staging promotion PR from dev to main.
 
 ### Status
-- **Source:** \`dev\`
-- **Target:** \`main\`
-- **Safety checks:** Validated by \`Monorepo Verification & Safety Gates\`.
+- Source: dev
+- Target: main
+- Safety checks: Validated by Monorepo Verification & Safety Gates.
 
 ### Instructions for Maintainer
 When ready to release staged changes to production:
 1. Ensure all CI checks are green.
 2. Review the commit log and changelog entries.
-3. Merge this PR into \`main\`."
+3. Merge this PR into main.
+EOF
+)
+          gh pr create \
+            --base main \
+            --head dev \
+            --title "chore(release): sync dev to main" \
+            --body "$PR_BODY"
