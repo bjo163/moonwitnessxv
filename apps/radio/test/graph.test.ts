@@ -80,7 +80,7 @@ interface DetailView {
     fromEntity: { stableId: string; labelEn: string; kind: string } | null
     toEntity: { stableId: string; labelEn: string; kind: string } | null
     evidence: { span: string | null; frame: string | null; sha: string | null; present: boolean; exactSha: boolean }
-    source: { code: string | null; work?: string } | null
+    source: { code: string | null; work?: string; reviewStatus?: string | null } | null
   }
   release: { releaseCode: string; graphSha: string } | null
   policy: { sameAsApproval: string; releaseImmutable: boolean; automaticApproval: boolean }
@@ -99,7 +99,7 @@ interface Overview {
   adjacency: { derived: boolean; rebuildable: boolean; stale: boolean; rows: number; releaseCode: string | null }
   candidates: CandidateView[]
   options: { relationTypes: string[]; statuses: string[] }
-  policy: { evidenceAtExactSha: boolean; evidenceSpanRequiredForApproval: boolean; sameAsApproval: string; revokedVisible: boolean }
+  policy: { evidenceAtExactSha: boolean; evidenceSpanRequiredForApproval: boolean; sameAsApproval: string; revokedVisible: boolean; automaticApproval: boolean }
 }
 
 interface ManifestEdge {
@@ -260,7 +260,7 @@ test('M12-02: a candidate is not an edge and missing evidence cannot be approved
   assert.equal(before.separation.reviewed.edgeCount, 5)
   assert.equal(before.policy.evidenceAtExactSha, true)
   assert.equal(before.policy.evidenceSpanRequiredForApproval, true)
-  assert.equal(before.registry.pins.boundaryDecision.sha256, M02_SHA256)
+  assert.equal(before.registry.pins.boundaryDecision?.sha256, M02_SHA256)
 
   const pending = before.candidates.find((row) => row.candidateCode === SAME_AS_PENDING)
   assert.ok(pending)

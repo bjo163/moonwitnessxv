@@ -140,8 +140,16 @@ export function RelationDetailView({ detail }: { detail: RelationDetail }): Reac
           : 'A reviewed relation is part of the ontology record. It still enters the presented graph only through an immutable release.'}
       </p>
 
-      <p className="dk-graph-meta">{relation.statusLabel}</p>
-      <p className="dk-graph-meta">{releaseLine(detail)}</p>
+      <dl className="dk-graph-detail-facts">
+        <dt>Status</dt>
+        <dd>{relation.statusLabel}</dd>
+        <dt>Epistemic</dt>
+        <dd>
+          {relation.epistemicLabel} ({relation.epistemicStatus})
+        </dd>
+        <dt>Release</dt>
+        <dd>{releaseLine(detail)}</dd>
+      </dl>
 
       {relation.unknown ? (
         <p className="dk-graph-detail-unknown" role="note">
