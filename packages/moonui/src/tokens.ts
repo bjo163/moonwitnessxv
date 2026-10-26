@@ -60,3 +60,11 @@ export const MOON_BORDERS = {
   hair: '1px solid rgba(247, 244, 236, 0.13)',
   dim: '1px solid rgba(247, 244, 236, 0.28)',
 } as const
+
+export const MOON_GLOWS = {
+  pink: 'rgba(255, 0, 122, 0.45)',
+  cyan: 'rgba(0, 212, 255, 0.45)',
+  accent: 'rgba(255, 212, 0, 0.45)',
+  ok: 'rgba(0, 230, 118, 0.45)',
+} as const
+

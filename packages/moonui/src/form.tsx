@@ -7,8 +7,9 @@ import type {
   TextareaHTMLAttributes,
 } from 'react'
 import { cn } from './cn.js'
+import { triggerHaptic, type HapticPattern } from './client/haptics.js'
 
-export type ButtonVariant = 'primary' | 'accent' | 'cyan' | 'paper' | 'ghost' | 'danger'
+export type ButtonVariant = 'primary' | 'accent' | 'cyan' | 'paper' | 'ghost' | 'danger' | 'cyber'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 export function Field({
@@ -90,10 +91,27 @@ export function SelectInput({
   )
 }
 
-export function Toggle({ label, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label?: ReactNode }): ReactNode {
+export function Toggle({
+  label,
+  haptic = true,
+  onChange,
+  ...rest
+}: InputHTMLAttributes<HTMLInputElement> & {
+  label?: ReactNode
+  haptic?: boolean
+}): ReactNode {
   return (
     <label className="m-toggle">
-      <input type="checkbox" {...rest} />
+      <input
+        type="checkbox"
+        onChange={(e) => {
+          if (haptic) {
+            triggerHaptic('switch')
+          }
+          onChange?.(e)
+        }}
+        {...rest}
+      />
       {label}
     </label>
   )
@@ -105,10 +123,16 @@ export function Button({
   type,
   className,
   children,
+  haptic,
+  loading,
+  disabled,
+  onClick,
   ...rest
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant
   size?: ButtonSize
+  haptic?: HapticPattern | boolean
+  loading?: boolean
 }): ReactNode {
   return (
     <button
@@ -116,8 +140,33 @@ export function Button({
       data-variant={variant}
       data-size={size}
       type={type ?? 'button'}
+      disabled={disabled || loading}
+      aria-busy={loading ? 'true' : undefined}
+      onClick={(e) => {
+        if (haptic) {
+          triggerHaptic(typeof haptic === 'string' ? haptic : 'tap')
+        }
+        onClick?.(e)
+      }}
       {...rest}
     >
+      {loading ? (
+        <span
+          className="m-btn-loader"
+          aria-hidden="true"
+          style={{
+            display: 'inline-block',
+            width: '0.85em',
+            height: '0.85em',
+            border: '2px solid currentColor',
+            borderRightColor: 'transparent',
+            borderRadius: '50%',
+            animation: 'm-spin 0.6s linear infinite',
+            marginRight: '0.5em',
+            verticalAlign: 'middle',
+          }}
+        />
+      ) : null}
       {children}
     </button>
   )
@@ -128,13 +177,27 @@ export function LinkButton({
   size = 'md',
   className,
   children,
+  haptic,
+  onClick,
   ...rest
 }: AnchorHTMLAttributes<HTMLAnchorElement> & {
   variant?: ButtonVariant
   size?: ButtonSize
+  haptic?: HapticPattern | boolean
 }): ReactNode {
   return (
-    <a className={cn('m-btn', className)} data-variant={variant} data-size={size} {...rest}>
+    <a
+      className={cn('m-btn', className)}
+      data-variant={variant}
+      data-size={size}
+      onClick={(e) => {
+        if (haptic) {
+          triggerHaptic(typeof haptic === 'string' ? haptic : 'tap')
+        }
+        onClick?.(e)
+      }}
+      {...rest}
+    >
       {children}
     </a>
   )

@@ -130,10 +130,25 @@ export {
   type IconProps,
 } from './icons/index.js'
 export {
+  Tooltip,
+  Skeleton,
+  CardSkeleton,
+  TableSkeleton,
+  GlitchText,
+  CyberFrame,
+  type TooltipProps,
+  type TooltipPosition,
+  type SkeletonProps,
+  type GlitchTextProps,
+  type CyberFrameProps,
+  type CyberTone,
+} from './feedback.js'
+export {
   MOON_COLORS,
   MOON_FONTS,
   MOON_SPACING,
   MOON_SHADOWS,
   MOON_BORDERS,
+  MOON_GLOWS,
   type MoonColorName,
 } from './tokens.js'

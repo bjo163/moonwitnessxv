@@ -35,7 +35,8 @@
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc -b --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsc -b && node --experimental-strip-types --test test/**/*.test.ts"
   },
   "peerDependencies": {
     "react": "^19.0.0",

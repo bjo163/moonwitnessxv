@@ -1,6 +1,7 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, KeyboardEvent } from 'react'
 import { cn } from './cn.js'
 import { Glyph } from './glyph.js'
+import { triggerHaptic } from './client/haptics.js'
 
 export interface NavItem {
   key: string
@@ -60,32 +61,63 @@ export interface TabItem {
   tone?: 'pink' | 'cyan' | 'accent' | 'ok'
 }
 
-/** Controlled client tab switcher with punk-zine styling */
+/** Controlled client tab switcher with punk-zine styling and roving tabindex ARIA navigation */
 export function Tabs({
   items,
   activeId,
   onChange,
   className,
+  haptic = true,
 }: {
   items: TabItem[]
   activeId: string
   onChange: (id: string) => void
   className?: string
+  haptic?: boolean
 }): ReactNode {
+  const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>, currentIndex: number) => {
+    let nextIndex = -1
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      nextIndex = (currentIndex + 1) % items.length
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      nextIndex = (currentIndex - 1 + items.length) % items.length
+    } else if (e.key === 'Home') {
+      nextIndex = 0
+    } else if (e.key === 'End') {
+      nextIndex = items.length - 1
+    }
+    const nextTab = items[nextIndex]
+    if (nextIndex >= 0 && nextTab) {
+      e.preventDefault()
+      if (haptic) triggerHaptic('switch')
+      onChange(nextTab.id)
+      const parent = e.currentTarget.parentElement
+      if (parent) {
+        const buttons = parent.querySelectorAll<HTMLButtonElement>('button[role="tab"]')
+        buttons[nextIndex]?.focus()
+      }
+    }
+  }
+
   return (
     <div className={cn('m-tabs', className)} role="tablist">
-      {items.map((tab) => {
+      {items.map((tab, idx) => {
         const isActive = tab.id === activeId
         return (
           <button
             key={tab.id}
             type="button"
             role="tab"
+            tabIndex={isActive ? 0 : -1}
             aria-selected={isActive}
             className="m-tab-btn"
             data-active={isActive ? 'true' : 'false'}
             data-tone={tab.tone ?? 'cyan'}
-            onClick={() => onChange(tab.id)}
+            onKeyDown={(e) => handleKeyDown(e, idx)}
+            onClick={() => {
+              if (haptic) triggerHaptic('switch')
+              onChange(tab.id)
+            }}
           >
             <span>{tab.label}</span>
             {typeof tab.count === 'number' ? <span className="m-tab-badge">{tab.count}</span> : null}

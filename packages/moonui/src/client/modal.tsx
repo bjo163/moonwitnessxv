@@ -28,13 +28,13 @@ export interface KbdLegendProps {
  */
 export function KbdLegend({ items, className = '' }: KbdLegendProps): ReactNode {
   return (
-    <div className={`flex flex-wrap items-center gap-3 font-mono text-[11px] text-neutral-400 ${className}`}>
+    <div className={`flex flex-wrap items-center gap-3 font-mono text-[11px] text-[var(--muted)] ${className}`}>
       {items.map((item, idx) => (
         <span key={idx} className="inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 rounded bg-neutral-800 border border-neutral-700 text-neutral-200 text-[10px] shadow-sm">
+          <kbd className="px-1.5 py-0.5 rounded bg-[var(--surface2)] border border-[var(--border)] text-[var(--fg)] text-[10px] shadow-sm">
             {item.key}
           </kbd>
-          <span className="text-neutral-400">{item.label}</span>
+          <span className="text-[var(--muted)]">{item.label}</span>
         </span>
       ))}
     </div>
@@ -42,7 +42,7 @@ export function KbdLegend({ items, className = '' }: KbdLegendProps): ReactNode 
 }
 
 /**
- * Tactile Modal Dialog with Backdrop Blur and Monospace Esc Handle
+ * Tactile Modal Dialog with Accessible Focus Trap, Backdrop Blur and Monospace Esc Handle
  */
 export function Modal({
   isOpen,
@@ -54,22 +54,59 @@ export function Modal({
   className = '',
 }: ModalProps): ReactNode {
   const modalRef = useRef<HTMLDivElement>(null)
+  const prevFocusedRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (!isOpen) return
 
+    prevFocusedRef.current = document.activeElement as HTMLElement | null
     triggerHaptic('switch')
+
+    // Shift focus into first focusable element inside the modal
+    const focusableSelector =
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    const focusables = modalRef.current?.querySelectorAll<HTMLElement>(focusableSelector)
+    if (focusables && focusables.length > 0 && focusables[0]) {
+      focusables[0].focus()
+    } else {
+      modalRef.current?.focus()
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault()
         triggerHaptic('switch')
         onClose()
+        return
+      }
+
+      if (e.key === 'Tab' && modalRef.current) {
+        const elements = modalRef.current.querySelectorAll<HTMLElement>(focusableSelector)
+        if (!elements || elements.length === 0) {
+          e.preventDefault()
+          return
+        }
+
+        const first = elements[0]
+        const last = elements[elements.length - 1]
+
+        if (first && last) {
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault()
+            last.focus()
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault()
+            first.focus()
+          }
+        }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      prevFocusedRef.current?.focus()
+    }
   }, [isOpen, onClose])
 
   if (!isOpen) return null
@@ -101,15 +138,16 @@ export function Modal({
       {/* Modal Box */}
       <div
         ref={modalRef}
-        className={`relative w-full ${widthClass} rounded-lg border border-neutral-800 bg-[#0d0b14] text-neutral-100 shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh] ${className}`}
+        tabIndex={-1}
+        className={`relative w-full ${widthClass} rounded-lg border border-[var(--border)] bg-[var(--paper)] text-[var(--fg)] shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh] outline-none ${className}`}
         style={{
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05)',
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800/80 bg-neutral-900/50">
-          <div className="font-mono text-sm uppercase tracking-wider text-cyan-400 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)] bg-[var(--surface)]">
+          <div className="font-mono text-sm uppercase tracking-wider text-[var(--cyan)] flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[var(--cyan)] animate-pulse" />
             {title}
           </div>
           <button
@@ -118,7 +156,7 @@ export function Modal({
               triggerHaptic('tap')
               onClose()
             }}
-            className="font-mono text-xs text-neutral-400 hover:text-white px-2 py-1 rounded hover:bg-neutral-800 transition-colors"
+            className="font-mono text-xs text-[var(--muted)] hover:text-[var(--fg)] px-2 py-1 rounded hover:bg-[var(--surface2)] transition-colors"
             title="Press Esc to close"
           >
             [ESC]
@@ -130,11 +168,75 @@ export function Modal({
 
         {/* Footer */}
         {footer && (
-          <div className="px-5 py-3 border-t border-neutral-800/80 bg-neutral-950/60 flex items-center justify-between">
+          <div className="px-5 py-3 border-t border-[var(--border)] bg-[var(--ink)] flex items-center justify-between">
             {footer}
           </div>
         )}
       </div>
     </div>
+  )
+}
+
+export interface AlertDialogProps {
+  isOpen: boolean
+  onClose: () => void
+  onConfirm: () => void
+  title?: ReactNode
+  message: ReactNode
+  confirmLabel?: string
+  cancelLabel?: string
+  tone?: 'danger' | 'accent' | 'ok'
+}
+
+/**
+ * Tactical Cyberpunk Confirmation / Alert Dialog with Accessible Focus Guard
+ */
+export function AlertDialog({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
+  tone = 'danger',
+}: AlertDialogProps): ReactNode {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title ?? 'Alert'}
+      maxWidth="sm"
+      footer={
+        <div className="flex items-center justify-end gap-3 w-full">
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic('tap')
+              onClose()
+            }}
+            className="m-btn"
+            data-variant="ghost"
+            data-size="sm"
+          >
+            {cancelLabel}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic(tone === 'danger' ? 'alert' : 'switch')
+              onConfirm()
+            }}
+            className="m-btn"
+            data-variant={tone === 'danger' ? 'danger' : tone === 'ok' ? 'cyan' : 'accent'}
+            data-size="sm"
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      }
+    >
+      <div className="text-sm text-[var(--fg)] leading-relaxed">{message}</div>
+    </Modal>
   )
 }

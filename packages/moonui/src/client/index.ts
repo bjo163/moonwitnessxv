@@ -30,12 +30,28 @@ export {
 } from './visualizer.js'
 
 export {
+  AudioSpectrum,
+  type AudioSpectrumProps,
+} from './audio-spectrum.js'
+
+export {
   Modal,
+  AlertDialog,
   KbdLegend,
   type ModalProps,
+  type AlertDialogProps,
   type KbdLegendProps,
   type KbdItem,
 } from './modal.js'
+
+export {
+  ToastProvider,
+  ToastContainer,
+  useToast,
+  type ToastItem,
+  type ToastTone,
+  type ToastContextValue,
+} from './toast.js'
 
 export {
   CommandPalette,

@@ -202,7 +202,7 @@ These boundaries require an XV-local ADR for any schema/data migration. XIV's Ob
 | D10 | World/Science optional | Real observations, provider runs, controlled simulation/experiment metadata | Cosmos/world views, no physical-device claim |
 | D11 | Journey optional | Path, milestone, mission, human mandate, game cross-reference | 100CENTER views; no faith score |
 | D12 | Workflow optional | Human task/review queue and AI suggestion lifecycle | Only one orchestration owner |
-| D13 | Design (Git) | UI contracts, brand, asset provenance | MoonUI consumer; Moonframe/Assets optional |
+| D13 | Design (Git) | UI contracts, tokens, sensory feedback, brand, asset provenance | Unified MoonUI design system (@moonwitness/moonui; verified M19-32, M30-01..M30-03) |
 | **D18** | **Messages & Channels — owned by SKYLINK** | `channel_accounts`, `conversations`, `messages`, `delivery_attempts` (schema `skylink`) | ARSY and other apps are clients only; no identity/session ownership; D09 `channels` migrated here |
 | **D19** | **Object Storage & Attachments — owned by ECHOLOG** | Object bytes, `sha256` digest, size, MIME, retention, legal hold, quota, download grants (sidecar metadata; **no tables**) | Consumers hold references only; not rights (D08), identity (D00), manifests (D07) or artifacts (D01) |
 
