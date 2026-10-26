@@ -1,5 +1,6 @@
 import fp from 'fastify-plugin'
 import helmet from '@fastify/helmet'
+import { COCKPIT_DEV_ORIGINS } from '@moonwitness/core'
 
 // Security HTTP headers for the hub, its Swagger UI and Studio.
 //
@@ -8,8 +9,10 @@ import helmet from '@fastify/helmet'
 // from anywhere else, plus MIME sniffing of echoed content.
 export default fp(async (fastify) => {
   const isDev = process.env.NODE_ENV !== 'production'
+  // Same pair of loopback spellings the frontends' CSP uses, from the shared
+  // port contract — the hub and the Next apps cannot drift apart on this.
   const frameAncestors = isDev
-    ? ["'self'", 'http://127.0.0.1:3004', 'http://localhost:3004']
+    ? ["'self'", ...COCKPIT_DEV_ORIGINS]
     : ["'none'"]
 
   await fastify.register(helmet, {

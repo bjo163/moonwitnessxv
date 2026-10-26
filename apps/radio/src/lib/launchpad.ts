@@ -1,3 +1,8 @@
+// The advertised origins come from the shared contract: the launchpad is the page
+// that tells an operator where things live, so it must not be a second place that
+// gets to decide the ports.
+import { AI_GATEWAY_PUBLIC_URL, FRONTEND_URLS } from '@moonwitness/core'
+
 export interface LaunchpadData {
   name: string
   version: string
@@ -12,9 +17,9 @@ export interface LaunchpadData {
 }
 
 export function renderLaunchpadHtml(data: LaunchpadData): string {
-  const dockUrl = data.frontends?.dock ?? 'http://localhost:3001'
-  const hqUrl = data.frontends?.headquarters ?? 'http://localhost:3002'
-  const aiUrl = 'http://localhost:3003'
+  const dockUrl = data.frontends?.dock ?? FRONTEND_URLS.dock
+  const hqUrl = data.frontends?.headquarters ?? FRONTEND_URLS.headquarters
+  const aiUrl = AI_GATEWAY_PUBLIC_URL
 
   return `<!DOCTYPE html>
 <html lang="en">

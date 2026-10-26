@@ -1,5 +1,6 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
+import { HUB_API_DEFAULT } from '@moonwitness/core'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -125,7 +126,9 @@ export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessS
       const timer = setTimeout(() => {
         controller.abort()
       }, 600)
-      const res = await fetch('http://127.0.0.1:3000/api/v1/stations?limit=50', { signal: controller.signal })
+      // the hub's address is the shared contract; a port change must not leave
+      // the cockpit silently merging nothing
+      const res = await fetch(`${HUB_API_DEFAULT}/stations?limit=50`, { signal: controller.signal })
       clearTimeout(timer)
       if (res.ok) {
         const body = (await res.json()) as { data?: Array<{ id: string; name: string; streamUrl: string; genre?: string }> }

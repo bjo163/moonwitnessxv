@@ -5,10 +5,18 @@
  */
 
 import process from 'node:process'
+import { execSync } from 'node:child_process'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { PORTS } from '@moonwitness/core'
 import { freeMonorepoPorts } from './ports.js'
 import { checkMonorepoServices } from './status.js'
 
 export { freeMonorepoPorts, checkMonorepoServices }
+
+/** Repo root, from this file's own location: `packages/cli/dist` -> the workspace. */
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
+const portList = Object.values(PORTS).join(', ')
 
 export function printHelp(): void {
   const text = `
@@ -19,9 +27,9 @@ Usage:
   mw   <command> [options]
 
 Commands:
-  status        Check health and port occupancy across all 5 microservices (3000-3004)
-  free-ports    Forcefully release bound ports (3000, 3001, 3002, 3003, 3004)
-  verify        Execute the 6-stage monorepo verification pipeline
+  status        Probe every workspace service (${portList}) and report ONLINE/OFFLINE
+  free-ports    Release the bound ports (${portList})
+  verify        Execute the monorepo verification pipeline (pnpm verify)
   help          Display this mission operator manual
 
 Examples:
@@ -37,7 +45,7 @@ export async function runCli(args = process.argv.slice(2)): Promise<void> {
 
   switch (command) {
     case 'status': {
-      console.info('📡 Probing Moonwitness microservice ports (3000-3004)...')
+      console.info(`📡 Probing Moonwitness service ports (${portList})...`)
       const services = await checkMonorepoServices()
       for (const s of services) {
         const symbol = s.status === 'ONLINE' ? '🟢' : '⚪'
@@ -52,6 +60,18 @@ export async function runCli(args = process.argv.slice(2)): Promise<void> {
         console.info(`✔ Freed ports: ${freed.map((p) => `:${p}`).join(', ')}`)
       } else {
         console.info('✔ Ports 3000-3004 were already clear.')
+      }
+      break
+    }
+    case 'verify': {
+      // the help advertised this command for a while without a case behind it,
+      // so `moon verify` answered "Unknown command". It now runs the same gate CI runs.
+      console.info('🔎 Running the monorepo verification pipeline: pnpm verify')
+      try {
+        execSync('pnpm verify', { stdio: 'inherit', cwd: repoRoot })
+      } catch {
+        // execSync already streamed the failure; mark the CLI itself as failed
+        process.exitCode = 1
       }
       break
     }

@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@moonwitness/eslint-config": "workspace:*",
     "eslint": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
     "typescript-eslint": "catalog:"

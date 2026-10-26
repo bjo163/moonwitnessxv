@@ -1,7 +1,15 @@
 import process from 'node:process'
 import { execSync } from 'node:child_process'
+import { PORTS } from '@moonwitness/core'
 
-const MONOREPO_PORTS = [3000, 3001, 3002, 3003, 3004]
+/**
+ * The port set comes from the shared contract, so `moon free-ports` cannot drift
+ * behind a port change. `scripts/free-ports.mjs` keeps its own copy deliberately:
+ * it is the escape hatch for a tree that has not been built yet, so it must not
+ * import anything compiled (`apps/radio/test/env-contract.test.ts` holds its
+ * literals honest instead).
+ */
+const MONOREPO_PORTS = Object.values(PORTS)
 
 export function freeMonorepoPorts(ports = MONOREPO_PORTS): { freed: number[]; errors: string[] } {
   const freed: number[] = []

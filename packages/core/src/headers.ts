@@ -9,6 +9,8 @@
  * re-exports them for the config files.
  */
 
+import { COCKPIT_DEV_ORIGINS } from './workspace.js'
+
 export interface HeaderPair {
   key: string
   value: string
@@ -35,11 +37,12 @@ export function securityHeaders(ancestors: string[] = ["'none'"], options: { dev
   let list = ancestors.length ? [...ancestors] : ["'none'"]
   if (options.dev) {
     // In local development, permit Cockpit desktop window to frame services.
+    // The origins come from the shared port contract, so a port change cannot
+    // leave this CSP listing a window that no longer exists.
     if (list.length === 1 && list[0] === "'none'") {
-      list = ["'self'", 'http://127.0.0.1:3004', 'http://localhost:3004']
+      list = ["'self'", ...COCKPIT_DEV_ORIGINS]
     } else {
-      if (!list.includes('http://127.0.0.1:3004')) list.push('http://127.0.0.1:3004')
-      if (!list.includes('http://localhost:3004')) list.push('http://localhost:3004')
+      for (const origin of COCKPIT_DEV_ORIGINS) if (!list.includes(origin)) list.push(origin)
     }
   }
   // X-Frame-Options has no allow-list: DENY would override the CSP for exactly the

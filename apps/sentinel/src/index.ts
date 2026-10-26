@@ -74,7 +74,9 @@ export async function authenticateSentinel(
   hubBaseUrl: string,
   env: Record<string, string | undefined> = process.env,
 ): Promise<string | undefined> {
-  const loginUrl = hubBaseUrl.endsWith('/api/v1') ? `${hubBaseUrl}/auth/login` : `${hubBaseUrl}/api/v1/auth/login`
+  // API_PREFIX is already imported from the shared contract: spelling it here
+  // again is how a prefix change silently leaves the sentinel dialling nothing.
+  const loginUrl = hubBaseUrl.endsWith(API_PREFIX) ? `${hubBaseUrl}/auth/login` : `${hubBaseUrl}${API_PREFIX}/auth/login`
   const login = env.MOONQL_AUTH_ADMIN_LOGIN ?? env.MOONQL_AUTH_ADMIN_USER ?? 'admin'
   const passwordsToTry = [
     env.MOONQL_AUTH_ADMIN_PASSWORD,

@@ -23,6 +23,9 @@ importers:
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@9.39.5)
+      '@moonwitness/eslint-config':
+        specifier: workspace:*
+        version: link:packages/eslint-config
       eslint:
         specifier: 'catalog:'
         version: 9.39.5

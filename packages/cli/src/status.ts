@@ -1,3 +1,5 @@
+import { API_PREFIX, PORTS } from '@moonwitness/core'
+
 export interface ServiceHealth {
   port: number
   name: string
@@ -5,12 +7,19 @@ export interface ServiceHealth {
   url: string
 }
 
+/**
+ * Probes are pointed at routes that answer 2xx without a session: the hub's
+ * liveness pair under the API prefix, the dock's homepage, HQ's login screen
+ * (its middleware redirects `/`), and the two services' own `/health`.
+ * Ports come from the shared contract — this file used to re-type 3000-3004 and
+ * probe a cockpit path that does not exist.
+ */
 const SERVICES = [
-  { port: 3000, name: 'ARSY Fastify Hub', path: '/health' },
-  { port: 3001, name: 'Radio Dock', path: '/' },
-  { port: 3002, name: 'Headquarters 100CENTER', path: '/api/session' },
-  { port: 3003, name: 'AI Gateway & Sentinel', path: '/health' },
-  { port: 3004, name: 'Moondeck Cockpit', path: '/api/status' },
+  { port: PORTS.hub, name: 'Radio Core Hub (ARSY)', path: `${API_PREFIX}/health` },
+  { port: PORTS.dock, name: 'Public Radio Dock', path: '/' },
+  { port: PORTS.headquarters, name: 'Command Headquarters', path: '/login' },
+  { port: PORTS.aigateway, name: 'AI Gateway Router', path: '/health' },
+  { port: PORTS.cockpit, name: 'Moondeck Cockpit', path: '/health' },
 ]
 
 export async function checkMonorepoServices(): Promise<ServiceHealth[]> {
@@ -27,7 +36,9 @@ export async function checkMonorepoServices(): Promise<ServiceHealth[]> {
       results.push({
         port: s.port,
         name: s.name,
-        status: res.ok || res.status < 500 ? 'ONLINE' : 'OFFLINE',
+        // a 404 is not "online": it means the probe path and the service drifted
+        // apart, which is exactly what the old `status < 500` test hid
+        status: res.ok ? 'ONLINE' : 'OFFLINE',
         url: `http://127.0.0.1:${s.port}`,
       })
     } catch {

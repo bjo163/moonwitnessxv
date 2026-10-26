@@ -4,7 +4,7 @@ import {
   useMultiFileAuthState,
   fetchLatestBaileysVersion,
 } from '@whiskeysockets/baileys'
-import { serviceUnavailable } from '@moonwitness/core'
+import { HUB_ORIGIN_DEFAULT, serviceUnavailable } from '@moonwitness/core'
 import { pino } from 'pino'
 import { EventEmitter } from 'node:events'
 import type {
@@ -175,7 +175,9 @@ export class WhatsAppClient extends EventEmitter {
       const to = msg.key?.remoteJid
       if (!to) return
 
-      const hubBase = 'http://127.0.0.1:3000'
+      // the hub origin is the shared contract, not a literal: this plugin runs
+      // inside the hub process, where the port is decided once
+      const hubBase = HUB_ORIGIN_DEFAULT
 
       if (text === 'ping') {
         await client.sendText(to, 'pong')

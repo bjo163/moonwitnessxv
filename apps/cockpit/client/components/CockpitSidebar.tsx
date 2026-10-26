@@ -1,0 +1,167 @@
+import type { ReactNode } from 'react'
+import { Badge, Button, Card, CardBody, CardHeader, LiveDot } from '@moonwitness/moonui'
+import type { AppConfig, ServiceState } from '../types'
+
+export interface CockpitSidebarProps {
+  config: AppConfig | null
+  serviceStates: Record<string, ServiceState>
+  controlService: (tag: string, action: 'start' | 'stop' | 'restart') => Promise<void>
+  openPreview: (url: string) => void
+  formatUptime: (seconds: number) => string
+}
+
+export function CockpitSidebar({
+  config,
+  serviceStates,
+  controlService,
+  openPreview,
+  formatUptime,
+}: CockpitSidebarProps): ReactNode {
+  return (
+    <aside className="cockpit-sidebar">
+      <div className="sidebar-header">
+        <span className="sidebar-title">Microservices</span>
+        <Badge tone="cyan">LIVE CONTROL</Badge>
+      </div>
+
+      <div className="services-list">
+        {config?.services.map((svc) => {
+          const state: ServiceState = serviceStates[svc.tag] || {
+            tag: svc.tag,
+            name: svc.name,
+            pkg: svc.pkg,
+            status: 'STOPPED',
+            uptimeSeconds: 0,
+            restarts: 0,
+          }
+          const isRunning = state.status === 'RUNNING'
+          const badgeTone =
+            state.status === 'RUNNING'
+              ? 'ok'
+              : state.status === 'STARTING'
+              ? 'accent'
+              : state.status === 'ERROR'
+              ? 'hot'
+              : 'night'
+
+          return (
+            <div key={svc.tag} className="service-card-wrapper">
+              <Card
+                style={{
+                  borderLeft: `4px solid ${svc.color}`,
+                  backgroundColor: 'var(--surface-2)',
+                }}
+              >
+                <CardHeader
+                  title={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: 16 }}>{svc.icon}</span>
+                      <span style={{ fontWeight: 800, fontSize: 13, color: 'var(--fg)' }}>
+                        {svc.name}
+                      </span>
+                    </div>
+                  }
+                  actions={
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <LiveDot
+                        state={
+                          state.status === 'RUNNING'
+                            ? 'live'
+                            : state.status === 'ERROR'
+                            ? 'down'
+                            : 'connecting'
+                        }
+                      />
+                      <Badge tone={badgeTone}>{state.status}</Badge>
+                    </div>
+                  }
+                />
+                <CardBody style={{ paddingTop: 0 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 12,
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 11,
+                      color: 'var(--muted)',
+                      marginBottom: 6,
+                    }}
+                  >
+                    {svc.port ? (
+                      <span>
+                        PORT: <b style={{ color: 'var(--cyan)' }}>{svc.port}</b>
+                      </span>
+                    ) : (
+                      <span>TYPE: WORKER</span>
+                    )}
+                    {state.pid ? (
+                      <span>
+                        PID: <b style={{ color: 'var(--fg)' }}>{state.pid}</b>
+                      </span>
+                    ) : null}
+                    {state.uptimeSeconds > 0 ? (
+                      <span>
+                        UP: <b style={{ color: 'var(--ok)' }}>{formatUptime(state.uptimeSeconds)}</b>
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: 'var(--muted)',
+                      marginBottom: 10,
+                      lineHeight: 1.35,
+                    }}
+                  >
+                    {svc.description}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    {isRunning ? (
+                      <>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => void controlService(svc.tag, 'stop')}
+                        >
+                          Stop
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => void controlService(svc.tag, 'restart')}
+                        >
+                          Restart
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => void controlService(svc.tag, 'start')}
+                      >
+                        Start
+                      </Button>
+                    )}
+                    {svc.url ? (
+                      <Button
+                        variant="paper"
+                        size="sm"
+                        onClick={() => {
+                          if (svc.url) openPreview(svc.url)
+                        }}
+                      >
+                        Preview
+                      </Button>
+                    ) : null}
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
+          )
+        })}
+      </div>
+    </aside>
+  )
+}
