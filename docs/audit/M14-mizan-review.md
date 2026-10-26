@@ -2,7 +2,7 @@
 
 - **Milestone**: M14 MIZAN and human research review
 - **Status**: IMPLEMENTED AND PG-VERIFIED
-- **Code baseline**: `e9a31d5` (addon, seed, mesin review, MIZAN, suite dan wiring radio, di atas `7775a7d`); commit bukti menambahkan ADR, laporan ini dan status TODO
+- **Code baseline**: `ada9d3b` (addon, seed, mesin review, MIZAN, suite dan wiring radio, di atas `31cc124` yang membawa journey/denpa/empire); commit bukti menambahkan ADR, laporan ini dan status TODO
 - **Date**: 2026-10-26
 - **Scope**: `@moonwitness/moonql-research`, wiring hub radio, suite HTTP M14, drill PostgreSQL
 
@@ -104,12 +104,12 @@ Semua perintah dijalankan dari root worktree `moonradio-m14`; Node 24 LTS, pnpm 
 |---|---|
 | `pnpm build` | pass (seluruh rantai workspace, termasuk `moonql-research` dan `moonql-client`) |
 | `pnpm build:web` | pass |
-| `pnpm ui:check` | 77 file, 0 violation, PASSED |
+| `pnpm ui:check` | 81 file, 0 violation, PASSED |
 | `pnpm lint` | 0 error, 62 warning (pre-existing di `packages/moonql/*` dan tools) |
-| `pnpm gen:sdk:check` | generated SDK up to date (`schemaHash 091ddd5a75fd9c63`) |
+| `pnpm gen:sdk:check` | generated SDK up to date (`schemaHash f1dd19609a87d617`) |
 | `pnpm --filter @moonwitness/radio exec tsx --test test/mizan.test.ts` | 7 test, 7 pass, 0 fail |
 | `pnpm --filter @moonwitness/radio exec tsx --test test/dockerfile-contract.test.ts test/moonql-compat.test.ts` | 10 test, 10 pass |
-| `pnpm --filter @moonwitness/radio test` | 295 test, 286 pass, 0 fail, 9 skipped |
+| `pnpm --filter @moonwitness/radio test` | 302 test, 293 pass, 0 fail, 9 skipped |
 | `PARITY_DATABASE_URL=… tsx --test test/mizan-pg.test.ts` | 1 test, 1 pass, `moonql.engine === 'pg'`; diulang sekali, lulus dengan angka sama |
 
 ### PostgreSQL vertical slice
