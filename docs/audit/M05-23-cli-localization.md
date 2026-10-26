@@ -6,7 +6,7 @@
 - **Prerequisites:** M05-08, M05-10 are checked in TODO. ADR-0005 assigns locale selection for the shared CLI to this task.
 - **Working-tree baseline:** root had unrelated CI accessibility repair and M01-07 ledger changes; a separate agent also had Headquarters login work in progress. This worker did not edit those paths.
 - **Claimed and actual paths:** `packages/cli/src/index.ts`, new `packages/cli/src/locale.ts`, `apps/radio/src/tools/gen-sdk.ts`, new `apps/radio/test/m05-23-cli-locale.test.ts`, this report. No package/root script or generated SDK/snapshot/history file changed.
-- **Integrated result SHA/reviewer:** pending integrator review and integration commit; all current results below are on the shared working tree based on the exact baseline SHA above.
+- **Integrated result SHA/reviewer:** `118dcb576d1cc3b791f6a7a85b208b7f4a5f83cc`; reviewed by root integrator. All commands below were run on the shared working tree with the source content committed at this SHA.
 
 ## Behavior
 
@@ -33,4 +33,4 @@
 
 No API, generated SDK, schema snapshot, history, source content, credential, role, or exit-code contract changed. Rollback reverts the CLI locale catalog/adapter, its focused test, and the `gen-sdk.ts` message adapter. The CLI catalog contains only human-authored operator instructions; schema identifiers and raw structured diff lines remain verbatim. No deployment is claimed.
 
-**Integrator handoff:** review the five claimed paths and exact evidence, then record the integration SHA/reviewer in this report and close only the M05-23 row in TODO if accepted. The generator's successful checks prove the committed SDK is currently up to date, not a write-mode generation.
+The generator's successful checks prove the committed SDK is currently up to date, not a write-mode generation.

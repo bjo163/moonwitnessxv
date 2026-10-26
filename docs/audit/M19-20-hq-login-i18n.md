@@ -5,7 +5,7 @@
 - **Prerequisite:** M05-10 is checked in TODO; the shared canonical `id`/`en` locale resolver and catalog contract are used.
 - **Worker:** `/root/m19_20_hq_login_i18n`.
 - **Changed paths:** `apps/headquarters/src/lib/login-copy.ts`, `apps/headquarters/src/app/login/page.tsx`, `apps/headquarters/src/layouts/auth.tsx`, `apps/headquarters/src/app/api/session/route.ts`, `apps/headquarters/src/app/(admin)/layout.tsx`, `apps/headquarters/test/login-locale.test.ts`, root `package.json`, this report.
-- **Result SHA/reviewer:** pending integration commit and root review.
+- **Result SHA/reviewer:** `118dcb576d1cc3b791f6a7a85b208b7f4a5f83cc`; reviewed by root integrator.
 
 ## Behavior
 
