@@ -32,6 +32,8 @@ interface Manifest {
   description?: string
   scripts?: Record<string, string>
   dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+  peerDependencies?: Record<string, string>
   exports?: Record<string, unknown>
 }
 
@@ -58,6 +60,25 @@ function sources(dir: string): string[] {
       const full = join(d, entry.name)
       if (entry.isDirectory()) walk(full)
       else if (/\.(ts|tsx|mjs)$/.test(entry.name) && !entry.name.endsWith('.d.ts')) out.push(full)
+    }
+  }
+  walk(base)
+  return out
+}
+
+/** Source and config files across a member, excluding compiled/dependency output. */
+function memberSources(dir: string): string[] {
+  const base = join(ROOT, dir)
+  const out: string[] = []
+  if (!existsSync(base)) return out
+  const ignoredDirectories = new Set(['node_modules', 'dist', '.next', 'coverage'])
+  const walk = (directory: string): void => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        if (!ignoredDirectories.has(entry.name)) walk(join(directory, entry.name))
+      } else if (/\.(ts|tsx|js|jsx|mjs|cjs)$/.test(entry.name) && !entry.name.endsWith('.d.ts')) {
+        out.push(join(directory, entry.name))
+      }
     }
   }
   walk(base)
@@ -142,6 +163,27 @@ test('topology: every library package states its own packaging standard', () => 
     if (pkg.scripts?.build && !pkg.scripts.typecheck) offenders.push(`${dir} builds but has no typecheck script (pnpm -r skips it)`)
   }
   assert.deepEqual(offenders, [], offenders.join('\n'))
+})
+
+test('topology: SQL drivers are imported only by MoonQL and the SKYLINK store', () => {
+  const owners = new Set<string>()
+  const driverNames = new Set(['drizzle-orm', 'postgres'])
+  const importPattern = /(?:from\s*|import\s*\(\s*)['"](drizzle-orm(?:\/[^'"]*)?|postgres)['"]/g
+
+  for (const { dir, pkg } of members) {
+    const manifestDependencies = [pkg.dependencies, pkg.devDependencies, pkg.peerDependencies]
+      .flatMap((dependencies) => Object.keys(dependencies ?? {}))
+    if (manifestDependencies.some((name) => driverNames.has(name))) owners.add(dir)
+
+    if (memberSources(dir).some((file) => importPattern.test(readFileSync(file, 'utf8')))) owners.add(dir)
+    importPattern.lastIndex = 0
+  }
+
+  assert.deepEqual(
+    [...owners].sort(),
+    ['packages/moonql', 'packages/skylink-store'],
+    'no app or third package may import drizzle-orm or postgres',
+  )
 })
 
 test('topology: the root build scripts are derived, not enumerated', () => {
