@@ -26,13 +26,14 @@ function sourceFiles(): string[] {
     for (const entry of readdirSync(base, { withFileTypes: true })) {
       if (!entry.isDirectory() || entry.name === 'node_modules') continue
       const src = join(base, entry.name, 'src')
-      let files: string[]
+      let files: Array<string | Buffer>
       try {
         files = readdirSync(src, { recursive: true })
       } catch {
         continue // package has no src (pure config)
       }
-      for (const path of files) {
+      for (const file of files) {
+        const path = String(file)
         if (!/\.tsx?$/.test(path) || path.startsWith('dist')) continue
         out.push(join(src, path))
       }

@@ -28,18 +28,25 @@ export const BUS_EVENTS = [
 export interface MoonBus {
   /**
    * Sebuah listener boleh async — `emit` sengaja memeriksa hasil yang berupa
-   * Promise dan memasangkan `.catch` (lihat komentar isolasi di bawah). Karena itu
-   * tipenya harus `void | Promise<void>`: versi `void` saja membuat antarmuka lebih
-   * sempit dari implementasinya, dan listener async yang sah ditolak pemonsumsi tipe.
+   * Promise dan memasangkan `.catch` (lihat komentar isolasi di bawah).
+   *
+   * Tipe kembaliannya `unknown`, bukan `void | Promise<void>`: bus tidak pernah
+   * memakai nilainya, dan listener yang ditulis sebagai ekspresi
+   * (`() => warns.push(x)`) mengembalikan number — sah untuk `void`, ditolak oleh
+   * union yang mengharuskan Promise.
    */
-  on<E extends BusEvent>(event: E, listener: (payload: BusPayloads[E]) => void | Promise<void>): () => void
+  on<E extends BusEvent>(event: E, listener: (payload: BusPayloads[E]) => unknown): () => void
   emit<E extends BusEvent>(event: E, payload: BusPayloads[E]): void
   readonly events: readonly BusEvent[]
 }
 
 type WarnLog = { warn: (obj: unknown, msg: string) => void }
 
-type AnyListener = (payload: unknown) => void | Promise<void>
+type AnyListener = (payload: unknown) => unknown
+
+/** only a real Promise gets a `.catch` attached */
+const isThenable = (value: unknown): value is Promise<unknown> =>
+  typeof value === 'object' && value !== null && typeof (value as { then?: unknown }).then === 'function'
 
 /**
  * Listener isolation is the contract: a subscriber that throws (or rejects)
@@ -50,7 +57,7 @@ export function createBus(log?: WarnLog): MoonBus {
 
   return {
     events: BUS_EVENTS,
-    on<E extends BusEvent>(event: E, listener: (payload: BusPayloads[E]) => void | Promise<void>): () => void {
+    on<E extends BusEvent>(event: E, listener: (payload: BusPayloads[E]) => unknown): () => void {
       let set = listeners.get(event)
       if (!set) {
         set = new Set()
@@ -70,8 +77,8 @@ export function createBus(log?: WarnLog): MoonBus {
           // An async subscriber rejects *after* this loop has moved on: without
           // this handler the rejection escapes as unhandledRejection (which can
           // take the process down) and the write that triggered it is blamed.
-          const result = listener(payload) as void | Promise<void>
-          if (result && typeof result.catch === 'function') {
+          const result = listener(payload)
+          if (isThenable(result)) {
             result.catch((err: unknown) =>
               log?.warn({ err: (err as Error).message, event }, 'moonql bus: async listener failed (write is not affected)'),
             )
