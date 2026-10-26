@@ -8,7 +8,7 @@
 
 ## Summary
 
-All six current app workspaces exist in `apps/*/package.json`: Dock, Headquarters, Cockpit, Radio (the current physical path for the ARSY hub), AI Gateway, and Sentinel. The seven inspected manifests (six apps plus MoonUI) contain no locale-specific runtime dependency such as `next-intl`, `i18next`, `react-intl`, FormatJS, or Lingui.
+All six current app workspaces exist in `apps/*/package.json`: Dock, Headquarters, Cockpit, Radio (the current physical path for the ARSY hub), AI Gateway, and Sentinel. The six app manifests, MoonUI manifest, and shared CLI manifest were inspected; none declares a locale-specific runtime dependency such as `next-intl`, `i18next`, `react-intl`, FormatJS, or Lingui.
 
 No app has a general id/en locale selector or locale-resolution policy visible in the inspected sources. Dock renders some language-tagged source and translation data, which is not the same as a localized application UI. Human-facing UI copy and metadata are predominantly English. The HTML language attributes observed for Dock, Headquarters, Cockpit, Radio's launchpad, and Radio's Studio are fixed to `en`. Localization requirements in [Blueprint §2A.3](../../BLUEPRINT.md#2a3-mandatory-global-i18n--localization-contract--planning-not-shipped) remain planning, and [ADR-0005](../decisions/ADR-0005-locale.md) remains proposed; neither proves implementation or settles every embedded operator surface.
 
@@ -32,7 +32,7 @@ Observed English human-facing shared labels include loading status (`aria-label=
 ## CLI/TUI applicability outside the six app matrix
 
 - The Cockpit launcher CLI and Sentinel `--once` worker output are included in their rows above. No interactive TUI was found in any of the six applications; MoonUI's `Terminal` component is rendered UI, not an interactive terminal runtime.
-- The root `moon` operator command is implemented separately in `packages/cli/src/index.ts` and exposes English help/output. ARSY's SDK generator/check command (`apps/radio/src/tools/gen-sdk.ts`) also emits English developer-facing status/errors. These are not additional applications; their shared developer/operator CLI locale follow-up is [M05-23](../tasks/M05/M05-23.md). Cockpit and Sentinel keep their app-specific owners; do not duplicate them under M05-23.
+- The root `moon` operator command is implemented separately in `packages/cli/src/index.ts` and exposes English help/output; its manifest has build/dev/typecheck scripts but no test or locale package. ARSY's SDK generator/check command (`apps/radio/src/tools/gen-sdk.ts`) also emits English developer-facing status/errors. These are not additional applications; their shared developer/operator CLI locale follow-up is [M05-23](../tasks/M05/M05-23.md). Cockpit and Sentinel keep their app-specific owners; do not duplicate them under M05-23.
 
 ## Focused negative and positive evidence
 
@@ -52,7 +52,7 @@ Shared prerequisites and unique scope owners remain:
 
 ## Method and limitations
 
-- Read the six app manifests, MoonUI manifest, task packet, TODO ownership rows, specified source paths, relevant route/component trees, CLI entry points, and locale/language references at the pinned baseline SHA. The user requested that the shared CLI be included, so an unchecked M05-23 task and packet were added without changing M05-08's checkbox.
+- Read the six app manifests, MoonUI and shared CLI manifests, task packet, TODO ownership rows, specified source paths, relevant route/component trees, CLI entry points, and locale/language references at the pinned baseline SHA. The user requested that the shared CLI be included, so an unchecked M05-23 task and packet were added without changing M05-08's checkbox.
 - Rechecked M00-07's dependency against the current six app workspaces; its historical discrepancy ledger remains pinned to older SHA `5da8bed` and was not treated as current locale evidence.
 - Did not execute builds or tests. M05-08's packet says production build is not required and asks to report exact commands if tests are run; the deliverable is a read-only source inventory. No screenshot evidence was collected.
 - M05-08 remains open for integrator review. The M05-23 ownership row and packet are new and unchecked; no task was marked done. No builds or tests were run for this read-only audit.
