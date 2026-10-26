@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible problem in current behavior.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Do not include credentials, private witness material, or source content you do not have permission to share.
+        A report helps triage a problem; it does not by itself authorize implementation or change TODO.md status.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include the smallest safe, repeatable set of steps.
+      placeholder: 1. Open …\n2. Select …\n3. Observe …
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: Repository revision
+      description: Branch and commit SHA, if known.
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Safe evidence
+      description: Add redacted logs, screenshots, or links. Remove tokens and personal data.
+    validations:
+      required: false
+  - type: input
+    id: related_task
+    attributes:
+      label: Related TODO task ID
+      description: If known, add the exact task ID (for example M00-01). Do not copy task status here.
+    validations:
+      required: false
