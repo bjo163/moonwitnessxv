@@ -12,6 +12,7 @@ import unilex from '@moonwitness/moonql-unilex'
 import ontology from '@moonwitness/moonql-ontology'
 import actors from '@moonwitness/moonql-actors'
 import graph from '@moonwitness/moonql-graph'
+import research from '@moonwitness/moonql-research'
 import type { AnyAddon } from '@moonwitness/moonql'
 
 /**
@@ -34,4 +35,5 @@ export const addons: AnyAddon[] = [
   ontology,
   actors,
   graph,
+  research,
 ]

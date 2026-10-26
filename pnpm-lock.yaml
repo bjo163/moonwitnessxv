@@ -222,6 +222,9 @@ importers:
       '@moonwitness/moonql-playlog':
         specifier: workspace:*
         version: link:../../packages/moonql-playlog
+      '@moonwitness/moonql-research':
+        specifier: workspace:*
+        version: link:../../packages/moonql-research
       '@moonwitness/moonql-schedule':
         specifier: workspace:*
         version: link:../../packages/moonql-schedule
@@ -529,6 +532,22 @@ importers:
         version: 5.9.3
 
   packages/moonql-playlog:
+    dependencies:
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../core
+      '@moonwitness/moonql':
+        specifier: workspace:*
+        version: link:../moonql
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  packages/moonql-research:
     dependencies:
       '@moonwitness/core':
         specifier: workspace:*

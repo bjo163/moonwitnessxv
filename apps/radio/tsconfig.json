@@ -23,6 +23,7 @@
     { "path": "../../packages/moonql-ontology" },
     { "path": "../../packages/moonql-graph" },
     { "path": "../../packages/moonql-actors" },
+    { "path": "../../packages/moonql-research" },
     { "path": "../../packages/whatsapp" },
     { "path": "../../packages/denpa" }
   ]

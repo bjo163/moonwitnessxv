@@ -1,0 +1,19 @@
+{
+  "name": "@moonwitness/moonql-research",
+  "version": "1.0.0",
+  "description": "Bounded SRGBL v8 stages, Key Witness frames, independent scores and adversarial hypotheses",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@moonwitness/core": "workspace:*",
+    "@moonwitness/moonql": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
+  }
+}
