@@ -105,7 +105,9 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 
 **Goal:** safely add applications to the current \`pnpm\` monorepo without re-inventing package/TypeScript/build/config/deployment/i18n conventions. Candidate entry point \`pnpm app:create\` is **not** an existing script. Inventory \`apps/*\`, \`packages/*\`, \`pnpm-workspace.yaml\`, Dockerfiles, \`@moonwitness/web-config\`, \`@moonwitness/moonui\` and CI first. Implement the smallest dry-run-capable scaffolder; reject name/path collisions and accidental overwrite; generate only runtime variants actually needed (public Next/privileged Next/local Vite/internal service/worker). Not every template receives a database, public port or Docker service. A successful sample app must install, build, pass tests including \`id/en\` locale coverage and relevant container routing **without manually repairing generated manifests**. Canonical executable subtasks are M05-17–M05-22.
 
-### 2A.3 Mandatory global i18n / localization contract — planning, not shipped
+### 2A.3 Mandatory global i18n / localization contract — accepted by ADR-0005; implementation not shipped
+
+**Ratified contract:** [ADR-0005](docs/decisions/ADR-0005-locale.md) now fixes the canonical `id`/`en` policy, deterministic preference order and per-runtime boundary. Its positive/negative vectors are inputs to M05-10/M05-11 tests, not evidence that a locale resolver or bilingual app is shipped. M05-10 chooses the smallest viable existing package home for the one registry after inspecting reuse.
 
 - **Supported UI languages v1:** ISO language tags \`id\` and \`en\`; no assumption that country is language or that translated UI means translated sacred source.
 - **Central owner:** one reusable locale registry/catalog contract in a justified shared package (proposed \`@moonwitness/i18n\` **only if** existing \`@moonwitness/core\`/MoonUI cannot cleanly own it). Text keys should be named, type-checked, and parity-checked by tests; never translated into stored API identifiers.
@@ -116,17 +118,17 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 - **Corpus separation:** never silently translate Quranic/scriptural source passages, citation fingerprints, rights, source-language original, edition IDs or authoritative statements as merely UI chrome. UI locale \`id/en\` is not evidence of an approved translation of any text.
 - **App acceptance matrix:**
 
-| Existing application | Localizable human interface | Baseline (at bb3aed0) | Owner / canonical TODO | Gate |
+| Existing application | Localizable human interface | Baseline (source inventory at `387f784`) | Owner / canonical TODO | Gate |
 |---|---|---|---|---|
 | Dock | Public Next UI, navigation, forms, content, SEO | PARTIAL/UNKNOWN; no verified \`/id\`/\`/en\` | M19-08–M19-19, M19-31 | Both routes, switcher, degraded mode, rights gate, browser E2E |
 | Headquarters | Login, sidebar, model/forms, errors, admin status | NOT VERIFIED in two languages | M19-20–M19-24 | id/en role tests and visible copy parity |
 | Cockpit | React/Vite console, panels, dialogs/help, optional CLI | NOT VERIFIED in two languages | M19-25–M19-30 | actual GUI/CLI scope, id/en, machine log invariants |
-| ARSY (currently radio) | Human error strings/diagnostics only | NOT VERIFIED in two languages | M05-14; M28 migration | stable error codes, id/en text if applicable, authorization intact |
+| ARSY (currently radio) | Human-facing launchpad, authenticated Studio UI, safe errors/diagnostics | NOT VERIFIED in two languages | M05-14; M28 migration | stable routes/envelope/error discriminators and auth, id/en UI and messages |
 | AI Gateway | User-visible provider/error info if exposed | NOT VERIFIED in two languages | M05-15 | human messages appropriate, IDs stable |
-| Sentinel | Human CLI help/diagnostic text if any | UNKNOWN/NOT VERIFIED | M05-16 | no translation of machine logs or automation output |
+| Sentinel | Human CLI help/actionable diagnostics if any | UNKNOWN/NOT VERIFIED | M05-16 | no translation of machine logs or automation output |
 | Future Harbor/SHADOW/MoonLab/WORKS/HELIOGRID | New user-facing interfaces | PLANNED, no current code | M05-19/M05-21 App Factory | all UI templates inherit typed locale and tests |
 
-**Global i18n VERIFIED gate:** per-app QA evidence at exact SHA, key parity, locale preference, date/number formatting, keyboard/accessible labels, auth-negative tests, and zero inadvertently changed API identifiers. One visible switcher is never proof of full coverage. Detailed tasks live exclusively in TODO (M05 and M19). The platform-wide i18n acceptance is intentionally separate from the narrower **Dock bilingual preview** gate; do not delay the small public preview for unrelated privileged-language screens, while retaining early, explicit all-app delivery requirements.
+**Global i18n VERIFIED gate:** per-app QA evidence at exact SHA, key parity, locale preference, date/number formatting, keyboard/accessible labels, auth-negative tests, stable machine output, and zero inadvertently changed API identifiers. One visible switcher is never proof of full coverage. Detailed tasks live exclusively in TODO (M05 and M19). The platform-wide i18n acceptance is intentionally separate from the narrower **Dock bilingual preview** gate; do not delay the small public preview for unrelated privileged-language screens, while retaining early, explicit all-app delivery requirements. ADR-0005 accepts the contract only; this gate remains unverified until implementation evidence exists.
 
 ### 2A.4 Bilingual public preview and release topology
 
