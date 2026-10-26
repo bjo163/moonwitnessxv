@@ -1,6 +1,6 @@
 # M01-05 — SemVer, Changelog & Protected Release Lifecycle
 
-- **Updated:** 2026-10-26
+- **Updated:** 2026-10-27
 - **Baseline package version:** `1.0.0` (private root workspace)
 - **Changelog:** [`CHANGELOG.md`](../../CHANGELOG.md)
 - **Repository:** [bjo163/moonwitnessxv](https://github.com/bjo163/moonwitnessxv)
@@ -24,12 +24,13 @@ not publish it to npm. Use SemVer for repository release tags:
 - Use a pre-release suffix (for example, `1.1.0-rc.1`) only for an explicitly
   reviewed candidate; it is not a production acceptance signal.
 
-For every release PR, add a concise, user-facing entry under `Unreleased` in
+For every release candidate, add a concise, user-facing entry under `Unreleased` in
 [`CHANGELOG.md`](../../CHANGELOG.md), grouped under `Added`, `Changed`,
 `Deprecated`, `Removed`, `Fixed`, or `Security` as applicable. Before tagging,
 move those entries under the version and release date, create a fresh
-`Unreleased` section, and update the root package version in the same reviewed
-PR. Do not describe planned or unverified work as shipped. Schema contract
+`Unreleased` section, and update the root package version in the same `dev`
+commit that CI verifies and promotes. Do not describe planned or unverified
+work as shipped. Schema contract
 changes must also follow the API/schema history policy in
 [`M01-04`](M01-04-sdk-drift-gate.md).
 
@@ -37,16 +38,15 @@ changes must also follow the API/schema history policy in
 
 ## 2. Reviewed release procedure
 
-1. Open a pull request to `main`; summarize behavior changes, migration impact,
-   changelog entry, and recovery path. Do not create a `dev` branch as part of
-   this policy.
-2. Obtain at least one human approval and a successful required
-   **Monorepo Verification & Safety Gates** check. `main` also blocks force
-   pushes and deletion; administrators are subject to the same rules.
+1. Land changes on `dev` (directly or by pull request) with the changelog entry
+   and recovery path. `dev` is the sole integration branch.
+2. Require the successful **Monorepo Verification & Safety Gates** check on
+   the exact `dev` commit. The `promote` job may fast-forward only that verified
+   SHA to `main`; force pushes and deletion are blocked, and no actor bypasses
+   the active `main` ruleset.
 3. Run `pnpm install --frozen-lockfile` and `pnpm verify` on the proposed
-   release commit. Review the exact source SHA and confirm that the changelog
-   and package version agree.
-4. After merge, create an annotated `vX.Y.Z` tag at the reviewed `main` commit
+   release commit. Confirm that the changelog and root package version agree.
+4. After the verified commit reaches `main`, create an annotated `vX.Y.Z` tag
    and publish a GitHub Release with notes matching the changelog. This is a
    human release action; no workflow publishes packages or deploys production.
 5. Record the tag, source SHA, CI run, and any application deployment evidence
@@ -65,22 +65,24 @@ rollback: it may not restore database state or deployment configuration.
 
 ## 4. Protection verification
 
-The [`main-release-protection` ruleset (ID 25876549)](https://github.com/bjo163/moonwitnessxv/rules/25876549) requires a pull request, one approving review, and the `Monorepo Verification & Safety Gates` status check. Stale approvals are dismissed after new commits, and no actor can bypass the ruleset. Force pushes and branch deletion are disabled. The authoritative state is the live GitHub ruleset; if it drifts, treat release acceptance as blocked until it is restored and rechecked.
+The [`main-release-protection` ruleset (ID 25876549)](https://github.com/bjo163/moonwitnessxv/rules/25876549) is active and requires the `Monorepo Verification & Safety Gates` status check, prohibits force pushes and deletion, and has no bypass actor. A pull-request/approval rule is intentionally absent because the accepted integration flow fast-forwards the exact CI-verified `dev` commit to `main`; requiring a PR there would block that promotion. The authoritative state is the live GitHub ruleset; if it drifts, treat release acceptance as blocked until it is restored and rechecked.
 
-The GitHub workflow exercises CI on pull requests targeting `main`. No
-release-specific workflow, `dev` promotion path, npm publishing, or production
-approval automation is configured by this task.
+The GitHub workflow runs CI on pushes and pull requests targeting `dev`; its
+promotion job fast-forwards `main` only after verification. No release-specific
+tagging workflow, npm publishing, or production approval automation is
+configured by this task.
 
 ## 5. Acceptance evidence
 
 - Positive: root `package.json` is `1.0.0`; this policy and
-  [`CHANGELOG.md`](../../CHANGELOG.md) define a versioned reviewed-release
-  procedure; live branch protection requires review and CI.
-- Negative: a direct push, force push, or branch deletion on `main` is rejected
-  by the active ruleset; its effective rules were read back through GitHub's
-  branch-rules API. No actor can bypass the rule. The private package has no
+  [`CHANGELOG.md`](../../CHANGELOG.md) define versioned releases; live ruleset
+  readback shows CI required, force push/deletion prohibited, no bypass actor,
+  and `current_user_can_bypass: never`.
+- Negative: unverified commits cannot satisfy the active required status-check
+  rule. Force push/deletion remain prohibited. This task did not attempt a
+  destructive write to test rejection. The private package has no
   publish script, and this lifecycle does not trigger production deployment.
-- Baseline: `638480315c6daf4d9535535f6493c68c2e9ec2aa`.
+- Baseline: `638480315c6daf4d9535535f6493c68c2e9ec2aa` (historical assessment).
 - Initial verification found `main` unprotected and no `CHANGELOG.md`; see
   [M01–M05 revalidation](M01-M05-revalidation-2026-10-26.md) for historical
   findings.
@@ -88,5 +90,6 @@ approval automation is configured by this task.
   314 tests (305 passed, 9 skipped, 0 failed), Headquarters production build,
   and Dock production build. Existing warnings include lint non-null
   assertions, large Cockpit bundle, and the Next.js middleware convention.
+- Current live ruleset re-read 2026-10-27: `gh api repos/bjo163/moonwitnessxv/rulesets/25876549`; active rules include `non_fast_forward`, `deletion`, and required status context `Monorepo Verification & Safety Gates`; bypass list empty and bypass `never`.
 - Focused policy check: package version/privacy, changelog structure, relative
   links, and absence of a publish script passed; `git diff --check` passed.

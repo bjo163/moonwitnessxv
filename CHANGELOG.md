@@ -14,3 +14,4 @@ available.
 
 ### Changed
 - Streamlined CI pipeline to run verification exactly once on `dev` and eliminate duplicate gates on `main` and local hooks.
+- Protected `main` with the required exact CI status check while preserving verified automatic fast-forward promotion.
