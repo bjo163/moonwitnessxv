@@ -161,9 +161,9 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 ## M05 — API/SDK and module behavior contracts
 
-**Group:** G0 · **Priority:** P0 · **Prerequisites:** M01,M02 · **Scope:** Fastify generated REST, MoonQL registry, client package.
+**Group:** G0 · **Priority:** P0 · **Prerequisites:** M01,M02 · **Scope:** Fastify generated REST and SDK **plus** added global locale/API-message/App Factory foundations. Historical M05-01–07 scope was verified before expansion; that does not close M05-08–22.
 
-**Exit gate:** No route duplicates, SDK drift or Radio break. **No completion inferred merely from repository files.**
+**Exit gate:** Legacy API fixtures remain stable; shared id/en catalog and factory-generated app each pass their own exact-SHA tests. No milestone-wide success inferred from the pre-expansion 7/7 evidence.
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
@@ -431,9 +431,9 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 ## M19 — Design system, accessibility and frontend experience
 
-**Group:** G3 · **Priority:** P1 · **Prerequisites:** M05,M08 · **Scope:** MoonUI, Dock, HQ and external design references.
+**Group:** G3 · **Priority:** P1 · **Prerequisites:** Relevant M05 locale contracts, M08 for Reader-specific work · **Scope:** MoonUI, Dock, Headquarters, **Cockpit Vite/CLI**, bilingual first landing and shared design. Microtasks M19-08–35 refine the existing M19 umbrellas.
 
-**Exit gate:** Accessible four interaction modes without breaking old radio design. Do not infer completion from code inventory alone.
+**Exit gate:** Accessible interaction modes without Radio regression, bilingual Dock preview with tested /id and /en, and independently verified id/en coverage of HQ/Cockpit and applicable other app surfaces. A Dock preview may pass its **scoped** gate before the complete global M19 gate.
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
@@ -595,9 +595,9 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 ## M27 — Full-stack acceptance, release evidence and human go/no-go
 
-**Group:** G6 · **Priority:** P0 · **Prerequisites:** M01,M03,M04,M08,M14,M18,M19,M20,M22,M28 · **Scope:** Exact release SHA, selected-scoped features, real tests and restore.
+**Group:** G6 · **Priority:** P0 · **Prerequisites:** M01,M03,M04,M08,M14,M18,M19,M20,M22,M28 for **full XV**; *scoped bilingual preview* follows M27-08–19 and the specific security/rights/locale/deployment gates it actually uses. · **Scope:** Exact release SHA, public-preview or full-feature manifest, real tests and restore.
 
-**Exit gate:** No publication until security/rights/data/recovery passes. Only real evidence closes this gate.
+**Exit gate:** No publication of restricted/unreviewed data; preview and full release evidence are separately classified. A successful scoped preview does **not** close M27-01–07/full XV.
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
@@ -627,7 +627,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 ## M28 — ARSY Hub rename and compatibility migration
 
-**Group:** G0 (Foundation) · **Priority:** P0 · **Prerequisites:** M00,M05,M22-01 · **Scope:** Existing `apps/radio`, workspace package, root scripts, pnpm lock, Docker Compose and Dockerfiles, current and future API environment names, test coverage, README and developer runbooks.
+**Group:** G0 (Foundation) · **Priority:** P0 · **Prerequisites:** M00, historical M05-01–07 API baseline and M22-01; new M05 i18n/App Factory tasks are independent except where an actual shared-interface dependency is specified. · **Scope:** Single `apps/radio`→`apps/arsy` move, workspace/package identity, pnpm lock, Docker/Compose/DNS, SDK/env aliases, radio/channel fixtures, regression and rollback.
 
 **Exit gate:** **`ARSY` becomes the single physical Fastify/MoonQL/API hub** at `apps/arsy` and `@moonwitness/arsy`; there is no second `apps/radio` runtime, while existing **Radio/SIGNAL** features, port `3000`, API routes and data remain compatible. Naming acceptance is ratified in [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md); actual code migration and tests remain unchecked.
 
