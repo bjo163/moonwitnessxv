@@ -24,7 +24,7 @@ const config = {
   // page looking rendered but never hydrated. Both the documented URLs and the
   // smoke checks address the stack as 127.0.0.1, so that host has to be named.
   // Ignored by `next build`/`next start`; it opens nothing in production.
-  allowedDevOrigins: ['127.0.0.1'],
+  allowedDevOrigins: ['127.0.0.1', 'localhost', '127.0.0.1:3004', 'localhost:3004'],
   async headers() {
     return [{ source: '/:path*', headers: NON_FRAMING_HEADERS }]
   },

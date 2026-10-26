@@ -16,7 +16,7 @@ const config = {
   transpilePackages: ['@moonwitness/moonui', '@moonwitness/moonql-client'],
   poweredByHeader: false,
   // see apps/dock/next.config.mjs: 127.0.0.1 is not `localhost` to the dev server
-  allowedDevOrigins: ['127.0.0.1'],
+  allowedDevOrigins: ['127.0.0.1', 'localhost', '127.0.0.1:3004', 'localhost:3004'],
   async headers() {
     // eval only where React Refresh needs it (see security-headers.mjs)
     return [{ source: '/:path*', headers: securityHeaders(["'none'"], { dev: process.env.NODE_ENV !== 'production' }) }]

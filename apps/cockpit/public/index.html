@@ -96,7 +96,7 @@
       <section class="tab-panel" id="tabPreview">
         <div class="preview-toolbar">
           <div class="preview-address-bar">
-            <input type="text" id="previewUrlInput" class="preview-input" value="http://localhost:3001" onkeydown="if(event.key==='Enter') navigatePreview()">
+            <input type="text" id="previewUrlInput" class="preview-input" value="http://127.0.0.1:3001" onkeydown="if(event.key==='Enter') navigatePreview()">
             <button class="btn btn-sm btn-primary" onclick="navigatePreview()">Go</button>
             <button class="btn btn-sm" onclick="reloadPreview()"></button>
             <button class="btn btn-sm" onclick="openExternal()">External</button>
@@ -106,7 +106,7 @@
           </div>
         </div>
         <div class="preview-container">
-          <iframe id="previewFrame" class="preview-frame" src="http://localhost:3001"></iframe>
+          <iframe id="previewFrame" class="preview-frame" src="http://127.0.0.1:3001"></iframe>
         </div>
       </section>
 

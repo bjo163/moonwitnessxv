@@ -184,7 +184,7 @@ export function App() {
   const [showErrorsOnly, setShowErrorsOnly] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [autoScroll, setAutoScroll] = useState(true)
-  const [previewUrl, setPreviewUrl] = useState('http://localhost:3001')
+  const [previewUrl, setPreviewUrl] = useState('http://127.0.0.1:3001')
   const [clock, setClock] = useState('')
   const [uptime, setUptime] = useState(0)
   const [errorLines, setErrorLines] = useState<string[]>([])
@@ -625,12 +625,12 @@ export function App() {
   })
 
   const previewShortcuts = [
-    { label: 'Dock (:3001)', url: 'http://localhost:3001' },
-    { label: 'Headquarters (:3002)', url: 'http://localhost:3002' },
-    { label: 'World Monitor (:3002/world-monitor)', url: 'http://localhost:3002/world-monitor' },
-    { label: 'Radio Hub (:3000)', url: 'http://localhost:3000' },
-    { label: 'Swagger Docs (:3000/docs)', url: 'http://localhost:3000/docs' },
-    { label: 'AI Gateway (:3003)', url: 'http://localhost:3003/v1/models' },
+    { label: 'Dock (:3001)', url: 'http://127.0.0.1:3001' },
+    { label: 'Headquarters (:3002)', url: 'http://127.0.0.1:3002' },
+    { label: 'World Monitor (:3002/world-monitor)', url: 'http://127.0.0.1:3002/world-monitor' },
+    { label: 'Radio Hub (:3000)', url: 'http://127.0.0.1:3000' },
+    { label: 'Swagger Docs (:3000/docs)', url: 'http://127.0.0.1:3000/docs' },
+    { label: 'AI Gateway (:3003)', url: 'http://127.0.0.1:3003/v1/models' },
   ]
 
   const portMap = [
@@ -1555,7 +1555,7 @@ export function App() {
                       <Button
                         variant="primary"
                         size="sm"
-                        onClick={() => openPreview(`http://localhost:${p.port}`)}
+                        onClick={() => openPreview(`http://127.0.0.1:${p.port}`)}
                       >
                         Open In Preview
                       </Button>

@@ -31,7 +31,16 @@ export interface HeaderPair {
  * so no release can ship `unsafe-eval` by forgetting to remove it.
  */
 export function securityHeaders(ancestors: string[] = ["'none'"], options: { dev?: boolean } = {}): HeaderPair[] {
-  const list = ancestors.length ? ancestors : ["'none'"]
+  let list = ancestors.length ? [...ancestors] : ["'none'"]
+  if (options.dev) {
+    // In local development, permit Cockpit desktop window to frame services.
+    if (list.length === 1 && list[0] === "'none'") {
+      list = ["'self'", 'http://127.0.0.1:3004', 'http://localhost:3004']
+    } else {
+      if (!list.includes('http://127.0.0.1:3004')) list.push('http://127.0.0.1:3004')
+      if (!list.includes('http://localhost:3004')) list.push('http://localhost:3004')
+    }
+  }
   // X-Frame-Options has no allow-list: DENY would override the CSP for exactly the
   // pages the allow-list exists to permit, so it travels with the strict policy.
   const strict = list.length === 1 && list[0] === "'none'"

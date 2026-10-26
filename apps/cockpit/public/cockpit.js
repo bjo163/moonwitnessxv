@@ -332,12 +332,12 @@ function renderPreviewShortcuts() {
   container.innerHTML = ''
 
   const shortcuts = [
-    { label: 'Dock (:3001)', url: 'http://localhost:3001' },
-    { label: 'Headquarters (:3002)', url: 'http://localhost:3002' },
-    { label: 'World Monitor (:3002/world-monitor)', url: 'http://localhost:3002/world-monitor' },
-    { label: 'Hub (:3000)', url: 'http://localhost:3000' },
-    { label: 'Swagger Docs (:3000/docs)', url: 'http://localhost:3000/docs' },
-    { label: 'AI Gateway (:3003)', url: 'http://localhost:3003/v1/models' },
+    { label: 'Dock (:3001)', url: 'http://127.0.0.1:3001' },
+    { label: 'Headquarters (:3002)', url: 'http://127.0.0.1:3002' },
+    { label: 'World Monitor (:3002/world-monitor)', url: 'http://127.0.0.1:3002/world-monitor' },
+    { label: 'Hub (:3000)', url: 'http://127.0.0.1:3000' },
+    { label: 'Swagger Docs (:3000/docs)', url: 'http://127.0.0.1:3000/docs' },
+    { label: 'AI Gateway (:3003)', url: 'http://127.0.0.1:3003/v1/models' },
   ]
 
   for (const s of shortcuts) {
@@ -444,7 +444,7 @@ function renderPortsGrid() {
       <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">${item.name}</div>
       <div style="color:var(--text-muted); font-size:12px; margin-bottom:12px;">${item.desc}</div>
       <div>
-        <a href="http://localhost:${item.port}" target="_blank" class="btn btn-sm" style="text-decoration:none;">Open :${item.port}</a>
+        <a href="http://127.0.0.1:${item.port}" target="_blank" class="btn btn-sm" style="text-decoration:none;">Open :${item.port}</a>
       </div>
     `
     container.appendChild(card)
