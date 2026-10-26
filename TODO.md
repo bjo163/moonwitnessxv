@@ -305,13 +305,15 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M14-01** — Design role-scoped draft/submitted/reviewed/disputed machine | P1 | D3 | M13-05,M03-04 | Named human actor transitions only |
-| - [ ] | **M14-02** — Build evidence/counterevidence reviewer detail | P1 | D3 | M14-01 | Exact source ID and version inspectable |
-| - [ ] | **M14-03** — Prepare real paired human annotator pilot process | P1 | D4 | M14-02 | Independent agreement actually recorded or BLOCKED |
-| - [ ] | **M14-04** — Implement bounded MIZAN method version and explanation | P1 | D3 | M13-06,M14-01 | Explicit criterion and context for score |
-| - [ ] | **M14-05** — Add rejection/revision/retraction with immutable decision trail | P1 | D3 | M14-02 | Old decisions preserved while correcting |
-| - [ ] | **M14-06** — Test wrong-role, forged evidence and concurrent approval | P1 | D4 | M14-03,M14-05 | No unapproved publish on race |
-| - [ ] | **M14-07** — Define human release criteria for reviewed knowledge claims | P1 | D2 | M14-04,M14-06 | Incomplete pilot remains not-public |
+| - [x] | **M14-01** — Design role-scoped draft/submitted/reviewed/disputed machine | P1 | D3 | M13-05,M03-04 | Named human actor transitions only |
+| - [x] | **M14-02** — Build evidence/counterevidence reviewer detail | P1 | D3 | M14-01 | Exact source ID and version inspectable |
+| - [x] | **M14-03** — Prepare real paired human annotator pilot process | P1 | D4 | M14-02 | Independent agreement actually recorded or BLOCKED |
+| - [x] | **M14-04** — Implement bounded MIZAN method version and explanation | P1 | D3 | M13-06,M14-01 | Explicit criterion and context for score |
+| - [x] | **M14-05** — Add rejection/revision/retraction with immutable decision trail | P1 | D3 | M14-02 | Old decisions preserved while correcting |
+| - [x] | **M14-06** — Test wrong-role, forged evidence and concurrent approval | P1 | D4 | M14-03,M14-05 | No unapproved publish on race |
+| - [x] | **M14-07** — Define human release criteria for reviewed knowledge claims | P1 | D2 | M14-04,M14-06 | Incomplete pilot remains not-public |
+
+**Revalidasi 2026-10-26 (`e9a31d5`, baseline `7775a7d`):** addon `@moonwitness/moonql-research` diperluas dengan 6 model (`research_reviews`, `research_review_events`, `research_counterevidence`, `mizan_methods`, `mizan_runs`, `research_pilot_annotations`) dan 15 endpoint review/counterevidence/MIZAN/pilot/release. Mesin status `DRAFT→SUBMITTED→REVIEWED` dengan `REJECTED`/`DISPUTED`/`RETRACTED` hanya dapat digerakkan oleh aktor manusia bernama dari `auth_users`; registrasi selalu `DRAFT` v1 (tanpa auto-approve), submitter tidak boleh menyetujui sendiri (four-eyes), dan guest/anonim ditolak. Setiap transisi memakai version CAS + mutex per-review dan menulis event append-only ber-`eventKey` unik; balapan dua approval menghasilkan `[200,409]` dengan tepat satu event `APPROVE`. Bukti wajib SHA persis (`c0a8…8912`); counterevidence seed (2, `OPEN`) harus diselesaikan dengan alasan sebelum approval; pilot `RECORDED` hanya dengan ≥2 annotator berbeda pada SHA sama (disagreement tetap dicatat), dan pilot kosong tetap `BLOCKED`. MIZAN v1 (`9e6e…669c`, 6 kriteria × 0–4 = 24, `CANDIDATE_NOT_RATIFIED`) menuntut metode terdaftar, explanation/context/unknowns dan total dihitung server; skor bukan verdict dan tidak pernah menjadi ranking. Release hanya kelayakan turunan dan `publicationAvailable` selalu `false` — tanpa jalur publikasi. Suite M14 7/7, Dockerfile contract + compat 10/10, suite penuh 295 test (286 pass, 9 skipped, 0 fail), drill PG nyata `engine=pg` lulus dua kali, `pnpm build`, `pnpm build:web`, `ui:check` (77 file, 0 violation), `gen:sdk:check` dan lint 0 error lulus. Bukti lengkap: [laporan M14](file:///z:/project/moonradio/docs/audit/M14-mizan-review.md); keputusan: [ADR M14-01](file:///z:/project/moonradio/docs/decisions/M14-01-review-workflow.md).
 
 
 ## M15 — Interdisciplinary historical comparison pilot

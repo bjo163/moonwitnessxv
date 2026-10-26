@@ -2,7 +2,7 @@
 
 - **Milestone**: M14 MIZAN and human research review
 - **Status**: IMPLEMENTED AND PG-VERIFIED
-- **Code baseline**: commit fitur M14 pada branch `m14-mizan`, di atas `7775a7d`; commit bukti menambahkan ADR, laporan ini dan status TODO
+- **Code baseline**: `e9a31d5` (addon, seed, mesin review, MIZAN, suite dan wiring radio, di atas `7775a7d`); commit bukti menambahkan ADR, laporan ini dan status TODO
 - **Date**: 2026-10-26
 - **Scope**: `@moonwitness/moonql-research`, wiring hub radio, suite HTTP M14, drill PostgreSQL
 
