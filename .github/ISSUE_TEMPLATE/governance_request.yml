@@ -1,6 +1,6 @@
 name: Governance or documentation request
 description: Propose a repository-governance or documentation improvement for triage.
-title: "governance: "
+title: "[GOV] "
 labels:
   - type:governance
 body:
@@ -9,6 +9,13 @@ body:
       value: >-
         This form is for discussion and triage. It does not authorize implementation, create a task status,
         or replace TODO.md. Do not include secrets or private witness material.
+  - type: input
+    id: task_or_marker
+    attributes:
+      label: TODO task ID or independent-work marker
+      description: For TODO-related discussion, enter its exact Mxx-yy ID. Otherwise enter NON-TODO GOVERNANCE PREPARATION. This is intake metadata, not authorization or status.
+    validations:
+      required: true
   - type: textarea
     id: request
     attributes:

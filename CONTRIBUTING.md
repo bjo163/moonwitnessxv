@@ -13,6 +13,8 @@ Thanks for helping improve MoonWitness XV. This guide covers how to propose and 
 
 Use the repository Issue forms when they fit. Include the relevant task ID for TODO-related discussion, or state `NON-TODO GOVERNANCE PREPARATION` for independent governance work. Describe the problem, intended scope, evidence, and any owner decision needed. An Issue is for discussion and coordination; implementation still follows the repository's task authority and review process.
 
+See [proposed Issue, branch, commit, and integration conventions](docs/governance/WORKFLOW_CONVENTIONS.md). They are guidance, not currently enforced repository policy.
+
 Before opening a pull request, update from the current `main`, keep the change focused, and check the full diff for unrelated files, private data, credentials, and generated artifacts. Do not force-push or rewrite shared history. Never include private witness material, secrets, or source content whose rights and consent are unknown.
 
 ## Pull requests
