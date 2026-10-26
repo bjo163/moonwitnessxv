@@ -1,6 +1,7 @@
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto'
 import { badRequest, unauthorized } from '@moonwitness/core'
 import { bool, defineAddon, defineModel, m2o, str } from '@moonwitness/moonql'
+import { getCachedApiKeyUser, invalidateKeyCache, setCachedApiKeyUser } from './cache.js'
 
 /** deterministic hash: unlike scrypt, a high-entropy token must be *lookable-up* */
 const hashKey = (key: string) => createHash('sha256').update(key).digest('hex')
@@ -77,6 +78,7 @@ export const apikeys = defineAddon({
         // explicit existence check: revoking a nonsense id must say 404, not pretend
         await orm.model('api_keys').get(id)
         await orm.model('api_keys').remove(id)
+        invalidateKeyCache(id)
         status(204)
         return null
       },
@@ -88,6 +90,14 @@ export const apikeys = defineAddon({
       const key = Array.isArray(raw) ? raw[0] : raw
       if (!key) return null
       const keyHash = hashKey(key)
+
+      // 1. High-throughput in-memory cache lookup
+      const cached = getCachedApiKeyUser(keyHash)
+      if (cached) {
+        return { id: cached.id, roles: cached.roles, meta: cached.meta }
+      }
+
+      // 2. Database lookup
       const page = await orm.model('api_keys').search({ limit: 1, where: { keyHash, active: true }, raw: true })
       const row = page.rows[0]
       // constant-time confirm the equality lookup (defense in depth)
@@ -97,9 +107,19 @@ export const apikeys = defineAddon({
         .split(',')
         .map((role) => role.trim())
         .filter(Boolean)
-      return { id: String(row.ownerRef), roles: roles.length ? roles : ['bot'], meta: { keyId: String(row.id), name: String(row.name) } }
+      const user = { id: String(row.ownerRef), roles: roles.length ? roles : ['bot'], meta: { keyId: String(row.id), name: String(row.name) } }
+      setCachedApiKeyUser(keyHash, user)
+      return user
     },
   },
 })
+
+export {
+  getCachedApiKeyUser,
+  setCachedApiKeyUser,
+  invalidateKeyCache,
+  clearKeyCache,
+  type CachedApiKeyUser,
+} from './cache.js'
 
 export default apikeys

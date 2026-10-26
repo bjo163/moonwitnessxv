@@ -91,6 +91,23 @@ const MISSION_ALERTS = [
   { tone: 'accent' as const, text: 'Publishing queue delayed (2 items)', ago: '3h ago' },
 ] as const
 
+const EMPIRE_14_SYSTEMS = [
+  { code: 'SYS-01', name: 'MoonWitness OS', domain: 'Umbrella runtime/experience contracts', status: 'ACTIVE', tone: 'cyan' as const },
+  { code: 'SYS-02', name: 'Semantic Engine', domain: 'UNILEX senses & trilateral root triangulation', status: 'ACTIVE', tone: 'cyan' as const },
+  { code: 'SYS-03', name: 'FURQAN Gate', domain: 'Source, evidence & claim classifier', status: 'OPERATIONAL', tone: 'accent' as const },
+  { code: 'SYS-04', name: 'MIZAN Review', domain: 'Bounded evaluation of evidence & quality', status: 'NOMINAL', tone: 'ok' as const },
+  { code: 'SYS-05', name: 'AMANAH Access', domain: 'Human permissions, mandate, and consent', status: 'GUARDED', tone: 'pink' as const },
+  { code: 'SYS-06', name: 'SHURA Deliberation', domain: 'Consultation, peer review & appeal desk', status: 'IN_SESSION', tone: 'accent' as const },
+  { code: 'SYS-07', name: '100CENTER', domain: 'Governed operator command workspace', status: 'ACTIVE', tone: 'ok' as const },
+  { code: 'SYS-08', name: 'KITAB Ledger', domain: 'Verified, versioned knowledge & review ledger', status: 'SYNCED', tone: 'cyan' as const },
+  { code: 'SYS-09', name: 'SIDRA TREE Graph', domain: 'Typed relation exploration & evidence graph', status: 'ONLINE', tone: 'ok' as const },
+  { code: 'SYS-10', name: 'Command Hub', domain: 'Multi-service process supervisor & telemetry', status: 'NOMINAL', tone: 'cyan' as const },
+  { code: 'SYS-11', name: 'Atmosphere OS', domain: 'Environmental sensor & space weather grid', status: 'STREAMING', tone: 'accent' as const },
+  { code: 'SYS-12', name: 'HELIOGRID', domain: 'Solar energy & physics telemetry tracker', status: 'NOMINAL', tone: 'ok' as const },
+  { code: 'SYS-13', name: 'ARSY Compute', domain: 'Approved orchestrator for bounded AI tools', status: 'BOUNDED', tone: 'pink' as const },
+  { code: 'SYS-14', name: 'Material Forge', domain: 'Materials science & physical artifact ledger', status: 'STANDBY', tone: 'night' as const },
+] as const
+
 export default async function DashboardPage() {
   const [ops, monitor] = await Promise.all([dashboard(), getMonitorOverview()])
   const totalRows = ops.models.reduce((sum, model) => sum + model.count, 0)
@@ -283,6 +300,41 @@ export default async function DashboardPage() {
           />
         </div>
       </section>
+
+      {/* 2.5 100CENTER: THE 14 SYSTEMS OF EMPIRE OF THE LIGHT (Section 21A.6) */}
+      <Panel
+        title="100CENTER · The 14 Systems of the Empire"
+        subtitle="Bounded logical systems restored from Section 21A.6 — telemetry, evidence, and research compute."
+        actions={<Badge tone="ok">14 / 14 SYNCHRONIZED</Badge>}
+      >
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 10 }}>
+          {EMPIRE_14_SYSTEMS.map((sys) => (
+            <div
+              key={sys.code}
+              style={{
+                backgroundColor: 'var(--surface-2)',
+                border: '1px solid var(--border)',
+                borderRadius: 4,
+                padding: '8px 10px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+                  {sys.code}
+                </span>
+                <Badge tone={sys.tone}>{sys.status}</Badge>
+              </div>
+              <strong style={{ fontSize: 13, color: 'var(--fg)' }}>{sys.name}</strong>
+              <span style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.4 }}>
+                {sys.domain}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Panel>
 
       {/* 3. BOTTOM 3-PANEL ROW: PROJECT UNIVERSE + ACTIVE WORKFLOWS + COMMAND FEED / ALERTS */}
       <section className="hq-mc-bottom-grid" id="project-universe">

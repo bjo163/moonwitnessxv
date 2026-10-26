@@ -18,6 +18,7 @@ import {
   Kbd,
   StationSeal,
   MoonAvatar,
+  CrtBackdrop,
   type TabItem,
 } from '@moonwitness/moonui'
 import {
@@ -196,6 +197,7 @@ export function App() {
   const [uptime, setUptime] = useState(0)
   const [errorLines, setErrorLines] = useState<string[]>([])
   const [isFreeingPorts, setIsFreeingPorts] = useState(false)
+  const [crtShader, setCrtShader] = useState(false)
 
   // Media Player State
   const [channels, setChannels] = useState<ChannelItem[]>(DEFAULT_CHANNELS)
@@ -513,6 +515,9 @@ export function App() {
         setActiveTab('ledger')
       } else if (e.key === '5') {
         setActiveTab('ports')
+      } else if (e.key === '`' || e.key === '~') {
+        triggerHaptic('toggle')
+        setActiveTab((prev) => (prev === 'logs' ? 'media' : 'logs'))
       }
     }
 
@@ -805,6 +810,17 @@ export function App() {
             onClick={() => void freePorts()}
           >
             {isFreeingPorts ? 'Freeing...' : 'Free Ports'}
+          </Button>
+          <Button
+            variant={crtShader ? 'accent' : 'ghost'}
+            size="sm"
+            onClick={() => {
+              triggerHaptic('toggle')
+              setCrtShader((prev) => !prev)
+            }}
+            title="Toggle Retro CRT Phosphor Scanline Shader"
+          >
+            {crtShader ? 'CRT: ON' : 'CRT: OFF'}
           </Button>
         </div>
       </header>
@@ -1566,6 +1582,51 @@ export function App() {
           ) : null}
         </main>
       </div>
+
+      {/* Cockpit Status & Desktop Hotkey Legend Footer */}
+      <footer
+        style={{
+          height: 28,
+          background: 'var(--ink)',
+          borderTop: '1px solid var(--border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 14px',
+          fontFamily: 'var(--font-mono)',
+          fontSize: 11,
+          color: 'var(--muted)',
+          zIndex: 20,
+          userSelect: 'none',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <span><Kbd>Space</Kbd> Play/Pause</span>
+          <span><Kbd>M</Kbd> Mute</span>
+          <span><Kbd>[</Kbd> / <Kbd>]</Kbd> Channel</span>
+          <span><Kbd>P</Kbd> PiP</span>
+          <span><Kbd>1</Kbd>–<Kbd>5</Kbd> Tabs</span>
+          <span><Kbd>~</Kbd> Toggle Terminal</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span>MOONDECK SUPERVISOR v15.4</span>
+          <span style={{ color: 'var(--cyan)', fontWeight: 800 }}>MS-EDGE WEBVIEW2</span>
+        </div>
+      </footer>
+
+      {/* CRT Phosphor Scanline Shader Layer */}
+      {crtShader ? (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            pointerEvents: 'none',
+            zIndex: 99999,
+          }}
+        >
+          <CrtBackdrop scanlines vignette tint="cyan" />
+        </div>
+      ) : null}
     </div>
   )
 }

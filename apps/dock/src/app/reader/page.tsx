@@ -1,4 +1,4 @@
-import { Badge, Button, Field, PageHeader, Panel, TextInput } from '@moonwitness/moonui'
+import { Badge, Button, Field, LinkButton, PageHeader, Panel, TextInput } from '@moonwitness/moonui'
 import { DEFAULT_CITATION, readPassage } from '@/data/queries/reader'
 import { ReaderView } from '@/ui/components/reader'
 
@@ -25,7 +25,14 @@ export default async function ReaderPage({
         title="Corpus Reader"
         subtitle="Exact source identity · rights-gated text · reproducible citation"
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Reader' }]}
-        actions={<Badge tone="cyan">{citation}</Badge>}
+        actions={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Badge tone="cyan">{citation}</Badge>
+            <LinkButton href="/reader/compare" variant="primary" size="sm">
+              1·6·3 COMPARATIVE WORKBENCH →
+            </LinkButton>
+          </div>
+        }
       />
 
       <Panel title="Look up a citation" subtitle="The Reader never guesses: absent, blocked and ambiguous are explicit states.">

@@ -477,3 +477,9 @@ export const playlog = defineAddon({
 })
 
 export default playlog
+export {
+  computeAcousticFingerprint,
+  compareFingerprints,
+  verifyBroadcastAuthenticity,
+  type AcousticFingerprint,
+} from './fingerprint.js'

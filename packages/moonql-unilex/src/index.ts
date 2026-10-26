@@ -1294,3 +1294,11 @@ export { classifyMatch, normalizeHeadword } from './match.js'
 export type { MatchClass, MatchPreview } from './match.js'
 export { UNILEX_SEED } from './data/registry.js'
 export { triangulateTerm, type TriangulatedConcept, type CognateEntry } from './triangulate.js'
+export {
+  hybridUnilexSearch,
+  generateLocalEmbedding,
+  cosineSimilarity,
+  type UnilexSearchCandidate,
+  type HybridSearchResult,
+  type HybridSearchOptions,
+} from './vector.js'

@@ -290,6 +290,30 @@ export class WhatsAppClient extends EventEmitter {
         await client.sendText(to, `Term "${query}" not found in current approved lexicon.`)
         return
       }
+
+      if (text === '!prisms') {
+        await client.sendText(
+          to,
+          'THE 13 PRISMS OF MOONWITNESS II:\n01 Storytelling\n02 Exposure\n03 Change Advisory Board\n04 Chasing Heart\n05 Lovestruck\n06 Breath Electric\n07 Seduction\n08 Fault Lines\n09 Villain of the Story\n10 Witness Archive\n11 Sanity\'s Last Breath\n12 Past Presence\n13 Promoting\n\nExplore online: https://moonwitness.media/prisms',
+        )
+        return
+      }
+
+      if (text === '!eras') {
+        await client.sendText(
+          to,
+          'THE 8 NARRATIVE ERAS:\n1 Before Light\n2 The Arrival\n3 The Witness\n4 The Runaways\n5 The Exposure\n6 The Change\n7 End of an Era\n8 Next Phase (XV)\n\nExplore timeline: https://moonwitness.media/timeline',
+        )
+        return
+      }
+
+      if (text === '!help') {
+        await client.sendText(
+          to,
+          'MOONWITNESS BOT COMMANDS:\n!np - Currently playing song & station\n!stations - List radio channels\n!req <message> - Send on-air listener request\n!intel - Latest critical radar signal\n!terms <query> - Search Unilex dictionary\n!prisms - 13 Prisms of Moonwitness II\n!eras - 8 Narrative Eras',
+        )
+        return
+      }
     }
   }
 }

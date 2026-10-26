@@ -2,6 +2,7 @@ import fastify, { type FastifyInstance } from 'fastify'
 import cors from '@fastify/cors'
 import { AiRouter } from './router.js'
 import type { ChatCompletionRequest } from './types.js'
+import { generateDeterministicEmbedding } from './embeddings.js'
 
 export interface ServerOptions {
   router?: AiRouter
@@ -86,6 +87,40 @@ export function buildServer(opts: ServerOptions = {}): FastifyInstance {
         },
       })
     }
+  })
+
+  // OpenAI-compatible Embeddings Endpoint
+  app.post<{ Body: { input: string | string[]; model?: string } }>('/v1/embeddings', async (req, reply) => {
+    const { input, model } = req.body ?? {}
+    if (!input) {
+      return reply.status(400).send({
+        error: {
+          message: 'Invalid request: "input" parameter is required.',
+          type: 'invalid_request_error',
+          param: 'input',
+          code: null,
+        },
+      })
+    }
+
+    const inputs = Array.isArray(input) ? input : [input]
+    const data = inputs.map((text, index) => ({
+      object: 'embedding',
+      index,
+      embedding: generateDeterministicEmbedding(String(text)),
+    }))
+
+    const totalTokens = inputs.reduce((acc, str) => acc + Math.ceil(String(str).length / 4), 0)
+
+    return reply.send({
+      object: 'list',
+      data,
+      model: model || 'text-embedding-moon-semantic',
+      usage: {
+        prompt_tokens: totalTokens,
+        total_tokens: totalTokens,
+      },
+    })
   })
 
   return app
