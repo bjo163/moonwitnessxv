@@ -98,6 +98,7 @@ Semua perintah dijalankan dari root worktree `moonradio-m13`; Node 24 LTS, pnpm 
 | `pnpm lint` | 0 error, 61 warning (pre-existing di `packages/moonql/*` dan tools) |
 | `pnpm build:web` | pass; route `/studio` dan seluruh route Dock/Reader ikut ter-build |
 | `PARITY_DATABASE_URL=… tsx --test test/research-pg.test.ts` | 1 test, 1 pass, 0 fail, `moonql.engine === 'pg'`; diulang sekali, lulus dengan angka sama |
+| CI run 40289384653 pada `fe76fd0` (main) | pass ([run 40289384653](https://github.com/bjo163/moonwitnessxv/actions/runs/40289384653)) |
 
 ### PostgreSQL vertical slice
 
