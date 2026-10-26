@@ -1,3 +1,4 @@
+import { Badge, PageHeader } from '@moonwitness/moonui'
 import { nowPlaying } from '@/data/queries/catalog'
 import { serverClient } from '@/data/sdk'
 import { todayWeekday } from '@/lib/time'
@@ -10,7 +11,12 @@ export default async function SchedulePage() {
 
   return (
     <div className="m-stack" style={{ gap: 20 }}>
-      <div className="dk-card-label">Weekly grid · {week.rows.length} slots · UTC</div>
+      <PageHeader
+        title="Signal Archive & Schedule"
+        subtitle={`Weekly transmission grid · ${week.rows.length} slots · UTC`}
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Archive' }]}
+        actions={<Badge tone="cyan">{week.rows.length} active slots</Badge>}
+      />
       <NowPlayingCard now={now} />
       <WeekGrid slots={week.rows} today={todayWeekday()} />
     </div>

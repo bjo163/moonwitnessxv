@@ -1,5 +1,5 @@
 // @ts-check
-import { loadRootEnv, SECURITY_HEADERS } from '../../scripts/next-config-shared.mjs'
+import { loadRootEnv, securityHeaders } from '../../scripts/next-config-shared.mjs'
 
 /**
  * One `.env` for the whole monorepo (the same file apps/radio reads); the loader
@@ -15,8 +15,11 @@ const config = {
   // both workspace libraries ship ESM from dist/ — let Next compile them
   transpilePackages: ['@moonwitness/moonui', '@moonwitness/moonql-client'],
   poweredByHeader: false,
+  // see apps/dock/next.config.mjs: 127.0.0.1 is not `localhost` to the dev server
+  allowedDevOrigins: ['127.0.0.1'],
   async headers() {
-    return [{ source: '/:path*', headers: SECURITY_HEADERS }]
+    // eval only where React Refresh needs it (see security-headers.mjs)
+    return [{ source: '/:path*', headers: securityHeaders(["'none'"], { dev: process.env.NODE_ENV !== 'production' }) }]
   },
 }
 

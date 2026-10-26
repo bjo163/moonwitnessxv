@@ -51,7 +51,7 @@ export const apikeys = defineAddon({
       body: { name: str({ maxLength: 80 }), roles: str({ maxLength: 120, null: true }) },
       handler: async ({ body, orm, user, status }) => {
         if (!user) throw unauthorized()
-        const roles = (body.roles ?? 'bot').trim()
+        const roles = String(body.roles ?? 'bot').trim()
         if (!/^[a-z0-9_-]+(,[a-z0-9_-]+)*$/.test(roles)) {
           throw badRequest('roles must be a comma separated list of role names (a-z0-9_-)')
         }

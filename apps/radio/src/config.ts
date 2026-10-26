@@ -54,6 +54,11 @@ const EnvSchema = z.object({
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(20),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().min(1000).default(60_000),
   HQ_URL: z.string().default(FRONTEND_URLS.headquarters),
+
+  // extra hostnames the egress gate must refuse on top of its built-in list
+  // (db, radio, dock, headquarters, localhost, metadata.google.internal); comma
+  // separated. Read only by the hub's own outbound fetch policy.
+  EGRESS_DENY_HOSTS: z.string().default(''),
 })
 
 /**
@@ -103,6 +108,8 @@ export interface RadioConfig {
     }
   }
   denpa: { enabled: boolean; token: string }
+  /** outbound fetch policy: names this process must never call, plus its own port */
+  egress: { denyHosts: string[] }
   /** explicit allow-list slice handed to addons as `ctx.env` */
   addonEnv: Record<string, string | undefined>
   /** the two Next.js frontends this hub serves (advertised by GET /) */
@@ -155,6 +162,7 @@ export function loadConfig(): RadioConfig {
       },
     },
     denpa: { enabled: e.DENPA_ENABLED, token: e.DENPA_TOKEN },
+    egress: { denyHosts: e.EGRESS_DENY_HOSTS.split(',').map((host) => host.trim()).filter(Boolean) },
     addonEnv: Object.fromEntries(ADDON_ENV_KEYS.map((key) => [key, process.env[key]])),
     frontends: { dock: e.DOCK_URL, headquarters: e.HQ_URL },
   }

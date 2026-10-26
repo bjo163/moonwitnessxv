@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
-import { and, asc, desc, eq, gt, gte, inArray, isNotNull, isNull, lt, lte, ne, notInArray, or, sql } from 'drizzle-orm'
-import type { AnyPgTable } from 'drizzle-orm/pg-core'
+import { and, asc, desc, eq, gt, gte, inArray, isNotNull, isNull, lt, lte, ne, notInArray, or, sql, type SQL } from 'drizzle-orm'
+import type { AnyPgTable, PgColumn } from 'drizzle-orm/pg-core'
+import { PgDialect } from 'drizzle-orm/pg-core'
 import type { AnyField, FieldsMap } from '../fields.js'
 import { hasColumn } from '../fields.js'
 import { columnName } from '../table.js'
@@ -18,15 +19,17 @@ const stripUndefined = (obj: Row): Row =>
  * (`start_min`). One lookup resolves both conventions; resolving only the
  * snake name silently renders an empty SQL expression (`... and  <= $2`).
  */
-export function buildColumnLookup(table: AnyPgTable): (key: string) => unknown {
-  const columns = new Map<string, unknown>()
+export function buildColumnLookup(table: AnyPgTable): (key: string) => PgColumn {
+  const columns = new Map<string, PgColumn>()
   for (const [key, value] of Object.entries(table as unknown as Record<string, unknown>)) {
     if (key.startsWith('_') || key === 'enableRLS') continue
-    columns.set(key, value)
+    columns.set(key, value as PgColumn)
     const snake = columnName(key)
-    if (snake !== key) columns.set(snake, value)
+    if (snake !== key) columns.set(snake, value as PgColumn)
   }
-  return (key: string) => columns.get(key)
+  // Keys originate from validated field names (defineModel) and the audit
+  // columns, so a miss here is a programming error, not user input.
+  return (key: string) => columns.get(key) as PgColumn
 }
 
 /**
@@ -44,6 +47,70 @@ export function toIsoTimestamp(value: string): string {
 }
 
 /**
+ * Render a built SQL fragment as text. Used by logs and by the parity test, which
+ * must be able to read the generated SQL without importing drizzle itself.
+ */
+export function sqlText(query: SQL): string {
+  return new PgDialect().sqlToQuery(query).sql
+}
+
+/**
+ * Domain -> SQL. Exported (not closure-private) so the parity matrix can assert the
+ * generated SQL without a database: the two engines agree on paper before they
+ * agree on rows.
+ */
+export function translateDomain(col: (key: string) => PgColumn, domain: Domain): SQL | undefined {
+  switch (domain.kind) {
+    case 'and': {
+      const conds = domain.parts.map((part) => translateDomain(col, part)).filter((c): c is SQL => c !== undefined)
+      return conds.length ? and(...conds) : undefined
+    }
+    case 'or': {
+      const conds = domain.parts.map((part) => translateDomain(col, part)).filter((c): c is SQL => c !== undefined)
+      return conds.length ? or(...conds) : undefined
+    }
+    case 'leaf': {
+      const { field, op, value } = domain.term
+      const c = col(field)
+      switch (op) {
+        case 'eq':
+          return value === null || value === undefined ? isNull(c) : eq(c, value)
+        case 'ne':
+          return value === null || value === undefined ? isNotNull(c) : ne(c, value)
+        case 'gt':
+          return gt(c, value)
+        case 'gte':
+          return gte(c, value)
+        case 'lt':
+          return lt(c, value)
+        case 'lte':
+          return lte(c, value)
+        case 'in':
+          return inArray(c, value as unknown[])
+        case 'nin':
+          return notInArray(c, value as unknown[])
+        case 'like':
+          // substring search: metacharacters in user input stay literals
+          return sql`${c} ilike ${likePattern(value)}`
+      }
+    }
+  }
+}
+
+/**
+ * Order terms with a single convention: NULL last in BOTH directions. Postgres'
+ * default is NULLS LAST for ASC and NULLS FIRST for DESC, while the memory engine
+ * used to put NULL first always — the same `?order=` therefore returned different
+ * pages depending on the engine. Absence may not masquerade as "smallest" or
+ * "largest"; it sorts after everything either way.
+ */
+export function orderTermsFor(col: (key: string) => PgColumn, order?: OrderTerm[]): SQL[] {
+  return (order ?? []).map(({ field, direction }) =>
+    direction === 'desc' ? sql`${desc(col(field))} nulls last` : sql`${asc(col(field))} nulls last`,
+  )
+}
+
+/**
  * Postgres engine: descriptor-built drizzle table + postgres-js pool.
  * The domain AST becomes real SQL (WHERE/ORDER BY/COUNT), not post-processing.
  * All casts stay confined inside this file.
@@ -56,7 +123,7 @@ export function createPgEngine(
 ): MoonEngine {
   const t = table as unknown as Record<string, unknown> & { id: unknown }
   const lookup = buildColumnLookup(table)
-  const col = (key: string): any => lookup(key)
+  const col = (key: string): PgColumn => lookup(key)
 
   // every timestamp the read contract exposes (audit columns + ts fields)
   const timeKeys = new Set(['createdAt', 'updatedAt', 'deletedAt'])
@@ -75,48 +142,13 @@ export function createPgEngine(
     return out ?? row
   }
 
-  function translate(domain: Domain): any {
-    switch (domain.kind) {
-      case 'and': {
-        const conds = domain.parts.map(translate).filter(Boolean)
-        return conds.length ? and(...conds) : undefined
-      }
-      case 'or': {
-        const conds = domain.parts.map(translate).filter(Boolean)
-        return conds.length ? or(...conds) : undefined
-      }
-      case 'leaf': {
-        const { field, op, value } = domain.term
-        const c = col(field)
-        switch (op) {
-          case 'eq':
-            return value === null || value === undefined ? isNull(c) : eq(c, value)
-          case 'ne':
-            return value === null || value === undefined ? isNotNull(c) : ne(c, value)
-          case 'gt':
-            return gt(c, value)
-          case 'gte':
-            return gte(c, value)
-          case 'lt':
-            return lt(c, value)
-          case 'lte':
-            return lte(c, value)
-          case 'in':
-            return inArray(c, value as unknown[])
-          case 'nin':
-            return notInArray(c, value as unknown[])
-          case 'like':
-            // substring search: metacharacters in user input stay literals
-            return sql`${c} ilike ${likePattern(value)}`
-        }
-      }
+  const where = (domain?: Domain): SQL | undefined => {
+    const parts: SQL[] = []
+    if (domain) {
+      const cond = translateDomain(col, domain)
+      if (cond) parts.push(cond)
     }
-  }
-
-  const where = (domain?: Domain): any => {
-    const parts: any[] = []
-    if (domain) parts.push(translate(domain))
-    if (opts?.softDelete) parts.push(isNull(t.deletedAt as never)) // implicit everywhere
+    if (opts?.softDelete) parts.push(isNull(col('deletedAt'))) // implicit everywhere
     if (!parts.length) return undefined
     const cond = parts.length === 1 ? parts[0] : and(...parts)
     return cond ?? undefined
@@ -134,15 +166,14 @@ export function createPgEngine(
     return values
   }
 
-  const orderTerms = (order?: OrderTerm[]) =>
-    order?.map(({ field, direction }) => (direction === 'desc' ? desc(col(field)) : asc(col(field))))
+  const orderTerms = (order?: OrderTerm[]): SQL[] => orderTermsFor(col, order)
 
   return {
     async list({ limit, offset, where: w, order }: ListOptions) {
       const q = where(w)
       const base = q ? db.select().from(table).where(q) : db.select().from(table)
-      const ordered = order?.length ? (base as any).orderBy(...(orderTerms(order) as any[])) : base
-      const rows = (await (ordered as any).limit(limit).offset(offset)) as Row[]
+      const ordered = order?.length ? base.orderBy(...orderTerms(order)) : base
+      const rows = (await ordered.limit(limit).offset(offset)) as Row[]
       return rows.map(isoRow)
     },
     async count(w?: Domain) {
@@ -189,12 +220,15 @@ export function createPgEngine(
     },
     async removeWhere(w?: Domain, limit = 1000) {
       // pick the ids first (bounded), then delete them in one statement: a soft
-      // model is stamped instead of erased, exactly like drop()
+      // model is stamped instead of erased, exactly like drop(). Oldest first —
+      // retention means "the rows that have been here longest", and an unordered
+      // LIMIT picked a different set on each engine (and on each plan).
       const q = where(w)
-      const pickedSelect = q
-        ? (db.select({ id: t.id as never }).from(table).where(q) as unknown as { limit: (n: number) => Promise<{ id: string }[]> })
-        : (db.select({ id: t.id as never }).from(table) as unknown as { limit: (n: number) => Promise<{ id: string }[]> })
-      const picked = await pickedSelect.limit(limit)
+      type PickedQuery = { orderBy: (...columns: SQL[]) => PickedQuery; limit: (n: number) => Promise<{ id: string }[]> }
+      const selected = (
+        q ? db.select({ id: t.id as never }).from(table).where(q) : db.select({ id: t.id as never }).from(table)
+      ) as unknown as PickedQuery
+      const picked = await selected.orderBy(asc(col('createdAt'))).limit(limit)
       if (!picked.length) return 0
       const ids = picked.map((row) => row.id)
       if (opts?.softDelete) {

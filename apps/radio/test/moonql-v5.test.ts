@@ -15,6 +15,28 @@ import {
 } from '@moonwitness/moonql'
 import envelope from '../src/plugins/envelope.js'
 
+/** the fields these assertions read from expanded view rows */
+interface CountryRecord {
+  id?: unknown
+  code?: unknown
+  name?: unknown
+}
+
+interface ExpandedRow {
+  name?: unknown
+  country?: unknown
+  countryRefRecord: CountryRecord
+  stations?: unknown
+}
+
+interface MenuItem {
+  group?: unknown
+  key?: unknown
+  kind?: unknown
+  route?: unknown
+  method?: unknown
+}
+
 function capLog() {
   const warns: string[] = []
   const log = {
@@ -113,7 +135,7 @@ test('view expand: select projection keeps the alias AND the joined record', asy
 
   const res = await app.inject().get('/orm/catalog').end()
   assert.equal(res.statusCode, 200)
-  const rows = res.json().data as Array<Record<string, any>>
+  const rows = res.json().data as ExpandedRow[]
   assert.equal(rows.length, 3)
 
   const jazz = rows.find((r) => r.name === 'Jazz Orbit')!
@@ -127,11 +149,11 @@ test('view expand: aggregate joins its groupBy key', async (t) => {
   t.after(() => app.close())
 
   const res = await app.inject().get('/orm/byCountry').end()
-  const rows = res.json().data as Array<Record<string, any>>
+  const rows = res.json().data as ExpandedRow[]
   assert.equal(rows.length, 2)
-  assert.equal(rows[0].stations, 2)
-  assert.equal(rows[0].countryRefRecord.code, 'JP')
-  assert.equal(rows[0].countryRefRecord.name, 'Japan')
+  assert.equal(rows[0]!.stations, 2)
+  assert.equal(rows[0]!.countryRefRecord.code, 'JP')
+  assert.equal(rows[0]!.countryRefRecord.name, 'Japan')
 })
 
 test('view expand: a non-m2o or non-grouped key fails the boot', () => {
@@ -169,11 +191,11 @@ test('_schema: menu is derived, grouped and sorted by (group, order, label)', as
   assert.equal(res.statusCode, 200)
   const doc = res.json().data
 
-  const lab = (doc.menu as Array<Record<string, any>>).filter((i) => i.group === 'Lab')
+  const lab = (doc.menu as MenuItem[]).filter((i) => i.group === 'Lab')
   assert.deepEqual(lab.map((i) => i.key), ['catalog', 'v5_stations', 'GET /v5/ping'])
   assert.deepEqual(lab.map((i) => i.kind), ['view', 'model', 'endpoint'])
-  assert.equal(lab[0].route, '/catalog')
-  assert.equal(lab[2].method, 'GET')
+  assert.equal(lab[0]!.route, '/catalog')
+  assert.equal(lab[2]!.method, 'GET')
   assert.equal(doc.models.v5_stations.menu.group, 'Lab')
   assert.equal(doc.views.catalog.expand[0], 'countryRef')
   assert.ok(doc.models.v5_stations.readSchema.properties.countryRefRecord)

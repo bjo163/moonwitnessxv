@@ -1,5 +1,4 @@
-import { createHash } from 'node:crypto'
-import { badRequest, fetchJsonWithPolicy } from '@moonwitness/core'
+import { badRequest, fetchJsonWithPolicy, pseudonym } from '@moonwitness/core'
 import { ADMIN_FULL, busStream, defineAddon, defineModel, defineView, int, m2o, sel, str, text, ts, type BusFrame } from '@moonwitness/moonql'
 
 /**
@@ -63,7 +62,7 @@ const parseNowPlaying = (body: unknown): NowPlayingFact | null => {
  * same token, no plaintext identity — and the demo seeds keep their readable
  * names because seeds never pass through this handler.
  */
-const pseudonym = (value: string): string => `lp_${createHash('sha256').update(value).digest('hex').slice(0, 16)}`
+const listenerToken = (value: string): Promise<string> => pseudonym('lp', value)
 
 /** Longest an anonymous tab may keep the on-air feed open; it reconnects after. */
 const MAX_ON_AIR_SECONDS = 300
@@ -301,7 +300,7 @@ export const playlog = defineAddon({
         return orm.model('playlogs').create({
           stationRef: body.stationRef,
           event: body.event ?? 'start',
-          listener: body.listener ? pseudonym(String(body.listener)) : null,
+          listener: body.listener ? await listenerToken(String(body.listener)) : null,
           seconds,
         })
       },

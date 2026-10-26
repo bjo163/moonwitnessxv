@@ -1,10 +1,12 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { cn } from './cn.js'
 
 export interface Breadcrumb {
   label: string
   href?: string
 }
+
+export type CardVariant = 'default' | 'art' | 'paper' | 'shadow'
 
 export function Breadcrumbs({ items }: { items: Breadcrumb[] }): ReactNode {
   return (
@@ -19,8 +21,30 @@ export function Breadcrumbs({ items }: { items: Breadcrumb[] }): ReactNode {
   )
 }
 
-export function Card({ children, className }: { children: ReactNode; className?: string }): ReactNode {
-  return <section className={cn('m-card', className)}>{children}</section>
+export function Card({
+  children,
+  className,
+  variant = 'default',
+  bgImage,
+  id,
+}: {
+  children: ReactNode
+  className?: string
+  variant?: CardVariant
+  bgImage?: string
+  id?: string
+}): ReactNode {
+  return (
+    <section className={cn('m-card', className)} data-variant={variant} id={id}>
+      {bgImage ? (
+        <>
+          <div className="m-card-art" style={{ backgroundImage: `url(${bgImage})` }} aria-hidden="true" />
+          <div className="m-card-shade" aria-hidden="true" />
+        </>
+      ) : null}
+      <div className="m-card-inner">{children}</div>
+    </section>
+  )
 }
 
 export function CardHeader({
@@ -43,8 +67,20 @@ export function CardHeader({
   )
 }
 
-export function CardBody({ children }: { children: ReactNode }): ReactNode {
-  return <div className="m-card-body">{children}</div>
+export function CardBody({
+  children,
+  className,
+  style,
+}: {
+  children: ReactNode
+  className?: string
+  style?: CSSProperties
+}): ReactNode {
+  return (
+    <div className={cn('m-card-body', className)} style={style}>
+      {children}
+    </div>
+  )
 }
 
 /** card + optional header in one call (the common case in a page) */
@@ -54,15 +90,21 @@ export function Panel({
   actions,
   children,
   className,
+  variant = 'default',
+  bgImage,
+  id,
 }: {
   title?: ReactNode
   subtitle?: ReactNode
   actions?: ReactNode
   children: ReactNode
   className?: string
+  variant?: CardVariant
+  bgImage?: string
+  id?: string
 }): ReactNode {
   return (
-    <Card className={className}>
+    <Card className={className} variant={variant} bgImage={bgImage} id={id}>
       {title ? <CardHeader title={title} subtitle={subtitle} actions={actions} /> : null}
       <CardBody>{children}</CardBody>
     </Card>
@@ -94,7 +136,7 @@ export function PageHeader({
   )
 }
 
-export type BadgeTone = 'accent' | 'ok' | 'hot' | 'night' | 'moon'
+export type BadgeTone = 'accent' | 'ok' | 'hot' | 'night' | 'moon' | 'pink' | 'cyan'
 
 export function Badge({ children, tone }: { children: ReactNode; tone?: BadgeTone }): ReactNode {
   return (

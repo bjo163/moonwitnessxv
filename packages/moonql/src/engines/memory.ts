@@ -45,7 +45,11 @@ export function createMemoryEngine(fields: FieldsMap, opts?: { softDelete?: bool
         const av = a[field] ?? null
         const bv = b[field] ?? null
         if (av === bv) continue
-        const cmp = av === null ? -1 : bv === null ? 1 : av < bv ? -1 : 1
+        // NULL is absence, not the smallest value: it sorts last in both
+        // directions, which is what the pg engine asks for with NULLS LAST.
+        if (av === null) return 1
+        if (bv === null) return -1
+        const cmp = av < bv ? -1 : 1
         return direction === 'desc' ? -cmp : cmp
       }
       return 0
@@ -90,8 +94,10 @@ export function createMemoryEngine(fields: FieldsMap, opts?: { softDelete?: bool
       return rows.delete(id)
     },
     async removeWhere(where?: Domain, limit = 1000) {
-      // same soft-delete semantics as drop(): a soft model is stamped, not erased
-      const doomed = filter(where).slice(0, limit)
+      // same soft-delete semantics as drop(): a soft model is stamped, not erased.
+      // Oldest first, like the pg engine: retention means "the rows that have been
+      // here longest", and without an order the two engines deleted different rows.
+      const doomed = sort(filter(where), [{ field: 'createdAt', direction: 'asc' }]).slice(0, limit)
       if (opts?.softDelete) {
         const at = new Date().toISOString()
         for (const r of doomed) r.deletedAt = at

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { Badge, LinkButton, PageHeader, Panel, StatCard } from '@moonwitness/moonui'
 import { getStation } from '@/data/queries/catalog'
 import { clock } from '@/lib/time'
 import { Player } from '@/ui/client/Player'
@@ -14,74 +15,61 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="m-stack" style={{ gap: 20 }}>
-      <a href="/stations" className="dk-muted dk-small">
-        ← back to the catalog
-      </a>
+      <PageHeader
+        title={station.name}
+        subtitle={`${station.genre ?? 'unformatted'} · ${station.countryRefRecord?.name ?? 'unknown country'} · ${plays} logged play${plays === 1 ? '' : 's'}`}
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Signals', href: '/stations' }, { label: station.name }]}
+        actions={
+          <span className="m-row">
+            <Badge tone={station.statusLabel === 'live' ? 'ok' : 'accent'}>
+              {station.statusLabel === 'live' ? 'on the air' : 'off the air'}
+            </Badge>
+            <LinkButton href="/stations" variant="ghost" size="sm">
+              ← Back to catalog
+            </LinkButton>
+          </span>
+        }
+      />
 
-      <div className="dk-detail">
-        <section className="dk-card">
-          <div className="dk-card-label">{station.statusLabel === 'live' ? 'on the air' : 'off the air'}</div>
-          <h1 style={{ margin: 0, fontSize: 34 }}>{station.name}</h1>
-          <div className="dk-row dk-muted">
-            <span>{station.genre ?? 'unformatted'}</span>
-            <span>· {station.countryRefRecord?.name ?? 'unknown country'}</span>
-            <span>· {plays} logged play{plays === 1 ? '' : 's'}</span>
+      <Player stationId={station.id} stationName={station.name} streamUrl={station.streamUrl} />
+
+      <Panel title="Reference Telemetry" subtitle="country, region, currency and language metadata">
+        {country ? (
+          <div className="m-grid m-grid-3">
+            <StatCard label="country" value={`${country.name} (${country.code})`} />
+            <StatCard label="region" value={country.region ?? '—'} />
+            <StatCard label="calling code" value={country.calling ?? '—'} />
+            <StatCard label="currency" value={country.currencyRefRecord?.name ?? '—'} />
+            <StatCard label="language" value={country.officialLangRecord?.name ?? '—'} />
+            <StatCard label="logged plays" value={plays} />
           </div>
-          <Player stationId={station.id} stationName={station.name} streamUrl={station.streamUrl} />
-        </section>
+        ) : (
+          <p className="m-muted">This station has no country reference.</p>
+        )}
+      </Panel>
 
-        <section className="dk-card">
-          <div className="dk-card-label">Reference data</div>
-          {country ? (
-            <div className="dk-facts">
-              <div className="dk-fact">
-                <b>country</b>
-                {country.name} ({country.code})
-              </div>
-              <div className="dk-fact">
-                <b>region</b>
-                {country.region ?? '—'}
-              </div>
-              <div className="dk-fact">
-                <b>calling code</b>
-                {country.calling ?? '—'}
-              </div>
-              <div className="dk-fact">
-                <b>currency</b>
-                {country.currencyRefRecord?.name ?? '—'}
-              </div>
-              <div className="dk-fact">
-                <b>language</b>
-                {country.officialLangRecord?.name ?? '—'}
-              </div>
-            </div>
-          ) : (
-            <p className="dk-muted">This station has no country reference.</p>
-          )}
-        </section>
-      </div>
-
-      <section className="m-stack" style={{ gap: 10 }}>
-        <div className="dk-card-label">Schedule ({slots.length} slots)</div>
+      <Panel title={`Schedule (${slots.length} slots)`} subtitle="weekly transmission windows in UTC">
         {slots.length === 0 ? (
-          <p className="dk-muted">No slots scheduled for this station yet.</p>
+          <p className="m-muted">No slots scheduled for this station yet.</p>
         ) : (
           <div className="dk-grid">
             {slots.map((slot) => (
               <div className="dk-station" key={slot.id}>
-                <div className="dk-station-top">
+                <div className="m-row" style={{ justifyContent: 'space-between' }}>
                   <strong>{slot.title}</strong>
-                  <span className="dk-pill">{slot.weekday}</span>
+                  <Badge tone="accent">{slot.weekday}</Badge>
                 </div>
-                <div className="dk-mono dk-small">
+                <div className="m-mono" style={{ fontSize: 12 }}>
                   {clock(slot.startMin)}–{clock(slot.endMin)}
                 </div>
-                <div className="dk-muted dk-small">{slot.host ? `hosted by ${slot.host}` : 'no host'}</div>
+                <div className="m-muted" style={{ fontSize: 12 }}>
+                  {slot.host ? `hosted by ${slot.host}` : 'no host'}
+                </div>
               </div>
             ))}
           </div>
         )}
-      </section>
+      </Panel>
     </div>
   )
 }

@@ -60,6 +60,7 @@ export interface MenuSpec {
 }
 
 export interface SeedCtx {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- seam erasure: addon memilih model saat runtime, tipenya tidak bisa diketahui di sini
   orm: { model(name: string): any }
   env: Record<string, string | undefined>
   log: { info: (obj: unknown, msg: string) => void; warn: (obj: unknown, msg: string) => void }
@@ -68,6 +69,7 @@ export interface SeedCtx {
 }
 
 export interface DataCtx {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- seam erasure yang sama dengan SeedCtx
   orm: { model(name: string): any }
   resolveRef: (ref: string) => Promise<string>
 }
@@ -139,7 +141,7 @@ export interface Model<F extends FieldsMap = FieldsMap> {
   __row?: AuditFields & PlainRow<F>
 }
 
-export type AnyModel = Model<any>
+export type AnyModel = Model<FieldsMap>
 
 const AUDIT_KEYS = ['id', 'createdAt', 'updatedAt']
 

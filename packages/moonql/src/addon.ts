@@ -27,6 +27,7 @@ export type HooksMap<M extends Record<string, Model>> = {
 }
 
 /** Runtime-erased hook bag the repository actually calls. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- setiap event hook punya bentuk argumen berbeda; repository memanggilnya lewat seam ini dan sudah melakukan cast di sisi panggil
 export type AnyHookBag = Partial<Record<HookEvent, (row: any, ...rest: any[]) => any>>
 
 // ---- identity & custom endpoints (framework-free extension points) ----
@@ -46,6 +47,7 @@ export type UserResolver = (request: RequestLike) => User | null | Promise<User 
 export type UserResolverFactory = (ctx: ProvideCtx) => UserResolver
 
 export interface ProvideCtx {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- seam erasure: addon menamai model saat runtime, bukan saat compile
   orm: { model(name: string): any }
   env: Record<string, string | undefined>
   log: { info: (obj: unknown, msg: string) => void; warn: (obj: unknown, msg: string) => void }
@@ -58,11 +60,12 @@ export interface ProvideCtx {
 }
 
 export interface EndpointCtx {
-  body: Record<string, any>
-  query: Record<string, any>
+  body: Record<string, unknown>
+  query: Record<string, unknown>
   params: Record<string, string>
   /** resolved identity for this request (enforced against `requires`) */
   user: User | null
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- seam erasure yang sama dengan ProvideCtx
   orm: { model(name: string): any }
   env: Record<string, string | undefined>
   /** set the response status before returning */
@@ -147,7 +150,8 @@ export interface Addon<M extends Record<string, Model> = Record<string, Model>> 
   observe?: (bus: MoonBus, ctx: ProvideCtx) => void | Promise<void>
 }
 
-export type AnyAddon = Addon<any>
+/** Any addon, with its model map widened: the registry holds them by runtime name. */
+export type AnyAddon = Addon
 
 const NAME_RE = /^[a-z][a-z0-9_]*$/
 

@@ -1,6 +1,7 @@
 import { badRequest, conflict, httpError, notFound } from '@moonwitness/core'
-import type { HookEvent } from './addon.js'
+import type { HookEvent, User } from './addon.js'
 import type { MoonRegistry, CompiledModel } from './registry.js'
+import { allowsAcl, resolveAcl } from './acl.js'
 import { eqDomain, isDomain, normalizeOrder, normalizeWhere } from './domain.js'
 import type { Domain } from './domain.js'
 import type { AggregateQuery, ListOptions, MoonEngine, Row } from './engines/engine.js'
@@ -20,6 +21,12 @@ export interface RepoQuery {
   raw?: boolean
   /** ask for the second pass that produces `total` (opt-in, see search()) */
   count?: boolean
+  /**
+   * Who is asking. Only used to decide whether an expanded relation is visible:
+   * a relation expands the target model's rows, so it must pass that model's
+   * `list` rule — otherwise `?expand=` is a way around it.
+   */
+  actor?: User | null
 }
 
 const uniqueViolation = (err: unknown): boolean =>
@@ -101,7 +108,7 @@ export class ModelRepo {
     return stamped
   }
 
-  private async expand(rows: Row[], keys: string[] | undefined): Promise<Row[]> {
+  private async expand(rows: Row[], keys: string[] | undefined, actor: User | null = null): Promise<Row[]> {
     if (!keys?.length) return rows
     for (const key of keys) {
       const f = this.compiled.fields[key]
@@ -112,13 +119,28 @@ export class ModelRepo {
         throw badRequest(`moonql expand: unknown model "${f.ref}"`)
       }
       const other = this.getRepo(f.ref)
+      const slot = f.kind === 'm2o' ? `${key}Record` : key
+
+      // The join reads the target table, so it answers to the target's list rule.
+      // Without this, a public model with a relation to an admin-only one would
+      // hand out that model's rows through `?expand=`. A model with `rest: false`
+      // has no REST surface at all, and a relation is part of that surface.
+      const targetAcl = resolveAcl(other.compiled.acl.list)
+      if (other.compiled.rest === false || !allowsAcl(targetAcl.roleRule, actor)) {
+        for (const r of rows) r[slot] = null
+        continue
+      }
+      const visible = (row: Row): boolean => !targetAcl.row || (actor !== null && targetAcl.row(actor, row))
+
       if (f.kind === 'm2o') {
         const ids = [...new Set(rows.map((r) => r[key]).filter((v): v is string => typeof v === 'string'))]
         const parents = ids.length
-          ? (await other.rawList({ limit: ids.length, offset: 0, where: inDomain('id', ids) })).map((r) => other.hydrate(r))
+          ? (await other.rawList({ limit: ids.length, offset: 0, where: inDomain('id', ids) }))
+              .map((r) => other.hydrate(r))
+              .filter(visible)
           : []
         const byId = new Map(parents.map((p) => [p.id as string, p]))
-        for (const r of rows) r[`${key}Record`] = byId.get((r[key] as string) ?? '') ?? null
+        for (const r of rows) r[slot] = byId.get((r[key] as string) ?? '') ?? null
       } else {
         const ids = [...new Set(rows.map((r) => r.id).filter((v): v is string => typeof v === 'string'))]
         // One bounded pass per expand. The order makes the bound deterministic:
@@ -131,7 +153,9 @@ export class ModelRepo {
               offset: 0,
               where: inDomain(f.fk as string, ids),
               order: [{ field: 'id', direction: 'asc' }],
-            })).map((r) => other.hydrate(r))
+            }))
+              .map((r) => other.hydrate(r))
+              .filter(visible)
           : []
         if (ids.length && children.length === ids.length * perParent) {
           this.log.warn(
@@ -161,8 +185,8 @@ export class ModelRepo {
   }
 
   /** public form of the join used by views (aggregate rows expand their groupBy keys) */
-  async expandRows(rows: Row[], keys: string[] | undefined): Promise<Row[]> {
-    return this.expand(rows, keys)
+  async expandRows(rows: Row[], keys: string[] | undefined, actor: User | null = null): Promise<Row[]> {
+    return this.expand(rows, keys, actor)
   }
 
   /**
@@ -185,7 +209,7 @@ export class ModelRepo {
       query.count ? this.engine.count(where) : Promise.resolve(0),
     ])
     const hydrated = rows.map((r) => this.hydrate(r, query.raw))
-    await this.expand(hydrated, query.expand)
+    await this.expand(hydrated, query.expand, query.actor ?? null)
     return { rows: hydrated, total }
   }
 
@@ -193,11 +217,11 @@ export class ModelRepo {
     return (await this.search(query)).rows
   }
 
-  async get(id: string, expand?: string[]): Promise<Row> {
+  async get(id: string, expand?: string[], actor: User | null = null): Promise<Row> {
     const row = await this.engine.find(id)
     if (!row) throw notFound(`${this.compiled.label} not found`)
     const hydrated = [this.hydrate(row)]
-    await this.expand(hydrated, expand)
+    await this.expand(hydrated, expand, actor)
     return hydrated[0]!
   }
 

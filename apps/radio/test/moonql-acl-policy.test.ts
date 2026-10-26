@@ -23,7 +23,7 @@ async function boot(aclPolicy?: 'off' | 'warn' | 'require') {
     seedPolicy: 'off',
     cronEnabled: false,
     ...(aclPolicy ? { aclPolicy } : {}),
-    log: { ...quiet, warn: (obj: Record<string, unknown>, msg: string) => warnings.push({ obj, msg }) },
+    log: { ...quiet, warn: (obj: unknown, msg: string) => { warnings.push({ obj, msg }) } },
   })
   return { moonql, warnings }
 }
@@ -56,7 +56,7 @@ test('acl policy: a misspelled mode warns instead of silently picking a side', a
     seedPolicy: 'off',
     cronEnabled: false,
     env: { MOONQL_ACL_POLICY: 'reqire' },
-    log: { info: () => {}, warn: (obj: Record<string, unknown>, msg: string) => warnings.push({ obj, msg }) },
+    log: { info: () => {}, warn: (obj: unknown, msg: string) => { warnings.push({ obj, msg }) } },
   })
   t.after(() => moonql.close())
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { openLiveStream, sameOriginSdk } from '@moonwitness/moonql-client'
+import { LiveDot } from '@moonwitness/moonui'
 import { clock, slotProgress } from '@/lib/time'
 
 interface NowSlot {
@@ -28,7 +29,9 @@ interface NowSlot {
 export function LiveTicker({ initial }: { initial: NowSlot | null }) {
   const [slot, setSlot] = useState<NowSlot | null>(initial)
   const [state, setState] = useState<'connecting' | 'live' | 'down'>('connecting')
-  const [progress, setProgress] = useState<number | null>(() => (initial ? slotProgress(initial.startMin, initial.endMin, new Date()) : null))
+  const [progress, setProgress] = useState<number | null>(() =>
+    initial ? slotProgress(initial.startMin, initial.endMin, new Date()) : null,
+  )
 
   // the clock, not the network: one tick a minute is the schedule's smallest unit
   useEffect(() => {
@@ -68,8 +71,8 @@ export function LiveTicker({ initial }: { initial: NowSlot | null }) {
   }, [])
 
   return (
-    <div className="dk-ticker">
-      <span className="dk-live-dot" data-state={state} />
+    <div className="m-row" style={{ fontSize: 12 }}>
+      <LiveDot state={state} />
       {slot ? (
         <span>
           <strong>{slot.title}</strong>
@@ -77,7 +80,7 @@ export function LiveTicker({ initial }: { initial: NowSlot | null }) {
           {slot.host ? ` · ${slot.host}` : ''} · {clock(slot.startMin)}–{clock(slot.endMin)} ({progress ?? 0}%)
         </span>
       ) : (
-        <span className="dk-muted">no slot on air</span>
+        <span className="m-muted">no slot on air</span>
       )}
     </div>
   )

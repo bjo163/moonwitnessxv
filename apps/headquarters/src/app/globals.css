@@ -1,15 +1,274 @@
-/* HQ-only additions on top of @moonwitness/moonui/moon.css */
-html,
-body {
-  min-height: 100%;
+/* HQ-only layout grids on top of @moonwitness/moonui/moon.css (prefix: hq-).
+   All UI and zine primitives (Button, LinkButton, Card, Panel, Badge, Tape,
+   ZineNote, Crown, BrandLogo, ModuleCard, PosterCard, ProgressBar, Field,
+   TextInput, Toggle, Nav, UserChip, LiveDot) come from @moonwitness/moonui. */
+
+/* ---------- 1. Login Page Layout ("Enter SHADOW") ---------- */
+.hq-auth-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.hq-auth-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 28px;
+  border-bottom: 2px solid var(--fg);
+  background: rgba(7, 6, 11, 0.92);
+}
+.hq-auth-stage {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 160px 440px 1fr;
+  gap: 22px;
+  max-width: 1380px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 18px 24px;
+  align-items: stretch;
+}
+.hq-auth-zine-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hq-zine-eye-img {
+  width: 100%;
+  height: 118px;
+  object-fit: cover;
+  border: 2px solid var(--fg);
+  display: block;
+}
+.hq-auth-card-wrap {
+  display: flex;
+  align-items: center;
+}
+.hq-shadow-card {
+  width: 100%;
+}
+.hq-shadow-head {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.hq-shadow-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(38px, 4.2vw, 54px);
+  line-height: 0.92;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transform: skewX(-8deg);
+  text-shadow: 3px 3px 0 #000000;
+}
+.hq-shadow-title span {
+  color: var(--pink);
+}
+.hq-auth-watcher {
+  position: relative;
+  border: 3px solid var(--fg);
+  overflow: hidden;
+  background: #06050a;
+  min-height: 480px;
+}
+.hq-watcher-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hq-watcher-tag-top {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+.hq-watcher-tag-right {
+  position: absolute;
+  top: 20px;
+  right: 18px;
+}
+.hq-watcher-poster {
+  position: absolute;
+  right: 16px;
+  bottom: 90px;
+}
+.hq-watcher-follow {
+  position: absolute;
+  bottom: 18px;
+  right: 110px;
+}
+.hq-auth-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 28px;
+  border-top: 2px solid var(--fg);
+  background: #050408;
+  font-family: var(--font-mono);
+  font-size: 12px;
 }
 
-@media (max-width: 900px) {
+/* ---------- 2. Mission Control Layout Grids ---------- */
+.hq-sidebar-zine {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+  border-top: 2px solid rgba(247, 244, 236, 0.35);
+  padding-top: 10px;
+}
+.hq-sidebar-eye {
+  width: 100%;
+  height: 68px;
+  object-fit: cover;
+  border: 1.5px solid var(--fg);
+  display: block;
+}
+.hq-search-form {
+  flex: 1;
+  max-width: 380px;
+}
+.hq-mc-hero {
+  min-height: 180px;
+}
+.hq-mc-hero-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.hq-mc-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(38px, 4.8vw, 64px);
+  line-height: 0.9;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transform: skewX(-8deg);
+  text-shadow: 3px 3px 0 #000000;
+}
+.hq-mc-title span {
+  color: var(--pink);
+}
+.hq-mc-pipeline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  padding: 4px 12px;
+  background: rgba(7, 6, 11, 0.85);
+  border-bottom: 2px solid var(--accent);
+}
+.hq-mc-pipeline i {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.hq-mc-bento {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+.hq-mc-radar-card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 310px;
+}
+.hq-radar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hq-radar-nodes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hq-node-top { position: absolute; top: 8%; left: 50%; transform: translateX(-50%); }
+.hq-node-tl { position: absolute; top: 24%; left: 10%; }
+.hq-node-tr { position: absolute; top: 24%; right: 10%; }
+.hq-node-bl { position: absolute; bottom: 26%; left: 10%; }
+.hq-node-br { position: absolute; bottom: 26%; right: 10%; }
+.hq-node-bottom { position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); }
+.hq-radar-caption {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+}
+
+.hq-mc-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+.hq-universe-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.hq-workflow-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed rgba(247, 244, 236, 0.14);
+}
+.hq-workflow-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.hq-wf-copy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.hq-wf-copy strong {
+  font-size: 12px;
+}
+.hq-feed-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+.hq-feed-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1120px) {
+  .hq-auth-stage,
+  .hq-mc-bento,
+  .hq-mc-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+  .hq-universe-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .m-shell {
     grid-template-columns: 1fr;
   }
   .m-sidebar {
     border-right: none;
-    border-bottom: var(--line);
+    border-bottom: 3px solid var(--fg);
   }
 }

@@ -30,12 +30,15 @@ Pemulihan menimpa database target. Bacalah dua kali, jalankan satu kali.
 # 1. hentikan sisi tulis stack, biarkan db tetap hidup
 docker compose stop radio headquarters dock
 
-# 2. pastikan tidak ada koneksi lain yang menahan exclusive access
-docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d postgres -c "SELECT pid, usename, state FROM pg_stat_activity WHERE datname = current_database();"'
+# 2. pastikan tidak ada koneksi lain yang menahan exclusive access.
+#    `$POSTGRES_DB` disediakan service `db` (bootstrap var Postgres); di dalam
+#    container itu `$PGDATABASE` TIDAK ada, dan libpq akan jatuh ke default
+#    "nama database = nama user" — query-nya lalu memeriksa database yang salah.
+docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT pid, usename, state FROM pg_stat_activity WHERE datname = current_database();"'
 
 # 3. pulihkan ke database yang sama, objek lama dijatuhkan dahulu
 docker compose cp .\backup.dump db:/tmp/restore.dump
-docker compose exec db sh -c 'pg_restore --clean --if-exists --no-owner -d "$PGDATABASE" /tmp/restore.dump'
+docker compose exec db sh -c 'pg_restore --clean --if-exists --no-owner -d "$POSTGRES_DB" /tmp/restore.dump'
 docker compose exec db rm /tmp/restore.dump
 
 # 4. nyalakan kembali
@@ -51,7 +54,7 @@ ownership yang tidak ada di sini.
 ```powershell
 docker compose exec radio node -e "fetch('http://127.0.0.1:3000/api/v1/health/ready').then(r=>r.text()).then(console.log)"
 curl.exe -s http://127.0.0.1:3000/api/v1/stationCatalog | Select-String -Pattern '"name"' | Select-Object -First 3
-docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$PGDATABASE" -c "SELECT count(*) FROM stations; SELECT count(*) FROM playlogs;"'
+docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT count(*) FROM stations; SELECT count(*) FROM playlogs;"'
 ```
 
 Tiga hal itu membuktikan: hub terhubung ke database yang dipulihkan, metadata-driven
@@ -64,7 +67,7 @@ salinan; sebuah runbook yang tidak pernah dieksekusi adalah asumsi.
 
 | Tanggal | Dump | Hasil | Catatan |
 | --- | --- | --- | --- |
-| _(belum pernah dijalankan — isi setelah latihan pertama)_ | | | |
+| 2026-10-26 | `pg_dump -Fc` dari `moonwitness-db` (79.641 byte) | **LULUS** — restore ke database sementara `moonwitness_drill` mengembalikan `stations` 36 dan `playlogs` 24, sama dengan sumber; database latihan lalu di-drop | Dijalankan persis seperti resep di atas (`createdb` → `pg_restore --no-owner`), pada container `moonwitness-db` yang sama dengan stack dev |
 
 ## Yang TIDAK dilakukan autoSync
 

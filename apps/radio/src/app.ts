@@ -5,6 +5,7 @@ import { readdir } from 'node:fs/promises'
 import { type JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'
 import { bootMoonQl, moonqlRest } from '@moonwitness/moonql'
 import { loadPlugins, loadModules, loadChannels } from './lib/loader.js'
+import { installEgress } from './lib/egress.js'
 import { ChannelManager } from './lib/channels.js'
 import { addons } from './addons.js'
 import type { RadioConfig } from './config.js'
@@ -26,6 +27,11 @@ export async function buildApp(config: RadioConfig) {
 
   app.decorate('config', config)
   app.decorate('channels', new ChannelManager())
+
+  // Outbound policy before anything can fetch: crons armed at boot (probe, now
+  // playing) run through this gate.
+  const egress = installEgress(config)
+  app.log.info({ ...egress, deniedHosts: egress.denyHosts.length }, 'egress: outbound policy installed')
 
   // Single ORM bootstrap: addons installed, engine picked, schema synced.
   const modulesRoot = join(here, 'modules')

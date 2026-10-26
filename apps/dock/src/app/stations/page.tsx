@@ -1,4 +1,15 @@
+import {
+  Button,
+  Field,
+  LinkButton,
+  PageHeader,
+  Pagination,
+  Panel,
+  SelectInput,
+  TextInput,
+} from '@moonwitness/moonui'
 import { listStations } from '@/data/queries/catalog'
+import { PAGE_SIZE } from '@/lib/env'
 import { StationGrid } from '@/ui/components/sections'
 
 export const dynamic = 'force-dynamic'
@@ -25,55 +36,47 @@ export default async function StationsPage({
 
   return (
     <div className="m-stack" style={{ gap: 20 }}>
-      <div className="dk-card-label">
-        Station catalog ·{' '}
-        {filtered ? `${page.total} of ${page.catalogSize}` : page.catalogSize} public stations
-      </div>
+      <PageHeader
+        title="Signal Catalog"
+        subtitle={`${filtered ? `${page.total} of ${page.catalogSize}` : page.catalogSize} public stations in the network`}
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Signals' }]}
+      />
 
-      <form className="dk-filters" method="get" action="/stations">
-        <label>
-          Search
-          <input name="q" defaultValue={filters.q ?? ''} placeholder="name or genre" />
-        </label>
-        <label>
-          Genre
-          <select name="genre" defaultValue={filters.genre ?? ''}>
-            <option value="">all genres</option>
-            {page.genres.map((genre) => (
-              <option key={genre} value={genre}>
-                {genre}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Country
-          <select name="country" defaultValue={filters.country ?? ''}>
-            <option value="">all countries</option>
-            {page.countries.map((country) => (
-              <option key={country.id} value={country.id}>
-                {country.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button type="submit" className="dk-play">
-          filter
-        </button>
-        <a href="/stations" className="dk-muted dk-small">
-          reset
-        </a>
-      </form>
+      <Panel title="Filter Signals" subtitle="search by station name, genre, or origin country">
+        <form className="m-row" style={{ alignItems: 'flex-end', gap: 14 }} method="get" action="/stations">
+          <Field label="Search" htmlFor="q">
+            <TextInput id="q" name="q" defaultValue={filters.q ?? ''} placeholder="name or genre" icon="🔍" />
+          </Field>
+          <Field label="Genre" htmlFor="genre">
+            <SelectInput
+              id="genre"
+              name="genre"
+              defaultValue={filters.genre ?? ''}
+              placeholder="all genres"
+              options={page.genres.map((genre) => ({ value: genre, label: genre }))}
+            />
+          </Field>
+          <Field label="Country" htmlFor="country">
+            <SelectInput
+              id="country"
+              name="country"
+              defaultValue={filters.country ?? ''}
+              placeholder="all countries"
+              options={page.countries.map((country) => ({ value: country.id, label: country.name }))}
+            />
+          </Field>
+          <Button type="submit" variant="accent">
+            Filter
+          </Button>
+          <LinkButton href="/stations" variant="ghost">
+            Reset
+          </LinkButton>
+        </form>
+      </Panel>
 
       <StationGrid stations={page.rows} />
 
-      <div className="dk-pager">
-        {page.page > 1 ? <a href={hrefFor(page.page - 1)}>← prev</a> : null}
-        <span className="dk-muted">
-          page {page.page} / {page.pages}
-        </span>
-        {page.page < page.pages ? <a href={hrefFor(page.page + 1)}>next →</a> : null}
-      </div>
+      <Pagination page={page.page} pageSize={PAGE_SIZE} total={page.total} hrefFor={hrefFor} />
     </div>
   )
 }

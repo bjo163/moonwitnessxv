@@ -366,7 +366,7 @@ export interface AirplayDailyOutput {
   seconds: number | null
   createdAt: string
   updatedAt: string
-  stationRefRecord?: { id: string; name: string; streamUrl: string; genre: string | null; countryRef: string | null; active: boolean; lastCheckedAt: string | null; probeOk: boolean | null; probeFails: number; statusLabel: string; createdAt: string; updatedAt: string }
+  stationRefRecord?: { id: string; name: string; streamUrl: string; genre: string | null; countryRef: string | null; active: boolean; lastCheckedAt: string | null; probeOk: boolean | null; probeFails: number; statusLabel: string; createdAt: string; updatedAt: string } | null
 }
 
 export interface NowPlayingTrackOutput {
@@ -375,7 +375,7 @@ export interface NowPlayingTrackOutput {
   artist: string | null
   listeners: number | null
   at: string
-  stationRefRecord?: { id: string; name: string; streamUrl: string; genre: string | null; countryRef: string | null; active: boolean; lastCheckedAt: string | null; probeOk: boolean | null; probeFails: number; statusLabel: string; createdAt: string; updatedAt: string }
+  stationRefRecord?: { id: string; name: string; streamUrl: string; genre: string | null; countryRef: string | null; active: boolean; lastCheckedAt: string | null; probeOk: boolean | null; probeFails: number; statusLabel: string; createdAt: string; updatedAt: string } | null
 }
 
 export interface UiSettingsOutput {
@@ -442,4 +442,4 @@ export interface ViewOutputs {
 export const MODEL_NAMES = ['currencies', 'languages', 'countries', 'stations', 'schedule_slots', 'playlogs', 'requests', 'settings_entries', 'ops_audit', 'ops_jobs'] as const satisfies readonly ModelName[]
 export const VIEW_NAMES = ['countryOptions', 'currencyOptions', 'stationCatalog', 'stationCountByGenre', 'stationCountByCountry', 'unhealthyStations', 'nowPlaying', 'weeklySchedule', 'upcoming', 'topStations', 'recentPlays', 'listenQuality', 'requestQueue', 'topStationsToday', 'airplayDaily', 'nowPlayingTrack', 'uiSettings'] as const satisfies readonly ViewName[]
 export const ENDPOINTS = [{ method: 'POST', path: '/auth/login', acl: 'public', stream: false }, { method: 'POST', path: '/auth/logout', acl: 'auth', stream: false }, { method: 'GET', path: '/auth/me', acl: 'auth', stream: false }, { method: 'POST', path: '/listen', acl: 'public', stream: false }, { method: 'GET', path: '/on-air', acl: 'public', stream: true }, { method: 'GET', path: '/api-keys', acl: ['admin'], stream: false }, { method: 'POST', path: '/api-keys', acl: ['admin'], stream: false }, { method: 'DELETE', path: '/api-keys/:id', acl: ['admin'], stream: false }, { method: 'GET', path: '/ops/dashboard', acl: ['admin'], stream: false }, { method: 'GET', path: '/ops/stream', acl: ['admin'], stream: true }] as const
-export const SCHEMA_HASH: string = 'f1cfb797174c8f35'
+export const SCHEMA_HASH: string = '7f45c51ccf4930d8'

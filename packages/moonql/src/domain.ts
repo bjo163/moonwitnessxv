@@ -102,7 +102,10 @@ export function matchesDomain(domain: Domain | undefined, row: Record<string, un
         case 'eq':
           return v === norm(value)
         case 'ne':
-          return v !== norm(value)
+          // SQL's `<>` never matches a NULL row: `where score <> 1` skips the rows
+          // where score is unknown. `ne: null` keeps meaning "is not null" (the pg
+          // engine translates it to IS NOT NULL), so it is the one exception.
+          return value === null ? v !== null : v !== null && v !== value
         case 'gt':
           return v !== null && value !== null && (v as never as number) > (value as never as number)
         case 'gte':
@@ -114,7 +117,8 @@ export function matchesDomain(domain: Domain | undefined, row: Record<string, un
         case 'in':
           return (value as unknown[]).some((x) => x === v)
         case 'nin':
-          return !(value as unknown[]).some((x) => x === v)
+          // NOT IN over a NULL row is NULL in SQL, i.e. not a match
+          return v !== null && !(value as unknown[]).some((x) => x === v)
         case 'like':
           return v !== null && String(v).toLowerCase().includes(String(value).toLowerCase())
       }

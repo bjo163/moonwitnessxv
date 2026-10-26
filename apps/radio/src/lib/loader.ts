@@ -5,7 +5,7 @@ import type { FastifyInstance, FastifyPluginAsync } from 'fastify'
 import type { ChannelManager, ChannelFactory } from './channels.js'
 import type { RadioConfig } from '../config.js'
 
-type AnyPlugin = FastifyPluginAsync<any>
+type AnyPlugin = FastifyPluginAsync
 
 const isSource = (f: string) => /\.(js|ts)$/.test(f) && !f.endsWith('.d.ts')
 
@@ -23,7 +23,7 @@ async function resolveFile(dir: string, name: string): Promise<string | null> {
   return null
 }
 
-async function importDefault(file: string): Promise<any> {
+async function importDefault(file: string): Promise<unknown> {
   const mod = await import(pathToFileURL(file).href)
   if (!mod.default) throw new Error(`"${file}" has no default export`)
   return mod.default

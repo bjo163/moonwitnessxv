@@ -20,27 +20,27 @@ const STUDIO_HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Moonql Studio</title>
 <style>
-  :root { --ink:#111; --paper:#f6f1e7; --accent:#ffd400; --hot:#ff4d4d; }
+  :root { --ink:#07060b; --paper:#0d0b14; --surface:#13101d; --fg:#f7f4ec; --accent:#ffd400; --pink:#ff007a; --hot:#ff1e56; }
   * { box-sizing: border-box; font-family: ui-monospace, "Cascadia Code", Menlo, monospace; }
-  body { margin:0; background:var(--paper); color:var(--ink); }
-  header { border-bottom:4px solid var(--ink); padding:14px 20px; background:var(--accent);
+  body { margin:0; background:var(--ink); color:var(--fg); }
+  header { border-bottom:3px solid var(--fg); padding:14px 20px; background:var(--surface);
     display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
   header h1 { font-size:20px; margin:0; letter-spacing:-1px; }
-  header .tag { border:3px solid var(--ink); padding:2px 8px; background:#fff; font-weight:700; }
+  header .tag { border:2px solid var(--fg); padding:2px 8px; background:var(--accent); color:#07060b; font-weight:800; }
   main { display:grid; grid-template-columns: 260px 1fr; gap:20px; padding:20px; }
-  nav { border:4px solid var(--ink); background:#fff; box-shadow:6px 6px 0 var(--ink); padding:12px; }
+  nav { border:2px solid var(--fg); background:var(--surface); box-shadow:4px 4px 0 #000; padding:12px; }
   nav h2 { font-size:13px; text-transform:uppercase; margin:10px 0 4px; border-bottom:2px solid var(--ink); }
   nav button { display:block; width:100%; text-align:left; margin:2px 0; padding:6px 8px;
     border:2px solid var(--ink); background:#fff; font-weight:700; cursor:pointer; }
   nav button:hover, nav button.on { background:var(--accent); }
-  section { border:4px solid var(--ink); background:#fff; box-shadow:6px 6px 0 var(--ink); padding:16px; min-height:70vh; }
+  section { border:2px solid var(--fg); background:var(--surface); box-shadow:4px 4px 0 #000; padding:16px; min-height:70vh; }
   .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
-  input, select, textarea { border:3px solid var(--ink); padding:6px 8px; background:#fff; font-weight:700; }
+  input, select, textarea { border:2px solid rgba(247,244,236,.45); padding:6px 8px; background:var(--paper); color:var(--fg); font-weight:700; }
   .btn { border:3px solid var(--ink); background:var(--accent); padding:7px 14px; font-weight:800; cursor:pointer; box-shadow:3px 3px 0 var(--ink); }
   .btn.danger { background:#fff; color:var(--hot); }
   table { border-collapse:collapse; width:100%; font-size:13px; }
   th, td { border:2px solid var(--ink); padding:5px 8px; text-align:left; vertical-align:top; max-width:340px; overflow:hidden; }
-  th { background:var(--accent); }
+  th { background:rgba(255,0,122,.16); color:var(--accent); }
   .muted { opacity:.6; font-size:12px; }
   .err { color:var(--hot); font-weight:800; }
   .card { border:3px solid var(--ink); padding:12px; margin:8px 0; box-shadow:4px 4px 0 var(--ink); }

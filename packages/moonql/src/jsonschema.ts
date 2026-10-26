@@ -123,12 +123,20 @@ export function attachRelations(models: Map<string, CompiledModel>): void {
       if (!f.ref || !models.has(f.ref)) continue
       const target = models.get(f.ref)!
       if (f.kind === 'm2o') {
-        props[`${key}Record`] = structuredClone(target.baseRead)
+        // A relation can be absent (no target row, or a caller who may not see
+        // it), and a serializer handed a plain `object` schema turns null into
+        // `{}` — an empty record, indistinguishable from a real one.
+        props[`${key}Record`] = nullableRecord(structuredClone(target.baseRead))
       } else if (f.kind === 'o2m') {
         props[key] = { type: ['array', 'null'], items: structuredClone(target.baseRead) }
       }
     }
   }
+}
+
+/** an object schema that also accepts null (a missing expanded relation) */
+function nullableRecord(schema: Json): Json {
+  return { ...schema, type: ['object', 'null'] }
 }
 
 // ---- view schemas ----
@@ -186,7 +194,7 @@ export function buildViewRead(
   // relation joins: declared (never required) so the serializer keeps them
   for (const k of view.expand ?? []) {
     const target = models?.get(source.fields[k]?.ref ?? '')
-    if (target) props[`${k}Record`] = structuredClone(target.baseRead)
+    if (target) props[`${k}Record`] = nullableRecord(structuredClone(target.baseRead))
   }
 
   return { type: 'object', additionalProperties: false, required, properties: props }

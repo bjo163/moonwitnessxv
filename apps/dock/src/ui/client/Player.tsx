@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { Badge, Button, LiveDot } from '@moonwitness/moonui'
 
 /** A session shorter than this is a skip: nobody drifts into it by accident. */
 const SKIP_AFTER_SECONDS = 30
@@ -80,7 +81,11 @@ export function Player({
       // The thing that failed was the audio, not the count: saying "beacon failed"
       // here sent people to look at the hub while the stream URL was the problem.
       startedAt.current = null
-      setStreamError(err instanceof Error && err.name === 'NotAllowedError' ? 'browser blocked autoplay — press play again' : 'stream unavailable')
+      setStreamError(
+        err instanceof Error && err.name === 'NotAllowedError'
+          ? 'browser blocked autoplay — press play again'
+          : 'stream unavailable',
+      )
     }
   }
 
@@ -94,12 +99,19 @@ export function Player({
         onPause={() => void close(true)}
         onError={() => setStreamError('stream unavailable')}
       />
-      <button type="button" className="dk-play" onClick={() => void toggle()} aria-pressed={playing}>
+      <Button
+        type="button"
+        variant={playing ? 'primary' : 'accent'}
+        size="md"
+        onClick={() => void toggle()}
+        aria-pressed={playing}
+      >
         {playing ? '■ stop' : '▶ play'}
-      </button>
-      <div className="dk-player-meta">
+      </Button>
+      <div className="m-row" style={{ gap: 10 }}>
+        <LiveDot on={playing} />
         <strong>{stationName}</strong>
-        <span className="dk-muted dk-small">
+        <Badge tone={streamError || beacon === 'failed' ? 'hot' : beacon === 'sent' ? 'ok' : 'cyan'}>
           {streamError
             ? `${streamError} — nothing was logged`
             : beacon === 'sent'
@@ -107,7 +119,7 @@ export function Player({
               : beacon === 'failed'
                 ? 'beacon failed'
                 : 'stream'}
-        </span>
+        </Badge>
       </div>
     </div>
   )

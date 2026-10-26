@@ -169,23 +169,29 @@ export const moonqlRest: FastifyPluginAsync<MoonqlRestOptions> = async (fastify,
         preHandler: guard(model.acl.list),
       }, async (request, reply: FastifyReply) => {
         const q = request.query as ListQuery
+        // one identity resolution per request, shared by the row rule and by the
+        // relations this answer expands
+        const user = await userOf(request)
         const result = await repo.search({
           limit: q.limit,
           offset: q.offset,
           where: parseWhereJson(q.where),
           order: q.order,
           expand: expandKeys(q.expand),
-          // the count pass is paid for only when the client asked for the header
-          count: q.total === true,
+          actor: user,
+          // the count pass is paid for only when the client asked for the header,
+          // and it is skipped entirely under a row rule (see below)
+          count: q.total === true && !rowRule,
         })
         let rows = result.rows
         if (rowRule) {
-          // row rules: total stays pre-filter (documented approximation)
-          const user = await userOf(request)
           if (user) rows = rows.filter((r) => rowRule(user, r))
           else rows = []
         }
-        if (q.total) reply.header('x-total-count', result.total)
+        // A row rule filters after the count, so the pre-filter total is either
+        // wrong or an oracle for rows the caller may not see. Omit the header and
+        // let the client page forward; HQ already handles a null total.
+        if (q.total && !rowRule) reply.header('x-total-count', result.total)
         return rows
       })
     }
@@ -202,9 +208,13 @@ export const moonqlRest: FastifyPluginAsync<MoonqlRestOptions> = async (fastify,
         },
         preHandler: guard(model.acl.get),
       }, async (request) => {
-        const row = await repo.get((request.params as IdParams).id, expandKeys((request.query as { expand?: string }).expand))
+        const user = await userOf(request)
+        const row = await repo.get(
+          (request.params as IdParams).id,
+          expandKeys((request.query as { expand?: string }).expand),
+          user,
+        )
         if (rowRule) {
-          const user = await userOf(request)
           if (!user || !rowRule(user, row)) throw forbidden()
         }
         return row
@@ -295,7 +305,7 @@ export const moonqlRest: FastifyPluginAsync<MoonqlRestOptions> = async (fastify,
       if (view.aggregate) {
         // aggregate first (SQL GROUP BY), then joins, order/slice over the (<= limit) result set
         const rows = await repo.aggregateView({ groupBy: view.aggregate.groupBy, metrics: view.aggregate.metrics, where, limit: view.limit })
-        await repo.expandRows(rows, expand)
+        await repo.expandRows(rows, expand, await userOf(request))
         const ordered = sortRows(rows, q.order ?? view.order)
         if (q.total) reply.header('x-total-count', ordered.length)
         return ordered.slice(offset, offset + limit)
@@ -312,7 +322,7 @@ export const moonqlRest: FastifyPluginAsync<MoonqlRestOptions> = async (fastify,
       })
       // join -> project: relation lookups only run for the rows we return
       let rows = result.rows
-      await repo.expandRows(rows, expand)
+      await repo.expandRows(rows, expand, await userOf(request))
       if (view.select) {
         rows = rows.map((r) => ({
           ...Object.fromEntries(Object.entries(view.select!).map(([alias, src]) => [alias, r[src] ?? null])),

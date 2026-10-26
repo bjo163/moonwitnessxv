@@ -37,11 +37,34 @@ export function parseVersion(value: unknown): ParsedVersion | null {
   return { major: Number(match[1]), minor: Number(match[2]), patch: Number(match[3]) }
 }
 
+/** the subset of a published field descriptor this classifier reads */
+interface FieldShape {
+  type?: string | string[]
+  nullable?: boolean
+  enum?: unknown[]
+  maxLength?: number
+}
+
+interface ObjectSchemaShape {
+  required?: string[]
+  properties?: Record<string, FieldShape>
+}
+
+/** the subset of a published model/view document this classifier reads */
+interface ModelShape {
+  fields?: Record<string, FieldShape>
+  createSchema?: ObjectSchemaShape
+  updateSchema?: ObjectSchemaShape
+  readSchema?: ObjectSchemaShape
+  acl?: unknown
+}
+
 /** the JSON Schema type of a property, with `null` from a nullable union removed */
-const baseType = (schema: { type?: string | string[] } | undefined): string | undefined =>
+const baseType = (schema: FieldShape | undefined): string | undefined =>
   schema === undefined ? undefined : Array.isArray(schema.type) ? schema.type.filter((t) => t !== 'null').join('|') : schema.type
 
-function diffFieldShapes(a: Record<string, any> | undefined, b: Record<string, any> | undefined): string[] {
+/** every difference that makes an existing caller's payload or reader fail */
+function diffFieldShapes(a: Record<string, FieldShape> | undefined, b: Record<string, FieldShape> | undefined): string[] {
   const out: string[] = []
   for (const [name, before] of Object.entries(a ?? {})) {
     const after = b?.[name]
@@ -51,8 +74,10 @@ function diffFieldShapes(a: Record<string, any> | undefined, b: Record<string, a
     }
     if (baseType(before) !== baseType(after)) out.push(`field "${name}" changed type ${baseType(before)} -> ${baseType(after)}`)
     if (before?.nullable === true && after?.nullable !== true) out.push(`field "${name}" became non-null`)
-    if (Array.isArray(before?.enum) && Array.isArray(after?.enum)) {
-      const lost = before.enum.filter((value: unknown) => !after.enum.includes(value))
+    const beforeEnum = before.enum
+    const afterEnum = after.enum
+    if (Array.isArray(beforeEnum) && Array.isArray(afterEnum)) {
+      const lost = beforeEnum.filter((value: unknown) => !afterEnum.includes(value))
       if (lost.length) out.push(`field "${name}" no longer accepts ${lost.map((value: unknown) => JSON.stringify(value)).join(', ')}`)
     }
     if (typeof before?.maxLength === 'number' && typeof after?.maxLength === 'number' && after.maxLength < before.maxLength) {
@@ -92,8 +117,8 @@ export function classifySchema(prev: SchemaDocument, next: SchemaDocument): Sche
   const changed: string[] = []
 
   for (const kind of ['models', 'views'] as const) {
-    const beforeAll = (prev as never as Record<typeof kind, Record<string, any>>)[kind] ?? {}
-    const afterAll = (next as never as Record<typeof kind, Record<string, any>>)[kind] ?? {}
+    const beforeAll = (prev as unknown as Record<typeof kind, Record<string, ModelShape>>)[kind] ?? {}
+    const afterAll = (next as unknown as Record<typeof kind, Record<string, ModelShape>>)[kind] ?? {}
 
     for (const name of Object.keys(beforeAll)) {
       if (!(name in afterAll)) {
@@ -112,7 +137,10 @@ export function classifySchema(prev: SchemaDocument, next: SchemaDocument): Sche
       breaking.push(...diffFieldShapes(before?.fields, after?.fields).map((line) => `${kind}: ${name} ${line}`))
       breaking.push(...diffFieldShapes(before?.readSchema?.properties, after?.readSchema?.properties).map((line) => `${kind}: ${name} reads ${line}`))
       for (const op of ['create', 'update'] as const) {
-        const gained = newlyRequired(before?.[`${op}Schema`], after?.[`${op}Schema`])
+        const gained = newlyRequired(
+          op === 'create' ? before?.createSchema : before?.updateSchema,
+          op === 'create' ? after?.createSchema : after?.updateSchema,
+        )
         if (gained.length) breaking.push(`${kind}: ${name} now requires ${gained.join(', ')} on ${op}`)
       }
       for (const [op, beforeRule] of Object.entries(aclRules(before?.acl))) {

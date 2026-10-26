@@ -67,7 +67,7 @@ test('buildTable: the audit column is reachable by its descriptor key', () => {
   // key, so a table that builds without throwing is the assertion that holds here.
   const table = buildTable('probe', fields, { indexes: [['title', 'n']] })
   const columns = (table as unknown as Record<symbol, Record<string, unknown>>)[Symbol.for('drizzle:Columns')]
-  assert.ok(columns.createdAt, 'createdAt must exist as a descriptor key')
+  assert.ok(columns!.createdAt, 'createdAt must exist as a descriptor key')
   assert.equal(createdAtIndexName('probe'), 'probe_created_at_idx')
   // one name template shared with autoSync, snake-cased like every other column
   assert.equal(modelledIndexName('probe', ['stationRef', 'createdAt']), 'probe_station_ref_created_at_idx')

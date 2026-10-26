@@ -37,6 +37,18 @@ const literal = (v: unknown): string => {
   throw new Error(`moonql autoSync: unsupported default value ${String(v)}`)
 }
 
+/**
+ * The unique index both boot paths rely on. A soft-delete model covers live rows
+ * only: a deleted row is invisible everywhere, so it must not reserve a value —
+ * otherwise re-creating a name that was deleted is a 409 on postgres and a success
+ * in the memory engine.
+ */
+export function uniqueIndexDdl(model: { name: string; softDelete: boolean }, columns: string[]): string {
+  const cols = columns.map((column) => `"${columnName(column)}"`).join(', ')
+  const partial = model.softDelete ? ' WHERE "deleted_at" IS NULL' : ''
+  return `CREATE UNIQUE INDEX IF NOT EXISTS "${model.name}_${columns.map(columnName).join('_')}_uq" ON "${model.name}" (${cols})${partial}`
+}
+
 /** Column definition; when `safeAdd` is set (ALTER on a possibly-populated table),
  *  a NOT NULL column without a default is added as nullable instead. */
 function columnDdl(key: string, f: AnyField, safeAdd = false): string {
@@ -110,6 +122,10 @@ export async function autoSync(client: Sql, registry: MoonRegistry, log: Log): P
     await client.unsafe(
       `CREATE INDEX IF NOT EXISTS "${createdAtIndexName(model.name)}" ON "${model.name}" ("created_at")`,
     )
+    // Unique constraints cover LIVE rows only on a soft-delete model: a deleted
+    // row is invisible everywhere, so it must not reserve a value. Same predicate
+    // as buildTable(). (An existing non-partial index keeps its name and is not
+    // rewritten; dropping and re-creating is a migration, not a boot step.)
     for (const [key, f] of Object.entries(model.fields)) {
       const field = f as AnyField
       if (!hasColumn(field)) continue
@@ -117,12 +133,11 @@ export async function autoSync(client: Sql, registry: MoonRegistry, log: Log): P
         await client.unsafe(`CREATE INDEX IF NOT EXISTS "${model.name}_${columnName(key)}_idx" ON "${model.name}" ("${columnName(key)}")`)
       }
       if (field.unique) {
-        await client.unsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "${model.name}_${columnName(key)}_uq" ON "${model.name}" ("${columnName(key)}")`)
+        await client.unsafe(uniqueIndexDdl({ name: model.name, softDelete: model.softDelete }, [key]))
       }
     }
     for (const pair of model.unique) {
-      const cols = pair.map((p) => `"${columnName(p)}"`).join(', ')
-      await client.unsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "${model.name}_${pair.map(columnName).join('_')}_uq" ON "${model.name}" (${cols})`)
+      await client.unsafe(uniqueIndexDdl({ name: model.name, softDelete: model.softDelete }, pair))
     }
     // composite indexes declared on the model: same names as buildTable() so a
     // pushed schema and a synced one agree

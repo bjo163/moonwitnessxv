@@ -6,16 +6,13 @@ import { fileURLToPath } from 'node:url'
 import { FIELD_INPUT_SPEC, inputKindFor } from '@moonwitness/core'
 
 /**
- * F1.3: one registry, not three.
+ * F1.3: one registry, not three — and one centralized design system (`@moonwitness/moonui`).
  *
  * The kind→control map used to live inside headquarters while the hub's Studio
- * re-derived the same decision in its own JS. That is the quiet kind of duplication
- * that never breaks a test — it just makes the two surfaces render the same metadata
- * differently. These assertions pin where each decision lives, and fail if a copy
- * reappears.
- *
- * The hub does not depend on the React kit (and should not), so the kit's side is
- * checked as source structure rather than by importing it.
+ * re-derived the same decision in its own JS. Likewise, `apps/dock` and
+ * `apps/headquarters` must consume `@moonwitness/moonui` primitives instead of
+ * re-inventing parallel cards, buttons, inputs, progress bars, badges, or zine
+ * elements in local CSS.
  */
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -71,4 +68,76 @@ test('the field table has exactly one home', () => {
   assert.equal(/FIELD_INPUT_SPEC\s*[:=]/.test(moonuiFields), false, 'the React kit forked the core table')
   const core = source('packages/core/src/field-spec.ts')
   assert.match(core, /export const FIELD_INPUT_SPEC/, 'core must be the owner')
+})
+
+test('moonui centralizes UI and punk-zine primitives across dock and headquarters', () => {
+  const index = source('packages/moonui/src/index.ts')
+  for (const symbol of [
+    'Button',
+    'LinkButton',
+    'Card',
+    'Panel',
+    'Field',
+    'TextInput',
+    'SelectInput',
+    'Toggle',
+    'Badge',
+    'Pagination',
+    'LiveDot',
+    'ProgressBar',
+    'ChartList',
+    'BrandLogo',
+    'Crown',
+    'Tape',
+    'ZineNote',
+    'ModuleCard',
+    'PosterCard',
+  ]) {
+    assert.match(index, new RegExp(`\\b${symbol}\\b`), `@moonwitness/moonui must export ${symbol}`)
+  }
+
+  // Every surface in dock and headquarters must import from @moonwitness/moonui
+  const surfaces = [
+    'apps/dock/src/ui/components/shell.tsx',
+    'apps/dock/src/ui/components/sections.tsx',
+    'apps/dock/src/ui/client/Player.tsx',
+    'apps/dock/src/ui/client/LiveTicker.tsx',
+    'apps/dock/src/app/page.tsx',
+    'apps/dock/src/app/stations/page.tsx',
+    'apps/dock/src/app/stations/[id]/page.tsx',
+    'apps/dock/src/app/schedule/page.tsx',
+    'apps/dock/src/app/embed/[id]/page.tsx',
+    'apps/headquarters/src/layouts/auth.tsx',
+    'apps/headquarters/src/layouts/vertical.tsx',
+    'apps/headquarters/src/app/login/page.tsx',
+    'apps/headquarters/src/app/(admin)/page.tsx',
+  ]
+  for (const file of surfaces) {
+    assert.match(source(file), /from '@moonwitness\/moonui'/, `${file} must consume @moonwitness/moonui`)
+  }
+
+  // Local app stylesheets must not re-declare shared primitives
+  const dockCss = source('apps/dock/src/app/globals.css')
+  const hqCss = source('apps/headquarters/src/app/globals.css')
+  for (const forbidden of [
+    /\.dk-btn-/,
+    /\.dk-pager\b/,
+    /\.dk-progress\b/,
+    /\.dk-live-dot\b/,
+    /\.dk-pill\b/,
+    /\.dk-tape\b/,
+    /@keyframes\b/,
+  ]) {
+    assert.equal(forbidden.test(dockCss), false, `dock/globals.css re-declared shared primitive ${forbidden}`)
+  }
+  for (const forbidden of [
+    /\.hq-module-card\b/,
+    /\.hq-proj-card\b/,
+    /\.hq-proj-bar\b/,
+    /\.hq-input-box\b/,
+    /\.hq-shadow-submit\b/,
+    /@keyframes\b/,
+  ]) {
+    assert.equal(forbidden.test(hqCss), false, `headquarters/globals.css re-declared shared primitive ${forbidden}`)
+  }
 })

@@ -11,12 +11,16 @@
   "compilerOptions": {
     "noEmit": true,
     "composite": false,
+    "incremental": false,
     "declaration": false,
     "declarationMap": false,
     "types": ["node"],
     "rootDir": "..",
     "lib": ["ES2022"]
   },
-  "include": ["./**/*.ts"],
+  // `src/fastify.d.ts` ikut di-include: di situlah `app.moonql`/`app.channels`
+  // didaftarkan ke FastifyInstance. Tanpa berkas itu, setiap tes yang membaca
+  // dekorasi tersebut gagal typecheck meski runtime-nya benar.
+  "include": ["./**/*.ts", "../src/fastify.d.ts"],
   "references": [{ "path": "../tsconfig.json" }]
 }

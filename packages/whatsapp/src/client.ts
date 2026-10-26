@@ -77,7 +77,10 @@ export class WhatsAppClient extends EventEmitter {
         void this.onConnectionUpdate(update as ConnectionUpdate)
       })
       this.sock.ev.on('messages.upsert', (payload) => {
-        this.onMessages((payload as { messages?: IncomingMessage[] }).messages ?? [])
+        // IWebMessageInfo membawa jauh lebih banyak medan daripada IncomingMessage;
+        // yang kami jamah hanya key + isi pesan, jadi penyempitan dilakukan sekali
+        // di sini alih-alih di setiap pembaca.
+        this.onMessages(payload.messages as unknown as IncomingMessage[])
       })
 
       this.setState('connecting')

@@ -19,12 +19,22 @@ export function resolveAcl(spec: AclSpec | undefined): ResolvedAcl {
 }
 
 /**
+ * Access role check as a question rather than an exception: `expand` has to decide
+ * whether the relation is visible at all, not abort the request that asked for it.
+ */
+export function allowsAcl(rule: AclRule | undefined, user: User | null): boolean {
+  if (rule === undefined || rule === 'public') return true
+  if (!user) return false
+  if (rule === 'auth') return true
+  return rule.some((role) => user.roles.includes(role))
+}
+
+/**
  * Access role check: undefined/'public' always pass (backward compatible);
  * 'auth' needs any user; an array needs a user holding one of those roles.
  */
 export function checkAcl(rule: AclRule | undefined, user: User | null): void {
-  if (rule === undefined || rule === 'public') return
+  if (allowsAcl(rule, user)) return
   if (!user) throw unauthorized()
-  if (rule === 'auth') return
-  if (!rule.some((role) => user.roles.includes(role))) throw forbidden()
+  throw forbidden()
 }

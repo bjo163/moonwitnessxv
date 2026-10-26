@@ -116,6 +116,13 @@ services:
       # plain HTTP inside compose: a secure cookie would never come back.
       # Put the app behind TLS and set HQ_COOKIE_SECURE=true.
       HQ_COOKIE_SECURE: ${HQ_COOKIE_SECURE:-false}
+    healthcheck:
+      # the image is Debian slim (no curl/wget): node is the one tool guaranteed here
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   dock:
     build:
@@ -139,6 +146,12 @@ services:
       DOCK_URL: ${DOCK_URL:-http://localhost:3001}
       # origins allowed to frame /embed/*; empty keeps 'none' everywhere
       EMBED_ORIGINS: ${EMBED_ORIGINS:-}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # Backup lives here and not in a moonql cron for two reasons the ORM enforces:
   # CronDef.run only receives orm/env/log (no driver connection), and parseEvery
@@ -168,12 +181,20 @@ services:
         while true; do
           stamp="$$(date -u +%Y%m%dT%H%M%SZ)"
           file="/backups/$$PGDATABASE-$${stamp}.dump"
-          if pg_dump -Fc -f "$${file}" 2>/tmp/pgdump.err && [ -s "$${file}" ]; then
+          part="$${file}.part"
+          # Write beside the final name and rename only on success: a dump killed
+          # mid-write would otherwise look fresh to the healthcheck (and to
+          # rotation) while being unusable.
+          if pg_dump -Fc -f "$$part" 2>/tmp/pgdump.err && [ -s "$$part" ]; then
+            mv "$$part" "$${file}"
             echo "written $${file} ($$(wc -c < "$${file}") bytes)"
             ls -1t /backups/*.dump | tail -n +$$((BACKUP_KEEP + 1)) | xargs -r rm -f
           else
+            rm -f "$$part"
             echo "pg_dump failed: $$(cat /tmp/pgdump.err)"
           fi
+          # a container killed between dump and rename leaves its .part behind
+          find /backups -name '*.part' -mmin +60 -delete 2>/dev/null || true
           sleep "$$BACKUP_INTERVAL_SECONDS"
         done
     volumes:

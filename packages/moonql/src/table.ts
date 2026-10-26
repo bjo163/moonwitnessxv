@@ -1,3 +1,5 @@
+import type { ColumnBuilderBase } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import {
   boolean,
   index as pgIndex,
@@ -9,6 +11,7 @@ import {
   uuid,
   varchar,
   type AnyPgTable,
+  getTableConfig,
 } from 'drizzle-orm/pg-core'
 import type { AnyField, FieldsMap } from './fields.js'
 import { hasColumn } from './fields.js'
@@ -32,9 +35,33 @@ export const createdAtIndexName = (model: string): string => `${model}_created_a
 export const modelledIndexName = (model: string, fields: readonly string[]): string =>
   `${model}_${fields.map(columnName).join('_')}_idx`
 
-function buildColumn(key: string, f: AnyField): unknown {
+/**
+ * Does one of this table's unique indexes carry a predicate?
+ *
+ * A soft-delete model must not let a deleted row reserve a value, and the drizzle
+ * path is one of the two places that has to express that (autoSync writes the
+ * other). Exported as a yes/no so the parity test can hold both paths to the rule
+ * without importing drizzle into an app — see the architecture block in
+ * `eslint.config.mjs`.
+ */
+export function hasPartialUnique(table: AnyPgTable): boolean {
+  return getTableConfig(table).indexes.some((index) => index.config.where !== undefined)
+}
+
+/**
+ * The two fluent modifiers every builder supports. They live on the concrete
+ * builder class (typed per column), while `ColumnBuilderBase` — the only type a
+ * runtime-chosen builder can share — carries just the config. Narrowing to this
+ * view is what lets the switch below stay exhaustive without an `any`.
+ */
+interface FluentColumn {
+  notNull(): FluentColumn
+  default(value: unknown): FluentColumn
+}
+
+function buildColumn(key: string, f: AnyField): ColumnBuilderBase {
   const name = columnName(key)
-  let col: any
+  let col: ColumnBuilderBase
   switch (f.kind) {
     case 'str':
       col = f.maxLength ? varchar(name, { length: f.maxLength }) : pgText(name)
@@ -61,9 +88,10 @@ function buildColumn(key: string, f: AnyField): unknown {
     default:
       throw new Error(`moonql: unknown field kind "${f.kind}"`)
   }
-  if (!f.null) col = col.notNull()
-  if (f.default !== undefined) col = col.default(f.default)
-  return col
+  const fluent = col as unknown as FluentColumn
+  const nullableOrNot = f.null ? fluent : fluent.notNull()
+  const withDefault = f.default === undefined ? nullableOrNot : nullableOrNot.default(f.default)
+  return withDefault as unknown as ColumnBuilderBase
 }
 
 /**
@@ -90,9 +118,12 @@ export function buildTable(name: string, fields: FieldsMap, opts?: { softDelete?
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map(([key, f]) => (t: any) => {
       const col = t[columnName(key)]
-      return f.unique
-        ? uniqueIndex(`${name}_${columnName(key)}_uq`).on(col)
-        : pgIndex(`${name}_${columnName(key)}_idx`).on(col)
+      if (!f.unique) return pgIndex(`${name}_${columnName(key)}_idx`).on(col)
+      const unique = uniqueIndex(`${name}_${columnName(key)}_uq`).on(col)
+      // A soft-deleted row is invisible to every read, so it must not keep
+      // occupying a unique slot: without the predicate, deleting a name and
+      // re-creating it is a 409 on postgres and a success in memory.
+      return opts?.softDelete ? unique.where(sql`deleted_at is null`) : unique
     })
 
   // The two queries every model receives — `order=-createdAt` and a retention

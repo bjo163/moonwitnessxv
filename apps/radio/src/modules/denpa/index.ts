@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto'
+import { pseudonym } from '@moonwitness/core'
 import denpa from '@moonwitness/denpa'
 import type { FastifyInstance } from 'fastify'
 
@@ -14,7 +14,7 @@ import type { FastifyInstance } from 'fastify'
 const MESSAGE_CAP = 500
 
 /** The same pseudonym rule as the public listen beacon, applied to the sender. */
-const senderOf = (origin: string): string => `dn_${createHash('sha256').update(origin).digest('hex').slice(0, 16)}`
+const senderOf = (origin: string): Promise<string> => pseudonym('dn', origin)
 
 /** The human part of a payload: `msg` when present, otherwise the payload itself. */
 const messageOf = (payload: unknown): string => {
@@ -55,7 +55,7 @@ export default async function denpaModule(fastify: FastifyInstance) {
     if (!message) return
     await fastify.moonql.model('requests').create({
       message,
-      sender: senderOf(origin),
+      sender: await senderOf(origin),
       stationRef: await stationRefOf(fastify, payload),
     })
   }

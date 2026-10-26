@@ -17,12 +17,18 @@ export function middleware(request: NextRequest): NextResponse {
   const allowList = embedOrigins(process.env)
   const framing = EMBED_PATH.test(request.nextUrl.pathname) && allowList.length > 0 ? allowList : ["'none'"]
 
-  for (const header of securityHeaders(framing)) response.headers.set(header.key, header.value)
+  // `next dev` compiles client modules with eval (React Refresh); a release build has
+  // no such call sites, so the strict policy stays the shipped one.
+  for (const header of securityHeaders(framing, { dev: process.env.NODE_ENV !== 'production' })) {
+    response.headers.set(header.key, header.value)
+  }
   return response
 }
 
 export const config = {
-  // static files do not need a policy attached, and matching them costs a worker
-  // invocation per asset request
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|icon.svg).*)'],
+  // Framework traffic is excluded, not just static files: matching `_next/hmr`
+  // intercepts the dev websocket upgrade, and the client tree then never hydrates
+  // (the page renders, no button works). `_next/*` responses carry no HTML, so they
+  // have no use for a document policy either.
+  matcher: ['/((?!_next/|favicon.ico|icon.svg|manifest.webmanifest).*)'],
 }

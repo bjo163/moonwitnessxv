@@ -17,9 +17,15 @@
  * wants one path (`/embed/*`) to be frameable while the rest — the catalog, and
  * anything that could carry a session — must stay unframeable.
  *
+ * `options.dev` exists because React Refresh compiles each module with `eval()`:
+ * under the production script-src the dock's client tree never mounts in `next dev`
+ * (the page looks rendered and no button works). It is off unless the caller asks,
+ * so no release can ship `unsafe-eval` by forgetting to remove it.
+ *
  * @param {string[]} [ancestors]
+ * @param {{ dev?: boolean }} [options]
  */
-export function securityHeaders(ancestors = ["'none'"]) {
+export function securityHeaders(ancestors = ["'none'"], options = {}) {
   const list = ancestors.length ? ancestors : ["'none'"]
   // X-Frame-Options has no allow-list: DENY would override the CSP for exactly the
   // pages the allow-list exists to permit, so it travels with the strict policy.
@@ -28,9 +34,15 @@ export function securityHeaders(ancestors = ["'none'"]) {
     {
       key: 'content-security-policy',
       value:
-        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; " +
+        `default-src 'self'; script-src 'self' 'unsafe-inline'${options.dev ? " 'unsafe-eval'" : ''}; ` +
+        "style-src 'self' 'unsafe-inline'; " +
         `img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' ws: wss:; ` +
-        `frame-ancestors ${list.join(' ')}; base-uri 'self'; form-action 'self'`,
+        // Audio is fetched by the media element, not by fetch/XHR, so it needs its
+        // own directive: without it <audio src="https://…"> falls back to
+        // default-src 'self' and the station is silently unplayable. https: only —
+        // the one plain-HTTP station in the seed catalog stays unplayable on
+        // purpose, and the player says so instead of failing silently.
+        `media-src 'self' https:; frame-ancestors ${list.join(' ')}; base-uri 'self'; form-action 'self'`,
     },
     { key: 'x-content-type-options', value: 'nosniff' },
     { key: 'referrer-policy', value: 'strict-origin-when-cross-origin' },

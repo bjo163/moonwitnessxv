@@ -113,10 +113,10 @@ test('denpa: a transmission becomes a listener request, sender pseudonymised', a
   const headers = await adminHeaders(app)
   const rows = (await app.inject().get('/api/v1/requests?limit=5').headers(headers).end()).json().data as Array<Record<string, unknown>>
   assert.equal(rows.length, 1)
-  assert.equal(rows[0].message, 'play Fracture')
-  assert.equal(rows[0].status, 'new')
-  assert.equal(rows[0].stationRef, station.id, 'the named station resolved to its row')
-  assert.match(String(rows[0].sender), /^dn_[0-9a-f]{16}$/, 'the origin is never stored in the clear')
+  assert.equal(rows[0]!.message, 'play Fracture')
+  assert.equal(rows[0]!.status, 'new')
+  assert.equal(rows[0]!.stationRef, station.id, 'the named station resolved to its row')
+  assert.match(String(rows[0]!.sender), /^dn_[0-9a-f]{16}$/, 'the origin is never stored in the clear')
 
   // the DJ-facing view is the same queue, filtered to what is still open
   const queue = await app.inject().get('/api/v1/requestQueue').headers(headers).end()

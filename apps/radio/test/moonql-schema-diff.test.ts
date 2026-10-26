@@ -1,12 +1,45 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { classifySchema, gateDecision, parseVersion, type SchemaDocument } from '@moonwitness/moonql'
+import { classifySchema, gateDecision, parseVersion } from '@moonwitness/moonql'
+import type { SchemaDocument } from '@moonwitness/core'
 
 /**
  * F4.1: the classifier behind the gate. `gen:sdk:check` already said "something
  * changed"; what a reviewer needs is which change is allowed to ship as a minor and
  * which one is a caller's outage. These are the distinctions the gate makes.
+ *
+ * Dokumen `_schema` adalah kontrak JSON, jadi tes ini bekerja pada bentuk longgarnya.
+ * Supaya tidak tenggelam dalam cast, akses ke model dilakukan lewat helper bertipe
+ * (`modelOf`) alih-alih `as never as Record<...>` di setiap baris.
  */
+
+interface TestField {
+  kind?: string
+  /** JSON Schema type seperti yang dikirim `_schema` (string atau union dengan 'null') */
+  type?: string | string[]
+  nullable?: boolean
+  enum?: string[]
+  maxLength?: number
+  required?: boolean
+}
+
+interface TestSchema {
+  required?: string[]
+  properties?: Record<string, TestField>
+}
+
+interface TestModel {
+  label?: string
+  fields: Record<string, TestField>
+  createSchema?: TestSchema
+  updateSchema?: TestSchema
+  readSchema?: TestSchema
+  acl?: Record<string, unknown>
+}
+
+const modelsOf = (doc: SchemaDocument): Record<string, TestModel> => doc.models as unknown as Record<string, TestModel>
+const modelOf = (doc: SchemaDocument, name: string): TestModel => modelsOf(doc)[name]!
+const viewsOf = (doc: SchemaDocument): Record<string, unknown> => doc.views as unknown as Record<string, unknown>
 
 const base = (): SchemaDocument =>
   ({
@@ -21,16 +54,13 @@ const base = (): SchemaDocument =>
           name: { kind: 'str', required: true, maxLength: 120 },
           genre: { kind: 'sel', required: false, nullable: true, enum: ['lofi', 'jazz'] },
         },
-        createSchema: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
-        updateSchema: { type: 'object', properties: { name: { type: 'string' } } },
-        readSchema: {
-          type: 'object',
-          properties: { name: { type: 'string' }, genre: { type: ['string', 'null'] } },
-        },
+        createSchema: { properties: { name: { type: 'string' } }, required: ['name'] },
+        updateSchema: { properties: { name: { type: 'string' } } },
+        readSchema: { properties: { name: { type: 'string' }, genre: { type: ['string', 'null'], nullable: true } } },
         acl: { list: 'public', create: ['admin'] },
       },
-    } as never,
-    views: { stationCatalog: { label: 'Catalog', from: 'stations', acl: 'public' } } as never,
+    },
+    views: { stationCatalog: { label: 'Catalog', from: 'stations', acl: 'public' } },
     endpoints: [{ addon: 'radio', method: 'POST', path: '/listen', acl: 'public', stream: false }],
     crons: [],
     menu: [],
@@ -51,11 +81,10 @@ test('parseVersion: numeric core only, garbage is null not zero', () => {
 
 test('additive changes are classified as added, never breaking', () => {
   const next = withDoc((doc) => {
-    ;(doc.models as never as Record<string, unknown>).requests = { label: 'Request', fields: {}, acl: {} }
-    ;(doc.views as never as Record<string, unknown>).airplayDaily = { label: 'Daily', from: 'requests' }
+    modelsOf(doc).requests = { label: 'Request', fields: {}, acl: {} }
+    viewsOf(doc).airplayDaily = { label: 'Daily', from: 'requests' }
     doc.endpoints.push({ addon: 'playlog', method: 'GET', path: '/on-air', acl: 'public', stream: true })
-    const station = (doc.models as never as Record<string, { fields: Record<string, unknown> }>).stations
-    station.fields.probeOk = { kind: 'bool', required: false, nullable: true }
+    modelOf(doc, 'stations').fields.probeOk = { kind: 'bool', required: false, nullable: true }
   })
 
   const diff = classifySchema(base(), next)
@@ -68,10 +97,10 @@ test('additive changes are classified as added, never breaking', () => {
 
 test('removals and new requirements are breaking', () => {
   const next = withDoc((doc) => {
-    delete (doc.views as never as Record<string, unknown>).stationCatalog
-    const station = (doc.models as never as Record<string, { fields: Record<string, unknown>; createSchema: { required: string[] } }>).stations
+    delete viewsOf(doc).stationCatalog
+    const station = modelOf(doc, 'stations')
     delete station.fields.genre
-    station.createSchema.required.push('streamUrl')
+    station.createSchema?.required?.push('streamUrl')
     doc.endpoints = []
   })
 
@@ -86,19 +115,22 @@ test('removals and new requirements are breaking', () => {
   assert.equal(refused.ok, false)
   assert.match(refused.reason, /raise the major/)
 
-  const accepted = gateDecision(base(), withDoc((doc) => {
-    delete (doc.views as never as Record<string, unknown>).stationCatalog
-    doc.apiVersion = '2.0.0'
-  }))
+  const accepted = gateDecision(
+    base(),
+    withDoc((doc) => {
+      delete viewsOf(doc).stationCatalog
+      doc.apiVersion = '2.0.0'
+    }),
+  )
   assert.equal(accepted.ok, true)
   assert.match(accepted.reason, /major 1 -> 2/)
 })
 
 test('narrowing a value range is breaking even when the type name survives', () => {
   const next = withDoc((doc) => {
-    const station = (doc.models as never as Record<string, { fields: Record<string, { enum?: string[]; maxLength?: number }> }>).stations
-    station.fields.genre.enum = ['lofi'] // 'jazz' is gone
-    station.fields.name.maxLength = 40 // values up to 120 already exist
+    const station = modelOf(doc, 'stations')
+    station.fields.genre!.enum = ['lofi'] // 'jazz' is gone
+    station.fields.name!.maxLength = 40 // values up to 120 already exist
   })
 
   const diff = classifySchema(base(), next)
@@ -108,27 +140,25 @@ test('narrowing a value range is breaking even when the type name survives', () 
 
 test('widening a nullable to a plain value is breaking; the reverse is not', () => {
   const hardened = withDoc((doc) => {
-    const station = (doc.models as never as Record<string, { fields: Record<string, { nullable?: boolean }> }>).stations
-    station.fields.genre.nullable = false
+    modelOf(doc, 'stations').fields.genre!.nullable = false
   })
   assert.ok(classifySchema(base(), hardened).breaking.some((line) => line.includes('became non-null')))
 
   // a field that starts allowing null breaks nobody: every reader already copes
   const softened = withDoc((doc) => {
-    const station = (doc.models as never as Record<string, { fields: Record<string, { nullable?: boolean }> }>).stations
-    station.fields.name.nullable = true
+    modelOf(doc, 'stations').fields.name!.nullable = true
   })
   assert.deepEqual(classifySchema(base(), softened).breaking.filter((l) => l.includes('name')), [])
 })
 
 test('acl that stops answering anonymous callers is breaking, other acl moves are noted', () => {
   const gated = withDoc((doc) => {
-    ;(doc.models as never as Record<string, { acl: Record<string, string> }>).stations.acl.list = ['admin']
+    modelOf(doc, 'stations').acl = { ...modelOf(doc, 'stations').acl, list: ['admin'] }
   })
   assert.ok(classifySchema(base(), gated).breaking.some((line) => line.includes('no longer public')))
 
   const tightenedButPrivate = withDoc((doc) => {
-    ;(doc.models as never as Record<string, { acl: Record<string, unknown> }>).stations.acl.create = 'auth'
+    modelOf(doc, 'stations').acl = { ...modelOf(doc, 'stations').acl, create: 'auth' }
   })
   const diff = classifySchema(base(), tightenedButPrivate)
   assert.deepEqual(diff.breaking, [])
@@ -139,7 +169,7 @@ test('acl that stops answering anonymous callers is breaking, other acl moves ar
 test('an unparseable version cannot authorise a breaking change', () => {
   const next = withDoc((doc) => {
     doc.apiVersion = 'next'
-    delete (doc.views as never as Record<string, unknown>).stationCatalog
+    delete viewsOf(doc).stationCatalog
   })
   const decision = gateDecision(base(), next)
   assert.equal(decision.ok, false)
@@ -148,7 +178,7 @@ test('an unparseable version cannot authorise a breaking change', () => {
 
 test('the gate is deterministic: the same pair always gives the same verdict', () => {
   const next = withDoc((doc) => {
-    delete (doc.views as never as Record<string, unknown>).stationCatalog
+    delete viewsOf(doc).stationCatalog
   })
   const first = JSON.stringify(gateDecision(base(), next))
   const second = JSON.stringify(gateDecision(base(), next))

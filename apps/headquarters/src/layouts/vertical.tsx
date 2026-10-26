@@ -1,50 +1,116 @@
 import type { ReactNode } from 'react'
-import { UserChip } from '@moonwitness/moonui'
+import {
+  Badge,
+  BrandLogo,
+  Breadcrumbs,
+  Button,
+  Crown,
+  TextInput,
+  UserChip,
+  ZineNote,
+  type NavGroup,
+} from '@moonwitness/moonui'
 import { getSchema } from '@/data/schema'
 import { menuGroups } from '@/data/queries/registry'
 import type { SessionUser } from '@/data/types'
 import { SideNav } from '@/ui/client/SideNav'
 
+const MISSION_GROUP: NavGroup = {
+  label: 'Mission Control',
+  items: [
+    { key: 'mc:dashboard', label: 'Dashboard', href: '/#telemetry', icon: '⌂' },
+    { key: 'mc:mission-control', label: 'Mission Control', href: '/', icon: '◎' },
+    { key: 'mc:project-universe', label: 'Project Universe', href: '/#project-universe', icon: '❐' },
+    { key: 'mc:story-forge', label: 'Story Forge', href: '/models', icon: '✎' },
+    { key: 'mc:poster-lab', label: 'Poster Lab', href: '/views', icon: '▣' },
+    { key: 'mc:research-lab', label: 'Research Lab', href: '/models/station', icon: '⚗' },
+    { key: 'mc:world-monitor', label: 'World Monitor', href: '/views/stationCatalog', icon: '🌐' },
+    { key: 'mc:publishing-hub', label: 'Publishing Hub', href: '/models/scheduleSlot', icon: '➤' },
+    { key: 'mc:settings', label: 'Settings', href: '/system', icon: '⚙' },
+  ],
+}
+
 /**
- * Vuexy-style shell: dark grouped sidebar generated from `_schema.menu`,
- * a navbar with the session chip and logout, then the page content.
+ * Mission Control shell (Image 4): punk-zine sidebar powered by `@moonwitness/moonui`
+ * (`BrandLogo`, `SideNav`/`Nav`, `ZineNote`), top command bar (`Breadcrumbs`,
+ * `TextInput`, `Badge`, `UserChip`, `Button`), and the main page canvas.
  */
 export async function VerticalLayout({ user, children }: { user: SessionUser; children: ReactNode }) {
   const doc = await getSchema()
-  const groups = menuGroups(doc)
+  const groups = [MISSION_GROUP, ...menuGroups(doc)]
 
   return (
     <div className="m-shell">
       <aside className="m-sidebar">
-        <a href="/" className="m-brand">
-          MOON<span>WITNESS</span> HQ
-        </a>
+        <BrandLogo
+          href="/"
+          size="md"
+          subtitle={
+            <span className="m-row" style={{ justifyContent: 'space-between', width: '100%' }}>
+              <span>EMPIRE OF THE LIGHT · A-L-L-A-H</span>
+              <span aria-hidden="true">🌐</span>
+            </span>
+          }
+        />
+
         <SideNav groups={groups} />
-        <div style={{ marginTop: 'auto', fontSize: 11, opacity: 0.55 }}>
+
+        <div className="hq-sidebar-zine" aria-hidden="true">
+          <ZineNote tone="dark" tilt="none">
+            DIFFERENT PEOPLE · SAME SKY · STORIES BEYOND BORDERS.
+          </ZineNote>
+          <div>
+            <img src="/art/manga-eye.jpg" alt="" className="hq-sidebar-eye" />
+            <ZineNote tone="pink" tilt="left">
+              WITNESS THE REAL.
+            </ZineNote>
+          </div>
+        </div>
+
+        <div className="m-muted" style={{ fontSize: 10 }}>
           <div>
             {doc.addons.length} addons · {Object.keys(doc.models).length} models
           </div>
-          <div>{doc.crons.length} crons · {doc.endpoints.length} endpoints</div>
+          <div>
+            {doc.crons.length} crons · {doc.endpoints.length} endpoints
+          </div>
         </div>
       </aside>
+
       <div className="m-main">
         <header className="m-navbar">
-          <div className="m-row">
-            <strong>Command center</strong>
-            <span className="m-muted">
-              moonql {doc.addons.find((addon) => addon.name === 'ops') ? '· ops online' : ''}
-            </span>
+          <div className="m-row" style={{ gap: 10 }}>
+            <Crown tone="cyan" size="sm" />
+            <Breadcrumbs items={[{ label: 'The Empire', href: '/' }, { label: 'Mission Control' }]} />
+            <Badge tone="ok">{doc.addons.find((addon) => addon.name === 'ops') ? 'ops online' : 'hub'}</Badge>
           </div>
-          <div className="m-row">
-            <UserChip name={user.displayName} detail={user.role} />
+
+          <form action="/models" method="get" className="hq-search-form">
+            <TextInput
+              name="q"
+              icon="🔍"
+              placeholder="Search projects, stories, research, or people..."
+              aria-label="Search projects, stories, research, or people"
+            />
+          </form>
+
+          <div className="m-row" style={{ gap: 12 }}>
+            <a href="/#alerts" className="m-row" style={{ textDecoration: 'none', gap: 4 }} aria-label="Mission alerts">
+              <span aria-hidden="true">🔔</span>
+              <Badge tone="pink">3</Badge>
+            </a>
+
+            <UserChip name={user.displayName} detail={`${user.role} // Empire`} />
+
             <form action="/api/session" method="post">
               <input type="hidden" name="logout" value="1" />
-              <button className="m-btn" data-variant="ghost">
+              <Button type="submit" variant="ghost" size="sm">
                 Log out
-              </button>
+              </Button>
             </form>
           </div>
         </header>
+
         <main className="m-content">{children}</main>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Alert, Button, Field, Panel, TextInput } from '@moonwitness/moonui'
+import { Alert, Button, Card, CardBody, Crown, Field, TextInput, Toggle } from '@moonwitness/moonui'
 import { AuthLayout } from '@/layouts/auth'
 
 export default async function LoginPage({
@@ -10,26 +10,68 @@ export default async function LoginPage({
 
   return (
     <AuthLayout>
-      <Panel title="Sign in" subtitle="admin credentials from moonql-auth">
-        <div className="m-stack">
+      <Card variant="shadow" className="hq-shadow-card">
+        <CardBody className="m-stack" style={{ gap: 18, padding: 28 }}>
+          <div className="hq-shadow-head">
+            <Crown tone="gold" size="lg" />
+            <h1 className="hq-shadow-title">
+              Enter <span>SHADOW</span>
+            </h1>
+            <p className="m-mono m-muted" style={{ margin: '6px 0 0', fontSize: 12 }}>
+              Private Command Center for stories,
+              <br />
+              research, posters, and publishing.
+            </p>
+          </div>
+
           {error ? <Alert tone="hot">{error}</Alert> : null}
-          <form action="/api/session" method="post" className="m-stack">
+
+          <form action="/api/session" method="post" className="m-stack" style={{ gap: 14 }}>
             <input type="hidden" name="next" value={next ?? '/'} />
-            <Field label="Login" htmlFor="login">
-              <TextInput id="login" name="login" autoComplete="username" required autoFocus />
+
+            <Field label="Email or Username" htmlFor="login">
+              <TextInput
+                id="login"
+                name="login"
+                icon="✉"
+                autoComplete="username"
+                placeholder="Enter your email or username"
+                required
+                autoFocus
+              />
             </Field>
+
             <Field label="Password" htmlFor="password">
-              <TextInput id="password" name="password" type="password" autoComplete="current-password" required />
+              <TextInput
+                id="password"
+                name="password"
+                type="password"
+                icon="🔒"
+                suffix="👁"
+                autoComplete="current-password"
+                placeholder="Enter your password"
+                required
+              />
             </Field>
-            <Button type="submit" variant="primary">
-              Enter the command center
+
+            <div className="m-row" style={{ justifyContent: 'space-between', fontSize: 12 }}>
+              <Toggle name="remember" defaultChecked label="Remember me" />
+              <a href="/login" style={{ color: 'var(--cyan)' }}>
+                Forgot password?
+              </a>
+            </div>
+
+            <Button type="submit" variant="primary" size="lg">
+              ENTER THE SHADOW <span aria-hidden="true">→</span>
             </Button>
           </form>
-          <p className="m-muted" style={{ fontSize: 12, margin: 0 }}>
-            The token is stored in an httpOnly cookie and never leaves the server.
-          </p>
-        </div>
-      </Panel>
+
+          <div className="m-row m-muted m-mono" style={{ justifyContent: 'center', fontSize: 12 }}>
+            <Crown tone="gold" size="sm" />
+            <span>Authorized crew only.</span>
+          </div>
+        </CardBody>
+      </Card>
     </AuthLayout>
   )
 }

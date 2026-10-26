@@ -42,8 +42,8 @@ export interface Field<
   store?: boolean
   /** compute: runtime value builder */
   get?: (row: Record<string, unknown>) => unknown
-  /** semantic validation beyond AJV; return an error message or null */
-  validate?: (value: any, row: Record<string, unknown>) => string | null | undefined
+  /** semantic validation beyond AJV; return an error message or null. Method syntax on purpose: a validator may declare the type it expects (`number`) and still be accepted, because AJV has already enforced it. */
+  validate?(value: unknown, row: Record<string, unknown>): string | null | undefined
   default?: T
   // phantom markers — inference only, never present at runtime
   __value?: T
@@ -51,7 +51,12 @@ export interface Field<
   __hasDefault?: HasDefault
 }
 
-export type AnyField = Field<FieldKind, any, any, any>
+/**
+ * Tipe geser untuk semua descriptor. `unknown` (bukan `any`) di slot nilai adalah
+ * yang membuat ini masih *aman*: setiap pembaca harus menyempitkan sendiri, dan
+ * inferensi dari descriptor konkret tetap bekerja karena posisi itu kovarian.
+ */
+export type AnyField = Field<FieldKind, unknown, boolean, boolean>
 export type FieldsMap = Record<string, AnyField>
 
 /** kinds that never persist to a column */
@@ -65,7 +70,7 @@ export interface FieldOpts {
   unique?: true
   null?: true
   private?: true
-  validate?: (value: any, row: Record<string, unknown>) => string | null | undefined
+  validate?(value: unknown, row: Record<string, unknown>): string | null | undefined
 }
 export interface StrOpts extends FieldOpts {
   maxLength?: number
@@ -91,7 +96,7 @@ export interface ComputeOpts {
   deps?: string[]
   /** persist as a column and keep it in sync on every write (Odoo store=True) */
   store?: true
-  get: (row: any) => any
+  get: (row: Record<string, unknown>) => unknown
 }
 
 type IsNull<O> = O extends { null: true } ? true : false
@@ -120,7 +125,7 @@ export function sel<const C extends readonly [string, ...string[]], const O exte
   choices: C,
   opts?: O,
 ): Field<'sel', C[number], IsNull<O>, HasDef<O>> {
-  return { ...base(opts), kind: 'sel', choices, default: opts?.default as any }
+  return { ...base(opts), kind: 'sel', choices, default: opts?.default as C[number] | undefined }
 }
 
 export function int<const O extends IntOpts = {}>(opts?: O): Field<'int', number, IsNull<O>, HasDef<O>> {
@@ -154,14 +159,14 @@ export function computed<const O extends ComputeOpts>(opts: O): Field<'compute',
 
 // ---- type inference from a fields map ----
 
-export type FieldValue<F extends AnyField> = F extends Field<FieldKind, infer T, infer N, any>
+export type FieldValue<F extends AnyField> = F extends Field<FieldKind, infer T, infer N, boolean>
   ? true extends N
     ? T | null
     : T
   : never
 
 /** compute/o2m are never part of a create/update payload; nullable/defaults are optional. */
-export type FieldOptionalInCreate<F extends AnyField> = F extends Field<infer K, any, infer N, infer D>
+export type FieldOptionalInCreate<F extends AnyField> = F extends Field<infer K, unknown, infer N, infer D>
   ? K extends 'compute' | 'o2m'
     ? true
     : true extends N
@@ -172,7 +177,7 @@ export type FieldOptionalInCreate<F extends AnyField> = F extends Field<infer K,
   : true
 
 type CreatableKeys<F extends FieldsMap> = {
-  [K in keyof F]: F[K] extends Field<'compute' | 'o2m', any, any, any> ? never : K
+  [K in keyof F]: F[K] extends Field<'compute' | 'o2m', unknown, boolean, boolean> ? never : K
 }[keyof F]
 
 /** Row shape for the descriptor fields only (audit fields added by the model). */
