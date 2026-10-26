@@ -439,3 +439,89 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 | - [ ] | **M23-06** — Keep AETHERION 10 realms and 100 levels as fictional game system | P2 | D2 | M23-04 | XP never equated with human age, holiness or heaven |
 | - [ ] | **M23-07** — Adversarial test for spiritual ranking, unauthorized mission actions | P2 | D3 | M23-05,M23-06 | Human agency and stated metaphoric boundaries enforced |
 
+
+## M24 — World Monitor and sourced external observations
+
+**Group:** G5 · **Priority:** P2 · **Prerequisites:** M03,M05,M06 · **Scope:** Optional world addon and historical A-L-L-A-H adapters.
+
+**Exit gate:** Attributable timestamped provider data with clear offline/freshness states. Only real evidence closes this gate.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M24-01** — Audit A-L-L-A-H USGS/GDACS/NOAA/Open-Meteo historical code and terms | P2 | D2 | M06-05 | Historical fixtures not mislabeled live production |
+| - [ ] | **M24-02** — Specify source, units, geo precision, temporal and revision model | P2 | D3 | M24-01 | Every observation linked to provider and timestamp |
+| - [ ] | **M24-03** — Design controlled outbound egress, quotas, retry and caching | P2 | D3 | M03-07,M24-02 | No uncontrolled alert bot or external fetch |
+| - [ ] | **M24-04** — Prototype one feature-flagged read-only provider adapter | P2 | D4 | M24-03 | Fails safely when provider/terms/connection missing |
+| - [ ] | **M24-05** — Build source-backed public World Monitor with stale flags | P2 | D3 | M24-04 | Not showing stale fixtures as live observations |
+| - [ ] | **M24-06** — Review YouTube Sentinel moderation, appeal, classification lens | P2 | D4 | M24-01,M03-06 | No automated punitive action or unsupported theology certainty |
+| - [ ] | **M24-07** — Test invalid/late/offline feed, timezone, geographic ambiguity | P2 | D4 | M24-05,M24-06 | Degraded provider displays uncertainty and source state |
+
+
+## M25 — Time, Cosmos, Earth science and research horizons
+
+**Group:** G5 · **Priority:** P3 · **Prerequisites:** M06,M24 · **Scope:** MTS, Cosmic Atlas, Atmosphere, HELIOGRID and Material Forge concepts.
+
+**Exit gate:** Scientifically honest hypothesis map with no fake working device. Only real evidence closes this gate.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M25-01** — Audit M-TIME/Antikythera claims and engineering dependencies | P3 | D3 | M06-05 | UTC/celestial model and narrative time kept distinct |
+| - [ ] | **M25-02** — Separate physical readings, simulation, astronomy and story modes | P3 | D2 | M24-02 | UI ontology has explicit claim type and source |
+| - [ ] | **M25-03** — Design HELIOGRID/Material Forge falsifiable research questions | P3 | D3 | M06-05 | No generator/quantum chip claimed built |
+| - [ ] | **M25-04** — Define unit normalization, measurement/calibration and source metadata | P3 | D3 | M25-02,M25-03 | No simulated values presented as sensor data |
+| - [ ] | **M25-05** — Sketch optional Cosmos/Time explorer with proposal label | P3 | D2 | M25-01 | Not discoverable as shipped feature |
+| - [ ] | **M25-06** — Research source context of comparative cosmos in sacred traditions | P3 | D3 | M25-02,M07-05 | Historical/scripture/scientific claims separated |
+| - [ ] | **M25-07** — Prepare cost/safety/hardware feasibility decision before execution | P3 | D4 | M25-04,M25-06 | No hardware effort without empirical review |
+
+
+## M26 — Legacy canon, Empire registries and missing sources
+
+**Group:** G5 · **Priority:** P2 · **Prerequisites:** M06,M17 · **Scope:** V10/V10.1, II/XII, GOD-PROMISE, 25 Amanah and source gaps.
+
+**Exit gate:** Versioned comprehensive archive inventory with honest unresolved entries. Only real evidence closes this gate.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M26-01** — Crosswalk 99 chapter labels to actual source versions | P2 | D3 | M06-02 | All slots indexed without falsely claiming 99 manuscripts |
+| - [ ] | **M26-02** — Recover 00-MAIN GOD PROMISE distinct from ROCKSOUL/paper | P2 | D3 | M06-06 | Different originals not automatically merged |
+| - [ ] | **M26-03** — Recover four THE BATTERIES books, NPD scenes, 15 synopsis sources | P2 | D4 | M26-01 | Missing pages, chronology and rights explicitly recorded |
+| - [ ] | **M26-04** — Reconcile ZILL origins, Honey/Queen R, and story alias variants | P2 | D3 | M26-01,M10-04 | Ambiguous identities stay disputed |
+| - [ ] | **M26-05** — Audit Empire nine principles, WINGS 10, G.O.D.99 and Asma registry | P2 | D2 | M06-05 | Independent taxonomy/permission kinds confirmed |
+| - [ ] | **M26-06** — Locate exact 25 Bidang Amanah source and mission mapping | P2 | D4 | M26-05 | 25 evidence rows or explicitly unverified, never guessed names |
+| - [ ] | **M26-07** — Audit early ZENIX/Universe history, AGE CODE and lost-source leads | P2 | D3 | M26-01 | Reported history vs repo evidence clearly tagged |
+
+
+## M27 — Full-stack acceptance, release evidence and human go/no-go
+
+**Group:** G6 · **Priority:** P0 · **Prerequisites:** M01,M03,M04,M08,M14,M18,M19,M20,M22 · **Scope:** Exact release SHA, selected-scoped features, real tests and restore.
+
+**Exit gate:** No publication until security/rights/data/recovery passes. Only real evidence closes this gate.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M27-01** — Freeze intended release feature set and exact commit manifest | P0 | D2 | M01-07,M20-07 | Experimental optional features excluded unless separately accepted |
+| - [ ] | **M27-02** — Execute build/lint/typecheck/tests/SDK/PG/docker matrix | P0 | D4 | M27-01 | Actual logs and pass/fail at source SHA |
+| - [ ] | **M27-03** — Execute Radio + Reader + HQ security/browser E2E | P0 | D4 | M27-02,M19-07,M22-07 | User journeys J01/J03/J07 pass, denied role tests visible |
+| - [ ] | **M27-04** — Restore isolated backup and prove row/manifest integrity | P0 | D3 | M04-07,M27-01 | Recovery run recorded and verified |
+| - [ ] | **M27-05** — Complete licensing, consent, research review and AI scope gates | P0 | D3 | M18-07,M14-07 | No unreviewed/rights-unknown raw source publicly served |
+| - [ ] | **M27-06** — Generate changelog, release notes and rollback/resume contract | P0 | D2 | M27-02,M27-05 | Exact SHA, binary outputs and migration steps recorded |
+| - [ ] | **M27-07** — Hold human release go/no-go and log remaining risks | P0 | D2 | M27-03,M27-04,M27-06 | Only approved and tested scope deployed |
+
+
+---
+
+## Consistency controls for the 28-milestone register
+
+**Priority order:** always protect Radio, permissions, sources, persistence, review and production restoration before adding unrelated surfaces. Although M22 appears under G4, run its P0 suite from the beginning. Stated milestone dependencies are conceptual gates: a task must also respect source rights and privacy even if its individual row does not restate them.
+
+**Overlapping implementation is prohibited:** one canonical TEXT owner for Reader and Explorer; one Figure Registry (Prophetic Table is a view); one Lexicon source for Terms; one Ontology for reviewed edges (Constellation is a derived graph); one Story model for SHADOW scenes and the public Story Universe; one user/IAM system for HQ/100CENTER; Radio continues using existing stations and schedule. No new backend merely for an Empire name.
+
+**Narrative boundary:** fiction characters are not theological referents; the user's `ZILL` interpretation remains separate from Shadow-optics and historic `ZIIL`; 10 WINGS is not 10 AETHERION realms; GOD99 is not Asmaul Husna 99 or 99 Human States; 33 patch slots are reported/drafts/proposals/conflicts/in-chat status, not divine approvals. The full 99 chapter V10 is an index of editorial coverage, **not authenticated originals**.
+
+**The next useful release** prioritizes exact source/citation + one reviewed term/figure + human research review, preserving Radio and rights/restore. World Monitor, Cosmos, HELIOGRID, 25 Amanah, AETHERION and optional AI do not block that first slice and cannot be marketed as live implementations.
+
+**Progress evidence to capture when work begins:** `task-id`, `source-SHA`, `files`, `tests and logs`, `source/rights` where applicable, `reviewer/decision`, `blocked/risks`, `new-SHA`, `date/timezone`. A future agent must not tick unchecked boxes simply because similar files or issues exist in XII/XIV/Corpus.
+
+**Target register:** 28 milestones × 7 unique tasks = **196 work packets** organized into G0–G6. This file defines **planning tasks**, not 196 GitHub issues, implementations, production releases, or promises of elapsed delivery time.
+
+**End of XV Master TODO v1.0 — 26 October 2026.**
