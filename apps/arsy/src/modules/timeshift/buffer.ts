@@ -1,5 +1,5 @@
 /**
- * @moonwitness/radio — Ring Buffer Audio Timeshifting Engine
+ * @moonwitness/arsy — Ring Buffer Audio Timeshifting Engine
  *
  * Implements a bounded circular buffer tracking recent audio chunks
  * to allow live rewind up to 3 minutes (180 seconds) without memory bloat.

@@ -209,7 +209,7 @@ export function createMoonwitnessConfig(options = {}) {
       files: [
         'scripts/**/*.mjs',
         'apps/*/next.config.mjs',
-        'apps/radio/src/tools/**/*.ts',
+        'apps/arsy/src/tools/**/*.ts',
         'packages/cli/**/*.{ts,js}',
         '*.config.mjs',
         '*.config.js',
@@ -233,7 +233,7 @@ export function createMoonwitnessConfig(options = {}) {
     },
 
     {
-      files: ['apps/radio/src/tools/**/*.ts'],
+      files: ['apps/arsy/src/tools/**/*.ts'],
       rules: { 'no-console': 'off' },
     },
 
@@ -244,7 +244,7 @@ export function createMoonwitnessConfig(options = {}) {
 
     // 5. Test Files
     {
-      files: ['apps/radio/test/**/*.ts', 'test/**/*.ts'],
+      files: ['apps/arsy/test/**/*.ts', 'test/**/*.ts'],
       rules: {
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/require-await': 'off',

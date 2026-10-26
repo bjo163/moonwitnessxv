@@ -14,7 +14,7 @@ import { ADDON_ENV_KEY_LIST, RADIO_ENV_KEYS } from '../src/config.js'
  * the template (and the local .env) to the schema that actually validates them.
  */
 
-/** Variables consumed outside apps/radio (compose + Next apps). */
+/** Variables consumed outside apps/arsy (compose + Next apps). */
 const FOREIGN_ENV_KEYS = [
   'POSTGRES_USER',
   'POSTGRES_PASSWORD',

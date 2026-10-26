@@ -16,7 +16,7 @@ import { adminHeaders, TEST_ADMIN_PASSWORD } from './helpers/auth.js'
  * from verification, never merge a shared name, and never store a rank field.
  *
  * Runs only when a disposable database is handed in (CI has none):
- *   PARITY_DATABASE_URL=postgres://... pnpm --filter @moonwitness/radio test
+ *   PARITY_DATABASE_URL=postgres://... pnpm --filter @moonwitness/arsy test
  */
 const DB_URL = process.env.PARITY_DATABASE_URL ?? process.env.DATABASE_URL ?? ''
 const quiet = { info: () => {}, warn: () => {} }

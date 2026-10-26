@@ -9,8 +9,8 @@ import { fileURLToPath } from 'node:url'
  *
  * One fact — "this package exists, and the hub uses it" — used to be written in
  * ten places that nothing tied together: the package's manifest, its tsconfig
- * references, apps/radio's dependencies, apps/radio/src/addons.ts, its reference
- * in radio's tsconfig, the root build scripts, and both Dockerfiles. `docs/audit/M13-research-contracts.md`
+ * references, apps/arsy's dependencies, apps/arsy/src/addons.ts, its reference
+ * in ARSY's tsconfig, the root build scripts, and both Dockerfiles. `docs/audit/M13-research-contracts.md`
  * records the cost honestly: adding @moonwitness/moonql-research meant editing the
  * Dockerfiles by hand "agar gate image tetap lengkap".
  *
@@ -134,11 +134,11 @@ test('topology: a tsc -b member references every workspace dependency it declare
 test('topology: addons.ts is exactly the addons the hub depends on', () => {
   // `addons.ts` calls itself "THE single wiring point"; this keeps the manifest
   // honest to that claim, so a dependency can no longer be declared and forgotten.
-  const addonsFile = readRepoText('apps/radio/src/addons.ts')
+  const addonsFile = readRepoText('apps/arsy/src/addons.ts')
   const imported = [...addonsFile.matchAll(/from '(@moonwitness\/[a-z0-9-]+)'/g)]
     .map((m) => m[1]!)
     .filter((name) => name !== '@moonwitness/moonql') // the ORM itself, not an addon
-  const declared = Object.keys(byName.get('@moonwitness/radio')!.pkg.dependencies ?? {})
+  const declared = Object.keys(byName.get('@moonwitness/arsy')!.pkg.dependencies ?? {})
     .filter((name) => name.startsWith('@moonwitness/'))
     .filter((name) => name !== '@moonwitness/moonql' && name !== '@moonwitness/core')
     // whatsapp/denpa are channels mounted outside the addon registry
@@ -147,8 +147,26 @@ test('topology: addons.ts is exactly the addons the hub depends on', () => {
   assert.deepEqual(
     [...new Set(imported)].sort(),
     declared.sort(),
-    'addons.ts imports and radio\'s addon dependencies must be the same set',
+    'addons.ts imports and ARSY\'s addon dependencies must be the same set',
   )
+})
+
+function hubRuntimeOwners(workspaces: { dir: string; pkg: Manifest }[]): string[] {
+  return workspaces
+    .filter(({ dir, pkg }) => dir.startsWith('apps/') && ['@moonwitness/arsy', '@moonwitness/radio'].includes(pkg.name))
+    .map(({ dir, pkg }) => `${dir}:${pkg.name}`)
+}
+
+test('topology: the runtime has one ARSY Hub identity and no duplicate Radio app', () => {
+  const expectedHub = ['apps/arsy:@moonwitness/arsy']
+  assert.deepEqual(hubRuntimeOwners(members), expectedHub)
+  assert.equal(existsSync(join(ROOT, 'apps/radio/package.json')), false, 'the old app path must not remain as a second workspace')
+  assert.throws(() => {
+    assert.deepEqual(
+      hubRuntimeOwners([...members, { dir: 'apps/radio', pkg: { name: '@moonwitness/radio' } }]),
+      expectedHub,
+    )
+  }, 'a duplicate legacy Radio Hub workspace must fail the topology gate')
 })
 
 test('topology: every library package states its own packaging standard', () => {

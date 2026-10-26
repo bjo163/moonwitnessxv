@@ -162,7 +162,7 @@ const filesToInspect = [
   ...scanFiles('apps/dock/src', ['.tsx', '.css']),
   ...scanFiles('apps/headquarters/src', ['.tsx', '.css']),
   ...scanFiles('apps/cockpit/client', ['.tsx', '.css']),
-  'apps/radio/src/lib/launchpad.ts',
+  'apps/arsy/src/lib/launchpad.ts',
 ]
 
 const inspectedSet = new Set(filesToInspect)

@@ -53,7 +53,7 @@ test('headquarters and studio consume the registry instead of owning a copy', ()
   const hqWidgets = source('apps/headquarters/src/ui/fields/widgets.tsx')
   assert.equal(/function (StrField|SelField|BoolField)\(/.test(hqWidgets), false, 'HQ re-declared widget bodies')
 
-  const studio = source('apps/radio/src/modules/studio/index.ts')
+  const studio = source('apps/arsy/src/modules/studio/index.ts')
   assert.match(studio, /FIELD_INPUT_SPEC/, 'Studio no longer receives the shared table')
   assert.match(studio, /var inputKindFor = \$\{inputKindFor\.toString\(\)\}/, 'Studio must borrow the function, not fork it')
   // the control choice must come from the shared spec. The remaining `p.type ===

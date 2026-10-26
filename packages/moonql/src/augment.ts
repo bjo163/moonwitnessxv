@@ -4,7 +4,7 @@
 // Deliberately duplicated across moonql, denpa and whatsapp: those two are standalone
 // plugins that must not gain a fastify dependency (or a cycle back into moonql) just
 // to share four optional properties. The hub's own augmentation
-// (`apps/radio/src/fastify.d.ts`) is different on purpose — it decorates the instance.
+// (`apps/arsy/src/fastify.d.ts`) is different on purpose — it decorates the instance.
 declare module 'fastify' {
   interface FastifySchema {
     tags?: string[]

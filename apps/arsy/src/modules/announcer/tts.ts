@@ -1,5 +1,5 @@
 /**
- * @moonwitness/radio — AI Voice DJ "Luna" Dispatcher
+ * @moonwitness/arsy — AI Voice DJ "Luna" Dispatcher
  *
  * Formats structured on-air news flash scripts and SSML audio cue frames
  * when critical intelligence signals or breaking alerts arrive.

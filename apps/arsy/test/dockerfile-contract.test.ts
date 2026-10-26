@@ -39,7 +39,7 @@ const dockerfile = readRepoText('Dockerfile')
 const dockerfileWeb = readRepoText('Dockerfile.web')
 const lockfile = readRepoText('pnpm-lock.yaml')
 const dockerignore = readRepoText('.dockerignore')
-const radioManifest = JSON.parse(readRepoText('apps/radio/package.json')) as {
+const radioManifest = JSON.parse(readRepoText('apps/arsy/package.json')) as {
   dependencies: Record<string, string>
 }
 
@@ -121,9 +121,9 @@ test('docker: the hub image ships the dist of every dependency it declares', () 
   assert.deepEqual(
     missing,
     [],
-    `apps/radio declares these as runtime dependencies but their dist is never copied:\n  ${missing.join('\n  ')}`,
+    `apps/arsy declares these as runtime dependencies but their dist is never copied:\n  ${missing.join('\n  ')}`,
   )
-  assert.ok(runtime!.includes('COPY --from=build /repo/apps/radio/dist apps/radio/dist'), 'the hub itself is copied')
+  assert.ok(runtime!.includes('COPY --from=build /repo/apps/arsy/dist apps/arsy/dist'), 'the ARSY hub itself is copied')
   // migrations are read off disk at boot (packages/moonql/src/client.ts)
   assert.ok(runtime!.includes('COPY --from=build /repo/packages/moonql/migrations packages/moonql/migrations'), 'moonql migrations ship with the image')
 })

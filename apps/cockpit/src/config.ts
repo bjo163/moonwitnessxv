@@ -15,7 +15,7 @@ export const DEFAULT_CONFIG: MoondeckConfig = {
     {
       tag: 'radio',
       name: 'Radio Core Hub',
-      pkg: '@moonwitness/radio',
+      pkg: '@moonwitness/arsy',
       port: PORTS.hub,
       color: '#00e5ff',
       icon: 'RD',

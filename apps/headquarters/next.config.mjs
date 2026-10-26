@@ -2,7 +2,7 @@
 import { loadRootEnv, securityHeaders } from '@moonwitness/web-config'
 
 /**
- * One `.env` for the whole monorepo (the same file apps/radio reads); the loader
+ * One `.env` for the whole monorepo (the same file apps/arsy reads); the loader
  * and header set come from @moonwitness/web-config, which re-exports the rules
  * @moonwitness/core owns — so neither app can drift ahead of the other.
  * Plain .mjs on purpose: production containers install without TypeScript,

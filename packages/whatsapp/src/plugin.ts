@@ -7,7 +7,7 @@ import type { WhatsAppPluginOptions } from './types.js'
  * OPTIONAL standalone integration: register this plugin to get /status, /qr,
  * /start, /logout and /send on the prefix you choose.
  *
- * apps/radio does NOT mount it — the hub drives WhatsApp through its channel
+ * apps/arsy does NOT mount it — the hub drives WhatsApp through its channel
  * plugin (src/channels/whatsapp.ts) and exposes the admin-only
  * <apiPrefix>/channels/whatsapp[/start|logout|send] routes instead, so one
  * control plane covers every channel. Keeping both mounted would publish the

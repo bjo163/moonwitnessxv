@@ -17,7 +17,7 @@
  *      not just the first.
  * Resolution is injected: this module stays browser-safe (no `node:` imports, which
  * the lint config enforces for `core`) and the hub supplies the resolver at boot —
- * see `apps/radio/src/lib/egress.ts`, the one place allowed to import `node:dns`.
+ * see `apps/arsy/src/lib/egress.ts`, the one place allowed to import `node:dns`.
  */
 
 /** hostnames that mean "inside our own perimeter", independent of DNS */

@@ -6,7 +6,7 @@ import { PORTS } from '@moonwitness/core'
  * The port set comes from the shared contract, so `moon free-ports` cannot drift
  * behind a port change. `scripts/free-ports.mjs` keeps its own copy deliberately:
  * it is the escape hatch for a tree that has not been built yet, so it must not
- * import anything compiled (`apps/radio/test/env-contract.test.ts` holds its
+ * import anything compiled (`apps/arsy/test/env-contract.test.ts` holds its
  * literals honest instead).
  */
 const MONOREPO_PORTS = Object.values(PORTS)
