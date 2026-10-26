@@ -43,6 +43,7 @@ export {
   type UserResolver,
   type UserResolverFactory,
   type CronDef,
+  type CronCtx,
 } from './addon.js'
 export { defineView, type View, type ViewDef, type ViewAggregate } from './view.js'
 

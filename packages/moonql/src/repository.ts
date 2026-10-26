@@ -279,7 +279,7 @@ export class ModelRepo {
     }
     const hydrated = this.hydrate(row)
     this.fire('afterCreate', hydrated)
-    this.bus?.emit('model.created', { model: this.compiled.name, id: String(hydrated.id), row: hydrated })
+    this.bus?.emit('model.created', { model: this.compiled.name, id: String(hydrated.id), row: hydrated, audit: this.compiled.audit })
     return hydrated
   }
 
@@ -314,7 +314,7 @@ export class ModelRepo {
     if (!row) throw notFound(`${this.compiled.label} not found`)
     const hydrated = this.hydrate(row)
     this.fire('afterUpdate', hydrated)
-    this.bus?.emit('model.updated', { model: this.compiled.name, id, row: hydrated })
+    this.bus?.emit('model.updated', { model: this.compiled.name, id, row: hydrated, audit: this.compiled.audit })
     return hydrated
   }
 
@@ -329,7 +329,7 @@ export class ModelRepo {
       await this.engine.drop(id)
     }
     this.fire('afterDelete', id)
-    this.bus?.emit('model.deleted', { model: this.compiled.name, id })
+    this.bus?.emit('model.deleted', { model: this.compiled.name, id, audit: this.compiled.audit })
   }
 
   async count(where?: unknown): Promise<number> {

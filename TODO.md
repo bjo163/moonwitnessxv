@@ -95,13 +95,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M03-01** — Audit default public list/get/expand/view/export exposure | P0 | D3 | M00-05 | Negative API tests include direct request paths |
-| - [ ] | **M03-02** — Define deny-by-default sensitive addon template | P0 | D3 | M03-01 | Restricted model REST false or explicit guarded ops |
-| - [ ] | **M03-03** — Test forged/expired HQ cookies vs Hub auth | P0 | D3 | M03-01 | No cookie-only privileged data access |
-| - [ ] | **M03-04** — Decide tenant and reviewer/editor role boundaries | P0 | D4 | M02-02,M03-02 | Tenant support verified or clearly out of scope |
-| - [ ] | **M03-05** — Test token TTL, revocation and API key cache limits | P0 | D3 | M03-03 | Revoked credentials denied per defined window |
-| - [ ] | **M03-06** — Write private witness, minors, copyright and withdrawal policy | P0 | D3 | M02-04 | No automatic import into public Git |
-| - [ ] | **M03-07** — Threat model CSP, logs, egress, DENPA, WA and SSR | P0 | D4 | M03-01,M03-05 | Critical risks receive blocking cases |
+| - [x] | **M03-01** — Audit default public list/get/expand/view/export exposure | P0 | D3 | M00-05 | Negative API tests include direct request paths ([docs/audit/M03-01-public-exposure-audit.md](file:///z:/project/moonradio/docs/audit/M03-01-public-exposure-audit.md)) |
+| - [x] | **M03-02** — Define deny-by-default sensitive addon template | P0 | D3 | M03-01 | Restricted model REST false or explicit guarded ops ([docs/audit/M03-02-deny-by-default-template.md](file:///z:/project/moonradio/docs/audit/M03-02-deny-by-default-template.md)) |
+| - [x] | **M03-03** — Test forged/expired HQ cookies vs Hub auth | P0 | D3 | M03-01 | No cookie-only privileged data access ([docs/audit/M03-03-cookie-auth-audit.md](file:///z:/project/moonradio/docs/audit/M03-03-cookie-auth-audit.md)) |
+| - [x] | **M03-04** — Decide tenant and reviewer/editor role boundaries | P0 | D4 | M02-02,M03-02 | Tenant support verified or clearly out of scope ([docs/decisions/M03-04-tenant-role-boundaries.md](file:///z:/project/moonradio/docs/decisions/M03-04-tenant-role-boundaries.md)) |
+| - [x] | **M03-05** — Test token TTL, revocation and API key cache limits | P0 | D3 | M03-03 | Revoked credentials denied per defined window ([docs/audit/M03-05-token-ttl-cache.md](file:///z:/project/moonradio/docs/audit/M03-05-token-ttl-cache.md)) |
+| - [x] | **M03-06** — Write private witness, minors, copyright and withdrawal policy | P0 | D3 | M02-04 | No automatic import into public Git ([docs/decisions/M03-06-witness-withdrawal-policy.md](file:///z:/project/moonradio/docs/decisions/M03-06-witness-withdrawal-policy.md)) |
+| - [x] | **M03-07** — Threat model CSP, logs, egress, DENPA, WA and SSR | P0 | D4 | M03-01,M03-05 | Critical risks receive blocking cases ([docs/audit/M03-07-threat-model.md](file:///z:/project/moonradio/docs/audit/M03-07-threat-model.md)) |
 
 
 ## M04 — Database continuity and recovery

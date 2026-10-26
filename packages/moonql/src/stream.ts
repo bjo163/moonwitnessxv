@@ -77,14 +77,22 @@ export function busStream(bus: MoonBus, options: BusStreamOptions): AsyncGenerat
           resolve()
           return
         }
-        const timer = setTimeout(finish, ms)
-        timer.unref?.()
-        function finish(): void {
+        let settled = false
+        const finish = (): void => {
+          if (settled) return
+          settled = true
           clearTimeout(timer)
           signal.removeEventListener('abort', finish)
+          if (wake === finish) wake = null
           resolve()
         }
+        const timer = setTimeout(finish, ms)
+        timer.unref?.()
         signal.addEventListener('abort', finish)
+        // Park the generator on `finish` so an arriving frame ends the wait now.
+        // Without this assignment `notify()` had no target: every quiet subscriber
+        // still slept a full pollMs, and the wake-up only shortened nothing.
+        wake = finish
       })
 
     let sent = 0

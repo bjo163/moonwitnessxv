@@ -21,6 +21,8 @@ export interface CompiledModel extends ModelSchemas {
   /** fields usable in ?where/?order (audit included, virtual excluded) */
   queryable: FieldsMap
   softDelete: boolean
+  /** the model's own audit preference, carried into bus payloads */
+  audit: boolean
   unique: string[][]
   /** declared non-unique composite indexes (columns that are filtered together) */
   indexes: string[][]
@@ -146,6 +148,7 @@ export function installAddons(
         model,
         queryable: queryableFields(model.fields as FieldsMap, model.softDelete),
         softDelete: model.softDelete,
+        audit: model.audit,
         unique: model.unique,
         indexes: model.indexes,
         acl: model.acl,

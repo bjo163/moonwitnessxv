@@ -116,6 +116,15 @@ export interface ModelDef<F extends FieldsMap> {
   data?: DataSpec
   /** Honest opt-out of the seed policy: this table is legitimately empty (audit/session stores). */
   seedless?: true
+  /**
+   * Write every mutation to the ops audit trail. Default true.
+   *
+   * Turn it off for machine-written telemetry (a beacon per listener, a row per
+   * metadata poll): those tables already have their own aggregate view, and an
+   * audit row per write doubles the busiest writes in the hub while saying nothing
+   * a human will read.
+   */
+  audit?: boolean
   /** Per-operation access rules; default 'public' (unchanged behavior). */
   acl?: Partial<Record<RestOp, AclSpec>>
   /** Upper bound for ?limit on this model's list route. */
@@ -135,6 +144,7 @@ export interface Model<F extends FieldsMap = FieldsMap> {
   seed?: ModelDef<F>['seed']
   data?: CompiledData
   seedless: boolean
+  audit: boolean
   acl: Partial<Record<RestOp, AclSpec>>
   maxLimit: number
   menu?: MenuSpec
@@ -198,6 +208,7 @@ export function defineModel<F extends FieldsMap>(def: ModelDef<F>): Model<F> {
     seed: def.seed,
     data,
     seedless: def.seedless === true,
+    audit: def.audit !== false,
     acl: def.acl ?? {},
     maxLimit: def.maxLimit ?? 200,
     menu: def.menu,

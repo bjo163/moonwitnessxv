@@ -98,6 +98,18 @@ export interface EndpointDef {
   menu?: MenuSpec
 }
 
+/**
+ * What a cron receives: the boot context plus the time it may spend.
+ *
+ * The budget is 80% of the declared interval, handed down by the runner rather
+ * than guessed by each addon: a job that walks a table and calls the network has
+ * to stop on its own terms, because the runner skips any tick that overlaps the
+ * previous run — an overrunning job silences itself permanently.
+ */
+export interface CronCtx extends ProvideCtx {
+  budgetMs: number
+}
+
 /** Declarative scheduled task, started at boot, stopped on instance.close(). */
 export interface CronDef {
   name: string
@@ -109,7 +121,7 @@ export interface CronDef {
    * repeats the work.
    */
   startImmediately?: boolean
-  run: (ctx: ProvideCtx) => unknown | Promise<unknown>
+  run: (ctx: CronCtx) => unknown | Promise<unknown>
 }
 
 export interface AddonDef<M extends Record<string, Model>> {

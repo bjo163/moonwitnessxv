@@ -6,9 +6,12 @@ import type { Row } from './engines/engine.js'
  * touching the owner addon — the gap `registry.hookFor` leaves open.
  */
 export interface BusPayloads {
-  'model.created': { model: string; id: string; row: Row }
-  'model.updated': { model: string; id: string; row: Row }
-  'model.deleted': { model: string; id: string }
+  // `audit` is the written model's own preference (default true), carried here so
+  // an observer can honour it without holding the registry: the ops trail reads
+  // it to stay out of telemetry tables.
+  'model.created': { model: string; id: string; row: Row; audit?: boolean }
+  'model.updated': { model: string; id: string; row: Row; audit?: boolean }
+  'model.deleted': { model: string; id: string; audit?: boolean }
   'cron.run': { addon: string; cron: string; status: 'ok' | 'error'; durationMs: number; detail: string | null }
   'data.synced': { model: string; created: number; updated: number; unchanged: number }
   'seed.applied': { model: string; rows: number }

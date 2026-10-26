@@ -1,4 +1,4 @@
-import { badRequest, fetchJsonWithPolicy, pseudonym } from '@moonwitness/core'
+import { badRequest, byStaleness, fetchJsonWithPolicy, pseudonym, runWithBudget } from '@moonwitness/core'
 import { ADMIN_FULL, busStream, defineAddon, defineModel, defineView, int, m2o, sel, str, text, ts, type BusFrame } from '@moonwitness/moonql'
 
 /**
@@ -99,6 +99,9 @@ export const playlog = defineAddon({
     playlogs: defineModel({
       label: 'Play event',
       rest: true,
+      // a beacon per listener session: the audit trail would grow with the audience
+      // and say nothing a human reads (the charts are its own aggregation)
+      audit: false,
       fields: {
         stationRef: m2o('stations', { index: true }),
         event: sel(['start', 'stop', 'skip'], { default: 'start' }),
@@ -134,6 +137,7 @@ export const playlog = defineAddon({
     now_playing: defineModel({
       label: 'Now playing',
       seedless: true, // machine-written telemetry, never demo data
+      audit: false, // one row per station per poll: telemetry, not a human action
       rest: false, // read through `nowPlayingTrack`, written by the cron
       fields: {
         stationRef: m2o('stations', { unique: true }),
@@ -389,20 +393,28 @@ export const playlog = defineAddon({
       // holding visitor-derived data: it needs its own retention window
       name: 'purge-playlog',
       every: '1d',
-      run: async ({ orm, env }) => {
+      run: async ({ orm, env, budgetMs }) => {
         const days = Number(env.PLAYLOG_RETENTION_DAYS ?? 90) || 90
         const cutoff = new Date(Date.now() - days * 86_400_000).toISOString()
         // Requests carry listener-authored text, so they expire on the same clock
         // as the listen events they sit beside — one retention rule, not two.
+        //
+        // Drain instead of a fixed 50-pass cap: past 50k rows a day the cap left
+        // visitor data older than the retention window we advertised, silently.
+        // The budget is the limit now, and what it could not reach is reported.
+        const deadline = Date.now() + budgetMs
         let removed = 0
+        let remaining = 0
         for (const model of ['playlogs', 'requests'] as const) {
-          for (let pass = 0; pass < 50; pass++) {
-            const chunk: number = await orm.model(model).removeWhere({ createdAt: { lt: cutoff } }, 1000)
+          const repo = orm.model(model)
+          while (Date.now() < deadline) {
+            const chunk: number = await repo.removeWhere({ createdAt: { lt: cutoff } }, 1000)
             removed += chunk
             if (chunk < 1000) break
           }
+          remaining += await repo.count({ createdAt: { lt: cutoff } })
         }
-        return { days, removed }
+        return { days, removed, remaining }
       },
     },
     {
@@ -413,30 +425,41 @@ export const playlog = defineAddon({
        */
       name: 'fetch-now-playing',
       every: '5m',
-      run: async ({ orm, env }) => {
+      run: async ({ orm, env, budgetMs }) => {
         if (env.EGRESS_ENABLED !== 'true') return { skipped: 'EGRESS_ENABLED is not true' }
         const nowPlaying = orm.model('now_playing')
-        const active = await orm.model('stations').list({ where: { active: true }, limit: 500 })
+        const active = (await orm.model('stations').list({ where: { active: true }, limit: 500 })) as Array<Record<string, unknown>>
+        // Cursor: oldest fact first (a station with no row yet counts as oldest), so
+        // a run that runs out of budget leaves the untouched stations at the front
+        // of the next one instead of re-reading the same head every time.
+        const seen = new Map<string, string>(
+          ((await nowPlaying.list({ limit: 1000 })) as Array<Record<string, unknown>>).map((row) => [String(row.stationRef), String(row.at ?? '')]),
+        )
+        const ordered = byStaleness(active, (station) => seen.get(String(station.id)) ?? '')
         let updated = 0
-        for (const station of active) {
-          let fact: NowPlayingFact | null = null
-          for (const candidate of statusUrls(String(station.streamUrl ?? ''))) {
-            fact = parseNowPlaying(await fetchJsonWithPolicy(candidate))
-            if (fact) break
-          }
-          if (!fact) continue
-          const payload = {
-            track: fact.track,
-            artist: fact.artist,
-            listeners: fact.listeners,
-            at: new Date().toISOString(),
-          }
-          const existing = await nowPlaying.list({ where: { stationRef: String(station.id) }, limit: 1 })
-          if (existing[0]) await nowPlaying.update(String(existing[0].id), payload)
-          else await nowPlaying.create({ stationRef: String(station.id), ...payload })
-          updated++
-        }
-        return { stations: active.length, updated }
+        const run = await runWithBudget(ordered, {
+          budgetMs,
+          run: async (station) => {
+            let fact: NowPlayingFact | null = null
+            for (const candidate of statusUrls(String(station.streamUrl ?? ''))) {
+              fact = parseNowPlaying(await fetchJsonWithPolicy(candidate))
+              if (fact) break
+            }
+            if (!fact) return false
+            const payload = {
+              track: fact.track,
+              artist: fact.artist,
+              listeners: fact.listeners,
+              at: new Date().toISOString(),
+            }
+            const existing = await nowPlaying.list({ where: { stationRef: String(station.id) }, limit: 1 })
+            if (existing[0]) await nowPlaying.update(String(existing[0].id), payload)
+            else await nowPlaying.create({ stationRef: String(station.id), ...payload })
+            updated++
+            return true
+          },
+        })
+        return { stations: run.done, updated, skippedByBudget: run.skipped.length, remaining: run.skipped.length }
       },
     },
   ],

@@ -1,4 +1,4 @@
-import { probeStream } from '@moonwitness/core'
+import { byStaleness, probeStream, runWithBudget } from '@moonwitness/core'
 import { ADMIN_WRITE, bool, computed, defineAddon, defineModel, defineView, int, m2o, str, ts } from '@moonwitness/moonql'
 
 /**
@@ -154,24 +154,38 @@ export default defineAddon({
        */
       name: 'probe-stations',
       every: '15m',
-      run: async ({ orm, env }) => {
+      run: async ({ orm, env, budgetMs }) => {
         if (env.EGRESS_ENABLED !== 'true') return { skipped: 'EGRESS_ENABLED is not true' }
         const stations = orm.model('stations')
-        const rows = await stations.list({ where: { active: true }, limit: 500 })
+        const rows = (await stations.list({ where: { active: true }, limit: 500 })) as Array<Record<string, unknown>>
+        // Staleness order is the cursor: the probe stamps lastCheckedAt, so a run
+        // that hits its budget leaves the untouched rows first in line next time.
+        // Serial with 2-4s per station used to overrun 15 minutes and then the
+        // runner skipped every following tick — forever, one warning per skip.
         let ok = 0
         let failed = 0
-        for (const row of rows) {
-          const alive = await probeStream(String(row.streamUrl ?? ''))
-          const fails = alive ? 0 : Number(row.probeFails ?? 0) + 1
-          await stations.update(String(row.id), {
-            lastCheckedAt: new Date().toISOString(),
-            probeOk: alive,
-            probeFails: fails,
-          })
-          if (alive) ok++
-          else failed++
+        const run = await runWithBudget(byStaleness(rows, (row) => row.lastCheckedAt as string | null), {
+          budgetMs,
+          run: async (row) => {
+            const alive = await probeStream(String(row.streamUrl ?? ''))
+            const fails = alive ? 0 : Number(row.probeFails ?? 0) + 1
+            await stations.update(String(row.id), {
+              lastCheckedAt: new Date().toISOString(),
+              probeOk: alive,
+              probeFails: fails,
+            })
+            if (alive) ok++
+            else failed++
+            return alive
+          },
+        })
+        return {
+          checked: run.done,
+          ok,
+          failed,
+          skippedByBudget: run.skipped.length,
+          remaining: run.skipped.length,
         }
-        return { checked: rows.length, ok, failed }
       },
     },
   ],

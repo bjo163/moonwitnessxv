@@ -29,16 +29,21 @@ const summaryOf = (row: Record<string, unknown>): string =>
  * without bus events — a purge that announced each row would instantly refill
  * the very table it is trimming.
  */
-async function purgeOlder(orm: ProvideCtx['orm'], model: 'ops_audit' | 'ops_jobs', days: number) {
+async function purgeOlder(orm: ProvideCtx['orm'], model: 'ops_audit' | 'ops_jobs', days: number, budgetMs: number) {
   const cutoff = new Date(Date.now() - days * 86_400_000).toISOString()
   const repo = orm.model(model)
   let removed = 0
-  for (let pass = 0; pass < 50; pass++) {
+  // Budget-bounded drain: the old 50-pass cap stopped at 50k rows and said nothing,
+  // so the table could exceed the retention window the operator was promised. What
+  // the budget could not reach is reported instead of assumed.
+  const deadline = Date.now() + budgetMs
+  while (Date.now() < deadline) {
     const chunk: number = await repo.removeWhere({ createdAt: { lt: cutoff } }, 1000)
     removed += chunk
     if (chunk < 1000) break
   }
-  return { model, days, removed }
+  const remaining = await repo.count({ createdAt: { lt: cutoff } })
+  return { model, days, removed, remaining }
 }
 
 /** bus payloads are `{model,id,row}` — the "who" is not on the bus, by design */
@@ -152,29 +157,33 @@ export const ops = defineAddon({
     {
       name: 'purge-audit',
       every: '1d',
-      run: async ({ orm, env }) => purgeOlder(orm, 'ops_audit', Number(env.OPS_AUDIT_RETENTION_DAYS ?? 14) || 14),
+      run: async ({ orm, env, budgetMs }) =>
+        purgeOlder(orm, 'ops_audit', Number(env.OPS_AUDIT_RETENTION_DAYS ?? 14) || 14, budgetMs),
     },
     {
       // every cron tick of every addon lands here: without a retention window
       // this table grows fastest exactly when the system is busiest
       name: 'purge-jobs',
       every: '1d',
-      run: async ({ orm, env }) => purgeOlder(orm, 'ops_jobs', Number(env.OPS_JOB_RETENTION_DAYS ?? 7) || 7),
+      run: async ({ orm, env, budgetMs }) =>
+        purgeOlder(orm, 'ops_jobs', Number(env.OPS_JOB_RETENTION_DAYS ?? 7) || 7, budgetMs),
     },
   ],
   observe: (bus, ctx) => {
     const audit = auditWriter(ctx)
-    // feedback guard: an audit row must never produce an audit row
-    const skip = (model: string) => model.startsWith('ops_')
+    // Two guards, two reasons: an audit row must never produce an audit row, and a
+    // model that declares `audit: false` (machine-written telemetry) asked to stay
+    // out of the trail — a row per beacon would double the busiest write in the hub.
+    const skip = (model: string, auditAllowed: boolean | undefined): boolean => model.startsWith('ops_') || auditAllowed === false
 
     bus.on('model.created', (p) => {
-      if (!skip(p.model)) audit('create', p.model, p.id, summaryOf(p.row))
+      if (!skip(p.model, p.audit)) audit('create', p.model, p.id, summaryOf(p.row))
     })
     bus.on('model.updated', (p) => {
-      if (!skip(p.model)) audit('update', p.model, p.id, summaryOf(p.row))
+      if (!skip(p.model, p.audit)) audit('update', p.model, p.id, summaryOf(p.row))
     })
     bus.on('model.deleted', (p) => {
-      if (!skip(p.model)) audit('delete', p.model, p.id, null)
+      if (!skip(p.model, p.audit)) audit('delete', p.model, p.id, null)
     })
     bus.on('cron.run', (p) => {
       void ctx.orm
