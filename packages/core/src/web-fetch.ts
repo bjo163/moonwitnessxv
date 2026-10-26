@@ -15,8 +15,9 @@
  *      resolves to 127.0.0.1 (or to the compose service `db`) passes layer 1 and
  *      must still be refused, and every answer of a multi-A record has to pass,
  *      not just the first.
- * Resolution is injected: this module stays browser-safe (no `node:` imports) and
- * `@moonwitness/core/node` supplies the Node implementation at boot.
+ * Resolution is injected: this module stays browser-safe (no `node:` imports, which
+ * the lint config enforces for `core`) and the hub supplies the resolver at boot —
+ * see `apps/radio/src/lib/egress.ts`, the one place allowed to import `node:dns`.
  */
 
 /** hostnames that mean "inside our own perimeter", independent of DNS */

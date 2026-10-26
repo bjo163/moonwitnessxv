@@ -40,22 +40,51 @@ function workspaceMembers(): string[] {
 }
 
 test('every workspace import is declared as a runtime dependency', () => {
+  const members = workspaceMembers()
+  const dirByName = new Map<string, string>()
+  for (const dir of members) {
+    dirByName.set((JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as { name: string }).name, dir)
+  }
+
   const offenders: string[] = []
-  for (const dir of workspaceMembers()) {
+  for (const dir of members) {
     const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')) as {
       dependencies?: Record<string, string>
       devDependencies?: Record<string, string>
     }
-    const used = new Set<string>()
+    // name -> the subpaths used against it ('' means the package root)
+    const used = new Map<string, Set<string>>()
     for (const file of sourceFiles(join(dir, 'src'))) {
-      for (const match of readFileSync(file, 'utf8').matchAll(/['"]@moonwitness\/([a-z0-9-]+)['"]/g)) {
-        used.add(`@moonwitness/${match[1]}`)
+      // a closing quote after the name alone used to hide every subpath import:
+      // `@moonwitness/moonui/client` slipped through the contract entirely
+      for (const match of readFileSync(file, 'utf8').matchAll(/['"]@moonwitness\/([a-z0-9-]+)((?:\/[^'"]*)?)['"]/g)) {
+        const name = `@moonwitness/${match[1]}`
+        if (!used.has(name)) used.set(name, new Set())
+        used.get(name)!.add(match[2] ?? '')
       }
     }
-    for (const name of used) {
-      if (pkg.dependencies?.[name]) continue
-      const where = pkg.devDependencies?.[name] ? 'devDependencies only' : 'not declared'
-      offenders.push(`${relative(repoRoot, dir)} imports ${name} at runtime but has ${where}`)
+    for (const [name, subs] of used) {
+      if (!pkg.dependencies?.[name]) {
+        const where = pkg.devDependencies?.[name] ? 'devDependencies only' : 'not declared'
+        offenders.push(`${relative(repoRoot, dir)} imports ${name} at runtime but has ${where}`)
+        continue
+      }
+      // A subpath is a promise the depended package must make in its exports map.
+      // Without one, deep imports resolve by accident and silently become API.
+      const target = dirByName.get(name)
+      if (!target) {
+        offenders.push(`${relative(repoRoot, dir)} imports ${name}, which is not a workspace member`)
+        continue
+      }
+      const exports = (JSON.parse(readFileSync(join(target, 'package.json'), 'utf8')) as { exports?: Record<string, unknown> }).exports
+      for (const sub of subs) {
+        if (!sub) continue
+        if (!exports) {
+          offenders.push(`${relative(repoRoot, dir)} imports ${name}${sub} but ${name} declares no exports map`)
+        } else if (!(('.' + sub) in exports)) {
+          offenders.push(`${relative(repoRoot, dir)} imports ${name}${sub} but ${name} does not export ".${sub}"`)
+        }
+      }
     }
   }
   assert.deepEqual(offenders, [], offenders.join('\n'))

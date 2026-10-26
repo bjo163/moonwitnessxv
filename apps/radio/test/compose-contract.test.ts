@@ -18,11 +18,16 @@ import { fileURLToPath } from 'node:url'
  */
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url))
-const compose = readFileSync(`${ROOT}/docker-compose.yml`, 'utf8')
-const runbook = readFileSync(`${ROOT}/docs/runbook-restore.md`, 'utf8')
+// These guards anchor on line starts, and git may hand this checkout CRLF (it
+// says so in its own warnings). Normalize at the read, or a contract either
+// throws on a stray \r or quietly matches nothing.
+const readRepoText = (rel: string): string => readFileSync(`${ROOT}/${rel}`, 'utf8').replace(/\r\n/g, '\n')
+const compose = readRepoText('docker-compose.yml')
+const runbook = readRepoText('docs/runbook-restore.md')
 // The dump algorithm moved out of the compose `command:` block into a script, so
 // the service the stack runs and the on-demand snapshot the recovery docs call
-// share one copy of it. The invariants below now guard that file.
+// share one copy of it. The invariants below now guard that file — read RAW,
+// because line endings are the thing being asserted there, not an artefact.
 const backupScript = readFileSync(`${ROOT}/scripts/db-backup.sh`, 'utf8')
 
 /** service name -> its block, from `services:` to the next top-level key */

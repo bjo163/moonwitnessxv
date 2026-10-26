@@ -25,11 +25,21 @@ import { fileURLToPath } from 'node:url'
  */
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url))
-const dockerfile = readFileSync(`${ROOT}/Dockerfile`, 'utf8')
-const dockerfileWeb = readFileSync(`${ROOT}/Dockerfile.web`, 'utf8')
-const lockfile = readFileSync(`${ROOT}/pnpm-lock.yaml`, 'utf8')
-const dockerignore = readFileSync(`${ROOT}/.dockerignore`, 'utf8')
-const radioManifest = JSON.parse(readFileSync(`${ROOT}/apps/radio/package.json`, 'utf8')) as {
+
+/**
+ * Every guard here anchors on a line start, and this repo's files are not
+ * guaranteed LF: pnpm writes the lockfile with the platform's line ending (this
+ * checkout's pnpm-lock.yaml is CRLF), and git warns it will convert on checkout.
+ * An un-normalized `\r` makes a contract either throw at parse time or match
+ * nothing — a green test that checks nothing. Normalize once, at the read.
+ */
+const readRepoText = (rel: string): string => readFileSync(`${ROOT}/${rel}`, 'utf8').replace(/\r\n/g, '\n')
+
+const dockerfile = readRepoText('Dockerfile')
+const dockerfileWeb = readRepoText('Dockerfile.web')
+const lockfile = readRepoText('pnpm-lock.yaml')
+const dockerignore = readRepoText('.dockerignore')
+const radioManifest = JSON.parse(readRepoText('apps/radio/package.json')) as {
   dependencies: Record<string, string>
 }
 
