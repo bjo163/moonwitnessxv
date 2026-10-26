@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { ViewOutputs } from '@moonwitness/moonql-client'
+import { formatLocaleNumber, type Locale } from '@moonwitness/core'
 import {
   Badge,
   Card,
@@ -18,6 +19,7 @@ import {
 import type { ChartRow, NowPlaying } from '@/data/types'
 import { clock } from '@/lib/time'
 import { slotWindow } from '@/data/queries/program'
+import { getLandingCopy } from '@/lib/landing-copy'
 
 /**
  * The minimum a station card needs, expressed AS THE HUB SHAPE (`countryRefRecord`
@@ -33,24 +35,27 @@ export interface StationLike {
 }
 
 const ARCHIVE_SIGNALS = [
-  { date: '2024.09', title: 'THE FIRST SIGNAL', img: '/art/archive-1.jpg' },
-  { date: '2024.11', title: 'VOICES IN THE FOG', img: '/art/archive-2.jpg' },
-  { date: '2025.01', title: 'THE OTHER SIDE', img: '/art/archive-3.jpg' },
-  { date: '2025.03', title: 'CITIES NEVER SLEEP', img: '/art/archive-4.jpg' },
-  { date: '2025.04', title: 'A BRIGHTER QUESTION', img: '/art/archive-5.jpg' },
-  { date: '2025.06', title: 'THE SHADOW GROWS', img: '/art/archive-6.jpg' },
-  { date: '2025.08', title: 'MORE TO COME', img: '/art/archive-7.jpg' },
+  { title: 'THE FIRST SIGNAL', img: '/art/archive-1.jpg' },
+  { title: 'VOICES IN THE FOG', img: '/art/archive-2.jpg' },
+  { title: 'THE OTHER SIDE', img: '/art/archive-3.jpg' },
+  { title: 'CITIES NEVER SLEEP', img: '/art/archive-4.jpg' },
+  { title: 'A BRIGHTER QUESTION', img: '/art/archive-5.jpg' },
+  { title: 'THE SHADOW GROWS', img: '/art/archive-6.jpg' },
+  { title: 'MORE TO COME', img: '/art/archive-7.jpg' },
 ] as const
 
 export function ZineFeatureTrio({
   now,
   live,
   leadStationId,
+  locale,
 }: {
   now: NowPlaying | null
   live?: ReactNode
   leadStationId?: string
+  locale: Locale
 }): ReactNode {
+  const copy = getLandingCopy(locale)
   const signalHref = now?.stationId
     ? `/stations/${now.stationId}`
     : leadStationId
@@ -58,28 +63,22 @@ export function ZineFeatureTrio({
       : '/stations'
 
   return (
-    <section className="dk-trio" aria-label="Featured transmissions and layers">
+    <section className="dk-trio" aria-label={copy.featuredTransmissions}>
       {/* Panel 1: TRANSMISSION 001 */}
       <Card variant="art" bgImage="/art/card-transmission.jpg" className="dk-trio-card">
         <CardBody className="dk-trio-layout">
           <div className="dk-trio-body">
             <div className="m-row">
-              <Tape tone="accent">TRANSMISSION 001</Tape>
-              <Badge tone="pink">LIVE</Badge>
+              <Tape tone="accent">{copy.transmission001}</Tape>
+              <Badge tone={now ? 'pink' : 'night'}>{now ? copy.scheduled : copy.noCurrentSlot}</Badge>
             </div>
 
             <h2 className="dk-trio-title">
-              A SIGNAL
-              <br />
-              FROM
-              <br />
-              BELOW
+              {copy.signalFromBelow}
             </h2>
 
             <p className="dk-trio-copy">
-              Strange sounds. A deeper current.
-              <br />
-              What are we really hearing?
+              {copy.strangeSounds}
             </p>
 
             {now ? (
@@ -98,17 +97,13 @@ export function ZineFeatureTrio({
 
           <div className="dk-trio-right-col">
             <ZineNote tone="paper" tilt="left">
-              SOME STORIES
-              <br />
-              SHOULD
-              <br />
-              STAY BURIED.
+              {copy.someStoriesBuried}
             </ZineNote>
 
-            <a href={signalHref} className="dk-circle-play" aria-label="Play transmission 001">
+            <a href={signalHref} className="dk-circle-play" aria-label={copy.playTransmission}>
               <span className="dk-circle-play-icon"><Chevron dir="right" /></span>
               <span className="m-mono" style={{ fontSize: 12, fontWeight: 800 }}>
-                03:24
+                {copy.playSignal}
               </span>
             </a>
           </div>
@@ -120,26 +115,21 @@ export function ZineFeatureTrio({
         <CardBody className="dk-trio-layout">
           <div className="dk-trio-body">
             <div className="m-row">
-              <Tape tone="accent">STORYTELLING</Tape>
+              <Tape tone="accent">{copy.storytelling}</Tape>
+              <Badge tone="night">{copy.planned}</Badge>
             </div>
 
             <h2 className="dk-trio-title">
-              REAL PEOPLE.
-              <br />
-              BIGGER HORIZONS.
+              {copy.realPeopleHorizons}
             </h2>
 
             <p className="dk-trio-copy">
-              Firsthand accounts, visual stories,
-              <br />
-              and unfiltered perspectives
-              <br />
-              from around the world.
+              {copy.firsthandStories}
             </p>
 
             <div>
               <LinkButton href="/stations" variant="cyan" size="sm">
-                EXPLORE STORIES <Chevron dir="right" />
+                {copy.exploreStories} <Chevron dir="right" />
               </LinkButton>
             </div>
           </div>
@@ -148,11 +138,7 @@ export function ZineFeatureTrio({
             <ZineNote tone="dark" tilt="left">
               <Crown tone="gold" size="sm" />
               <br />
-              DIFFERENT
-              <br />
-              PLACES.
-              <br />
-              SAME STORIES.
+              {copy.differentPlaces}
             </ZineNote>
           </div>
         </CardBody>
@@ -163,39 +149,28 @@ export function ZineFeatureTrio({
         <CardBody className="dk-trio-layout">
           <div className="dk-trio-body">
             <div className="m-row">
-              <Tape tone="pink">THE SHADOW</Tape>
+              <Tape tone="pink">{copy.shadow}</Tape>
+              <Badge tone="night">{copy.planned}</Badge>
             </div>
 
             <h2 className="dk-trio-title">
-              NOT EVERYTHING
-              <br />
-              IS VISIBLE.
+              {copy.notEverythingVisible}
             </h2>
 
             <p className="dk-trio-copy">
-              A deeper layer of Moonwitness.
-              <br />
-              Unexplained stories, hidden connections,
-              <br />
-              and what lives in the in-between.
+              {copy.shadowCopy}
             </p>
 
             <div>
               <LinkButton href="/schedule" variant="accent" size="sm">
-                ENTER THE SHADOW <Chevron dir="right" />
+                {copy.viewSchedule} <Chevron dir="right" />
               </LinkButton>
             </div>
           </div>
 
           <div className="dk-trio-right-col">
             <ZineNote tone="dark" tilt="left">
-              THERE&apos;S
-              <br />
-              ALWAYS
-              <br />
-              ANOTHER
-              <br />
-              LAYER.
+              {copy.anotherLayer}
             </ZineNote>
           </div>
         </CardBody>
@@ -207,36 +182,31 @@ export function ZineFeatureTrio({
 export function CrewConstellation({
   counts,
   stations,
+  locale,
 }: {
-  counts: { stations: number; countries: number; plays: number }
+  counts: { stations: number; countries: number }
   stations: StationLike[]
+  locale: Locale
 }): ReactNode {
-  const crewMembers = 1324 + counts.stations
-  const countryTotal = Math.max(87, counts.countries)
-  const signalTotal = 6912 + counts.plays
+  const copy = getLandingCopy(locale)
 
   return (
     <Card className="dk-constellation-card" id="constellation">
       <CardBody className="dk-constellation">
         <div className="m-stack" style={{ gap: 10 }}>
           <div>
-            <Tape tone="cyan">CREW CONSTELLATION</Tape>
+            <Tape tone="cyan">{copy.constellation}</Tape>
           </div>
-          <h2 className="dk-section-heading">A GLOBAL MAP OF WITNESSES.</h2>
+          <h2 className="dk-section-heading">{copy.stationMapHeading}</h2>
           <p className="m-muted" style={{ margin: 0, fontSize: 13 }}>
-            Different places. Different perspectives. Same moon. Hover to explore the crew and see where the next signal
-            comes from.
+            {copy.stationMapDescription}
           </p>
           <div className="m-row" style={{ gap: 12 }}>
             <LinkButton href="/stations" variant="primary" size="sm">
-              EXPLORE THE CREW <Chevron dir="right" />
+              {copy.exploreStations} <Chevron dir="right" />
             </LinkButton>
             <ZineNote tone="dark" tilt="left">
-              REAL PEOPLE.
-              <br />
-              REAL PLACES.
-              <br />
-              SAME SKY.
+              {copy.sameSky}
             </ZineNote>
           </div>
         </div>
@@ -244,7 +214,7 @@ export function CrewConstellation({
         <div className="dk-constellation-map">
           <img
             src="/art/constellation-map.jpg"
-            alt="Global constellation map of Moonwitness crew members and active signals"
+            alt={copy.stationMapAlt}
             className="dk-map-img"
           />
           <div className="dk-map-pins">
@@ -253,7 +223,7 @@ export function CrewConstellation({
                 key={station.id}
                 href={`/stations/${station.id}`}
                 className={`dk-map-pin dk-map-pin-${idx + 1}`}
-                title={`${station.name} (${station.countryRefRecord?.name ?? 'Global'})`}
+                title={`${station.name} (${station.countryRefRecord?.name ?? copy.stationPinGlobal})`}
               >
                 <Badge tone="pink">{station.name}</Badge>
               </a>
@@ -267,22 +237,15 @@ export function CrewConstellation({
               <div className="dk-paper-stat-row">
                 <Glyph code="CR" tone="pink" size="sm" />
                 <div>
-                  <strong>{crewMembers.toLocaleString('en-US')}</strong>
-                  <span>CREW MEMBERS</span>
+                  <strong>{formatLocaleNumber(counts.stations, locale)}</strong>
+                  <span>{copy.stationCount}</span>
                 </div>
               </div>
               <div className="dk-paper-stat-row">
                 <Glyph code="CT" tone="cyan" size="sm" />
                 <div>
-                  <strong>{countryTotal}</strong>
-                  <span>COUNTRIES ({counts.countries} HUB)</span>
-                </div>
-              </div>
-              <div className="dk-paper-stat-row">
-                <Glyph code="SG" tone="accent" size="sm" />
-                <div>
-                  <strong>{signalTotal.toLocaleString('en-US')}</strong>
-                  <span>SIGNALS ({counts.stations} LIVE)</span>
+                  <strong>{formatLocaleNumber(counts.countries, locale)}</strong>
+                  <span>{copy.countryCount}</span>
                 </div>
               </div>
             </CardBody>
@@ -303,30 +266,31 @@ export function CrewConstellation({
   )
 }
 
-export function ArchiveTimeline({ slotCount }: { slotCount: number }): ReactNode {
+export function ArchiveTimeline({ slotCount, locale }: { slotCount: number; locale: Locale }): ReactNode {
+  const copy = getLandingCopy(locale)
   return (
     <Card id="archive">
       <CardBody className="dk-archive">
         <div className="m-stack" style={{ gap: 8 }}>
           <div>
-            <Tape tone="accent">ARCHIVE</Tape>
+            <Tape tone="accent">{copy.archive}</Tape>
           </div>
-          <h2 className="dk-section-heading">A TIMELINE OF SIGNALS.</h2>
+          <h2 className="dk-section-heading">{copy.archiveHeading}</h2>
           <p className="m-muted" style={{ margin: 0, fontSize: 12 }}>
-            Past transmissions, ongoing mysteries, and the stories that shape Moonwitness.
+            {copy.archiveDescription}
             <br />
-            <span className="m-mono">{slotCount} weekly schedule slots active</span>
+            <span className="m-mono">{formatLocaleNumber(slotCount, locale)} {copy.scheduleSlots}</span>
           </p>
           <div>
             <LinkButton href="/schedule" variant="cyan" size="sm">
-              BROWSE ARCHIVE <Chevron dir="right" />
+              {copy.browseArchive} <Chevron dir="right" />
             </LinkButton>
           </div>
         </div>
 
         <div className="dk-archive-track">
           {ARCHIVE_SIGNALS.map((item, idx) => (
-            <a href="/schedule" className="dk-archive-node" key={item.date}>
+            <a href="/schedule" className="dk-archive-node" key={item.img}>
               <div className="dk-archive-thumb-wrap">
                 <img src={item.img} alt={item.title} className="dk-archive-thumb" />
                 {idx < ARCHIVE_SIGNALS.length - 1 ? (
@@ -335,7 +299,7 @@ export function ArchiveTimeline({ slotCount }: { slotCount: number }): ReactNode
                   </span>
                 ) : null}
               </div>
-              <span className="dk-archive-date">{item.date}</span>
+              <Badge tone="night">{copy.planned}</Badge>
               <strong className="dk-archive-title">{item.title}</strong>
             </a>
           ))}
@@ -476,13 +440,14 @@ export function ZineSkaPosterSection(): ReactNode {
   )
 }
 
-export function NowPlayingCard({ now, live }: { now: NowPlaying | null; live?: ReactNode }): ReactNode {
+export function NowPlayingCard({ now, live, locale = 'en' }: { now: NowPlaying | null; live?: ReactNode; locale?: Locale }): ReactNode {
+  const copy = getLandingCopy(locale)
   if (!now) {
     return (
-      <Panel title="Now playing · Live Signal">
+      <Panel title={copy.nowScheduled}>
         <div className="m-stack" style={{ gap: 8 }}>
           <p className="m-muted" style={{ margin: 0 }}>
-            The schedule is empty right now — standby for next transmission.
+            {copy.emptySchedule}
           </p>
           {live}
         </div>
@@ -491,7 +456,7 @@ export function NowPlayingCard({ now, live }: { now: NowPlaying | null; live?: R
   }
   return (
     <Panel
-      title="Now playing · Live Signal"
+      title={copy.nowScheduled}
       actions={<Badge tone="pink">{clock(now.startMin)}–{clock(now.endMin)}</Badge>}
     >
       <div className="m-stack" style={{ gap: 10 }}>
@@ -500,7 +465,7 @@ export function NowPlayingCard({ now, live }: { now: NowPlaying | null; live?: R
         </h2>
         <div className="m-row m-muted">
           {now.stationName ? <span>{now.stationName}</span> : null}
-          {now.host ? <span>· hosted by {now.host}</span> : null}
+          {now.host ? <span>· {copy.hostedBy} {now.host}</span> : null}
         </div>
         <ProgressBar value={now.progress} tone="pink" />
         {live}
@@ -526,8 +491,8 @@ export function StationCard({ station }: { station: StationLike }): ReactNode {
   )
 }
 
-export function StationGrid({ stations }: { stations: StationLike[] }): ReactNode {
-  if (!stations.length) return <p className="m-muted">No stations match that filter.</p>
+export function StationGrid({ stations, locale = 'en' }: { stations: StationLike[]; locale?: Locale }): ReactNode {
+  if (!stations.length) return <p className="m-muted">{getLandingCopy(locale).noStations}</p>
   return (
     <div className="dk-grid">
       {stations.map((station) => (
@@ -545,17 +510,19 @@ export function ChartBars({ title, rows, empty }: { title: string; rows: ChartRo
   )
 }
 
-export function WeekGrid({ slots, today }: { slots: ViewOutputs['weeklySchedule'][]; today: string }): ReactNode {
+export function WeekGrid({ slots, today, locale = 'en' }: { slots: ViewOutputs['weeklySchedule'][]; today: string; locale?: Locale }): ReactNode {
+  const copy = getLandingCopy(locale)
   const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+  const dayLabels = [copy.weekdayMon, copy.weekdayTue, copy.weekdayWed, copy.weekdayThu, copy.weekdayFri, copy.weekdaySat, copy.weekdaySun]
   return (
     <div className="dk-week">
-      {days.map((day) => {
+      {days.map((day, index) => {
         const daySlots = slots.filter((slot) => slot.weekday === day)
         return (
           <div className={`dk-day${day === today ? ' dk-day-today' : ''}`} key={day}>
             <div className="dk-day-head">
-              {day}
-              {day === today ? <Badge tone="accent">today</Badge> : null}
+              {dayLabels[index]}
+              {day === today ? <Badge tone="accent">{copy.today}</Badge> : null}
             </div>
             {daySlots.length === 0 ? <div className="m-muted" style={{ fontSize: 12 }}>—</div> : null}
             {daySlots.map((slot) => (

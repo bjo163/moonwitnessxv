@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@moonwitness/core": "workspace:*",
-    "@whiskeysockets/baileys": "^6.7.9",
+    "@whiskeysockets/baileys": "6.7.24",
     "pino": "^9.6.0"
   },
   "devDependencies": {

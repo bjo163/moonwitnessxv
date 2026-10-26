@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server.js'
 // both Next configs use. `core` is linted to stay free of Node built-ins precisely so
 // this edge entry point can import it.
 import { EMBED_PATH, embedOrigins, isLocale, resolveLocale, securityHeaders } from '@moonwitness/core'
+import { DOCK_LOCALE_HEADER } from './lib/locale-context.mjs'
 
 /**
  * Framing is decided per path, here, rather than in `next.config.mjs`.
@@ -49,7 +50,10 @@ export function middleware(request: NextRequest): NextResponse {
       const destination = request.nextUrl.clone()
       destination.pathname = remainder
       routePath = remainder
-      response = NextResponse.rewrite(destination)
+      const forwardedHeaders = new Headers(request.headers)
+      // Overwrite any client-supplied value before forwarding trusted route context.
+      forwardedHeaders.set(DOCK_LOCALE_HEADER, localeSegment)
+      response = NextResponse.rewrite(destination, { request: { headers: forwardedHeaders } })
     } else {
       response = NextResponse.next()
     }

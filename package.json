@@ -28,7 +28,7 @@
     "start:hq": "pnpm --filter @moonwitness/headquarters start",
     "start:ai": "pnpm --filter @moonwitness/aigateway start",
     "start:sentinel": "pnpm --filter @moonwitness/sentinel start",
-    "test": "pnpm --filter @moonwitness/core test && pnpm --filter @moonwitness/dock test && pnpm --filter @moonwitness/radio test",
+    "test": "pnpm --filter @moonwitness/core test && pnpm --filter @moonwitness/dock test && pnpm --filter @moonwitness/radio test && pnpm --filter @moonwitness/radio exec tsx --test ../../apps/headquarters/test/session-auth.test.ts",
     "gen:sdk": "pnpm --filter @moonwitness/radio exec tsx src/tools/gen-sdk.ts",
     "gen:sdk:check": "pnpm --filter @moonwitness/radio exec tsx src/tools/gen-sdk.ts --check",
     "db:up": "docker compose -f docker-compose.db.yml up -d",
@@ -49,6 +49,7 @@
     "@moonwitness/eslint-config": "workspace:*",
     "eslint": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
-    "typescript-eslint": "catalog:"
+    "typescript-eslint": "catalog:",
+    "zod": "^4.6.7"
   }
 }

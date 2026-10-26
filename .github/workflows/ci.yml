@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -31,7 +33,20 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
+        id: install_dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Audit dependency advisories
+        run: pnpm audit --audit-level=high
+
+      - name: Scan Git history for secrets
+        if: ${{ always() && steps.install_dependencies.conclusion == 'success' }}
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" \
+            --volume "$GITHUB_WORKSPACE:/repo:ro" \
+            --workdir /repo \
+            ghcr.io/gitleaks/gitleaks:v8.30.0@sha256:105ac66a57b2bb8afb61a3b8a5dcc4817773d03724a7e8a515214cfe58225556 \
+            git --redact=100 --exit-code=1 --no-banner --no-color .
 
       - name: Run Monorepo Verification (build, lint, gen:sdk:check, test, build:web)
         run: pnpm verify

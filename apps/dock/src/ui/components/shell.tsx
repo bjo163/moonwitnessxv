@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
 import { BrandLogo, Crown, LinkButton, LiveDot, Tape, ZineNote, Chevron } from '@moonwitness/moonui'
 import { MtsTelemetryClock } from '@moonwitness/moonui/client'
+import type { Locale } from '@moonwitness/core'
 import { SITE_NAME, SITE_TAGLINE } from '@/lib/env'
+import { getLandingCopy } from '@/lib/landing-copy'
 
 export function SiteHeader(): ReactNode {
   return (
@@ -111,10 +113,13 @@ export function SiteFooter(): ReactNode {
 export function Hero({
   counts,
   nowTitle,
+  locale,
 }: {
-  counts: { stations: number; countries: number; plays: number }
+  counts: { stations: number; countries: number }
   nowTitle?: string
+  locale: Locale
 }): ReactNode {
+  const copy = getLandingCopy(locale)
   return (
     <section className="dk-hero">
       <div className="dk-hero-art" aria-hidden="true" />
@@ -127,43 +132,41 @@ export function Hero({
             <h1 className="dk-hero-title">MOONWITNESS</h1>
           </div>
 
-          <Tape tone="accent">PEOPLE. PLACES. STORIES. ANOTHER SIDE OF REALITY.</Tape>
+          <Tape tone="accent">{copy.heroEyebrow}</Tape>
 
           <p className="dk-hero-sub">
-            A GLOBAL STORY NETWORK
+            {copy.heroNetwork}
             <br />
-            FOR CURIOUS HUMANS.
+            {copy.heroAudience}
             <br />
-            DIFFERENT PEOPLE. SAME MOON.
+            {copy.heroMoon}
             <br />
-            BIGGER PERSPECTIVES.
+            {copy.heroPerspective}
           </p>
+          <p className="dk-hero-sub">{copy.approvedMission}</p>
 
           <div className="m-row" style={{ gap: 14 }}>
             <LinkButton href="/stations" variant="primary" size="md">
-              EXPLORE THE SIGNALS <Chevron dir="right" />
+              {copy.exploreSignals} <Chevron dir="right" />
             </LinkButton>
 
             <div className="dk-hero-badge">
-              <LiveDot on />
+              <LiveDot on={Boolean(nowTitle)} />
               <div>
                 <div className="m-muted" style={{ fontSize: 11 }}>
-                  LIVE TRANSMISSION
+                  {nowTitle ? copy.scheduledTransmission : copy.noCurrentSlot}
                 </div>
-                <strong>{nowTitle ?? 'A SIGNAL FROM BELOW'}</strong>
+                <strong>{nowTitle ?? copy.noCurrentSlot}</strong>
               </div>
             </div>
           </div>
 
           <div className="dk-stats">
             <span>
-              <strong>{counts.stations}</strong> STATIONS
+              <strong>{counts.stations}</strong> {copy.stations}
             </span>
             <span>
-              <strong>{counts.countries}</strong> COUNTRIES
-            </span>
-            <span>
-              <strong>{counts.plays}</strong> SIGNALS LOGGED
+              <strong>{counts.countries}</strong> {copy.countries}
             </span>
           </div>
         </div>

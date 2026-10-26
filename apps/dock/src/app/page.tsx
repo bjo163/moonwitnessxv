@@ -1,4 +1,6 @@
 import { Badge, Card, CardBody, LinkButton, Tape, type BadgeTone, Chevron } from '@moonwitness/moonui'
+import { formatLocaleNumber } from '@moonwitness/core'
+import { headers } from 'next/headers'
 import { homePayload } from '@/data/queries/program'
 import { Player } from '@/ui/client/Player'
 import { LiveTicker } from '@/ui/client/LiveTicker'
@@ -14,26 +16,32 @@ import {
   ZineSkaPosterSection,
 } from '@/ui/components/sections'
 import { todayWeekday } from '@/lib/time'
+import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { getLandingCopy } from '@/lib/landing-copy'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
+  const requestHeaders = await headers()
+  const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const copy = getLandingCopy(locale)
   const payload = await homePayload()
   const live = payload.stations.find((station) => station.id === payload.now?.stationId) ?? payload.stations[0]
 
   return (
     <div className="dk-home-stack">
-      <Hero counts={payload.counts} nowTitle={payload.now?.title} />
+      <Hero counts={{ stations: payload.counts.stations, countries: payload.counts.countries }} nowTitle={payload.now?.title} locale={locale} />
 
       <ZineFeatureTrio
         now={payload.now}
         live={<LiveTicker initial={payload.now} />}
         leadStationId={live?.id}
+        locale={locale}
       />
 
-      <CrewConstellation counts={payload.counts} stations={payload.stations} />
+      <CrewConstellation counts={payload.counts} stations={payload.stations} locale={locale} />
 
-      <ArchiveTimeline slotCount={payload.week.length} />
+      <ArchiveTimeline slotCount={payload.week.length} locale={locale} />
 
       <ZineSkaPosterSection />
 
@@ -42,11 +50,11 @@ export default async function HomePage() {
           <CardBody className="m-stack" style={{ gap: 16 }}>
             <div className="dk-deck-header">
               <div>
-                <Tape tone="accent">WORLD MONITOR · OSINT RADAR INTERCEPT</Tape>
-                <h2 className="dk-section-heading">GLOBAL PULSE & INTELLIGENCE.</h2>
+                <Tape tone="accent">{copy.worldMonitor}</Tape>
+                <h2 className="dk-section-heading">{copy.globalPulse}</h2>
               </div>
               <span className="m-muted" style={{ fontSize: 13 }}>
-                LIVE FEED · AI TRIAGED
+                {copy.liveFeedAiTriaged}
               </span>
             </div>
 
@@ -71,7 +79,7 @@ export default async function HomePage() {
                   >
                     <div className="m-row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
                       <span className="m-muted" style={{ fontSize: 11, textTransform: 'uppercase' }}>
-                        {sig.platform} · {sig.radarRefRecord?.name ?? 'Radar'}
+                        {sig.platform} · {sig.radarRefRecord?.name ?? copy.radar}
                       </span>
                       <Badge tone={badgeTone}>{sig.sentiment.toUpperCase()}</Badge>
                     </div>
@@ -91,9 +99,9 @@ export default async function HomePage() {
                       </p>
                     ) : null}
                     <div className="m-row" style={{ justifyContent: 'space-between', fontSize: 11, marginTop: 'auto' }}>
-                      <span className="m-muted">Urgency: {sig.urgencyScore}%</span>
+                      <span className="m-muted">{copy.urgency}: {formatLocaleNumber(sig.urgencyScore, locale)}%</span>
                       {sig.viewsCount ? (
-                        <span className="m-muted">{(sig.viewsCount / 1000).toFixed(1)}k views</span>
+                        <span className="m-muted">{formatLocaleNumber(sig.viewsCount / 1000, locale)}k {copy.views}</span>
                       ) : null}
                     </div>
                   </div>
@@ -108,31 +116,31 @@ export default async function HomePage() {
         <CardBody className="m-stack" style={{ gap: 18 }}>
           <div className="dk-deck-header">
             <div>
-              <Tape tone="pink">LIVE RADIO TELEMETRY</Tape>
-              <h2 className="dk-section-heading">SIGNALS IN THE DOCK.</h2>
+              <Tape tone="pink">{copy.liveRadioTelemetry}</Tape>
+              <h2 className="dk-section-heading">{copy.signalsInDock}</h2>
             </div>
             <LinkButton href="/stations" variant="accent" size="sm">
-              ALL STATIONS ({payload.counts.stations}) <Chevron dir="right" />
+              {copy.allStations} ({formatLocaleNumber(payload.counts.stations, locale)}) <Chevron dir="right" />
             </LinkButton>
           </div>
 
           <div className="m-grid m-grid-2">
-            <NowPlayingCard now={payload.now} live={<LiveTicker initial={payload.now} />} />
-            <ChartBars title="Most played signals" rows={payload.topStations} empty="No listens logged yet — press play." />
+            <NowPlayingCard now={payload.now} live={<LiveTicker initial={payload.now} />} locale={locale} />
+            <ChartBars title={copy.mostPlayedSignals} rows={payload.topStations} empty={copy.noListens} />
           </div>
 
-          <StationGrid stations={payload.stations} />
+          <StationGrid stations={payload.stations} locale={locale} />
 
           <div className="m-grid m-grid-2">
-            <ChartBars title="Signals per country" rows={payload.perCountry} empty="No country data." />
-            <ChartBars title="Signals per genre" rows={payload.perGenre} empty="No genre data." />
+            <ChartBars title={copy.signalsPerCountry} rows={payload.perCountry} empty={copy.noCountryData} />
+            <ChartBars title={copy.signalsPerGenre} rows={payload.perGenre} empty={copy.noGenreData} />
           </div>
 
           <div className="m-stack" style={{ gap: 12 }}>
             <div>
-              <Tape tone="cyan">THIS WEEK&apos;S TRANSMISSION GRID</Tape>
+              <Tape tone="cyan">{copy.weeklyGrid}</Tape>
             </div>
-            <WeekGrid slots={payload.week} today={todayWeekday()} />
+            <WeekGrid slots={payload.week} today={todayWeekday()} locale={locale} />
           </div>
         </CardBody>
       </Card>

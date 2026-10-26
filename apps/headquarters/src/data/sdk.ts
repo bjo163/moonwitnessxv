@@ -1,6 +1,6 @@
-import { createServerSdk } from '@moonwitness/moonql-client'
 import { RADIO_API_URL } from '@/lib/env'
 import { readToken } from '@/lib/session'
+import { createHeadquartersServerSdk } from './server-sdk.mjs'
 
 /**
  * Server-only client. The token is resolved per request from the httpOnly
@@ -8,5 +8,5 @@ import { readToken } from '@/lib/session'
  * Construction is the shared kit's job; only the token reader is HQ-specific.
  */
 export function serverClient() {
-  return createServerSdk({ env: { RADIO_API_URL }, token: readToken })
+  return createHeadquartersServerSdk(RADIO_API_URL, readToken)
 }

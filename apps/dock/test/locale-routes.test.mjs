@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import process from 'node:process'
 import test from 'node:test'
 import { NextRequest } from 'next/server.js'
 import { config, middleware } from '../src/middleware.ts'
@@ -28,6 +29,16 @@ test('canonical locale paths rewrite to existing routes without losing query dat
 
   const page = middleware(request('/en/reader?chapter=2'))
   assert.equal(page.headers.get('x-middleware-rewrite'), 'http://localhost:3001/reader?chapter=2')
+})
+
+test('localized rewrites overwrite untrusted internal locale headers', () => {
+  for (const locale of ['id', 'en']) {
+    const response = middleware(request(`/${locale}/reader`, { 'x-mw-locale': 'fr' }))
+    assert.equal(response.headers.get('x-middleware-request-x-mw-locale'), locale)
+    assert.equal(response.headers.get('x-mw-locale'), null)
+    const overridden = response.headers.get('x-middleware-override-headers')?.split(',').map((name) => name.trim().toLowerCase()) ?? []
+    assert.ok(overridden.includes('x-mw-locale'))
+  }
 })
 
 test('unsupported locale prefixes fail closed and never remap to a supported locale', () => {

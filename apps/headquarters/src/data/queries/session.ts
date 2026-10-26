@@ -1,7 +1,7 @@
 import { cache } from 'react'
-import { MoonApiError } from '@moonwitness/moonql-client'
 import { serverClient } from '@/data/sdk'
 import type { SessionUser } from '@/data/types'
+import { resolveHqSession } from '@/lib/session-auth.mjs'
 
 /**
  * The signed-in admin, deduped per request/render.
@@ -11,12 +11,7 @@ import type { SessionUser } from '@/data/types'
  * to the login screen with a valid cookie.
  */
 export const me = cache(async (): Promise<SessionUser | null> => {
-  try {
-    return await serverClient().call<SessionUser>('/auth/me')
-  } catch (err) {
-    if (err instanceof MoonApiError && err.statusCode === 401) return null
-    throw err
-  }
+  return resolveHqSession(() => serverClient().call<SessionUser>('/auth/me'))
 })
 
 export async function login(loginName: string, password: string): Promise<{ token: string; user: SessionUser }> {
