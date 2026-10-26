@@ -7,7 +7,8 @@
 > `fb6a548` (`moonql: generated SDK is up to date`) setelah source `data/`
 > di-commit, addon monitor di-wire, dan artefak kontrak SDK dipaku ke LF lewat
 > `.gitattributes`. `pnpm verify` juga menjalankan gate ini sebelum test dan
-> `build:web`. Lihat
+> `build:web`; CI [run 40263464402](https://github.com/bjo163/moonwitnessxv/actions/runs/40263464402)
+> pada `fa0f1b5` `success`. Lihat
 > [laporan revalidasi](M01-M05-revalidation-2026-10-26.md).
 
 ---

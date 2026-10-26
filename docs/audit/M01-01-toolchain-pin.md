@@ -1,7 +1,7 @@
 # M01-01 — Toolchain Pin & Lockfile Compatibility Specification
 
 - **Audit Date**: 2026-10-26
-- **Commit SHA**: `fb6a548`
+- **Commit SHA**: `fa0f1b5`
 
 > **Revalidasi akhir 2026-10-26 — LULUS.** Pin lama `>=20` dan `.nvmrc 20.18.0`
 > tidak kompatibel dengan lockfile: `@eslint/js@10.0.1` membutuhkan
@@ -9,7 +9,9 @@
 > Seluruh sisi kini memakai **Node 24 LTS**: `.nvmrc`, `package.json#engines`,
 > CI (`node-version-file: .nvmrc`), serta kedua Dockerfile (`node:24-slim`).
 > Checkout bersih di `fb6a548` lulus `pnpm install --frozen-lockfile` dan
-> `pnpm verify` (199 test, 197 pass, 2 skipped, 0 fail). Lihat
+> `pnpm verify` (199 test, 197 pass, 2 skipped, 0 fail); CI
+> [run 40263464402](https://github.com/bjo163/moonwitnessxv/actions/runs/40263464402)
+> pada `fa0f1b5` juga `success` untuk install + `pnpm verify`. Lihat
 > [laporan revalidasi](M01-M05-revalidation-2026-10-26.md).
 
 ---
@@ -41,7 +43,8 @@
 ## 3. Clean-Checkout Verification
 
 Dijalankan pada worktree bersih di `fb6a548` dengan Node `v24.22.1` dan pnpm
-`10.33.4`:
+`10.33.4`; CI mengulang gate yang sama pada `fa0f1b5` (run `40263464402`,
+`success`):
 
 | Command | Result |
 |---|---|
@@ -51,6 +54,7 @@ Dijalankan pada worktree bersih di `fb6a548` dengan Node `v24.22.1` dan pnpm
 | `pnpm gen:sdk:check` | `moonql: generated SDK is up to date` |
 | `pnpm test` | 199 test, 197 pass, 2 skipped, 0 fail |
 | `pnpm build:web` | exit 0 (dock + headquarters) |
+| CI `Install dependencies` + `pnpm verify` | `success` (`fa0f1b5`) |
 
 `.gitattributes` memaku tiga artefak kontrak SDK ke LF agar checkout Windows
 tidak menghasilkan drift palsu pada `gen:sdk:check`.
