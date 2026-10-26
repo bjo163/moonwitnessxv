@@ -69,10 +69,10 @@ Positive evidence: Arabic source has `lang="ar"` and RTL; Indonesian translation
 
 ## Gaps, rollback, and next work
 
-M19-08's inventory and source-boundary review are complete. The task's evidence criterion is only partially met: there are no focused positive/negative tests for locale route negotiation, unsupported locales, route protection, or `/id`/`/en` legacy mapping at this baseline. No runtime was changed, so no runtime rollback was needed; removing this audit artifact is the rollback. Do not mark the task complete until its owner/integrator accepts the documented test-evidence gap or adds allowed focused tests.
+M19-08's inventory and source-boundary review are complete. The positive and negative Reader/Terms drills exercise the public content and rights boundary and show that source languages are not conflated with UI locale. There are no locale-route, unsupported-route, or `/id`/`/en` mapping tests because this audit baseline has no locale routes; route behavior belongs to M19-09. No runtime was changed, so no runtime rollback was needed; removing this audit artifact is the rollback.
 
 Next eligible route implementation is **M19-09**, subject to its listed prerequisites M05-11 and this audit being accepted. M19-10/11 content work follows route support and must preserve the source-language/right boundaries above. M19-18 (nested `SiteLayout` removal) also depends on M19-08 and can proceed independently after this audit is accepted.
 
-**Result source SHA:** `c1f828b69c81e6ab039a9606597f658d3a38a1f9` (unchanged; artifact is uncommitted).
+**Result source SHA:** `e73e156bf4616131152ff865b3f6f67658a92d77`.
 **Files changed:** `docs/audit/M19-08-dock-locale-scope.md` only.
 **Limitations:** no production/browser request was made; route protection assessment is limited to inspected application code; no locale-routing tests exist among the focused scripts run.
