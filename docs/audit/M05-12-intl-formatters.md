@@ -4,7 +4,7 @@
 - **Owner/worker:** platform/i18n; `/root/m05_12_intl_format`.
 - **Baseline SHA:** `0b3aedf5c6c290b9f0b312a591739a3177d0ccfa`.
 - **Branch:** `codex/m05-08-locale-audit-387f784`.
-- **Result SHA:** pending integrator commit.
+- **Result SHA:** `d06d581df2cf588804be3801bd6d4cec93dbd5d9`.
 - **Claimed/actual paths:** `packages/core/src/locale-format.ts`, `packages/core/src/index.ts`, `packages/core/test/locale-format.test.mjs`, this report.
 
 ## Behavior and boundaries
@@ -20,4 +20,4 @@ The shared core package exports numeric, currency, and date formatters using the
 
 ## Safety, rollback, and limits
 
-These helpers only format explicit display values and do not translate or mutate source passages, names, citations, or IDs. No external data, network lookup, or environment-derived location is used. Rollback removes the formatter export, implementation, focused test and this report; no migrations or persisted data are involved. No application has adopted the helpers yet, so this task proves the shared formatter contract, not a rendered UI. Independent review and exact result SHA remain for integration.
+These helpers only format explicit display values and do not translate or mutate source passages, names, citations, or IDs. No external data, network lookup, or environment-derived location is used. Rollback removes the formatter export, implementation, focused test and this report; no migrations or persisted data are involved. No application has adopted the helpers yet, so this task proves the shared formatter contract, not a rendered UI. The integrator reviewed the focused diff and exact result SHA is recorded above.
