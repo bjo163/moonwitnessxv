@@ -18,6 +18,10 @@
 
 **Final XV application naming decision (26 October 2026): ARSY is the existing backend Hub, currently physically located at `apps/radio` / `@moonwitness/radio`.** Its accepted target identity is **`apps/arsy` / `@moonwitness/arsy`**, and the existing Radio/stations/schedules/playback functionality becomes **SIGNAL/RADIO**, a bounded domain inside the same service. **One ARSY backend only; no second Hub.** The package/filesystem/Docker/CI migration is **not yet implemented** and is tracked by [ADR-0001](../../docs/decisions/ADR-0001-arsy-is-xv-hub.md) + [TODO M28](../../TODO.md#m28--arsy-hub-rename-and-compatibility-migration). Historical statements that ARSY is only "proposed orchestration" reflect an **earlier meaning**: future orchestration capabilities will extend this same ARSY Hub, not create another runtime. Radio media remains usable; no theological al-'Arsh representation or divine authority is claimed.
 
+**SKYLINK — the accepted second standalone service (27 October 2026, [ADR-0006](../../docs/decisions/ADR-0006-skylink-communication-surface.md)):** `SKYLINK` (`apps/skylink`, port `3005`) is a **bounded communication service, not a second Hub**. It owns domain **D18 Messages & Channels** and provides a multi-provider messaging surface (WhatsApp first, Telegram second, then other platforms) with its own REST + WebSocket API and operator UI. Dependency direction is `other apps → API → SKYLINK → providers` and `ARSY/SIGNAL → API → SKYLINK`; **identity remains D00/ARSY** (SKYLINK issues no sessions), and it may not become another ORM catalog, publishing engine or graph store. This is the only accepted exception to "one ARSY backend only"; no third service is authorized by this paragraph.
+
+**ECHOLOG — the accepted third standalone service target (planned M39, no implementation yet; 27 October 2026, [ADR-0007](../../docs/decisions/ADR-0007-echolog-storage.md)):** `ECHOLOG` (`apps/echolog`, port `3006`) is planned as a **bounded, stateless storage service, not a second Hub**. It will own domain **D19 Object Storage & Attachments**: content-addressed `sha256/<digest>` objects, write-once, metadata in JSON sidecars, a `fs` driver and an S3-compatible driver, presigned downloads only. It will own **no database tables** — ADR-0006's closed SQL-owner set stays `{moonql, skylink-store}`. Dependency direction is `other apps → API → ECHOLOG → driver`; **identity remains D00/ARSY**, and no consumer will hold driver credentials. It is the planned provider for the owner-deferred off-host backup task, which remains blocked until its S3-compatible target exists.
+
 **XV execution handoff (26 October 2026):** This narrative governs scope and historical/source interpretation. The unique architecture/owner decisions are tracked in [`BLUEPRINT.md`](../../BLUEPRINT.md), and the **sole task ID/status plan** lives in [`TODO.md`](../../TODO.md) (G0–G6, M00–M28; M28 is the foundation ARSY rename, and M27 remains the release gate). If high-level stage lists in this narrative appear to overlap with the more detailed milestone work, **TODO owns execution status, BLUEPRINT owns technical boundaries, and this narrative owns vision**. Neither document confers source rights or certifies implemented runtime behavior.
 
 **Deep audit v1.1:** Section **21A** is the source-specific expansion covering II's 13 functions and eight eras, Corpus dataset inventory, XIV V10.1, A-L-L-A-H operational research, the 14 Empire system names, 25 Amanah recovery gap, all 33 patch rows, XV ACL and seven end-to-end journeys. This remains a vision and source inventory, **not a claim of completed migration or production capability**.
@@ -114,6 +118,9 @@ An earlier creative ontology used a `SHADOW` root and an `AGE OF LIGHT` class nu
 - `G.O.D. 99` organization **distinct from** Asmaul Husna 99, 99 Human States, and any 99 editorial chapter count.
 - `WINGS 10` divisions **distinct from** `AETHERION 10 Realms`.
 - `ARSY` technology **distinct from** al-'Arsh in scripture; `MIZAN` scoring **distinct from** eschatological judgment.
+- `SKYLINK` (the communication service) **distinct from** `SIGNAL` (the bounded Radio domain inside ARSY) and **distinct from** any angelic, prophetic or divine authority; its registry entry carries `authorityLimit: NO_SUPERNATURAL_OR_DIVINE_AUTHORITY` and names a human operations wing, never an angel identity.
+- `PHONNY` is a **proposed communication-surface slot** with `projectStatus: NAME_UNCONFIRMED`, not a shipped product name; [ADR-0006](../../docs/decisions/ADR-0006-skylink-communication-surface.md) resolves that slot to `SKYLINK`.
+- `ECHOLOG` (the storage service) **distinct from** observability and logging — log/audit retention stays with `moonql-ops` and the Cockpit; ECHOLOG stores **bytes and attachments**, never log streams. It is also **distinct from** `SIGNAL` and from any angelic, prophetic or divine authority; its registry entry carries `authorityLimit: NO_SUPERNATURAL_OR_DIVINE_AUTHORITY`.
 
 ---
 
@@ -497,12 +504,14 @@ The checked XV `main` baseline is initial commit `0e0b3b8de0b39d1fee01589e939cca
 | `apps/radio` (`@moonwitness/radio`) **— current path, ARSY target** | **ARSY: the existing DB-touching Fastify API + MoonQL ORM Hub**; physical target `apps/arsy` / `@moonwitness/arsy`, pending M28; radio functions retained as SIGNAL/RADIO | `3000` |
 | `apps/dock` | **Public Next.js Dock**: stations, schedule, now-playing/catalog/embedding | `3001` |
 | `apps/headquarters` | **Next.js admin command center**, login, systems, generic models, data views | `3002` |
+| `apps/skylink` (**proposed, M38**) | **SKYLINK: standalone multi-channel communication surface** — Fastify REST + WebSocket + operator UI; owner of **D18 Messages & Channels**; not a second Hub | `3005` |
+| `apps/echolog` (**proposed, M39**) | **ECHOLOG: standalone object storage & attachments** — Fastify REST, content-addressed immutable objects, `fs`/S3 drivers, presigned downloads; owner of **D19**; **stateless** (no tables) | `3006` |
 | `packages/moonql` | Declarative model descriptors, additive schema sync, repository, auto-REST, views, events, generated schema | internal |
 | `packages/moonql-client` | Typed generated SDK | internal |
 | `packages/moonui` | Existing shared UI | internal |
 | `packages/moonql-base/auth/apikeys/ops/settings` | Reference data, sessions and permissions, machine tokens, operational audit/cron, settings | internal |
 | `packages/moonql-stations/schedule/playlog` | Radio-domain station, scheduling, listening aggregation | internal |
-| `packages/whatsapp`, `packages/denpa` | Optional messaging/channel and inbound transmission functionality | internal |
+| `packages/whatsapp`, `packages/denpa` | Current optional messaging/channel and inbound transmission functionality; **target: `packages/skylink-whatsapp` / `packages/skylink-core` under M38** | internal |
 
 Supporting baseline: Docker Compose, PostgreSQL option and in-memory engine, `.env.example`, generated docs, unit tests/verify scripts, backup/restore runbook.
 
@@ -884,6 +893,10 @@ A XIV V10.1 companion identifies the following **14 system concepts** that were 
 
 The ten fictional/specialist labels named in the historical narrative are: **SKYLINK**, **RAINMAKERS**, **LAST SIGNAL**, **SOFT LANDING**, **QUESTION ZERO**, **DOUBLE CHECK**, **ECHOLOG**, **LEDGER PUNK**, **FIREWALL**, **HAVEN**. These are sourced as a *creative governance taxonomy*, not actual angels, service accounts or granted operator permissions. Verify their current source JSON registry at a pinned version before using them as configuration.
 
+**W01 `SKYLINK` cross-reference (27 October 2026):** the sibling Empire repository's `data/organization/wings10.json` (v1.0.0) defines `W01 | SKYLINK | team: SIGNAL COURIERS | area: Transmission & Knowledge | primaryPillar: TRUTH_GUIDANCE | proposedLeadPersonaSlot: GOD-049`, with `status: PROPOSED_NOT_ASSIGNED`, `unitType: HUMAN_OPERATIONS_WING` and `authorityLimit: NO_SUPERNATURAL_OR_DIVINE_AUTHORITY`. The name is used as the **software identity** of XV's planned communication surface per [ADR-0006](../../docs/decisions/ADR-0006-skylink-communication-surface.md), not as configuration. The registry entry remains **`PROPOSED_NOT_ASSIGNED`**; using the name assigns no office, grants no authority, converts no fictional persona into an operator, and does not modify the registry.
+
+**W07 `ECHOLOG` cross-reference (27 October 2026):** the sibling Empire registry defines `W07 | ECHOLOG | team: FIELD RECORDERS | area: Observation & Documentation | primaryPillar: TRUTH_GUIDANCE | proposedLeadPersonaSlot: GOD-050`, with `GOD-050 | FIELD WITNESS | dept D02 SIGNAL RUNNERS`, `status: PROPOSED_NOT_ASSIGNED` and `authorityLimit: NO_SUPERNATURAL_OR_DIVINE_AUTHORITY`. These fields are a source-name reference only, never runtime configuration. The name is used as the **software identity** of XV's planned object-storage surface per [ADR-0007](../../docs/decisions/ADR-0007-echolog-storage.md). It assigns no office, no custody authority over private source material, and does not modify the registry.
+
 ## 21A.7 Twenty-five Bidang Amanah — recover a missing architecture family
 
 Earlier design discussions refer to a **25 Bidang Amanah** model linked to actual **prophetic mission patterns**, **Divine Ontology**, **Asma/principles**, and ordinary general-domain responsibilities. The historical conceptual chain:
@@ -1033,6 +1046,8 @@ Recommended architecture approach: protect existing stations/API clients, add on
 | **WITNESS** | Observations, Testimony, Events, Messages, Fault Lines, Past Presence | Consent-aware story/witness domain |
 | **STORIES** | Four lenses, eight eras, Crew, Episodes, Character Atlas, Posters/Comics | Creative/world-specific canon |
 | **SIGNAL** | Radio stations, schedule, DENPA, music/media source references | **Existing XV product domain** |
+| **LINK / MESSAGES** | Multi-provider inbox (WhatsApp, Telegram; later Discord, Instagram, Messenger, X), pairing, transmit/receive, channel status | **D18 owned by SKYLINK**; ARSY and other apps consume it as clients |
+| **STORE / ATTACHMENTS** | Object storage and attachments: verified upload, digest, retention, legal hold, presigned download | **D19 owned by ECHOLOG**; stateless (no tables); consumers store `{object_key,digest,size,content_type}` only |
 | **WORLD** | World Monitor, Earth/Cosmos, MTS/Time, scientific simulations | Source-grounded monitoring/research, later |
 | **JOURNEY** | Voluntary reflections, Mission, Path, World Patches, AETHERION game | Journey/workflow vs fiction separated |
 | **ABOUT** | Vision, source policy, method, data rights, project history, how to cite | Published governance |

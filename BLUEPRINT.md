@@ -98,8 +98,14 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 | COCKPIT | \`apps/cockpit\` | Developer process/log/preview supervisor | Existing local application, not public admin or production energy controller |
 | AI Gateway / Sentinel | \`apps/aigateway\`, \`apps/sentinel\` | Internal bounded model routing / source collection | Existing workers/services, not public AI/monitoring authority |
 | ARSY / SIGNAL | \`apps/radio\` now, \`apps/arsy\` after M28 | ONE Fastify/MoonQL API, data authority and existing Radio domain | Accepted name; rename pending, preserve legacy paths |
+| **SKYLINK** | \`apps/skylink\` (M38-07 health-only skeleton) | Health route only; provider messaging, D18 store and operator UI remain planned | **Accepted (ADR-0006)**; bounded service, **not** a second Hub; owns D18 only |
+| **ECHOLOG** | planned \`apps/echolog\` (not yet implemented; M39) | Object storage and attachments: verified upload, `sha256` digests, retention, legal hold, presigned download | **Accepted (ADR-0007)**; bounded planned service, **stateless** (no tables), **not** a second Hub; will own D19 only |
 
 **Proposed D14–D17 (not accepted domain contracts):** D14 Community/Membership; D15 Commerce & Work; D16 Financial Operations/treasury oversight; D17 physical Energy & Assets. Design governance by separate ADR before creating schemas. Each model has precisely one ARSY/MoonQL owner; frontend boundaries do not confer database ownership. WORKS initially sells actual existing products/services via appropriately licensed payment providers; multi-seller wallets, banking, speculative tokens and automated payouts are out of initial scope. HELIOGRID pilot must start with verified read-only meters, units, calibration and technician permission; simulations never masquerade as measured generation/savings. No second REST hub, login system, editor, approval engine or graph database.
+
+**D18 — accepted carve-out (ADR-0006):** **D18 Messages & Channels** is owned by **SKYLINK** (`apps/skylink`), the single accepted exception to "every model is owned by ARSY/MoonQL". SKYLINK owns one dedicated `skylink` schema and is the **second and final** SQL/migration owner besides \`@moonwitness/moonql\`; a guard test must keep that set closed. The carve-out authorizes **no** second REST hub, no second login/identity system, no second publishing/approval engine, no graph database and no second database container. D09 keeps stations, schedules, playlogs and DENPA and must not regress; `channels` semantics move to D18 by migration, never by duplication.
+
+**D19 — accepted storage owner (ADR-0007):** **D19 Object Storage & Attachments** is owned by **ECHOLOG** (`apps/echolog`). ECHOLOG is **stateless**: it owns no tables and imports no SQL driver, so the closed SQL-owner set stays exactly `{@moonwitness/moonql, @moonwitness/skylink-store}`. It owns bytes, digests, retention, legal hold and download grants only — never rights/consent (D08), identity (D00), media manifests (D07), artifact metadata (D01) or message rows (D18). Consumers store `{object_key, digest, size, content_type}`. This carve-out authorizes no second Hub, no second identity, no second database and no `bytea` payloads in Postgres.
 
 ### 2A.2 Reusable App Factory — early engineering contract, NOT implemented
 
@@ -122,7 +128,7 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 |---|---|---|---|---|
 | Dock | Public Next UI, navigation, forms, content, SEO | PARTIAL/UNKNOWN; no verified \`/id\`/\`/en\` | M19-08–M19-19, M19-31 | Both routes, switcher, degraded mode, rights gate, browser E2E |
 | Headquarters | Login, sidebar, model/forms, errors, admin status | NOT VERIFIED in two languages | M19-20–M19-24 | id/en role tests and visible copy parity |
-| Cockpit | React/Vite console, panels, dialogs/help, optional CLI | NOT VERIFIED in two languages | M19-25–M19-30 | actual GUI/CLI scope, id/en, machine log invariants |
+| Cockpit | React/Vite console, panels, dialogs/help, optional CLI | VERIFIED BILINGUAL TECHNICIAN CONSOLE (M19-25–M19-30, ADR-0008) | M19-25–M19-30 | In-GUI switcher, localStorage persistence, 1:1 key parity, accessible alertdialog confirmations, machine log invariance |
 | ARSY (currently radio) | Human-facing launchpad, authenticated Studio UI, safe errors/diagnostics | NOT VERIFIED in two languages | M05-14; M28 migration | stable routes/envelope/error discriminators and auth, id/en UI and messages |
 | AI Gateway | User-visible provider/error info if exposed | NOT VERIFIED in two languages | M05-15 | human messages appropriate, IDs stable |
 | Sentinel | Human CLI help/actionable diagnostics if any | UNKNOWN/NOT VERIFIED | M05-16 | no translation of machine logs or automation output |
@@ -162,6 +168,14 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
            |                       |
       apps/headquarters <---- authorized reviewer actions
 
+    Messaging dependency direction (ADR-0006) — a bounded service, not a second Hub:
+      ARSY/SIGNAL and other apps ──REST+WS (service key / D00 session)──▶ SKYLINK (apps/skylink, D18)
+                                                                          ──▶ WhatsApp · Telegram · later providers
+
+    Storage dependency direction (ADR-0007) — bounded and stateless, not a second Hub:
+      apps and workers ──API (service key / D00 session)──▶ ECHOLOG (apps/echolog, D19)
+                                                          ──▶ driver: fs (default) · s3 (MinIO/R2/AWS)
+
 - **Git XV** owns software, vocabulary definitions, schemas, policies and approved editorial specs.
 - **Publisher/source owner** owns the original outside work/license, not XV.
 - **Approved asset storage** owns one immutable version of consented media/source bytes; XV stores metadata/digests. No public private-archive dumps.
@@ -189,6 +203,8 @@ These boundaries require an XV-local ADR for any schema/data migration. XIV's Ob
 | D11 | Journey optional | Path, milestone, mission, human mandate, game cross-reference | 100CENTER views; no faith score |
 | D12 | Workflow optional | Human task/review queue and AI suggestion lifecycle | Only one orchestration owner |
 | D13 | Design (Git) | UI contracts, brand, asset provenance | MoonUI consumer; Moonframe/Assets optional |
+| **D18** | **Messages & Channels — owned by SKYLINK** | `channel_accounts`, `conversations`, `messages`, `delivery_attempts` (schema `skylink`) | ARSY and other apps are clients only; no identity/session ownership; D09 `channels` migrated here |
+| **D19** | **Object Storage & Attachments — owned by ECHOLOG** | Object bytes, `sha256` digest, size, MIME, retention, legal hold, quota, download grants (sidecar metadata; **no tables**) | Consumers hold references only; not rights (D08), identity (D00), manifests (D07) or artifacts (D01) |
 
 A record is stored under one canonical owner. Search exports, charts, caches, UI read models and RAG retrieval never create a competing source of truth. Don't implement 14 names of Empire as 14 microservices.
 

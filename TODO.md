@@ -57,7 +57,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 | **G1 — SOURCE** | M06–M11 | Historic source crosswalk, corpus, reader, lexicon, ontology, figures |
 | **G2 — RESEARCH** | M12–M15 | Typed relations, SRGBL/Key Witness, MIZAN, comparative case |
 | **G3 — WITNESS & CREATIVE** | M16–M19 | Personal witness, creative canon, publishing, design |
-| **G4 — OPERATIONS** | M20–M23 | 100CENTER, optional AI, existing Radio/WA/DENPA, Journey |
+| **G4 — OPERATIONS** | M20–M23 plus **M38 SKYLINK** plus **M39 ECHOLOG** | 100CENTER, optional AI, existing Radio/WA/DENPA, Journey; SKYLINK = standalone multi-channel communication surface (D18); ECHOLOG = standalone object storage & attachments, stateless (D19) |
 | **G5 — OPTIONAL RESEARCH** | M24–M26 | World monitoring, Science/Time, legacy registries and source recovery |
 | **G6 — RELEASE** | M27 | Real full-stack tests, privacy, rights and approved launch |
 | **G7 — ECOSYSTEM** | M29–M37 | AI handoffs, Master Design, Lighthouse, Harbor, SHADOW, MoonLab, WORKS, HELIOGRID, cross-app identity |
@@ -782,7 +782,65 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 | - [ ] | **M37-05** — Test cross-app token expiry and role isolation | P1 | D4 | M37-04 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M37/M37-05.md) |
 ---
 
-## Consistency controls for 38-milestone plan
+## M38 — SKYLINK multi-channel communication surface
+
+**Group:** G4 · **Priority:** P0 · **Prerequisites:** ADR-0006 accepted, D18 registered (M38-04), M22, M28 · **Scope:** `apps/skylink`, `packages/skylink-*`, D18 schema, documentation upgrade. **Status:** PLANNED; documentation tasks M38-02..M38-05 gate every line of code.
+
+**Outcome:** SKYLINK owns domain **D18 Messages & Channels** as a standalone Fastify + WebSocket + operator-UI service on port 3005. Dependency direction is `other apps → API → SKYLINK → providers` and `ARSY/SIGNAL → API → SKYLINK`; ARSY stops constructing provider clients in-process. Source of truth: [ADR-0006](docs/decisions/ADR-0006-skylink-communication-surface.md).
+
+**Exit gate:** ARSY sends and receives through SKYLINK over HTTP+WS with `SKYLINK_ENABLED=false` by default; WhatsApp (Baileys 7.0.0-rc14) and Telegram both proven; every affected document names SKYLINK and D18; rollback to the in-process channel demonstrated with no loss of recorded D18 messages. **Rollback:** flag off restores current behaviour; the `skylink` schema is additive and never edited by MoonQL migrations.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M38-01** — Ratify ADR-0006 and record the SKYLINK/D18 decision | P0 | D1 | — | **LEAF**; ADR states ACCEPTED with provider order WhatsApp→Telegram, the single second-SQL-owner exception, and the required-document clause; `docs/decisions/README.md` lists it as accepted; evidence = exact SHA + owner review; [packet](docs/tasks/M38/M38-01.md) |
+| - [ ] | **M38-02** — Upgrade this register for M38 (milestone rows, group map, status block, target count) | P0 | D1 | M38-01 | **LEAF**; M38 section present, G4 map names M38, target-register count updated, **no historical checkbox rewritten**; evidence = diff + exact SHA; [packet](docs/tasks/M38/M38-02.md) |
+| - [ ] | **M38-03** — Upgrade the master narrative to name SKYLINK and D18 | P0 | D2 | M38-02 | **LEAF**; five anchors updated (final naming decision, name-separation section, runtime table, WINGS cross-reference, domain list); W01 recorded **without** claiming an assigned office and `authorityLimit` retained; evidence = diff + exact SHA; [packet](docs/tasks/M38/M38-03.md) |
+| - [ ] | **M38-04** — Register D18 in BLUEPRINT, M02-02 and APPS, and add the focused architecture contract | P0 | D3 | M38-03 | **LEAF**; D18 row with SKYLINK as sole owner, explicit carve-out next to "no second REST hub/login/graph", six historical directories distinguished from the current M38-07 health-only seventh app, new `docs/architecture/SKYLINK.md` indexed; evidence = diff + exact SHA; [packet](docs/tasks/M38/M38-04.md) |
+| - [ ] | **M38-05** — Upgrade MASTER_DESIGN, design surfaces, README, milestone/task packets and agent guidance | P0 | D3 | M38-04 | **LEAF**; six historical app directories distinguished from the current seventh health-only SKYLINK skeleton and the planned full service; no unsupported implementation claims; surface semantics state no fictional LIVE/NOMINAL claim; evidence = repository-wide search output + exact SHA; [packet](docs/tasks/M38/M38-05.md) |
+| - [ ] | **M38-06** — Pin the port, env and dev-runner contract for SKYLINK | P0 | D2 | M38-07 | **LEAF**; `PORTS.skylink=3005` plus `SKYLINK_URL_DEFAULT`, egress deny-host, `scripts/dev.mjs` and `scripts/free-ports.mjs` mention 3005, `.env.example` documents every `SKYLINK_*`, `env-contract` test green; evidence = focused test output + exact SHA; [packet](docs/tasks/M38/M38-06.md) |
+| - [ ] | **M38-07** — Stand up `apps/skylink` and `packages/skylink-core` with health and no providers | P0 | D3 | M38-05 | **LEAF**; boots on 3005, `/health` 200, zero providers registered, `pnpm-lock.yaml` importers match the manifests on disk, topology test green; evidence = boot log + test output + exact SHA; [packet](docs/tasks/M38/M38-07.md) |
+| - [ ] | **M38-08** — Implement the D18 store, migrations and single-owner guard | P0 | D4 | M38-07 | **LEAF**; `skylink` schema migrates up and down cleanly, `schemaFilter` scoped, guard test holds `drizzle-orm` importers to exactly `{moonql, skylink-store}`; evidence = migration output + test output + exact SHA; [packet](docs/tasks/M38/M38-08.md) |
+| - [ ] | **M38-09** — Extract a transport-only WhatsApp adapter on Baileys 7.0.0-rc14 | P0 | D4 | M38-08 | **LEAF**; send and receive proven, no Hub business logic or Hub URL inside the package, radio bot relocated to its consumer, negative test on a missing session; evidence = focused tests + exact SHA; [packet](docs/tasks/M38/M38-09.md) |
+| - [ ] | **M38-10** — Add the Telegram provider, webhook verification and provider-security contract | P1 | D3 | M38-09 | **LEAF**; a forged webhook is rejected, an authentic one persists to `messages`, `docs/architecture/SECURITY.md` records credential handling and `raw` retention; evidence = positive/negative tests + exact SHA; [packet](docs/tasks/M38/M38-10.md) |
+| - [ ] | **M38-11** — Publish REST and WS surfaces with two auth modes and a duplicate-channel guard | P0 | D4 | M38-10 | **LEAF**; unauthenticated calls return 401, a duplicate channel id fails at boot instead of silently overwriting, WS delivers channel state; evidence = positive/negative tests + exact SHA; [packet](docs/tasks/M38/M38-11.md) |
+| - [ ] | **M38-12** — Make ARSY a SKYLINK client behind `SKYLINK_ENABLED` | P0 | D4 | M38-11, M28 | **LEAF**; flag off reproduces today's behaviour exactly, flag on routes through SKYLINK, M22 Radio regression suite green, Dockerfile copies every workspace dependency dist; evidence = suite output + exact SHA; [packet](docs/tasks/M38/M38-12.md) |
+| - [ ] | **M38-13** — Build the operator UI and register it in the design gates | P1 | D3 | M38-12 | **LEAF**; inbox, pairing and channel status render from MoonUI primitives, `pnpm ui:check` reports zero violations, client enters the lint and design-system globs; evidence = `ui:check` output + screenshot + exact SHA; [packet](docs/tasks/M38/M38-13.md) |
+| - [ ] | **M38-14** — Compose service, cockpit supervision, end-to-end proof, rollback and evidence | P0 | D4 | M38-13 | **LEAF**; compose service has a healthcheck, cockpit supervises six services, ARSY→SKYLINK→provider and inbound→WS→UI verified, rollback demonstrated, `docs/audit/M38-*.md` records every command; evidence = logs + exact SHA; [packet](docs/tasks/M38/M38-14.md) |
+
+**Gate dokumen (M38-02..M38-05):** selesai hanya jika dokumen membedakan enam app directory historis, skeleton health-only SKYLINK yang kini menjadi ketujuh, dan layanan messaging yang masih direncanakan; tidak ada klaim implementasi yang belum terbukti; D18 tercantum pada permukaan terkait; dan semua tautan `[packet]` dapat di-resolve.
+
+**Koreksi urutan (diverifikasi saat M38-05):** **M38-07 mendahului M38-06.** `scripts/dev.mjs` tidak boleh menyebut paket yang belum ada, dan `.env.example` tidak boleh mendeklarasikan variabel yang belum dibaca kode (`env-contract.test.ts` menolak keduanya). Jadi skeleton app (M38-07) dibuat lebih dulu, lalu port/runner/env (M38-06) disatukan dalam satu commit dengan entri runner-nya.
+
+---
+
+## M39 — ECHOLOG storage and attachments
+
+**Group:** G4 · **Priority:** P0 · **Prerequisites:** ADR-0007 accepted, D19 registered (M39-04) · **Scope:** `apps/echolog`, `packages/echolog-core`, root port/env/runner contract, documentation upgrade. **Status:** PLANNED; documentation tasks M39-02..M39-05 gate every line of code.
+
+**Outcome:** ECHOLOG owns domain **D19 Object Storage & Attachments** as a standalone, **stateless** Fastify service on port 3006: content-addressed `sha256/<digest>` objects, write-once, metadata in JSON sidecars, `fs` driver first and `s3` (MinIO/R2/AWS) second, presigned downloads only. It owns **no tables** — ADR-0006's closed SQL-owner set `{moonql, skylink-store}` stays true. Source of truth: [ADR-0007](docs/decisions/ADR-0007-echolog-storage.md).
+
+**Exit gate:** upload → metadata → download → delete round trip proven on both drivers; bytes never stored in Postgres; retention and legal hold refuse premature deletion; no consumer holds driver credentials; stopping the service leaves every object intact.
+
+**Rollback:** stop the service; consumers fall back to local files or a no-op, and existing objects stay untouched because nothing else writes them.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M39-01** — Ratify ADR-0007 and record the ECHOLOG/D19 decision | P0 | D1 | — | **LEAF**; ADR states ACCEPTED with the stateless clause, key scheme, driver order and non-goals; `docs/decisions/README.md` lists it; evidence = exact SHA + owner review; [packet](docs/tasks/M39/M39-01.md) |
+| - [ ] | **M39-02** — Upgrade this register for M39 | P0 | D1 | M39-01 | **LEAF**; M39 section present, G4 map names both M38 and M39, target-register count updated, **no historical checkbox rewritten**; evidence = before/after counts + exact SHA; [packet](docs/tasks/M39/M39-02.md) |
+| - [ ] | **M39-03** — Upgrade the master narrative to name ECHOLOG and D19 | P0 | D2 | M39-02 | **LEAF**; five anchors updated; W07 recorded **without** claiming an assigned office; ECHOLOG explicitly separated from observability/logging; evidence = diff + exact SHA; [packet](docs/tasks/M39/M39-03.md) |
+| - [ ] | **M39-04** — Register D19 in BLUEPRINT, M02-02 and APPS, add the ECHOLOG contract and security rules | P0 | D3 | M39-03 | **LEAF**; D19 row, SQL-owner set restated as closed, seven→eight apps, `docs/architecture/ECHOLOG.md` indexed, SECURITY records credentials/presign/retention; evidence = diff + exact SHA; [packet](docs/tasks/M39/M39-04.md) |
+| - [ ] | **M39-05** — Upgrade MASTER_DESIGN, design surfaces, README, milestone/task packets and agent guidance | P0 | D3 | M39-04 | **LEAF**; no document still says "seven apps" and ECHOLOG/D19 appear consistently; evidence = repository-wide search output + exact SHA; [packet](docs/tasks/M39/M39-05.md) |
+| - [ ] | **M39-06** — Stand up `apps/echolog` and `packages/echolog-core` with health and no active driver | P0 | D3 | M39-05 | **LEAF**; boots, `/health` 200, no driver committed, `pnpm-lock.yaml` importers match manifests, topology green; evidence = boot log + test output + exact SHA; [packet](docs/tasks/M39/M39-06.md) |
+| - [ ] | **M39-07** — Pin the port, env and dev-runner contract for ECHOLOG | P0 | D2 | M39-06 | **LEAF**; `PORTS.echolog=3006`, `scripts/dev.mjs` and `scripts/free-ports.mjs` mention 3006, `.env.example` documents every `ECHOLOG_*`, `FOREIGN_ENV_KEYS` extended, `env-contract` green; evidence = focused test output + exact SHA; [packet](docs/tasks/M39/M39-07.md) |
+| - [ ] | **M39-08** — Implement the content-addressed `fs` driver with quota, retention and legal hold | P0 | D4 | M39-07 | **LEAF**; identical bytes return the same key (dedupe), objects immutable after commit, delete refused under legal hold, GC reports held objects; evidence = tests + exact SHA; [packet](docs/tasks/M39/M39-08.md) |
+| - [ ] | **M39-09** — Publish REST upload/meta/download/delete/GC with two auth modes and hard limits | P0 | D4 | M39-08 | **LEAF**; 401 without credentials, 413 over size, 415 on disallowed MIME, 409 on held delete, presign TTL ≤5m; evidence = positive/negative tests + exact SHA; [packet](docs/tasks/M39/M39-09.md) |
+| - [ ] | **M39-10** — Add the `s3` driver, the optional profiled MinIO service and fs↔s3 parity | P1 | D3 | M39-09 | **LEAF**; the same operations pass on both drivers, compose service carries a healthcheck, no credentials in the app; evidence = parity output + exact SHA; [packet](docs/tasks/M39/M39-10.md) |
+| - [ ] | **M39-11** — Document the consumer handoff, build the operator UI and register the design gates | P1 | D3 | M39-10 | **LEAF**; handoff states consumers store `{object_key,digest,size,content_type}` only, `pnpm ui:check` zero violations, client registered in lint/design globs; evidence = `ui:check` output + screenshot + exact SHA; [packet](docs/tasks/M39/M39-11.md) |
+| - [ ] | **M39-12** — End-to-end proof, rollback, evidence and changelog | P0 | D4 | M39-11 | **LEAF**; upload→download→delete verified on both drivers, rollback leaves objects intact, `docs/audit/M39-*.md` records every command; evidence = logs + exact SHA; [packet](docs/tasks/M39/M39-12.md) |
+
+---
+
+## Consistency controls for 40-milestone plan
 
 **Priority order:** rename the **Hub application** to ARSY only after M28 compatibility gates; always protect the independent **Radio/SIGNAL feature**, permissions, sources, persistence, review and production restoration before adding unrelated surfaces. Although M22 appears under G4, run its P0 suite from the beginning. Stated milestone dependencies are conceptual gates: a task must also respect source rights and privacy even if its individual row does not restate them.
 
@@ -794,6 +852,6 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 **Progress evidence to capture when work begins:** `task-id`, `source-SHA`, `files`, `tests and logs`, `source/rights` where applicable, `reviewer/decision`, `blocked/risks`, `new-SHA`, `date/timezone`. A future agent must not tick unchecked boxes simply because similar files or issues exist in XII/XIV/Corpus.
 
-**Target register:** 38 milestones (29 preserved M00–M28 plus M29–M37), 266 preserved task IDs plus 45 newly scoped leaf IDs = **311 unique tasks**. Prior checkmarks keep scoped historical evidence. This file is the **only** active task register, not a GitHub-issue count, implementation claim or promise of elapsed time.
+**Target register:** 40 milestones (29 preserved M00–M28 plus M29–M37 plus the appended **M38** and **M39**), 267 preserved unique task IDs from M00–M28 plus 45 newly scoped leaf IDs from M29–M37 plus 14 SKYLINK leaf IDs plus 12 ECHOLOG leaf IDs = **338 unique tasks**. Prior checkmarks keep scoped historical evidence. This file is the **only** active task register, not a GitHub-issue count, implementation claim or promise of elapsed time.
 
 **End of XV Master TODO — modular planning v2, 26 October 2026.**

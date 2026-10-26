@@ -1,4 +1,4 @@
-# M02-02 — Domain Ownership Mapping & Boundary Register (D00–D13)
+# M02-02 — Domain Ownership Mapping & Boundary Register (D00–D19)
 
 - **Milestone**: M02 — XV Governance and Source of Truth
 - **Status**: RATIFIED
@@ -12,7 +12,7 @@ Setiap entitas data di MoonWitness XV hanya dimiliki oleh **satu domain kanonika
 
 ---
 
-## 2. Matriks Kepemilikan Domain D00–D13
+## 2. Matriks Kepemilikan Domain D00–D19
 
 | Domain ID | Nama Domain | Paket / Modul Target | Entitas Kanonikal yang Dimiliki | Batas & Aturan Anti-Tumpang Tindih |
 |---|---|---|---|---|
@@ -30,10 +30,12 @@ Setiap entitas data di MoonWitness XV hanya dimiliki oleh **satu domain kanonika
 | **D11** | **Journey** *(Optional)* | `@moonwitness/journey` *(Planned G4)* | `paths`, `milestones`, `human_mandates`, `interactive_levels` | Eksplorasi alur belajar mandiri dan arsip 100CENTER. |
 | **D12** | **Workflow** *(Optional)* | `@moonwitness/workflow` *(Planned G4)* | `review_tasks`, `human_decision_queue`, `ai_candidate_proposals` | Pengelolaan antrean kerja kurator manusia dan kandidat telaah AI. |
 | **D13** | **Design System** *(Existing)* | `@moonwitness/moonui` | Komponen visual, token styling CSS, SVG Zine & Crown, layouts | Kontrak visual antarmuka monorepo. Bebas dari business logic atau database state. |
+| **D18** | **Messages & Channels** *(Accepted — ADR-0006)* | `@moonwitness/skylink-store`, disajikan oleh `apps/skylink` | `channel_accounts`, `conversations`, `messages`, `delivery_attempts` (schema `skylink`) | Pemilik tunggal pesan/percakapan. **Tidak memiliki** identitas, sesi, atau login (D00 tetap ARSY). ARSY dan app lain hanya klien lewat REST/WS. Semantik `channels` pindah dari D09 ke D18 secara migrasi, bukan duplikasi; D09 tetap memiliki stations/schedule/playlog/DENPA. |
+| **D19** | **Object Storage & Attachments** *(Accepted — ADR-0007)* | `@moonwitness/echolog-core` + `apps/echolog` | Objek byte, `sha256` digest, size, MIME, retensi, legal hold, kuota, grant unduh (metadata sidecar; **tanpa tabel**) | Pemilik tunggal byte. **Stateless** — himpunan SQL owner tetap `{moonql, skylink-store}`. Bukan pemilik consent (D08), identitas (D00), `media_manifests` (D07), artifact (D01), atau baris pesan (D18); konsumen hanya menyimpan `{object_key, digest, size, content_type}`. |
 
 ---
 
 ## 3. Aturan Pelaksanaan (*Anti-Duplication Rules*)
-1. Tidak ada pembuatan modul baru yang melanggar domain D00–D13 di atas.
+1. Tidak ada pembuatan modul baru yang melanggar kepemilikan domain di atas.
 2. Saat migrasi nama ARSY (M28) berlangsung, seluruh entitas **D09 Signal** tetap utuh dan stabil.
 3. Seluruh dependensi antarmuka publik (`apps/dock`) dan admin (`apps/headquarters`) hanya berinteraksi melalui SDK typed client yang diturunkan dari skema domain kanonikal ini.
