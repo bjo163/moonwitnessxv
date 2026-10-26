@@ -267,13 +267,15 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M12-01** — Audit Rocksoul STORY/EVENT/PERSON/TEXT/LAW/PERSPECTIVE boundaries | P1 | D2 | M06-05 | No source owner duplication |
-| - [ ] | **M12-02** — Define typed candidate edge with evidence span and frame | P1 | D3 | M10-03,M12-01 | Missing evidence cannot be approved edge |
-| - [ ] | **M12-03** — Design immutable graph release pointer and rollback | P1 | D3 | M12-02,M02-05 | Exactly one versioned active release at a time |
-| - [ ] | **M12-04** — Implement rebuildable adjacency/search view from canonical records | P1 | D4 | M12-03 | Derived graph can be dropped and reconstructed |
-| - [ ] | **M12-05** — Add false identity and chronology counterexample fixtures | P1 | D3 | M12-02 | Similarity and co-occurrence never auto sameAs |
-| - [ ] | **M12-06** — Build Constellation relation detail with provenance and unknown | P1 | D3 | M12-04,M12-05 | Candidate and approved relation clearly labeled |
-| - [ ] | **M12-07** — Test export/replay/dedup and revoked edge visibility | P1 | D4 | M12-03,M12-06 | Graph release and source lineage correct |
+| - [x] | **M12-01** — Audit Rocksoul STORY/EVENT/PERSON/TEXT/LAW/PERSPECTIVE boundaries | P1 | D2 | M06-05 | No source owner duplication |
+| - [x] | **M12-02** — Define typed candidate edge with evidence span and frame | P1 | D3 | M10-03,M12-01 | Missing evidence cannot be approved edge |
+| - [x] | **M12-03** — Design immutable graph release pointer and rollback | P1 | D3 | M12-02,M02-05 | Exactly one versioned active release at a time |
+| - [x] | **M12-04** — Implement rebuildable adjacency/search view from canonical records | P1 | D4 | M12-03 | Derived graph can be dropped and reconstructed |
+| - [x] | **M12-05** — Add false identity and chronology counterexample fixtures | P1 | D3 | M12-02 | Similarity and co-occurrence never auto sameAs |
+| - [x] | **M12-06** — Build Constellation relation detail with provenance and unknown | P1 | D3 | M12-04,M12-05 | Candidate and approved relation clearly labeled |
+| - [x] | **M12-07** — Test export/replay/dedup and revoked edge visibility | P1 | D4 | M12-03,M12-06 | Graph release and source lineage correct |
+
+**Revalidasi 2026-10-26 (`e279998`, baseline `8064ff6`):** addon `@moonwitness/moonql-graph` terpasang dengan 4 model dan seed terpin: 5 candidate (2 approved, 1 rejected, 2 pending), 4 relasi ontology `VERIFIED`, 1 release immutable berisi 5 edge (4 ontology + 1 candidate, 1 dedup), pointer singleton v1 dan 5 baris adjacency. Candidate adalah klaim, bukan edge: approval menuntut reviewer, alasan, span, dan SHA-256 persis yang cocok dengan sumber; `sameAs` tidak pernah dapat di-approve (identitas tetap review M10), dan build release memblokir bukti yang tidak lengkap. Release deterministik dan immutable dengan `graphSha` unik; replay mengembalikan release yang ada, pointer memakai CAS `expectedVersion`, dan rollback hanya mengaktifkan release lama. Adjacency/search adalah turunan yang dapat di-drop dan dibangun ulang dari manifest aktif; candidate revoked tetap terlihat dan tetap ada di export release lama. Dock `/constellation` menampilkan panel release + antrean candidate, dan `/constellation/relations/[relationCode]` menyajikan detail candidate vs reviewed, evidence span/frame/SHA, provenance, review trail dan UNKNOWN tanpa kontrol tulis. Suite M12 6/6 lulus, drill UI 99/99, drill PG nyata `engine=pg` lulus dua kali, `pnpm build`, `pnpm build:web`, `ui:check` (75 file, 0 violation), `gen:sdk:check` dan eslint file M12 (0 error/0 warning) lulus. Suite penuh 258 test: 250 pass, 7 skipped, 1 fail hanya karena `packages/cli/` untracked (WIP bersamaan, 7 `eslint-disable`); tree commit bersih lulus `lint-budget` 2/2. Bukti lengkap: [laporan M12](file:///z:/project/moonradio/docs/audit/M12-typed-correlation-graph.md).
 
 
 ## M13 — SRGBL v8, Key Witness and SWING
