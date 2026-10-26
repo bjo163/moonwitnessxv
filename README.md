@@ -16,7 +16,7 @@ Modular **TypeScript/pnpm** monorepo with six established application workspaces
 
 **Ecosystem direction (PLANNED, not deployed):** Empire of the Light / `a-l-l-a-h.com` Lighthouse experience (initially reuse Dock), Harbor community, SHADOW creative authoring, MoonLab research, WORKS commerce and a conditional HELIOGRID read-only energy operations app after calibrated pilot. Those proposed app surfaces share D00 auth, one ARSY/MoonQL Hub and global `id`/`en` UI conventions; SKYLINK is the sole accepted bounded D18 service exception, not a second identity or general-purpose Hub. See [Blueprint §2A](BLUEPRINT.md#2a--global-ecosystem-surfaces-and-implementation-reality-proposal-26-october-2026), and [Immediate Execution](TODO.md#immediate-execution--foundation--global-i18n--first-bilingual-public-release) for **planning**; a health-only scaffold does not claim the communication surface is implemented.
 
-**First delivery target:** existing Dock landing page in `/id` and `/en`, Docker/Compose verified before claiming any Coolify deployment. `pnpm verify` passing alone is **not** a production Docker or public deployment verification. Current `apps/dock` routes do **not** yet demonstrate end-to-end bilingual content. ARSY's physical Radio rename remains pending.
+**First delivery target:** existing Dock landing page in `/id` and `/en`; M19-09–18 record localized route, SEO, fallback, and accessibility evidence. Frozen Docker/Compose readiness and publication are still unverified; `pnpm verify` passing alone is **not** production Docker or public deployment evidence. ARSY's physical Radio rename remains pending.
 
 Current application surfaces and accepted planned targets:
 
