@@ -74,7 +74,7 @@ moonwitness/
 
 ## Requirements
 
-- Node >= 20 · pnpm 10 (`corepack enable`)
+- Node 24 LTS (`>=24 <25`) · pnpm 10 (`corepack enable`)
 
 ## Getting started
 

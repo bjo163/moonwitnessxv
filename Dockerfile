@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---- Base ----
-FROM node:22-slim AS base
+FROM node:24-slim AS base
 # two instructions: PATH cannot reference PNPM_HOME while it is being defined
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -77,7 +77,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile --prod
 
 # ---- Runtime ----
-FROM node:22-slim AS runtime
+FROM node:24-slim AS runtime
 ENV NODE_ENV=production
 WORKDIR /repo
 # Keep the workspace layout: root manifests + package.jsons + built dist + prod deps

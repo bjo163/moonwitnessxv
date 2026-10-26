@@ -5,7 +5,7 @@
   "description": "Moonwitness - modular TypeScript Fastify monorepo with OpenAPI, a plugin system, and a WhatsApp (Baileys) plugin",
   "packageManager": "pnpm@10.33.4",
   "engines": {
-    "node": ">=20"
+    "node": ">=24 <25"
   },
   "scripts": {
     "build": "pnpm --filter @moonwitness/core build && pnpm --filter @moonwitness/radio build && pnpm --filter @moonwitness/moonql-client build && pnpm --filter @moonwitness/moonui build",
