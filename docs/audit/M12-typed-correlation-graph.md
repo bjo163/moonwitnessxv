@@ -88,8 +88,9 @@ Semua perintah dijalankan dari root repository; Node 24 LTS, pnpm 10.33.4.
 | `pnpm ui:check` | pass; 75 file, 0 violation |
 | `pnpm gen:sdk:check` | generated SDK up to date |
 | `pnpm exec eslint <file M12>` | 0 error, 0 warning |
-| `pnpm test` (tree kerja) | 258 test, 250 pass, 7 skipped, 1 fail — satu-satunya kegagalan `lint-budget` karena `packages/cli/` untracked (WIP bersamaan, 7 `eslint-disable`) menambah budget 14 menjadi 21; semua test M12 lulus |
-| `lint-budget` pada tree commit bersih (`e279998`, worktree terpisah) | 2 test, 2 pass — budget kembali 14 tanpa WIP tersebut |
+| `pnpm verify` pada tree M12 bersih (worktree `90a9b22` + lockfile sinkron) | pass: build, `ui:check` 75/0, lint 0 error (57 warning), `gen:sdk:check`, 258 test (251 pass, 7 skipped, 0 fail), `build:web` |
+| `lint-budget` pada tree commit bersih (`e279998`, worktree terpisah) | 2 test, 2 pass — budget 14 terpenuhi |
+| CI run 34 pada `06238fb` (memuat M12 + sinkronisasi lockfile) | pass ([run 40285847611](https://github.com/bjo163/moonwitnessxv/actions/runs/40285847611)); run 33 pada `90a9b22` gagal di `pnpm install --frozen-lockfile` karena importer `eslint-config`/`types` belum ada |
 
 ### PostgreSQL vertical slice
 
@@ -119,4 +120,4 @@ Cleanup: `docker stop mw-m12-pg` + `docker rm mw-m12-pg`; tidak ada container `m
 - Seed lima candidate adalah sample kontrak, bukan registry korelasi lengkap. Perluasan membutuhkan review sumber per klaim; tidak ada identitas universal yang divalidasi di sini.
 - Docker image tidak dibangun ulang pada milestone ini; `pnpm verify:docker` tetap gate deployment terpisah.
 - `sameAs` tetap tidak dapat di-approve di graph; setiap perubahan identitas harus melalui alur review M10 dengan bukti dan reviewer.
-- Suite penuh pada tree kerja sesekali tertahan WIP bersamaan di luar milestone (`packages/cli`); CI hanya melihat file yang di-commit, dan tree commit M12 lulus `lint-budget` secara terpisah.
+- WIP bersamaan di luar milestone sempat menambah `packages/cli` pada tree kerja; verifikasi akhir dilakukan di worktree bersih dan CI run 34 pada `06238fb` lulus.
