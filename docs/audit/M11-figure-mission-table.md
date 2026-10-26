@@ -2,7 +2,7 @@
 
 - **Milestone**: M11 Figure/Event and Prophetic Mission Table
 - **Status**: IMPLEMENTED AND PG-VERIFIED
-- **Code baseline**: `fd7bf7f` (M11 code shipped with the ecosystem commit), planning baseline `8064ff6`
+- **Code baseline**: `fd7bf7f` (M11 code shipped with the ecosystem commit), evidence commit `7d43241`, planning baseline `8064ff6`
 - **Date**: 2026-10-26
 - **Scope**: `@moonwitness/moonql-actors`, hub endpoints, Dock `/missions`, `/figures`, `/figures/[figureCode]`, PostgreSQL drill
 
@@ -122,3 +122,4 @@ Cleanup: `docker stop mw-m11-pg`; container list count 0; port 55432 has no list
 - The Docker images were not rebuilt in this milestone. `Dockerfile`/`Dockerfile.web` carry the actors manifest and runtime `dist`, but `pnpm verify:docker` remains a separate deployment gate.
 - The five-figure seed is a contract sample, not a complete or authoritative prophetic registry. Expansion requires source-by-source review; nothing here validates a universal identity or an exclusive mission.
 - The 25-avatar proposal remains unintegrated and unseeded. Any future avatar work must keep the disclosure, the `PEDAGOGICAL_ONLY` authority and the ban on prophet impersonation.
+- CI on `7d43241` passed ([run 40280734466](https://github.com/bjo163/moonwitnessxv/actions/runs/40280734466)). The preceding ecosystem commit `fd7bf7f` failed only at `pnpm install --frozen-lockfile` because `apps/radio/package.json` did not yet declare `@moonwitness/moonql-actors`; that declaration is part of this evidence commit. A concurrent `HEAD` edit during the milestone was captured in `fd7bf7f`, so the code and its evidence live in two commits.
