@@ -174,8 +174,9 @@ export function App(): ReactNode {
   const currentChannel = channels[activeChannelIndex] ?? DEFAULT_CHANNELS[0]
 
   // Data sync hook
-  const { config, serviceStates, setServiceStates, logs, setLogs, clock, uptime } = useCockpitSync(setChannels)
-  const progress = useTodoProgress()
+  const { config, serviceStates, setServiceStates, logs, setLogs, clock, uptime, progressPayload, progressLive } =
+    useCockpitSync(setChannels)
+  const progress = useTodoProgress({ progressPayload, progressLive })
 
   // Actions hook
   const {
@@ -683,6 +684,8 @@ export function App(): ReactNode {
 
       <CockpitConfirmModal
         isOpen={Boolean(confirmModal?.isOpen)}
+        isDestructive={confirmModal?.isDestructive ?? false}
+        irreversibleNote={copy.confirmIrreversible}
         title={confirmModal?.title ?? ''}
         description={confirmModal?.description ?? ''}
         confirmLabel={copy.confirmBtn}

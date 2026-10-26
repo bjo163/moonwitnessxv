@@ -1,10 +1,11 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { statSync } from 'node:fs'
+import { join } from 'node:path'
 import { loadMoondeckConfig, DEFAULT_CONFIG } from '../src/config.js'
 import { ProcessSupervisor } from '../src/supervisor.js'
 import { ProgressTracker } from '../src/progressTracker.js'
-import { resolveRegisterPath } from '../src/paths.js'
+import { findRepoRoot, resolveRegisterPath } from '../src/paths.js'
 import type { ProgressPayload } from '../src/progressTracker.js'
 import { createCockpitServer } from '../src/server.js'
 
@@ -37,6 +38,9 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
   tracker.start()
   const app = createCockpitServer(DEFAULT_CONFIG, supervisor, tracker)
 
+  // The tracker installs a non-unref'd poll on purpose; a failed assertion here
+  // must not leave it running and hang the test process.
+  try {
   // /health
   const healthRes = await app.inject({ method: 'GET', url: '/health' })
   assert.equal(healthRes.statusCode, 200)
@@ -59,6 +63,12 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
   // /api/errors
   const errorsRes = await app.inject({ method: 'GET', url: '/api/errors' })
   assert.equal(errorsRes.statusCode, 200)
+  const errorsBody = JSON.parse(errorsRes.body) as { path?: string }
+  assert.equal(
+    errorsBody.path,
+    join(findRepoRoot(), 'dev-errors.log'),
+    'the ledger must read the file the supervisor writes',
+  )
 
   // Static files
   const htmlRes = await app.inject({ method: 'GET', url: '/' })
@@ -124,12 +134,17 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
     'group buckets must account for every row',
   )
 
-  const deltaRes = await app.inject({
-    method: 'GET',
-    url: `/api/progress?since=${encodeURIComponent(new Date(Date.now() - 60_000).toISOString())}`,
-  })
-  assert.equal(deltaRes.statusCode, 200)
-  assert.ok('delta' in (JSON.parse(deltaRes.body) as Record<string, unknown>))
+  // The wire payload is a projection: lifetime flip counters, no row slice and
+  // no absolute path. Rows come from /api/todo/tasks only.
+  assert.ok(progressBody.flipTotals, 'lifetime flip counters must be present')
+  assert.equal(typeof progressBody.flipTotals.closed, 'number')
+  assert.equal(progressBody.registerLabel, 'TODO.md')
+  assert.equal('tasks' in (progressBody as unknown as Record<string, unknown>), false, 'row slice must not ride the payload')
+  assert.equal(
+    'registerPath' in (progressBody as unknown as Record<string, unknown>),
+    false,
+    'absolute path must not leak',
+  )
 
   const tasksRes = await app.inject({ method: 'GET', url: '/api/todo/tasks?milestone=M27&status=open' })
   assert.equal(tasksRes.statusCode, 200)
@@ -147,6 +162,13 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
   const oversizedBody = JSON.parse(oversizedRes.body) as { returned: number }
   assert.ok(oversizedBody.returned <= 400, 'the drill-down must stay bounded')
 
+  // A non-numeric limit used to become NaN and silently return no rows.
+  const bogusLimitRes = await app.inject({ method: 'GET', url: '/api/todo/tasks?status=all&limit=abc' })
+  assert.equal(bogusLimitRes.statusCode, 200)
+  const bogusBody = JSON.parse(bogusLimitRes.body) as { returned: number; matched: number }
+  assert.equal(typeof bogusBody.returned, 'number')
+  assert.equal(bogusBody.returned, Math.min(bogusBody.matched, 400), 'a non-numeric limit must fall back to the cap')
+
   // Reading the register must never write to it
   const registerAfter = statSync(registerPath)
   assert.equal(registerAfter.size, registerBefore.size, 'TODO.md size must be untouched')
@@ -162,6 +184,8 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
     assert.equal(/ledgerErrors\b/.test(bundleRes.body), false, 'Bundle must not contain unreferenced ledgerErrors')
   }
 
-  await app.close()
-  tracker.stop()
+  } finally {
+    await app.close()
+    tracker.stop()
+  }
 })

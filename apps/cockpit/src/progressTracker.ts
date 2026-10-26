@@ -16,11 +16,36 @@ export interface ProgressPoint {
   percent: number
 }
 
-export interface ProgressPayload extends RegisterSnapshot {
+export interface FlipTotals {
+  /** Cumulative open→done transitions observed since this process started. */
+  closed: number
+  /** Cumulative done→open reopenings observed since this process started. */
+  reopened: number
+}
+
+/**
+ * The wire shape. Deliberately an explicit projection instead of the whole
+ * `RegisterSnapshot`: the capped `tasks` slice (up to 400 rows) would ride along
+ * on every SSE frame although `GET /api/todo/tasks` is the only row source, and
+ * the absolute register path must not leave the process.
+ */
+export interface ProgressPayload {
+  generatedAt: string
+  total: number
+  done: number
+  open: number
+  percent: number
+  milestones: RegisterSnapshot['milestones']
+  groups: RegisterSnapshot['groups']
+  priorities: RegisterSnapshot['priorities']
+  openP0: string[]
   source: 'TODO.md'
-  registerPath: string
+  /** Short label only — never an absolute local path. */
+  registerLabel: 'TODO.md'
   ready: boolean
   stale: boolean
+  /** Absolute counters, so the client's "closed since you opened this" survives payload dedupe. */
+  flipTotals: FlipTotals
   flipLog: ProgressFlip[]
   history: ProgressPoint[]
   error?: string
@@ -47,19 +72,6 @@ const MAX_FLIPS = 50
 const MAX_HISTORY = 240
 const MAX_TASK_RETURN = 400
 
-const EMPTY_SNAPSHOT: RegisterSnapshot = {
-  generatedAt: new Date(0).toISOString(),
-  total: 0,
-  done: 0,
-  open: 0,
-  percent: 0,
-  milestones: [],
-  groups: [],
-  priorities: {},
-  openP0: [],
-  tasks: [],
-}
-
 /**
  * Watches TODO.md and republishes a parsed snapshot when it changes.
  *
@@ -76,6 +88,8 @@ export class ProgressTracker extends EventEmitter {
 
   private snapshot: RegisterSnapshot | null = null
   private flipLog: ProgressFlip[] = []
+  private flipTotals: FlipTotals = { closed: 0, reopened: 0 }
+  private readonly startedAt = new Date().toISOString()
   private history: ProgressPoint[] = []
   private statuses = new Map<string, TaskStatus>()
   private allTasks: TodoTask[] = []
@@ -121,20 +135,33 @@ export class ProgressTracker extends EventEmitter {
       stat = statSync(this.filePath)
     } catch (err: unknown) {
       // Keep serving the last good snapshot; never throw into a request.
-      this.readError = err instanceof Error ? err.message : String(err)
+      this.failRead(err instanceof Error ? err.message : String(err))
       return
     }
     const signature = `${String(stat.mtimeMs)}:${String(stat.size)}`
     if (signature === this.signature) {
-      // Advance the trend line while idle too, so the sparkline honestly shows
-      // "no change" instead of freezing at the last write.
+      // Advance the trend line while idle *and* publish it. A history point the
+      // client never receives cannot make the sparkline honest.
       if (this.snapshot && Date.now() - this.lastParseAt >= this.heartbeatMs) {
         this.pushHistory(this.snapshot)
         this.lastParseAt = Date.now()
+        this.emit('progress', this.buildPayload())
       }
       return
     }
     this.scheduleRead()
+  }
+
+  /**
+   * Record a read failure and announce the *transition* into blindness. Without
+   * this emit an open panel keeps showing live-looking numbers forever, which is
+   * the wrong failure mode for a monitoring surface. Repeated failures of the
+   * same kind stay quiet so the stream is not flooded.
+   */
+  private failRead(message: string): void {
+    const firstFailure = this.readError === undefined
+    this.readError = message
+    if (firstFailure) this.emit('progress', this.buildPayload())
   }
 
   private scheduleRead(): void {
@@ -156,7 +183,7 @@ export class ProgressTracker extends EventEmitter {
       stat = statSync(this.filePath)
       text = readFileSync(this.filePath, 'utf8')
     } catch (err: unknown) {
-      this.readError = err instanceof Error ? err.message : String(err)
+      this.failRead(err instanceof Error ? err.message : String(err))
       return
     }
 
@@ -164,7 +191,7 @@ export class ProgressTracker extends EventEmitter {
     try {
       next = parseTodoRegister(text)
     } catch (err: unknown) {
-      this.readError = err instanceof Error ? err.message : String(err)
+      this.failRead(err instanceof Error ? err.message : String(err))
       return
     }
 
@@ -195,6 +222,9 @@ export class ProgressTracker extends EventEmitter {
       const after = current.get(id)
       if (!after || before === after) continue
       this.flipLog.push({ taskId: id, from: before, to: after, at })
+      // Counted before the log is capped: these are lifetime totals, not a view.
+      if (after === 'done') this.flipTotals.closed += 1
+      else this.flipTotals.reopened += 1
     }
     if (this.flipLog.length > MAX_FLIPS) {
       this.flipLog = this.flipLog.slice(-MAX_FLIPS)
@@ -216,15 +246,43 @@ export class ProgressTracker extends EventEmitter {
   public buildPayload(): ProgressPayload {
     const base = {
       source: 'TODO.md' as const,
-      registerPath: this.filePath,
+      registerLabel: 'TODO.md' as const,
+      flipTotals: { ...this.flipTotals },
       flipLog: [...this.flipLog].reverse(),
       history: [...this.history],
       ...(this.readError ? { error: this.readError } : {}),
     }
-    if (!this.snapshot) {
-      return { ...base, ...EMPTY_SNAPSHOT, ready: false, stale: false }
+    const snapshot = this.snapshot
+    if (!snapshot) {
+      return {
+        ...base,
+        generatedAt: this.startedAt,
+        total: 0,
+        done: 0,
+        open: 0,
+        percent: 0,
+        milestones: [],
+        groups: [],
+        priorities: {},
+        openP0: [],
+        ready: false,
+        stale: Boolean(this.readError),
+      }
     }
-    return { ...base, ...this.snapshot, ready: !this.readError, stale: Boolean(this.readError) }
+    return {
+      ...base,
+      generatedAt: snapshot.generatedAt,
+      total: snapshot.total,
+      done: snapshot.done,
+      open: snapshot.open,
+      percent: snapshot.percent,
+      milestones: snapshot.milestones,
+      groups: snapshot.groups,
+      priorities: snapshot.priorities,
+      openP0: snapshot.openP0,
+      ready: !this.readError,
+      stale: Boolean(this.readError),
+    }
   }
 
   public hasSnapshot(): boolean {
@@ -236,21 +294,12 @@ export class ProgressTracker extends EventEmitter {
    * complete list is filtered here rather than sent to every client.
    */
   public queryTasks(query: TaskQuery): { rows: TodoTask[]; matched: number; returned: number } {
-    const limit = Math.max(1, Math.min(query.limit ?? MAX_TASK_RETURN, MAX_TASK_RETURN))
+    const raw = query.limit ?? MAX_TASK_RETURN
+    const limit = Number.isFinite(raw) && raw > 0 ? Math.min(raw, MAX_TASK_RETURN) : MAX_TASK_RETURN
     let rows = this.allTasks
     if (query.status && query.status !== 'all') rows = rows.filter((t) => t.status === query.status)
     if (query.milestone) rows = rows.filter((t) => t.milestone === query.milestone)
     if (query.priority) rows = rows.filter((t) => t.priority === query.priority)
     return { rows: rows.slice(0, limit), matched: rows.length, returned: Math.min(rows.length, limit) }
-  }
-
-  /** Flips observed after `sinceIso`, plus the net tasks-closed movement. */
-  public getDelta(sinceIso: string): { since: string; flips: ProgressFlip[]; netClosed: number } {
-    const since = Date.parse(sinceIso)
-    const flips = Number.isNaN(since)
-      ? []
-      : [...this.flipLog].reverse().filter((flip) => Date.parse(flip.at) >= since)
-    const netClosed = flips.reduce((net, flip) => net + (flip.to === 'done' ? 1 : -1), 0)
-    return { since: sinceIso, flips, netClosed }
   }
 }

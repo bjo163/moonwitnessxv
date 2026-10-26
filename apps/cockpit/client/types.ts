@@ -96,6 +96,11 @@ export interface ProgressPoint {
   percent: number
 }
 
+export interface FlipTotals {
+  closed: number
+  reopened: number
+}
+
 /** Mirrors apps/cockpit/src/progressTracker.ts ProgressPayload. */
 export interface ProgressPayload {
   generatedAt: string
@@ -107,19 +112,16 @@ export interface ProgressPayload {
   groups: GroupProgress[]
   priorities: Record<string, PriorityProgress>
   openP0: string[]
-  tasks: TodoTask[]
   source: 'TODO.md'
-  registerPath: string
+  /** Short label only — the server never sends an absolute local path. */
+  registerLabel: 'TODO.md'
   ready: boolean
   stale: boolean
+  /** Lifetime counters; the panel subtracts the values it saw first. */
+  flipTotals: FlipTotals
   flipLog: ProgressFlip[]
   history: ProgressPoint[]
   error?: string
-  delta?: {
-    since: string
-    flips: ProgressFlip[]
-    netClosed: number
-  }
 }
 
 export interface TodoTaskQueryResult {

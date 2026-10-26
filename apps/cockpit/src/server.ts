@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
 import { fetchIcyMetadata } from '@moonwitness/core'
 import { DEFAULT_MEDIA_CHANNELS, type ChannelItem } from './channels.js'
+import { findRepoRoot } from './paths.js'
 import type { ProgressTracker } from './progressTracker.js'
 import type { MoondeckConfig } from './types.js'
 import type { ProcessSupervisor } from './supervisor.js'
@@ -39,7 +40,10 @@ export function createCockpitServer(
   app.register(cors, { origin: true })
 
   const publicDir = findPublicDir()
-  const repoRoot = resolve(publicDir, '../../..')
+  // Deliberately not `resolve(publicDir, '../../..')`: when the Vite bundle wins
+  // the lookup that lands on `apps/`, so the ledger read a different file than
+  // ProcessSupervisor writes. Both now derive the root the same way.
+  const repoRoot = findRepoRoot()
   const errorLogFile = join(repoRoot, 'dev-errors.log')
 
   // Static assets
@@ -193,14 +197,12 @@ export function createCockpitServer(
 
   // TODO register progress — a read-only projection of TODO.md. There is no
   // write path here on purpose: TODO.md stays the sole task/status register.
-  app.get('/api/progress', async (req, reply) => {
-    const query = req.query as { since?: string }
+  app.get('/api/progress', async (_req, reply) => {
     const payload = progress.buildPayload()
-    const delta = query.since ? progress.getDelta(query.since) : null
     if (!progress.hasSnapshot()) {
       return reply.code(503).send({ ...payload, error: payload.error ?? 'Register not readable yet' })
     }
-    return delta ? { ...payload, delta } : payload
+    return payload
   })
 
   app.get('/api/todo/tasks', async (req, reply) => {
@@ -209,11 +211,13 @@ export function createCockpitServer(
       return reply.code(503).send({ error: 'Register not readable yet', rows: [] })
     }
     const snapshot = progress.buildPayload()
+    // `Number('abc')` is NaN, and NaN silently returned an empty page.
+    const parsedLimit = Number(query.limit)
     const result = progress.queryTasks({
       status: query.status,
       milestone: query.milestone,
       priority: query.priority,
-      limit: query.limit ? Number(query.limit) : undefined,
+      limit: Number.isFinite(parsedLimit) && parsedLimit > 0 ? parsedLimit : undefined,
     })
     return { ...result, total: snapshot.total, done: snapshot.done, open: snapshot.open }
   })

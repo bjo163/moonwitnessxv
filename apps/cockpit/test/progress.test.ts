@@ -12,6 +12,16 @@ function row(id: string, done: boolean, priority = 'P1', difficulty = 'D2', titl
   return `| - [${done ? 'x' : ' '}] | **${id}** — ${title} | ${priority} | ${difficulty} | — | evidence for ${id} |`
 }
 
+/** Poll a predicate instead of sleeping a fixed window, so a loaded machine cannot flake the test. */
+async function waitFor(predicate: () => boolean, timeoutMs = 1500): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs
+  while (Date.now() < deadline) {
+    if (predicate()) return true
+    await new Promise((resolve) => setTimeout(resolve, 10))
+  }
+  return predicate()
+}
+
 const FIXTURE = [
   '# Fake register',
   '',
@@ -163,6 +173,9 @@ void test('ProgressTracker: reports a real transition and emits once per change'
     assert.equal(flip.to, 'done')
     assert.equal(received.source, 'TODO.md')
     assert.equal(received.ready, true)
+    // Lifetime counters are what the panel subtracts from its baseline; they must
+    // survive the capped flip log (which is a view, not the total).
+    assert.deepEqual(received.flipTotals, { closed: 1, reopened: 0 })
 
     tracker.stop()
     const afterStop = payloads.length
@@ -245,6 +258,64 @@ void test('ProgressTracker: an unreadable register never throws and keeps ready 
     assert.equal(emitted, 0, 'nothing may be emitted without a parse')
   } finally {
     tracker.stop()
+  }
+})
+
+void test('ProgressTracker: a read failure is announced once and recovery is announced too', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'moon-progress-stale-'))
+  const file = join(dir, 'TODO.md')
+  const tracker = new ProgressTracker({ filePath: file, pollMs: 15, debounceMs: 5 })
+  try {
+    writeFileSync(file, FIXTURE, 'utf8')
+    tracker.start()
+    const payloads: ProgressPayload[] = []
+    tracker.on('progress', (payload: ProgressPayload) => payloads.push(payload))
+
+    // Make the register unreadable: the panel must be told it went blind instead
+    // of silently serving live-looking numbers.
+    rmSync(file)
+    const sawStale = await waitFor(() => payloads.some((p) => p.stale))
+    assert.ok(sawStale, 'a read failure must be pushed at least once')
+    const stale = payloads.filter((p) => p.stale)
+    assert.ok(stale[0]?.error, 'the stale payload must carry a reason')
+    assert.equal(stale[0]?.ready, false)
+    // Repeated failures of the same kind stay quiet.
+    assert.ok(stale.length <= 2, `expected transition-only emits, got ${String(stale.length)}`)
+    assert.equal(stale[0]?.done, 4, 'the last good snapshot is kept')
+
+    // Recovery is a transition as well.
+    const beforeRecovery = payloads.length
+    writeFileSync(file, FIXTURE, 'utf8')
+    const recovered = await waitFor(() => payloads.slice(beforeRecovery).some((p) => p.ready))
+    assert.ok(recovered, 'recovery must be pushed')
+    assert.equal(payloads.slice(beforeRecovery).find((p) => p.ready)?.stale, false)
+  } finally {
+    tracker.stop()
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+void test('ProgressTracker: the idle heartbeat is actually published', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'moon-progress-heartbeat-'))
+  const file = join(dir, 'TODO.md')
+  const tracker = new ProgressTracker({ filePath: file, pollMs: 10, debounceMs: 5, heartbeatMs: 30 })
+  try {
+    writeFileSync(file, FIXTURE, 'utf8')
+    tracker.start()
+    const payloads: ProgressPayload[] = []
+    tracker.on('progress', (payload: ProgressPayload) => payloads.push(payload))
+
+    // No file change at all: only the heartbeat can produce these frames.
+    const published = await waitFor(() => payloads.length >= 1)
+    assert.ok(published, 'the heartbeat must emit, not just append history')
+    const historyLengths = payloads.map((p) => p.history.length)
+    assert.ok(
+      Math.max(...historyLengths) > 1,
+      `history must grow in the delivered payloads, saw ${historyLengths.join(',')}`,
+    )
+  } finally {
+    tracker.stop()
+    rmSync(dir, { recursive: true, force: true })
   }
 })
 

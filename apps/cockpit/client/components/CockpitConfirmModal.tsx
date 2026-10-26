@@ -7,6 +7,10 @@ export interface CockpitConfirmModalProps {
   description: string
   confirmLabel: string
   cancelLabel: string
+  /** Irreversible actions get the danger treatment so the click is not a reflex. */
+  isDestructive?: boolean
+  /** Shown in place of nothing when the action cannot be undone. */
+  irreversibleNote?: string
   onConfirm: () => void
   onCancel: () => void
 }
@@ -17,10 +21,12 @@ export function CockpitConfirmModal({
   description,
   confirmLabel,
   cancelLabel,
+  isDestructive = false,
+  irreversibleNote = 'This action cannot be undone.',
   onConfirm,
   onCancel,
 }: CockpitConfirmModalProps): ReactNode {
-  const confirmBtnRef = useRef<HTMLButtonElement | null>(null)
+  const dialogRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (!isOpen) return
@@ -33,7 +39,9 @@ export function CockpitConfirmModal({
     }
 
     window.addEventListener('keydown', handleKeyDown)
-    confirmBtnRef.current?.focus()
+    // Button is a plain function component, so a ref on it never attached. Focus
+    // the dialog container instead: the intent was "move focus into the dialog".
+    dialogRef.current?.focus()
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
@@ -62,6 +70,8 @@ export function CockpitConfirmModal({
       onClick={onCancel}
     >
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         style={{
           background: 'var(--surface, #13101d)',
           border: '2px solid var(--accent, #ffd400)',
@@ -96,17 +106,25 @@ export function CockpitConfirmModal({
           }}
         >
           {description}
+          {isDestructive ? (
+            <span
+              style={{
+                display: 'block',
+                marginTop: 8,
+                fontFamily: 'monospace',
+                fontSize: '0.8rem',
+                color: 'var(--hot, #ff1e56)',
+              }}
+            >
+              {irreversibleNote}
+            </span>
+          ) : null}
         </p>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
           <Button variant="ghost" size="sm" onClick={onCancel}>
             {cancelLabel}
           </Button>
-          <Button
-            ref={confirmBtnRef}
-            variant="accent"
-            size="sm"
-            onClick={onConfirm}
-          >
+          <Button variant={isDestructive ? 'danger' : 'accent'} size="sm" onClick={onConfirm}>
             {confirmLabel}
           </Button>
         </div>

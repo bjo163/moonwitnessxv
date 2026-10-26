@@ -112,11 +112,6 @@ export interface CockpitCopyCatalog {
   progressSubtitle: string
   overallProgress: string
   closedTasks: string
-  openTasks: string
-  filterAllPriorities: string
-  filterP0: string
-  filterP1: string
-  filterP2: string
   groupFoundation: string
   groupSource: string
   groupResearch: string
@@ -126,6 +121,59 @@ export interface CockpitCopyCatalog {
   groupRelease: string
   groupEcosystem: string
   openBlockersHeader: string
+  progressSourceNote: string
+  progressLiveBadge: string
+  progressPollingBadge: string
+  progressSessionSuffix: string
+  progressLastDelivery: string
+  progressEmptyTitle: string
+  progressEmptyHint: string
+  progressStaleNote: string
+  progressOpenSuffix: string
+  progressCompletionHint: string
+  progressClear: string
+  progressNoP0Hint: string
+  progressRegisterUpdated: string
+  progressPanelGroups: string
+  progressPanelGroupsSub: string
+  progressPanelPriorities: string
+  progressPanelPrioritiesSub: string
+  progressPanelMilestones: string
+  progressPanelMilestonesSub: string
+  progressPanelRows: string
+  progressShowingRows: string
+  progressPanelFlips: string
+  progressPanelFlipsSub: string
+  progressFlipsEmpty: string
+  provenanceTitle: string
+  provenanceBody: string
+  progressFilterStatus: string
+  progressFilterOpen: string
+  progressFilterDone: string
+  progressFilterAll: string
+  progressFilterPriority: string
+  progressFilterMilestone: string
+  progressFocus: string
+  progressClearFocus: string
+  progressLoading: string
+  progressTrendNeedsTwo: string
+  progressTrendAria: string
+  progressTrendSamples: string
+  colTask: string
+  colDeliverable: string
+  colMilestone: string
+  colGroup: string
+  colDone: string
+  colOpen: string
+  colTotal: string
+  colProgress: string
+  progressNoRowsDone: string
+  progressNoRowsOpen: string
+  timeNotYet: string
+  timeUnknown: string
+  timeSeconds: string
+  timeMinutes: string
+  timeHours: string
 
   // Footer & Shortcuts
   shortcutsTitle: string
@@ -143,6 +191,7 @@ export interface CockpitCopyCatalog {
   freePortsTitle: string
   freePortsDesc: string
   confirmBtn: string
+  confirmIrreversible: string
   cancelBtn: string
 
   // Help Modal
@@ -266,11 +315,6 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     progressSubtitle: 'Live status synced directly from TODO.md master planning backlog',
     overallProgress: 'OVERALL COMPLETION',
     closedTasks: 'CLOSED TASKS',
-    openTasks: 'OPEN TASKS',
-    filterAllPriorities: 'ALL PRIORITIES',
-    filterP0: 'P0 BLOCKERS',
-    filterP1: 'P1 CORE',
-    filterP2: 'P2 HORIZON',
     groupFoundation: 'G0 — FOUNDATION',
     groupSource: 'G1 — SOURCE',
     groupResearch: 'G2 — RESEARCH',
@@ -279,7 +323,61 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     groupOptionalResearch: 'G5 — OPTIONAL RESEARCH',
     groupRelease: 'G6 — RELEASE',
     groupEcosystem: 'G7 — ECOSYSTEM',
-    openBlockersHeader: 'ACTIVE P0 BLOCKERS IN THIS GROUP',
+    openBlockersHeader: 'OPEN P0 BLOCKERS',
+    progressSourceNote: 'SOURCE: TODO.md · READ-ONLY PROJECTION · NOT A TASK REGISTER',
+    progressLiveBadge: 'LIVE',
+    progressPollingBadge: 'POLLING',
+    progressSessionSuffix: 'THIS SESSION',
+    progressLastDelivery: 'LAST DELIVERY',
+    progressEmptyTitle: 'No register rows parsed',
+    progressEmptyHint: 'TODO.md is unreadable or contains no canonical task rows.',
+    progressStaleNote: 'Showing the last good parse; the register could not be re-read.',
+    progressOpenSuffix: 'open',
+    progressCompletionHint: 'checked boxes in the register',
+    progressClear: 'CLEAR',
+    progressNoP0Hint: 'No open P0 rows',
+    progressRegisterUpdated: 'Register updated',
+    progressPanelGroups: 'Milestone groups',
+    progressPanelGroupsSub: "Percentage of each group's canonical task rows marked done",
+    progressPanelPriorities: 'Priorities',
+    progressPanelPrioritiesSub: 'Open rows by priority class',
+    progressPanelMilestones: 'Milestones',
+    progressPanelMilestonesSub: 'Select a milestone to filter the task list',
+    progressPanelRows: 'Task rows',
+    progressShowingRows: 'matching rows',
+    progressPanelFlips: 'Live checkbox activity',
+    progressPanelFlipsSub: 'Transitions observed by this cockpit process since it started',
+    progressFlipsEmpty: 'No checkbox transitions observed since the cockpit started.',
+    provenanceTitle: 'Provenance',
+    provenanceBody:
+      'Counts are derived from the canonical task rows in TODO.md each time the file changes. This panel never writes to the register; TODO.md remains the sole task and status source of truth.',
+    progressFilterStatus: 'Status',
+    progressFilterPriority: 'Priority',
+    progressFilterMilestone: 'Milestone',
+    progressFocus: 'Focus',
+    progressClearFocus: 'Clear',
+    progressFilterOpen: 'OPEN',
+    progressFilterDone: 'DONE',
+    progressFilterAll: 'ALL',
+    progressLoading: 'LOADING',
+    progressTrendNeedsTwo: 'Trend needs two samples.',
+    progressTrendAria: 'Completion trend while the cockpit has been open',
+    progressTrendSamples: 'samples',
+    colTask: 'Task',
+    colDeliverable: 'Deliverable',
+    colMilestone: 'Milestone',
+    colGroup: 'Group',
+    colDone: 'Done',
+    colOpen: 'Open',
+    colTotal: 'Total',
+    colProgress: 'Progress',
+    progressNoRowsDone: 'No rows match this filter.',
+    progressNoRowsOpen: 'Nothing open in this slice.',
+    timeNotYet: 'not yet',
+    timeUnknown: 'unknown',
+    timeSeconds: 's ago',
+    timeMinutes: 'm',
+    timeHours: 'h',
 
     // Footer & Shortcuts
     shortcutsTitle: 'KEYBOARD SHORTCUTS',
@@ -297,6 +395,7 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     freePortsTitle: 'Free Allocated Network Ports?',
     freePortsDesc: 'This will forcefully release ports 3000-3004 by terminating lingering background processes.',
     confirmBtn: 'CONFIRM ACTION',
+    confirmIrreversible: 'This action cannot be undone.',
     cancelBtn: 'CANCEL',
 
     // Help Modal
@@ -414,15 +513,10 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     emptyLedger: 'Nol catatan error. Kesehatan sistem optimal.',
 
     // Progress
-    progressTitle: 'Register Eksekusi Master MoonWitness XV',
+    progressTitle: 'Daftar Eksekusi Master MoonWitness XV',
     progressSubtitle: 'Status langsung disinkronkan dari backlog perencanaan master TODO.md',
     overallProgress: 'PENYELESAIAN KESELURUHAN',
     closedTasks: 'TUGAS SELESAI',
-    openTasks: 'TUGAS TERBUKA',
-    filterAllPriorities: 'SEMUA PRIORITAS',
-    filterP0: 'BLOKIR P0',
-    filterP1: 'INTI P1',
-    filterP2: 'HORIZON P2',
     groupFoundation: 'G0 — FONDASI',
     groupSource: 'G1 — SUMBER',
     groupResearch: 'G2 — RISET',
@@ -431,7 +525,61 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     groupOptionalResearch: 'G5 — RISET OPSIONAL',
     groupRelease: 'G6 — RILIS',
     groupEcosystem: 'G7 — EKOSISTEM',
-    openBlockersHeader: 'BLOKIR P0 AKTIF DALAM GRUP INI',
+    openBlockersHeader: 'BLOKIR P0 TERBUKA',
+    progressSourceNote: 'SUMBER: TODO.md · PROYEKSI HANYA-BACA · BUKAN REGISTER TUGAS',
+    progressLiveBadge: 'LANGSUNG',
+    progressPollingBadge: 'POLLING',
+    progressSessionSuffix: 'SESI INI',
+    progressLastDelivery: 'PENGIRIMAN TERAKHIR',
+    progressEmptyTitle: 'Tidak ada baris daftar tugas terbaca',
+    progressEmptyHint: 'TODO.md tidak terbaca atau tidak memuat baris tugas kanonik.',
+    progressStaleNote: 'Menampilkan hasil parse terakhir yang baik; daftar tugas tidak dapat dibaca ulang.',
+    progressOpenSuffix: 'terbuka',
+    progressCompletionHint: 'kotak tercentang di daftar tugas',
+    progressClear: 'BERSIH',
+    progressNoP0Hint: 'Tidak ada baris P0 terbuka',
+    progressRegisterUpdated: 'Daftar tugas diperbarui',
+    progressPanelGroups: 'Grup milestone',
+    progressPanelGroupsSub: 'Persentase baris tugas kanonik tiap grup yang ditandai selesai',
+    progressPanelPriorities: 'Prioritas',
+    progressPanelPrioritiesSub: 'Baris terbuka per kelas prioritas',
+    progressPanelMilestones: 'Milestone',
+    progressPanelMilestonesSub: 'Pilih milestone untuk memfilter daftar tugas',
+    progressPanelRows: 'Baris tugas',
+    progressShowingRows: 'baris cocok',
+    progressPanelFlips: 'Aktivitas centang langsung',
+    progressPanelFlipsSub: 'Transisi yang diamati proses cockpit ini sejak mulai',
+    progressFlipsEmpty: 'Belum ada transisi centang sejak cockpit dimulai.',
+    provenanceTitle: 'Provenans',
+    provenanceBody:
+      'Angka diturunkan dari baris tugas kanonik di TODO.md setiap kali berkas berubah. Panel ini tidak pernah menulis ke daftar tugas; TODO.md tetap satu-satunya sumber status dan tugas.',
+    progressFilterStatus: 'Status',
+    progressFilterPriority: 'Prioritas',
+    progressFilterMilestone: 'Milestone',
+    progressFocus: 'Fokus',
+    progressClearFocus: 'Hapus',
+    progressFilterOpen: 'TERBUKA',
+    progressFilterDone: 'SELESAI',
+    progressFilterAll: 'SEMUA',
+    progressLoading: 'MEMUAT',
+    progressTrendNeedsTwo: 'Tren butuh dua sampel.',
+    progressTrendAria: 'Tren penyelesaian selama cockpit terbuka',
+    progressTrendSamples: 'sampel',
+    colTask: 'Tugas',
+    colDeliverable: 'Deliverabel',
+    colMilestone: 'Milestone',
+    colGroup: 'Grup',
+    colDone: 'Selesai',
+    colOpen: 'Terbuka',
+    colTotal: 'Total',
+    colProgress: 'Progres',
+    progressNoRowsDone: 'Tidak ada baris yang cocok.',
+    progressNoRowsOpen: 'Tidak ada yang terbuka di irisan ini.',
+    timeNotYet: 'belum',
+    timeUnknown: 'tidak diketahui',
+    timeSeconds: 's lalu',
+    timeMinutes: 'm',
+    timeHours: 'j',
 
     // Footer & Shortcuts
     shortcutsTitle: 'PINTASAN KEYBOARD',
@@ -449,6 +597,7 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     freePortsTitle: 'Bebaskan Port Jaringan?',
     freePortsDesc: 'Tindakan ini akan melepaskan paksa port 3000-3004 dengan menghentikan proses yang menggantung.',
     confirmBtn: 'KONFIRMASI AKSI',
+    confirmIrreversible: 'Tindakan ini tidak dapat dibatalkan.',
     cancelBtn: 'BATAL',
 
     // Help Modal

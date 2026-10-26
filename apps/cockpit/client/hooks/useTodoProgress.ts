@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { ProgressPayload, TodoTask } from '../types'
+import type { FlipTotals, ProgressPayload, TodoTask } from '../types'
+import { netClosedSince } from '../lib/progress-math'
 
 export type TaskStatusFilter = 'open' | 'done' | 'all'
 
@@ -12,8 +13,12 @@ export interface TodoProgressFilters {
 }
 
 export interface UseTodoProgressOptions {
-  /** REST safety-net cadence for when the SSE stream is not delivering. */
+  /** REST safety-net cadence for when the shared stream is not delivering. */
   pollMs?: number
+  /** Latest payload pushed by the single cockpit stream (owned by useCockpitSync). */
+  progressPayload?: ProgressPayload | null
+  /** Whether that stream is currently delivering. */
+  progressLive?: boolean
 }
 
 const DEFAULT_POLL_MS = 20_000
@@ -25,14 +30,19 @@ interface TaskQueryResult {
 }
 
 /**
- * Read-only progress feed. The SSE `progress` event is the primary path because
- * the server parses TODO.md once per change; the REST poll is only a safety net
- * for a stream that got dropped by a proxy or the embedded webview.
+ * Read-only progress feed. The primary path is the payload pushed on the single
+ * `/api/logs/stream` connection owned by `useCockpitSync` — this hook must never
+ * open a second EventSource, because every extra socket also adds a listener on
+ * the tracker and costs one of the browser's per-host connections.
+ *
+ * The REST poll is only a safety net for a stream that got dropped.
  */
 export function useTodoProgress(options?: UseTodoProgressOptions) {
   const pollMs = options?.pollMs ?? DEFAULT_POLL_MS
+  const streamPayload = options?.progressPayload ?? null
+  const streamLive = options?.progressLive ?? false
+
   const [payload, setPayload] = useState<ProgressPayload | null>(null)
-  const [live, setLive] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastReceived, setLastReceived] = useState<string | null>(null)
   const [revision, setRevision] = useState(0)
@@ -41,17 +51,21 @@ export function useTodoProgress(options?: UseTodoProgressOptions) {
   const [rowsLoading, setRowsLoading] = useState(false)
   const [rowsMatched, setRowsMatched] = useState(0)
 
-  const openedAt = useRef(new Date().toISOString())
   const stampRef = useRef('')
+  const baselineRef = useRef<FlipTotals | null>(null)
   const inflight = useRef(new Map<string, AbortController>())
 
   const applyPayload = useCallback((next: ProgressPayload) => {
     // Every arrival counts as a delivery, even an unchanged one, so the header
     // age reads as stream liveness rather than "time since the last edit".
     setLastReceived(new Date().toISOString())
-    // buildPayload() reuses one parse, so an unchanged register arrives with the
-    // same stamp; re-rendering on it would refetch the drill-down for nothing.
-    const stamp = `${next.generatedAt}|${String(next.done)}|${String(next.total)}`
+    // The first payload is the baseline for "closed since you opened this"; the
+    // counters are lifetime totals, so the difference survives dedupe.
+    if (!baselineRef.current) baselineRef.current = next.flipTotals
+    // History length and the error are part of the identity: a heartbeat frame
+    // (history only) and a transition into "stale" carry no count change but
+    // still have to reach the panel.
+    const stamp = `${next.generatedAt}|${String(next.done)}|${String(next.total)}|${String(next.history.length)}|${next.error ?? ''}`
     if (stamp === stampRef.current) return
     stampRef.current = stamp
     setPayload(next)
@@ -59,11 +73,16 @@ export function useTodoProgress(options?: UseTodoProgressOptions) {
     setRevision((prev) => prev + 1)
   }, [])
 
+  // Primary path: the payload pushed on the shared stream.
+  useEffect(() => {
+    if (streamPayload) applyPayload(streamPayload)
+  }, [streamPayload, applyPayload])
+
   useEffect(() => {
     let active = true
     const load = async () => {
       try {
-        const res = await fetch(`/api/progress?since=${encodeURIComponent(openedAt.current)}`)
+        const res = await fetch('/api/progress')
         const data = (await res.json()) as ProgressPayload
         if (active && res.ok) applyPayload(data)
         else if (active) setError(data.error ?? `Progress unavailable (${String(res.status)})`)
@@ -78,29 +97,6 @@ export function useTodoProgress(options?: UseTodoProgressOptions) {
       clearInterval(timer)
     }
   }, [pollMs, applyPayload])
-
-  useEffect(() => {
-    const es = new EventSource('/api/logs/stream')
-
-    es.addEventListener('progress', (event) => {
-      try {
-        const data = JSON.parse((event as MessageEvent).data) as ProgressPayload
-        setLive(true)
-        applyPayload(data)
-      } catch {
-        /* ignore malformed frame */
-      }
-    })
-
-    es.addEventListener('error', () => {
-      setLive(false)
-    })
-
-    return () => {
-      setLive(false)
-      es.close()
-    }
-  }, [applyPayload])
 
   // Drill-down rows: re-fetched when the operator changes a filter or the
   // register actually moves. Any superseded request for the same key is aborted.
@@ -137,6 +133,10 @@ export function useTodoProgress(options?: UseTodoProgressOptions) {
     }
   }, [filters, revision])
 
+  const baseline = baselineRef.current
+  const totals = payload?.flipTotals
+  const netClosedSinceOpen = baseline && totals ? netClosedSince(baseline, totals) : 0
+
   return {
     payload,
     rows,
@@ -144,9 +144,9 @@ export function useTodoProgress(options?: UseTodoProgressOptions) {
     rowsLoading,
     filters,
     setFilters,
-    live,
+    live: streamLive,
     error,
     lastReceived,
-    netClosedSinceOpen: payload?.delta?.netClosed ?? 0,
+    netClosedSinceOpen,
   }
 }

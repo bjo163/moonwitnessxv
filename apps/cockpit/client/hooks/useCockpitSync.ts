@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { AppConfig, ChannelItem, LogEntry, ServiceState } from '../types'
+import type { AppConfig, ChannelItem, LogEntry, ProgressPayload, ServiceState } from '../types'
 
 export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => ChannelItem[]) => void) {
   const [config, setConfig] = useState<AppConfig | null>(null)
@@ -7,6 +7,10 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [clock, setClock] = useState('')
   const [uptime, setUptime] = useState(0)
+  // The register payload rides this stream instead of a second EventSource: one
+  // socket per page, one tracker listener per page, one per-host connection.
+  const [progressPayload, setProgressPayload] = useState<ProgressPayload | null>(null)
+  const [progressLive, setProgressLive] = useState(false)
 
   // Clock
   useEffect(() => {
@@ -84,7 +88,22 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
       }
     })
 
+    es.addEventListener('progress', (e) => {
+      try {
+        const next = JSON.parse((e as MessageEvent).data) as ProgressPayload
+        setProgressLive(true)
+        setProgressPayload(next)
+      } catch {
+        /* ignore malformed frame */
+      }
+    })
+
+    es.addEventListener('error', () => {
+      setProgressLive(false)
+    })
+
     return () => {
+      setProgressLive(false)
       es.close()
     }
   }, [])
@@ -97,5 +116,7 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
     setLogs,
     clock,
     uptime,
+    progressPayload,
+    progressLive,
   }
 }
