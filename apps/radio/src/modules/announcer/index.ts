@@ -1,4 +1,5 @@
 import type { TypedModule } from '../../lib/types.js'
+import { generateLunaScript } from './tts.js'
 
 /**
  * Announcer module — no routes on purpose. It is mounted by the folder convention
@@ -76,7 +77,13 @@ const announcerRoutes: TypedModule = async (fastify) => {
       if (urgency >= 80 || sentiment === 'critical' || sentiment === 'alert') {
         const title = clip(String(row.title ?? 'breaking signal'))
         const platform = String(row.platform ?? 'intel').toUpperCase()
+        
+        // 1. Announce to IM channels
         await announce(`[INTEL FLASH] (${platform} URGENCY ${urgency}%): ${title}`, 'intel')
+        
+        // 2. Format AI Voice DJ Luna script and log cue
+        const cue = generateLunaScript({ title, urgency, platform })
+        fastify.log.info({ cueId: cue.id, urgency, script: cue.scriptText }, 'announcer: Luna voice flash cue generated')
       }
     })().catch((err: unknown) => fastify.log.warn({ err: (err as Error).message }, 'announcer: intel flash hook failed'))
   })

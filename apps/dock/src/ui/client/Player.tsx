@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback, type ReactNode } from 'react'
 import { Badge, Button, LiveDot, StationSeal } from '@moonwitness/moonui'
 import { LivingBackdrop, AudioVisualizer, triggerHaptic } from '@moonwitness/moonui/client'
+import { TimeShiftPlayer } from './TimeShiftPlayer'
 
 /** A session shorter than this is a skip: nobody drifts into it by accident. */
 const SKIP_AFTER_SECONDS = 30
@@ -203,6 +204,11 @@ export function Player({
                 color="#00d4ff"
                 accentColor="#ff007a"
               />
+            </div>
+
+            {/* 3-Minute Zero-Drop Circular Buffer Timeshift */}
+            <div style={{ width: '100%', maxWidth: 360, marginTop: 4 }}>
+              <TimeShiftPlayer stationId={stationId} isPlaying={playing} audioRef={audio} />
             </div>
           </div>
         </div>

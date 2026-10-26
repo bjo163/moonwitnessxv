@@ -1393,3 +1393,328 @@
     grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   }
 }
+
+/* ---- Figure Registry and Prophetic Mission Table (M11) ---- */
+
+.dk-actors-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.dk-actors-header-link {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px;
+}
+.dk-actors-header-link:hover,
+.dk-actors-header-link:focus-visible {
+  color: var(--pink);
+  border-color: var(--pink);
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.dk-actors-filter-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+.dk-actors-filter-form .m-field {
+  margin: 0;
+}
+
+.dk-actors-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+.dk-actors-stat {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 10px 12px;
+}
+.dk-actors-stat dt {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.dk-actors-stat dd {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--cyan);
+}
+
+.dk-actors-notices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.dk-actors-notice {
+  margin: 0;
+  border-left: 3px solid var(--accent);
+  padding: 6px 10px;
+  background: var(--surface-2);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--chalk);
+}
+
+.dk-actors-missions,
+.dk-actors-figures,
+.dk-actors-roles,
+.dk-actors-events,
+.dk-actors-avatars,
+.dk-actors-sources,
+.dk-actors-rules,
+.dk-actors-roles-inline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dk-actors-roles-inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dk-actors-roles-inline li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px dashed var(--border);
+  padding: 4px 8px;
+}
+
+.dk-actors-mission,
+.dk-actors-figure,
+.dk-actors-role,
+.dk-actors-event,
+.dk-actors-avatar {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dk-actors-mission-head,
+.dk-actors-figure-head,
+.dk-actors-role-head,
+.dk-actors-event-head,
+.dk-actors-avatar-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dk-actors-mission-name,
+.dk-actors-figure-name,
+.dk-actors-event-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+.dk-actors-mission-name a,
+.dk-actors-figure-name a {
+  color: var(--fg);
+  text-decoration: none;
+}
+.dk-actors-mission-name a:hover,
+.dk-actors-mission-name a:focus-visible,
+.dk-actors-figure-name a:hover,
+.dk-actors-figure-name a:focus-visible {
+  color: var(--pink);
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+.dk-actors-mission-title {
+  margin: 4px 0;
+  font-size: 15px;
+  color: var(--chalk);
+}
+.dk-actors-figure-summary,
+.dk-actors-event-description,
+.dk-actors-readable {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--chalk);
+}
+.dk-actors-tradition {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.dk-actors-meta {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.dk-actors-block {
+  display: block;
+  margin-top: 2px;
+}
+.dk-actors-facts {
+  display: grid;
+  grid-template-columns: minmax(120px, max-content) 1fr;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 13px;
+}
+.dk-actors-facts dt {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding-top: 2px;
+}
+.dk-actors-facts dd {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.dk-actors-table-code {
+  display: inline-block;
+  margin: 0 8px 4px 0;
+  font-size: 11px;
+  color: var(--cyan);
+}
+.dk-actors-reading-note {
+  border-left: 3px solid var(--moon);
+  padding: 6px 10px;
+  background: var(--surface-2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dk-actors-reading-note p {
+  margin: 4px 0 0;
+  color: var(--chalk);
+}
+.dk-actors-readings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+}
+.dk-actors-reading {
+  border: 1px solid var(--border);
+  background: var(--ink);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dk-actors-reading-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 8px;
+}
+.dk-actors-reading-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+.dk-actors-subhead {
+  margin: 16px 0 8px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.dk-actors-disclosure {
+  border: 1px dashed var(--hot);
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--fg);
+}
+.dk-actors-rules {
+  padding-left: 20px;
+  list-style: disc;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--chalk);
+}
+.dk-actors-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.dk-actors-source {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px dashed var(--border);
+  padding-top: 6px;
+}
+.dk-actors-citation {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--chalk);
+  overflow-wrap: anywhere;
+}
+.dk-actors-hash {
+  font-size: 11px;
+  color: var(--cyan);
+  overflow-wrap: anywhere;
+}
+.dk-actors-source-link {
+  font-size: 11px;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.dk-actors-source-link:hover,
+.dk-actors-source-link:focus-visible {
+  color: var(--pink);
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+.dk-actors-sources > li {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+@media (max-width: 900px) {
+  .dk-actors-filter-form {
+    grid-template-columns: 1fr;
+  }
+  .dk-actors-facts {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .dk-actors-facts dd {
+    margin-bottom: 8px;
+  }
+  .dk-actors-readings {
+    grid-template-columns: 1fr;
+  }
+  .dk-actors-mission,
+  .dk-actors-figure,
+  .dk-actors-event,
+  .dk-actors-avatar {
+    padding: 12px;
+  }
+}

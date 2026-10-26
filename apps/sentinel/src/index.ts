@@ -15,6 +15,8 @@ import type {
 
 export { parseFeedXml, scoreHeadline }
 export type { CapturedSignalInput, DriverContext, DriverKind, MonitorDriver, MonitorRadarInfo, MonitorSourceInfo }
+export { dispatchCriticalAlert, type WebhookConfig, type WebhookDispatchResult } from './webhooks.js'
+export { clusterSignalsGeospatially, haversineDistanceKm, type GeoCoordinate, type ClusteredThreatZone } from './radar.js'
 
 export const DRIVER_REGISTRY: Record<DriverKind, MonitorDriver> = {
   rss: youtubeRssDriver,

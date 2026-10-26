@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { openLiveStream, sameOriginSdk } from '@moonwitness/moonql-client'
-import { LiveDot } from '@moonwitness/moonui'
+import { LiveDot, Tape, Badge } from '@moonwitness/moonui'
+import { triggerHaptic } from '@moonwitness/moonui/client'
 import { clock, slotProgress } from '@/lib/time'
 
 interface NowSlot {
@@ -61,6 +62,7 @@ export function LiveTicker({ initial }: { initial: NowSlot | null }) {
       onEvent: (data) => {
         const frame = data as { kind?: string; title?: string; urgencyScore?: number; platform?: string }
         if (frame.kind === 'intel' && frame.title) {
+          triggerHaptic('alert')
           setIntelAlert({
             title: frame.title,
             urgency: frame.urgencyScore ?? 0,
@@ -83,12 +85,18 @@ export function LiveTicker({ initial }: { initial: NowSlot | null }) {
   }, [])
 
   return (
-    <div className="m-row" style={{ fontSize: 12 }}>
+    <div className="m-row" style={{ fontSize: 12, alignItems: 'center', gap: 8 }}>
       <LiveDot state={state} />
       {intelAlert ? (
-        <span style={{ color: 'var(--alert)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-          [INTEL FLASH {intelAlert.platform.toUpperCase()} {intelAlert.urgency}%] {intelAlert.title}
-        </span>
+        <div className="m-row" style={{ gap: 6, alignItems: 'center' }}>
+          <Tape tone="pink">
+            INTEL FLASH · {intelAlert.platform.toUpperCase()}
+          </Tape>
+          <Badge tone="hot">{intelAlert.urgency}% URGENCY</Badge>
+          <span style={{ color: 'var(--fg)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+            {intelAlert.title}
+          </span>
+        </div>
       ) : slot ? (
         <span>
           <strong>{slot.title}</strong>

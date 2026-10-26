@@ -15,7 +15,10 @@ export function SiteHeader(): ReactNode {
         <a href="/stations">SIGNALS</a>
         <a href="/reader">READER</a>
         <a href="/terms">TERMS</a>
+        <a href="/figures">FIGURES</a>
         <a href="/constellation">CONSTELLATION</a>
+        <a href="/prisms">PRISMS</a>
+        <a href="/timeline">TIMELINE</a>
         <a href="/schedule">ARCHIVE</a>
         <a href="/#constellation">CREW</a>
         <a href="/#zine-poster">ABOUT</a>

@@ -85,3 +85,5 @@ export type { Field, AnyField, FieldsMap, FieldKind, PlainRow, CreateInput } fro
 export { createMoonQl, runMigrations, type MoonQl } from './client.js'
 export type { Log } from './log.js'
 export type { Json } from './json.js'
+
+export { computeMerkleRoot, type MerkleTreeResult } from './tools/merkle-verify.js'
