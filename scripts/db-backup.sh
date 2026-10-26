@@ -11,7 +11,7 @@
 # non-empty success. A dump killed mid-write would otherwise look fresh to the
 # freshness healthcheck (and to rotation) while being unusable. The path is
 # literal because compose mounts the volume there and the healthcheck reads the
-# same glob — apps/radio/test/compose-contract.test.ts holds both to it.
+# same glob — apps/arsy/test/compose-contract.test.ts holds both to it.
 
 # `one`/tag mode prints the committed path on stdout, so a failure must not
 # pollute it: errors go to stderr and still land in `docker compose logs`.

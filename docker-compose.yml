@@ -41,7 +41,7 @@ services:
       timeout: 3s
       retries: 10
 
-  radio:
+  arsy:
     build:
       context: .
       dockerfile: Dockerfile
@@ -59,7 +59,7 @@ services:
       HOST: 0.0.0.0
       PORT: "3000"
       # Everything from here down honours .env. The hub validates each value at
-      # boot (apps/radio/src/config.ts), so a malformed one fails the container
+      # boot (apps/arsy/src/config.ts), so a malformed one fails the container
       # with a readable list instead of quietly keeping the image default.
       LOG_LEVEL: ${LOG_LEVEL:-info}
       # the healthcheck below interpolates the same value: prefix and probe
@@ -99,7 +99,7 @@ services:
       PLAYLOG_PSEUDONYM_SALT: ${PLAYLOG_PSEUDONYM_SALT:-}
       # opt-in outbound fetches (station probe + now-playing metadata)
       EGRESS_ENABLED: ${EGRESS_ENABLED:-false}
-      # hostnames the egress gate refuses on top of db/radio/dock/headquarters
+      # hostnames the egress gate refuses on top of db/arsy/radio/dock/headquarters
       EGRESS_DENY_HOSTS: ${EGRESS_DENY_HOSTS:-}
       # WhatsApp (Baileys) — persist the multi-device session on a volume.
       WHATSAPP_ENABLED: ${WHATSAPP_ENABLED:-false}
@@ -122,6 +122,12 @@ services:
       timeout: 5s
       retries: 6
       start_period: 30s
+    networks:
+      default:
+        # Existing BFFs and local tools still resolve this same ARSY container
+        # through the deprecated `radio` DNS name during the compatibility window.
+        aliases:
+          - radio
 
   headquarters:
     build:
@@ -134,7 +140,7 @@ services:
     container_name: moonwitness-headquarters
     restart: unless-stopped
     depends_on:
-      radio:
+      arsy:
         condition: service_healthy
     ports:
       - "3002:3002"
@@ -171,7 +177,7 @@ services:
     container_name: moonwitness-dock
     restart: unless-stopped
     depends_on:
-      radio:
+      arsy:
         condition: service_healthy
     ports:
       - "3001:3001"

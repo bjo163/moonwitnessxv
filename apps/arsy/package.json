@@ -39,7 +39,7 @@
     "@moonwitness/moonql-settings": "workspace:*",
     "@moonwitness/moonql-stations": "workspace:*",
     "@moonwitness/moonql-unilex": "workspace:*",
-    "@moonwitness/whatsapp": "workspace:*",
+    "@moonwitness/skylink-whatsapp": "workspace:*",
     "fastify": "^5.2.1",
     "fastify-plugin": "^5.0.1",
     "json-schema-to-ts": "^3.1.1",

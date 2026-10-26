@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Dev runner for the seven processes (radio hub, dock, headquarters, ai gateway, sentinel, SKYLINK, ECHOLOG).
+ * Dev runner for the seven processes (ARSY hub, dock, headquarters, ai gateway, sentinel, SKYLINK, ECHOLOG).
  *
  * Why not `pnpm --parallel`? It makes the child Next.js processes start with a
  * non-development NODE_ENV ("You are using a non-standard NODE_ENV value"),
@@ -13,7 +13,7 @@
  * and provides interactive hotkeys to launch any frontend/API in browser with 1 key.
  *
  *   pnpm dev                         # build libs, then run everything
- *   node scripts/dev.mjs radio,dock  # subset
+ *   node scripts/dev.mjs arsy,dock   # subset (radio remains a transition alias)
  */
 import { spawn, execFileSync } from 'node:child_process'
 import { createInterface } from 'node:readline'
@@ -50,11 +50,11 @@ const ANSI = {
 
 const APPS = [
   {
-    tag: 'radio',
-    pkg: '@moonwitness/radio',
+    tag: 'arsy',
+    pkg: '@moonwitness/arsy',
     port: Number(process.env.RADIO_PORT ?? 3000),
     color: ANSI.boldCyan,
-    name: 'Radio Core Hub & ORM',
+    name: 'ARSY Hub · Radio/SIGNAL Core & ORM',
     url: 'http://localhost:3000',
     desc: 'Core Fastify hub, ORM REST engine, SSE on-air stream, & OpenAPI docs',
   },
@@ -116,7 +116,8 @@ const APPS = [
 ]
 
 const only = (process.argv[2] ?? '').split(',').map((s) => s.trim()).filter(Boolean)
-const selected = only.length > 0 ? APPS.filter((app) => only.includes(app.tag)) : APPS
+const requested = new Set(only.map((tag) => (tag === 'radio' ? 'arsy' : tag)))
+const selected = only.length > 0 ? APPS.filter((app) => requested.has(app.tag)) : APPS
 const isWindows = process.platform === 'win32'
 const width = Math.max(...selected.map((app) => app.tag.length))
 

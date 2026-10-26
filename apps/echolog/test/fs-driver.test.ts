@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -141,4 +141,29 @@ void test('driver rejects a non-content-addressed key and malformed sidecar', as
     )
     await assert.rejects(driver.get('../metadata'), /Object key must be/)
   })
+})
+
+void test('driver refuses an object-directory symlink that points outside the storage root', async (t) => {
+  const outside = await mkdtemp(join(tmpdir(), 'echolog-outside-'))
+  try {
+    await withStore(100, async (driver, root) => {
+      const bytes = new TextEncoder().encode('safe object')
+      const stored = await driver.putStream(stream(bytes), metadata)
+      const objectDirectory = join(root, 'objects')
+      const outsidePath = join(outside, 'objects')
+      await mkdir(outsidePath)
+      await writeFile(join(outsidePath, stored.digest), bytes)
+      await rm(objectDirectory, { recursive: true })
+      try {
+        await symlink(outsidePath, objectDirectory, 'junction')
+      } catch {
+        t.skip('the current Windows environment does not permit creating a directory junction')
+        return
+      }
+      await assert.rejects(driver.get(stored.object_key), /Unsafe storage directory/)
+      assert.deepEqual(await readdir(outsidePath), [stored.digest])
+    })
+  } finally {
+    await rm(outside, { recursive: true, force: true })
+  }
 })

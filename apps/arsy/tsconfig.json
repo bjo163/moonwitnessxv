@@ -25,7 +25,7 @@
     { "path": "../../packages/moonql-graph" },
     { "path": "../../packages/moonql-actors" },
     { "path": "../../packages/moonql-research" },
-    { "path": "../../packages/whatsapp" },
+    { "path": "../../packages/skylink-whatsapp" },
     { "path": "../../packages/denpa" }
   ]
 }

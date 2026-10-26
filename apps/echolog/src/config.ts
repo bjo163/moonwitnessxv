@@ -1,13 +1,45 @@
 import { z } from 'zod'
+import { resolve } from 'node:path'
+
+const DEFAULT_MIME_TYPES = [
+  'application/pdf',
+  'application/zip',
+  'audio/flac',
+  'audio/mpeg',
+  'audio/mp4',
+  'audio/ogg',
+  'audio/wav',
+  'image/gif',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'video/mp4',
+]
 
 const ConfigSchema = z.object({
   host: z.string().trim().min(1).default('127.0.0.1'),
   port: z.coerce.number().int().min(1).max(65535).default(3006),
+  nodeEnv: z.enum(['development', 'test', 'production']).default('development'),
+  arsyUrl: z.string().url().default('http://127.0.0.1:3000'),
+  serviceKey: z.string().default(''),
+  grantSigningSecret: z.string().default(''),
+  storageRoot: z.string().trim().min(1).default('./data/echolog'),
+  storageQuotaBytes: z.coerce.number().int().positive().default(10 * 1024 * 1024 * 1024),
+  maxUploadBytes: z.coerce.number().int().positive().default(50 * 1024 * 1024),
+  allowedMimeTypes: z.string().default(DEFAULT_MIME_TYPES.join(',')),
 })
 
 export interface EchologConfig {
   host: string
   port: number
+  nodeEnv: 'development' | 'test' | 'production'
+  arsyUrl: string
+  serviceKey: string
+  grantSigningSecret: string
+  storageRoot: string
+  storageQuotaBytes: number
+  maxUploadBytes: number
+  allowedMimeTypes: string[]
 }
 
 export function parseConfig(
@@ -39,13 +71,39 @@ export function parseConfig(
   const parsed = ConfigSchema.safeParse({
     host: environment.ECHOLOG_HOST,
     port: requestedPort ?? environment.ECHOLOG_PORT,
+    nodeEnv: environment.NODE_ENV,
+    arsyUrl: environment.ECHOLOG_ARSY_URL,
+    serviceKey: environment.ECHOLOG_SERVICE_KEY,
+    grantSigningSecret: environment.ECHOLOG_GRANT_SECRET,
+    storageRoot: environment.ECHOLOG_STORAGE_ROOT,
+    storageQuotaBytes: environment.ECHOLOG_STORAGE_QUOTA_BYTES,
+    maxUploadBytes: environment.ECHOLOG_MAX_UPLOAD_BYTES,
+    allowedMimeTypes: environment.ECHOLOG_ALLOWED_MIME_TYPES,
   })
   if (!parsed.success) {
     const details = parsed.error.issues.map((issue) => `${issue.path.join('.') || 'config'}: ${issue.message}`).join('; ')
     throw new Error(`Invalid ECHOLOG configuration: ${details}`)
   }
 
-  return parsed.data
+  const mimeTypes = parsed.data.allowedMimeTypes.split(',').map((value) => value.trim().toLowerCase()).filter(Boolean)
+  if (mimeTypes.length === 0 || mimeTypes.some((value) => !/^[a-z0-9!#$&^_.+-]+\/[a-z0-9!#$&^_.+-]+$/.test(value))) {
+    throw new Error('Invalid ECHOLOG configuration: allowed MIME types must be a non-empty comma-separated list.')
+  }
+  if (parsed.data.serviceKey.length > 0 && parsed.data.serviceKey.length < 32) {
+    throw new Error('Invalid ECHOLOG configuration: service key must be at least 32 characters when configured.')
+  }
+  if (parsed.data.grantSigningSecret.length > 0 && parsed.data.grantSigningSecret.length < 32) {
+    throw new Error('Invalid ECHOLOG configuration: grant secret must be at least 32 characters when configured.')
+  }
+  if (parsed.data.nodeEnv === 'production' && (!parsed.data.serviceKey || !parsed.data.grantSigningSecret)) {
+    throw new Error('Invalid ECHOLOG production configuration: ECHOLOG_SERVICE_KEY and ECHOLOG_GRANT_SECRET are required.')
+  }
+
+  return {
+    ...parsed.data,
+    allowedMimeTypes: [...new Set(mimeTypes)],
+    storageRoot: resolve(parsed.data.storageRoot),
+  }
 }
 
 export function loadConfig(): EchologConfig {

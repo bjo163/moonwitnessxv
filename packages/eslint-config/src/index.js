@@ -126,7 +126,7 @@ export function createMoonwitnessConfig(options = {}) {
 
     // 3. Monorepo Architecture Isolation Boundaries
     {
-      files: ['apps/**/*.{ts,tsx}', 'packages/moonql-*/**/*.{ts,tsx}', 'packages/denpa/**/*.{ts,tsx}', 'packages/whatsapp/**/*.{ts,tsx}'],
+      files: ['apps/**/*.{ts,tsx}', 'packages/moonql-*/**/*.{ts,tsx}', 'packages/denpa/**/*.{ts,tsx}', 'packages/skylink-whatsapp/**/*.{ts,tsx}'],
       rules: {
         'no-restricted-imports': [
           'error',

@@ -35,7 +35,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile
 
 # ---- Build the libraries, then the selected app ----
-# Root `pnpm build` would also build @moonwitness/radio, whose sources are not
+# Root `pnpm build` would also build @moonwitness/arsy, whose sources are not
 # copied into this stage (only apps/${APP}) — the filter would match nothing and
 # the image build would fail. Build the libs, then exactly one frontend.
 FROM deps AS build

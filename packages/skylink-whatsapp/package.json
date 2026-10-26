@@ -1,5 +1,5 @@
 {
-  "name": "@moonwitness/whatsapp",
+  "name": "@moonwitness/skylink-whatsapp",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -14,16 +14,16 @@
   "scripts": {
     "build": "tsc -b",
     "dev": "tsc -b --watch",
+    "test": "tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@moonwitness/core": "workspace:*",
-    "@whiskeysockets/baileys": "6.7.24",
+    "@whiskeysockets/baileys": "7.0.0-rc14",
     "pino": "^9.6.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
-    "fastify": "^5.2.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
 }

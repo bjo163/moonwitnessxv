@@ -31,16 +31,16 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 # ---- Build (project references compile packages then the app) ----
 FROM deps AS build
 COPY tsconfig.base.json ./
-COPY apps/radio ./apps/radio
+COPY apps/arsy ./apps/arsy
 # One copy for the whole library tree. An explicit per-package list is exactly
 # what fell behind when @moonwitness/moonql-monitor joined the workspace, and
-# `tsc -b` needs every project in apps/radio's reference graph. .dockerignore
+# `tsc -b` needs every project in apps/arsy's reference graph. .dockerignore
 # keeps node_modules, dist and .next out of the context: this is sources only.
 COPY packages ./packages
-# radio's tsconfig references its whole graph, so this single `tsc -b` compiles
+# ARSY's tsconfig references its whole graph, so this single `tsc -b` compiles
 # the libraries it needs and then the hub — no cockpit Vite pass, no dev-only
 # libs, and none of the app builds the root `pnpm build` would demand.
-RUN pnpm --filter @moonwitness/radio build
+RUN pnpm --filter @moonwitness/arsy build
 
 # ---- Production deps only ----
 # same derivation rule as `deps`: --prod still has to see every importer
@@ -82,8 +82,8 @@ COPY --from=build /repo/packages/moonql-journey/dist packages/moonql-journey/dis
 COPY --from=build /repo/packages/moonql-actors/dist packages/moonql-actors/dist
 COPY --from=build /repo/packages/moonql-graph/dist packages/moonql-graph/dist
 COPY --from=build /repo/packages/moonql-research/dist packages/moonql-research/dist
-COPY --from=build /repo/packages/whatsapp/dist packages/whatsapp/dist
+COPY --from=build /repo/packages/skylink-whatsapp/dist packages/skylink-whatsapp/dist
 COPY --from=build /repo/packages/denpa/dist packages/denpa/dist
-COPY --from=build /repo/apps/radio/dist apps/radio/dist
+COPY --from=build /repo/apps/arsy/dist apps/arsy/dist
 EXPOSE 3000
-CMD ["node", "apps/radio/dist/server.js"]
+CMD ["node", "apps/arsy/dist/server.js"]

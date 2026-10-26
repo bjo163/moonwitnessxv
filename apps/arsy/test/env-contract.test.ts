@@ -30,6 +30,13 @@ const FOREIGN_ENV_KEYS = [
   // read by apps/echolog/src/config.ts; never aliases the hub PORT
   'ECHOLOG_HOST',
   'ECHOLOG_PORT',
+  'ECHOLOG_ARSY_URL',
+  'ECHOLOG_SERVICE_KEY',
+  'ECHOLOG_GRANT_SECRET',
+  'ECHOLOG_STORAGE_ROOT',
+  'ECHOLOG_STORAGE_QUOTA_BYTES',
+  'ECHOLOG_MAX_UPLOAD_BYTES',
+  'ECHOLOG_ALLOWED_MIME_TYPES',
 ] as const
 
 const ALLOWED = new Set<string>([...RADIO_ENV_KEYS, ...ADDON_ENV_KEY_LIST, ...FOREIGN_ENV_KEYS])
@@ -68,7 +75,7 @@ test('the retired WHATSAPP_PREFIX does not come back', () => {
 test('.env.example ships placeholders, not credentials', () => {
   const path = join(process.cwd(), '..', '..', '.env.example')
   const text = readFileSync(path, 'utf8')
-  for (const key of ['POSTGRES_PASSWORD', 'MOONQL_AUTH_ADMIN_PASSWORD', 'DENPA_TOKEN']) {
+  for (const key of ['POSTGRES_PASSWORD', 'MOONQL_AUTH_ADMIN_PASSWORD', 'DENPA_TOKEN', 'ECHOLOG_SERVICE_KEY', 'ECHOLOG_GRANT_SECRET']) {
     const value = new RegExp(`^${key}=(.*)$`, 'm').exec(text)?.[1] ?? null
     assert.ok(value !== null, `${key} must be documented`)
     assert.ok(value === '' || value === 'change-me', `${key} must stay a placeholder, found "${value}"`)

@@ -77,9 +77,30 @@ test('compose: the database name each service dials is actually defined for it',
   // pg_dump/pg_restore read PG*, so the sidecar must be given PGDATABASE
   assert.match(backup, /PGDATABASE:\s*\$\{POSTGRES_DB/, 'backup maps POSTGRES_DB to PGDATABASE')
 
-  const radio = blocks.get('radio')
-  assert.ok(radio, 'radio service exists')
-  assert.match(radio, /DATABASE_URL:.*POSTGRES_DB/, 'the hub dials the database by name')
+  const arsy = blocks.get('arsy')
+  assert.ok(arsy, 'canonical arsy service exists')
+  assert.match(arsy, /DATABASE_URL:.*POSTGRES_DB/, 'the hub dials the database by name')
+})
+
+test('compose: the legacy radio DNS name aliases the one ARSY Hub service', () => {
+  const arsy = blocks.get('arsy')
+  assert.ok(arsy, 'canonical arsy service exists')
+  assert.equal(blocks.has('radio'), false, 'a second radio service must not exist')
+  assert.match(arsy, /aliases:[\s\S]*?\n\s+- radio\b/, 'radio resolves as a compatibility alias on the same service')
+  assert.match(arsy, /container_name:\s*moonwitness\b/, 'the existing Hub container identity is retained')
+  assert.match(compose, /depends_on:\n\s+arsy:\n\s+condition: service_healthy/, 'BFFs wait for the canonical ARSY service')
+  assert.match(compose, /RADIO_API_URL:\s*http:\/\/radio:3000\$\{API_PREFIX/, 'legacy consumers continue through the radio alias')
+})
+
+test('root workflows and dev runner select ARSY and retain the radio transition alias', () => {
+  const manifest = JSON.parse(readRepoText('package.json')) as { scripts: Record<string, string> }
+  const runner = readRepoText('scripts/dev.mjs')
+  assert.match(manifest.scripts.build ?? '', /--filter @moonwitness\/arsy build/)
+  assert.match(manifest.scripts.test ?? '', /--filter @moonwitness\/arsy test/)
+  assert.match(manifest.scripts['gen:sdk:check'] ?? '', /--filter @moonwitness\/arsy/)
+  assert.equal(manifest.scripts['dev:radio'], 'pnpm --filter @moonwitness/arsy dev')
+  assert.match(runner, /tag: 'arsy',[\s\S]*?pkg: '@moonwitness\/arsy'/)
+  assert.match(runner, /tag === 'radio' \? 'arsy' : tag/)
 })
 
 test('compose: the backup runs the shared script, mounted read-only', () => {
@@ -142,7 +163,7 @@ test('compose: a probe never glues a slash onto a prefix that already has one', 
   // probe 404s and dock/headquarters gate on it.
   assert.doesNotMatch(compose, /127\.0\.0\.1:3000\/\$\{API_PREFIX/, 'no separator before an API_PREFIX that starts with /')
   assert.match(compose, /127\.0\.0\.1:3000\$\{API_PREFIX:-\/api\/v1\}\/health\/ready/, 'the hub probes the real readiness path')
-  assert.doesNotMatch(compose, /radio:3000\/\$\{API_PREFIX/, 'the BFFs dial the prefix without a separator too')
+  assert.doesNotMatch(compose, /radio:3000\/\$\{API_PREFIX/, 'the BFF compatibility alias dials the prefix without an extra separator')
 })
 
 test('runbook: no step asks the db container for a variable it does not have', () => {

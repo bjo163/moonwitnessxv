@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Dev runner escape hatch: frees the dev ports (radio :3000, dock :3001,
+ * Dev runner escape hatch: frees the dev ports (ARSY Hub / radio alias :3000, dock :3001,
  * headquarters :3002, ai gateway :3003, cockpit :3004, SKYLINK :3005, ECHOLOG :3006) and the repo's leftover dev processes.
  *
  * `pnpm dev` (scripts/dev.mjs) already kills its own process tree on Ctrl+C, but

@@ -142,7 +142,7 @@ test('topology: addons.ts is exactly the addons the hub depends on', () => {
     .filter((name) => name.startsWith('@moonwitness/'))
     .filter((name) => name !== '@moonwitness/moonql' && name !== '@moonwitness/core')
     // whatsapp/denpa are channels mounted outside the addon registry
-    .filter((name) => name !== '@moonwitness/whatsapp' && name !== '@moonwitness/denpa')
+    .filter((name) => name !== '@moonwitness/skylink-whatsapp' && name !== '@moonwitness/denpa')
 
   assert.deepEqual(
     [...new Set(imported)].sort(),
@@ -215,7 +215,7 @@ test('topology: the root build scripts are derived, not enumerated', () => {
   )
   assert.doesNotMatch(root.scripts['build:libs'] ?? '', /--filter @moonwitness\//, 'no per-package filters in build:libs')
   assert.ok(root.scripts.build.includes('build:libs'), 'build must reuse build:libs rather than repeat the list')
-  for (const app of ['radio', 'aigateway', 'sentinel', 'cockpit']) {
+  for (const app of ['arsy', 'aigateway', 'sentinel', 'cockpit', 'skylink', 'echolog']) {
     assert.ok(root.scripts.build.includes(`@moonwitness/${app} build`), `build must cover @moonwitness/${app}`)
   }
   // the two Next apps are deliberately elsewhere: root `build` is the API/image

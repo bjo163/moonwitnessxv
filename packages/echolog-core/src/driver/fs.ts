@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto'
-import { link, mkdir, open, readdir, readFile, rename, rm, stat } from 'node:fs/promises'
+import { link, lstat, mkdir, open, readdir, readFile, rename, rm, stat } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import type { ObjectMetadataInput, ObjectSidecar, StorageDriver } from '../index.js'
 import { parseObjectSidecar } from '../sidecar.js'
@@ -47,6 +47,19 @@ export class FsStorageDriver implements StorageDriver {
     this.root = resolve(options.root)
     this.quotaBytes = options.quotaBytes
     this.now = options.now ?? (() => new Date())
+  }
+
+  async ready(): Promise<void> {
+    await this.ensureDirectories()
+    const probePath = join(this.root, 'tmp', `.ready-${randomUUID()}`)
+    const handle = await open(probePath, 'wx')
+    try {
+      await handle.writeFile(new Uint8Array())
+      await handle.sync()
+    } finally {
+      await handle.close()
+      await rm(probePath, { force: true })
+    }
   }
 
   async put(objectKey: string, bytes: Uint8Array, sidecar: ObjectSidecar): Promise<void> {
@@ -137,6 +150,9 @@ export class FsStorageDriver implements StorageDriver {
   async get(objectKey: string): Promise<{ bytes: Uint8Array; sidecar: ObjectSidecar } | null> {
     this.validateKey(objectKey)
     try {
+      await this.ensureDirectories()
+      await this.assertRegularFile(this.objectPath(objectKey))
+      await this.assertRegularFile(this.sidecarPath(objectKey))
       const [bytes, json] = await Promise.all([
         readFile(this.objectPath(objectKey)),
         readFile(this.sidecarPath(objectKey), 'utf8'),
@@ -249,7 +265,36 @@ export class FsStorageDriver implements StorageDriver {
   }
 
   private async ensureDirectories(): Promise<void> {
-    await Promise.all(['objects', 'metadata', 'tmp'].map((name) => mkdir(join(this.root, name), { recursive: true })))
+    await mkdir(this.root, { recursive: true })
+    await this.assertDirectory(this.root)
+    for (const name of ['objects', 'metadata', 'tmp']) {
+      await this.ensureDirectory(join(this.root, name))
+    }
+  }
+
+  private async ensureDirectory(path: string): Promise<void> {
+    try {
+      await this.assertDirectory(path)
+      return
+    } catch (error) {
+      if (!isMissing(error)) throw error
+    }
+    try {
+      await mkdir(path)
+    } catch (error) {
+      if (!isAlreadyExists(error)) throw error
+    }
+    await this.assertDirectory(path)
+  }
+
+  private async assertDirectory(path: string): Promise<void> {
+    const entry = await lstat(path)
+    if (entry.isSymbolicLink() || !entry.isDirectory()) throw new Error('Unsafe storage directory')
+  }
+
+  private async assertRegularFile(path: string): Promise<void> {
+    const entry = await lstat(path)
+    if (entry.isSymbolicLink() || !entry.isFile()) throw new Error('Unsafe storage file')
   }
 
   private objectPath(objectKey: string): string {
