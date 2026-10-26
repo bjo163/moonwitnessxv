@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
-import { Badge, Button, LiveDot } from '@moonwitness/moonui'
+import { useEffect, useRef, useState, useCallback, type ReactNode } from 'react'
+import { Badge, Button, LiveDot, StationSeal } from '@moonwitness/moonui'
+import { LivingBackdrop, AudioVisualizer, triggerHaptic } from '@moonwitness/moonui/client'
 
 /** A session shorter than this is a skip: nobody drifts into it by accident. */
 const SKIP_AFTER_SECONDS = 30
@@ -14,7 +15,8 @@ export interface LiveMetaInfo {
 }
 
 /**
- * Resilient audio player with ICY metadata sniffing and zero-drop ambient failover.
+ * Resilient living audio player with ICY metadata sniffing,
+ * procedural StationSeal heraldry, real-time frequency visualizer, and zero-drop failover.
  */
 export function Player({
   stationId,
@@ -24,7 +26,7 @@ export function Player({
   stationId: string
   stationName: string
   streamUrl: string
-}) {
+}): ReactNode {
   const audio = useRef<HTMLAudioElement | null>(null)
   const [playing, setPlaying] = useState(false)
   const [beacon, setBeacon] = useState<'idle' | 'sent' | 'failed'>('idle')
@@ -93,6 +95,7 @@ export function Player({
   }, [playing, stationId, isFailover])
 
   const triggerFailover = useCallback(() => {
+    triggerHaptic('alert')
     if (isFailover) {
       setStreamError('stream unavailable')
       return
@@ -109,6 +112,7 @@ export function Player({
   }, [isFailover])
 
   const toggle = async () => {
+    triggerHaptic('switch')
     const element = audio.current
     if (!element) return
     if (playing) {
@@ -140,45 +144,69 @@ export function Player({
   }
 
   return (
-    <div className="dk-player">
-      <audio
-        ref={audio}
-        src={activeSrc}
-        preload="none"
-        onEnded={() => void close(true)}
-        onPause={() => void close(true)}
-        onError={() => triggerFailover()}
-      />
-      <Button
-        type="button"
-        variant={playing ? 'primary' : 'accent'}
-        size="md"
-        onClick={() => void toggle()}
-        aria-pressed={playing}
-      >
-        {playing ? 'stop' : 'play'}
-      </Button>
-      <div className="m-row" style={{ gap: 8, flexWrap: 'wrap' }}>
-        <LiveDot on={playing} />
-        <strong>{stationName}</strong>
-        {isFailover ? (
-          <Badge tone="hot">FAILOVER: AMBIENT BACKUP</Badge>
-        ) : liveMeta?.title && liveMeta.title !== stationName ? (
-          <Badge tone="cyan">
-            ON AIR: {liveMeta.artist ? `${liveMeta.artist} - ` : ''}{liveMeta.title}
-          </Badge>
-        ) : (
-          <Badge tone={streamError || beacon === 'failed' ? 'hot' : beacon === 'sent' ? 'ok' : 'cyan'}>
-            {streamError
-              ? `${streamError} — logging paused`
-              : beacon === 'sent'
-                ? 'listen logged — charts updated'
-                : beacon === 'failed'
-                  ? 'beacon failed'
-                  : 'stream live'}
-          </Badge>
-        )}
+    <LivingBackdrop audioElement={audio.current} active={playing} className="rounded-lg">
+      <div className="dk-player" style={{ position: 'relative', overflow: 'hidden' }}>
+        <audio
+          ref={audio}
+          src={activeSrc}
+          preload="none"
+          crossOrigin="anonymous"
+          onEnded={() => void close(true)}
+          onPause={() => void close(true)}
+          onError={() => triggerFailover()}
+        />
+
+        <div className="m-row" style={{ gap: 14, alignItems: 'center', width: '100%' }}>
+          {/* Procedural Heraldic Station Seal */}
+          <StationSeal stationId={stationId} name={stationName} size={44} />
+
+          <Button
+            type="button"
+            variant={playing ? 'primary' : 'accent'}
+            size="md"
+            onClick={() => void toggle()}
+            aria-pressed={playing}
+          >
+            {playing ? 'STOP' : 'PLAY'}
+          </Button>
+
+          <div className="m-col" style={{ gap: 4, flex: 1, minWidth: 200 }}>
+            <div className="m-row" style={{ gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <LiveDot on={playing} />
+              <strong style={{ letterSpacing: '0.04em' }}>{stationName}</strong>
+              {isFailover ? (
+                <Badge tone="hot">FAILOVER: AMBIENT BACKUP</Badge>
+              ) : liveMeta?.title && liveMeta.title !== stationName ? (
+                <Badge tone="cyan">
+                  ON AIR: {liveMeta.artist ? `${liveMeta.artist} - ` : ''}{liveMeta.title}
+                </Badge>
+              ) : (
+                <Badge tone={streamError || beacon === 'failed' ? 'hot' : beacon === 'sent' ? 'ok' : 'cyan'}>
+                  {streamError
+                    ? `${streamError} — logging paused`
+                    : beacon === 'sent'
+                      ? 'listen logged — charts updated'
+                      : beacon === 'failed'
+                        ? 'beacon failed'
+                        : 'stream live'}
+                </Badge>
+              )}
+            </div>
+
+            {/* Phosphor frequency spectrum */}
+            <div style={{ width: '100%', maxWidth: 360, opacity: playing ? 0.9 : 0.35, transition: 'opacity 0.3s ease' }}>
+              <AudioVisualizer
+                audioElement={audio.current}
+                active={playing}
+                height={20}
+                barCount={24}
+                color="#00d4ff"
+                accentColor="#ff007a"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </LivingBackdrop>
   )
 }

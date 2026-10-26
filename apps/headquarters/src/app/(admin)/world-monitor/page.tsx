@@ -16,6 +16,7 @@ import {
   type ProgressTone,
 } from '@moonwitness/moonui'
 import { getMonitorOverview } from '@/data/queries/monitor'
+import { ThreatRadarMap } from '@/ui/client/ThreatRadarMap'
 
 interface SearchParams {
   radar?: string
@@ -173,6 +174,9 @@ export default async function WorldMonitorPage({
           </div>
         </CardBody>
       </Card>
+
+      {/* 1.5 TACTICAL THREAT RADAR MAP */}
+      <ThreatRadarMap selectedRadarId={selectedRadarId} />
 
       {/* 2. TOP KPI ROW */}
       <div className="m-grid m-grid-3">

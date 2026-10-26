@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { BrandLogo, Crown, LinkButton, LiveDot, Tape, ZineNote, Chevron } from '@moonwitness/moonui'
+import { MtsTelemetryClock } from '@moonwitness/moonui/client'
 import { SITE_NAME, SITE_TAGLINE } from '@/lib/env'
 
 export function SiteHeader(): ReactNode {
@@ -20,7 +21,8 @@ export function SiteHeader(): ReactNode {
         <a href="/#zine-poster">ABOUT</a>
       </nav>
 
-      <div className="m-row">
+      <div className="m-row" style={{ gap: 10, alignItems: 'center' }}>
+        <MtsTelemetryClock compact />
         <a href="/stations" className="dk-icon-btn" aria-label="Search signals" title="Search signals">
           SRC
         </a>

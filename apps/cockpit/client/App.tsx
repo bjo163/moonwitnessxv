@@ -16,8 +16,15 @@ import {
   StationCard,
   TerminalViewer,
   Kbd,
+  StationSeal,
+  MoonAvatar,
   type TabItem,
 } from '@moonwitness/moonui'
+import {
+  MtsTelemetryClock,
+  AudioVisualizer,
+  triggerHaptic,
+} from '@moonwitness/moonui/client'
 
 export type ChannelMediaType = 'bgm' | 'radio' | 'iptv'
 
@@ -397,6 +404,7 @@ export function App() {
   }, [volume, isMuted])
 
   const togglePlayPause = () => {
+    triggerHaptic('switch')
     const ch = currentChannel
     if (ch.type === 'iptv') {
       const v = videoRef.current
@@ -420,6 +428,7 @@ export function App() {
   }
 
   const selectChannel = (index: number) => {
+    triggerHaptic('tuning')
     setActiveChannelIndex(index)
     setIsPlaying(true)
   }
@@ -655,6 +664,7 @@ export function App() {
       <header className="cockpit-topbar">
         <div className="cockpit-brand">
           <BrandLogo size="sm" />
+          <MoonAvatar seed="cockpit-supervisor" variant="crown" size={32} />
           <div className="cockpit-title">
             <span>MOONDECK</span>
             <Tape tone="accent">DESKTOP COCKPIT</Tape>
@@ -662,6 +672,7 @@ export function App() {
         </div>
 
         <div className="cockpit-telemetry">
+          <MtsTelemetryClock compact />
           <div>
             SYS CLOCK: <strong style={{ color: 'var(--fg)' }}>{clock}</strong>
           </div>
@@ -1171,24 +1182,8 @@ export function App() {
                         textAlign: 'center',
                       }}
                     >
-                      <div
-                        style={{
-                          width: 120,
-                          height: 120,
-                          borderRadius: '50%',
-                          background:
-                            currentChannel.type === 'bgm'
-                              ? 'radial-gradient(circle, var(--pink) 0%, transparent 70%)'
-                              : 'radial-gradient(circle, var(--cyan) 0%, transparent 70%)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: 54,
-                          boxShadow: '0 0 30px rgba(0, 212, 255, 0.2)',
-                          animation: isPlaying ? 'pulse 2s infinite' : 'none',
-                        }}
-                      >
-                        {currentChannel.icon}
+                      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
+                        <StationSeal stationId={currentChannel.id} name={currentChannel.name} genre={currentChannel.genre} size={96} />
                       </div>
 
                       <div style={{ maxWidth: 450 }}>
@@ -1201,6 +1196,9 @@ export function App() {
                         <Tape tone={currentChannel.type === 'bgm' ? 'pink' : 'cyan'}>
                           {isPlaying ? 'ON-AIR AUDIO STREAMING' : 'STREAM PAUSED'}
                         </Tape>
+                        <div style={{ width: '100%', maxWidth: 380, margin: '12px auto 0 auto' }}>
+                          <AudioVisualizer audioElement={audioRef.current} active={isPlaying} height={32} barCount={28} />
+                        </div>
                         {nowPlayingTrack?.title ? (
                           <div
                             style={{
@@ -1368,6 +1366,7 @@ export function App() {
                     return (
                       <StationCard
                         key={ch.id}
+                        useSeal={true}
                         id={ch.id}
                         name={ch.name}
                         type={ch.type}

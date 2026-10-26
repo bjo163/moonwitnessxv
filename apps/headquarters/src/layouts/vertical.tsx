@@ -8,8 +8,10 @@ import {
   TextInput,
   UserChip,
   ZineNote,
+  MoonAvatar,
   type NavGroup,
 } from '@moonwitness/moonui'
+import { MtsTelemetryClock } from '@moonwitness/moonui/client'
 import { getSchema } from '@/data/schema'
 import { menuGroups } from '@/data/queries/registry'
 import type { SessionUser } from '@/data/types'
@@ -93,13 +95,18 @@ export async function VerticalLayout({ user, children }: { user: SessionUser; ch
             />
           </form>
 
-          <div className="m-row" style={{ gap: 12 }}>
+          <div className="m-row" style={{ gap: 12, alignItems: 'center' }}>
+            <MtsTelemetryClock compact />
+
             <a href="/#alerts" className="m-row" style={{ textDecoration: 'none', gap: 4 }} aria-label="Mission alerts">
               <span className="m-mono m-muted">ALERTS</span>
               <Badge tone="pink">3</Badge>
             </a>
 
-            <UserChip name={user.displayName} detail={`${user.role} // Empire`} />
+            <div className="m-row" style={{ gap: 8, alignItems: 'center' }}>
+              <MoonAvatar seed={user.displayName || 'commander'} variant="crown" size={26} />
+              <UserChip name={user.displayName} detail={`${user.role} // Empire`} />
+            </div>
 
             <form action="/api/session" method="post">
               <input type="hidden" name="logout" value="1" />

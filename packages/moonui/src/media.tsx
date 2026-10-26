@@ -4,6 +4,7 @@ import { Badge, type BadgeTone } from './layout.js'
 import { LiveDot } from './data.js'
 import { Button } from './form.js'
 import { Glyph } from './glyph.js'
+import { StationSeal } from './seal.js'
 
 const TYPE_CODE = { bgm: 'BG', radio: 'FM', iptv: 'TV' } as const
 
@@ -16,6 +17,7 @@ export interface StationCardProps {
   country?: string
   /** 2-3 letter monogram for the <Glyph> tile; defaults from `type` */
   icon?: string
+  useSeal?: boolean
   active?: boolean
   isPlaying?: boolean
   onSelect?: () => void
@@ -25,11 +27,13 @@ export interface StationCardProps {
 }
 
 export function StationCard({
+  id,
   name,
   type = 'radio',
   genre,
   country,
   icon,
+  useSeal = false,
   active = false,
   isPlaying = false,
   onSelect,
@@ -49,7 +53,11 @@ export function StationCard({
       onClick={onSelect}
     >
       <div className="m-station-card-left">
-        <Glyph code={icon || TYPE_CODE[type]} tone={type === 'bgm' ? 'pink' : type === 'iptv' ? 'accent' : 'cyan'} />
+        {useSeal ? (
+          <StationSeal stationId={id} name={name} genre={genre} size={32} />
+        ) : (
+          <Glyph code={icon || TYPE_CODE[type]} tone={type === 'bgm' ? 'pink' : type === 'iptv' ? 'accent' : 'cyan'} />
+        )}
         <div className="m-station-info">
           <div className="m-station-head">
             <span className="m-station-name">{name}</span>
