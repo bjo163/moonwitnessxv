@@ -2,7 +2,7 @@
 
 - **Milestone**: M10 Ontology, alias and identity review
 - **Status**: IMPLEMENTED AND PG-VERIFIED
-- **Code baseline**: `d539cee` plus the isolated M10 changes
+- **Code baseline**: `7493fea` (M10 commit), planning baseline `d539cee`
 - **Date**: 2026-10-26
 - **Scope**: `@moonwitness/moonql-ontology`, hub endpoints, Dock `/constellation`, PostgreSQL drill
 
@@ -122,4 +122,4 @@ Cleanup: `docker stop mw-m10-pg && docker rm mw-m10-pg`; container list count 0;
 - The PG drill used a disposable database and a small fixture; it validates schema, joins, ACL, temporal guard and reviewer flow, not production volume.
 - The Docker images were not rebuilt in this milestone. `Dockerfile`/`Dockerfile.web` now carry the ontology manifest and runtime `dist`, but a full `pnpm verify:docker` remains a separate deployment gate.
 - The eight-entity seed is a reviewed boundary sample, not a complete ontology. Expanding it requires source-by-source review; this milestone is not a validation of any universal identity claim.
-- CI verification is recorded after the M10 commit is pushed; see the revalidation note in `TODO.md`.
+- CI on `7493fea` passed ([run 40277413272](https://github.com/bjo163/moonwitnessxv/actions/runs/40277413272)). The local `pnpm verify` was red only at lint because of unrelated concurrent work, so the CI run is the authoritative combined gate.
