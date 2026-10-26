@@ -146,13 +146,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M06-01** — Pin source repo SHA and exact path by artifact family | P0 | D2 | M00-07 | Immutable source references for priority families |
-| - [ ] | **M06-02** — Crosswalk XIV V10/V10.1/ledger/gap archive | P0 | D3 | M06-01 | 99 editorial chapters not mistaken for original manuscripts |
-| - [ ] | **M06-03** — Recover II 13 functions/8 eras/10 world rules | P0 | D2 | M06-01 | Source-specific era and lore evidence |
-| - [ ] | **M06-04** — Preserve XII 33 patch statuses and disputed 014 | P0 | D2 | M06-01 | 8+5+1+18+1 registry with zero divine approval inferred |
-| - [ ] | **M06-05** — Inventory Corpus, Empire, A-L-L-A-H, Rocksoul interfaces | P0 | D3 | M06-01 | Owner and compatibility map, not bulk code import |
-| - [ ] | **M06-06** — Classify license, privacy, consent and missing media | P0 | D3 | M06-02 | Unknown rights -> metadata-only and NEEDS_SOURCE |
-| - [ ] | **M06-07** — Publish source crosswalk, gaps and reviewer queue | P0 | D3 | M06-03,M06-04,M06-05,M06-06 | Source IDs and constraints auditable |
+| - [x] | **M06-01** — Pin source repo SHA and exact path by artifact family | P0 | D2 | M00-07 | Immutable source references for priority families ([docs/audit/M06-01-source-repo-pins.md](file:///z:/project/moonradio/docs/audit/M06-01-source-repo-pins.md)) |
+| - [x] | **M06-02** — Crosswalk XIV V10/V10.1/ledger/gap archive | P0 | D3 | M06-01 | 99 editorial chapters not mistaken for original manuscripts ([docs/decisions/M06-02-xiv-v10-crosswalk.md](file:///z:/project/moonradio/docs/decisions/M06-02-xiv-v10-crosswalk.md)) |
+| - [x] | **M06-03** — Recover II 13 functions/8 eras/10 world rules | P0 | D2 | M06-01 | Source-specific era and lore evidence ([docs/decisions/M06-03-ii-lore-recovery.md](file:///z:/project/moonradio/docs/decisions/M06-03-ii-lore-recovery.md)) |
+| - [x] | **M06-04** — Preserve XII 33 patch statuses and disputed 014 | P0 | D2 | M06-01 | 8+5+1+18+1 registry with zero divine approval inferred ([docs/decisions/M06-04-xii-patches-registry.md](file:///z:/project/moonradio/docs/decisions/M06-04-xii-patches-registry.md)) |
+| - [x] | **M06-05** — Inventory Corpus, Empire, A-L-L-A-H, Rocksoul interfaces | P0 | D3 | M06-01 | Owner and compatibility map, not bulk code import ([docs/decisions/M06-05-historical-interfaces-map.md](file:///z:/project/moonradio/docs/decisions/M06-05-historical-interfaces-map.md)) |
+| - [x] | **M06-06** — Classify license, privacy, consent and missing media | P0 | D3 | M06-02 | Unknown rights -> metadata-only and NEEDS_SOURCE ([docs/decisions/M06-06-rights-classification.md](file:///z:/project/moonradio/docs/decisions/M06-06-rights-classification.md)) |
+| - [x] | **M06-07** — Publish source crosswalk, gaps and reviewer queue | P0 | D3 | M06-03,M06-04,M06-05,M06-06 | Source IDs and constraints auditable ([docs/audit/M06-07-source-crosswalk-queue.md](file:///z:/project/moonradio/docs/audit/M06-07-source-crosswalk-queue.md)) |
 
 
 ## M07 — Corpus source rights and ingestion pilot
