@@ -15,13 +15,11 @@ Use the repository Issue forms when they fit. Include the relevant task ID for T
 
 See [Issue, branch, commit, and integration conventions](docs/governance/WORKFLOW_CONVENTIONS.md).
 
-Before opening a pull request, update from the current `main`, keep the change focused, and check the full diff for unrelated files, private data, credentials, and generated artifacts. Do not force-push or rewrite shared history. Never include private witness material, secrets, or source content whose rights and consent are unknown.
+Before pushing changes, update from the current `dev`, keep the change focused, and check the full diff for unrelated files, private data, credentials, and generated artifacts. Do not force-push or rewrite shared history. Never include private witness material, secrets, or source content whose rights and consent are unknown.
 
-## Pull requests
+## Integration workflow
 
-Use the [pull request template](.github/PULL_REQUEST_TEMPLATE.md). Link relevant Issues and task packets, explain the exact files changed, and report commands and observed results. Separate verified behavior from proposals. Do not mark a TODO task complete; the authorized integrator records status only after reviewing the required evidence.
-
-Open pull requests into `main`; the `Monorepo Verification & Safety Gates` check must pass before merging. Human approval is not required, though review threads must be resolved. Do not push directly to `main`. There is no `dev` branch or promotion workflow: `main` is the only long-lived branch, and changes land only through pull requests.
+Changes enter through `dev` (either via direct push or pull request). The `Monorepo Verification & Safety Gates` check runs automatically on `dev`. When verified, commits are automatically promoted to `main` without manual approval bottlenecks. Direct pushes to `main` are restricted.
 
 ## Sources, rights, and privacy
 
