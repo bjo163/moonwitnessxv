@@ -79,8 +79,7 @@ test(
         await moonql.model('unilex_relations').removeWhere({ sourceTermRef: ids[1] })
         await moonql.model('unilex_relations').removeWhere({ targetTermRef: ids[1] })
         await moonql.model('unilex_match_reviews').removeWhere({ pairCode: 'P090:P091' })
-        await moonql.model('unilex_review_log').removeWhere({ targetRef: 'P090' })
-        await moonql.model('unilex_review_log').removeWhere({ targetRef: 'P091' })
+        await moonql.model('unilex_review_log').removeWhere({ targetRef: 'P090:P091' })
         await moonql.model('unilex_forms').removeWhere({ termRef: ids[0] })
         await moonql.model('unilex_forms').removeWhere({ termRef: ids[1] })
         await moonql.model('unilex_senses').removeWhere({ termRef: ids[0] })
@@ -210,7 +209,7 @@ test(
     const reviews = await moonql.model('unilex_match_reviews').list({ where: { pairCode: 'P090:P091' } })
     assert.equal(reviews.length, 1)
     assert.equal(reviews[0]?.decision, 'APPROVED_EXACT')
-    const log = await moonql.model('unilex_review_log').list({ where: { targetRef: 'P090' } })
+    const log = await moonql.model('unilex_review_log').list({ where: { targetRef: 'P090:P091' } })
     assert.ok(log.length >= 1, 'the decision is logged with its reviewer and reason')
   },
 )

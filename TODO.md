@@ -210,13 +210,15 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M09-01** — Recover Empire UNILEX seed and review status | P1 | D2 | M06-05 | 71 seed concepts not called validated universal dictionary |
-| - [ ] | **M09-02** — Define term, source language, script and sense schema | P1 | D3 | M09-01 | Every term has source, context and editorial status |
-| - [ ] | **M09-03** — Test ALLAH/ARSY/ZILL and naming confusions | P1 | D2 | M09-02 | Theological and fictional senses stay separate |
-| - [ ] | **M09-04** — Build exact/near/different matching review rules | P1 | D3 | M09-03 | Phonetic resemblance never silently sameAs |
-| - [ ] | **M09-05** — Build a Terms Table as projection, not second vocabulary | P1 | D3 | M09-02,M05-05 | Search filters terms by approved source and scope |
-| - [ ] | **M09-06** — Test mixed Arabic/Hebrew/Greek input and transliteration | P1 | D3 | M09-05 | Diacritics and RTL identities retained |
-| - [ ] | **M09-07** — Define stable term ID correction/deprecation process | P1 | D2 | M09-04,M09-06 | Old senses preserved with reviewer reasoning |
+| - [x] | **M09-01** — Recover Empire UNILEX seed and review status | P1 | D2 | M06-05 | 71 seed concepts pinned at `38354ff` with raw SHA-256 and an explicit "not a validated universal dictionary" notice; XV addenda P030/P031 separated ([evidence](file:///z:/project/moonradio/docs/audit/M09-unilex-terminology.md)) |
+| - [x] | **M09-02** — Define term, source language, script and sense schema | P1 | D3 | M09-01 | 7 models; every projected term has an approved source, context note, sense and `DRAFT_REVIEW` status (test 1) |
+| - [x] | **M09-03** — Test ALLAH/ARSY/ZILL and naming confusions | P1 | D2 | M09-02 | Four approved `distinctFrom` edges; P004:P031 `REJECTED`/`NEAR` with reason (test 2) |
+| - [x] | **M09-04** — Build exact/near/different matching review rules | P1 | D3 | M09-03 | Preview never writes; reviewer + evidence required; anonymous POST 401; contradiction refused (tests 2–3) |
+| - [x] | **M09-05** — Build a Terms Table as projection, not second vocabulary | P1 | D3 | M09-02,M05-05 | `GET /unilex/terms` filters by approved source, lane, scope, status and query; Dock `/terms` + 45-check SSR drill |
+| - [x] | **M09-06** — Test mixed Arabic/Hebrew/Greek input and transliteration | P1 | D3 | M09-05 | Raw diacritics, script and RTL/LTR retained; cross-script always `DIFFERENT` (test 5, UI drill) |
+| - [x] | **M09-07** — Define stable term ID correction/deprecation process | P1 | D2 | M09-04,M09-06 | Stable IDs immutable; deprecation reason + successor; old sense preserved with reviewer note; review log (test 6) |
+
+**Revalidasi 2026-10-26 (`9fde13f`, baseline `3178a4c`):** addon `@moonwitness/moonql-unilex` terpasang di hub dengan 7 model, seed 71 konsep yang dipin ke `bjo163/empire-of-the-light@38354ff` (SHA-256 `8e60fe61…d05772`), plus 2 addenda XV yang dipisahkan. Proyeksi `GET /unilex/terms` hanya menampilkan term bersumber `APPROVED_FOR_CITATION`; preview tidak pernah menulis relasi dan identitas hanya dicatat reviewer dengan bukti. Dock `/terms` dan `/terms/[stableId]` menampilkan bentuk per aksara/bahasa, sense berkonteks, provenance, relasi, keputusan identitas dan review log. `pnpm verify` lulus; 230 test (226 pass, 4 skipped, 0 fail); drill UI 45/45; drill PG nyata `engine=pg` lulus dengan 73 terms / 146 forms / 73 senses / 28 relations. SDK snapshot `e86eaa67aa9fd70b`. Bukti lengkap: [laporan M09](file:///z:/project/moonradio/docs/audit/M09-unilex-terminology.md).
 
 
 ## M10 — Ontology, alias and identity review
