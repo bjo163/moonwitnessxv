@@ -9,7 +9,7 @@ available.
 
 ### Added
 - Release and changelog guidance in `docs/audit/M01-05-release-lifecycle.md`.
-- Automated staging-to-production synchronization PR workflow (`.github/workflows/sync-dev-to-main.yml`).
+- Automated staging-to-production synchronization PR job in `.github/workflows/ci.yml`.
 - Staging integration branch `dev` with PR gating and safety checks.
 
 ### Changed

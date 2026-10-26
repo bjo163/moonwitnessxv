@@ -8,11 +8,14 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   verify:
     name: Monorepo Verification & Safety Gates
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Restrict main pull requests to the dev branch
@@ -47,3 +50,64 @@ jobs:
 
       - name: Run Monorepo Verification (build, lint, gen:sdk:check, test, build:web)
         run: pnpm verify
+
+  sync_pr:
+    name: Ensure sync PR from dev to main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    needs: verify
+    runs-on: ubuntu-latest
+    concurrency:
+      group: sync-dev-to-main
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout verified commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Check dev commits and manage PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch origin main:refs/remotes/origin/main
+
+          BEHIND_COUNT=$(git rev-list --count refs/remotes/origin/main..HEAD)
+          echo "Commits on dev ahead of main: $BEHIND_COUNT"
+
+          if [ "$BEHIND_COUNT" -eq 0 ]; then
+            echo "dev has no new commits compared to main. No PR needed."
+            exit 0
+          fi
+
+          EXISTING_PR=$(gh pr list --base main --head dev --state open --json number --jq '.[0].number')
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Open sync PR #$EXISTING_PR already exists from dev to main. GitHub will auto-update it with the latest dev commits."
+            exit 0
+          fi
+
+          echo "No open sync PR found. Creating a new PR from dev to main..."
+          echo "## Summary" > pr_body.md
+          echo "Automated staging promotion PR from dev to main." >> pr_body.md
+          echo "" >> pr_body.md
+          echo "### Status" >> pr_body.md
+          echo "- Source: dev" >> pr_body.md
+          echo "- Target: main" >> pr_body.md
+          echo "- Safety checks: Validated by Monorepo Verification & Safety Gates." >> pr_body.md
+          echo "" >> pr_body.md
+          echo "### Instructions for Maintainer" >> pr_body.md
+          echo "When ready to release staged changes to production:" >> pr_body.md
+          echo "1. Ensure all CI checks are green." >> pr_body.md
+          echo "2. Review the commit log and changelog entries." >> pr_body.md
+          echo "3. Merge this PR into main." >> pr_body.md
+
+          gh pr create \
+            --base main \
+            --head dev \
+            --title "chore(release): sync dev to main" \
+            --body-file pr_body.md

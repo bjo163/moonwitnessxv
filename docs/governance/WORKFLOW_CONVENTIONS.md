@@ -41,7 +41,7 @@ Proposed PR titles use the same format as commits. The existing [PR template](..
 
 ## Integration flow: enforced
 
-The required path is `topic branch → PR to dev → verified merge → automated PR to main → release merge`. The `dev` branch is the GitHub default branch and the primary staging integration branch. Both `dev` and `main` reject direct pushes, force-pushes, and deletion.
+The required path is `topic branch → PR to dev → verified merge → automated PR to main → release merge`. The `main` branch is the GitHub default branch and release branch; `dev` is the staging integration branch. Both `dev` and `main` reject direct pushes, force-pushes, and deletion.
 
 1. **Development into `dev`:**
    - Topic branches target `dev` via Pull Request.
@@ -50,7 +50,7 @@ The required path is `topic branch → PR to dev → verified merge → automate
 
 2. **Promotion from `dev` to `main`:**
    - PRs into `main` are restricted strictly to this repository's `dev` branch.
-   - Pushes to `dev` trigger the `Auto PR dev to main` workflow. If `dev` contains commits ahead of `main`, it ensures an open sync PR (`chore(release): sync dev to main`) exists.
+   - Pushes to `dev` trigger the `sync_pr` job in `ci.yml`. If `dev` contains commits ahead of `main`, it ensures an open sync PR (`chore(release): sync dev to main`) exists.
    - The sync PR automatically receives subsequent `dev` commits and runs the `Monorepo Verification & Safety Gates` check.
    - When ready for a production release, the maintainer reviews the sync PR and merges it into `main`.
 
