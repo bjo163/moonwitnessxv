@@ -1,9 +1,22 @@
 import { byStaleness, probeStream, runWithBudget } from '@moonwitness/core'
-import { ADMIN_WRITE, bool, computed, defineAddon, defineModel, defineView, int, m2o, str, ts } from '@moonwitness/moonql'
+import {
+  ADMIN_WRITE,
+  bool,
+  computed,
+  defineAddon,
+  defineModel,
+  defineView,
+  int,
+  m2o,
+  sel,
+  str,
+  text,
+  ts,
+} from '@moonwitness/moonql'
 
 /**
  * The radio addon — the ENTIRE stations feature in one declarative file.
- * moonql derives: the `stations` table (+id/createdAt/updatedAt),
+ * moonql derives: the `stations` and `denpa_transmissions` tables (+id/createdAt/updatedAt),
  * validation & serialization schemas, the repository, the
  * /api/v1/stations CRUD routes (rest: true) and unique-name enforcement.
  *
@@ -94,6 +107,40 @@ export default defineAddon({
         { name: 'NPO Radio 1', streamUrl: 'https://icecast.omroep.nl/radio1-bb-mp3', genre: 'news', countryRef: '@countries:nl' },
       ],
     }),
+
+    denpa_transmissions: defineModel({
+      label: 'Denpa Transmission',
+      rest: true,
+      maxLimit: 100,
+      fields: {
+        tokenHash: str({ maxLength: 64 }),
+        pseudonym: str({ maxLength: 64 }),
+        message: text(),
+        stationRef: m2o('stations', { null: true, index: true }),
+        status: sel(['PENDING', 'ON_AIR', 'ARCHIVED', 'FILTERED'], { default: 'ON_AIR', index: true }),
+        broadcastAt: ts({ null: true }),
+      },
+      acl: ADMIN_WRITE,
+      menu: { group: 'Radio', icon: 'DP', order: 30 },
+      seed: [
+        {
+          tokenHash: 'd7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592',
+          pseudonym: 'Denpa#7741',
+          message: 'Midnight frequency check from Jakarta Cyberdeck. Signal is loud and clear.',
+          stationRef: '@stations:Prambors FM Jakarta',
+          status: 'ON_AIR',
+          broadcastAt: '2026-10-26T12:00:00.000Z',
+        },
+        {
+          tokenHash: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
+          pseudonym: 'Echo#0819',
+          message: 'Listening to Al-Bayan Quranic stream from Surabaya substation. Peace to all witnesses.',
+          stationRef: '@stations:Radio Rodja 756 AM',
+          status: 'ON_AIR',
+          broadcastAt: '2026-10-26T13:30:00.000Z',
+        },
+      ],
+    }),
   },
   views: {
     // public, curated projection for the dock: active stations + their country
@@ -143,6 +190,24 @@ export default defineAddon({
       limit: 50,
       acl: ['admin'],
       menu: { group: 'Radio', icon: 'HL', order: 22 },
+    }),
+    // public on-air denpa transmissions projection for dock & listener terminal
+    publicLiveTransmissions: defineView('publicLiveTransmissions', {
+      label: 'Public On-Air Transmissions',
+      from: 'denpa_transmissions',
+      select: {
+        id: 'id',
+        pseudonym: 'pseudonym',
+        message: 'message',
+        stationRef: 'stationRef',
+        status: 'status',
+        broadcastAt: 'broadcastAt',
+      },
+      where: { status: 'ON_AIR' },
+      expand: ['stationRef'],
+      order: '-createdAt',
+      limit: 30,
+      menu: { group: 'Radio', icon: 'TX', order: 25 },
     }),
   },
   cron: [

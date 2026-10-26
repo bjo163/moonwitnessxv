@@ -2,7 +2,15 @@
 
 import { useEffect, useRef, useState, useCallback, type ReactNode } from 'react'
 import { Badge, Button, LiveDot, StationSeal } from '@moonwitness/moonui'
-import { LivingBackdrop, AudioVisualizer, triggerHaptic } from '@moonwitness/moonui/client'
+import {
+  LivingBackdrop,
+  AudioVisualizer,
+  triggerHaptic,
+  getOrCreateDspRack,
+  DSP_PRESETS,
+  type EqSettings,
+  type TapeSettings,
+} from '@moonwitness/moonui/client'
 import { TimeShiftPlayer } from './TimeShiftPlayer'
 
 /** A session shorter than this is a skip: nobody drifts into it by accident. */
@@ -17,7 +25,8 @@ export interface LiveMetaInfo {
 
 /**
  * Resilient living audio player with ICY metadata sniffing,
- * procedural StationSeal heraldry, real-time frequency visualizer, and zero-drop failover.
+ * procedural StationSeal heraldry, real-time frequency visualizer,
+ * WebAudio 5-band EQ & Lo-Fi tape saturation rack, and zero-drop failover.
  */
 export function Player({
   stationId,
@@ -36,6 +45,12 @@ export function Player({
   const [liveMeta, setLiveMeta] = useState<LiveMetaInfo | null>(null)
   const startedAt = useRef<number | null>(null)
   const retryTimer = useRef<NodeJS.Timeout | null>(null)
+
+  // WebAudio DSP Rack state
+  const [dspOpen, setDspOpen] = useState(false)
+  const [selectedPreset, setSelectedPreset] = useState<string>('flat')
+  const [eq, setEq] = useState<EqSettings>({ low: 0, lowMid: 0, mid: 0, highMid: 0, high: 0 })
+  const [tape, setTape] = useState<TapeSettings>({ enabled: false, saturation: 0, hiss: 0, crackle: 0 })
 
   const activeSrc = isFailover ? AMBIENT_FAILOVER_URL : streamUrl
 
@@ -128,6 +143,14 @@ export function Player({
       setPlaying(true)
       setStreamError(null)
       startedAt.current = Date.now()
+
+      // Ensure DSP rack is attached and running
+      const rack = getOrCreateDspRack(element)
+      if (rack) {
+        rack.setEq(eq)
+        rack.setTape(tape)
+      }
+
       const response = await fetch('/api/listen', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -141,6 +164,38 @@ export function Player({
       } else {
         triggerFailover()
       }
+    }
+  }
+
+  const handleApplyPreset = (presetId: string) => {
+    const p = DSP_PRESETS.find((x) => x.id === presetId)
+    if (!p) return
+    triggerHaptic('switch')
+    setSelectedPreset(presetId)
+    setEq(p.eq)
+    setTape(p.tape)
+    if (audio.current) {
+      const rack = getOrCreateDspRack(audio.current)
+      rack?.applyPreset(presetId)
+    }
+  }
+
+  const handleUpdateEqBand = (band: keyof EqSettings, value: number) => {
+    const next = { ...eq, [band]: value }
+    setEq(next)
+    if (audio.current) {
+      const rack = getOrCreateDspRack(audio.current)
+      rack?.setEq(next)
+    }
+  }
+
+  const handleToggleTape = () => {
+    triggerHaptic('switch')
+    const nextTape = { ...tape, enabled: !tape.enabled }
+    setTape(nextTape)
+    if (audio.current) {
+      const rack = getOrCreateDspRack(audio.current)
+      rack?.setTape(nextTape)
     }
   }
 
@@ -211,7 +266,98 @@ export function Player({
               <TimeShiftPlayer stationId={stationId} isPlaying={playing} audioRef={audio} />
             </div>
           </div>
+
+          {/* DSP FX Rack Toggle */}
+          <div className="m-col" style={{ alignItems: 'flex-end', gap: 6 }}>
+            <Button
+              type="button"
+              variant={tape.enabled ? 'primary' : 'ghost'}
+              size="sm"
+              onClick={() => setDspOpen(!dspOpen)}
+              title="Tactical WebAudio DSP FX & Parametric EQ Rack"
+            >
+              DSP FX {tape.enabled ? '● TAPE' : ''}
+            </Button>
+          </div>
         </div>
+
+        {/* DSP Acoustic Conditioner Drawer */}
+        {dspOpen ? (
+          <div
+            style={{
+              marginTop: 14,
+              paddingTop: 12,
+              borderTop: '1px solid var(--border)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 12,
+            }}
+          >
+            <div className="m-row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--cyan)', letterSpacing: '0.04em' }}>
+                ACOUSTIC CONDITIONER & 5-BAND PARAMETRIC EQ
+              </span>
+              <div className="m-row" style={{ gap: 6 }}>
+                <Button
+                  type="button"
+                  variant={tape.enabled ? 'primary' : 'paper'}
+                  size="sm"
+                  onClick={handleToggleTape}
+                >
+                  {tape.enabled ? 'TAPE WARMTH: ON' : 'TAPE WARMTH: OFF'}
+                </Button>
+              </div>
+            </div>
+
+            {/* Presets */}
+            <div className="m-row" style={{ gap: 6, flexWrap: 'wrap' }}>
+              {DSP_PRESETS.map((p) => (
+                <Button
+                  key={p.id}
+                  type="button"
+                  variant={selectedPreset === p.id ? 'primary' : 'ghost'}
+                  size="sm"
+                  onClick={() => handleApplyPreset(p.id)}
+                >
+                  {p.name}
+                </Button>
+              ))}
+            </div>
+
+            {/* 5-Band Equalizer Sliders */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, textAlign: 'center' }}>
+              {(['low', 'lowMid', 'mid', 'highMid', 'high'] as const).map((band) => {
+                const labels: Record<string, string> = {
+                  low: '60 Hz',
+                  lowMid: '250 Hz',
+                  mid: '1 kHz',
+                  highMid: '4 kHz',
+                  high: '12 kHz',
+                }
+                const val = eq[band]
+                return (
+                  <div key={band} className="m-col" style={{ gap: 4, alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--muted)', fontFamily: 'monospace' }}>
+                      {labels[band]}
+                    </span>
+                    <input
+                      type="range"
+                      min={-12}
+                      max={12}
+                      step={0.5}
+                      value={val}
+                      onChange={(e) => handleUpdateEqBand(band, parseFloat(e.target.value))}
+                      style={{ width: '100%', accentColor: 'var(--cyan)' }}
+                    />
+                    <span style={{ fontSize: '0.7rem', color: 'var(--fg)', fontFamily: 'monospace' }}>
+                      {val > 0 ? `+${val}` : val} dB
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        ) : null}
       </div>
     </LivingBackdrop>
   )

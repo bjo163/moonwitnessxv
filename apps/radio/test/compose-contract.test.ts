@@ -130,6 +130,16 @@ test('compose: the backup volume exists and is mounted at /backups', () => {
   assert.match(blocks.get('backup') ?? '', /db-backups:\/backups/, 'and mounted where the script writes')
 })
 
+test('compose: a probe never glues a slash onto a prefix that already has one', () => {
+  // API_PREFIX carries its own leading slash (`/api/v1`). Writing `${base}/$` +
+  // `{API_PREFIX}` produced `http://127.0.0.1:3000//api/v1/health/ready`: the hub
+  // answered on the host while every container stayed unhealthy, because the
+  // probe 404s and dock/headquarters gate on it.
+  assert.doesNotMatch(compose, /127\.0\.0\.1:3000\/\$\{API_PREFIX/, 'no separator before an API_PREFIX that starts with /')
+  assert.match(compose, /127\.0\.0\.1:3000\$\{API_PREFIX:-\/api\/v1\}\/health\/ready/, 'the hub probes the real readiness path')
+  assert.doesNotMatch(compose, /radio:3000\/\$\{API_PREFIX/, 'the BFFs dial the prefix without a separator too')
+})
+
 test('runbook: no step asks the db container for a variable it does not have', () => {
   // `$PGDATABASE` is exported by the backup sidecar only; inside `db` it is unset
   // and libpq silently falls back to "database = user", so the command "works"

@@ -35,6 +35,7 @@
     "@moonwitness/moonql-corpus": "workspace:*",
     "@moonwitness/moonql-unilex": "workspace:*",
     "@moonwitness/moonql-ontology": "workspace:*",
+    "@moonwitness/moonql-journey": "workspace:*",
     "@moonwitness/moonql-graph": "workspace:*",
     "@moonwitness/moonql-research": "workspace:*",
     "@moonwitness/whatsapp": "workspace:*",

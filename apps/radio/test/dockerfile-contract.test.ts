@@ -35,9 +35,10 @@ const radioManifest = JSON.parse(readFileSync(`${ROOT}/apps/radio/package.json`,
 
 /** Every workspace member pnpm-lock.yaml knows about, as `apps/x` / `packages/y`. */
 function lockfileImporters(): string[] {
-  const start = lockfile.indexOf('\nimporters:\n')
+  const norm = lockfile.replace(/\r\n/g, '\n')
+  const start = norm.indexOf('\nimporters:\n')
   assert.ok(start >= 0, 'pnpm-lock.yaml has an importers: block')
-  const rest = lockfile.slice(start + '\nimporters:\n'.length)
+  const rest = norm.slice(start + '\nimporters:\n'.length)
   // the block ends at the next top-level key (column 0)
   const end = rest.search(/^\S/m)
   const body = end >= 0 ? rest.slice(0, end) : rest

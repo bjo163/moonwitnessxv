@@ -1,15 +1,14 @@
 import { pseudonym } from '@moonwitness/core'
 import denpa from '@moonwitness/denpa'
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 
 /**
  * DENPA 電波 module -> mounted at <apiPrefix>/denpa
  * Inbound webhook receiver: anyone "transmits", we catch the signal.
  *
- * A transmission that carries words becomes a `requests` row: the queue is then
- * data the DJ can sort, close and audit instead of a line that scrolls past in a
- * terminal. Two rules travel with it — the origin is never stored in the clear,
- * and nothing a webhook does may take the hub down.
+ * A transmission that carries words becomes a `requests` row and a
+ * `denpa_transmissions` row: the queue is data the DJ can sort, close and audit,
+ * and the live on-air view feeds public frontends.
  */
 const MESSAGE_CAP = 500
 
@@ -35,8 +34,63 @@ const stationRefOf = async (fastify: FastifyInstance, payload: unknown): Promise
   return rows[0] ? String(rows[0].id) : null
 }
 
+interface TransmitBody {
+  message: string
+  pseudonym?: string
+  stationRef?: string
+}
+
 export default async function denpaModule(fastify: FastifyInstance) {
   const cfg = fastify.config.denpa
+
+  // Public listener transmission endpoint: web visitors can beam shortwave messages
+  fastify.post('/transmit', {
+    schema: {
+      tags: ['denpa'],
+      summary: 'Transmit a shortwave denpa message from the public web transceiver',
+      body: {
+        type: 'object',
+        required: ['message'],
+        properties: {
+          message: { type: 'string', minLength: 1, maxLength: 500 },
+          pseudonym: { type: 'string', maxLength: 50 },
+          stationRef: { type: 'string' },
+        },
+      },
+    },
+  }, async (req: FastifyRequest<{ Body: TransmitBody }>, reply: FastifyReply) => {
+    const rawMessage = req.body?.message?.trim() ?? ''
+    if (!rawMessage) {
+      return reply.code(400).send({ ok: false, error: 'message cannot be empty' })
+    }
+    const message = rawMessage.slice(0, MESSAGE_CAP)
+    const pseudo = req.body.pseudonym?.trim() || await senderOf(req.ip || 'anonymous')
+
+    const transmission = await fastify.moonql.model('denpa_transmissions').create({
+      tokenHash: 'web_listener',
+      pseudonym: pseudo,
+      message,
+      stationRef: req.body.stationRef || null,
+      status: 'ON_AIR',
+      broadcastAt: new Date().toISOString(),
+    })
+
+    try {
+      const gate = await fastify.moonql.model('settings_entries').list({ where: { key: 'requests_open' }, limit: 1 })
+      if (String(gate[0]?.value ?? 'true') !== 'false') {
+        await fastify.moonql.model('requests').create({
+          message,
+          sender: pseudo,
+          stationRef: req.body.stationRef || null,
+        })
+      }
+    } catch (err) {
+      fastify.log.warn({ err: (err as Error).message }, 'denpa: failed to queue transmission to requests')
+    }
+
+    return reply.code(201).send(transmission)
+  })
+
   if (!cfg.enabled) return
 
   // An inbound webhook without a token is a public writer that anyone can feed
@@ -46,17 +100,29 @@ export default async function denpaModule(fastify: FastifyInstance) {
     return
   }
 
-  const queue = async (origin: string, payload: unknown): Promise<void> => {
-    // The DJ can close the queue from HQ; a closed queue still logs the signal.
+  const recordAndQueue = async (origin: string, tokenHash: string, payload: unknown): Promise<void> => {
+    const message = messageOf(payload).trim()
+    if (!message) return
+
+    const sender = await senderOf(origin)
+    const stationRef = await stationRefOf(fastify, payload)
+
+    await fastify.moonql.model('denpa_transmissions').create({
+      tokenHash,
+      pseudonym: sender,
+      message,
+      stationRef,
+      status: 'ON_AIR',
+      broadcastAt: new Date().toISOString(),
+    })
+
     const gate = await fastify.moonql.model('settings_entries').list({ where: { key: 'requests_open' }, limit: 1 })
     if (String(gate[0]?.value ?? 'true') === 'false') return
 
-    const message = messageOf(payload).trim()
-    if (!message) return
     await fastify.moonql.model('requests').create({
       message,
-      sender: await senderOf(origin),
-      stationRef: await stationRefOf(fastify, payload),
+      sender,
+      stationRef,
     })
   }
 
@@ -64,10 +130,8 @@ export default async function denpaModule(fastify: FastifyInstance) {
     token: cfg.token,
     onReceive: (t) => {
       fastify.log.info({ id: t.id, origin: t.origin }, 'denpa: transmission received')
-      // fire-and-forget, but never unhandled: a slow or failing write must not
-      // reject inside a webhook that has already answered 202
-      void queue(t.origin, t.payload).catch((err: unknown) =>
-        fastify.log.warn({ err: (err as Error).message }, 'denpa: transmission not queued as a request'),
+      void recordAndQueue(t.origin, 'denpa_webhook', t.payload).catch((err: unknown) =>
+        fastify.log.warn({ err: (err as Error).message }, 'denpa: transmission not recorded/queued'),
       )
     },
   })

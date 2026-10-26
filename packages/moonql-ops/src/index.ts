@@ -1,19 +1,24 @@
 import {
   ADMIN_FULL,
   ADMIN_ONLY,
+  ADMIN_WRITE,
   BUS_EVENTS,
   busStream,
   defineAddon,
   defineModel,
+  defineView,
   int,
   sel,
   str,
   type ProvideCtx,
 } from '@moonwitness/moonql'
+import { EMPIRE_SYSTEMS_SEED } from './empire.js'
+
+export * from './empire.js'
 
 /**
  * moonql-ops — the observability addon: an audit trail, a cron monitor, one
- * dashboard endpoint and a live SSE stream. It never touches another addon's
+ * dashboard endpoint, empire systems registry, and a live SSE stream. It never touches another addon's
  * files: everything arrives through `observe(bus)` and the metadata contract.
  */
 
@@ -87,6 +92,33 @@ export const ops = defineAddon({
       },
       acl: ADMIN_FULL,
       menu: { group: 'System', icon: 'JB', order: 30 },
+    }),
+    empire_systems: defineModel({
+      label: 'Empire System',
+      rest: true,
+      maxLimit: 100,
+      fields: {
+        code: str({ maxLength: 40 }),
+        name: str({ maxLength: 100 }),
+        historicalRole: str({ maxLength: 255 }),
+        xvMapping: str({ maxLength: 255 }),
+        disallowedInterpretation: str({ maxLength: 255 }),
+        category: sel(['GOVERNANCE', 'INFERENCE', 'STORAGE', 'RESEARCH', 'TRANSMISSION'], { index: true }),
+        status: sel(['ACTIVE', 'BOUNDED', 'HISTORICAL_CONCEPT'], { default: 'ACTIVE', index: true }),
+      },
+      unique: [['code']],
+      acl: ADMIN_WRITE,
+      menu: { group: 'System', icon: 'ES', order: 40 },
+      seed: EMPIRE_SYSTEMS_SEED,
+    }),
+  },
+  views: {
+    empireSystemsOverview: defineView('empireSystemsOverview', {
+      label: 'Empire Systems Registry',
+      from: 'empire_systems',
+      order: 'category,code',
+      limit: 50,
+      menu: { group: 'System', icon: 'EO', order: 15 },
     }),
   },
   endpoints: {

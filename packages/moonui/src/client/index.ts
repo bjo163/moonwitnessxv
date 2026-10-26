@@ -54,3 +54,12 @@ export {
   type DensityMode,
   type DensityProviderProps,
 } from './density.js'
+
+export {
+  MoonDspRack,
+  getOrCreateDspRack,
+  DSP_PRESETS,
+  type EqSettings,
+  type TapeSettings,
+  type DspPreset,
+} from './dsp.js'

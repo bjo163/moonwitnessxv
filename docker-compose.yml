@@ -75,7 +75,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}
       MOONQL_AUTOSYNC: ${MOONQL_AUTOSYNC:-true}
       # addon-declared crons (e.g. auth session purge, ops retention) arm at boot
-      MOONQL_CRON_ENABLED: "true"
+      MOONQL_CRON_ENABLED: ${MOONQL_CRON_ENABLED:-true}
       # no empty tables: warn | require (fail boot) | off
       MOONQL_SEED_POLICY: ${MOONQL_SEED_POLICY:-warn}
       # a REST model without a write rule is anonymous-writable -> refuse to boot.
@@ -113,8 +113,11 @@ services:
     volumes:
       - whatsapp-session:/data
     healthcheck:
-      # the liveness route says nothing about the database; readiness does
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/${API_PREFIX:-/api/v1}/health/ready').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      # the liveness route says nothing about the database; readiness does.
+      # API_PREFIX already carries its leading slash, so no separator is added
+      # here: `...3000/` + `/api/v1` probes `//api/v1`, which 404s and would leave
+      # the container unhealthy forever — blocking dock and headquarters.
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000${API_PREFIX:-/api/v1}/health/ready').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -137,7 +140,9 @@ services:
       - "3002:3002"
     environment:
       NODE_ENV: production
-      RADIO_API_URL: http://radio:3000/api/v1
+      # follows API_PREFIX so a renamed prefix cannot leave the BFF dialling a
+      # path the hub no longer serves
+      RADIO_API_URL: http://radio:3000${API_PREFIX:-/api/v1}
       SITE_NAME: ${SITE_NAME:-Moonwitness}
       HQ_URL: ${HQ_URL:-http://localhost:3002}
       DOCK_URL: ${DOCK_URL:-http://localhost:3001}
@@ -172,7 +177,8 @@ services:
       - "3001:3001"
     environment:
       NODE_ENV: production
-      RADIO_API_URL: http://radio:3000/api/v1
+      # follows API_PREFIX, same reason as headquarters
+      RADIO_API_URL: http://radio:3000${API_PREFIX:-/api/v1}
       SITE_NAME: ${SITE_NAME:-Moonwitness}
       DOCK_URL: ${DOCK_URL:-http://localhost:3001}
       # origins allowed to frame /embed/*; empty keeps 'none' everywhere
