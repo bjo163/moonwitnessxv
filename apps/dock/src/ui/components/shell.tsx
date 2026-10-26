@@ -19,6 +19,7 @@ export function SiteHeader(): ReactNode {
         <a href="/constellation">CONSTELLATION</a>
         <a href="/prisms">PRISMS</a>
         <a href="/timeline">TIMELINE</a>
+        <a href="/studio">STUDIO</a>
         <a href="/schedule">ARCHIVE</a>
         <a href="/#constellation">CREW</a>
         <a href="/#zine-poster">ABOUT</a>

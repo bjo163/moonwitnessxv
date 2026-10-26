@@ -2,7 +2,7 @@
 #
 # One image definition for both Next apps:
 #   docker build -f Dockerfile.web --build-arg APP=dock -t moonwitness-dock .
-#   docker build -f Dockerfile.web --build-arg APP=headquarters -t moonwitness-hq .
+#   docker build -f Dockerfile.web --build-arg APP=headquarters -t moonwitness-headquarters .
 #
 # No `output: 'standalone'` on purpose: tracing a pnpm workspace is fragile,
 # a plain `--prod` install + `next start` is predictable.
@@ -15,6 +15,9 @@ FROM node:24-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+# corepack downloads pnpm@<packageManager> on first use: a prompt it is not
+# allowed to show would look exactly like a stalled build
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /repo
 
 # ---- Install deps (all workspace manifests are required by the lockfile) ----
@@ -43,6 +46,17 @@ COPY packages/moonql-actors/package.json packages/moonql-actors/
 COPY packages/moonql-graph/package.json packages/moonql-graph/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
+# The remaining workspace members: this list is pnpm-lock.yaml's `importers:`
+# block, and `--frozen-lockfile` refuses to install when one has no manifest.
+# apps/radio/test/dockerfile-contract.test.ts holds both stages to it.
+COPY apps/aigateway/package.json apps/aigateway/
+COPY apps/cockpit/package.json apps/cockpit/
+COPY apps/sentinel/package.json apps/sentinel/
+COPY packages/cli/package.json packages/cli/
+COPY packages/eslint-config/package.json packages/eslint-config/
+COPY packages/moonql-monitor/package.json packages/moonql-monitor/
+COPY packages/testing/package.json packages/testing/
+COPY packages/types/package.json packages/types/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile
 
@@ -84,6 +98,15 @@ COPY packages/moonql-actors/package.json packages/moonql-actors/
 COPY packages/moonql-graph/package.json packages/moonql-graph/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
+# same completeness rule as `deps`: --prod still resolves every importer
+COPY apps/aigateway/package.json apps/aigateway/
+COPY apps/cockpit/package.json apps/cockpit/
+COPY apps/sentinel/package.json apps/sentinel/
+COPY packages/cli/package.json packages/cli/
+COPY packages/eslint-config/package.json packages/eslint-config/
+COPY packages/moonql-monitor/package.json packages/moonql-monitor/
+COPY packages/testing/package.json packages/testing/
+COPY packages/types/package.json packages/types/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile --prod
 
@@ -108,6 +131,9 @@ COPY --from=build /repo/packages/moonui/moon.css packages/moonui/moon.css
 COPY --from=build /repo/apps/${APP}/package.json apps/${APP}/package.json
 COPY --from=build /repo/apps/${APP}/next.config.mjs apps/${APP}/next.config.mjs
 COPY --from=build /repo/apps/${APP}/.next apps/${APP}/.next
+# `next start` serves public/ straight off disk — it is not bundled into .next.
+# Without this every artwork file and the PWA icon 404 in the deployed app.
+COPY --from=build /repo/apps/${APP}/public apps/${APP}/public
 EXPOSE ${APP_PORT}
 WORKDIR /repo/apps/${APP}
 CMD ["sh", "-c", "exec ./node_modules/.bin/next start -p ${APP_PORT}"]

@@ -3,3 +3,8 @@
 packages/moonql-client/src/generated.ts text eol=lf
 packages/moonql-client/src/schema-snapshot.json text eol=lf
 packages/moonql-client/src/schema-history.json text eol=lf
+
+# Shell scripts that run inside a Linux container (scripts/db-backup.sh is
+# bind-mounted into postgres:17-alpine). A CRLF checkout makes /bin/sh see
+# $'\r' as a command and takes the backup sidecar down with it.
+*.sh text eol=lf

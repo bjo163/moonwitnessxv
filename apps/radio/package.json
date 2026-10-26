@@ -45,6 +45,7 @@
   "devDependencies": {
     "@moonwitness/aigateway": "workspace:*",
     "@moonwitness/cli": "workspace:*",
+    "@moonwitness/moonui": "workspace:*",
     "@moonwitness/moonql-client": "workspace:*",
     "@moonwitness/sentinel": "workspace:*",
     "@moonwitness/testing": "workspace:*",

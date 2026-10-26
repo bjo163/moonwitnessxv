@@ -6,6 +6,9 @@ FROM node:24-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+# a cold corepack fetch must never stop to ask: in a build with no TTY a prompt
+# is indistinguishable from a hang
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /repo
 
 # ---- Install deps (needs only manifests for a locked, cached layer) ----
@@ -35,6 +38,18 @@ COPY packages/moonql-actors/package.json packages/moonql-actors/
 COPY packages/moonql-graph/package.json packages/moonql-graph/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
+# The remaining workspace members. This list is pnpm-lock.yaml's `importers:`
+# block, not a convenience: `--frozen-lockfile` refuses to install when an
+# importer has no manifest, so one forgotten line fails every image build.
+# apps/radio/test/dockerfile-contract.test.ts holds both stages to it.
+COPY apps/aigateway/package.json apps/aigateway/
+COPY apps/cockpit/package.json apps/cockpit/
+COPY apps/sentinel/package.json apps/sentinel/
+COPY packages/cli/package.json packages/cli/
+COPY packages/eslint-config/package.json packages/eslint-config/
+COPY packages/moonql-monitor/package.json packages/moonql-monitor/
+COPY packages/testing/package.json packages/testing/
+COPY packages/types/package.json packages/types/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile
 
@@ -42,26 +57,15 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 FROM deps AS build
 COPY tsconfig.base.json ./
 COPY apps/radio ./apps/radio
-COPY packages/core ./packages/core
-COPY packages/moonql ./packages/moonql
-COPY packages/moonql-client ./packages/moonql-client
-COPY packages/moonui ./packages/moonui
-COPY packages/moonql-base ./packages/moonql-base
-COPY packages/moonql-auth ./packages/moonql-auth
-COPY packages/moonql-stations ./packages/moonql-stations
-COPY packages/moonql-schedule ./packages/moonql-schedule
-COPY packages/moonql-playlog ./packages/moonql-playlog
-COPY packages/moonql-apikeys ./packages/moonql-apikeys
-COPY packages/moonql-settings ./packages/moonql-settings
-COPY packages/moonql-ops ./packages/moonql-ops
-COPY packages/moonql-corpus ./packages/moonql-corpus
-COPY packages/moonql-unilex ./packages/moonql-unilex
-COPY packages/moonql-ontology ./packages/moonql-ontology
-COPY packages/moonql-actors ./packages/moonql-actors
-COPY packages/moonql-graph ./packages/moonql-graph
-COPY packages/whatsapp ./packages/whatsapp
-COPY packages/denpa ./packages/denpa
-RUN pnpm build
+# One copy for the whole library tree. An explicit per-package list is exactly
+# what fell behind when @moonwitness/moonql-monitor joined the workspace, and
+# `tsc -b` needs every project in apps/radio's reference graph. .dockerignore
+# keeps node_modules, dist and .next out of the context: this is sources only.
+COPY packages ./packages
+# radio's tsconfig references its whole graph, so this single `tsc -b` compiles
+# the libraries it needs and then the hub — no cockpit Vite pass, no dev-only
+# libs, and none of the app builds the root `pnpm build` would demand.
+RUN pnpm --filter @moonwitness/radio build
 
 # ---- Production deps only ----
 FROM base AS prod-deps
@@ -88,6 +92,15 @@ COPY packages/moonql-actors/package.json packages/moonql-actors/
 COPY packages/moonql-graph/package.json packages/moonql-graph/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
+# same completeness rule as `deps`: --prod still resolves every importer
+COPY apps/aigateway/package.json apps/aigateway/
+COPY apps/cockpit/package.json apps/cockpit/
+COPY apps/sentinel/package.json apps/sentinel/
+COPY packages/cli/package.json packages/cli/
+COPY packages/eslint-config/package.json packages/eslint-config/
+COPY packages/moonql-monitor/package.json packages/moonql-monitor/
+COPY packages/testing/package.json packages/testing/
+COPY packages/types/package.json packages/types/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile --prod
 
@@ -109,6 +122,9 @@ COPY --from=build /repo/packages/moonql-playlog/dist packages/moonql-playlog/dis
 COPY --from=build /repo/packages/moonql-apikeys/dist packages/moonql-apikeys/dist
 COPY --from=build /repo/packages/moonql-settings/dist packages/moonql-settings/dist
 COPY --from=build /repo/packages/moonql-ops/dist packages/moonql-ops/dist
+# a declared dependency of the hub, not an optional addon: without this dist the
+# container dies at import time, long after a green build
+COPY --from=build /repo/packages/moonql-monitor/dist packages/moonql-monitor/dist
 COPY --from=build /repo/packages/moonql-corpus/dist packages/moonql-corpus/dist
 COPY --from=build /repo/packages/moonql-unilex/dist packages/moonql-unilex/dist
 COPY --from=build /repo/packages/moonql-ontology/dist packages/moonql-ontology/dist

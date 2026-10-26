@@ -20,6 +20,10 @@ import { fileURLToPath } from 'node:url'
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url))
 const compose = readFileSync(`${ROOT}/docker-compose.yml`, 'utf8')
 const runbook = readFileSync(`${ROOT}/docs/runbook-restore.md`, 'utf8')
+// The dump algorithm moved out of the compose `command:` block into a script, so
+// the service the stack runs and the on-demand snapshot the recovery docs call
+// share one copy of it. The invariants below now guard that file.
+const backupScript = readFileSync(`${ROOT}/scripts/db-backup.sh`, 'utf8')
 
 /** service name -> its block, from `services:` to the next top-level key */
 function services(): Map<string, string> {
@@ -73,19 +77,51 @@ test('compose: the database name each service dials is actually defined for it',
   assert.match(radio, /DATABASE_URL:.*POSTGRES_DB/, 'the hub dials the database by name')
 })
 
-test('compose: the backup writes through a .part file and renames on success', () => {
+test('compose: the backup runs the shared script, mounted read-only', () => {
   const backup = blocks.get('backup')
   assert.ok(backup, 'backup service exists')
 
-  // no direct write to the final name: that is the half-dump bug
-  assert.doesNotMatch(backup, /pg_dump[^\n]*-f\s+"\$\$\{file\}"/, 'pg_dump must not write the final name directly')
-  assert.match(backup, /part="\$\$\{file\}\.part"/, 'the temp name is derived from the final one, on the same volume')
-  assert.match(backup, /pg_dump[^\n]*-f\s+"\$\$part"/, 'pg_dump writes the temp file')
-  assert.match(backup, /mv\s+"\$\$part"\s+"\$\$\{file\}"/, 'the rename is the commit point')
-  assert.match(backup, /rm -f "\$\$part"/, 'a failed dump is removed, not left to look fresh')
-  // rotation and freshness both look at *.dump, which a .part never matches
-  assert.match(backup, /ls -1t \/backups\/\*\.dump/, 'rotation counts committed dumps only')
+  // no second copy of the dump algorithm living in the compose file
+  assert.match(backup, /command: \["sh", "\/backup\.sh", "loop"\]/, 'the service runs scripts/db-backup.sh')
+  assert.doesNotMatch(backup, /pg_dump -Fc/, 'and does not inline its own dump command')
+  assert.match(backup, /\.\/scripts\/db-backup\.sh:\/backup\.sh:ro/, 'the script is mounted, not baked into an image')
+  // freshness is judged on committed dumps only, in the container that writes them
   assert.match(backup, /healthcheck:[\s\S]*ls -1t \/backups\/\*\.dump/, 'freshness is judged on committed dumps only')
+})
+
+test('backup script: writes through a .part file and renames on success', () => {
+  assert.ok(backupScript.startsWith('#!/bin/sh'), 'must run under the POSIX shell the postgres image ships')
+  // a CRLF checkout turns every line into `command\r` for /bin/sh: on this host
+  // that is the difference between a backup sidecar and a crash loop.
+  assert.ok(!backupScript.includes('\r'), 'db-backup.sh must stay LF: /bin/sh reads CRLF as part of the command')
+
+  // no direct write to the final name: that is the half-dump bug
+  assert.doesNotMatch(backupScript, /pg_dump[^\n]*-f\s+"\$file"/, 'pg_dump must not write the final name directly')
+  assert.match(backupScript, /part="\$file\.part"/, 'the temp name is derived from the final one, on the same volume')
+  assert.match(backupScript, /pg_dump[^\n]*-f\s+"\$part"/, 'pg_dump writes the temp file')
+  assert.match(backupScript, /mv\s+"\$part"\s+"\$file"/, 'the rename is the commit point')
+  assert.match(backupScript, /rm -f "\$part"/, 'a failed dump is removed, not left to look fresh')
+  // rotation and freshness both look at *.dump, which a .part never matches
+  assert.match(backupScript, /ls -1t \/backups\/\*\.dump/, 'rotation counts committed dumps only')
+  assert.match(backupScript, /-name '\*\.part'[^\n]*-delete/, 'an orphaned .part is swept')
+})
+
+test('backup script: the on-demand mode the recovery docs call exists', () => {
+  // docs/decisions/M04-02-migration-rollback-plan.md asks for a tagged snapshot
+  // before a destructive migration; a mode that is not there is a recipe that fails
+  // at the worst possible moment.
+  assert.match(backupScript, /^ {2}one\)/m, '`one` is an explicit mode')
+  assert.match(backupScript, /^ {2}\*\)/m, 'a bare tag falls through to a tagged dump')
+  assert.match(backupScript, /file="\/backups\/\$PGDATABASE-\$stamp-\$1\.dump"/, 'the tag lands in the file name')
+})
+
+test('compose: db can read the dumps its rollback recipe restores from', () => {
+  const db = blocks.get('db')
+  assert.ok(db, 'db service exists')
+  // docs/audit/M04-06-schema-upgrade-rollback.md runs pg_restore on /backups
+  // inside this container; the volume used to be mounted in `backup` only.
+  assert.match(db, /db-backups:\/backups:ro/, 'the same volume is visible, read-only')
+  assert.match(compose, /^\s{2}db-backups:\s*$/m, 'the backup volume is declared')
 })
 
 test('compose: the backup volume exists and is mounted at /backups', () => {

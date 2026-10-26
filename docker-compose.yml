@@ -9,6 +9,11 @@ name: moonwitness
 #   WHATSAPP_ENABLED / WHATSAPP_AUTO_CONNECT          IM channel
 #   DENPA_ENABLED / DENPA_TOKEN                       inbound webhook
 #   CORS_ORIGIN                                       comma-separated allow-list
+#
+# Behaviour knobs (log level, rate limit, retention windows, egress deny list,
+# pseudonym salt, bot copy) are read from the same .env as the hub itself, each
+# with the production-safe default spelled out below. MOONQL_ACL_POLICY is the
+# deliberate exception: it is pinned, never widened from the environment.
 
 x-db-identity: &db-identity
   POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
@@ -26,6 +31,10 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      # Read-only view of the dumps, so the rollback recipe in
+      # docs/audit/M04-06-schema-upgrade-rollback.md can restore straight from
+      # `/backups/<dump>` inside this container. Only `backup` writes there.
+      - db-backups:/backups:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:?set POSTGRES_USER in .env} -d ${POSTGRES_DB:?set POSTGRES_DB in .env}"]
       interval: 5s
@@ -49,17 +58,29 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: "3000"
-      RADIO_TITLE: Moonwitness Hub API
+      # Everything from here down honours .env. The hub validates each value at
+      # boot (apps/radio/src/config.ts), so a malformed one fails the container
+      # with a readable list instead of quietly keeping the image default.
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      # the healthcheck below interpolates the same value: prefix and probe
+      # cannot end up disagreeing about where the API lives
+      API_PREFIX: ${API_PREFIX:-/api/v1}
+      RADIO_TITLE: ${RADIO_TITLE:-Moonwitness Hub API}
+      # unauthenticated entry points (/auth/login, /listen)
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-20}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
       # the two frontends by default; "*" reflects every origin and must be a
       # deliberate choice, not the shipped default
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3001,http://localhost:3002}
       DATABASE_URL: postgresql://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}
-      MOONQL_AUTOSYNC: "true"
+      MOONQL_AUTOSYNC: ${MOONQL_AUTOSYNC:-true}
       # addon-declared crons (e.g. auth session purge, ops retention) arm at boot
       MOONQL_CRON_ENABLED: "true"
       # no empty tables: warn | require (fail boot) | off
-      MOONQL_SEED_POLICY: warn
-      # a REST model without a write rule is anonymous-writable -> refuse to boot
+      MOONQL_SEED_POLICY: ${MOONQL_SEED_POLICY:-warn}
+      # a REST model without a write rule is anonymous-writable -> refuse to boot.
+      # Pinned on purpose (docs/audit/M03-02): the local .env says `warn`, and a
+      # production stack must not inherit a looser gate from a developer machine.
       MOONQL_ACL_POLICY: require
       # only trust X-Forwarded-* when a real proxy terminates in front of the hub
       TRUST_PROXY: ${TRUST_PROXY:-false}
@@ -69,16 +90,23 @@ services:
       DOCK_URL: ${DOCK_URL:-http://localhost:3001}
       HQ_URL: ${HQ_URL:-http://localhost:3002}
       # moonql-ops: retention windows (days) for the two log tables
-      OPS_AUDIT_RETENTION_DAYS: "14"
-      OPS_JOB_RETENTION_DAYS: "7"
+      OPS_AUDIT_RETENTION_DAYS: ${OPS_AUDIT_RETENTION_DAYS:-14}
+      OPS_JOB_RETENTION_DAYS: ${OPS_JOB_RETENTION_DAYS:-7}
       # moonql-playlog: listen events hold visitor-derived data
-      PLAYLOG_RETENTION_DAYS: "90"
+      PLAYLOG_RETENTION_DAYS: ${PLAYLOG_RETENTION_DAYS:-90}
+      # rotating this re-identifies every listener at once (see .env.example);
+      # empty behaves exactly like an unset value, so it cannot silently rotate
+      PLAYLOG_PSEUDONYM_SALT: ${PLAYLOG_PSEUDONYM_SALT:-}
       # opt-in outbound fetches (station probe + now-playing metadata)
       EGRESS_ENABLED: ${EGRESS_ENABLED:-false}
+      # hostnames the egress gate refuses on top of db/radio/dock/headquarters
+      EGRESS_DENY_HOSTS: ${EGRESS_DENY_HOSTS:-}
       # WhatsApp (Baileys) — persist the multi-device session on a volume.
       WHATSAPP_ENABLED: ${WHATSAPP_ENABLED:-false}
       WHATSAPP_AUTO_CONNECT: ${WHATSAPP_AUTO_CONNECT:-false}
       WHATSAPP_AUTH_DIR: /data/whatsapp-auth
+      WHATSAPP_BOT_ENABLED: ${WHATSAPP_BOT_ENABLED:-true}
+      WHATSAPP_BOT_GREETING: ${WHATSAPP_BOT_GREETING:-Moonwitness WhatsApp bot is online.}
       # DENPA 電波 inbound webhook: off unless a token is supplied (see module).
       DENPA_ENABLED: ${DENPA_ENABLED:-false}
       DENPA_TOKEN: ${DENPA_TOKEN:-}
@@ -86,7 +114,7 @@ services:
       - whatsapp-session:/data
     healthcheck:
       # the liveness route says nothing about the database; readiness does
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/v1/health/ready').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/${API_PREFIX:-/api/v1}/health/ready').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -117,8 +145,11 @@ services:
       # Put the app behind TLS and set HQ_COOKIE_SECURE=true.
       HQ_COOKIE_SECURE: ${HQ_COOKIE_SECURE:-false}
     healthcheck:
-      # the image is Debian slim (no curl/wget): node is the one tool guaranteed here
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      # the image is Debian slim (no curl/wget): node is the one tool guaranteed here.
+      # /login, not /: the auth middleware redirects an anonymous `/` (M01-02
+      # probes the same public page), and a readiness gate should not depend on
+      # a redirect chain to prove the app answers.
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/login').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -173,32 +204,16 @@ services:
       PGDATABASE: ${POSTGRES_DB:?set POSTGRES_DB in .env}
       BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-3600}
       BACKUP_KEEP: ${BACKUP_KEEP:-48}
-    command:
-      - sh
-      - -ec
-      - |
-        mkdir -p /backups
-        while true; do
-          stamp="$$(date -u +%Y%m%dT%H%M%SZ)"
-          file="/backups/$$PGDATABASE-$${stamp}.dump"
-          part="$${file}.part"
-          # Write beside the final name and rename only on success: a dump killed
-          # mid-write would otherwise look fresh to the healthcheck (and to
-          # rotation) while being unusable.
-          if pg_dump -Fc -f "$$part" 2>/tmp/pgdump.err && [ -s "$$part" ]; then
-            mv "$$part" "$${file}"
-            echo "written $${file} ($$(wc -c < "$${file}") bytes)"
-            ls -1t /backups/*.dump | tail -n +$$((BACKUP_KEEP + 1)) | xargs -r rm -f
-          else
-            rm -f "$$part"
-            echo "pg_dump failed: $$(cat /tmp/pgdump.err)"
-          fi
-          # a container killed between dump and rename leaves its .part behind
-          find /backups -name '*.part' -mmin +60 -delete 2>/dev/null || true
-          sleep "$$BACKUP_INTERVAL_SECONDS"
-        done
+    command: ["sh", "/backup.sh", "loop"]
     volumes:
       - db-backups:/backups
+      # The dump algorithm lives in scripts/db-backup.sh: the interval loop this
+      # service runs and the on-demand snapshot docs/decisions/M04-02 asks for
+      # (`sh /backup.sh manual-pre-migration`) are then the same code. Two copies
+      # of "write the .part, rename on success" is how a half-dump comes back.
+      # `sh` is spelled out so the recipe does not depend on the exec bit of a
+      # bind-mounted file from a Windows checkout.
+      - ./scripts/db-backup.sh:/backup.sh:ro
     healthcheck:
       # a backup that has not run recently is not a backup: freshness is the signal
       test: ["CMD-SHELL", "f=$$(ls -1t /backups/*.dump 2>/dev/null | head -1); [ -n \"$${f}\" ] && [ $$(( $$(date +%s) - $$(stat -c %Y \"$${f}\") )) -le $$(( ${BACKUP_INTERVAL_SECONDS:-3600} * 3 )) ]"]

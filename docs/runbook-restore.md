@@ -16,6 +16,20 @@ Satu dump per `BACKUP_INTERVAL_SECONDS` (default 3600), nama
 Healthcheck service gagal bila dump terakhir lebih tua dari 3 × interval — itu
 sinyal bahwa cron pencadangan mati, bukan bahwa database bermasalah.
 
+Snapshot atas permintaan memakai script yang sama (`scripts/db-backup.sh`), sehingga
+ia melalui write-to-`.part` lalu rename yang sama seperti dump berkala: outputnya
+adalah path dump yang sudah di-commit.
+
+```powershell
+docker compose exec backup sh /backup.sh manual-pre-migration
+# /backups/moonwitness-<stamp>-manual-pre-migration.dump
+```
+
+Volume dump juga ter-mount **read-only** di container `db` pada path `/backups`,
+jadi resep rollback di [`docs/audit/M04-06-schema-upgrade-rollback.md`](audit/M04-06-schema-upgrade-rollback.md)
+dapat menjalankan `pg_restore` langsung dari sana tanpa menyalin file. Hanya service
+`backup` yang menulis ke volume itu.
+
 Salin keluar host sebelum dianggap aman:
 
 ```powershell

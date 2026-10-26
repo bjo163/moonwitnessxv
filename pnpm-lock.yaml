@@ -259,6 +259,9 @@ importers:
       '@moonwitness/moonql-client':
         specifier: workspace:*
         version: link:../../packages/moonql-client
+      '@moonwitness/moonui':
+        specifier: workspace:*
+        version: link:../../packages/moonui
       '@moonwitness/sentinel':
         specifier: workspace:*
         version: link:../sentinel

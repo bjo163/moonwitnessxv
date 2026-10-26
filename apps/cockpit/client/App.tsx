@@ -640,6 +640,7 @@ export function App() {
 
   const previewShortcuts = [
     { label: 'Dock (:3001)', url: 'http://127.0.0.1:3001' },
+    { label: 'Studio (:3001/studio)', url: 'http://127.0.0.1:3001/studio' },
     { label: 'Headquarters (:3002)', url: 'http://127.0.0.1:3002' },
     { label: 'World Monitor (:3002/world-monitor)', url: 'http://127.0.0.1:3002/world-monitor' },
     { label: 'Radio Hub (:3000)', url: 'http://127.0.0.1:3000' },

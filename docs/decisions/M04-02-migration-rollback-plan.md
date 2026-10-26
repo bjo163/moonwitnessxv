@@ -44,7 +44,10 @@ For any schema change involving column deletion, renaming, or type narrowing:
 ## 3. SQL Rollback Procedure
 
 Before applying non-additive changes:
-1. Trigger an on-demand snapshot: `docker compose exec backup /backup.sh manual-pre-migration`.
+1. Trigger an on-demand snapshot: `docker compose exec backup sh /backup.sh manual-pre-migration`.
+   The sidecar's interval loop and this one-shot are the same script
+   (`scripts/db-backup.sh`), so a manual snapshot carries the same write-to-`.part`
+   then rename discipline as an automatic one; it prints the committed path.
 2. Apply migration within an explicit transaction:
    ```sql
    BEGIN;
