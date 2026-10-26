@@ -1,0 +1,15 @@
+# MoonWitness XV repository guidance
+
+Repository: `bjo163/moonwitnessxv`. Start with [README](README.md) and the relevant document index; inspect actual files before trusting historical claims.
+
+- [TODO.md](TODO.md) owns task status. [BLUEPRINT.md](BLUEPRINT.md) owns architecture and domain boundaries; [MASTER_DESIGN.md](MASTER_DESIGN.md) owns UI semantics. Use accepted [ADRs](docs/decisions/README.md), milestone/task specifications, and observed evidence for their respective purposes.
+- Before editing, record branch, HEAD, and working-tree changes; inspect TODO scope and relevant packets. Preserve existing changes and untracked files.
+- Preparation-only requests, including Phase 3, freeze all TODO implementation and status changes. A skill does not authorize executing a task, build, test, migration, release, or deployment.
+- Use the existing [AI execution contract](docs/planning/AI_EXECUTION_CONTRACT.md) for separately authorized task work. This file adds no task lease, dispatcher, handoff, or status system.
+- Read current manifests for toolchain requirements: the present root declares Node `>=24 <25` and `pnpm@10.33.4`. Respect package ownership and existing APIs; do not introduce another backend or data owner for an ecosystem name.
+- Keep secrets, environment values, private witness material, and unapproved source content out of output and public Git. Follow [security guidance](SECURITY.md) and accepted rights/consent decisions.
+- Report only commands actually executed and results actually observed. Configuration and CI success do not prove deployment. Identify missing evidence and distinguish inference from fact.
+
+Read-only skills: [orientation](.agents/skills/repo-orientation/SKILL.md), [environment diagnosis](.agents/skills/environment-doctor/SKILL.md), [failure triage](.agents/skills/failure-triage/SKILL.md), [diff review](.agents/skills/diff-risk-review/SKILL.md), and [governance tools](.agents/skills/governance-tooling/SKILL.md). The [diagnostic command guide](scripts/diagnostics/README.md) discovers commands without executing application scripts. Review [contribution guidance](CONTRIBUTING.md) when proposing a change.
+
+For separately authorized coding, use [TypeScript/ESLint guidance](.agents/skills/moonwitness-eslint-typescript/SKILL.md), [monorepo boundaries](.agents/skills/moonwitness-monorepo-boundaries/SKILL.md), or [Fastify API patterns](.agents/skills/moonwitness-fastify-api/SKILL.md) when relevant. These skills describe current conventions; they do not authorize TODO work.
