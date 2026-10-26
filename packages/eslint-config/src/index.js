@@ -41,6 +41,9 @@ export const typescriptRules = {
     { argsIgnorePattern: '^_', varsIgnorePattern: '^_', ignoreRestSiblings: true },
   ],
   '@typescript-eslint/no-non-null-assertion': 'warn',
+  '@typescript-eslint/prefer-as-const': 'error',
+  '@typescript-eslint/adjacent-overload-signatures': 'error',
+  '@typescript-eslint/no-extra-non-null-assertion': 'error',
   '@typescript-eslint/no-unsafe-argument': 'off',
   '@typescript-eslint/no-unsafe-assignment': 'off',
   '@typescript-eslint/no-unsafe-call': 'off',
@@ -51,6 +54,28 @@ export const typescriptRules = {
   'no-var': 'error',
   'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
   'require-await': 'off',
+
+  // --- Strict Clean Code, Modularity & Line Limits ---
+  'max-lines': ['warn', { max: 1800, skipBlankLines: true, skipComments: true }],
+  'max-lines-per-function': ['warn', { max: 450, skipBlankLines: true, skipComments: true, IIFEs: true }],
+  'max-depth': ['warn', { max: 8 }],
+  'max-nested-callbacks': ['warn', { max: 5 }],
+  'max-len': [
+    'warn',
+    {
+      code: 200,
+      ignoreUrls: true,
+      ignoreStrings: true,
+      ignoreTemplateLiterals: true,
+      ignoreComments: true,
+      ignoreRegExpLiterals: true,
+    },
+  ],
+  complexity: ['warn', { max: 50 }],
+  'no-self-compare': 'error',
+  'no-unneeded-ternary': 'error',
+  'prefer-object-spread': 'error',
+  yoda: ['error', 'never'],
 }
 
 /**
@@ -181,7 +206,14 @@ export function createMoonwitnessConfig(options = {}) {
 
     // 4. Scripts & Build Configs
     {
-      files: ['scripts/**/*.mjs', 'apps/*/next.config.mjs', 'apps/radio/src/tools/**/*.ts', '*.config.mjs', '*.config.js'],
+      files: [
+        'scripts/**/*.mjs',
+        'apps/*/next.config.mjs',
+        'apps/radio/src/tools/**/*.ts',
+        'packages/cli/**/*.{ts,js}',
+        '*.config.mjs',
+        '*.config.js',
+      ],
       languageOptions: {
         ecmaVersion: 2023,
         sourceType: 'module',
