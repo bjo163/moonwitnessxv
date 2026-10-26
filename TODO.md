@@ -229,13 +229,15 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M10-01** — Define actor/entity/character/alias and typed edge contracts | P1 | D3 | M09-04,M02-05 | Separate kinds and versioned identity |
-| - [ ] | **M10-02** — Make identity merge a reviewer-approved candidate action | P1 | D4 | M10-01,M03-04 | No automatic destructive merger |
-| - [ ] | **M10-03** — Register source and perspective-scoped relation edges | P1 | D3 | M10-01 | Unknown/disputed relation not labeled verified |
-| - [ ] | **M10-04** — Test ZILL/ZIIL, THE BATTERY/ALLAH, SHADOW variants | P1 | D2 | M10-02,M09-03 | Negative identity decisions preserved |
-| - [ ] | **M10-05** — Build Constellation as read-only graph projection | P1 | D3 | M10-03 | Same graph ID as backend, no second graph authority |
-| - [ ] | **M10-06** — Test split, corrections and invalid temporal merges | P1 | D4 | M10-02,M10-05 | Review rollback and source lineage survive |
-| - [ ] | **M10-07** — Document reviewer conflict queue and evidence rubric | P1 | D2 | M10-04,M10-06 | UNKNOWN can remain unresolved |
+| - [x] | **M10-01** — Define actor/entity/character/alias and typed edge contracts | P1 | D3 | M09-04,M02-05 | Separate kinds and versioned identity |
+| - [x] | **M10-02** — Make identity merge a reviewer-approved candidate action | P1 | D4 | M10-01,M03-04 | No automatic destructive merger |
+| - [x] | **M10-03** — Register source and perspective-scoped relation edges | P1 | D3 | M10-01 | Unknown/disputed relation not labeled verified |
+| - [x] | **M10-04** — Test ZILL/ZIIL, THE BATTERY/ALLAH, SHADOW variants | P1 | D2 | M10-02,M09-03 | Negative identity decisions preserved |
+| - [x] | **M10-05** — Build Constellation as read-only graph projection | P1 | D3 | M10-03 | Same graph ID as backend, no second graph authority |
+| - [x] | **M10-06** — Test split, corrections and invalid temporal merges | P1 | D4 | M10-02,M10-05 | Review rollback and source lineage survive |
+| - [x] | **M10-07** — Document reviewer conflict queue and evidence rubric | P1 | D2 | M10-04,M10-06 | UNKNOWN can remain unresolved |
+
+**Revalidasi 2026-10-26 (baseline `d539cee`):** addon `@moonwitness/moonql-ontology` terpasang di hub dengan 6 model dan seed terpin: 5 sumber, 8 entitas (`ACTOR`/`ENTITY`/`CHARACTER` terpisah), 7 alias, 7 relasi bertipe, 4 keputusan identitas dan 3 log review. `GET /ontology/constellation` adalah proyeksi read-only dengan graph ID deterministik `gph_<16 hex>`; merge hanya lewat keputusan reviewer dengan jendela temporal, split (`REVOKED`) memulihkan komponen tanpa menghapus riwayat, dan edge `UNKNOWN`/`DISPUTED` tidak pernah diproyeksikan sebagai terverifikasi. Dock `/constellation` menampilkan graph identity, entity, alias ber-`lang`/`dir`, edge, keputusan identitas, rubrik bukti dan conflict queue tanpa kontrol tulis. Suite penuh 236 test (231 pass, 5 skipped, 0 fail), drill UI 71/71, drill PG nyata `engine=pg` lulus dan idempoten, `pnpm build`, `pnpm build:web`, `ui:check` (65 file, 0 violation), `gen:sdk:check` (`0a97846a800aa4e9`) dan eslint file M10 (0 error/0 warning) lulus; `pnpm verify` lokal hanya tertahan lint WIP `packages/moonui/src/client/*` yang bukan bagian milestone. Bukti lengkap: [laporan M10](file:///z:/project/moonradio/docs/audit/M10-ontology-identity.md).
 
 
 ## M11 — Figure/Event and Prophetic Mission Table

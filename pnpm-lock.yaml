@@ -207,6 +207,9 @@ importers:
       '@moonwitness/moonql-monitor':
         specifier: workspace:*
         version: link:../../packages/moonql-monitor
+      '@moonwitness/moonql-ontology':
+        specifier: workspace:*
+        version: link:../../packages/moonql-ontology
       '@moonwitness/moonql-ops':
         specifier: workspace:*
         version: link:../../packages/moonql-ops
@@ -397,6 +400,22 @@ importers:
         version: link:../moonql
 
   packages/moonql-monitor:
+    dependencies:
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../core
+      '@moonwitness/moonql':
+        specifier: workspace:*
+        version: link:../moonql
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  packages/moonql-ontology:
     dependencies:
       '@moonwitness/core':
         specifier: workspace:*

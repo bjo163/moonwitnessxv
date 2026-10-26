@@ -9,6 +9,7 @@ import ops from '@moonwitness/moonql-ops'
 import monitor from '@moonwitness/moonql-monitor'
 import corpus from '@moonwitness/moonql-corpus'
 import unilex from '@moonwitness/moonql-unilex'
+import ontology from '@moonwitness/moonql-ontology'
 import type { AnyAddon } from '@moonwitness/moonql'
 
 /**
@@ -16,4 +17,4 @@ import type { AnyAddon } from '@moonwitness/moonql'
  * Adding a feature = install its package + one line here.
  * Order is irrelevant — the registry topologically sorts by `depends`.
  */
-export const addons: AnyAddon[] = [base, auth, stations, schedule, playlog, apikeys, settings, ops, monitor, corpus, unilex]
+export const addons: AnyAddon[] = [base, auth, stations, schedule, playlog, apikeys, settings, ops, monitor, corpus, unilex, ontology]

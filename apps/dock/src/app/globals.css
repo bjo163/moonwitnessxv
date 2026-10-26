@@ -1133,3 +1133,263 @@
     padding: 14px;
   }
 }
+
+/* ---------- Constellation graph projection ---------- */
+.dk-graph {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.dk-graph-meta {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.dk-graph-notice {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 4px solid var(--cyan);
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dk-graph-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dk-graph-identity-meta {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px 16px;
+  margin: 0;
+  font-size: 13px;
+}
+.dk-graph-identity-meta dt {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.dk-graph-identity-meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.dk-graph-id {
+  font-size: 13px;
+  color: var(--cyan);
+  overflow-wrap: anywhere;
+}
+.dk-graph-counts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+.dk-graph-counts li {
+  border: 1px solid var(--border);
+  background: var(--ink);
+  padding: 8px 10px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.dk-graph-counts strong {
+  display: block;
+  font-size: 20px;
+  color: var(--fg);
+}
+.dk-graph-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dk-graph-section h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.dk-graph-nodes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.dk-graph-node {
+  border: 2px solid var(--border-strong);
+  background: var(--surface);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.dk-graph-node-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dk-graph-node-title {
+  margin: 0 0 2px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+.dk-graph-node-description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dk-graph-node-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  border-top: 1px dashed var(--border);
+  padding-top: 8px;
+}
+.dk-graph-aliases,
+.dk-graph-edges,
+.dk-graph-decisions,
+.dk-graph-conflicts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dk-graph-aliases {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dk-graph-alias {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  background: var(--ink);
+  max-width: 100%;
+}
+.dk-graph-alias-surface {
+  font-size: 18px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.dk-graph-edge,
+.dk-graph-decision,
+.dk-graph-conflict {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 3px solid var(--border-strong);
+  padding: 4px 0 4px 10px;
+}
+.dk-graph-edge[data-verified='true'] {
+  border-left-color: var(--ok);
+}
+.dk-graph-edge[data-verified='false'] {
+  border-left-color: var(--hot);
+}
+.dk-graph-decision[data-candidate='true'] {
+  border-left-color: var(--accent);
+}
+.dk-graph-decision[data-active='true'] {
+  border-left-color: var(--ok);
+}
+.dk-graph-edge-head,
+.dk-graph-decision-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dk-graph-edge-route,
+.dk-graph-decision-pair {
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.dk-graph-edge p,
+.dk-graph-decision p,
+.dk-graph-conflict p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.dk-graph-source {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px dashed var(--border);
+  padding-top: 6px;
+}
+.dk-graph-citation {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--chalk);
+  overflow-wrap: anywhere;
+}
+.dk-graph-hash {
+  font-size: 11px;
+  color: var(--cyan);
+  overflow-wrap: anywhere;
+}
+.dk-graph-source-link {
+  font-size: 11px;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.dk-graph-source-link:hover,
+.dk-graph-source-link:focus-visible {
+  color: var(--pink);
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+.dk-graph-rubric {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dk-graph-rules,
+.dk-graph-evidence {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dk-graph-evidence {
+  margin-top: 4px;
+  color: var(--chalk);
+}
+
+@media (max-width: 900px) {
+  .dk-graph-nodes {
+    grid-template-columns: 1fr;
+  }
+  .dk-graph-identity-meta {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .dk-graph-identity-meta dd {
+    margin-bottom: 8px;
+  }
+  .dk-graph-node {
+    padding: 12px;
+  }
+  .dk-graph-counts {
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  }
+}

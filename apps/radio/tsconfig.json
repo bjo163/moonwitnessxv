@@ -20,6 +20,7 @@
     { "path": "../../packages/moonql-monitor" },
     { "path": "../../packages/moonql-corpus" },
     { "path": "../../packages/moonql-unilex" },
+    { "path": "../../packages/moonql-ontology" },
     { "path": "../../packages/whatsapp" },
     { "path": "../../packages/denpa" }
   ]
