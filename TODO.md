@@ -637,7 +637,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M28-01** — Inventory all hub-name references and freeze old API/Radio fixtures | P0 | D2 | M00-02,M22-01 | Capture references in root scripts, lock importer, Dockerfiles, Compose DNS, frontend BFFs, env aliases, tests, generated SDK, metrics and runbooks with source SHA |
+| - [x] | **M28-01** — Inventory all hub-name references and freeze old API/Radio fixtures | P0 | D2 | M00-02,M22-01 | **Closed 2026-10-27:** pinned source SHA `0f3a252af6e7b7d803cedab121a443911d820279`; mapped package/scripts/lock importer, Dockerfiles, Compose/DNS, frontend BFFs, env aliases, tests, SDK, metrics and runbooks; classified Radio-domain references to preserve; cross-referenced M22-01 normalized fixtures. Integrator review accepted; no runtime test or rename claimed. [Inventory](docs/audit/M28-01-hub-identity-inventory.md). |
 | - [ ] | **M28-02** — Ratify ARSY technical compatibility map using accepted ADR-0001 | P0 | D2 | M28-01,M02-03 | Specify names, safe deprecated env aliases, public routes, port `3000`, DB and no-duplicate-Hub rule; no unreviewed breaking change |
 | - [ ] | **M28-03** — Move, not copy, backend workspace `apps/radio` to `apps/arsy` | P0 | D4 | M28-02 | Rename `@moonwitness/radio` to `@moonwitness/arsy`; preserve module/ORM logic and single process; no duplicated models or migrations |
 | - [ ] | **M28-04** — Migrate package filters, pnpm lock, Dockerfiles, Compose and runners | P0 | D4 | M28-03 | Regenerate lock with pnpm; update all paths/build scripts/ports; retain tested `radio` internal DNS compatibility or transition mapping for Dock/HQ |
