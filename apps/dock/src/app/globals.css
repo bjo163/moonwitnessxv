@@ -621,3 +621,209 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Corpus Reader ---------- */
+.dk-reader-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px;
+}
+.dk-reader-form .m-field:first-of-type {
+  flex: 1 1 240px;
+}
+.dk-reader-form .m-field:nth-of-type(2) {
+  flex: 1 1 200px;
+}
+.dk-reader-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.dk-reader-passage {
+  border: 3px solid var(--fg);
+  background: #12101b;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.dk-reader-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dk-reader-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 0.95;
+}
+.dk-reader-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(247, 244, 236, 0.65);
+}
+.dk-reader-version {
+  margin-top: 12px;
+}
+.dk-reader-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dk-reader-block h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.dk-reader-source {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px 16px;
+  margin: 0;
+  font-size: 13px;
+}
+.dk-reader-source dt {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(247, 244, 236, 0.55);
+}
+.dk-reader-source dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.dk-reader-source a {
+  color: var(--accent);
+}
+.dk-reader-arabic {
+  margin: 0;
+  padding: 12px 0;
+  font-size: clamp(24px, 3.4vw, 36px);
+  line-height: 2;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.dk-reader-blocked {
+  border: 2px dashed var(--pink);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dk-reader-blocked code {
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.dk-reader-translations {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.dk-reader-translation {
+  border-left: 4px solid var(--pink);
+  padding: 6px 0 6px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dk-reader-translation[data-blocked='true'] {
+  border-left-color: rgba(247, 244, 236, 0.3);
+}
+.dk-reader-translation p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.dk-reader-translation-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.dk-reader-blocked-inline {
+  font-size: 12px !important;
+  color: rgba(247, 244, 236, 0.65);
+}
+.dk-reader-candidates {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.dk-reader-candidate {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 2px solid rgba(247, 244, 236, 0.5);
+  border-radius: 4px;
+  padding: 12px 14px;
+  color: inherit;
+  text-decoration: none;
+}
+.dk-reader-candidate:hover,
+.dk-reader-candidate:focus-visible {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.dk-reader-candidate-name {
+  font-weight: 700;
+}
+.dk-reader-candidate-meta {
+  font-size: 12px;
+}
+.dk-reader-citation {
+  margin: 0 0 12px;
+  padding: 12px;
+  background: #07060b;
+  border: 2px solid rgba(247, 244, 236, 0.35);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.dk-reader-citation:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.dk-reader-copy {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dk-reader-copy-status {
+  font-size: 12px;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .dk-reader-grid {
+    grid-template-columns: 1fr;
+  }
+  .dk-reader-source {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .dk-reader-source dd {
+    margin-bottom: 8px;
+  }
+  .dk-reader-passage {
+    padding: 14px;
+  }
+}
