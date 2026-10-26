@@ -191,13 +191,15 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M08-01** — Design UI states for source, absent, ambiguous, rights-blocked | P0 | D2 | M07-05 | No invented verses or misleading blank labels |
-| - [ ] | **M08-02** — Render work, edition, language, permission and source | P0 | D3 | M08-01 | QS 2:82 exact source identity visible |
-| - [ ] | **M08-03** — Add context and licensed parallel translation display | P1 | D3 | M08-02,M07-04 | Arabic/translation context not conflated |
-| - [ ] | **M08-04** — Add reproducible citation with selector and version | P0 | D2 | M08-02 | Copy output includes exact source and source date |
-| - [ ] | **M08-05** — Test missing/forbidden/right-unknown Reader behavior | P0 | D3 | M08-03,M03-02 | No private bytes leaked in errors or browser |
-| - [ ] | **M08-06** — Test Arabic RTL, mobile, accessibility and keyboard | P0 | D3 | M08-03 | Meaningful navigation and readable manuscript scripts |
-| - [ ] | **M08-07** — Complete QS 2:82 API/PG/Reader/Reviewer vertical slice | P0 | D4 | M08-04,M08-05,M08-06 | Same source identity across all layers |
+| - [x] | **M08-01** — Design UI states for source, absent, ambiguous, rights-blocked | P0 | D2 | M07-05 | States implemented in `/corpus/reader` + Dock Reader; absent/ambiguous tests and 28-check SSR drill ([evidence](file:///z:/project/moonradio/docs/audit/M08-reader-vertical-slice.md)) |
+| - [x] | **M08-02** — Render work, edition, language, permission and source | P0 | D3 | M08-01 | QS 2:82 identity asserted in `apps/radio/test/corpus-reader.test.ts` and on PG (`corpus-reader-pg.test.ts`) |
+| - [x] | **M08-03** — Add context and licensed parallel translation display | P1 | D3 | M08-02,M07-04 | Arabic separated from translations with language tags; Kemenag text only on cleared edition/translation |
+| - [x] | **M08-04** — Add reproducible citation with selector and version | P0 | D2 | M08-02 | Citation includes edition code, provenance SHA, source date, retrieval; labelled copy button and focusable citation block |
+| - [x] | **M08-05** — Test missing/forbidden/right-unknown Reader behavior | P0 | D3 | M08-03,M03-02 | Raw REST 401; blocked edition/translation withheld; absent/invalid covered in memory and PG tests |
+| - [x] | **M08-06** — Test Arabic RTL, mobile, accessibility and keyboard | P0 | D3 | M08-03 | `apps/dock/scripts/verify-reader-ui.tsx` — 28 checks (RTL/lang, labels, focus, mobile breakpoint, nav) |
+| - [x] | **M08-07** — Complete QS 2:82 API/PG/Reader/Reviewer vertical slice | P0 | D4 | M08-04,M08-05,M08-06 | PG drill + `corpus-reviewer.test.ts`: admin REST and public Reader return the same edition, provenance, URI and source date |
+
+**Revalidasi 2026-10-26 (`9a31351`, baseline `f517fb8`):** corpus addon terpasang di hub; `corpus_passages`/`corpus_translations` menjadi `ADMIN_FULL` dengan unique `(citationKey, editionRef)`; `GET /corpus/reader` menjadi satu-satunya proyeksi teks publik dengan rights veto. Dock `/reader` menampilkan identitas sumber, Arabic RTL, terjemahan berlisensi, sitasi reproducible, serta state absent/ambiguous/rights-blocked. Suite penuh 215 test (212 pass, 3 skipped, 0 fail), build radio + Dock lulus, `gen:sdk:check` lulus (`1fa620155ba520bf`), drill PG nyata `engine=pg` lulus, drill UI 28/28. Bukti lengkap: [laporan M08](file:///z:/project/moonradio/docs/audit/M08-reader-vertical-slice.md).
 
 
 ## M09 — UNILEX and multilingual terminology
