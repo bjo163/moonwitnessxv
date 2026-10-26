@@ -1,6 +1,7 @@
 # M19-10 — Dock Indonesian home copy
 
 - **Baseline:** M19-09 route baseline at `0f3a252af6e7b7d803cedab121a443911d820279`.
+- **Integrated result SHA:** `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa`.
 - **Scope:** Indonesian localization of human-authored Dock landing UI, with its English source retained in an app-owned catalog. This does not complete the wider English pass (M19-11), locale selector (M19-12), metadata (M19-14), or other route copy.
 - **Authority:** devotional statement translated from the approved [Mission guide](../vision/chapters/MISSION.md). Locale behavior follows [ADR-0005](../decisions/ADR-0005-locale.md); source passages and runtime/API values remain outside the catalog.
 
@@ -29,6 +30,8 @@ Commands executed on the working tree:
 - `git diff --check` — passed.
 
 The route tests cover `/id` and `/en` header overwrite behavior and confirm no client-visible `x-mw-locale` response header. Catalog tests cover key parity, approved mission terms, safe default locale behavior, illustrative map labeling, actual button destination wording, absence of fabricated counters/dates/duration, and neutral static OSINT labels. This report does not claim deployment or visual browser verification. The middleware locale-context change is coupled to rendering localized routes and should receive integrator review as a narrow M19-09 integration adjustment.
+
+The integrator reviewed the landing copy and ran `pnpm verify` on the exact result SHA above; GitHub Actions run [`40378453247`](https://github.com/bjo163/moonwitnessxv/actions/runs/40378453247) passed on that SHA. The promote-to-main job was skipped because the run was for a pull request. No deployment or visual browser verification is claimed.
 
 ## Rollback
 
