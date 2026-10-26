@@ -1,9 +1,9 @@
 # M05-08 — Locale coverage inventory
 
-- **Audit baseline:** `origin/dev` and `origin/main` at `387f784ac74db3588cc7f2137bc684b1cd2b9f22` (26 October 2026). Source review was pinned to this common commit.
-- **Baseline CI:** [CI Verify & Gate run 40356958540](https://github.com/bjo163/moonwitnessxv/actions/runs/40356958540), successful on this SHA. This is baseline context, not locale acceptance evidence.
+- **Audit source baseline:** `origin/dev` and `origin/main` at `387f784ac74db3588cc7f2137bc684b1cd2b9f22` (26 October 2026). Revalidation confirmed `main` and `dev` now both point to `d8c5bfa2e61f7d797d9478de0522514048a93886`; the intervening changes are limited to `CONTRIBUTING.md`, `docs/governance/WORKFLOW_CONVENTIONS.md`, and `docs/planning/AI_EXECUTION_CONTRACT.md`, with no app or package source changes. The newer baseline CI run [40359838620](https://github.com/bjo163/moonwitnessxv/actions/runs/40359838620) passed.
+- **Inventory/review SHA:** `4b229ec97ed6468dbe8b01fc79f29398e3b368b4`. Integrator review passed: six app workspaces and owners accounted for; source paths, language tags, locale gaps, CLI/TUI/API boundaries, stable machine contracts, and test evidence checked; 22 line references and 2 relative links resolve. PR verification [40361827534](https://github.com/bjo163/moonwitnessxv/actions/runs/40361827534) passed on this exact SHA. GitHub PR #8 has no separate external review submission.
 - **Scope:** source and manifest inspection for the six current app workspaces, shared MoonUI, and related CLI/TUI/API surfaces.
-- **Result:** the app inventory and locale evidence below are documented. The shared operator/developer CLI follow-up is now owned by M05-23; M05-08 itself remains open for integrator review and its TODO checkbox remains unchecked.
+- **Result:** the app inventory and locale evidence below are documented. The shared operator/developer CLI follow-up is owned by M05-23. Integrator review is complete; M05-08 is checked in TODO.
 - **Evidence boundary:** no application tests, builds, screenshots, or runtime locale behavior were executed or observed for this audit.
 
 ## Summary
@@ -53,7 +53,7 @@ Shared prerequisites and unique scope owners remain:
 
 ## Method and limitations
 
-- Read the six app manifests, MoonUI and shared CLI manifests, task packet, TODO ownership rows, specified source paths, relevant route/component trees, CLI entry points, and locale/language references at the pinned baseline SHA. The user requested that the shared CLI be included, so an unchecked M05-23 task and packet were added without changing M05-08's checkbox.
+- Read the six app manifests, MoonUI and shared CLI manifests, task packet, TODO ownership rows, specified source paths, relevant route/component trees, CLI entry points, and locale/language references at the pinned baseline SHA. The user requested that the shared CLI be included, so an unchecked M05-23 task and packet were added; M05-08 stayed open until this integrator review passed.
 - Rechecked M00-07's dependency against the current six app workspaces; its historical discrepancy ledger remains pinned to older SHA `5da8bed` and was not treated as current locale evidence.
 - Did not execute builds or tests. M05-08's packet says production build is not required and asks to report exact commands if tests are run; the deliverable is a read-only source inventory. No screenshot evidence was collected.
-- M05-08 remains open for integrator review. The M05-23 ownership row and packet are new and unchecked; no task was marked done. No builds or tests were run for this read-only audit.
+- Integrator review confirmed the inventory satisfies M05-08's acceptance; the canonical TODO status was updated. M05-23 and its ownership row remain open and unchecked. No builds or tests were run locally for this read-only audit; the cited CI runs were observed remotely.
