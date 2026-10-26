@@ -2,8 +2,14 @@
 
 - **Milestone**: M04 Database continuity and recovery
 - **Task**: M04-05
-- **Status**: RATIFIED
-- **Auditor**: MoonWitness XV Architecture Group
+- **Status**: RENCANA — TASK DIBUKA KEMBALI (revalidasi 2026-10-26)
+- **Auditor**: Revalidasi otomatis 2026-10-26
+
+> **Revalidasi 2026-10-26:** dokumen ini masih berupa strategi. Tidak ada
+> implementasi `rclone`, target off-host, jadwal retensi/prune, atau test yang
+> dijalankan. Backup yang ada hanya berada di volume Docker host yang sama
+> dengan database. Lihat
+> [laporan revalidasi](M01-M05-revalidation-2026-10-26.md).
 
 ---
 

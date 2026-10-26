@@ -21,7 +21,12 @@ Untuk memastikan seluruh record memiliki identitas unik, tahan benturan saat mig
    - `fg_<id>` — Figures / Actors (`D04 Actor`)
    - `cs_<id>` — Research Cases (`D05 Research`)
    - `wt_<id>` — Witness Testimonies (`D06 Witness`)
-   - `st_<id>` — Story Arcs & Episodes (`D07 Story`)
+   - `sa_<id>` — Story Arcs & Episodes (`D07 Story`)
+
+   > Revalidasi 2026-10-26: prefix Story sebelumnya juga `st_`, bertabrakan dengan
+   > Stations. Diganti `sa_` agar satu prefix hanya dimiliki satu tipe; belum ada
+   > kode yang memakai prefix ini. Lihat
+   > [laporan revalidasi](../audit/M01-M05-revalidation-2026-10-26.md).
 
 2. **Kekekalan ID (*Immutability*)**:
    - Sekali sebuah ID diterbitkan dan dirujuk oleh SDK atau antarmuka publik, ID tersebut **tidak boleh diubah atau ditimpa**.

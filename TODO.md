@@ -5,6 +5,8 @@
 
 **Read:** [BLUEPRINT.md](BLUEPRINT.md) for the sole XV architecture and ownership contract; [Master Vision Narrative XV](docs/vision/MASTER_VISION_NARRATIVE_XV.md) for history, narrative and interpretive boundaries. **This TODO is the sole planning task/status index**. Avoid copying task progress into vision or independent lists. Real build logs, test results and specific commit SHAs establish completion; an existing file or CI configuration alone does not.
 
+> **Revalidasi M01–M05 (2026-10-26):** exit gate M01–M05 **belum terpenuhi** di HEAD `3822657`. CI 7/7 run gagal di `Install dependencies`; checkout bersih gagal build/test karena `data/` di-ignore dan perbaikan `pseudonym()` belum di-commit. Delapan task dibuka kembali dan beberapa dokumen bukti dikoreksi. Rincian: [docs/audit/M01-M05-revalidation-2026-10-26.md](file:///z:/project/moonradio/docs/audit/M01-M05-revalidation-2026-10-26.md). Checkbox `[x]` yang bergantung pada test diverifikasi di worktree saat ini, bukan di SHA bersih.
+
 ## How to interpret and execute
 
 **Priority:** `P0` blocker (security, compatibility, provenance, release); `P1` core product; `P2` improvement/next horizon; `P3` speculative optional research. **Difficulty:** `D1` isolated, `D2` small, `D3` bounded multi-file, `D4` complex with cross-domain tests/review, `D5` high-uncertainty that must first be broken into smaller work packets. These are relative estimates, not promises of elapsed time.
@@ -61,13 +63,15 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [x] | **M01-01** — Pin Node and pnpm compatible with lockfile | P0 | D2 | M00-04 | Documented in `docs/audit/M01-01-toolchain-pin.md` (`.nvmrc`, `.npmrc`) |
+| - [ ] | **M01-01** — Pin Node and pnpm compatible with lockfile | P0 | D2 | M00-04 | **REOPENED 2026-10-26:** Node 20.x tidak kompatibel (`@eslint/js@10.0.1`, `cookie@2.0.1`); Node 22.13+ lolos install. [Laporan](file:///z:/project/moonradio/docs/audit/M01-M05-revalidation-2026-10-26.md) · `docs/audit/M01-01-toolchain-pin.md` |
 | - [x] | **M01-02** — Define radio + Dock + HQ smoke procedure | P0 | D2 | M00-02 | Documented in `docs/audit/M01-02-smoke-procedure.md` (`pnpm ports:free`, 3-app probe) |
-| - [x] | **M01-03** — Configure CI only after checking repository policy | P0 | D3 | M01-01,M01-02 | Configured in `.github/workflows/ci.yml` running `pnpm verify` |
-| - [x] | **M01-04** — Enforce generated SDK and schema drift check | P0 | D2 | M01-03 | Documented in `docs/audit/M01-04-sdk-drift-gate.md` (`gen:sdk:check`) |
-| - [x] | **M01-05** — Define semver, changelog and protected release lifecycle | P1 | D3 | M01-03 | Documented in `docs/audit/M01-05-release-lifecycle.md` |
-| - [x] | **M01-06** — Add dependency and secret-scanning gate | P0 | D3 | M01-03 | Documented in `docs/audit/M01-06-secret-dependency-gate.md` |
-| - [x] | **M01-07** — Publish CI evidence ledger and no-bypass rule | P0 | D2 | M01-04,M01-06 | Documented in `docs/audit/M01-07-ci-evidence-ledger.md` (Exit Gate Verified) |
+| - [ ] | **M01-03** — Configure CI only after checking repository policy | P0 | D3 | M01-01,M01-02 | **REOPENED 2026-10-26:** workflow ada, tetapi 7/7 run gagal di `Install dependencies`; `pnpm verify` selalu `skipped`. |
+| - [x] | **M01-04** — Enforce generated SDK and schema drift check | P0 | D2 | M01-03 | Documented in `docs/audit/M01-04-sdk-drift-gate.md` (`gen:sdk:check`). **Catatan 2026-10-26:** lulus di worktree; gagal di HEAD karena `dist/data/*` tidak ada; CI belum pernah menjalankannya. |
+| - [ ] | **M01-05** — Define semver, changelog and protected release lifecycle | P1 | D3 | M01-03 | **REOPENED 2026-10-26:** tidak ada `CHANGELOG.md`/prosedur changelog dan tidak ada bukti protected branch. |
+| - [ ] | **M01-06** — Add dependency and secret-scanning gate | P0 | D3 | M01-03 | **REOPENED 2026-10-26:** tidak ada langkah audit/secret-scan di CI; `.gitignore` tidak memuat pola yang diklaim. |
+| - [ ] | **M01-07** — Publish CI evidence ledger and no-bypass rule | P0 | D2 | M01-04,M01-06 | **REOPENED 2026-10-26:** ledger mengklaim "Exit Gate Verified", tetapi 7/7 run CI `failure`. |
+
+**Revalidasi 2026-10-26:** exit gate M01 belum terpenuhi. CI 7/7 run `failure` (run terakhir `40256992028`, SHA `3822657`, gagal di `Install dependencies`); checkout bersih HEAD gagal build/test. M01-01, M01-03, M01-05, M01-06, M01-07 dibuka kembali; M01-04 hanya lulus di worktree. Bukti: [laporan revalidasi](file:///z:/project/moonradio/docs/audit/M01-M05-revalidation-2026-10-26.md).
 
 
 ## M02 — XV governance and source of truth
@@ -82,9 +86,11 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 | - [x] | **M02-02** — Assign D00–D13 to existing and proposed modules | P0 | D3 | M00-02,M02-01 | Documented in `docs/decisions/M02-02-domain-assignments.md` |
 | - [x] | **M02-03** — Draft XV ADR for additive MoonQL domain architecture | P0 | D3 | M02-02 | Ratified in `docs/decisions/ADR-0002-additive-moonql-domains.md` |
 | - [x] | **M02-04** — Draft XV ADR for source rights, consent and publishing storage | P0 | D3 | M02-02 | Ratified in `docs/decisions/ADR-0003-source-rights-and-consent.md` |
-| - [x] | **M02-05** — Specify stable IDs and versioned legacy refs | P0 | D3 | M02-03 | Documented in `docs/decisions/M02-05-stable-ids-and-legacy-refs.md` |
+| - [x] | **M02-05** — Specify stable IDs and versioned legacy refs | P0 | D3 | M02-03 | Documented in `docs/decisions/M02-05-stable-ids-and-legacy-refs.md`. **Dikoreksi 2026-10-26:** prefix Story `st_` → `sa_` (sebelumnya duplikat dengan Stations). |
 | - [x] | **M02-06** — Fix single task/status/document hierarchy | P0 | D1 | M02-01 | Documented in `docs/decisions/M02-06-document-hierarchy.md` |
 | - [x] | **M02-07** — Review XIV/Empire decisions as historical, not current mandates | P0 | D2 | M02-03,M02-04 | Documented in `docs/decisions/M02-07-historical-decisions-matrix.md` (Exit Gate Verified) |
+
+**Revalidasi 2026-10-26:** semua dokumen M02 ada. Satu defect dikoreksi: M02-05 memakai `st_` untuk Stations dan Story; Story diganti `sa_`.
 
 
 ## M03 — ACL, privacy, consent and abuse prevention
@@ -95,13 +101,15 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [x] | **M03-01** — Audit default public list/get/expand/view/export exposure | P0 | D3 | M00-05 | Negative API tests include direct request paths ([docs/audit/M03-01-public-exposure-audit.md](file:///z:/project/moonradio/docs/audit/M03-01-public-exposure-audit.md)) |
+| - [x] | **M03-01** — Audit default public list/get/expand/view/export exposure | P0 | D3 | M00-05 | Negative API tests include direct request paths ([docs/audit/M03-01-public-exposure-audit.md](file:///z:/project/moonradio/docs/audit/M03-01-public-exposure-audit.md)). **Dikoreksi 2026-10-26:** `/on-air`, `/listen` 201, `/api-keys`, pseudonym `lp_`; referensi test diperbaiki. |
 | - [x] | **M03-02** — Define deny-by-default sensitive addon template | P0 | D3 | M03-01 | Restricted model REST false or explicit guarded ops ([docs/audit/M03-02-deny-by-default-template.md](file:///z:/project/moonradio/docs/audit/M03-02-deny-by-default-template.md)) |
-| - [x] | **M03-03** — Test forged/expired HQ cookies vs Hub auth | P0 | D3 | M03-01 | No cookie-only privileged data access ([docs/audit/M03-03-cookie-auth-audit.md](file:///z:/project/moonradio/docs/audit/M03-03-cookie-auth-audit.md)) |
+| - [ ] | **M03-03** — Test forged/expired HQ cookies vs Hub auth | P0 | D3 | M03-01 | **REOPENED 2026-10-26:** tidak ada test forged/expired `hq_token`; middleware HQ hanya mengecek keberadaan cookie. [Laporan](file:///z:/project/moonradio/docs/audit/M01-M05-revalidation-2026-10-26.md) |
 | - [x] | **M03-04** — Decide tenant and reviewer/editor role boundaries | P0 | D4 | M02-02,M03-02 | Tenant support verified or clearly out of scope ([docs/decisions/M03-04-tenant-role-boundaries.md](file:///z:/project/moonradio/docs/decisions/M03-04-tenant-role-boundaries.md)) |
-| - [x] | **M03-05** — Test token TTL, revocation and API key cache limits | P0 | D3 | M03-03 | Revoked credentials denied per defined window ([docs/audit/M03-05-token-ttl-cache.md](file:///z:/project/moonradio/docs/audit/M03-05-token-ttl-cache.md)) |
+| - [ ] | **M03-05** — Test token TTL, revocation and API key cache limits | P0 | D3 | M03-03 | **REOPENED 2026-10-26:** revocation/role demotion diuji; TTL expiry dan API-key cache cap belum. |
 | - [x] | **M03-06** — Write private witness, minors, copyright and withdrawal policy | P0 | D3 | M02-04 | No automatic import into public Git ([docs/decisions/M03-06-witness-withdrawal-policy.md](file:///z:/project/moonradio/docs/decisions/M03-06-witness-withdrawal-policy.md)) |
-| - [x] | **M03-07** — Threat model CSP, logs, egress, DENPA, WA and SSR | P0 | D4 | M03-01,M03-05 | Critical risks receive blocking cases ([docs/audit/M03-07-threat-model.md](file:///z:/project/moonradio/docs/audit/M03-07-threat-model.md)) |
+| - [x] | **M03-07** — Threat model CSP, logs, egress, DENPA, WA and SSR | P0 | D4 | M03-01,M03-05 | Critical risks receive blocking cases ([docs/audit/M03-07-threat-model.md](file:///z:/project/moonradio/docs/audit/M03-07-threat-model.md)). **Dikoreksi 2026-10-26:** volume WA `whatsapp-session`; klaim `.gitignore` dihapus. |
+
+**Revalidasi 2026-10-26:** M03-01 dan M03-07 dikoreksi; M03-03 dan M03-05 dibuka kembali karena test forged/expired cookie, TTL expiry, dan cache cap tidak ada. Exit gate M03 belum terpenuhi.
 
 
 ## M04 — Database continuity and recovery
@@ -114,11 +122,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 |---|---|---|---|---|---|
 | - [x] | **M04-01** — Verify production PG requirement vs memory fallback | P0 | D3 | M00-06 | No accidental production ephemeral storage ([docs/audit/M04-01-production-pg-requirement.md](file:///z:/project/moonradio/docs/audit/M04-01-production-pg-requirement.md)) |
 | - [x] | **M04-02** — Define non-additive migration plan beyond autoSync | P0 | D3 | M04-01,M02-05 | Reviewed SQL rollback protects existing records ([docs/decisions/M04-02-migration-rollback-plan.md](file:///z:/project/moonradio/docs/decisions/M04-02-migration-rollback-plan.md)) |
-| - [x] | **M04-03** — Execute test DB restore from real dump | P0 | D4 | M04-01 | Actual successful isolated restore evidence ([docs/audit/M04-03-db-restore-execution.md](file:///z:/project/moonradio/docs/audit/M04-03-db-restore-execution.md)) |
-| - [x] | **M04-04** — Compare restored station/playlog rows and indexes | P0 | D2 | M04-03 | Row counts and stable IDs match baseline ([docs/audit/M04-04-row-counts-and-indexes.md](file:///z:/project/moonradio/docs/audit/M04-04-row-counts-and-indexes.md)) |
-| - [x] | **M04-05** — Copy backups off host and test retention path | P0 | D3 | M04-03 | Single host loss does not destroy only backup ([docs/audit/M04-05-off-host-backup-retention.md](file:///z:/project/moonradio/docs/audit/M04-05-off-host-backup-retention.md)) |
-| - [x] | **M04-06** — Test schema upgrade failure and rollback | P0 | D4 | M04-02,M04-03 | Prior radio data not corrupted ([docs/audit/M04-06-schema-upgrade-rollback.md](file:///z:/project/moonradio/docs/audit/M04-06-schema-upgrade-rollback.md)) |
-| - [x] | **M04-07** — Update restore runbook with actual drill metadata | P1 | D2 | M04-04,M04-05,M04-06 | Named operator, time, results and constraints ([docs/runbook-restore.md](file:///z:/project/moonradio/docs/runbook-restore.md)) |
+| - [x] | **M04-03** — Execute test DB restore from real dump | P0 | D4 | M04-01 | **Direvalidasi 2026-10-26:** dump `20261025T213120Z` (73.900 B), restore exit 0, 36 stations/21 playlogs ([docs/audit/M04-03-db-restore-execution.md](file:///z:/project/moonradio/docs/audit/M04-03-db-restore-execution.md)) |
+| - [x] | **M04-04** — Compare restored station/playlog rows and indexes | P0 | D2 | M04-03 | **Direvalidasi 2026-10-26:** 36 stations/21 playlogs, 9 indeks; angka lama 24 dan `station_envelope_metadata` tidak ada ([docs/audit/M04-04-row-counts-and-indexes.md](file:///z:/project/moonradio/docs/audit/M04-04-row-counts-and-indexes.md)) |
+| - [ ] | **M04-05** — Copy backups off host and test retention path | P0 | D3 | M04-03 | **REOPENED 2026-10-26:** masih rencana; tidak ada implementasi rclone/prune, target off-host, atau test retensi ([docs/audit/M04-05-off-host-backup-retention.md](file:///z:/project/moonradio/docs/audit/M04-05-off-host-backup-retention.md)) |
+| - [x] | **M04-06** — Test schema upgrade failure and rollback | P0 | D4 | M04-02,M04-03 | **Direvalidasi 2026-10-26:** rollback DDL gagal terbukti di container terisolasi; test otomatis belum ada ([docs/audit/M04-06-schema-upgrade-rollback.md](file:///z:/project/moonradio/docs/audit/M04-06-schema-upgrade-rollback.md)) |
+| - [x] | **M04-07** — Update restore runbook with actual drill metadata | P1 | D2 | M04-04,M04-05,M04-06 | **Diperbarui 2026-10-26:** metadata drill aktual (dump, ukuran, hasil, operator revalidasi, batasan) ([docs/runbook-restore.md](file:///z:/project/moonradio/docs/runbook-restore.md)) |
+
+**Revalidasi 2026-10-26:** restore dan rollback DDL diuji ulang di container terisolasi. Dump aktual `moonwitness-20261025T213120Z.dump` (73.900 B) menghasilkan 36 stations/21 playlogs dan 9 indeks; `pg_restore` exit 0. M04-03/04/06/07 diperbarui; M04-05 tetap dibuka karena belum ada backup off-host. Angka lama 24 playlogs/79,6 KB/`station_envelope_metadata` tidak ditemukan. Bukti: [laporan revalidasi](file:///z:/project/moonradio/docs/audit/M01-M05-revalidation-2026-10-26.md).
 
 
 ## M05 — API/SDK and module behavior contracts
@@ -129,14 +139,15 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [x] | **M05-01** — Record existing OpenAPI, envelope and error fixtures | P0 | D2 | M00-02 | Pinned current response contracts ([docs/audit/M05-01-api-fixtures.md](file:///z:/project/moonradio/docs/audit/M05-01-api-fixtures.md)) |
+| - [x] | **M05-01** — Record existing OpenAPI, envelope and error fixtures | P0 | D2 | M00-02 | **Diperbarui 2026-10-26:** sintaks filter aktual `?where=<json>` (diparse `parseWhereJson`), bukan `?where[field]=`; `?total=true` didokumentasikan ([docs/audit/M05-01-api-fixtures.md](file:///z:/project/moonradio/docs/audit/M05-01-api-fixtures.md)) |
 | - [x] | **M05-02** — Test duplicate model/view/manual route rejection | P0 | D2 | M05-01 | Collision fails boot and has regression test ([apps/radio/test/api-contracts.test.ts](file:///z:/project/moonradio/apps/radio/test/api-contracts.test.ts)) |
 | - [x] | **M05-03** — Define future addon namespace and registration standard | P0 | D2 | M02-02,M05-02 | New feature cannot shadow old radio endpoints ([docs/decisions/M05-03-addon-namespace-standards.md](file:///z:/project/moonradio/docs/decisions/M05-03-addon-namespace-standards.md)) |
-| - [x] | **M05-04** — Verify SDK codegen deterministic hash and API version | P0 | D2 | M01-04,M05-01 | Repeat generation gives stable client ([apps/radio/test/api-contracts.test.ts](file:///z:/project/moonradio/apps/radio/test/api-contracts.test.ts)) |
-| - [x] | **M05-05** — Define pagination, filter/expand, locale and UNKNOWN | P1 | D3 | M05-01 | Bounded and source-safe query behavior ([docs/decisions/M05-05-query-standards.md](file:///z:/project/moonradio/docs/decisions/M05-05-query-standards.md)) |
+| - [x] | **M05-04** — Verify SDK codegen deterministic hash and API version | P0 | D2 | M01-04,M05-01 | Repeat generation gives stable client ([apps/radio/test/api-contracts.test.ts](file:///z:/project/moonradio/apps/radio/test/api-contracts.test.ts)); `gen:sdk:check` lulus di worktree, gagal di HEAD bersih |
+| - [x] | **M05-05** — Define pagination, filter/expand, locale and UNKNOWN | P1 | D3 | M05-01 | **Dikoreksi 2026-10-26:** stations `maxLimit` 200 (bukan 100); `?limit` di atas maximum ditolak 400 oleh schema, bukan di-clamp; tidak ada filter/locale fallback di MoonQL ([docs/decisions/M05-05-query-standards.md](file:///z:/project/moonradio/docs/decisions/M05-05-query-standards.md)) |
 | - [x] | **M05-06** — Document approved old-repo adapter boundaries | P1 | D3 | M02-07,M05-03 | No implicit historical runtime dependency ([docs/decisions/M05-06-adapter-boundaries.md](file:///z:/project/moonradio/docs/decisions/M05-06-adapter-boundaries.md)) |
-| - [x] | **M05-07** — Add compatibility smoke for existing clients | P0 | D3 | M05-04,M05-06 | Current Radio tests keep passing ([apps/radio/test/stations.test.ts](file:///z:/project/moonradio/apps/radio/test/stations.test.ts)) |
+| - [x] | **M05-07** — Add compatibility smoke for existing clients | P0 | D3 | M05-04,M05-06 | Smoke ada; suite worktree 196/196 lulus, tetapi test HEAD bersih gagal karena blocker build/data ([apps/radio/test/stations.test.ts](file:///z:/project/moonradio/apps/radio/test/stations.test.ts)) |
 
+**Revalidasi 2026-10-26:** kontrak M05 diverifikasi terhadap kode dan test worktree. Tiga dokumen dikoreksi (sintaks `?where`, `maxLimit`/penolakan 400, ketiadaan locale/UNKNOWN di query). Tidak ada task M05 yang dibuka kembali, tetapi lulusnya test hanya berlaku di worktree; checkout bersih HEAD gagal `build`/`test`/`gen:sdk:check`, sehingga exit gate M05 belum terbukti di SHA `3822657`. Bukti: [laporan revalidasi](file:///z:/project/moonradio/docs/audit/M01-M05-revalidation-2026-10-26.md).
 
 ## M06 — Source crosswalk and historical recovery
 

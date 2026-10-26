@@ -4,6 +4,12 @@
 - **Status**: RATIFIED
 - **Reference**: `apps/headquarters/src/middleware.ts`, `apps/radio/test/moonql-auth.test.ts`
 
+> **Revalidasi 2026-10-26 — TASK DIBUKA KEMBALI.** Tidak ditemukan test
+> forged/expired `hq_token`. `apps/headquarters/src/middleware.ts:11` hanya
+> mengecek keberadaan cookie; otoritas sesi tetap Hub, tetapi skenario cookie
+> palsu/kedaluwarsa belum diuji end-to-end. Lihat
+> [laporan revalidasi](M01-M05-revalidation-2026-10-26.md).
+
 ---
 
 ## 1. Analisis Batas Keamanan Antara BFF dan Fastify Hub

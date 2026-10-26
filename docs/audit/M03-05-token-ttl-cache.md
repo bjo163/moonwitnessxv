@@ -4,6 +4,12 @@
 - **Status**: RATIFIED
 - **Reference**: `packages/moonql-auth/src/index.ts`, `apps/radio/test/moonql-identity-cache.test.ts`
 
+> **Revalidasi 2026-10-26 — TASK DIBUKA KEMBALI.** Test yang ada mencakup
+> logout revocation, role demotion, API-key revocation, dan unknown token. Tidak
+> ada test TTL expiry (`IDENTITY_TTL_MS = 15_000`, sesi 7 hari) atau batas cache
+> (`IDENTITY_CACHE_MAX = 500`). Lihat
+> [laporan revalidasi](M01-M05-revalidation-2026-10-26.md).
+
 ---
 
 ## 1. Spesifikasi Masa Berlaku & Batas Cache Identitas

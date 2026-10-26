@@ -19,7 +19,8 @@ sinyal bahwa cron pencadangan mati, bukan bahwa database bermasalah.
 Salin keluar host sebelum dianggap aman:
 
 ```powershell
-docker compose cp backup:/backups/moonwitness-20261026T000000Z.dump .\backup.dump
+# ganti nama file dengan dump terbaru dari perintah `ls` di atas
+docker compose cp backup:/backups/moonwitness-20261025T213120Z.dump .\backup.dump
 ```
 
 ## Memulihkan
@@ -67,7 +68,13 @@ salinan; sebuah runbook yang tidak pernah dieksekusi adalah asumsi.
 
 | Tanggal | Dump | Hasil | Operator | Batasan / Catatan |
 | --- | --- | --- | --- | --- |
-| 2026-10-26T08:31:00+07:00 | `pg_dump -Fc` dari `moonwitness-db` (79.641 byte) | **LULUS** — restore ke database sementara `moonwitness_drill` mengembalikan `stations` 36 dan `playlogs` 24, sama dengan sumber; database latihan lalu di-drop | MoonWitness XV DevOps & Architecture Team | Dijalankan persis seperti resep di atas (`createdb` → `pg_restore --no-owner`), pada container `moonwitness-db`. Memerlukan Postgres aktif; memory engine dev tidak memiliki persistensi disk |
+| 2026-10-26T09:29:00+07:00 | `moonwitness-20261025T213120Z.dump` (73.900 byte; SHA-256 `8a32e171…`) | **LULUS** — restore ke `moonwitness_drill` di container terisolasi `postgres:17-alpine` (`pg_restore --no-owner --no-acl`, exit 0): 15 tabel, `stations` 36, `playlogs` 21, 9 indeks; uji DDL gagal juga rollback bersih | Qoder (revalidasi otomatis) | Bukan restore ke DB live. Dump adalah snapshot 2026-10-25T21:31Z; live saat revalidasi 36 stations/41 playlogs. Tidak ada uji off-host. Container drill dihapus setelah pengambilan bukti. |
+
+Baris drill lama (2026-10-26T08:31:00+07:00) yang menyebut dump
+`moonwitness-20261026T000000Z.dump` 79.641 byte dan `playlogs` 24 tidak dapat
+direproduksi: file dump tersebut tidak ada di volume backup. Baris itu diganti
+dengan hasil revalidasi di atas; rinciannya ada di
+[docs/audit/M01-M05-revalidation-2026-10-26.md](audit/M01-M05-revalidation-2026-10-26.md).
 
 ## Yang TIDAK dilakukan autoSync
 

@@ -3,6 +3,11 @@
 - **Audit Date**: 2026-10-26
 - **Baseline Version**: `1.0.0`
 
+> **Revalidasi 2026-10-26 — TASK DIBUKA KEMBALI.** Dokumen ini mendefinisikan
+> SemVer dan rollback, tetapi tidak ada `CHANGELOG.md`/prosedur changelog dan
+> tidak ada bukti protected branch/release protection. Lihat
+> [laporan revalidasi](M01-M05-revalidation-2026-10-26.md).
+
 ---
 
 ## 1. Aturan Semantic Versioning (SemVer)

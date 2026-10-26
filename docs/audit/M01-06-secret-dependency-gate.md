@@ -2,6 +2,12 @@
 
 - **Audit Date**: 2026-10-26
 
+> **Revalidasi 2026-10-26 — TASK DIBUKA KEMBALI.** Tidak ada langkah
+> `pnpm audit` atau secret scanning di `.github/workflows/ci.yml`. `.gitignore`
+> aktual tidak memuat `*.key`, `*.pem`, `*.dump`, atau store WhatsApp seperti
+> yang diklaim dokumen ini. Lihat
+> [laporan revalidasi](M01-M05-revalidation-2026-10-26.md).
+
 ---
 
 ## 1. Secret Scanning & Git Leaks Prevention

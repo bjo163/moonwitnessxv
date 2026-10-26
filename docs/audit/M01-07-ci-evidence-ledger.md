@@ -3,6 +3,12 @@
 - **Audit Date**: 2026-10-26
 - **Commit SHA**: `85c78bc`
 
+> **Revalidasi 2026-10-26 — EXIT GATE TIDAK TERPENUHI.** Tujuh run CI terakhir
+> berakhir `failure`; run `40256992028` (SHA `3822657`) gagal di
+> `Install dependencies` dan langkah `pnpm verify` `skipped`. Verdict "MILESTONE
+> M01 RESMI SELESAI" di bawah tidak berlaku. Lihat
+> [laporan revalidasi](M01-M05-revalidation-2026-10-26.md).
+
 ---
 
 ## 1. Aturan Mutlak "No-Bypass" (Zero Bypass Policy)

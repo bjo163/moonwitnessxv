@@ -3,6 +3,12 @@
 - **Audit Date**: 2026-10-26
 - **Tool**: `pnpm gen:sdk:check` (`apps/radio/src/tools/gen-sdk.ts --check`)
 
+> **Revalidasi 2026-10-26:** gate lulus di worktree saat ini
+> (`moonql: generated SDK is up to date`), tetapi gagal di checkout bersih HEAD
+> karena `packages/moonql-base/dist/data/*` tidak dapat dibuat (file sumber
+> `data/` di-ignore). CI belum pernah menjalankan gate ini karena install gagal.
+> Lihat [laporan revalidasi](M01-M05-revalidation-2026-10-26.md).
+
 ---
 
 ## 1. Mekanisme Gate Drift
