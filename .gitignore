@@ -2,7 +2,7 @@ node_modules/
 .env
 *.log
 dist/
-data/
+/data/
 coverage/
 .DS_Store
 *.tsbuildinfo

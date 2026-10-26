@@ -20,7 +20,13 @@ export async function sha256Hex(value: string): Promise<string> {
  * A stable, prefixed pseudonym for `value` (`lp_1f3c…`), 16 hex chars.
  * Same input, same token — so "the same person" stays visible without the source
  * text ever reaching the table.
+ *
+ * `salt` is the operator's rotation knob: setting it changes every token at once,
+ * which is the point (a leaked column can be invalidated) and the cost (past
+ * listening history stops matching). With no salt the digest is of the bare value,
+ * so introducing the parameter does not retroactively break existing rows.
  */
-export async function pseudonym(prefix: string, value: string): Promise<string> {
-  return `${prefix}_${(await sha256Hex(value)).slice(0, 16)}`
+export async function pseudonym(prefix: string, value: string, salt = ''): Promise<string> {
+  const digested = salt ? `${value}#${salt}` : value
+  return `${prefix}_${(await sha256Hex(digested)).slice(0, 16)}`
 }
