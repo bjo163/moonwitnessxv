@@ -575,3 +575,122 @@ export const HYPOTHESIS_SEED = [
     verificationNote: null,
   },
 ] as const
+
+// ------------------------------------------------------- M14 review & MIZAN
+
+export const REVIEW_MACHINE_STATES = [
+  'DRAFT',
+  'SUBMITTED',
+  'REVIEWED',
+  'DISPUTED',
+  'REJECTED',
+  'RETRACTED',
+] as const
+export const REVIEW_DECISIONS = ['APPROVED', 'REJECTED', 'REVISION_REQUESTED'] as const
+export const REVIEW_ACTIONS = [
+  'SUBMIT',
+  'APPROVE',
+  'REJECT',
+  'REQUEST_REVISION',
+  'DISPUTE',
+  'RESOLVE_DISPUTE',
+  'RETRACT',
+] as const
+export const REVIEW_TARGET_KINDS = ['CLAIM', 'HYPOTHESIS'] as const
+export const COUNTEREVIDENCE_STATUSES = ['OPEN', 'ACKNOWLEDGED', 'REJECTED'] as const
+export const PILOT_ASSESSMENTS = ['SUPPORTED', 'CONTRADICTED', 'UNDETERMINED'] as const
+
+export const MIZAN_CRITERIA = [
+  { key: 'evidenceGrounding', label: 'Every reading is tied to an exact source span and digest' },
+  { key: 'counterevidenceCoverage', label: 'Counterevidence is recorded and answered, not omitted' },
+  { key: 'provenance', label: 'Source identity, version and representation are inspectable' },
+  { key: 'consistency', label: 'Claims do not silently contradict adjacent reviewed claims' },
+  { key: 'riskDisclosure', label: 'Known risks and misuse surface are stated' },
+  { key: 'unknownHonesty', label: 'Unknowns stay labelled unknown instead of guessed' },
+] as const
+
+export const MIZAN_SCALE_MIN = 0
+export const MIZAN_SCALE_MAX = 4
+export const MIZAN_MAX_SCORE = MIZAN_CRITERIA.length * MIZAN_SCALE_MAX
+export const MIZAN_METHOD_CODE = 'MIZAN-EVIDENCE-RISK-CONSISTENCY'
+export const MIZAN_METHOD_VERSION = '1'
+export const MIZAN_METHOD_STATUS = 'CANDIDATE_NOT_RATIFIED'
+export const MIZAN_METHOD_TEXT =
+  'MIZAN v1 criteria: evidenceGrounding,counterevidenceCoverage,provenance,consistency,riskDisclosure,unknownHonesty; each 0-4; total 24; no ranking; not divine judgment.'
+export const MIZAN_METHOD_SHA256 = '9e6e50853663340c5a3f4f17931cbcb85b720a3b4e20d4a060b897dc7e05669c'
+export const MIZAN_MIN_INDEPENDENT_ANNOTATORS = 2
+
+export const M14_POLICY = {
+  autoApprove: false,
+  publicationAvailable: false,
+  namedHumanActorRequired: true,
+  guestRoleMayReview: false,
+  fourEyes: true,
+  revisionPreservesHistory: true,
+  retractionIsDeletion: false,
+  exactShaRequired: true,
+  counterevidenceRequiredForApproval: true,
+  counterevidenceMustBeResolved: true,
+  pilotMinimumIndependentAnnotators: MIZAN_MIN_INDEPENDENT_ANNOTATORS,
+  pilotRecordedIsNotPublication: true,
+  mizanMethodStatus: MIZAN_METHOD_STATUS,
+  mizanCriteria: MIZAN_CRITERIA.map((entry) => entry.key),
+  mizanScale: [MIZAN_SCALE_MIN, MIZAN_SCALE_MAX],
+  mizanMaxScore: MIZAN_MAX_SCORE,
+  mizanScoreIsVerdict: false,
+  theologicalRanking: 'FORBIDDEN',
+  reviewMachineStates: REVIEW_MACHINE_STATES,
+  reviewDecisions: REVIEW_DECISIONS,
+} as const
+
+export const COUNTEREVIDENCE_SEED = [
+  {
+    ceCode: 'CE-QS2-82-RECIPIENT',
+    caseCode: 'RC-QS-002-082-AR',
+    targetKind: 'CLAIM',
+    targetCode: 'CLM-QS2-82-COND',
+    sourceId: 'tafsir:recipient-scope',
+    sourceVersion: 'v1',
+    citationKey: 'QS 2:82',
+    evidenceSha: QURAN_SHA256,
+    finding:
+      'The verse names a declared addressee; extending the reward clause to a wider audience is not established by this verse alone.',
+    registeredByName: 'M13 engineering seed (not a human reviewer)',
+    status: 'OPEN',
+    resolutionReason: null,
+    resolvedByName: null,
+    resolvedAt: null,
+  },
+  {
+    ceCode: 'CE-QS2-82-DEFINITION',
+    caseCode: 'RC-QS-002-082-AR',
+    targetKind: 'CLAIM',
+    targetCode: 'CLM-QS2-82-COND',
+    sourceId: 'lexicon:belief-righteous-action',
+    sourceVersion: 'v1',
+    citationKey: 'QS 2:82',
+    evidenceSha: QURAN_SHA256,
+    finding:
+      'The verse names belief and righteous action without defining either boundary; passages that define them sit outside this bounded case.',
+    registeredByName: 'M13 engineering seed (not a human reviewer)',
+    status: 'OPEN',
+    resolutionReason: null,
+    resolvedByName: null,
+    resolvedAt: null,
+  },
+] as const
+
+export const MIZAN_METHOD_SEED = [
+  {
+    methodCode: MIZAN_METHOD_CODE,
+    version: MIZAN_METHOD_VERSION,
+    methodSha: MIZAN_METHOD_SHA256,
+    methodText: MIZAN_METHOD_TEXT,
+    criteria: MIZAN_CRITERIA.map((entry) => entry.key).join(','),
+    scaleMin: MIZAN_SCALE_MIN,
+    scaleMax: MIZAN_SCALE_MAX,
+    maxScore: MIZAN_MAX_SCORE,
+    status: MIZAN_METHOD_STATUS,
+    registeredByName: 'M13 engineering seed (not a human reviewer)',
+  },
+] as const
