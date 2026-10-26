@@ -48,9 +48,9 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 | - [x] | **M00-02** — Map Fastify routes, MoonQL addons and manual module collisions | P0 | D2 | M00-01 | Documented in `docs/audit/M00-02-routes-addons-matrix.md` |
 | - [x] | **M00-03** — Pin station seed and existing public envelope | P0 | D2 | M00-02 | Documented in `docs/audit/M00-03-station-seed-envelope.md` |
 | - [x] | **M00-04** — Run and record lint, typecheck, build, test status | P0 | D2 | M00-01 | Documented in `docs/audit/M00-04-verification-log.md` (187 tests pass, build:web pass) |
-| - [ ] | **M00-05** — List auth, cookie, REST, webhook, export and privacy surfaces | P0 | D3 | M00-02 | Anonymous/read/write risk matrix |
-| - [ ] | **M00-06** — List PG/memory, migrations, backups and restore evidence | P0 | D2 | M00-01 | Unverified disaster recovery explicitly marked |
-| - [ ] | **M00-07** — Publish discrepancy ledger CODE vs TESTED vs RELEASED vs UNKNOWN | P0 | D2 | M00-03,M00-04,M00-05,M00-06 | Named P0 blockers and reproducible steps |
+| - [x] | **M00-05** — List auth, cookie, REST, webhook, export and privacy surfaces | P0 | D3 | M00-02 | Documented in `docs/audit/M00-05-auth-privacy-matrix.md` |
+| - [x] | **M00-06** — List PG/memory, migrations, backups and restore evidence | P0 | D2 | M00-01 | Documented in `docs/audit/M00-06-db-disaster-recovery.md` |
+| - [x] | **M00-07** — Publish discrepancy ledger CODE vs TESTED vs RELEASED vs UNKNOWN | P0 | D2 | M00-03,M00-04,M00-05,M00-06 | Documented in `docs/audit/M00-07-discrepancy-ledger.md` (Exit Gate Verified) |
 
 
 ## M01 — CI, version and release foundation
