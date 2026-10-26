@@ -1,7 +1,7 @@
 # M38/M39 documentation gate and SKYLINK skeleton evidence
 
-**Source SHA:** `71122e01acbabcc20822c8bd9dabaa4cd188a0db`  
-**Base SHA:** `a3b8b3103d7764a0ec22824522b56f5bd0d44217`  
+**Source SHA:** `71122e01acbabcc20822c8bd9dabaa4cd188a0db`
+**Base SHA:** `a3b8b3103d7764a0ec22824522b56f5bd0d44217`
 **Date:** 2026-10-27 · **Reviewer:** root integrator
 
 ## Scoped result
