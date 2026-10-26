@@ -6,8 +6,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc -b",
-    "dev": "node --import tsx src/index.ts",
-    "start": "node dist/index.js",
+    "dev": "node --import tsx --env-file-if-exists=../../.env src/index.ts",
+    "start": "node --env-file-if-exists=../../.env dist/index.js",
     "test": "tsx --test test/**/*.test.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json"
   },

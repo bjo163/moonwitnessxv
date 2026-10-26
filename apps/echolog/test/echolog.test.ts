@@ -50,6 +50,11 @@ void test('ECHOLOG config rejects an invalid port with a readable message', () =
   )
 })
 
+void test('ECHOLOG uses ECHOLOG_PORT and ignores the inherited Radio PORT', () => {
+  assert.deepEqual(parseConfig({ PORT: '3000' }), { host: '127.0.0.1', port: 3006 })
+  assert.deepEqual(parseConfig({ PORT: '3000', ECHOLOG_PORT: '3006' }), { host: '127.0.0.1', port: 3006 })
+})
+
 void test('ECHOLOG core computes SHA-256 using the Web Crypto API', async () => {
   assert.equal(
     await sha256Hex(new TextEncoder().encode('abc')),

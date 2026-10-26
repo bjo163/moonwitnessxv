@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Dev runner escape hatch: frees the dev ports (radio :3000, dock :3001,
- * headquarters :3002, ai gateway :3003, cockpit :3004, SKYLINK :3005) and the repo's leftover dev processes.
+ * headquarters :3002, ai gateway :3003, cockpit :3004, SKYLINK :3005, ECHOLOG :3006) and the repo's leftover dev processes.
  *
  * `pnpm dev` (scripts/dev.mjs) already kills its own process tree on Ctrl+C, but
  * an earlier run started some other way — a bare `next dev`, a crashed watcher,
@@ -19,7 +19,7 @@
 import { execFileSync } from 'node:child_process'
 import { waitForPortsFree } from './port-utils.mjs'
 
-const PORTS = [3000, 3001, 3002, 3003, 3004, 3005]
+const PORTS = [3000, 3001, 3002, 3003, 3004, 3005, 3006]
 const isWindows = process.platform === 'win32'
 
 const run = (file, args) => execFileSync(file, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })

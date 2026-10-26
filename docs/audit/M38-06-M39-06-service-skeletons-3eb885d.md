@@ -30,7 +30,7 @@ Evidence:
 - Runtime command `pnpm --filter @moonwitness/echolog exec tsx src/index.ts --port 3006` served `GET /health` with `200` and `{"status":"ok","app":"echolog","port":3006}`; `GET /health/ready` returned `503` and `{"status":"not_ready","app":"echolog","reason":"no driver configured"}`. The process was stopped after the requests.
 - `pnpm install --frozen-lockfile --ignore-scripts` — passed with pnpm 10.33.4; importer contract tests passed.
 - `rg -n 'drizzle-orm|postgres|node:crypto' apps/echolog packages/echolog-core` — no forbidden SQL or Node crypto imports found.
-- `pnpm build` — passed for all root build targets, including shared packages and SKYLINK. Cockpit emitted its existing large-client-chunk advisory.
+- Root `pnpm build` — passed for the configured shared-package, Radio, AI Gateway, Sentinel, Cockpit and SKYLINK targets. Cockpit emitted a large-client-chunk advisory.
 
 ## Boundaries and limitations
 

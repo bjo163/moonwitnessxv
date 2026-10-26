@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { assertPublicHttpUrl, PORTS, SKYLINK_URL_DEFAULT } from '@moonwitness/core'
+import { assertPublicHttpUrl, ECHOLOG_URL_DEFAULT, PORTS, SKYLINK_URL_DEFAULT } from '@moonwitness/core'
 import { ADDON_ENV_KEY_LIST, RADIO_ENV_KEYS } from '../src/config.js'
 
 /**
@@ -27,6 +27,9 @@ const FOREIGN_ENV_KEYS = [
   // read by the compose backup sidecar's shell loop, never by the hub
   'BACKUP_INTERVAL_SECONDS',
   'BACKUP_KEEP',
+  // read by apps/echolog/src/config.ts; never aliases the hub PORT
+  'ECHOLOG_HOST',
+  'ECHOLOG_PORT',
 ] as const
 
 const ALLOWED = new Set<string>([...RADIO_ENV_KEYS, ...ADDON_ENV_KEY_LIST, ...FOREIGN_ENV_KEYS])
@@ -95,4 +98,24 @@ test('SKYLINK has a shared client URL and is blocked as an egress destination', 
   assert.equal(PORTS.skylink, 3005)
   assert.equal(SKYLINK_URL_DEFAULT, `http://127.0.0.1:${PORTS.skylink}`)
   assert.throws(() => assertPublicHttpUrl('http://skylink:3005/health'), /refused private target/)
+})
+
+test('ECHOLOG has a dedicated shared port and cannot inherit the hub PORT', () => {
+  assert.equal(PORTS.echolog, 3006)
+  assert.equal(ECHOLOG_URL_DEFAULT, `http://127.0.0.1:${PORTS.echolog}`)
+  assert.throws(() => assertPublicHttpUrl('http://echolog:3006/health'), /refused private target/)
+
+  const runner = readFileSync(join(process.cwd(), '..', '..', 'scripts/dev.mjs'), 'utf8')
+  assert.match(runner, /tag: 'echolog',[\s\S]*?port: 3006,[\s\S]*?env: \{ ECHOLOG_PORT: '3006' \}/)
+  assert.match(runner, /if \(app\.tag === 'echolog'\) delete childEnv\.PORT/)
+})
+
+test('root build and test scripts include ECHOLOG while build:libs remains derived', () => {
+  const root = join(process.cwd(), '..', '..')
+  const manifest = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
+    scripts: Record<string, string>
+  }
+  assert.match(manifest.scripts.build ?? '', /@moonwitness\/echolog build/)
+  assert.match(manifest.scripts.test ?? '', /@moonwitness\/echolog test/)
+  assert.equal(manifest.scripts['build:libs'], 'pnpm --filter "./packages/**" build')
 })

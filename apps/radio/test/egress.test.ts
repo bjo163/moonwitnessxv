@@ -65,7 +65,7 @@ test('egress: a host that can only be an integer is refused, not resolved', () =
 })
 
 test('egress: compose service names and metadata are refused by name', async () => {
-  for (const host of ['db', 'DB', 'radio', 'dock', 'headquarters', 'metadata.google.internal', 'db.']) {
+  for (const host of ['db', 'DB', 'radio', 'dock', 'headquarters', 'skylink', 'echolog', 'metadata.google.internal', 'db.']) {
     assert.throws(() => assertPublicHttpUrl(`http://${host}:8080/status`), /refused private target/, host)
   }
   // a public name that merely contains one is fine

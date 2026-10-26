@@ -21,7 +21,7 @@
  */
 
 /** hostnames that mean "inside our own perimeter", independent of DNS */
-export const DEFAULT_DENY_HOSTS = ['localhost', 'db', 'radio', 'dock', 'headquarters', 'skylink', 'metadata.google.internal']
+export const DEFAULT_DENY_HOSTS = ['localhost', 'db', 'radio', 'dock', 'headquarters', 'skylink', 'echolog', 'metadata.google.internal']
 
 /** ports that are never a broadcast endpoint: the database, and the hub itself */
 export const DEFAULT_DENY_PORTS = [5432]
