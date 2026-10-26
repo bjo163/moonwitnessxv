@@ -124,7 +124,7 @@ export default defineAddon({
       menu: { group: 'Radio', icon: 'DP', order: 30 },
       seed: [
         {
-          tokenHash: 'fixture-denpa-transmission-01',
+          tokenHash: '',
           pseudonym: 'Denpa#7741',
           message: 'Midnight frequency check from Jakarta Cyberdeck. Signal is loud and clear.',
           stationRef: '@stations:Prambors FM Jakarta',
@@ -132,7 +132,7 @@ export default defineAddon({
           broadcastAt: '2026-10-26T12:00:00.000Z',
         },
         {
-          tokenHash: 'fixture-denpa-transmission-02',
+          tokenHash: '',
           pseudonym: 'Echo#0819',
           message: 'Listening to Al-Bayan Quranic stream from Surabaya substation. Peace to all witnesses.',
           stationRef: '@stations:Radio Rodja 756 AM',
