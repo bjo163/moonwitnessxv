@@ -51,7 +51,7 @@ export const monitor = defineAddon({
       label: 'Monitor Radar',
       rest: true,
       acl: ADMIN_WRITE,
-      menu: { group: 'World Monitor', icon: '🛰️', order: 10 },
+      menu: { group: 'World Monitor', icon: 'RD', order: 10 },
       fields: {
         code: str({ maxLength: 40 }),
         name: str({ maxLength: 120 }),
@@ -165,7 +165,7 @@ export const monitor = defineAddon({
       label: 'Monitor Source',
       rest: true,
       acl: ADMIN_WRITE,
-      menu: { group: 'World Monitor', icon: '📡', order: 20 },
+      menu: { group: 'World Monitor', icon: 'SR', order: 20 },
       fields: {
         handle: str({ maxLength: 80 }),
         name: str({ maxLength: 140 }),
@@ -346,7 +346,7 @@ export const monitor = defineAddon({
       label: 'Monitor Signal',
       rest: true,
       acl: ADMIN_WRITE,
-      menu: { group: 'World Monitor', icon: '⚡', order: 30 },
+      menu: { group: 'World Monitor', icon: 'SG', order: 30 },
       fields: {
         externalId: str({ maxLength: 160, index: true }),
         title: str({ maxLength: 240 }),
@@ -591,7 +591,7 @@ export const monitor = defineAddon({
       seedless: true,
       rest: true,
       acl: ADMIN_FULL,
-      menu: { group: 'World Monitor', icon: '🤖', order: 40 },
+      menu: { group: 'World Monitor', icon: 'TK', order: 40 },
       fields: {
         sourceRef: m2o('monitor_sources', { index: true }),
         radarRef: m2o('monitor_radars', { null: true, index: true }),
@@ -622,7 +622,7 @@ export const monitor = defineAddon({
       expand: ['countryRef'],
       order: 'name',
       limit: 100,
-      menu: { group: 'World Monitor', icon: '🧭', order: 1 },
+      menu: { group: 'World Monitor', icon: 'HR', order: 1 },
     }),
 
     monitorActiveSources: defineView('monitorActiveSources', {
@@ -646,7 +646,7 @@ export const monitor = defineAddon({
       expand: ['radarRef'],
       order: 'name',
       limit: 200,
-      menu: { group: 'World Monitor', icon: '📡', order: 2 },
+      menu: { group: 'World Monitor', icon: 'AS', order: 2 },
     }),
 
     monitorSignalFeed: defineView('monitorSignalFeed', {
@@ -674,7 +674,7 @@ export const monitor = defineAddon({
       expand: ['sourceRef', 'radarRef'],
       order: '-urgencyScore,-publishedAt',
       limit: 100,
-      menu: { group: 'World Monitor', icon: '⚡', order: 3 },
+      menu: { group: 'World Monitor', icon: 'FD', order: 3 },
     }),
 
     monitorSignalsByPlatform: defineView('monitorSignalsByPlatform', {
@@ -683,7 +683,7 @@ export const monitor = defineAddon({
       aggregate: { groupBy: ['platform'], metrics: { signals: { fn: 'count' } } },
       order: '-signals',
       limit: 20,
-      menu: { group: 'World Monitor', icon: '📊', order: 15 },
+      menu: { group: 'World Monitor', icon: 'PF', order: 15 },
     }),
 
     monitorSignalsByRadar: defineView('monitorSignalsByRadar', {
@@ -693,7 +693,7 @@ export const monitor = defineAddon({
       expand: ['radarRef'],
       order: '-signals',
       limit: 50,
-      menu: { group: 'World Monitor', icon: '🎯', order: 16 },
+      menu: { group: 'World Monitor', icon: 'RB', order: 16 },
     }),
   },
 
@@ -701,7 +701,7 @@ export const monitor = defineAddon({
     overview: {
       path: '/monitor/overview',
       method: 'GET',
-      menu: { group: 'World Monitor', icon: '🌐', order: 5 },
+      menu: { group: 'World Monitor', icon: 'WP', order: 5 },
       handler: async ({ orm }) => {
         const [radarsPage, sourcesPage, signalsPage, tasksPage] = await Promise.all([
           orm.model('monitor_radars').search({ limit: 100, order: 'name' }),

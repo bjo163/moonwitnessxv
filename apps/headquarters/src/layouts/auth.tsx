@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { BrandLogo, Crown, LinkButton, ZineNote } from '@moonwitness/moonui'
+import { BrandLogo, Crown, LinkButton, ZineNote, Chevron } from '@moonwitness/moonui'
 import { SITE_NAME } from '@/lib/env'
 
 /**
@@ -25,10 +25,10 @@ export function AuthLayout({ children }: { children: ReactNode }) {
 
         <div className="m-row" style={{ gap: 18 }}>
           <ZineNote tone="dark" tilt="left">
-            🌐 SAME MOON · DIFFERENT PEOPLE
+            SAME MOON · DIFFERENT PEOPLE
           </ZineNote>
           <LinkButton href="/" variant="accent" size="md">
-            FOLLOW THE SIGNAL <span aria-hidden="true">→</span>
+            FOLLOW THE SIGNAL <Chevron dir="right" />
           </LinkButton>
         </div>
       </header>
@@ -63,7 +63,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
           </div>
 
           <ZineNote tone="dark" tilt="none">
-            🌐 PEOPLE · PLACES · IDEAS · CULTURES · BEYOND BORDERS.
+            PEOPLE · PLACES · IDEAS · CULTURES · BEYOND BORDERS.
           </ZineNote>
         </aside>
 
@@ -81,7 +81,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
             <ZineNote tone="dark" tilt="left">
               SAME MOON
               <br />
-              DIFFERENT PEOPLE ☆
+              DIFFERENT PEOPLE
             </ZineNote>
           </div>
           <div className="hq-watcher-tag-right">
@@ -108,7 +108,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
 
       <footer className="hq-auth-footer">
         <div>
-          ☺ <strong>Moonwitness</strong> // Create · Curate · Publish · <span className="m-muted">{SITE_NAME}</span>
+          <strong>Moonwitness</strong> // Create · Curate · Publish · <span className="m-muted">{SITE_NAME}</span>
         </div>
         <div className="m-row m-muted" style={{ gap: 16 }}>
           <span>Privacy</span>

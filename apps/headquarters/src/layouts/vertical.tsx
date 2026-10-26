@@ -18,15 +18,15 @@ import { SideNav } from '@/ui/client/SideNav'
 const MISSION_GROUP: NavGroup = {
   label: 'Mission Control',
   items: [
-    { key: 'mc:dashboard', label: 'Dashboard', href: '/#telemetry', icon: '⌂' },
-    { key: 'mc:mission-control', label: 'Mission Control', href: '/', icon: '◎' },
-    { key: 'mc:project-universe', label: 'Project Universe', href: '/#project-universe', icon: '❐' },
-    { key: 'mc:story-forge', label: 'Story Forge', href: '/models', icon: '✎' },
-    { key: 'mc:poster-lab', label: 'Poster Lab', href: '/views', icon: '▣' },
-    { key: 'mc:research-lab', label: 'Research Lab', href: '/models/monitor_radars', icon: '⚗' },
-    { key: 'mc:world-monitor', label: 'World Monitor', href: '/world-monitor', icon: '🌐' },
-    { key: 'mc:publishing-hub', label: 'Publishing Hub', href: '/models/scheduleSlot', icon: '➤' },
-    { key: 'mc:settings', label: 'Settings', href: '/system', icon: '⚙' },
+    { key: 'mc:dashboard', label: 'Dashboard', href: '/#telemetry', icon: 'DB' },
+    { key: 'mc:mission-control', label: 'Mission Control', href: '/', icon: 'MC' },
+    { key: 'mc:project-universe', label: 'Project Universe', href: '/#project-universe', icon: 'PU' },
+    { key: 'mc:story-forge', label: 'Story Forge', href: '/models', icon: 'SF' },
+    { key: 'mc:poster-lab', label: 'Poster Lab', href: '/views', icon: 'PL' },
+    { key: 'mc:research-lab', label: 'Research Lab', href: '/models/monitor_radars', icon: 'RL' },
+    { key: 'mc:world-monitor', label: 'World Monitor', href: '/world-monitor', icon: 'WM' },
+    { key: 'mc:publishing-hub', label: 'Publishing Hub', href: '/models/scheduleSlot', icon: 'PH' },
+    { key: 'mc:settings', label: 'Settings', href: '/system', icon: 'ST' },
   ],
 }
 
@@ -48,7 +48,6 @@ export async function VerticalLayout({ user, children }: { user: SessionUser; ch
           subtitle={
             <span className="m-row" style={{ justifyContent: 'space-between', width: '100%' }}>
               <span>EMPIRE OF THE LIGHT · A-L-L-A-H</span>
-              <span aria-hidden="true">🌐</span>
             </span>
           }
         />
@@ -88,7 +87,7 @@ export async function VerticalLayout({ user, children }: { user: SessionUser; ch
           <form action="/models" method="get" className="hq-search-form">
             <TextInput
               name="q"
-              icon="🔍"
+              icon="FIND"
               placeholder="Search projects, stories, research, or people..."
               aria-label="Search projects, stories, research, or people"
             />
@@ -96,7 +95,7 @@ export async function VerticalLayout({ user, children }: { user: SessionUser; ch
 
           <div className="m-row" style={{ gap: 12 }}>
             <a href="/#alerts" className="m-row" style={{ textDecoration: 'none', gap: 4 }} aria-label="Mission alerts">
-              <span aria-hidden="true">🔔</span>
+              <span className="m-mono m-muted">ALERTS</span>
               <Badge tone="pink">3</Badge>
             </a>
 

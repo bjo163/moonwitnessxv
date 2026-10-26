@@ -13,6 +13,7 @@ import {
   StatCard,
   ZineNote,
   type ProgressTone,
+  Glyph,
 } from '@moonwitness/moonui'
 import { dashboard } from '@/data/queries/ops'
 import { getMonitorOverview } from '@/data/queries/monitor'
@@ -69,19 +70,19 @@ const PROJECTS: ReadonlyArray<{
 ]
 
 const WORKFLOWS = [
-  { icon: '🤖', name: 'Content Analysis Agent', detail: 'Scanning new sources...', state: 'Running' },
-  { icon: '🖼', name: 'Poster Generation Batch', detail: 'Creating visuals (12/15)...', state: 'Running' },
-  { icon: '✔', name: 'Fact Check Pipeline', detail: 'Verifying 8 items...', state: 'Running' },
-  { icon: '📅', name: 'Cross-Post Scheduler', detail: "Preparing tomorrow's posts...", state: 'Queued' },
-  { icon: '📡', name: 'Research Signal Watcher', detail: 'Monitoring global feeds...', state: 'Running' },
+  { icon: 'AG', name: 'Content Analysis Agent', detail: 'Scanning new sources...', state: 'Running' },
+  { icon: 'PO', name: 'Poster Generation Batch', detail: 'Creating visuals (12/15)...', state: 'Running' },
+  { icon: 'FC', name: 'Fact Check Pipeline', detail: 'Verifying 8 items...', state: 'Running' },
+  { icon: 'CP', name: 'Cross-Post Scheduler', detail: "Preparing tomorrow's posts...", state: 'Queued' },
+  { icon: 'RW', name: 'Research Signal Watcher', detail: 'Monitoring global feeds...', state: 'Running' },
 ] as const
 
 const COMMAND_FEED_ITEMS = [
-  { icon: '🟣', text: 'New signal detected: Climate movement in SE Asia', ago: '12m ago' },
-  { icon: '🔵', text: 'Chapter 12: Broken Sky updated', ago: '2h ago' },
-  { icon: '🩷', text: 'Poster set completed: PENDETA-ONLINE', ago: '4h ago' },
-  { icon: '🟡', text: 'Source flagged for review (needs verification)', ago: '6h ago' },
-  { icon: '🟢', text: 'AI workflow completed: Cultural Trends Report', ago: '8h ago' },
+  { icon: 'SG', text: 'New signal detected: Climate movement in SE Asia', ago: '12m ago' },
+  { icon: 'CH', text: 'Chapter 12: Broken Sky updated', ago: '2h ago' },
+  { icon: 'PS', text: 'Poster set completed: PENDETA-ONLINE', ago: '4h ago' },
+  { icon: 'SR', text: 'Source flagged for review (needs verification)', ago: '6h ago' },
+  { icon: 'AI', text: 'AI workflow completed: Cultural Trends Report', ago: '8h ago' },
 ] as const
 
 const MISSION_ALERTS = [
@@ -137,7 +138,7 @@ export default async function DashboardPage() {
               DIFFERENT PEOPLE
             </ZineNote>
             <ZineNote tone="accent" tilt="right">
-              ♛ FOLLOW THE SIGNAL
+              FOLLOW THE SIGNAL
             </ZineNote>
           </div>
         </CardBody>
@@ -148,7 +149,7 @@ export default async function DashboardPage() {
         <div className="m-stack" style={{ gap: 10, justifyContent: 'space-between' }}>
           <ModuleCard
             href="/models"
-            icon="✎"
+            icon="SF"
             tone="pink"
             title="Story Forge"
             description="Develop stories, characters, worlds and narratives."
@@ -161,7 +162,7 @@ export default async function DashboardPage() {
           />
           <ModuleCard
             href="/views"
-            icon="▣"
+            icon="PL"
             tone="cyan"
             title="Poster Lab"
             description="Create visual stories, posters, and social campaigns."
@@ -174,7 +175,7 @@ export default async function DashboardPage() {
           />
           <ModuleCard
             href="/models/monitor_radars"
-            icon="⚗"
+            icon="RL"
             tone="purple"
             title="Research Lab"
             description="Explore cultures, ideas, people and real world context."
@@ -226,7 +227,7 @@ export default async function DashboardPage() {
         <div className="m-stack" style={{ gap: 10, justifyContent: 'space-between' }}>
           <ModuleCard
             href="/world-monitor"
-            icon="🌐"
+            icon="WM"
             tone="yellow"
             title="World Monitor"
             description="Track global signals, trends and stories in motion."
@@ -240,7 +241,7 @@ export default async function DashboardPage() {
           />
           <ModuleCard
             href="/models/scheduleSlot"
-            icon="➤"
+            icon="PH"
             tone="pink"
             title="Publishing Hub"
             description="Prepare and publish across platforms and communities."
@@ -254,7 +255,7 @@ export default async function DashboardPage() {
           />
           <ModuleCard
             href="/system"
-            icon="⚙"
+            icon="AC"
             tone="cyan"
             title="Automation Center"
             description="Manage AI workflows, agents and automated operations."
@@ -268,7 +269,7 @@ export default async function DashboardPage() {
           />
           <ModuleCard
             href="/models"
-            icon="🛡"
+            icon="SV"
             tone="purple"
             title="Source Verification"
             description="Verify sources, facts and media before publishing."
@@ -290,7 +291,7 @@ export default async function DashboardPage() {
           subtitle="All projects, worlds and creative universes."
           actions={
             <LinkButton href="/models" variant="ghost" size="sm">
-              View All →
+              View All
             </LinkButton>
           }
         >
@@ -313,14 +314,14 @@ export default async function DashboardPage() {
           title="Active Workflows"
           actions={
             <LinkButton href="/system" variant="ghost" size="sm">
-              View All →
+              View All
             </LinkButton>
           }
         >
           <div className="m-stack" style={{ gap: 8 }}>
             {WORKFLOWS.map((wf) => (
               <div className="hq-workflow-row" key={wf.name}>
-                <Badge tone="moon">{wf.icon}</Badge>
+                <Glyph code={wf.icon} tone="moon" size="sm" />
                 <div className="hq-wf-copy">
                   <strong>{wf.name}</strong>
                   <span className="m-muted" style={{ fontSize: 10 }}>
@@ -338,14 +339,14 @@ export default async function DashboardPage() {
             title="Command Feed"
             actions={
               <LinkButton href="/world-monitor" variant="ghost" size="sm">
-                View All →
+                View All
               </LinkButton>
             }
           >
             <div className="m-stack" style={{ gap: 6 }}>
               {COMMAND_FEED_ITEMS.map((item) => (
                 <div className="hq-feed-row" key={item.text}>
-                  <span>{item.icon}</span>
+                  <Glyph code={item.icon} tone="cyan" size="sm" />
                   <span className="hq-feed-text">{item.text}</span>
                   <span className="m-mono m-muted" style={{ fontSize: 10 }}>
                     {item.ago}
@@ -359,14 +360,14 @@ export default async function DashboardPage() {
             title="Mission Alerts"
             actions={
               <LinkButton href="/world-monitor" variant="ghost" size="sm">
-                View All →
+                View All
               </LinkButton>
             }
           >
             <div className="m-stack" style={{ gap: 6 }}>
               {MISSION_ALERTS.map((alert) => (
                 <div className="hq-feed-row" key={alert.text}>
-                  <Badge tone={alert.tone}>⚠</Badge>
+                  <Badge tone={alert.tone}>WARN</Badge>
                   <span className="hq-feed-text">{alert.text}</span>
                   <span className="m-mono m-muted" style={{ fontSize: 10 }}>
                     {alert.ago}

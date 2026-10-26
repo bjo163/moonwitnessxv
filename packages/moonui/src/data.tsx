@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { cellText, cn } from './cn.js'
+import { Chevron } from './glyph.js'
 
 export interface ColumnDef<T> {
   key: string
@@ -66,12 +67,20 @@ export function Pagination({
   const pages = total === null ? null : Math.max(1, Math.ceil(total / pageSize))
   return (
     <div className="m-pagination">
-      {page > 1 ? <a href={hrefFor(page - 1)}>← Prev</a> : null}
+      {page > 1 ? (
+        <a href={hrefFor(page - 1)}>
+          <Chevron dir="left" /> Prev
+        </a>
+      ) : null}
       <span className="m-page">
         {page}
         {pages ? ` / ${pages}` : ''}
       </span>
-      {pages && page < pages ? <a href={hrefFor(page + 1)}>Next →</a> : null}
+      {pages && page < pages ? (
+        <a href={hrefFor(page + 1)}>
+          Next <Chevron dir="right" />
+        </a>
+      ) : null}
       {total !== null ? (
         <span className="m-muted">
           {total} row{total === 1 ? '' : 's'}

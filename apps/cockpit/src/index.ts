@@ -15,13 +15,13 @@ async function main() {
     await app.listen({ host, port })
     const appUrl = `http://${host}:${port}`
     console.info(`\x1b[1;35m╭────────────────────────────────────────────────────────────╮\x1b[0m`)
-    console.info(`\x1b[1;35m│\x1b[0m  \x1b[1;37m▲ MOONDECK // WINDOWS DESKTOP COCKPIT\x1b[0m                     \x1b[1;35m│\x1b[0m`)
+    console.info(`\x1b[1;35m│\x1b[0m  \x1b[1;37mMOONDECK // WINDOWS DESKTOP COCKPIT\x1b[0m                     \x1b[1;35m│\x1b[0m`)
     console.info(`\x1b[1;35m│\x1b[0m  Engine backend listening at: \x1b[1;36m${appUrl}\x1b[0m               \x1b[1;35m│\x1b[0m`)
     console.info(`\x1b[1;35m╰────────────────────────────────────────────────────────────╯\x1b[0m`)
 
     const shouldOpen = process.argv.includes('--open') || process.argv.includes('-o')
     if (shouldOpen) {
-      console.info(`\x1b[90m  ➜ Spawning native Windows desktop window...\x1b[0m`)
+      console.info(`\x1b[90m  Spawning native Windows desktop window...\x1b[0m`)
       launchDesktopApp({
         url: appUrl,
         width: config.window?.width ?? 1400,
@@ -29,7 +29,7 @@ async function main() {
         title: config.title,
       })
     } else {
-      console.info(`\x1b[90m  ➜ Open \x1b[1;36m${appUrl}\x1b[0m\x1b[90m or run with \x1b[1;37m--open\x1b[0m\x1b[90m for desktop mode\x1b[0m`)
+      console.info(`\x1b[90m  Open \x1b[1;36m${appUrl}\x1b[0m\x1b[90m or run with \x1b[1;37m--open\x1b[0m\x1b[90m for desktop mode\x1b[0m`)
     }
   } catch (err: unknown) {
     console.error('\x1b[1;31m[MOONDECK ERROR]\x1b[0m Failed to start server:', err)

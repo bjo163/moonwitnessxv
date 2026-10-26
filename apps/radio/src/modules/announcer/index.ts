@@ -49,7 +49,7 @@ const announcerRoutes: TypedModule = async (fastify) => {
       const station = row.stationRef ? await orm.model('stations').get(String(row.stationRef)).catch(() => null) : null
       const who = String(row.sender ?? 'an anonymous listener')
       await announce(
-        `📮 request from ${who}${station ? ` for ${String(station.name)}` : ''}: ${clip(String(row.message ?? ''))}`,
+        `[request] from ${who}${station ? ` for ${String(station.name)}` : ''}: ${clip(String(row.message ?? ''))}`,
         'request',
       )
     })().catch((err: unknown) => fastify.log.warn({ err: (err as Error).message }, 'announcer: request hook failed'))
@@ -61,7 +61,7 @@ const announcerRoutes: TypedModule = async (fastify) => {
   orm.bus.on('cron.run', (payload) => {
     if (payload.status !== 'error') return
     void announce(
-      `⚠️ cron ${payload.addon}/${payload.cron} failed after ${payload.durationMs}ms: ${clip(String(payload.detail ?? 'no detail'))}`,
+      `[alert] cron ${payload.addon}/${payload.cron} failed after ${payload.durationMs}ms: ${clip(String(payload.detail ?? 'no detail'))}`,
       'cron',
     ).catch((err: unknown) => fastify.log.warn({ err: (err as Error).message }, 'announcer: alert hook failed'))
   })

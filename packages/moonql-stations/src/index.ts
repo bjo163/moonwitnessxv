@@ -47,7 +47,7 @@ export default defineAddon({
       // The catalog is public to read but admin-only to change: it feeds the
       // stream URLs both frontends play, so anonymous writes are not acceptable.
       acl: ADMIN_WRITE,
-      menu: { group: 'Radio', icon: '🎚️', order: 5 },
+      menu: { group: 'Radio', icon: 'ST', order: 5 },
       seed: [
         // ---- Indonesia · Jakarta ----
         { name: 'Prambors FM Jakarta', streamUrl: 'https://stream.rcs.revma.com/h77wwp48kxcwv', genre: 'pop', countryRef: '@countries:id' },
@@ -105,7 +105,7 @@ export default defineAddon({
       expand: ['countryRef'],
       order: 'name',
       limit: 100,
-      menu: { group: 'Radio', icon: '📻', order: 10 },
+      menu: { group: 'Radio', icon: 'CA', order: 10 },
     }),
     stationCountByGenre: defineView('stationCountByGenre', {
       label: 'Stations per genre',
@@ -113,7 +113,7 @@ export default defineAddon({
       aggregate: { groupBy: ['genre'], metrics: { stations: { fn: 'count' } } },
       order: '-stations',
       limit: 30,
-      menu: { group: 'Radio', icon: '🎼', order: 20 },
+      menu: { group: 'Radio', icon: 'GN', order: 20 },
     }),
     // cross-reference aggregate: which countries broadcast the most
     stationCountByCountry: defineView('stationCountByCountry', {
@@ -142,7 +142,7 @@ export default defineAddon({
       order: '-probeFails,name',
       limit: 50,
       acl: ['admin'],
-      menu: { group: 'Radio', icon: '⚠️', order: 22 },
+      menu: { group: 'Radio', icon: 'HL', order: 22 },
     }),
   },
   cron: [

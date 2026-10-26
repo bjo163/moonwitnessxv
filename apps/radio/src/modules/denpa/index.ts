@@ -63,7 +63,7 @@ export default async function denpaModule(fastify: FastifyInstance) {
   await fastify.register(denpa, {
     token: cfg.token,
     onReceive: (t) => {
-      fastify.log.info({ id: t.id, origin: t.origin }, '⚡ denpa: transmission received')
+      fastify.log.info({ id: t.id, origin: t.origin }, 'denpa: transmission received')
       // fire-and-forget, but never unhandled: a slow or failing write must not
       // reject inside a webhook that has already answered 202
       void queue(t.origin, t.payload).catch((err: unknown) =>

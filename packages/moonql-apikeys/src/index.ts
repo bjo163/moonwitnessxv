@@ -38,7 +38,7 @@ export const apikeys = defineAddon({
       path: '/api-keys',
       method: 'GET',
       requires: ['admin'],
-      menu: { group: 'System', icon: '🔑', order: 60 },
+      menu: { group: 'System', icon: 'KY', order: 60 },
       handler: async ({ orm }) => {
         const page = await orm.model('api_keys').search({ limit: 100, order: '-createdAt' })
         return page.rows // hydrated -> private keyHash is stripped automatically

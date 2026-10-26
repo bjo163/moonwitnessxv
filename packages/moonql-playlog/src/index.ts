@@ -197,7 +197,7 @@ export const playlog = defineAddon({
       expand: ['stationRef'],
       order: '-plays',
       limit: 10,
-      menu: { group: 'Radio', icon: '🏆', order: 30 },
+      menu: { group: 'Radio', icon: 'TS', order: 30 },
     }),
     recentPlays: defineView('recentPlays', {
       label: 'Latest listen events',
@@ -224,7 +224,7 @@ export const playlog = defineAddon({
       expand: ['stationRef'],
       order: '-beacons',
       limit: 200,
-      menu: { group: 'Radio', icon: '📉', order: 32 },
+      menu: { group: 'Radio', icon: 'LQ', order: 32 },
     }),
     /**
      * What the queue looks like to the people who run it: open requests first,
@@ -239,7 +239,7 @@ export const playlog = defineAddon({
       order: '-createdAt',
       limit: 100,
       acl: ['admin'],
-      menu: { group: 'Radio', icon: '📮', order: 33 },
+      menu: { group: 'Radio', icon: 'RQ', order: 33 },
     }),
     /**
      * Same chart, one day wide. The `where` is a function of the clock, so the
@@ -253,7 +253,7 @@ export const playlog = defineAddon({
       expand: ['stationRef'],
       order: '-plays',
       limit: 10,
-      menu: { group: 'Radio', icon: '📊', order: 29 },
+      menu: { group: 'Radio', icon: 'TD', order: 29 },
     }),
     /**
      * The stored rollup: reading history costs one scan of a table that grows by
@@ -265,7 +265,7 @@ export const playlog = defineAddon({
       expand: ['stationRef'],
       order: '-day',
       limit: 500,
-      menu: { group: 'Radio', icon: '🗓️', order: 30 },
+      menu: { group: 'Radio', icon: 'AD', order: 30 },
     }),
     // public: this is what a listener actually wants to see under a station name
     nowPlayingTrack: defineView('nowPlayingTrack', {
@@ -275,7 +275,7 @@ export const playlog = defineAddon({
       expand: ['stationRef'],
       order: '-at',
       limit: 100,
-      menu: { group: 'Radio', icon: '🎵', order: 12 },
+      menu: { group: 'Radio', icon: 'NP', order: 12 },
     }),
   },
   endpoints: {
@@ -286,7 +286,7 @@ export const playlog = defineAddon({
       path: '/listen',
       method: 'POST',
       requires: 'public',
-      menu: { group: 'Radio', icon: '🎧', order: 40 },
+      menu: { group: 'Radio', icon: 'TL', order: 40 },
       body: {
         stationRef: str({ maxLength: 36 }),
         event: sel(['start', 'stop', 'skip'], { default: 'start' }),
@@ -317,7 +317,7 @@ export const playlog = defineAddon({
       method: 'GET',
       requires: 'public',
       stream: true,
-      menu: { group: 'Radio', icon: '🔴', order: 41 },
+      menu: { group: 'Radio', icon: 'ON', order: 41 },
       handler: ({ bus, query, signal }) => {
         // An anonymous caller holding a socket is the one thing a single-process
         // hub cannot hand out freely: five minutes per tab, then reconnect.

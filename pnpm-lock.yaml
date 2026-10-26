@@ -222,6 +222,9 @@ importers:
       '@moonwitness/moonql-stations':
         specifier: workspace:*
         version: link:../../packages/moonql-stations
+      '@moonwitness/moonql-unilex':
+        specifier: workspace:*
+        version: link:../../packages/moonql-unilex
       '@moonwitness/whatsapp':
         specifier: workspace:*
         version: link:../../packages/whatsapp
@@ -485,6 +488,15 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
+
+  packages/moonql-unilex:
+    dependencies:
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../core
+      '@moonwitness/moonql':
+        specifier: workspace:*
+        version: link:../moonql
 
   packages/moonui:
     dependencies:

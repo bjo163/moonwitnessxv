@@ -1,10 +1,12 @@
 import type { ReactNode } from 'react'
 import { cn } from './cn.js'
+import { Glyph } from './glyph.js'
 
 export interface NavItem {
   key: string
   label: string
   href: string
+  /** 2-3 letter monogram shown in the <Glyph> tile; falls back to the label */
   icon?: string
 }
 
@@ -29,7 +31,7 @@ export function Nav({ groups, activeKey }: { groups: NavGroup[]; activeKey?: str
                 href={item.href}
                 data-active={item.key === activeKey ? 'true' : 'false'}
               >
-                <span className="m-nav-icon">{item.icon ?? '•'}</span>
+                <Glyph code={item.icon ?? item.label} tone={item.key === activeKey ? 'ink' : 'pink'} size="sm" />
                 {item.label}
               </a>
             ))}
@@ -54,7 +56,6 @@ export function TabBar({ tabs, activeKey }: { tabs: NavItem[]; activeKey?: strin
 export interface TabItem {
   id: string
   label: ReactNode
-  icon?: ReactNode
   count?: number
   tone?: 'pink' | 'cyan' | 'accent' | 'ok'
 }
@@ -86,7 +87,6 @@ export function Tabs({
             data-tone={tab.tone ?? 'cyan'}
             onClick={() => onChange(tab.id)}
           >
-            {tab.icon ? <span className="m-tab-icon">{tab.icon}</span> : null}
             <span>{tab.label}</span>
             {typeof tab.count === 'number' ? <span className="m-tab-badge">{tab.count}</span> : null}
           </button>

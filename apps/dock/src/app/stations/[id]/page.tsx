@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { Badge, LinkButton, PageHeader, Panel, StatCard } from '@moonwitness/moonui'
+import { Badge, LinkButton, PageHeader, Panel, StatCard, Chevron } from '@moonwitness/moonui'
 import { getStation } from '@/data/queries/catalog'
 import { clock } from '@/lib/time'
 import { Player } from '@/ui/client/Player'
@@ -25,7 +25,7 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
               {station.statusLabel === 'live' ? 'on the air' : 'off the air'}
             </Badge>
             <LinkButton href="/stations" variant="ghost" size="sm">
-              ← Back to catalog
+              <Chevron dir="left" /> Back to catalog
             </LinkButton>
           </span>
         }

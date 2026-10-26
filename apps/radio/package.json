@@ -32,6 +32,7 @@
     "@moonwitness/moonql-ops": "workspace:*",
     "@moonwitness/moonql-monitor": "workspace:*",
     "@moonwitness/moonql-corpus": "workspace:*",
+    "@moonwitness/moonql-unilex": "workspace:*",
     "@moonwitness/whatsapp": "workspace:*",
     "fastify": "^5.2.1",
     "fastify-plugin": "^5.0.1",

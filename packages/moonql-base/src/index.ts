@@ -29,7 +29,7 @@ export const base = defineAddon({
       unique: [['code']],
       acl: ADMIN_WRITE,
       data: { rows: CURRENCIES },
-      menu: { group: 'Reference', icon: '💱', order: 10 },
+      menu: { group: 'Reference', icon: 'CU', order: 10 },
     }),
     languages: defineModel({
       label: 'Language',
@@ -42,7 +42,7 @@ export const base = defineAddon({
       unique: [['code']],
       acl: ADMIN_WRITE,
       data: { rows: LANGUAGES },
-      menu: { group: 'Reference', icon: '🗣️', order: 20 },
+      menu: { group: 'Reference', icon: 'LG', order: 20 },
     }),
     countries: defineModel({
       label: 'Country',
@@ -60,7 +60,7 @@ export const base = defineAddon({
       unique: [['code']],
       acl: ADMIN_WRITE,
       data: { rows: COUNTRIES },
-      menu: { group: 'Reference', icon: '🌍', order: 30 },
+      menu: { group: 'Reference', icon: 'CT', order: 30 },
     }),
   },
   views: {

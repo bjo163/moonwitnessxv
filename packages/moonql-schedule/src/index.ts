@@ -50,7 +50,7 @@ export const schedule = defineAddon({
       },
       unique: [['weekday', 'stationRef', 'startMin']],
       acl: ADMIN_WRITE,
-      menu: { group: 'Radio', icon: '🗓️', order: 7 },
+      menu: { group: 'Radio', icon: 'SL', order: 7 },
       // full-week demo grid over the REAL station catalog: every UTC weekday
       // covered morning + evening, so nowPlaying is NEVER empty at any hour
       seed: (
@@ -92,7 +92,7 @@ export const schedule = defineAddon({
         live: true,
       }),
       expand: ['stationRef'],
-      menu: { group: 'Radio', icon: '🔴', order: 1 },
+      menu: { group: 'Radio', icon: 'NW', order: 1 },
     }),
     weeklySchedule: defineView('weeklySchedule', {
       label: 'The full week grid',
@@ -101,7 +101,7 @@ export const schedule = defineAddon({
       expand: ['stationRef'],
       order: 'dayIndex,startMin',
       limit: 100,
-      menu: { group: 'Radio', icon: '🗓️', order: 2 },
+      menu: { group: 'Radio', icon: 'WS', order: 2 },
     }),
     upcoming: defineView('upcoming', {
       label: 'Live program slots',

@@ -19,6 +19,7 @@
     { "path": "../../packages/moonql-ops" },
     { "path": "../../packages/moonql-monitor" },
     { "path": "../../packages/moonql-corpus" },
+    { "path": "../../packages/moonql-unilex" },
     { "path": "../../packages/whatsapp" },
     { "path": "../../packages/denpa" }
   ]

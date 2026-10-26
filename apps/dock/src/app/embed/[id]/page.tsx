@@ -32,7 +32,7 @@ export default async function EmbedPage({ params }: { params: Promise<{ id: stri
         <Player stationId={station.id} stationName={station.name} streamUrl={station.streamUrl} />
         <div>
           <LinkButton href={`/stations/${station.id}`} variant="ghost" size="sm" target="_blank" rel="noopener noreferrer">
-            Open in Moonwitness →
+            Open in Moonwitness
           </LinkButton>
         </div>
       </CardBody>

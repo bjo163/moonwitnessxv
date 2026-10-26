@@ -49,28 +49,28 @@ const DRIVER_META: ReadonlyArray<{
     key: 'rss',
     title: 'YouTube Atom / RSS',
     tone: 'cyan',
-    icon: '📻',
+    icon: 'RS',
     desc: 'Zero-key YouTube channel XML & standard RSS 2.0 feeds.',
   },
   {
     key: 'playwright',
     title: 'Playwright DOM',
     tone: 'pink',
-    icon: '🎭',
+    icon: 'PW',
     desc: 'Headless Chromium automation for X, Instagram & YouTube live search.',
   },
   {
     key: 'openclaw',
     title: 'OpenClaw Crawler',
     tone: 'yellow',
-    icon: '🦀',
+    icon: 'OC',
     desc: 'DOM-to-Markdown structural extraction & anti-bot social tag feeds.',
   },
   {
     key: 'agent',
     title: 'Agentic AI Triage',
     tone: 'purple',
-    icon: '🤖',
+    icon: 'AG',
     desc: 'Autonomous multi-step synthesis, urgency scoring & executive briefs.',
   },
 ]
@@ -157,7 +157,7 @@ export default async function WorldMonitorPage({
 
           <div className="m-stack" style={{ gap: 8, alignItems: 'flex-end' }}>
             <ZineNote tone="accent" tilt="right">
-              ♛ SENTINEL 3-TIER ENGINE
+              SENTINEL 3-TIER ENGINE
             </ZineNote>
             <div className="m-row" style={{ gap: 8 }}>
               <LinkButton href="/models/monitor_radars/new" variant="primary" size="sm">
@@ -167,7 +167,7 @@ export default async function WorldMonitorPage({
                 + New Source
               </LinkButton>
               <LinkButton href="/models/monitor_signals" variant="ghost" size="sm">
-                All Signals →
+                All Signals
               </LinkButton>
             </div>
           </div>
@@ -200,7 +200,7 @@ export default async function WorldMonitorPage({
         actions={
           selectedRadarId || selectedSourceId || selectedPlatform || selectedDriver ? (
             <LinkButton href="/world-monitor" variant="ghost" size="sm">
-              Reset Filters ✕
+              Reset Filters
             </LinkButton>
           ) : undefined
         }
@@ -248,7 +248,7 @@ export default async function WorldMonitorPage({
           subtitle="Macro issue / operation radar"
           actions={
             <LinkButton href="/models/monitor_radars" variant="ghost" size="sm">
-              CRUD →
+              CRUD
             </LinkButton>
           }
         >
@@ -295,7 +295,7 @@ export default async function WorldMonitorPage({
           }
           actions={
             <LinkButton href="/models/monitor_sources" variant="ghost" size="sm">
-              CRUD →
+              CRUD
             </LinkButton>
           }
         >
@@ -352,7 +352,7 @@ export default async function WorldMonitorPage({
           }
           actions={
             <LinkButton href="/views/monitorSignalFeed" variant="ghost" size="sm">
-              Feed View →
+              Feed View
             </LinkButton>
           }
         >
@@ -396,7 +396,7 @@ export default async function WorldMonitorPage({
                     <div className="m-row" style={{ justifyContent: 'space-between', fontSize: 10 }}>
                       <span className="m-mono m-muted">URGENCY SCORE: {sig.urgencyScore}/100</span>
                       <span className="m-mono m-muted">
-                        👁 {sig.viewsCount.toLocaleString()} · ♥ {sig.likesCount.toLocaleString()} · 💬{' '}
+                        VIEWS {sig.viewsCount.toLocaleString()} · LIKES {sig.likesCount.toLocaleString()} · CMT{' '}
                         {sig.commentsCount.toLocaleString()}
                       </span>
                     </div>
@@ -422,7 +422,7 @@ export default async function WorldMonitorPage({
                       className="m-mono"
                       style={{ fontSize: 10, color: 'var(--accent)' }}
                     >
-                      Source URL ↗
+                      Source URL
                     </a>
                   </div>
                 </div>
@@ -466,7 +466,7 @@ export default async function WorldMonitorPage({
         subtitle="Pull-queue tasks claimed and executed by apps/sentinel workers."
         actions={
           <LinkButton href="/models/monitor_tasks" variant="ghost" size="sm">
-            Inspect Queue →
+            Inspect Queue
           </LinkButton>
         }
       >

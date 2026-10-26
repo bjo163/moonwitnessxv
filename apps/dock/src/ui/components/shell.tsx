@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { BrandLogo, Crown, LinkButton, LiveDot, Tape, ZineNote } from '@moonwitness/moonui'
+import { BrandLogo, Crown, LinkButton, LiveDot, Tape, ZineNote, Chevron } from '@moonwitness/moonui'
 import { SITE_NAME, SITE_TAGLINE } from '@/lib/env'
 
 export function SiteHeader(): ReactNode {
@@ -13,6 +13,7 @@ export function SiteHeader(): ReactNode {
         </a>
         <a href="/stations">SIGNALS</a>
         <a href="/reader">READER</a>
+        <a href="/terms">TERMS</a>
         <a href="/schedule">ARCHIVE</a>
         <a href="/#constellation">CREW</a>
         <a href="/#zine-poster">ABOUT</a>
@@ -20,13 +21,13 @@ export function SiteHeader(): ReactNode {
 
       <div className="m-row">
         <a href="/stations" className="dk-icon-btn" aria-label="Search signals" title="Search signals">
-          🔍
+          SRC
         </a>
         <a href="/#constellation" className="dk-icon-btn" aria-label="Global network" title="Global network">
-          🌐
+          NET
         </a>
         <LinkButton href="/#join-crew" variant="paper" size="sm">
-          JOIN THE CREW <span aria-hidden="true">→</span>
+          JOIN THE CREW <Chevron dir="right" />
         </LinkButton>
         <Crown tone="gold" size="md" />
       </div>
@@ -40,10 +41,10 @@ export function SiteFooter(): ReactNode {
       <div className="dk-join-banner">
         <div className="m-row" style={{ gap: 10 }}>
           <span className="dk-icon-btn" aria-hidden="true">
-            ◐
+            THM
           </span>
           <span className="dk-icon-btn" aria-hidden="true">
-            ⊕
+            GLB
           </span>
           <ZineNote tone="dark" tilt="none">
             MESSAGES
@@ -68,7 +69,7 @@ export function SiteFooter(): ReactNode {
             <strong>A BRIGHTER WORLD.</strong>
           </p>
           <LinkButton href="/stations" variant="paper" size="md">
-            BECOME A MOONWITNESS <span aria-hidden="true">→</span>
+            BECOME A MOONWITNESS <Chevron dir="right" />
           </LinkButton>
         </div>
 
@@ -80,7 +81,7 @@ export function SiteFooter(): ReactNode {
             <br />
             ANOTHER SIDE
             <br />
-            OF REALITY. ☺
+            OF REALITY.
           </ZineNote>
         </div>
       </div>
@@ -130,7 +131,7 @@ export function Hero({
 
           <div className="m-row" style={{ gap: 14 }}>
             <LinkButton href="/stations" variant="primary" size="md">
-              EXPLORE THE SIGNALS <span aria-hidden="true">→</span>
+              EXPLORE THE SIGNALS <Chevron dir="right" />
             </LinkButton>
 
             <div className="dk-hero-badge">

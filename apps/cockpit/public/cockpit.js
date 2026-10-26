@@ -75,7 +75,7 @@ function renderServiceCards() {
     card.innerHTML = `
       <div class="card-top">
         <div class="card-identity">
-          <span class="service-icon">${svc.icon || '📦'}</span>
+          <span class="service-icon">${svc.icon || ''}</span>
           <span class="service-name">${svc.name}</span>
         </div>
         <span class="status-badge ${state.status}">${state.status}</span>
@@ -89,13 +89,13 @@ function renderServiceCards() {
       <div class="card-controls">
         ${
           isRunning
-            ? `<button class="btn btn-danger btn-sm" onclick="controlService('${svc.tag}', 'stop')">⏹ Stop</button>
-               <button class="btn btn-sm" onclick="controlService('${svc.tag}', 'restart')">↻ Restart</button>`
-            : `<button class="btn btn-primary btn-sm" onclick="controlService('${svc.tag}', 'start')">▶ Start</button>`
+            ? `<button class="btn btn-danger btn-sm" onclick="controlService('${svc.tag}', 'stop')">Stop</button>
+               <button class="btn btn-sm" onclick="controlService('${svc.tag}', 'restart')">Restart</button>`
+            : `<button class="btn btn-primary btn-sm" onclick="controlService('${svc.tag}', 'start')">Start</button>`
         }
         ${
           svc.url
-            ? `<button class="btn btn-sm" onclick="openPreview('${svc.url}')">👁 Preview</button>`
+            ? `<button class="btn btn-sm" onclick="openPreview('${svc.url}')">Preview</button>`
             : ''
         }
       </div>
@@ -148,7 +148,7 @@ async function freePorts() {
   } catch (err) {
     alert('Failed to free ports: ' + err.message)
   } finally {
-    btn.textContent = '⚡ Free Ports'
+    btn.textContent = 'Free Ports'
     btn.disabled = false
     await refreshStatus()
   }
@@ -332,12 +332,12 @@ function renderPreviewShortcuts() {
   container.innerHTML = ''
 
   const shortcuts = [
-    { label: '🚢 Dock (:3001)', url: 'http://localhost:3001' },
-    { label: '🏛️ Headquarters (:3002)', url: 'http://localhost:3002' },
-    { label: '🛰️ World Monitor (:3002/world-monitor)', url: 'http://localhost:3002/world-monitor' },
-    { label: '📻 Hub (:3000)', url: 'http://localhost:3000' },
-    { label: '📖 Swagger Docs (:3000/docs)', url: 'http://localhost:3000/docs' },
-    { label: '🧠 AI Gateway (:3003)', url: 'http://localhost:3003/v1/models' },
+    { label: 'Dock (:3001)', url: 'http://localhost:3001' },
+    { label: 'Headquarters (:3002)', url: 'http://localhost:3002' },
+    { label: 'World Monitor (:3002/world-monitor)', url: 'http://localhost:3002/world-monitor' },
+    { label: 'Hub (:3000)', url: 'http://localhost:3000' },
+    { label: 'Swagger Docs (:3000/docs)', url: 'http://localhost:3000/docs' },
+    { label: 'AI Gateway (:3003)', url: 'http://localhost:3003/v1/models' },
   ]
 
   for (const s of shortcuts) {
@@ -390,7 +390,7 @@ async function loadErrorLedger() {
     $('ledgerCount').textContent = `${data.total || 0} entries`
 
     if (!data.lines || data.lines.length === 0) {
-      viewport.innerHTML = '<div style="color:var(--neon-green)">✔ No errors recorded in dev-errors.log. All systems nominal.</div>'
+      viewport.innerHTML = '<div style="color:var(--neon-green)">No errors recorded in dev-errors.log. All systems nominal.</div>'
       return
     }
 
@@ -444,7 +444,7 @@ function renderPortsGrid() {
       <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">${item.name}</div>
       <div style="color:var(--text-muted); font-size:12px; margin-bottom:12px;">${item.desc}</div>
       <div>
-        <a href="http://localhost:${item.port}" target="_blank" class="btn btn-sm" style="text-decoration:none;">Open :${item.port} ↗</a>
+        <a href="http://localhost:${item.port}" target="_blank" class="btn btn-sm" style="text-decoration:none;">Open :${item.port}</a>
       </div>
     `
     container.appendChild(card)

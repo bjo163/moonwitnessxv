@@ -73,7 +73,7 @@ export const ops = defineAddon({
         summary: str({ maxLength: 240, null: true }),
       },
       acl: ADMIN_FULL,
-      menu: { group: 'System', icon: '🧾', order: 20 },
+      menu: { group: 'System', icon: 'AU', order: 20 },
     }),
     ops_jobs: defineModel({
       label: 'Cron job run',
@@ -86,7 +86,7 @@ export const ops = defineAddon({
         detail: str({ maxLength: 500, null: true }),
       },
       acl: ADMIN_FULL,
-      menu: { group: 'System', icon: '⏱️', order: 30 },
+      menu: { group: 'System', icon: 'JB', order: 30 },
     }),
   },
   endpoints: {
@@ -94,7 +94,7 @@ export const ops = defineAddon({
       path: '/ops/dashboard',
       method: 'GET',
       requires: ADMIN_ONLY,
-      menu: { group: 'System', icon: '📊', order: 10 },
+      menu: { group: 'System', icon: 'OV', order: 10 },
       handler: async ({ orm, engine, schema }) => {
         const doc = schema()
         const names = Object.keys(doc.models)

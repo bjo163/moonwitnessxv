@@ -80,7 +80,7 @@ export const corpus = defineAddon({
       label: 'Corpus Work',
       rest: true,
       acl: ADMIN_WRITE,
-      menu: { group: 'Corpus', icon: '📜', order: 10 },
+      menu: { group: 'Corpus', icon: 'WK', order: 10 },
       fields: {
         code: str({ maxLength: 40 }),
         title: str({ maxLength: 120 }),
@@ -106,7 +106,7 @@ export const corpus = defineAddon({
       label: 'Corpus Edition',
       rest: true,
       acl: ADMIN_WRITE,
-      menu: { group: 'Corpus', icon: '🏛️', order: 20 },
+      menu: { group: 'Corpus', icon: 'ED', order: 20 },
       fields: {
         code: str({ maxLength: 60 }),
         workRef: m2o('corpus_works', { index: true }),
@@ -140,7 +140,7 @@ export const corpus = defineAddon({
       // raw source bytes never leave through generic REST; the public projection
       // is `/corpus/reader`, which evaluates the edition's rights first
       acl: ADMIN_FULL,
-      menu: { group: 'Corpus', icon: '🔍', order: 30 },
+      menu: { group: 'Corpus', icon: 'PS', order: 30 },
       fields: {
         citationKey: str({ maxLength: 60 }), // e.g. "QS 2:82"
         editionRef: m2o('corpus_editions', { index: true }),
@@ -173,7 +173,7 @@ export const corpus = defineAddon({
       label: 'Corpus Translation',
       rest: true,
       acl: ADMIN_FULL,
-      menu: { group: 'Corpus', icon: '🌐', order: 40 },
+      menu: { group: 'Corpus', icon: 'TR', order: 40 },
       fields: {
         code: str({ maxLength: 80 }),
         passageRef: m2o('corpus_passages', { index: true }),
@@ -234,7 +234,7 @@ export const corpus = defineAddon({
       method: 'GET',
       path: '/corpus/reader',
       requires: 'public',
-      menu: { group: 'Corpus', icon: '📖', order: 50 },
+      menu: { group: 'Corpus', icon: 'OV', order: 50 },
       handler: async ({ query, orm, status }) => {
         const raw = typeof query.citation === 'string' ? query.citation : ''
         const citation = raw.trim().replace(/\s+/g, ' ')

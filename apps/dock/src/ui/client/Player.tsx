@@ -106,7 +106,7 @@ export function Player({
         onClick={() => void toggle()}
         aria-pressed={playing}
       >
-        {playing ? '■ stop' : '▶ play'}
+        {playing ? 'stop' : 'play'}
       </Button>
       <div className="m-row" style={{ gap: 10 }}>
         <LiveDot on={playing} />

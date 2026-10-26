@@ -76,7 +76,7 @@ const DEFAULT_CHANNELS: ChannelItem[] = [
     type: 'bgm',
     streamUrl: '/bgm.mp3',
     genre: 'Chiptune / 8-Bit',
-    icon: '🎮',
+    icon: 'BG',
     country: 'MOON',
     description: 'Official Moondeck Mission Cockpit energetic arcade soundtrack',
   },
@@ -86,7 +86,7 @@ const DEFAULT_CHANNELS: ChannelItem[] = [
     type: 'iptv',
     streamUrl: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8',
     genre: 'News / Current Affairs',
-    icon: '📺',
+    icon: 'DW',
     country: 'DE',
     description: 'Deutsche Welle international 24/7 news television stream',
   },
@@ -96,7 +96,7 @@ const DEFAULT_CHANNELS: ChannelItem[] = [
     type: 'iptv',
     streamUrl: 'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8',
     genre: 'Sports / Gaming / Action',
-    icon: '⚡',
+    icon: 'RB',
     country: 'AT',
     description: 'Extreme sports, gaming, and action culture live television',
   },
@@ -106,7 +106,7 @@ const DEFAULT_CHANNELS: ChannelItem[] = [
     type: 'iptv',
     streamUrl: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
     genre: 'Animation / Visuals',
-    icon: '🎬',
+    icon: 'AN',
     country: 'NL',
     description: 'Continuous Open Source 3D animation visual stream',
   },
@@ -126,7 +126,7 @@ const DEFAULT_CHANNELS: ChannelItem[] = [
     type: 'radio',
     streamUrl: 'https://stream.rcs.revma.com/h77wwp48kxcwv',
     genre: 'Pop / Hits',
-    icon: '📻',
+    icon: 'PR',
     country: 'ID',
     description: 'Hit music station Indonesia #1 for youth',
   },
@@ -136,7 +136,7 @@ const DEFAULT_CHANNELS: ChannelItem[] = [
     type: 'radio',
     streamUrl: 'https://ic.mari.co.id:8443/genfm',
     genre: 'Indonesian Pop',
-    icon: '📻',
+    icon: 'GF',
     country: 'ID',
     description: 'Suara Musik Indonesia hits & culture',
   },
@@ -146,7 +146,7 @@ const DEFAULT_CHANNELS: ChannelItem[] = [
     type: 'radio',
     streamUrl: 'https://ice2.somafm.com/groovesalad-128-mp3',
     genre: 'Ambient / Chillout',
-    icon: '🥗',
+    icon: 'SG',
     country: 'US',
     description: 'A nicely chilled plate of ambient beats and cyber grooves',
   },
@@ -156,7 +156,7 @@ const DEFAULT_CHANNELS: ChannelItem[] = [
     type: 'radio',
     streamUrl: 'https://ice2.somafm.com/secretagent-128-mp3',
     genre: 'Spy / Cyberpunk',
-    icon: '🕵️',
+    icon: 'SA',
     country: 'US',
     description: 'The soundtrack for your stylish, mysterious hacking day',
   },
@@ -166,7 +166,7 @@ const DEFAULT_CHANNELS: ChannelItem[] = [
     type: 'radio',
     streamUrl: 'https://kexp.streamguys1.com/kexp160.mp3',
     genre: 'Indie / Eclectic',
-    icon: '🎙️',
+    icon: 'KX',
     country: 'US',
     description: 'Where the music matters — legendary independent live radio',
   },
@@ -546,12 +546,12 @@ export function App() {
   })
 
   const previewShortcuts = [
-    { label: '🚢 Dock (:3001)', url: 'http://localhost:3001' },
-    { label: '🏛️ Headquarters (:3002)', url: 'http://localhost:3002' },
-    { label: '🛰️ World Monitor (:3002/world-monitor)', url: 'http://localhost:3002/world-monitor' },
-    { label: '📻 Radio Hub (:3000)', url: 'http://localhost:3000' },
-    { label: '📖 Swagger Docs (:3000/docs)', url: 'http://localhost:3000/docs' },
-    { label: '🧠 AI Gateway (:3003)', url: 'http://localhost:3003/v1/models' },
+    { label: 'Dock (:3001)', url: 'http://localhost:3001' },
+    { label: 'Headquarters (:3002)', url: 'http://localhost:3002' },
+    { label: 'World Monitor (:3002/world-monitor)', url: 'http://localhost:3002/world-monitor' },
+    { label: 'Radio Hub (:3000)', url: 'http://localhost:3000' },
+    { label: 'Swagger Docs (:3000/docs)', url: 'http://localhost:3000/docs' },
+    { label: 'AI Gateway (:3003)', url: 'http://localhost:3003/v1/models' },
   ]
 
   const portMap = [
@@ -563,11 +563,11 @@ export function App() {
   ]
 
   const cockpitTabs: TabItem[] = [
-    { id: 'logs', label: 'Terminal & Logs', icon: '📟', tone: 'cyan' },
-    { id: 'preview', label: 'In-App Web Preview', icon: '🌐', tone: 'accent' },
-    { id: 'media', label: 'Media & IPTV Player', count: channels.length, icon: '📺', tone: 'pink' },
-    { id: 'ledger', label: 'Error Ledger', count: errorLines.length > 0 ? errorLines.length : undefined, icon: '🚨', tone: 'accent' },
-    { id: 'ports', label: 'Network & Ports', icon: '🔌', tone: 'cyan' },
+    { id: 'logs', label: 'Terminal & Logs', tone: 'cyan' },
+    { id: 'preview', label: 'In-App Web Preview', tone: 'accent' },
+    { id: 'media', label: 'Media & IPTV Player', count: channels.length, tone: 'pink' },
+    { id: 'ledger', label: 'Error Ledger', count: errorLines.length > 0 ? errorLines.length : undefined, tone: 'accent' },
+    { id: 'ports', label: 'Network & Ports', tone: 'cyan' },
   ]
 
   return (
@@ -644,7 +644,7 @@ export function App() {
               onClick={prevChannel}
               title="Previous Channel"
             >
-              ⏮
+              Prev
             </Button>
             <Button
               variant={isPlaying ? 'danger' : 'primary'}
@@ -653,7 +653,7 @@ export function App() {
               onClick={togglePlayPause}
               title={isPlaying ? 'Pause' : 'Play'}
             >
-              {isPlaying ? '⏸' : '▶'}
+              {isPlaying ? 'Pause' : 'Play'}
             </Button>
             <Button
               variant="ghost"
@@ -662,7 +662,7 @@ export function App() {
               onClick={nextChannel}
               title="Next Channel"
             >
-              ⏭
+              Next
             </Button>
             <Button
               variant="ghost"
@@ -671,7 +671,7 @@ export function App() {
               onClick={() => setIsMuted(!isMuted)}
               title={isMuted ? 'Unmute' : 'Mute'}
             >
-              {isMuted ? '🔇' : '🔊'}
+              {isMuted ? 'Muted' : 'Vol'}
             </Button>
             <input
               type="range"
@@ -695,7 +695,7 @@ export function App() {
               onClick={() => setActiveTab('media')}
               title="Open Media & IPTV Station Tab"
             >
-              📺 Player
+              Player
             </Button>
           </div>
         </div>
@@ -703,10 +703,10 @@ export function App() {
         {/* Global Dev Actions */}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <Button variant="primary" size="sm" onClick={() => void startAll()}>
-            ▶ Start All
+            Start All
           </Button>
           <Button variant="danger" size="sm" onClick={() => void stopAll()}>
-            ⏹ Stop All
+            Stop All
           </Button>
           <Button
             variant="accent"
@@ -714,7 +714,7 @@ export function App() {
             disabled={isFreeingPorts}
             onClick={() => void freePorts()}
           >
-            {isFreeingPorts ? 'Freeing...' : '⚡ Free Ports'}
+            {isFreeingPorts ? 'Freeing...' : 'Free Ports'}
           </Button>
         </div>
       </header>
@@ -829,14 +829,14 @@ export function App() {
                               size="sm"
                               onClick={() => void controlService(svc.tag, 'stop')}
                             >
-                              ⏹ Stop
+                              Stop
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => void controlService(svc.tag, 'restart')}
                             >
-                              ↻ Restart
+                              Restart
                             </Button>
                           </>
                         ) : (
@@ -845,7 +845,7 @@ export function App() {
                             size="sm"
                             onClick={() => void controlService(svc.tag, 'start')}
                           >
-                            ▶ Start
+                            Start
                           </Button>
                         )}
                         {svc.url ? (
@@ -856,7 +856,7 @@ export function App() {
                               if (svc.url) openPreview(svc.url)
                             }}
                           >
-                            👁 Preview
+                            Preview
                           </Button>
                         ) : null}
                       </div>
@@ -970,14 +970,14 @@ export function App() {
                       if (previewFrameRef.current) previewFrameRef.current.src = previewUrl
                     }}
                   >
-                    ↻
+                    Reload
                   </Button>
                   <Button
                     variant="paper"
                     size="sm"
                     onClick={() => window.open(previewUrl, '_blank')}
                   >
-                    ↗ External
+                    External
                   </Button>
                 </div>
 
@@ -1141,17 +1141,17 @@ export function App() {
                 >
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <Button variant="ghost" size="sm" onClick={prevChannel}>
-                      ⏮ Previous
+                      Previous
                     </Button>
                     <Button
                       variant={isPlaying ? 'danger' : 'primary'}
                       size="sm"
                       onClick={togglePlayPause}
                     >
-                      {isPlaying ? '⏸ Pause' : '▶ Play Stream'}
+                      {isPlaying ? 'Pause' : 'Play Stream'}
                     </Button>
                     <Button variant="ghost" size="sm" onClick={nextChannel}>
-                      ⏭ Next
+                      Next
                     </Button>
                   </div>
 
@@ -1169,7 +1169,7 @@ export function App() {
                       style={{ width: 80, accentColor: 'var(--cyan)' }}
                     />
                     <Button variant="ghost" size="sm" onClick={() => setIsMuted(!isMuted)}>
-                      {isMuted ? '🔇' : '🔊'}
+                      {isMuted ? 'Muted' : 'Vol'}
                     </Button>
                   </div>
                 </div>
@@ -1303,8 +1303,8 @@ export function App() {
                         padding: '0 6px',
                       }}
                     >
-                      <option value="iptv">📺 IPTV</option>
-                      <option value="radio">📻 Radio</option>
+                      <option value="iptv">IPTV</option>
+                      <option value="radio">Radio</option>
                     </select>
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
@@ -1348,7 +1348,7 @@ export function App() {
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <Button variant="primary" size="sm" onClick={() => void loadLedger()}>
-                    ↻ Refresh
+                    Refresh
                   </Button>
                   <Button variant="danger" size="sm" onClick={() => void clearLedger()}>
                     Clear Log File
@@ -1359,7 +1359,7 @@ export function App() {
               <div className="m-terminal-viewer" style={{ flex: 1, maxHeight: 'none' }}>
                 {errorLines.length === 0 ? (
                   <div style={{ color: 'var(--ok)', padding: 16 }}>
-                    ✔ No errors recorded in dev-errors.log. All systems nominal.
+                    No errors recorded in dev-errors.log. All systems nominal.
                   </div>
                 ) : (
                   errorLines.map((line, idx) => (
@@ -1437,7 +1437,7 @@ export function App() {
                         size="sm"
                         onClick={() => openPreview(`http://localhost:${p.port}`)}
                       >
-                        Open In Preview 👁
+                        Open In Preview
                       </Button>
                     </CardBody>
                   </Card>

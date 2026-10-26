@@ -24,7 +24,7 @@ export const settings = defineAddon({
       },
       unique: [['key']],
       acl: ADMIN_WRITE,
-      menu: { group: 'System', icon: '⚙️', order: 50 },
+      menu: { group: 'System', icon: 'CF', order: 50 },
       seed: [
         { key: 'volume', group: 'player', value: '0.8', note: 'default player volume' },
         { key: 'theme', group: 'ui', value: 'moon-dark', note: 'neo-brutalist dark palette' },

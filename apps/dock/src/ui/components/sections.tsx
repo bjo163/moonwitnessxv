@@ -12,6 +12,8 @@ import {
   ProgressBar,
   Tape,
   ZineNote,
+  Chevron,
+  Glyph,
 } from '@moonwitness/moonui'
 import type { ChartRow, NowPlaying } from '@/data/types'
 import { clock } from '@/lib/time'
@@ -63,7 +65,7 @@ export function ZineFeatureTrio({
           <div className="dk-trio-body">
             <div className="m-row">
               <Tape tone="accent">TRANSMISSION 001</Tape>
-              <Badge tone="pink">▶ LIVE</Badge>
+              <Badge tone="pink">LIVE</Badge>
             </div>
 
             <h2 className="dk-trio-title">
@@ -104,7 +106,7 @@ export function ZineFeatureTrio({
             </ZineNote>
 
             <a href={signalHref} className="dk-circle-play" aria-label="Play transmission 001">
-              <span className="dk-circle-play-icon">▶</span>
+              <span className="dk-circle-play-icon"><Chevron dir="right" /></span>
               <span className="m-mono" style={{ fontSize: 12, fontWeight: 800 }}>
                 03:24
               </span>
@@ -137,7 +139,7 @@ export function ZineFeatureTrio({
 
             <div>
               <LinkButton href="/stations" variant="cyan" size="sm">
-                EXPLORE STORIES <span aria-hidden="true">→</span>
+                EXPLORE STORIES <Chevron dir="right" />
               </LinkButton>
             </div>
           </div>
@@ -161,7 +163,7 @@ export function ZineFeatureTrio({
         <CardBody className="dk-trio-layout">
           <div className="dk-trio-body">
             <div className="m-row">
-              <Tape tone="pink">⚡ THE SHADOW</Tape>
+              <Tape tone="pink">THE SHADOW</Tape>
             </div>
 
             <h2 className="dk-trio-title">
@@ -180,7 +182,7 @@ export function ZineFeatureTrio({
 
             <div>
               <LinkButton href="/schedule" variant="accent" size="sm">
-                ENTER THE SHADOW <span aria-hidden="true">→</span>
+                ENTER THE SHADOW <Chevron dir="right" />
               </LinkButton>
             </div>
           </div>
@@ -227,7 +229,7 @@ export function CrewConstellation({
           </p>
           <div className="m-row" style={{ gap: 12 }}>
             <LinkButton href="/stations" variant="primary" size="sm">
-              EXPLORE THE CREW <span aria-hidden="true">→</span>
+              EXPLORE THE CREW <Chevron dir="right" />
             </LinkButton>
             <ZineNote tone="dark" tilt="left">
               REAL PEOPLE.
@@ -263,21 +265,21 @@ export function CrewConstellation({
           <Card variant="paper" className="dk-paper-stats">
             <CardBody className="m-stack" style={{ gap: 8, padding: 14 }}>
               <div className="dk-paper-stat-row">
-                <span aria-hidden="true">👥</span>
+                <Glyph code="CR" tone="pink" size="sm" />
                 <div>
                   <strong>{crewMembers.toLocaleString('en-US')}</strong>
                   <span>CREW MEMBERS</span>
                 </div>
               </div>
               <div className="dk-paper-stat-row">
-                <span aria-hidden="true">🌐</span>
+                <Glyph code="CT" tone="cyan" size="sm" />
                 <div>
                   <strong>{countryTotal}</strong>
                   <span>COUNTRIES ({counts.countries} HUB)</span>
                 </div>
               </div>
               <div className="dk-paper-stat-row">
-                <span aria-hidden="true">〽</span>
+                <Glyph code="SG" tone="accent" size="sm" />
                 <div>
                   <strong>{signalTotal.toLocaleString('en-US')}</strong>
                   <span>SIGNALS ({counts.stations} LIVE)</span>
@@ -317,7 +319,7 @@ export function ArchiveTimeline({ slotCount }: { slotCount: number }): ReactNode
           </p>
           <div>
             <LinkButton href="/schedule" variant="cyan" size="sm">
-              BROWSE ARCHIVE <span aria-hidden="true">→</span>
+              BROWSE ARCHIVE <Chevron dir="right" />
             </LinkButton>
           </div>
         </div>
@@ -329,7 +331,7 @@ export function ArchiveTimeline({ slotCount }: { slotCount: number }): ReactNode
                 <img src={item.img} alt={item.title} className="dk-archive-thumb" />
                 {idx < ARCHIVE_SIGNALS.length - 1 ? (
                   <span className="dk-archive-arrow" aria-hidden="true">
-                    →
+                    <Chevron dir="right" />
                   </span>
                 ) : null}
               </div>
@@ -371,10 +373,10 @@ export function ZineSkaPosterSection(): ReactNode {
             <ZineNote tone="accent" tilt="left">
               MEREKA JUAL · KITA BELI.
               <br />
-              JANGAN MAU JADI MONYET. ♛
+              JANGAN MAU JADI MONYET.
             </ZineNote>
             <ZineNote tone="paper" tilt="right">
-              TEROMPET ⚡ SKA ⚡ <strong>2:113</strong>
+              TEROMPET / SKA / <strong>2:113</strong>
             </ZineNote>
           </div>
 
@@ -394,7 +396,7 @@ export function ZineSkaPosterSection(): ReactNode {
           <div className="m-grid m-grid-3">
             <Card>
               <CardBody>
-                <Badge tone="accent">⚡ 4-L4H</Badge>
+                <Badge tone="accent">4-L4H</Badge>
                 <div className="m-muted" style={{ fontSize: 11, marginTop: 4 }}>
                   THE BATTERY
                 </div>
@@ -402,7 +404,7 @@ export function ZineSkaPosterSection(): ReactNode {
             </Card>
             <Card>
               <CardBody>
-                <Badge tone="cyan">✚ WALTER-WHITER</Badge>
+                <Badge tone="cyan">WALTER-WHITER</Badge>
                 <div className="m-muted" style={{ fontSize: 11, marginTop: 4 }}>
                   DOKTER PUTIH · MAL PRAKTEK
                 </div>
@@ -410,7 +412,7 @@ export function ZineSkaPosterSection(): ReactNode {
             </Card>
             <Card>
               <CardBody>
-                <Badge tone="pink">🏁 ISROCKFEEL</Badge>
+                <Badge tone="pink">ISROCKFEEL</Badge>
                 <div className="m-muted" style={{ fontSize: 11, marginTop: 4 }}>
                   ARTIS BAND SKA · TET-TET
                 </div>
@@ -424,7 +426,7 @@ export function ZineSkaPosterSection(): ReactNode {
                 Dasar kau <mark className="dk-mark-red">muka tebal...</mark>
               </div>
               <div className="dk-ransom-strip">
-                ★ kau <mark className="dk-mark-yellow">muka tebal</mark> ♫
+                kau <mark className="dk-mark-yellow">muka tebal</mark>
               </div>
               <div className="dk-ransom-strip">
                 Memang <mark className="dk-mark-red">tak punya malu</mark>

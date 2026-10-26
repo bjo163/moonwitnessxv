@@ -45,7 +45,7 @@ export default async function StationsPage({
       <Panel title="Filter Signals" subtitle="search by station name, genre, or origin country">
         <form className="m-row" style={{ alignItems: 'flex-end', gap: 14 }} method="get" action="/stations">
           <Field label="Search" htmlFor="q">
-            <TextInput id="q" name="q" defaultValue={filters.q ?? ''} placeholder="name or genre" icon="🔍" />
+            <TextInput id="q" name="q" defaultValue={filters.q ?? ''} placeholder="name or genre" icon="FIND" />
           </Field>
           <Field label="Genre" htmlFor="genre">
             <SelectInput

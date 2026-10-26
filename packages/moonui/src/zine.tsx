@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { cn } from './cn.js'
 import { ProgressBar, type ProgressTone } from './data.js'
+import { Chevron } from './glyph.js'
 
 export type CrownTone = 'gold' | 'cyan' | 'pink'
 export type CrownSize = 'sm' | 'md' | 'lg'
@@ -146,7 +147,7 @@ export function ModuleCard({
         {metrics ? <div className="m-module-metrics">{metrics}</div> : null}
       </div>
       <span className="m-module-arrow" aria-hidden="true">
-        →
+        <Chevron dir="right" />
       </span>
     </a>
   )

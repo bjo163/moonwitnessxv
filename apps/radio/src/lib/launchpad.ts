@@ -236,7 +236,7 @@ export function renderLaunchpadHtml(data: LaunchpadData): string {
         <a class="card" href="${dockUrl}" target="_blank">
           <div>
             <span class="card-tag tag-pink">Public Broadcast</span>
-            <div class="card-title">📻 Public Radio Dock</div>
+            <div class="card-title">Public Radio Dock</div>
             <div class="card-desc">Live audio stream, now-playing card, weekly schedule grid, and World Monitor live ticker.</div>
           </div>
           <div class="card-url">${dockUrl} &rarr;</div>
@@ -245,7 +245,7 @@ export function renderLaunchpadHtml(data: LaunchpadData): string {
         <a class="card" href="${hqUrl}" target="_blank">
           <div>
             <span class="card-tag tag-purple">Administration</span>
-            <div class="card-title">🏛️ Headquarters (HQ)</div>
+            <div class="card-title">Headquarters (HQ)</div>
             <div class="card-desc">Mission control dashboard, database model inspection, CRUD station management, and ops view.</div>
           </div>
           <div class="card-url">${hqUrl} &rarr;</div>
@@ -254,7 +254,7 @@ export function renderLaunchpadHtml(data: LaunchpadData): string {
         <a class="card" href="${hqUrl}/world-monitor" target="_blank">
           <div>
             <span class="card-tag tag-yellow">OSINT & Surveillance</span>
-            <div class="card-title">🛰️ World Monitor 3-Tier</div>
+            <div class="card-title">World Monitor 3-Tier</div>
             <div class="card-desc">Drilldown UI across Radars, Sources (YouTube, X, RSS), and captured Signals with AI triage.</div>
           </div>
           <div class="card-url">${hqUrl}/world-monitor &rarr;</div>
@@ -268,7 +268,7 @@ export function renderLaunchpadHtml(data: LaunchpadData): string {
         <a class="card" href="/docs" target="_blank">
           <div>
             <span class="card-tag tag-cyan">Developer Contract</span>
-            <div class="card-title">⚡ OpenAPI Swagger Docs</div>
+            <div class="card-title">OpenAPI Swagger Docs</div>
             <div class="card-desc">Interactive Swagger UI testing surface with auto-generated endpoints, models, and schemas.</div>
           </div>
           <div class="card-url">/docs &rarr;</div>
@@ -277,7 +277,7 @@ export function renderLaunchpadHtml(data: LaunchpadData): string {
         <a class="card" href="${aiUrl}/v1/models" target="_blank">
           <div>
             <span class="card-tag tag-yellow">Free-First Router</span>
-            <div class="card-title">🧠 AI Gateway Router</div>
+            <div class="card-title">AI Gateway Router</div>
             <div class="card-desc">OpenAI-compatible chat completions with Gemini, Groq, OpenRouter, Ollama, & Heuristic fallback.</div>
           </div>
           <div class="card-url">${aiUrl}/v1/models &rarr;</div>
@@ -286,7 +286,7 @@ export function renderLaunchpadHtml(data: LaunchpadData): string {
         <a class="card" href="/api/v1/health" target="_blank">
           <div>
             <span class="card-tag tag-green">Telemetry</span>
-            <div class="card-title">🩺 Health & Metrics</div>
+            <div class="card-title">Health & Metrics</div>
             <div class="card-desc">Service health status, memory usage, Prometheus telemetry, and ORM bus metrics.</div>
           </div>
           <div class="card-url">/api/v1/health &rarr;</div>

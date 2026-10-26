@@ -1,4 +1,4 @@
-import { Badge, Card, CardBody, LinkButton, Tape, type BadgeTone } from '@moonwitness/moonui'
+import { Badge, Card, CardBody, LinkButton, Tape, type BadgeTone, Chevron } from '@moonwitness/moonui'
 import { homePayload } from '@/data/queries/program'
 import { Player } from '@/ui/client/Player'
 import { LiveTicker } from '@/ui/client/LiveTicker'
@@ -93,7 +93,7 @@ export default async function HomePage() {
                     <div className="m-row" style={{ justifyContent: 'space-between', fontSize: 11, marginTop: 'auto' }}>
                       <span className="m-muted">Urgency: {sig.urgencyScore}%</span>
                       {sig.viewsCount ? (
-                        <span className="m-muted">👁 {(sig.viewsCount / 1000).toFixed(1)}k</span>
+                        <span className="m-muted">{(sig.viewsCount / 1000).toFixed(1)}k views</span>
                       ) : null}
                     </div>
                   </div>
@@ -112,7 +112,7 @@ export default async function HomePage() {
               <h2 className="dk-section-heading">SIGNALS IN THE DOCK.</h2>
             </div>
             <LinkButton href="/stations" variant="accent" size="sm">
-              ALL STATIONS ({payload.counts.stations}) <span aria-hidden="true">→</span>
+              ALL STATIONS ({payload.counts.stations}) <Chevron dir="right" />
             </LinkButton>
           </div>
 

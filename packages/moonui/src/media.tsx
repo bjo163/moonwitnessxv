@@ -3,6 +3,9 @@ import { cn } from './cn.js'
 import { Badge, type BadgeTone } from './layout.js'
 import { LiveDot } from './data.js'
 import { Button } from './form.js'
+import { Glyph } from './glyph.js'
+
+const TYPE_CODE = { bgm: 'BG', radio: 'FM', iptv: 'TV' } as const
 
 export interface StationCardProps {
   id: string
@@ -11,6 +14,7 @@ export interface StationCardProps {
   streamUrl: string
   genre?: string
   country?: string
+  /** 2-3 letter monogram for the <Glyph> tile; defaults from `type` */
   icon?: string
   active?: boolean
   isPlaying?: boolean
@@ -45,7 +49,7 @@ export function StationCard({
       onClick={onSelect}
     >
       <div className="m-station-card-left">
-        <span className="m-station-icon">{icon || (type === 'iptv' ? '📺' : '📻')}</span>
+        <Glyph code={icon || TYPE_CODE[type]} tone={type === 'bgm' ? 'pink' : type === 'iptv' ? 'accent' : 'cyan'} />
         <div className="m-station-info">
           <div className="m-station-head">
             <span className="m-station-name">{name}</span>

@@ -176,7 +176,7 @@ export class WhatsAppClient extends EventEmitter {
       const to = msg.key?.remoteJid
       if (!to) return
 
-      if (text === 'ping') await client.sendText(to, 'pong 🏓')
+      if (text === 'ping') await client.sendText(to, 'pong')
       else if (text === 'help') await client.sendText(to, this.opts.bot.greeting ?? 'Moonwitness WhatsApp bot is online.')
     }
   }

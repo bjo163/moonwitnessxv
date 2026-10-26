@@ -1,4 +1,4 @@
-import { Alert, Button, Card, CardBody, Crown, Field, TextInput, Toggle } from '@moonwitness/moonui'
+import { Alert, Button, Card, CardBody, Crown, Field, TextInput, Toggle, Chevron } from '@moonwitness/moonui'
 import { AuthLayout } from '@/layouts/auth'
 
 export default async function LoginPage({
@@ -33,7 +33,7 @@ export default async function LoginPage({
               <TextInput
                 id="login"
                 name="login"
-                icon="✉"
+                icon="ID"
                 autoComplete="username"
                 placeholder="Enter your email or username"
                 required
@@ -46,8 +46,7 @@ export default async function LoginPage({
                 id="password"
                 name="password"
                 type="password"
-                icon="🔒"
-                suffix="👁"
+                icon="PW"
                 autoComplete="current-password"
                 placeholder="Enter your password"
                 required
@@ -62,7 +61,7 @@ export default async function LoginPage({
             </div>
 
             <Button type="submit" variant="primary" size="lg">
-              ENTER THE SHADOW <span aria-hidden="true">→</span>
+              ENTER THE SHADOW <Chevron dir="right" />
             </Button>
           </form>
 

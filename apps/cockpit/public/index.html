@@ -34,9 +34,9 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn btn-primary" onclick="startAll()">▶ Start All</button>
-      <button class="btn btn-danger" onclick="stopAll()">⏹ Stop All</button>
-      <button class="btn btn-amber" id="btnFreePorts" onclick="freePorts()">⚡ Free Ports</button>
+      <button class="btn btn-primary" onclick="startAll()">Start All</button>
+      <button class="btn btn-danger" onclick="stopAll()">Stop All</button>
+      <button class="btn btn-amber" id="btnFreePorts" onclick="freePorts()">Free Ports</button>
     </div>
   </header>
 
@@ -57,17 +57,17 @@
     <main class="cockpit-stage">
       <nav class="stage-tabs">
         <div class="stage-tab active" data-target="tabLogs">
-          <span>📟 TERMINAL & LOGS</span>
+          <span>TERMINAL & LOGS</span>
         </div>
         <div class="stage-tab" data-target="tabPreview">
-          <span>🌐 WEB PREVIEW</span>
+          <span>WEB PREVIEW</span>
         </div>
         <div class="stage-tab" data-target="tabLedger">
-          <span>🚨 ERROR LEDGER</span>
+          <span>ERROR LEDGER</span>
           <span class="tab-badge" id="ledgerCount">0</span>
         </div>
         <div class="stage-tab" data-target="tabPorts">
-          <span>🔌 NETWORK & PORTS</span>
+          <span>NETWORK & PORTS</span>
         </div>
       </nav>
 
@@ -98,8 +98,8 @@
           <div class="preview-address-bar">
             <input type="text" id="previewUrlInput" class="preview-input" value="http://localhost:3001" onkeydown="if(event.key==='Enter') navigatePreview()">
             <button class="btn btn-sm btn-primary" onclick="navigatePreview()">Go</button>
-            <button class="btn btn-sm" onclick="reloadPreview()">↻</button>
-            <button class="btn btn-sm" onclick="openExternal()">↗ External</button>
+            <button class="btn btn-sm" onclick="reloadPreview()"></button>
+            <button class="btn btn-sm" onclick="openExternal()">External</button>
           </div>
           <div class="toolbar-group" id="previewShortcuts">
             <!-- Rendered via JS -->
@@ -117,7 +117,7 @@
             <span style="font-size:11px; font-weight:700; color:var(--text-muted);">SOURCE: dev-errors.log</span>
           </div>
           <div class="toolbar-group">
-            <button class="btn btn-sm btn-primary" id="btnRefreshLedger">↻ Refresh</button>
+            <button class="btn btn-sm btn-primary" id="btnRefreshLedger">Refresh</button>
             <button class="btn btn-sm btn-danger" id="btnClearLedger">Clear Log File</button>
           </div>
         </div>

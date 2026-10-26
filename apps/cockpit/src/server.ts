@@ -137,7 +137,7 @@ export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessS
                 type: 'radio',
                 streamUrl: s.streamUrl,
                 genre: s.genre ?? 'Live Radio',
-                icon: '📻',
+                icon: 'FM',
                 country: 'ID',
               })
             }
@@ -162,7 +162,7 @@ export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessS
       type: body.type,
       streamUrl: body.streamUrl,
       genre: body.genre ?? (body.type === 'iptv' ? 'Custom IPTV' : 'Custom Station'),
-      icon: body.icon ?? (body.type === 'iptv' ? '📺' : '📻'),
+      icon: body.icon ?? (body.type === 'iptv' ? 'TV' : 'FM'),
       country: body.country ?? 'CUSTOM',
       description: body.description ?? 'User-added custom station/stream',
     }
