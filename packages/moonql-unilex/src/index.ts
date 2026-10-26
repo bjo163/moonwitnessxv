@@ -404,6 +404,39 @@ const assertReviewedIdentity = (row: Row): void => {
 const stableIdError = (stableId: string): string | null =>
   /^[USTP][0-9]{3}$/.test(stableId) ? null : 'stable ID must match ^[USTP][0-9]{3}$'
 
+function computeRelevance(q: string, term: Row, termForms: Row[]): number {
+  const query = q.trim().toLowerCase()
+  if (!query) return 1
+  const tokens = query.split(/\s+/).filter(Boolean)
+  let score = 0
+
+  const stableId = String(term.stableId ?? '').toLowerCase()
+  const preferredEn = String(term.preferredEn ?? '').toLowerCase()
+  const preferredId = String(term.preferredId ?? '').toLowerCase()
+  const definition = String(term.definition ?? '').toLowerCase()
+  const contextNote = String(term.contextNote ?? '').toLowerCase()
+
+  if (stableId === query || preferredEn === query || preferredId === query) score += 100
+  else if (preferredEn.startsWith(query) || stableId.startsWith(query)) score += 75
+
+  for (const form of termForms) {
+    const head = String(form.headword ?? '').toLowerCase()
+    const trans = String(form.transliteration ?? '').toLowerCase()
+    const norm = String(form.normalized ?? '').toLowerCase()
+    if (head === query || trans === query || norm === query) score += 90
+    else if (head.includes(query) || trans.includes(query) || norm.includes(query)) score += 50
+  }
+
+  for (const t of tokens) {
+    if (preferredEn.includes(t)) score += 30
+    if (preferredId.includes(t)) score += 25
+    if (definition.includes(t)) score += 15
+    if (contextNote.includes(t)) score += 10
+  }
+
+  return score
+}
+
 // ------------------------------------------------------------------ addon
 
 export const unilex = defineAddon({
@@ -796,18 +829,10 @@ export const unilex = defineAddon({
             if (lane && term.lane !== lane) return null
             if (editorialStatus && term.editorialStatus !== editorialStatus) return null
 
+            let relevanceScore = 0
             if (q) {
-              const haystack = [
-                term.stableId,
-                term.preferredEn,
-                term.preferredId,
-                term.definition,
-                term.contextNote,
-                ...termForms.flatMap((form) => [form.headword, form.transliteration, form.normalized]),
-              ]
-                .map((value) => String(value ?? '').toLowerCase())
-                .join('\n')
-              if (!haystack.includes(q.toLowerCase())) return null
+              relevanceScore = computeRelevance(q, term, termForms)
+              if (relevanceScore <= 0) return null
             }
 
             const termRelations = (relationsByTerm.get(termId) ?? []).map((relation) => {
@@ -855,10 +880,11 @@ export const unilex = defineAddon({
               })),
               sources: [...termSources.values()].map(sourceView),
               relations: termRelations,
+              relevanceScore: relevanceScore || undefined,
             }
           })
           .filter((row): row is NonNullable<typeof row> => row !== null)
-          .sort((a, b) => String(a.stableId).localeCompare(String(b.stableId)))
+          .sort((a, b) => (q ? ((b.relevanceScore ?? 0) - (a.relevanceScore ?? 0)) : 0) || String(a.stableId).localeCompare(String(b.stableId)))
 
         const offset = Math.max(0, asInt(query.offset) ?? 0)
         const limit = Math.min(100, Math.max(1, asInt(query.limit) ?? 50))

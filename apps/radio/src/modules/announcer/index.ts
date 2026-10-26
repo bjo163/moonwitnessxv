@@ -66,7 +66,22 @@ const announcerRoutes: TypedModule = async (fastify) => {
     ).catch((err: unknown) => fastify.log.warn({ err: (err as Error).message }, 'announcer: alert hook failed'))
   })
 
-  fastify.log.info('announcer: listening for requests and cron failures')
+  // Critical Sentinel intelligence flash announcer hook:
+  orm.bus.on('model.created', (payload) => {
+    if (payload.model !== 'monitor_signals') return
+    void (async () => {
+      const row = payload.row as Record<string, unknown>
+      const urgency = Number(row.urgencyScore ?? 0)
+      const sentiment = String(row.sentiment ?? '')
+      if (urgency >= 80 || sentiment === 'critical' || sentiment === 'alert') {
+        const title = clip(String(row.title ?? 'breaking signal'))
+        const platform = String(row.platform ?? 'intel').toUpperCase()
+        await announce(`[INTEL FLASH] (${platform} URGENCY ${urgency}%): ${title}`, 'intel')
+      }
+    })().catch((err: unknown) => fastify.log.warn({ err: (err as Error).message }, 'announcer: intel flash hook failed'))
+  })
+
+  fastify.log.info('announcer: listening for requests, cron failures, and critical intel')
 }
 
 export default announcerRoutes

@@ -115,3 +115,26 @@ test('announcer: a failed cron raises an alert on the same leg', async (t) => {
   await settle()
   assert.equal(sent.length, 1, 'success is silent')
 })
+
+test('announcer: critical sentinel intel signal raises an on-air intel flash', async (t) => {
+  const sent: Array<{ to: string; text: string }> = []
+  const app = await makeApp(sent)
+  t.after(() => app.close())
+  await setDestination(app, 'studio-control')
+
+  app.moonql.bus.emit('model.created', {
+    model: 'monitor_signals',
+    id: 'sig-test-1',
+    row: {
+      title: 'Satellite Uplink Frequency Anomaly',
+      urgencyScore: 92,
+      sentiment: 'critical',
+      platform: 'youtube',
+    },
+  })
+  await settle()
+
+  assert.equal(sent.length, 1, 'critical intel signal triggers flash')
+  assert.match(sent[0]!.text, /\[INTEL FLASH\] \(YOUTUBE URGENCY 92%\)/)
+  assert.match(sent[0]!.text, /Satellite Uplink Frequency Anomaly/)
+})

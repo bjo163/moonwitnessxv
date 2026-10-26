@@ -37,6 +37,7 @@ COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
 COPY packages/moonql-settings/package.json packages/moonql-settings/
 COPY packages/moonql-ops/package.json packages/moonql-ops/
 COPY packages/moonql-corpus/package.json packages/moonql-corpus/
+COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -74,6 +75,7 @@ COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
 COPY packages/moonql-settings/package.json packages/moonql-settings/
 COPY packages/moonql-ops/package.json packages/moonql-ops/
 COPY packages/moonql-corpus/package.json packages/moonql-corpus/
+COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \

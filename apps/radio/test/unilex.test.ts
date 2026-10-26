@@ -509,6 +509,12 @@ test('M09-05: Terms Table is a projection filtered by approved source and scope'
   assert.equal(page.limit, 2)
   assert.equal(page.offset, 1)
 
+  const searched = dataOf<TermsBody>(
+    await app.inject().get('/orm/unilex/terms').query({ q: 'Truth' }).end(),
+  )
+  assert.ok(searched.total > 0)
+  assert.equal(searched.terms[0]?.stableId, 'U001')
+
   const draft = await moonql.model('unilex_sources').create({
     code: 'draft-source',
     title: 'Unapproved working source',

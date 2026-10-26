@@ -81,6 +81,17 @@ const onAirFrame = ({ payload, at }: BusFrame): Record<string, unknown> => {
   // the schedule grid is a pointer, not content: the dock recomputes "what is on
   // air now" from the clock, and only needs to know that the grid was edited
   if (model === 'schedule_slots') return { at, kind: 'schedule', stationRef: row.stationRef ?? null }
+  if (model === 'monitor_signals') {
+    return {
+      at,
+      kind: 'intel',
+      title: row.title ?? 'Intel Alert',
+      urgencyScore: row.urgencyScore ?? 0,
+      sentiment: row.sentiment ?? 'neutral',
+      platform: row.platform ?? 'intel',
+      author: row.author ?? null,
+    }
+  }
   return { at, kind: 'listen', stationRef: row.stationRef ?? null, event: row.event ?? null, seconds: row.seconds ?? null }
 }
 
@@ -327,7 +338,7 @@ export const playlog = defineAddon({
           : MAX_ON_AIR_SECONDS
         return busStream(bus, {
           events: ['model.created', 'model.updated'],
-          models: ['playlogs', 'now_playing', 'schedule_slots'],
+          models: ['playlogs', 'now_playing', 'schedule_slots', 'monitor_signals'],
           seconds,
           limit: Number(query.limit ?? 0) || 0,
           signal,

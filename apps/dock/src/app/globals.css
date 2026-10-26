@@ -834,3 +834,302 @@
     padding: 14px;
   }
 }
+
+/* ---------- UNILEX Terms Table ---------- */
+.dk-terms-meta {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.dk-terms-filter-form,
+.dk-terms-match-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px;
+}
+.dk-terms-filter-form .m-field,
+.dk-terms-match-form .m-field {
+  flex: 1 1 180px;
+}
+.dk-terms-filter-form .m-field:first-child {
+  flex: 1 1 260px;
+}
+.dk-terms-registry {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dk-terms-notice {
+  margin: 0;
+  padding: 10px 12px;
+  border-left: 4px solid var(--accent);
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dk-terms-registry-meta {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px 16px;
+  margin: 0;
+  font-size: 13px;
+}
+.dk-terms-registry-meta dt {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.dk-terms-registry-meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.dk-terms-hash {
+  font-size: 11px;
+  overflow-wrap: anywhere;
+  color: var(--cyan);
+}
+.dk-terms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dk-terms-row {
+  border: 2px solid var(--border-strong);
+  background: var(--surface);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dk-terms-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dk-terms-link {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  text-decoration: none;
+}
+.dk-terms-link:hover,
+.dk-terms-link:focus-visible,
+.dk-terms-detail-link:hover,
+.dk-terms-detail-link:focus-visible,
+.dk-terms-source-link:hover,
+.dk-terms-source-link:focus-visible {
+  color: var(--pink);
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+.dk-terms-definition {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.dk-terms-context {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--chalk);
+}
+.dk-terms-forms {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dk-terms-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  background: var(--ink);
+  max-width: 100%;
+}
+.dk-terms-headword {
+  font-size: 19px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.dk-terms-form-meta {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.dk-terms-translit {
+  font-size: 11px;
+  color: var(--chalk);
+  overflow-wrap: anywhere;
+}
+.dk-terms-row-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-top: 1px dashed var(--border);
+  padding-top: 8px;
+}
+.dk-terms-detail-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+}
+.dk-terms-match {
+  margin-top: 14px;
+  border: 2px solid var(--border-strong);
+  background: var(--surface);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dk-terms-match-sides {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.dk-terms-match-side {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  background: var(--ink);
+  min-width: 0;
+}
+.dk-terms-match-raw {
+  font-size: 22px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.dk-terms-reasons {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dk-terms-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.dk-terms-article {
+  border: 3px solid var(--fg);
+  background: var(--surface);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.dk-terms-lede {
+  margin: 0;
+  font-size: 18px;
+  color: var(--accent);
+}
+.dk-terms-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 2px solid var(--border);
+  padding-top: 12px;
+}
+.dk-terms-section h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.dk-terms-senses,
+.dk-terms-relations,
+.dk-terms-reviews,
+.dk-terms-log,
+.dk-terms-sources {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dk-terms-sense,
+.dk-terms-relation,
+.dk-terms-review,
+.dk-terms-log-entry,
+.dk-terms-source {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 3px solid var(--pink);
+  padding: 4px 0 4px 10px;
+}
+.dk-terms-sense[data-current='false'] {
+  border-left-color: var(--border-strong);
+  opacity: 0.85;
+}
+.dk-terms-sense p,
+.dk-terms-relation p,
+.dk-terms-review p,
+.dk-terms-log-entry p,
+.dk-terms-source-citation {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.dk-terms-review-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--cyan);
+}
+.dk-terms-source-link {
+  font-size: 11px;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.dk-terms-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .dk-terms-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .dk-terms-match-sides {
+    grid-template-columns: 1fr;
+  }
+  .dk-terms-registry-meta {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .dk-terms-registry-meta dd {
+    margin-bottom: 8px;
+  }
+  .dk-terms-article {
+    padding: 14px;
+  }
+}

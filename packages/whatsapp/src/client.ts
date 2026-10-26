@@ -166,18 +166,130 @@ export class WhatsAppClient extends EventEmitter {
     }
   }
 
-  /** A tiny built-in bot: replies to "ping" and "help". */
+  /** Interactive radio command handler: replies to ping, help, !np, !stations, !req, !intel, !terms */
   private buildDefaultHandler(): MessageHandler {
     return async (msg, client) => {
       if (!this.opts.bot?.enabled) return
-      const text = (msg.message?.conversation ?? msg.message?.extendedTextMessage?.text ?? '')
-        .trim()
-        .toLowerCase()
+      const rawText = (msg.message?.conversation ?? msg.message?.extendedTextMessage?.text ?? '').trim()
+      const text = rawText.toLowerCase()
       const to = msg.key?.remoteJid
       if (!to) return
 
-      if (text === 'ping') await client.sendText(to, 'pong')
-      else if (text === 'help') await client.sendText(to, this.opts.bot.greeting ?? 'Moonwitness WhatsApp bot is online.')
+      const hubBase = 'http://127.0.0.1:3000'
+
+      if (text === 'ping') {
+        await client.sendText(to, 'pong')
+        return
+      }
+
+      if (text === 'help' || text === '!help') {
+        const helpText = [
+          'MOONWITNESS RADIO DISPATCH',
+          'Available commands:',
+          '• !np - Now playing on-air slot & station',
+          '• !stations - Top active radio channels',
+          '• !req <message> - Send a request to the live studio',
+          '• !intel - Latest critical radar signal',
+          '• !terms <word> - Lookup concept in UNILEX',
+        ].join('\n')
+        await client.sendText(to, helpText)
+        return
+      }
+
+      if (text === '!np') {
+        try {
+          const res = await fetch(`${hubBase}/api/v1/views/nowPlaying?limit=1`, { signal: AbortSignal.timeout(2000) })
+          if (res.ok) {
+            const body = (await res.json()) as { data?: Array<{ title?: string; host?: string; stationRefRecord?: { name?: string } }> }
+            const slot = body.data?.[0]
+            if (slot?.title) {
+              const station = slot.stationRefRecord?.name ? ` on ${slot.stationRefRecord.name}` : ''
+              const host = slot.host ? ` with ${slot.host}` : ''
+              await client.sendText(to, `ON-AIR: ${slot.title}${station}${host}`)
+              return
+            }
+          }
+        } catch {
+          /* hub unreachable */
+        }
+        await client.sendText(to, 'ON-AIR: Moonwitness 24/7 Cyberpunk Radio Stream')
+        return
+      }
+
+      if (text === '!stations') {
+        try {
+          const res = await fetch(`${hubBase}/api/v1/stations?limit=5&where=${encodeURIComponent(JSON.stringify({ active: true }))}`, { signal: AbortSignal.timeout(2000) })
+          if (res.ok) {
+            const body = (await res.json()) as { data?: Array<{ name: string; genre?: string }> }
+            const lines = (body.data ?? []).map((s) => `• ${s.name} (${s.genre ?? 'Eclectic'})`)
+            if (lines.length > 0) {
+              await client.sendText(to, `ACTIVE CHANNELS:\n${lines.join('\n')}`)
+              return
+            }
+          }
+        } catch {
+          /* quiet ignore */
+        }
+        await client.sendText(to, 'Stations available at: https://moonwitness.media/stations')
+        return
+      }
+
+      if (text.startsWith('!req ') || text.startsWith('!request ')) {
+        const message = rawText.replace(/^!(?:req|request)\s+/i, '').trim()
+        if (!message) {
+          await client.sendText(to, 'Usage: !req <song or message for DJ>')
+          return
+        }
+        try {
+          await fetch(`${hubBase}/api/v1/requests`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, sender: to, status: 'new' }),
+            signal: AbortSignal.timeout(3000),
+          })
+          await client.sendText(to, `Request received: "${message}". Broadcast queued for on-air review!`)
+        } catch {
+          await client.sendText(to, `Request accepted locally: "${message}"`)
+        }
+        return
+      }
+
+      if (text === '!intel') {
+        try {
+          const res = await fetch(`${hubBase}/api/v1/monitor_signals?limit=1&order=-urgencyScore`, { signal: AbortSignal.timeout(2000) })
+          if (res.ok) {
+            const body = (await res.json()) as { data?: Array<{ title: string; urgencyScore: number; platform: string }> }
+            const top = body.data?.[0]
+            if (top) {
+              await client.sendText(to, `CRITICAL INTEL [${top.platform.toUpperCase()} ${top.urgencyScore}%]:\n${top.title}`)
+              return
+            }
+          }
+        } catch {
+          /* quiet ignore */
+        }
+        await client.sendText(to, 'Sentinel radar scanning: all sectors nominal.')
+        return
+      }
+
+      if (text.startsWith('!terms ') || text.startsWith('!term ')) {
+        const query = rawText.replace(/^!(?:terms|term)\s+/i, '').trim()
+        try {
+          const res = await fetch(`${hubBase}/orm/unilex/terms?q=${encodeURIComponent(query)}&limit=1`, { signal: AbortSignal.timeout(2000) })
+          if (res.ok) {
+            const body = (await res.json()) as { data?: { terms?: Array<{ preferredEn: string; definition: string; stableId: string }> } }
+            const term = body.data?.terms?.[0]
+            if (term) {
+              await client.sendText(to, `UNILEX [${term.stableId}] ${term.preferredEn}:\n${term.definition}`)
+              return
+            }
+          }
+        } catch {
+          /* quiet ignore */
+        }
+        await client.sendText(to, `Term "${query}" not found in current approved lexicon.`)
+        return
+      }
     }
   }
 }

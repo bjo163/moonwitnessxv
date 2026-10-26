@@ -15,6 +15,7 @@ import {
   PillGroup,
   StationCard,
   TerminalViewer,
+  Kbd,
   type TabItem,
 } from '@moonwitness/moonui'
 
@@ -197,6 +198,7 @@ export function App() {
   const [volume, setVolume] = useState(0.4)
   const [channelCategory, setChannelCategory] = useState<'all' | 'bgm' | 'radio' | 'iptv'>('all')
   const [channelSearch, setChannelSearch] = useState('')
+  const [nowPlayingTrack, setNowPlayingTrack] = useState<{ artist: string | null; title: string } | null>(null)
 
   // Custom channel input form
   const [customName, setCustomName] = useState('')
@@ -431,6 +433,83 @@ export function App() {
     const prevIdx = (activeChannelIndex - 1 + channels.length) % channels.length
     selectChannel(prevIdx)
   }
+
+  const togglePip = async () => {
+    if (!videoRef.current || !document.pictureInPictureEnabled) return
+    try {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture()
+      } else {
+        await videoRef.current.requestPictureInPicture()
+      }
+    } catch {
+      /* PiP not permitted or rejected */
+    }
+  }
+
+  // Poll ICY metadata for currently playing radio station
+  useEffect(() => {
+    if (!isPlaying || currentChannel.type !== 'radio') {
+      setNowPlayingTrack(null)
+      return
+    }
+
+    let active = true
+    const fetchMeta = async () => {
+      try {
+        const res = await fetch(`/api/metadata?url=${encodeURIComponent(currentChannel.streamUrl)}`)
+        if (res.ok && active) {
+          const data = (await res.json()) as { artist: string | null; title: string }
+          if (data?.title) setNowPlayingTrack(data)
+        }
+      } catch {
+        /* quiet ignore */
+      }
+    }
+
+    void fetchMeta()
+    const timer = setInterval(() => void fetchMeta(), 15_000)
+    return () => {
+      active = false
+      clearInterval(timer)
+    }
+  }, [isPlaying, currentChannel.streamUrl, currentChannel.type])
+
+  // Global Desktop Hotkeys for Cockpit command center
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault()
+        togglePlayPause()
+      } else if (e.key === 'm' || e.key === 'M') {
+        setIsMuted((prev) => !prev)
+      } else if (e.key === '[') {
+        prevChannel()
+      } else if (e.key === ']') {
+        nextChannel()
+      } else if (e.key === 'p' || e.key === 'P') {
+        void togglePip()
+      } else if (e.key === '1') {
+        setActiveTab('logs')
+      } else if (e.key === '2') {
+        setActiveTab('preview')
+      } else if (e.key === '3') {
+        setActiveTab('media')
+      } else if (e.key === '4') {
+        setActiveTab('ledger')
+      } else if (e.key === '5') {
+        setActiveTab('ports')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeChannelIndex, channels.length, isPlaying, currentChannel])
 
   const addCustomChannel = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -1122,6 +1201,22 @@ export function App() {
                         <Tape tone={currentChannel.type === 'bgm' ? 'pink' : 'cyan'}>
                           {isPlaying ? 'ON-AIR AUDIO STREAMING' : 'STREAM PAUSED'}
                         </Tape>
+                        {nowPlayingTrack?.title ? (
+                          <div
+                            style={{
+                              marginTop: 10,
+                              fontSize: 12,
+                              color: 'var(--cyan)',
+                              fontFamily: 'var(--font-mono)',
+                              background: 'rgba(0, 212, 255, 0.08)',
+                              padding: '4px 8px',
+                              borderRadius: 4,
+                              border: '1px solid rgba(0, 212, 255, 0.2)',
+                            }}
+                          >
+                            NOW PLAYING: {nowPlayingTrack.artist ? `${nowPlayingTrack.artist} - ` : ''}{nowPlayingTrack.title}
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   ) : null}
@@ -1153,6 +1248,11 @@ export function App() {
                     <Button variant="ghost" size="sm" onClick={nextChannel}>
                       Next
                     </Button>
+                    {currentChannel.type === 'iptv' ? (
+                      <Button variant="ghost" size="sm" onClick={() => void togglePip()}>
+                        PiP
+                      </Button>
+                    ) : null}
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -1172,6 +1272,26 @@ export function App() {
                       {isMuted ? 'Muted' : 'Vol'}
                     </Button>
                   </div>
+                </div>
+
+                {/* Hotkey Indicator Strip */}
+                <div
+                  style={{
+                    padding: '4px 16px',
+                    background: 'var(--panel)',
+                    borderTop: '1px solid var(--chalk-dim)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    fontSize: 10,
+                    color: 'var(--muted)',
+                  }}
+                >
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>Space</Kbd> Play/Pause</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>M</Kbd> Mute</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>[</Kbd><Kbd>]</Kbd> Prev/Next</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>P</Kbd> PiP</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><Kbd>1-5</Kbd> Tabs</span>
                 </div>
               </div>
 

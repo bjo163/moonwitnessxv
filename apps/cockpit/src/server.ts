@@ -4,6 +4,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
+import { fetchIcyMetadata } from '@moonwitness/core'
 import { DEFAULT_MEDIA_CHANNELS, type ChannelItem } from './channels.js'
 import type { MoondeckConfig } from './types.js'
 import type { ProcessSupervisor } from './supervisor.js'
@@ -149,6 +150,18 @@ export function createCockpitServer(config: MoondeckConfig, supervisor: ProcessS
     }
 
     return mediaChannels
+  })
+
+  // ICY Audio Stream metadata probe
+  app.get('/api/metadata', async (req, reply) => {
+    const query = req.query as { url?: string }
+    if (!query.url) return reply.code(400).send({ error: 'url parameter required' })
+    try {
+      const meta = await fetchIcyMetadata(query.url, { timeoutMs: 2500 })
+      return meta ?? { artist: null, title: 'Live Audio', rawTitle: 'Live Audio' }
+    } catch {
+      return { artist: null, title: 'Live Audio', rawTitle: 'Live Audio' }
+    }
   })
 
   app.post('/api/channels', async (req, reply) => {

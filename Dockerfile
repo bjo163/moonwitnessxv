@@ -29,6 +29,7 @@ COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
 COPY packages/moonql-settings/package.json packages/moonql-settings/
 COPY packages/moonql-ops/package.json packages/moonql-ops/
 COPY packages/moonql-corpus/package.json packages/moonql-corpus/
+COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -50,6 +51,8 @@ COPY packages/moonql-playlog ./packages/moonql-playlog
 COPY packages/moonql-apikeys ./packages/moonql-apikeys
 COPY packages/moonql-settings ./packages/moonql-settings
 COPY packages/moonql-ops ./packages/moonql-ops
+COPY packages/moonql-corpus ./packages/moonql-corpus
+COPY packages/moonql-unilex ./packages/moonql-unilex
 COPY packages/whatsapp ./packages/whatsapp
 COPY packages/denpa ./packages/denpa
 RUN pnpm build
@@ -73,6 +76,7 @@ COPY packages/moonql-apikeys/package.json packages/moonql-apikeys/
 COPY packages/moonql-settings/package.json packages/moonql-settings/
 COPY packages/moonql-ops/package.json packages/moonql-ops/
 COPY packages/moonql-corpus/package.json packages/moonql-corpus/
+COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -97,6 +101,7 @@ COPY --from=build /repo/packages/moonql-apikeys/dist packages/moonql-apikeys/dis
 COPY --from=build /repo/packages/moonql-settings/dist packages/moonql-settings/dist
 COPY --from=build /repo/packages/moonql-ops/dist packages/moonql-ops/dist
 COPY --from=build /repo/packages/moonql-corpus/dist packages/moonql-corpus/dist
+COPY --from=build /repo/packages/moonql-unilex/dist packages/moonql-unilex/dist
 COPY --from=build /repo/packages/whatsapp/dist packages/whatsapp/dist
 COPY --from=build /repo/packages/denpa/dist packages/denpa/dist
 COPY --from=build /repo/apps/radio/dist apps/radio/dist

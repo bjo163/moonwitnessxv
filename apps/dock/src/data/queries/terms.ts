@@ -104,6 +104,7 @@ export interface TermListItem {
   forms: TermForm[]
   sources: TermSource[]
   relations: TermRelation[]
+  relevanceScore?: number | null
 }
 
 export interface TermsPage {

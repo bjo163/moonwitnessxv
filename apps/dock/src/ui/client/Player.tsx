@@ -1,16 +1,20 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Badge, Button, LiveDot } from '@moonwitness/moonui'
 
 /** A session shorter than this is a skip: nobody drifts into it by accident. */
 const SKIP_AFTER_SECONDS = 30
+const AMBIENT_FAILOVER_URL = 'https://ice2.somafm.com/dronezone-128-mp3'
+
+export interface LiveMetaInfo {
+  artist: string | null
+  title: string
+  stationName: string | null
+}
 
 /**
- * The player is the only interactive surface: it streams the station audio and
- * reports a listen to the BFF (`/api/listen`), which forwards the public beacon.
- * A play is only half the story — closing the session with how long it ran is
- * what turns the beacon into a quality signal instead of a click counter.
+ * Resilient audio player with ICY metadata sniffing and zero-drop ambient failover.
  */
 export function Player({
   stationId,
@@ -24,13 +28,15 @@ export function Player({
   const audio = useRef<HTMLAudioElement | null>(null)
   const [playing, setPlaying] = useState(false)
   const [beacon, setBeacon] = useState<'idle' | 'sent' | 'failed'>('idle')
-  /** why the button did nothing — separate from the beacon, which may be fine */
   const [streamError, setStreamError] = useState<string | null>(null)
-  /** when the current session started, in clock ms; null while stopped */
+  const [isFailover, setIsFailover] = useState(false)
+  const [liveMeta, setLiveMeta] = useState<LiveMetaInfo | null>(null)
   const startedAt = useRef<number | null>(null)
+  const retryTimer = useRef<NodeJS.Timeout | null>(null)
 
-  /** Report how the session ended. `keepalive` lets the beacon survive a navigation. */
-  const close = async (reportFailure: boolean) => {
+  const activeSrc = isFailover ? AMBIENT_FAILOVER_URL : streamUrl
+
+  const close = useCallback(async (reportFailure: boolean) => {
     const seconds = startedAt.current === null ? 0 : Math.round((Date.now() - startedAt.current) / 1000)
     startedAt.current = null
     if (seconds <= 0) return
@@ -49,13 +55,58 @@ export function Player({
     } catch {
       if (reportFailure) setBeacon('failed')
     }
-  }
+  }, [stationId])
+
   const closeRef = useRef(close)
   closeRef.current = close
 
-  // Leaving the page (unmount, route change) still ends the session: without this
-  // every navigation would leak an open listen and inflate the charts.
-  useEffect(() => () => void closeRef.current(false), [])
+  useEffect(() => () => {
+    if (retryTimer.current) clearTimeout(retryTimer.current)
+    void closeRef.current(false)
+  }, [])
+
+  // Poll ICY live metadata while playing
+  useEffect(() => {
+    if (!playing || isFailover) return
+    let active = true
+
+    const fetchMeta = async () => {
+      try {
+        const res = await fetch(`/api/stations/${stationId}/live-meta`)
+        if (res.ok && active) {
+          const body = (await res.json()) as { ok: boolean; data?: LiveMetaInfo }
+          if (body.ok && body.data) {
+            setLiveMeta(body.data)
+          }
+        }
+      } catch {
+        /* quiet ignore: metadata polling is best-effort */
+      }
+    }
+
+    void fetchMeta()
+    const timer = setInterval(() => void fetchMeta(), 15_000)
+    return () => {
+      active = false
+      clearInterval(timer)
+    }
+  }, [playing, stationId, isFailover])
+
+  const triggerFailover = useCallback(() => {
+    if (isFailover) {
+      setStreamError('stream unavailable')
+      return
+    }
+    setIsFailover(true)
+    setStreamError('primary stream stall - failover active')
+
+    // Attempt recovery back to primary stream in 8 seconds
+    if (retryTimer.current) clearTimeout(retryTimer.current)
+    retryTimer.current = setTimeout(() => {
+      setIsFailover(false)
+      setStreamError(null)
+    }, 8_000)
+  }, [isFailover])
 
   const toggle = async () => {
     const element = audio.current
@@ -63,6 +114,7 @@ export function Player({
     if (playing) {
       element.pause()
       setPlaying(false)
+      setIsFailover(false)
       await close(true)
       return
     }
@@ -78,14 +130,12 @@ export function Player({
       })
       setBeacon(response.ok ? 'sent' : 'failed')
     } catch (err) {
-      // The thing that failed was the audio, not the count: saying "beacon failed"
-      // here sent people to look at the hub while the stream URL was the problem.
       startedAt.current = null
-      setStreamError(
-        err instanceof Error && err.name === 'NotAllowedError'
-          ? 'browser blocked autoplay — press play again'
-          : 'stream unavailable',
-      )
+      if (err instanceof Error && err.name === 'NotAllowedError') {
+        setStreamError('browser blocked autoplay — press play again')
+      } else {
+        triggerFailover()
+      }
     }
   }
 
@@ -93,11 +143,11 @@ export function Player({
     <div className="dk-player">
       <audio
         ref={audio}
-        src={streamUrl}
+        src={activeSrc}
         preload="none"
         onEnded={() => void close(true)}
         onPause={() => void close(true)}
-        onError={() => setStreamError('stream unavailable')}
+        onError={() => triggerFailover()}
       />
       <Button
         type="button"
@@ -108,18 +158,26 @@ export function Player({
       >
         {playing ? 'stop' : 'play'}
       </Button>
-      <div className="m-row" style={{ gap: 10 }}>
+      <div className="m-row" style={{ gap: 8, flexWrap: 'wrap' }}>
         <LiveDot on={playing} />
         <strong>{stationName}</strong>
-        <Badge tone={streamError || beacon === 'failed' ? 'hot' : beacon === 'sent' ? 'ok' : 'cyan'}>
-          {streamError
-            ? `${streamError} — nothing was logged`
-            : beacon === 'sent'
-              ? 'listen logged — the charts just moved'
-              : beacon === 'failed'
-                ? 'beacon failed'
-                : 'stream'}
-        </Badge>
+        {isFailover ? (
+          <Badge tone="hot">FAILOVER: AMBIENT BACKUP</Badge>
+        ) : liveMeta?.title && liveMeta.title !== stationName ? (
+          <Badge tone="cyan">
+            ON AIR: {liveMeta.artist ? `${liveMeta.artist} - ` : ''}{liveMeta.title}
+          </Badge>
+        ) : (
+          <Badge tone={streamError || beacon === 'failed' ? 'hot' : beacon === 'sent' ? 'ok' : 'cyan'}>
+            {streamError
+              ? `${streamError} — logging paused`
+              : beacon === 'sent'
+                ? 'listen logged — charts updated'
+                : beacon === 'failed'
+                  ? 'beacon failed'
+                  : 'stream live'}
+          </Badge>
+        )}
       </div>
     </div>
   )

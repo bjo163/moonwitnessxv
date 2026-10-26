@@ -5,7 +5,6 @@ import type {
   MatchPreview,
   TermDetail,
   TermForm,
-  TermListItem,
   TermSource,
   TermsPage,
 } from '@/data/queries/terms'
@@ -140,6 +139,7 @@ export function TermList({ page }: { page: TermsPage }): ReactNode {
               </div>
             </div>
             <div className="m-row" style={{ gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              {term.relevanceScore ? <Badge tone="cyan">MATCH {term.relevanceScore}%</Badge> : null}
               <Badge tone="cyan">{term.lane}</Badge>
               <Badge tone={toneFor(term.editorialStatus)}>{term.editorialStatus}</Badge>
             </div>
@@ -344,13 +344,5 @@ export function TermDetailView({ detail }: { detail: TermDetail }): ReactNode {
         </aside>
       </div>
     </div>
-  )
-}
-
-export function TermSummary({ term }: { term: TermListItem }): ReactNode {
-  return (
-    <p className="dk-terms-meta">
-      {term.preferredEn} · <code>{term.stableId}</code>
-    </p>
   )
 }

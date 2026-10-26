@@ -28,6 +28,7 @@ interface NowSlot {
  */
 export function LiveTicker({ initial }: { initial: NowSlot | null }) {
   const [slot, setSlot] = useState<NowSlot | null>(initial)
+  const [intelAlert, setIntelAlert] = useState<{ title: string; urgency: number; platform: string } | null>(null)
   const [state, setState] = useState<'connecting' | 'live' | 'down'>('connecting')
   const [progress, setProgress] = useState<number | null>(() =>
     initial ? slotProgress(initial.startMin, initial.endMin, new Date()) : null,
@@ -58,9 +59,20 @@ export function LiveTicker({ initial }: { initial: NowSlot | null }) {
       path: '/api/on-air',
       onState: setState,
       onEvent: (data) => {
+        const frame = data as { kind?: string; title?: string; urgencyScore?: number; platform?: string }
+        if (frame.kind === 'intel' && frame.title) {
+          setIntelAlert({
+            title: frame.title,
+            urgency: frame.urgencyScore ?? 0,
+            platform: frame.platform ?? 'intel',
+          })
+          setTimeout(() => setIntelAlert(null), 25_000)
+          return
+        }
+
         // only a grid change moves "what is on air"; listen and track frames would
         // make every beacon cost a schedule re-read for no visible reason
-        if ((data as { kind?: string })?.kind !== 'schedule') return
+        if (frame.kind !== 'schedule') return
         void refresh()
       },
     })
@@ -73,7 +85,11 @@ export function LiveTicker({ initial }: { initial: NowSlot | null }) {
   return (
     <div className="m-row" style={{ fontSize: 12 }}>
       <LiveDot state={state} />
-      {slot ? (
+      {intelAlert ? (
+        <span style={{ color: 'var(--alert)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+          [INTEL FLASH {intelAlert.platform.toUpperCase()} {intelAlert.urgency}%] {intelAlert.title}
+        </span>
+      ) : slot ? (
         <span>
           <strong>{slot.title}</strong>
           {slot.stationName ? ` · ${slot.stationName}` : ''}
