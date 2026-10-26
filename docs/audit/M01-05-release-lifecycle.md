@@ -2,6 +2,7 @@
 
 - **Updated:** 2026-10-27
 - **Baseline package version:** `1.0.0` (private root workspace)
+- **Implementation SHA:** `f8769f695a47408e2e11d7c293f74c4537dd85e1`.
 - **Changelog:** [`CHANGELOG.md`](../../CHANGELOG.md)
 - **Repository:** [bjo163/moonwitnessxv](https://github.com/bjo163/moonwitnessxv)
 
