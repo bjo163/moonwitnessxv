@@ -65,6 +65,21 @@ It is neither merely a Quran app, nor a universal religious verdict engine, nor 
 
 **Scope discipline:** Completing H1 does not require launching H5. Future horizons do not authorize a rewrite of XV's running radio stack.
 
+## 00.3 Empire of the Light — global ecosystem direction (reconciled proposal, 26 October 2026)
+
+**Why:** This program is inspired by devotion to **ALLAH** through beneficial knowledge, truthful witness, just correction, compassion, accountable creation and service. It respects Nabi Muhammad SAW and Nabi Isa AS within their accurately attributed traditions; the project does not claim revelation, prophecy, divine appointment, or authority over human conscience. Scriptural source, traditional interpretation, personal reflection, technological metaphor and experimental hypothesis must always be labeled separately. End-time interests are source-grounded study and preparedness, not predictions or compelled affiliation.
+
+**What:** **EMPIRE OF THE LIGHT** is the aspirational organizational vision, a voluntary, distributed movement for learning, creating, working, measuring results and improving lives — **not** dominion over people. **A-L-L-A-H** is the project acronym *Accountable Life, Learning & Action Hub*, not the religious referent ALLAH. **A-L-L-A-H.COM** is the **owner-proposed** global domain/gateway; possession, DNS and deployment are not verified by this narrative. **MOONWITNESS XV** is the knowledge, witness, creative and radio/discovery product within the Empire.
+
+**Value loops, never confused with proof of implementation:** Knowledge: discover → read source → research → human review → create → publish. Productive economy: learn → create useful work → offer → deliver → receive actual payment → account for cost → reinvest. Resource/energy: measure real energy use → verify → optimize safely → assess savings → maintain. Revenue is a commercial outcome to validate, not an entitlement from a spiritual name; no infinite/free-energy claims or tokenized miracle economy.
+
+**Proposed user/work spaces (NOT present yet as directories):** LIGHTHOUSE is an optional gateway experience within existing Dock, not automatically an app. DOCK = public discoveries; HARBOR = opt-in community/member portal; SHADOW = creative authoring surface, distinct from its fictional character; MOONLAB = bounded research preparation; WORKS = customer work/commerce and actual revenue; HEADQUARTERS/100CENTER = human governance and finance oversight, not an all-purpose authoring IDE. HELIOGRID = conditional energy-monitoring work surface only after calibrated real pilot; Quantum/Photon/Proton/Material Forge remain reviewed research horizons. The accepted ARSY Hub is *one existing backend* physically under \`apps/radio\` until M28 is proven.
+
+**Global access is intrinsic, not translation theater:** First UI languages are \`id\` and \`en\`, with explicit visible language selection and a bilingual \`/id\` and \`/en\` landing page from the first preview. UI translations do not silently alter Qur'anic or other original passages, source language, rights, translator identity, or meaning. A user's language is not assumed from nationality, IP, or precise location; participation remains voluntary and accessible without requiring religious assent for public reading.
+
+**Release discipline:** The first deliverable is a truthful, bilingual MoonWitness XV public preview using existing \`apps/dock\`, built and validated in Docker Compose before Coolify deployment is claimed. App Factory, all-app localization including Cockpit, ARSY physical rename, full publishing, WORKS, and HELIOGRID have explicit but separately scoped evidence gates. These decisions are architecture *proposals* pending accepted ADRs where they would revise product or domain ownership. Execution and tested status belong to [BLUEPRINT](../../BLUEPRINT.md) and [TODO](../../TODO.md), never to this vision narrative.
+
+
 ---
 
 # 01 — Name constitution: five identities, no forced synonym

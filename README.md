@@ -9,13 +9,22 @@
 
 The current applications below are **existing ARSY-Hub-as-`radio` / MoonQL functionality**. Corpus, ontology, comparative research, SHADOW, 100CENTER, World Monitor and Journey are **planned capability areas**, **not automatically live features** merely because they appear in the vision. Use the TODO evidence gates before declaring a task complete; source/privacy/security/recovery checks are mandatory before importing sensitive content.
 
-Modular **TypeScript** monorepo with **three apps and one contract**:
+Modular **TypeScript/pnpm** monorepo with **six currently existing application workspaces** (three core public/admin/Hub surfaces plus Cockpit, AI Gateway and Sentinel). **Do not equate an app directory with a production-certified service.**
+
+**Ecosystem direction (PLANNED, not deployed):** Empire of the Light / `a-l-l-a-h.com` Lighthouse experience (initially reuse Dock), Harbor community, SHADOW creative authoring, MoonLab research, WORKS commerce and a conditional HELIOGRID read-only energy operations app after calibrated pilot. All proposed apps share D00 auth, one ARSY/MoonQL Hub and global `id`/`en` UI conventions; no duplicated backend or stored source rights. See [Blueprint §2A](BLUEPRINT.md#2a--global-ecosystem-surfaces-and-implementation-reality-proposal-26-october-2026), and [Immediate Execution](TODO.md#immediate-execution--foundation--global-i18n--first-bilingual-public-release) for **planning** (no app or locale implementation has been claimed).
+
+**First delivery target:** existing Dock landing page in `/id` and `/en`, Docker/Compose verified before claiming any Coolify deployment. `pnpm verify` passing alone is **not** a production Docker or public deployment verification. Current `apps/dock` routes do **not** yet demonstrate end-to-end bilingual content. ARSY's physical Radio rename remains pending.
+
+Current primary application surfaces:
 
 | App | Port | Role |
 |---|---|---|
 | **ARSY Hub (currently `@moonwitness/radio`)** | 3000 | Single Fastify + MoonQL API/ORM hub; migration target `@moonwitness/arsy` (M28) |
 | **`@moonwitness/headquarters`** | 3002 | Admin command center (Next.js 16, RSC + server actions) |
 | **`@moonwitness/dock`** | 3001 | Public homepage, station catalog and schedule (Next.js 16, RSC) |
+| **`@moonwitness/cockpit`** | 3004 by default (local) | Developer Vite/React GUI + process supervision; not a public production admin |
+| **`@moonwitness/aigateway`** | 3003 by default (internal) | Bounded model inference adapter; not an independent truth owner |
+| **`@moonwitness/sentinel`** | Worker, no public HTTP port expected | Source-monitor ingestion/background tasks; not publication authority |
 
 The hub behind everything:
 

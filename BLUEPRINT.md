@@ -79,6 +79,64 @@ At master audit commit `43dfcdebfbaa1a7a078d2a0657a10cfdae2ce298`, XV tree conta
 
 Use progressive disclosure: search/read first; sources before analysis; reviewer and private tools only for authorized users. On mobile prioritize reading, search, stories and signal.
 
+## 2A — Global ecosystem surfaces and implementation reality (proposal, 26 October 2026)
+
+**Observed at source SHA \`bb3aed0\`:** six existing runnable application workspaces: \`apps/dock\` (Next.js public), \`apps/headquarters\` (Next.js private/admin), \`apps/radio\` (the accepted ARSY Fastify Hub identity, filesystem migration **pending**), \`apps/cockpit\` (local developer GUI/Vite + supervisor service), \`apps/aigateway\` (bounded internal model adapter), \`apps/sentinel\` (worker/collector). The latest observed GitHub Actions \`pnpm verify\` succeeded at \`bb3aed0\`, which does not prove Docker builds, actual internationalization, DB migrations, or production deployment.
+
+### 2A.1 Branding and proposed future apps (not shipped)
+
+| Experience | Runtime/code owner | Business responsibility | Status / boundary |
+|---|---|---|---|
+| LIGHTHOUSE | Proposed landing experience **within Dock** | Gateway for \`a-l-l-a-h.com\` | Proposed; domain, DNS and TLS unverified |
+| DOCK | \`apps/dock\` | Public source-first reading, discovery, Stories, SIGNAL | Existing; public data-release gate still required |
+| HARBOR | Proposed \`apps/harbor\` | Voluntary member/community, personal library, contributions | Proposed; one shared D00 identity |
+| SHADOW | Proposed \`apps/shadow\` | Story/poster/media editing and source-aware creative drafts | Proposed extraction of HQ workspace; D07 records, no parallel publisher |
+| MOONLAB | Proposed \`apps/moonlab\` | Research workbench, SRGBL/MIZAN candidate prep | Proposed extraction; D05 data, HQ review remains independent |
+| WORKS | Proposed \`apps/works\` | Catalog, offers, CRM, work delivery, invoicing and revenue operations | Proposed; no independent payments bank or D00 |
+| HELIOGRID | Conditional \`apps/heliogrid\` | Read-only energy site/meters, PV, battery/UPS/maintenance analytics | Proposed **only after** measured pilot; not an energy generator |
+| HEADQUARTERS / 100CENTER | \`apps/headquarters\` | Review, publication veto, rights, finance oversight and audit | Existing UI, new governance flows not certified |
+| COCKPIT | \`apps/cockpit\` | Developer process/log/preview supervisor | Existing local application, not public admin or production energy controller |
+| AI Gateway / Sentinel | \`apps/aigateway\`, \`apps/sentinel\` | Internal bounded model routing / source collection | Existing workers/services, not public AI/monitoring authority |
+| ARSY / SIGNAL | \`apps/radio\` now, \`apps/arsy\` after M28 | ONE Fastify/MoonQL API, data authority and existing Radio domain | Accepted name; rename pending, preserve legacy paths |
+
+**Proposed D14–D17 (not accepted domain contracts):** D14 Community/Membership; D15 Commerce & Work; D16 Financial Operations/treasury oversight; D17 physical Energy & Assets. Design governance by separate ADR before creating schemas. Each model has precisely one ARSY/MoonQL owner; frontend boundaries do not confer database ownership. WORKS initially sells actual existing products/services via appropriately licensed payment providers; multi-seller wallets, banking, speculative tokens and automated payouts are out of initial scope. HELIOGRID pilot must start with verified read-only meters, units, calibration and technician permission; simulations never masquerade as measured generation/savings. No second REST hub, login system, editor, approval engine or graph database.
+
+### 2A.2 Reusable App Factory — early engineering contract, NOT implemented
+
+**Goal:** safely add applications to the current \`pnpm\` monorepo without re-inventing package/TypeScript/build/config/deployment/i18n conventions. Candidate entry point \`pnpm app:create\` is **not** an existing script. Inventory \`apps/*\`, \`packages/*\`, \`pnpm-workspace.yaml\`, Dockerfiles, \`@moonwitness/web-config\`, \`@moonwitness/moonui\` and CI first. Implement the smallest dry-run-capable scaffolder; reject name/path collisions and accidental overwrite; generate only runtime variants actually needed (public Next/privileged Next/local Vite/internal service/worker). Not every template receives a database, public port or Docker service. A successful sample app must install, build, pass tests including \`id/en\` locale coverage and relevant container routing **without manually repairing generated manifests**. Canonical executable subtasks are M05-17–M05-22.
+
+### 2A.3 Mandatory global i18n / localization contract — planning, not shipped
+
+- **Supported UI languages v1:** ISO language tags \`id\` and \`en\`; no assumption that country is language or that translated UI means translated sacred source.
+- **Central owner:** one reusable locale registry/catalog contract in a justified shared package (proposed \`@moonwitness/i18n\` **only if** existing \`@moonwitness/core\`/MoonUI cannot cleanly own it). Text keys should be named, type-checked, and parity-checked by tests; never translated into stored API identifiers.
+- **Precedence:** explicit URL locale → user-selected persistent locale → existing account preference → validated \`Accept-Language\` hint → declared default; never infer from precise geolocation or force IP lookup. An explicit URL always wins. \`id-ID\`, \`en-US\`, country, timezone and source-language are distinct dimensions.
+- **Public URL contract:** \`/id\` and \`/en\` MUST render complete meaningful landing pages; \`/\` has documented deterministic redirect/selection; unknown locale responds predictably, with preserved existing legacy routes, API paths, assets and embeds. Locale switcher preserves route when a localized equivalent exists. Locale-specific title/description, \`hreflang\`, canonical URLs, and browser \`lang\` must be tested.
+- **Next.js 16 implementation note:** the project currently uses \`src/middleware.ts\` on Dock and HQ for security. Next.js 16 officially calls this convention \`proxy.ts\`; audit security header/CSP matchers and auth coverage before changing it. Locale routing must NOT override \`/api/*\`, \`/_next/*\`, \`/embed/*\`, auth endpoints, stream endpoints or static metadata. Primary reference: https://nextjs.org/docs/app/guides/internationalization and https://nextjs.org/docs/app/api-reference/file-conventions/proxy .
+- **Per-runtime strategy:** Next frontends can use URL locale routing and SSR catalog dictionaries; Cockpit Vite/React uses an accessible GUI selector and appropriate local persistence, not forced \`/id\` URLs; ARSY/API can negotiate human-facing error messages using validated headers while keeping stable machine codes; AI Gateway human descriptions only if relevant; Sentinel worker logs, automation codes, service IDs, API fields, model names and CLI commands MUST remain machine-stable.
+- **Corpus separation:** never silently translate Quranic/scriptural source passages, citation fingerprints, rights, source-language original, edition IDs or authoritative statements as merely UI chrome. UI locale \`id/en\` is not evidence of an approved translation of any text.
+- **App acceptance matrix:**
+
+| Existing application | Localizable human interface | Baseline (at bb3aed0) | Owner / canonical TODO | Gate |
+|---|---|---|---|---|
+| Dock | Public Next UI, navigation, forms, content, SEO | PARTIAL/UNKNOWN; no verified \`/id\`/\`/en\` | M19-08–M19-19, M19-31 | Both routes, switcher, degraded mode, rights gate, browser E2E |
+| Headquarters | Login, sidebar, model/forms, errors, admin status | NOT VERIFIED in two languages | M19-20–M19-24 | id/en role tests and visible copy parity |
+| Cockpit | React/Vite console, panels, dialogs/help, optional CLI | NOT VERIFIED in two languages | M19-25–M19-30 | actual GUI/CLI scope, id/en, machine log invariants |
+| ARSY (currently radio) | Human error strings/diagnostics only | NOT VERIFIED in two languages | M05-14; M28 migration | stable error codes, id/en text if applicable, authorization intact |
+| AI Gateway | User-visible provider/error info if exposed | NOT VERIFIED in two languages | M05-15 | human messages appropriate, IDs stable |
+| Sentinel | Human CLI help/diagnostic text if any | UNKNOWN/NOT VERIFIED | M05-16 | no translation of machine logs or automation output |
+| Future Harbor/SHADOW/MoonLab/WORKS/HELIOGRID | New user-facing interfaces | PLANNED, no current code | M05-19/M05-21 App Factory | all UI templates inherit typed locale and tests |
+
+**Global i18n VERIFIED gate:** per-app QA evidence at exact SHA, key parity, locale preference, date/number formatting, keyboard/accessible labels, auth-negative tests, and zero inadvertently changed API identifiers. One visible switcher is never proof of full coverage. Detailed tasks live exclusively in TODO (M05 and M19). The platform-wide i18n acceptance is intentionally separate from the narrower **Dock bilingual preview** gate; do not delay the small public preview for unrelated privileged-language screens, while retaining early, explicit all-app delivery requirements.
+
+### 2A.4 Bilingual public preview and release topology
+
+**First release slice:** truthful public landing experience in existing Dock, NOT a new Next app or an assertion that all Empire products run. Core sections Hero/Mission, Empire context, existing/pilot/planned capabilities, principles, voluntary participation, README/contact/privacy, source links. Both \`/id\` and \`/en\` are release-blocking; handle \`/\`, 404 unknown locale, navigation, keyboard/mobile, contrast, reduced motion, descriptive metadata, privacy/rights and clean fallback if Hub offline. Existing \`apps/dock/src/app/page.tsx\` requires several live MoonQL reads; separating static mission from optional Hub widgets is an implementation task, **not yet delivered**.
+
+**Compose/Coolify:** currently \`docker-compose.yml\` starts db, \`radio\`, \`dock\`, \`headquarters\` and backup; Dockerfiles are present, \`pnpm verify:docker\` exists but is NOT in the observed CI. Current Compose publishes host \`radio:3000\`, \`dock:3001\`, \`headquarters:3002\`; check external exposure before production and prefer a constrained preview or secure full-stack topology. Pin secrets, volume namespace, health/readiness, Docker build, stage smoke, TLS/DNS, actual deployment SHA and tested rollback. Coolify supports Git-backed Compose: https://coolify.io/docs/applications/builds/docker-compose . Do not assert domain ownership/active TLS, Docker success or DEPLOYED_VERIFIED without logs. Implementation subtasks M27-08–M27-19.
+
+**Release stages are distinct:** \`CI_VERIFIED\` ≠ \`BUILD_VERIFIED\` ≠ \`DEPLOYMENT_READY\` ≠ \`DEPLOYED_VERIFIED\` ≠ \`RELEASE_ACCEPTED\`. Full XV M27 acceptance still requires its separate human rights, security, restore and publication gates.
+
+
 ## 3 — Target architecture (logical, not already deployed)
 
     apps/dock (public Next.js)
