@@ -9,9 +9,8 @@ available.
 
 ### Added
 - Release and changelog guidance in `docs/audit/M01-05-release-lifecycle.md`.
-- Automated staging-to-production synchronization PR job in `.github/workflows/ci.yml`.
-- Staging integration branch `dev` with PR gating and safety checks.
+- Automated fast-forward promotion from verified `dev` to `main` without redundant checks or approval gates.
+- Integration branch `dev` with PR gating and safety checks.
 
 ### Changed
-- Integration flow routes topic branches into `dev` via Pull Request; direct pushes to `dev` and `main` are blocked.
-- Pull requests targeting `main` must originate from `dev`.
+- Streamlined CI pipeline to run verification exactly once on `dev` and eliminate duplicate gates on `main` and local hooks.

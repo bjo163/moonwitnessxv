@@ -39,21 +39,20 @@ Breaking changes use `!` before the colon (`feat(api)!: ...`) and a `BREAKING CH
 
 Proposed PR titles use the same format as commits. The existing [PR template](../../.github/PULL_REQUEST_TEMPLATE.md) remains the detail checklist: task ID or explicit `NON-TODO GOVERNANCE PREPARATION`, bounded scope and paths, linked Issues/contracts, actual commands/results, evidence, compatibility and security/rights/privacy/localization impact, rollback, and required reviewers. Record exact baseline SHA only after observing it. A PR or passing CI does not itself authorize implementation or close a task.
 
-## Integration flow: enforced
+## Integration flow: enforced & streamlined
 
-The required path is `topic branch → PR to dev → verified merge → automated PR to main → release merge`. The `main` branch is the GitHub default branch and release branch; `dev` is the staging integration branch. Both `dev` and `main` reject direct pushes, force-pushes, and deletion.
+The required path is `topic branch → PR to dev → verified merge → automatic fast-forward to main`. `main` is the GitHub default branch; `dev` is the active integration branch. Both `dev` and `main` reject direct force-pushes and deletion.
 
 1. **Development into `dev`:**
    - Topic branches target `dev` via Pull Request.
-   - PRs into `dev` require the `Monorepo Verification & Safety Gates` check to pass before merging.
-   - Merging into `dev` stages features together for end-to-end integration.
+   - PRs into `dev` run the `Monorepo Verification & Safety Gates` check.
+   - Merging into `dev` triggers the single verified integration run.
 
-2. **Promotion from `dev` to `main`:**
-   - PRs into `main` are restricted strictly to this repository's `dev` branch.
-   - Pushes to `dev` trigger the `sync_pr` job in `ci.yml`. If `dev` contains commits ahead of `main`, it ensures an open sync PR (`chore(release): sync dev to main`) exists.
-   - The sync PR automatically receives subsequent `dev` commits and runs the `Monorepo Verification & Safety Gates` check.
-   - When ready for a production release, the maintainer reviews the sync PR and merges it into `main`.
+2. **Automatic Fast-Forward to `main` (Zero-Approval, Zero-Duplicate):**
+   - After verification succeeds on `dev`, the `promote` job immediately fast-forwards `main` to that exact verified commit.
+   - There are no duplicate verification checks on `main`, no secondary release PRs, and no human approval bottlenecks.
+   - Local environments use no pre-commit hooks (Husky is omitted) to preserve rapid local iteration; verification is owned by CI.
 
 ## Enforcement state
 
-There is no commit-message validator, branch-name validator, PR-title validator, or TODO-to-Issue synchronizer. These conventions remain guidance, while branch routing, PR gating, and automated sync PR management are enforced by repository rules and CI.
+There is no commit-message validator, branch-name validator, PR-title validator, or TODO-to-Issue synchronizer. These conventions remain guidance, while branch routing, PR gating on `dev`, and automated promotion to `main` are enforced by repository rules and CI.
