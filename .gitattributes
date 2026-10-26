@@ -1,0 +1,5 @@
+# These files are compared byte-for-byte by gen:sdk:check and its test.
+# Pin LF so a Windows checkout does not turn them into false drift.
+packages/moonql-client/src/generated.ts text eol=lf
+packages/moonql-client/src/schema-snapshot.json text eol=lf
+packages/moonql-client/src/schema-history.json text eol=lf
