@@ -1,3 +1,4 @@
+import { SSE_HEADERS } from '@moonwitness/core'
 import { RADIO_API_URL } from '@/lib/env'
 import { readToken } from '@/lib/session'
 
@@ -43,11 +44,6 @@ export async function GET(request: Request): Promise<Response> {
 
   return new Response(upstream.body, {
     status: 200,
-    headers: {
-      'content-type': 'text/event-stream; charset=utf-8',
-      'cache-control': 'no-cache, no-transform',
-      connection: 'keep-alive',
-      'x-accel-buffering': 'no',
-    },
+    headers: SSE_HEADERS,
   })
 }

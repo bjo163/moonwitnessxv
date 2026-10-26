@@ -7,19 +7,16 @@ import { createMemoryEngine } from './engines/memory.js'
 import { createPgEngine } from './engines/pg.js'
 import type { MoonEngine } from './engines/engine.js'
 import type { AnyAddon, RequestLike, User } from './addon.js'
+import { pickAddonEnv } from './addon.js'
 import { startCrons, type CronHandle } from './crons.js'
 import { createRefResolver } from './refs.js'
 import { syncModelData } from './datasync.js'
 import { createBus, type MoonBus } from './bus.js'
 import { httpError } from '@moonwitness/core'
+import type { Log } from './log.js'
 
 /** demo/fixture seeds should reach this many rows (seed policy advisory) */
 export const MIN_DEMO_ROWS = 10
-
-type Log = {
-  info: (obj: unknown, msg: string) => void
-  warn: (obj: unknown, msg: string) => void
-}
 
 export interface MoonQlOptions {
   /** Omit (or empty) to boot the in-memory engine — zero-config dev & tests. */
@@ -234,7 +231,9 @@ export async function bootMoonQl(options: MoonQlOptions): Promise<MoonQlInstance
 
   // identity resolver chain from addon provides (any number of addons)
   if (registry.resolveUserFactories.length) {
-    const resolvers = registry.resolveUserFactories.map((factory) => factory({ orm: { model: instance.model }, env, log, bus }))
+    const resolvers = registry.resolveUserFactories.map(({ env: declared, factory }) =>
+      factory({ orm: { model: instance.model }, env: pickAddonEnv(env, declared), log, bus }),
+    )
     instance.resolveUser = async (request) => {
       for (const resolver of resolvers) {
         try {
@@ -254,7 +253,8 @@ export async function bootMoonQl(options: MoonQlOptions): Promise<MoonQlInstance
   for (const addon of registry.addons) {
     if (!addon.observe) continue
     try {
-      await addon.observe(bus, { orm: { model: instance.model }, env, log, bus })
+      // each addon sees only the environment names it declared (`addon.env`)
+      await addon.observe(bus, { orm: { model: instance.model }, env: pickAddonEnv(env, addon.env), log, bus })
     } catch (err) {
       log.warn({ err: (err as Error).message, addon: addon.name }, 'moonql observe: subscriber failed to attach')
     }

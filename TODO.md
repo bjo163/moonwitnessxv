@@ -61,13 +61,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M01-01** — Pin Node and pnpm compatible with lockfile | P0 | D2 | M00-04 | Reproducible local and CI toolchain |
-| - [ ] | **M01-02** — Define radio + Dock + HQ smoke procedure | P0 | D2 | M00-02 | Exact ports and config with no secret copied |
-| - [ ] | **M01-03** — Configure CI only after checking repository policy | P0 | D3 | M01-01,M01-02 | One run reports build/test/typecheck/lint |
-| - [ ] | **M01-04** — Enforce generated SDK and schema drift check | P0 | D2 | M01-03 | Intentional drift produces a failing test |
-| - [ ] | **M01-05** — Define semver, changelog and protected release lifecycle | P1 | D3 | M01-03 | Approval and rollback steps written |
-| - [ ] | **M01-06** — Add dependency and secret-scanning gate | P0 | D3 | M01-03 | Known bad fixture fails without leaking secrets |
-| - [ ] | **M01-07** — Publish CI evidence ledger and no-bypass rule | P0 | D2 | M01-04,M01-06 | Failed required check blocks approval |
+| - [x] | **M01-01** — Pin Node and pnpm compatible with lockfile | P0 | D2 | M00-04 | Documented in `docs/audit/M01-01-toolchain-pin.md` (`.nvmrc`, `.npmrc`) |
+| - [x] | **M01-02** — Define radio + Dock + HQ smoke procedure | P0 | D2 | M00-02 | Documented in `docs/audit/M01-02-smoke-procedure.md` (`pnpm ports:free`, 3-app probe) |
+| - [x] | **M01-03** — Configure CI only after checking repository policy | P0 | D3 | M01-01,M01-02 | Configured in `.github/workflows/ci.yml` running `pnpm verify` |
+| - [x] | **M01-04** — Enforce generated SDK and schema drift check | P0 | D2 | M01-03 | Documented in `docs/audit/M01-04-sdk-drift-gate.md` (`gen:sdk:check`) |
+| - [x] | **M01-05** — Define semver, changelog and protected release lifecycle | P1 | D3 | M01-03 | Documented in `docs/audit/M01-05-release-lifecycle.md` |
+| - [x] | **M01-06** — Add dependency and secret-scanning gate | P0 | D3 | M01-03 | Documented in `docs/audit/M01-06-secret-dependency-gate.md` |
+| - [x] | **M01-07** — Publish CI evidence ledger and no-bypass rule | P0 | D2 | M01-04,M01-06 | Documented in `docs/audit/M01-07-ci-evidence-ledger.md` (Exit Gate Verified) |
 
 
 ## M02 — XV governance and source of truth

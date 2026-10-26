@@ -2,10 +2,9 @@ import type { MoonEngine, Row } from './engines/engine.js'
 import type { CompiledModel } from './registry.js'
 import type { DataCtx } from './model.js'
 import type { RefResolver } from './refs.js'
+import { norm } from './domain.js'
+import type { Log } from './log.js'
 
-type Log = { info: (obj: unknown, msg: string) => void }
-
-const norm = (v: unknown) => (v === undefined ? null : v)
 const tupleKey = (row: Row, keys: string[]) => JSON.stringify(keys.map((k) => norm(row[k])))
 
 export interface SyncResult {

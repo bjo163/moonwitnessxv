@@ -1,10 +1,7 @@
 import type { MoonRegistry } from './registry.js'
 import type { MoonQlInstance } from './boot.js'
-
-type Log = {
-  info: (obj: unknown, msg: string) => void
-  warn: (obj: unknown, msg: string) => void
-}
+import type { Log } from './log.js'
+import { pickAddonEnv } from './addon.js'
 
 export interface CronHandle {
   stop(): void
@@ -50,10 +47,17 @@ export function parseEvery(every: string | number): number {
  */
 export function startCrons(instance: MoonQlInstance, registry: MoonRegistry, log: Log): CronHandle {
   const timers: NodeJS.Timeout[] = []
-  const ctx = { orm: { model: instance.model }, env: instance.env, log, bus: instance.bus }
+  // one context per addon: a cron may read only the env names its addon declared
+  const ctxFor = (addon: string): { orm: { model: MoonQlInstance['model'] }; env: Record<string, string | undefined>; log: Log; bus: MoonQlInstance['bus'] } => {
+    const owner = registry.addons.find((candidate) => candidate.name === addon)
+    return { orm: { model: instance.model }, env: pickAddonEnv(instance.env, owner?.env ?? []), log, bus: instance.bus }
+  }
 
   for (const { addon, def } of registry.crons) {
     const ms = parseEvery(def.every)
+    // 80% of the cadence: room to finish and return before the next tick, without
+    // the overlap guard below turning a slow job into a silent one.
+    const cronCtx = { ...ctxFor(addon), budgetMs: Math.floor(ms * 0.8) }
     let running = false
     const tick = () => {
       if (running) {

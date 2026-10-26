@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import type { AnyField, FieldsMap } from '../fields.js'
 import { hasColumn } from '../fields.js'
 import { matchesDomain } from '../domain.js'
+import { norm } from '../domain.js'
 import type { Domain, OrderTerm } from '../domain.js'
 import type { AggregateQuery, ListOptions, MoonEngine, Row } from './engine.js'
 
@@ -14,7 +15,6 @@ import type { AggregateQuery, ListOptions, MoonEngine, Row } from './engine.js'
 export function createMemoryEngine(fields: FieldsMap, opts?: { softDelete?: boolean }): MoonEngine {
   const rows = new Map<string, Row>()
   const now = () => new Date().toISOString()
-  const norm = (v: unknown) => (v === undefined ? null : v)
 
   const materialize = (data: Row): Row => {
     const row: Row = { id: randomUUID(), createdAt: now(), updatedAt: now() }

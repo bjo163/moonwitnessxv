@@ -17,6 +17,8 @@ import { ADMIN_WRITE, bool, computed, defineAddon, defineModel, defineView, int,
  */
 export default defineAddon({
   name: 'radio',
+  // the only knob this addon reads: whether outbound probing is allowed at all
+  env: ['EGRESS_ENABLED'],
   models: {
     stations: defineModel({
       label: 'Station',

@@ -1,8 +1,7 @@
 import type { AnyField, FieldKind, FieldsMap } from './fields.js'
 import type { CompiledModel } from './registry.js'
 import type { ViewAggregate } from './view.js'
-
-type Json = Record<string, unknown>
+import type { Json } from './json.js'
 
 const kindType: Record<FieldKind, Json> = {
   str: { type: 'string' },

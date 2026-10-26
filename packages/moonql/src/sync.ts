@@ -3,8 +3,7 @@ import type { AnyField, FieldKind, FieldsMap } from './fields.js'
 import { hasColumn } from './fields.js'
 import type { MoonRegistry } from './registry.js'
 import { columnName, createdAtIndexName, modelledIndexName } from './table.js'
-
-type Log = { info: (obj: unknown, msg: string) => void; warn: (obj: unknown, msg: string) => void }
+import type { Log } from './log.js'
 
 const pgType = (f: AnyField): string => {
   switch (f.kind as FieldKind) {

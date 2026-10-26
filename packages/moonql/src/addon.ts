@@ -117,6 +117,15 @@ export interface AddonDef<M extends Record<string, Model>> {
   version?: string
   /** Names of addons this one requires (installed first). */
   depends?: string[]
+  /**
+   * The environment names this addon may read through `ctx.env`.
+   *
+   * Omitted means none: the hub's allow-list says which names are *available to
+   * addons at all*, and this says which of them belong to this one. Without it the
+   * admin password of the auth addon was readable by every plugin, which is exactly
+   * what the comment above `ctx.env` promised it was not.
+   */
+  env?: readonly string[]
   models: M
   hooks?: HooksMap<M>
   /** Read-only projections mounted by moonql (defineView). */
@@ -141,6 +150,7 @@ export interface Addon<M extends Record<string, Model> = Record<string, Model>> 
   name: string
   version: string
   depends: string[]
+  env: readonly string[]
   models: M
   hooks: HooksMap<M>
   views: Record<string, View>
@@ -152,6 +162,18 @@ export interface Addon<M extends Record<string, Model> = Record<string, Model>> 
 
 /** Any addon, with its model map widened: the registry holds them by runtime name. */
 export type AnyAddon = Addon
+
+/**
+ * The slice of the hub's environment an addon is allowed to see: names it declared,
+ * restricted to what the hub put in `ctx.env` at all. A name the hub does not expose
+ * stays absent even when an addon asks for it.
+ */
+export function pickAddonEnv(
+  available: Record<string, string | undefined>,
+  declared: readonly string[] = [],
+): Record<string, string | undefined> {
+  return Object.fromEntries(declared.filter((key) => key in available).map((key) => [key, available[key]]))
+}
 
 const NAME_RE = /^[a-z][a-z0-9_]*$/
 
@@ -189,6 +211,7 @@ export function defineAddon<M extends Record<string, Model>>(def: AddonDef<M>): 
     name: def.name,
     version: def.version ?? '1.0.0',
     depends: def.depends ?? [],
+    env: def.env ?? [],
     models: def.models,
     hooks: def.hooks ?? {},
     views: def.views ?? {},

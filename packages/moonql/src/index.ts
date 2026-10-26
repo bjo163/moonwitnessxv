@@ -82,4 +82,5 @@ export type { Field, AnyField, FieldsMap, FieldKind, PlainRow, CreateInput } fro
 
 // legacy pg escape hatch (still available for handwritten needs)
 export { createMoonQl, runMigrations, type MoonQl } from './client.js'
-export { createCrud, type CrudRow } from './crud.js'
+export type { Log } from './log.js'
+export type { Json } from './json.js'

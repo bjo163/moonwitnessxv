@@ -8,8 +8,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "pnpm --filter @moonwitness/radio build && pnpm --filter @moonwitness/moonql-client build && pnpm --filter @moonwitness/moonui build",
-    "build:libs": "pnpm --filter @moonwitness/moonql-client build && pnpm --filter @moonwitness/moonui build",
+    "build": "pnpm --filter @moonwitness/core build && pnpm --filter @moonwitness/radio build && pnpm --filter @moonwitness/moonql-client build && pnpm --filter @moonwitness/moonui build",
+    "build:libs": "pnpm --filter @moonwitness/core build && pnpm --filter @moonwitness/moonql-client build && pnpm --filter @moonwitness/moonui build",
     "build:web": "pnpm --filter @moonwitness/headquarters build && pnpm --filter @moonwitness/dock build",
     "clean": "node -e \"const{rmSync,readdirSync,statSync}=require('fs');const{join}=require('path');const walk=(d)=>{for(const e of readdirSync(d)){if(e==='node_modules'||e==='.git')continue;const p=join(d,e);const s=statSync(p);if(s.isDirectory()){if(e==='dist'||e==='.next'){rmSync(p,{recursive:true,force:true});continue}walk(p)}else if(e.endsWith('.tsbuildinfo'))rmSync(p,{force:true})}};walk('.')/* also wipe the root-level buildinfo files */\"",
     "dev": "pnpm build:libs && node scripts/dev.mjs",

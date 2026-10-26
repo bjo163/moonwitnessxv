@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { buildSchemaDocument, gateDecision, classifySchema, generateClientSource, installAddons, parseVersion } from '@moonwitness/moonql'
-import type { SchemaDocument } from '@moonwitness/core'
+import { canonicalJson, type SchemaDocument } from '@moonwitness/core'
 import { addons } from '../addons.js'
 import { loadConfig } from '../config.js'
 
@@ -23,22 +23,8 @@ export function currentDocument(): SchemaDocument {
   return buildSchemaDocument(installAddons(addons, { reservedPaths: [] }), { apiVersion: loadConfig().api.version })
 }
 
-/** key-sorted JSON, so the committed snapshot is diffable in review */
-function stableJson(value: unknown): string {
-  const walk = (v: unknown): unknown => {
-    if (Array.isArray(v)) return v.map(walk)
-    if (v && typeof v === 'object') {
-      return Object.fromEntries(
-        Object.entries(v as Record<string, unknown>)
-          .filter(([, item]) => item !== undefined)
-          .sort(([a], [b]) => a.localeCompare(b))
-          .map(([key, item]) => [key, walk(item)]),
-      )
-    }
-    return v
-  }
-  return JSON.stringify(walk(value))
-}
+/** the committed snapshot is key-sorted, so a review sees content and not insertion order */
+const stableJson = (value: unknown): string => canonicalJson(value)
 
 function readSnapshot(): SchemaDocument | null {
   try {

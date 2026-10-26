@@ -85,7 +85,8 @@ export function normalizeOrder(queryable: FieldsMap, modelName: string, raw: unk
   })
 }
 
-const norm = (v: unknown) => (v === undefined ? null : v)
+/** `undefined` is not a value in a row: it normalises to null, like the pg engine does. */
+export const norm = (v: unknown): unknown => (v === undefined ? null : v)
 
 /** JS evaluator for the memory engine (same semantics the pg translation must have). */
 export function matchesDomain(domain: Domain | undefined, row: Record<string, unknown>): boolean {

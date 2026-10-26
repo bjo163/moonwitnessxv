@@ -6,8 +6,10 @@ import { eqDomain, isDomain, normalizeOrder, normalizeWhere } from './domain.js'
 import type { Domain } from './domain.js'
 import type { AggregateQuery, ListOptions, MoonEngine, Row } from './engines/engine.js'
 import type { MoonBus } from './bus.js'
+import type { Log } from './log.js'
 
-type Log = { warn: (obj: unknown, msg: string) => void }
+/** the repository only ever complains */
+type RepoLog = Pick<Log, 'warn'>
 
 /** Query accepted by repository reads — REST passes the parsed pieces. */
 export interface RepoQuery {
@@ -44,7 +46,7 @@ export class ModelRepo {
     private readonly compiled: CompiledModel,
     private readonly engine: MoonEngine,
     private readonly registry: MoonRegistry,
-    private readonly log: Log,
+    private readonly log: RepoLog,
     private readonly getRepo: (name: string) => ModelRepo,
     /** optional: emits model.* events so observers (audit, metrics) can react */
     private readonly bus?: MoonBus,

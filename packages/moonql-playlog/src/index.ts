@@ -94,6 +94,7 @@ export const playlog = defineAddon({
   name: 'playlog',
   version: '1.0.0',
   depends: ['radio'],
+  env: ['EGRESS_ENABLED', 'PLAYLOG_RETENTION_DAYS'],
   models: {
     playlogs: defineModel({
       label: 'Play event',

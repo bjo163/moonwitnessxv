@@ -71,7 +71,8 @@ export interface MoonRegistry {
   views: Map<string, CompiledView>
   endpoints: CompiledEndpoint[]
   crons: { addon: string; def: CronDef }[]
-  resolveUserFactories: UserResolverFactory[]
+  /** factories paired with the addon they came from, so `ctx.env` can be scoped */
+  resolveUserFactories: { addon: string; factory: UserResolverFactory; env: readonly string[] }[]
   hookFor: (event: HookEvent, modelName: string) => AnyHookBag[HookEvent] | undefined
 }
 
@@ -202,9 +203,11 @@ export function installAddons(
   }
 
   // identity providers: every addon may contribute; boot chains them
-  const resolveUserFactories: UserResolverFactory[] = []
+  const resolveUserFactories: { addon: string; factory: UserResolverFactory; env: readonly string[] }[] = []
   for (const addon of sorted) {
-    for (const factory of addon.provides?.resolveUser ?? []) resolveUserFactories.push(factory)
+    for (const factory of addon.provides?.resolveUser ?? []) {
+      resolveUserFactories.push({ addon: addon.name, factory, env: addon.env })
+    }
   }
 
   // crons: collected here, armed by boot (registry stays pure/sync)

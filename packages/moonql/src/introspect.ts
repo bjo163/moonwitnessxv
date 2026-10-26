@@ -1,11 +1,10 @@
 import { createHash } from 'node:crypto'
-import type { MenuItem, MenuMeta, SchemaDocument } from '@moonwitness/core'
+import { canonicalJson, type MenuItem, type MenuMeta, type SchemaDocument } from '@moonwitness/core'
 import type { MoonRegistry, CompiledModel } from './registry.js'
+import type { Json } from './json.js'
 import type { AclSpec } from './model.js'
 import { resolveAcl } from './acl.js'
 import { MIN_DEMO_ROWS } from './boot.js'
-
-type Json = Record<string, unknown>
 
 /** which default-data tier carries this model (seed policy visibility for clients) */
 const dataTier = (m: CompiledModel): 'reference' | 'runtime' | 'demo' | 'none' =>
@@ -66,17 +65,10 @@ function menuOf(
  * Key-sorted JSON: the digest must follow content, not the order a Map happened to
  * be filled in. Without this, a refactor that only changes addon registration order
  * would look like a breaking contract change to every client.
+ *
+ * The implementation lives in `@moonwitness/core` (`canonicalJson`) because the SDK
+ * generator needs the same function, and two copies of "stable" drift.
  */
-const stableJson = (value: unknown): string => {
-  if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`
-  if (value && typeof value === 'object') {
-    const entries = Object.entries(value as Record<string, unknown>)
-      .filter(([, v]) => v !== undefined)
-      .sort(([a], [b]) => a.localeCompare(b))
-    return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${stableJson(v)}`).join(',')}}`
-  }
-  return JSON.stringify(value) ?? 'null'
-}
 
 export interface SchemaDocumentOptions {
   /** the hub's own advertised version; the document reports it next to its digest */
@@ -174,7 +166,7 @@ export function buildSchemaDocument(registry: MoonRegistry, options?: SchemaDocu
 
   return {
     // 16 hex chars is plenty to spot a drift and keeps the value loggable
-    schemaHash: createHash('sha256').update(stableJson(content)).digest('hex').slice(0, 16),
+    schemaHash: createHash('sha256').update(canonicalJson(content)).digest('hex').slice(0, 16),
     apiVersion: options?.apiVersion ?? '0.0.0',
     ...content,
   }

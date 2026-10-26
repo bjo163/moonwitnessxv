@@ -1,12 +1,11 @@
 import type { FieldMeta, JsonSchema, SchemaDocument } from '@moonwitness/core'
+import type { Json } from './json.js'
 
 /**
  * Registry metadata -> TypeScript SDK source. Pure string work, zero deps and
  * zero I/O so `pnpm gen:sdk` can run without an engine, a database or a socket.
  * Output is deterministic: registry iteration order, no timestamps.
  */
-
-type Json = Record<string, unknown>
 
 const IDENT_RE = /^[A-Za-z_$][A-Za-z0-9_$]*$/
 

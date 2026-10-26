@@ -1,3 +1,4 @@
+import { SSE_HEADERS } from '@moonwitness/core'
 import { serverClient } from '@/data/sdk'
 
 /**
@@ -52,11 +53,6 @@ export async function GET(request: Request): Promise<Response> {
   })
 
   return new Response(body, {
-    headers: {
-      'content-type': 'text/event-stream; charset=utf-8',
-      'cache-control': 'no-cache, no-transform',
-      connection: 'keep-alive',
-      'x-accel-buffering': 'no',
-    },
+    headers: SSE_HEADERS,
   })
 }

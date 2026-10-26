@@ -10,7 +10,8 @@ import { likePattern } from '../domain.js'
 import type { MoonQl } from '../client.js'
 import type { AggregateQuery, ListOptions, MoonEngine, Row } from './engine.js'
 
-const stripUndefined = (obj: Row): Row =>
+/** one copy of "drop the keys the driver should not see" */
+export const stripUndefined = (obj: Row): Row =>
   Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
 
 /**

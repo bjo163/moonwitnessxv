@@ -55,6 +55,7 @@ export const ops = defineAddon({
   name: 'ops',
   version: '1.0.0',
   depends: ['auth'],
+  env: ['OPS_AUDIT_RETENTION_DAYS', 'OPS_JOB_RETENTION_DAYS'],
   models: {
     ops_audit: defineModel({
       label: 'Audit entry',

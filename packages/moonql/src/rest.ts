@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync, FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { badRequest, forbidden, type SchemaDocument } from '@moonwitness/core'
+import { badRequest, forbidden, SSE_HEADERS, type SchemaDocument } from '@moonwitness/core'
 import './augment.js'
 import type { MoonQlInstance } from './boot.js'
 import type { AclSpec } from './model.js'
@@ -356,12 +356,7 @@ export const moonqlRest: FastifyPluginAsync<MoonqlRestOptions> = async (fastify,
           }
           reply.hijack() // envelope + serializer are bypassed entirely
           const raw = reply.raw
-          raw.writeHead(200, {
-            'content-type': 'text/event-stream; charset=utf-8',
-            'cache-control': 'no-cache, no-transform',
-            connection: 'keep-alive',
-            'x-accel-buffering': 'no',
-          })
+          raw.writeHead(200, SSE_HEADERS)
           raw.write(':connected\n\n')
 
           const ping = setInterval(() => {
