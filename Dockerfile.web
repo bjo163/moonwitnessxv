@@ -40,6 +40,7 @@ COPY packages/moonql-corpus/package.json packages/moonql-corpus/
 COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/moonql-ontology/package.json packages/moonql-ontology/
 COPY packages/moonql-actors/package.json packages/moonql-actors/
+COPY packages/moonql-graph/package.json packages/moonql-graph/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -80,6 +81,7 @@ COPY packages/moonql-corpus/package.json packages/moonql-corpus/
 COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/moonql-ontology/package.json packages/moonql-ontology/
 COPY packages/moonql-actors/package.json packages/moonql-actors/
+COPY packages/moonql-graph/package.json packages/moonql-graph/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \

@@ -207,6 +207,9 @@ importers:
       '@moonwitness/moonql-corpus':
         specifier: workspace:*
         version: link:../../packages/moonql-corpus
+      '@moonwitness/moonql-graph':
+        specifier: workspace:*
+        version: link:../../packages/moonql-graph
       '@moonwitness/moonql-monitor':
         specifier: workspace:*
         version: link:../../packages/moonql-monitor

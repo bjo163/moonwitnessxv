@@ -21,6 +21,7 @@
     { "path": "../../packages/moonql-corpus" },
     { "path": "../../packages/moonql-unilex" },
     { "path": "../../packages/moonql-ontology" },
+    { "path": "../../packages/moonql-graph" },
     { "path": "../../packages/moonql-actors" },
     { "path": "../../packages/whatsapp" },
     { "path": "../../packages/denpa" }

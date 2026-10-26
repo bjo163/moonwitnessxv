@@ -32,6 +32,7 @@ COPY packages/moonql-corpus/package.json packages/moonql-corpus/
 COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/moonql-ontology/package.json packages/moonql-ontology/
 COPY packages/moonql-actors/package.json packages/moonql-actors/
+COPY packages/moonql-graph/package.json packages/moonql-graph/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -57,6 +58,7 @@ COPY packages/moonql-corpus ./packages/moonql-corpus
 COPY packages/moonql-unilex ./packages/moonql-unilex
 COPY packages/moonql-ontology ./packages/moonql-ontology
 COPY packages/moonql-actors ./packages/moonql-actors
+COPY packages/moonql-graph ./packages/moonql-graph
 COPY packages/whatsapp ./packages/whatsapp
 COPY packages/denpa ./packages/denpa
 RUN pnpm build
@@ -83,6 +85,7 @@ COPY packages/moonql-corpus/package.json packages/moonql-corpus/
 COPY packages/moonql-unilex/package.json packages/moonql-unilex/
 COPY packages/moonql-ontology/package.json packages/moonql-ontology/
 COPY packages/moonql-actors/package.json packages/moonql-actors/
+COPY packages/moonql-graph/package.json packages/moonql-graph/
 COPY packages/whatsapp/package.json packages/whatsapp/
 COPY packages/denpa/package.json packages/denpa/
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
@@ -110,6 +113,7 @@ COPY --from=build /repo/packages/moonql-corpus/dist packages/moonql-corpus/dist
 COPY --from=build /repo/packages/moonql-unilex/dist packages/moonql-unilex/dist
 COPY --from=build /repo/packages/moonql-ontology/dist packages/moonql-ontology/dist
 COPY --from=build /repo/packages/moonql-actors/dist packages/moonql-actors/dist
+COPY --from=build /repo/packages/moonql-graph/dist packages/moonql-graph/dist
 COPY --from=build /repo/packages/whatsapp/dist packages/whatsapp/dist
 COPY --from=build /repo/packages/denpa/dist packages/denpa/dist
 COPY --from=build /repo/apps/radio/dist apps/radio/dist

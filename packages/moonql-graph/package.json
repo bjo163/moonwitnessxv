@@ -1,0 +1,20 @@
+{
+  "name": "@moonwitness/moonql-graph",
+  "version": "1.0.0",
+  "description": "Typed correlation candidates, immutable graph releases and a derived adjacency projection",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@moonwitness/core": "workspace:*",
+    "@moonwitness/moonql": "workspace:*",
+    "@moonwitness/moonql-ontology": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
+  }
+}
