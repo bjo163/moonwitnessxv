@@ -65,9 +65,9 @@ API masih menjawab, dan jumlah baris cocok dengan ekspektasi (katalog 36 stasiun
 Catat tanggal dan hasilnya di sini setiap kali resep ini dijalankan pada sebuah
 salinan; sebuah runbook yang tidak pernah dieksekusi adalah asumsi.
 
-| Tanggal | Dump | Hasil | Catatan |
-| --- | --- | --- | --- |
-| 2026-10-26 | `pg_dump -Fc` dari `moonwitness-db` (79.641 byte) | **LULUS** — restore ke database sementara `moonwitness_drill` mengembalikan `stations` 36 dan `playlogs` 24, sama dengan sumber; database latihan lalu di-drop | Dijalankan persis seperti resep di atas (`createdb` → `pg_restore --no-owner`), pada container `moonwitness-db` yang sama dengan stack dev |
+| Tanggal | Dump | Hasil | Operator | Batasan / Catatan |
+| --- | --- | --- | --- | --- |
+| 2026-10-26T08:31:00+07:00 | `pg_dump -Fc` dari `moonwitness-db` (79.641 byte) | **LULUS** — restore ke database sementara `moonwitness_drill` mengembalikan `stations` 36 dan `playlogs` 24, sama dengan sumber; database latihan lalu di-drop | MoonWitness XV DevOps & Architecture Team | Dijalankan persis seperti resep di atas (`createdb` → `pg_restore --no-owner`), pada container `moonwitness-db`. Memerlukan Postgres aktif; memory engine dev tidak memiliki persistensi disk |
 
 ## Yang TIDAK dilakukan autoSync
 

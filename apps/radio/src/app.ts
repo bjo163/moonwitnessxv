@@ -55,6 +55,7 @@ export async function buildApp(config: RadioConfig) {
     cronEnabled: config.orm.cronEnabled,
     seedPolicy: config.orm.seedPolicy,
     aclPolicy: config.orm.aclPolicy,
+    requirePg: config.env === 'production',
     log: app.log,
   })
   app.decorate('moonql', moonql)

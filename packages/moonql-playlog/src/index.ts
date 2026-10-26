@@ -62,7 +62,7 @@ const parseNowPlaying = (body: unknown): NowPlayingFact | null => {
  * same token, no plaintext identity — and the demo seeds keep their readable
  * names because seeds never pass through this handler.
  */
-const listenerToken = (value: string): Promise<string> => pseudonym('lp', value)
+const listenerToken = (value: string, salt = ''): Promise<string> => pseudonym('lp', value, salt)
 
 /** Longest an anonymous tab may keep the on-air feed open; it reconnects after. */
 const MAX_ON_AIR_SECONDS = 300
@@ -94,7 +94,7 @@ export const playlog = defineAddon({
   name: 'playlog',
   version: '1.0.0',
   depends: ['radio'],
-  env: ['EGRESS_ENABLED', 'PLAYLOG_RETENTION_DAYS'],
+  env: ['EGRESS_ENABLED', 'PLAYLOG_RETENTION_DAYS', 'PLAYLOG_PSEUDONYM_SALT'],
   models: {
     playlogs: defineModel({
       label: 'Play event',
@@ -293,7 +293,7 @@ export const playlog = defineAddon({
         listener: str({ maxLength: 60, null: true }),
         seconds: int({ null: true }),
       },
-      handler: async ({ body, orm, status }) => {
+      handler: async ({ body, orm, status, env }) => {
         // an unknown station would become a chart row that no catalog row can
         // explain (and an easy way to stuff the table with junk)
         const station = await orm.model('stations').get(body.stationRef).catch(() => null)
@@ -305,7 +305,7 @@ export const playlog = defineAddon({
         return orm.model('playlogs').create({
           stationRef: body.stationRef,
           event: body.event ?? 'start',
-          listener: body.listener ? await listenerToken(String(body.listener)) : null,
+          listener: body.listener ? await listenerToken(String(body.listener), env.PLAYLOG_PSEUDONYM_SALT ?? '') : null,
           seconds,
         })
       },

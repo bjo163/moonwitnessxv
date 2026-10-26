@@ -78,6 +78,9 @@ const ADDON_ENV_KEYS = [
   'OPS_AUDIT_RETENTION_DAYS',
   'OPS_JOB_RETENTION_DAYS',
   'PLAYLOG_RETENTION_DAYS',
+  // rotating this changes every listener token at once: a leaked column can be
+  // invalidated, at the cost of past listening history no longer matching
+  'PLAYLOG_PSEUDONYM_SALT',
   // opt-in door for the hub's outbound fetches (station probe, now-playing)
   'EGRESS_ENABLED',
   'WHATSAPP_AUTH_DIR',
@@ -129,6 +132,13 @@ export function loadConfig(): RadioConfig {
     throw new Error(`Invalid environment configuration:\n${issues}`)
   }
   const e = parsed.data
+
+  // M04-01: In production, PostgreSQL is strictly required to prevent accidental ephemeral storage.
+  if (e.NODE_ENV === 'production' && !e.DATABASE_URL) {
+    throw new Error(
+      'FATAL: DATABASE_URL is required in production environment (M04-01). Refusing to boot with ephemeral in-memory storage.',
+    )
+  }
   // `*` reflects every origin; a list is trimmed so "http://a, http://b" works
   const corsOrigin =
     e.CORS_ORIGIN === '*' ? true : e.CORS_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean)

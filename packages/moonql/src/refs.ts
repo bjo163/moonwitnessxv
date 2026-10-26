@@ -18,8 +18,32 @@ export interface RefTarget {
 export function parseRef(v: unknown): RefTarget | null {
   if (typeof v !== 'string' || !v.startsWith('@')) return null
   const m = REF_RE.exec(v)
-  if (!m) throw httpError(500, `moonql: malformed reference "${v}" — expected @model[.field]:value`)
+  if (!m) return null
   return { model: m[1]!, field: m[2], value: m[3]!.trim() }
+}
+
+/**
+ * Is this string an *attempt* at a reference, rather than ordinary data that
+ * happens to start with '@'?
+ *
+ * Catalog content is full of handles and profile URLs ('@witness.id',
+ * 'tiktok.com/@witness.id/video/1'), and reading every '@' as a reference made the
+ * hub refuse to boot over one string in someone's seed row. The intent is knowable
+ * where the models are: '@tags' is a broken reference exactly when a model named
+ * `tags` is installed — a handle that names no model is data.
+ */
+export function looksLikeRefAttempt(v: unknown, knownModels: { has(name: string): boolean }): boolean {
+  if (typeof v !== 'string' || !v.startsWith('@')) return false
+  const head = v.slice(1).split(':')[0] ?? ''
+  const m = /^([a-z_][a-z0-9_]*)(?:\.[a-z_][a-z0-9_]*)?$/.exec(head)
+  return m !== null && knownModels.has(m[1]!)
+}
+
+export function refHeadModel(v: unknown): string | null {
+  if (typeof v !== 'string' || !v.startsWith('@')) return null
+  const head = v.slice(1).split(':')[0] ?? ''
+  const m = /^([a-z_][a-z0-9_]*)(?:\.[a-z_][a-z0-9_]*)?$/.exec(head)
+  return m ? m[1]! : null
 }
 
 export function defaultRefField(unique: string[][], model: string): string {
@@ -68,7 +92,16 @@ export function createRefResolver(getModel: (name: string) => RefModelInfo | nul
      */
     async resolve(ref: string, strict: boolean, warn?: (msg: string) => void): Promise<string | null> {
       const target = parseRef(ref)
-      if (!target) return null
+      if (!target) {
+        // an '@name' that names a real model is a typo'd reference, not content:
+        // strict tier dies, the lenient tier warns and the row keeps its literal
+        const head = refHeadModel(ref)
+        if (head && getModel(head)) {
+          if (strict) throw httpError(500, `moonql: malformed reference "${ref}" — expected @model[.field]:value`)
+          warn?.(`moonql: malformed reference "${ref}" — kept as plain text`)
+        }
+        return null
+      }
       const model = getModel(target.model)
       if (!model) {
         if (strict) throw httpError(500, `moonql: reference "${ref}" targets unknown model "${target.model}"`)
@@ -102,7 +135,9 @@ export function createRefResolver(getModel: (name: string) => RefModelInfo | nul
       for (const row of rows) {
         const clone: Row = {}
         for (const [k, v] of Object.entries(row)) {
-          clone[k] = typeof v === 'string' && v.startsWith('@') ? await this.resolve(v, strict, warn) : v
+          // only an '@' string that parses as a reference is replaced; a social
+          // handle stays exactly what the author wrote
+          clone[k] = typeof v === 'string' && parseRef(v) ? await this.resolve(v, strict, warn) : v
         }
         out.push(clone)
       }

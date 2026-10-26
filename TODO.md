@@ -112,13 +112,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M04-01** — Verify production PG requirement vs memory fallback | P0 | D3 | M00-06 | No accidental production ephemeral storage |
-| - [ ] | **M04-02** — Define non-additive migration plan beyond autoSync | P0 | D3 | M04-01,M02-05 | Reviewed SQL rollback protects existing records |
-| - [ ] | **M04-03** — Execute test DB restore from real dump | P0 | D4 | M04-01 | Actual successful isolated restore evidence |
-| - [ ] | **M04-04** — Compare restored station/playlog rows and indexes | P0 | D2 | M04-03 | Row counts and stable IDs match baseline |
-| - [ ] | **M04-05** — Copy backups off host and test retention path | P0 | D3 | M04-03 | Single host loss does not destroy only backup |
-| - [ ] | **M04-06** — Test schema upgrade failure and rollback | P0 | D4 | M04-02,M04-03 | Prior radio data not corrupted |
-| - [ ] | **M04-07** — Update restore runbook with actual drill metadata | P1 | D2 | M04-04,M04-05,M04-06 | Named operator, time, results and constraints |
+| - [x] | **M04-01** — Verify production PG requirement vs memory fallback | P0 | D3 | M00-06 | No accidental production ephemeral storage ([docs/audit/M04-01-production-pg-requirement.md](file:///z:/project/moonradio/docs/audit/M04-01-production-pg-requirement.md)) |
+| - [x] | **M04-02** — Define non-additive migration plan beyond autoSync | P0 | D3 | M04-01,M02-05 | Reviewed SQL rollback protects existing records ([docs/decisions/M04-02-migration-rollback-plan.md](file:///z:/project/moonradio/docs/decisions/M04-02-migration-rollback-plan.md)) |
+| - [x] | **M04-03** — Execute test DB restore from real dump | P0 | D4 | M04-01 | Actual successful isolated restore evidence ([docs/audit/M04-03-db-restore-execution.md](file:///z:/project/moonradio/docs/audit/M04-03-db-restore-execution.md)) |
+| - [x] | **M04-04** — Compare restored station/playlog rows and indexes | P0 | D2 | M04-03 | Row counts and stable IDs match baseline ([docs/audit/M04-04-row-counts-and-indexes.md](file:///z:/project/moonradio/docs/audit/M04-04-row-counts-and-indexes.md)) |
+| - [x] | **M04-05** — Copy backups off host and test retention path | P0 | D3 | M04-03 | Single host loss does not destroy only backup ([docs/audit/M04-05-off-host-backup-retention.md](file:///z:/project/moonradio/docs/audit/M04-05-off-host-backup-retention.md)) |
+| - [x] | **M04-06** — Test schema upgrade failure and rollback | P0 | D4 | M04-02,M04-03 | Prior radio data not corrupted ([docs/audit/M04-06-schema-upgrade-rollback.md](file:///z:/project/moonradio/docs/audit/M04-06-schema-upgrade-rollback.md)) |
+| - [x] | **M04-07** — Update restore runbook with actual drill metadata | P1 | D2 | M04-04,M04-05,M04-06 | Named operator, time, results and constraints ([docs/runbook-restore.md](file:///z:/project/moonradio/docs/runbook-restore.md)) |
 
 
 ## M05 — API/SDK and module behavior contracts

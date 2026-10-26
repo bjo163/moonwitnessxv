@@ -42,6 +42,8 @@ export interface MoonQlOptions {
    * disables the check. Overridden by this option, else MOONQL_ACL_POLICY.
    */
   aclPolicy?: 'off' | 'warn' | 'require'
+  /** Refuse in-memory fallback; fail the boot if databaseUrl is omitted or empty (M04-01). */
+  requirePg?: boolean
   log: Log
 }
 
@@ -89,6 +91,11 @@ export async function bootMoonQl(options: MoonQlOptions): Promise<MoonQlInstance
     }
     log.info({ models: registry.models.size }, 'moonql: engine=pg, migrations applied, schema synced')
   } else {
+    if (options.requirePg) {
+      throw new Error(
+        'moonql: databaseUrl is strictly required (requirePg=true, M04-01). Refusing to boot with in-memory fallback.',
+      )
+    }
     for (const model of registry.models.values()) {
       engines.set(model.name, createMemoryEngine(model.fields, { softDelete: model.softDelete }))
     }
