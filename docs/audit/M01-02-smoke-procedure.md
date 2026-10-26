@@ -56,4 +56,4 @@ docker compose ps
 
 ## 4. Zero Secrets Leakage Rule
 - Dilarang menyalin `.env` produksi ke dalam branch publik Git.
-- Smoke test lokal wajib menggunakan fallback environment aman dari [`.env.example`](file:///z:/project/moonradio/.env.example).
+- Smoke test lokal wajib menggunakan fallback environment aman dari [`.env.example`](../../.env.example).

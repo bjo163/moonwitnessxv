@@ -32,7 +32,7 @@ Berdasarkan audit rute dan pengujian injeksi langsung pada Fastify Hub:
 
 ## 2. Pengujian Jalur Tidak Langsung (*Indirect Vector Tests*)
 
-Sesuai bukti uji di [`moonql-acl-surface.test.ts`](file:///z:/project/moonradio/apps/radio/test/moonql-acl-surface.test.ts):
+Sesuai bukti uji di [`moonql-acl-surface.test.ts`](../../apps/radio/test/moonql-acl-surface.test.ts):
 1. **Pencegahan Kebocoran via `?expand=`**:
    - Jika entitas publik me-relasikan entitas privat (misal model `things` merujuk `owners` yang bersifat admin-only), pemanggil anonim yang meminta `?expand=ownerRef` akan menerima `ownerRefRecord: null`. Entitas target tidak dibocorkan.
 2. **Pencegahan Kebocoran via `x-total-count` (Counting Oracle)**:

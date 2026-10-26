@@ -28,7 +28,7 @@
 ---
 
 ## 2. CI Automation Wiring
-- Alur kerja GitHub Actions telah terpasang di [`.github/workflows/ci.yml`](file:///z:/project/moonradio/.github/workflows/ci.yml) yang mengeksekusi `pnpm verify` otomatis pada setiap push dan pull request ke branch `main`.
+- Alur kerja GitHub Actions telah terpasang di [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) yang mengeksekusi `pnpm verify` otomatis pada setiap push dan pull request ke branch `main`.
 
 ---
 

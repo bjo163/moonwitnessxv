@@ -2,7 +2,7 @@
 
 - **Milestone**: M03 — ACL, Privacy, Consent and Abuse Prevention
 - **Status**: RATIFIED
-- **Reference**: [ADR-0002](file:///z:/project/moonradio/docs/decisions/ADR-0002-additive-moonql-domains.md), `packages/moonql/src/acl.ts`
+- **Reference**: [ADR-0002](../decisions/ADR-0002-additive-moonql-domains.md), `packages/moonql/src/acl.ts`
 
 ---
 

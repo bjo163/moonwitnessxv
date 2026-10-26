@@ -30,7 +30,7 @@ pnpm --filter @moonwitness/radio exec tsx src/tools/gen-sdk.ts --check
 ---
 
 ## 2. Test Verification
-- Pengujian otomatis pada [`apps/radio/test/gen-sdk-gate.test.ts`](file:///z:/project/moonradio/apps/radio/test/gen-sdk-gate.test.ts):
+- Pengujian otomatis pada [`apps/radio/test/gen-sdk-gate.test.ts`](../../apps/radio/test/gen-sdk-gate.test.ts):
   - Menguji penolakan breaking change tanpa persetujuan manusia.
   - Menguji pencatatan histori skema pada `appendHistory`.
   - Menguji drift gate deteksi modifikasi file tak sinkron.

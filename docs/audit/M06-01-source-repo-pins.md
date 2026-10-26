@@ -9,7 +9,7 @@
 
 ## 1. Pinned Source Repository Matrix
 
-Per [BLUEPRINT.md §7](file:///z:/project/moonradio/BLUEPRINT.md), external historical repos are pinned immutably by Git repository URL, commit SHA, and exact path:
+Per [BLUEPRINT.md §7](../../BLUEPRINT.md), external historical repos are pinned immutably by Git repository URL, commit SHA, and exact path:
 
 | Artifact Family | Original Source Repo | Pinned Commit SHA / Tag | Exact Relative Path | XV Target Domain | Classification |
 |---|---|---|---|---|---|

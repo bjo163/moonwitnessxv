@@ -40,4 +40,4 @@
    git checkout <LAST_STABLE_SHA>
    docker compose up -d --build
    ```
-2. Jika ada masalah migrasi database, jalankan prosedur pemulihan data dari snapshot backup terverifikasi ([`docs/runbook-restore.md`](file:///z:/project/moonradio/docs/runbook-restore.md)).
+2. Jika ada masalah migrasi database, jalankan prosedur pemulihan data dari snapshot backup terverifikasi ([`docs/runbook-restore.md`](../runbook-restore.md)).

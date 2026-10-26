@@ -26,7 +26,7 @@ Sesuai implementasi di `@moonwitness/moonql-auth`:
 
 ## 2. Jaminan Pencabutan Kredensial (*Revocation Guarantees*)
 
-Pengujian otomatis pada [`moonql-identity-cache.test.ts`](file:///z:/project/moonradio/apps/radio/test/moonql-identity-cache.test.ts) membuktikan:
+Pengujian otomatis pada [`moonql-identity-cache.test.ts`](../../apps/radio/test/moonql-identity-cache.test.ts) membuktikan:
 1. **Logout Langsung Mematikan Cache**:
    - Panggilan `POST /auth/logout` langsung menghapus token dari database dan cache lokal. Permintaan berikutnya dengan token yang sama pada milidetik yang sama langsung ditolak `401`.
 2. **Perubahan Hak Akses / Demosi Peran**:
