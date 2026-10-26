@@ -2,7 +2,7 @@
 
 - **Task:** M01-07, publish the CI evidence ledger and state the no-bypass rule.
 - **Audit date:** 2026-10-27.
-- **Review baseline:** branch `codex/m05-08-locale-audit-387f784`, local HEAD `6e4d3a37c265e6df0d0b1853d312b04c32d69830`; worktree also contains independent in-progress M03-05 and M22-06 changes. This report does not modify those paths.
+- **Review baseline:** branch `codex/m05-08-locale-audit-387f784`, local HEAD `dc82e7920d3dc61e9ae4a41b137f05d2516f9dab`; clean working tree before this report edit.
 - **Prerequisites checked in the current TODO working tree:** M01-04 and M01-06.
 - **Earlier revalidation:** on 2026-10-26, seven then-most-recent CI runs failed; run `40256992028` (SHA `3822657`) failed during install, before `pnpm verify`. That historical finding is not the current status. See [M01–M05 revalidation](M01-M05-revalidation-2026-10-26.md).
 
@@ -18,12 +18,13 @@ The checked-in [workflow](../../.github/workflows/ci.yml) runs on pushes to `dev
 
 ## 3. Current exact-SHA evidence ledger
 
-| Run | Event/context | SHA | Verification | Promotion | Evidence |
+| Run | Event/context | Head SHA | Verification | Promotion | Evidence |
 |---|---|---|---|---|---|
-| [40378453247](https://github.com/bjo163/moonwitnessxv/actions/runs/40378453247) | Pull request #8, feature branch targeting `dev` | `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa` | `Monorepo Verification & Safety Gates`: **success** | `Promote verified dev to main`: **skipped**, as expected for a PR event | Check diagnostics for head `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa`; 10 ESLint warnings, one Node 20 runner warning, one runner notice, no errors |
+| [40408605486](https://github.com/bjo163/moonwitnessxv/actions/runs/40408605486) | Latest pull request #8 run, feature branch targeting `dev` | `dc82e7920d3dc61e9ae4a41b137f05d2516f9dab` | **failure** in `pnpm verify` → `ui:check`; PR merge checkout was `b99bc23e63e7297c43c291ac91292b67fd84e9dd` | `Promote verified dev to main`: **skipped**, as expected for a PR event | CI log: UI consistency found `background: '#00e5ff'` at `apps/dock/src/app/global-error.tsx:50`; `pnpm verify` exited 1. No claim that this finding was introduced by M01-07. |
+| [40378453247](https://github.com/bjo163/moonwitnessxv/actions/runs/40378453247) | Earlier pull request #8 run | `941cb2447eb8fc4fe30e03a2566f6a062cc4a5aa` | `Monorepo Verification & Safety Gates`: **success** | `Promote verified dev to main`: **skipped**, as expected for a PR event | Check diagnostics: 10 ESLint warnings, one Node 20 runner warning, one runner notice, no errors |
 | [40376979518](https://github.com/bjo163/moonwitnessxv/actions/runs/40376979518) | Earlier pull request head | `1971fd6f94543e89c71158c7ae19cbdedc9067a7` | **failure** in the full-history Gitleaks step; `pnpm verify` skipped | Not run | Two historical fixture matches were reported at `packages/moonql-stations/src/index.ts`; values are intentionally not reproduced here |
 
-At `941cb24`, the two active seed `tokenHash` values were blanked, the allowlist was narrowed to exact historical fingerprints, and the full verification job passed. The successful PR check proves verification for that exact SHA only. It does not prove promotion or deployment. The workflow's subsequent preflight/fast-forward path can be proven only by a successful `dev` push run, not by this PR run.
+At `941cb24`, the two active seed `tokenHash` values were blanked, the allowlist was narrowed to exact historical fingerprints, and the full verification job passed. The newer exact-head run `40408605486` proves that the current PR head does **not** pass the full verification gate: the failure was in Dock UI consistency, after build and safety scans. This report records the failure for the integrator; it does not assign ownership or change that source. Neither PR run proves promotion or deployment. The workflow's subsequent preflight/fast-forward path can be proven only by a successful `dev` push run, not by a PR run.
 
 ## 4. Verdict and remaining limits
 

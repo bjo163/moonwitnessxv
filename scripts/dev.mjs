@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Dev runner for the five processes (radio hub, dock, headquarters, ai gateway, sentinel).
+ * Dev runner for the six processes (radio hub, dock, headquarters, ai gateway, sentinel, SKYLINK).
  *
  * Why not `pnpm --parallel`? It makes the child Next.js processes start with a
  * non-development NODE_ENV ("You are using a non-standard NODE_ENV value"),
@@ -93,6 +93,16 @@ const APPS = [
     url: null,
     desc: 'Autonomous radar scraper & poller (YouTube RSS, Playwright, OpenClaw, AI Agent)',
   },
+  {
+    tag: 'skylink',
+    pkg: '@moonwitness/skylink',
+    port: 3005,
+    env: { PORT: '3005' },
+    color: ANSI.boldCyan,
+    name: 'SKYLINK Communication Service',
+    url: 'http://localhost:3005/health',
+    desc: 'Health-only D18 service skeleton; providers and messaging remain planned',
+  },
 ]
 
 const only = (process.argv[2] ?? '').split(',').map((s) => s.trim()).filter(Boolean)
@@ -165,11 +175,12 @@ function printDirectoryTable() {
   process.stdout.write(`         \x1b[90m└─ Free-First Completions: http://localhost:3003/v1/chat/completions\x1b[0m\n`)
   process.stdout.write(`  \x1b[1;35m[6 / g]\x1b[0m  \x1b[1;35mMoondeck GUI Cockpit\x1b[0m      ➜  \x1b[1;36mhttp://localhost:3004\x1b[0m\n`)
   process.stdout.write(`         \x1b[90m└─ Standalone Windows Desktop GUI: pnpm gui\x1b[0m\n`)
+  process.stdout.write(`  \x1b[1;36m[7 / k]\x1b[0m  \x1b[1;36mSKYLINK Health Service\x1b[0m     ➜  \x1b[1;36mhttp://localhost:3005/health\x1b[0m\n`)
   process.stdout.write(`  \x1b[1;32m[sentinel]\x1b[0m \x1b[1;32mSentinel Worker Daemon\x1b[0m ➜  \x1b[90m[Active Poller · YouTube, Playwright, Agent]\x1b[0m\n\n`)
 
   process.stdout.write(`\x1b[1;37m● INTERACTIVE SHORTCUTS (Press key in terminal)\x1b[0m\n`)
   process.stdout.write(`  \x1b[1;37m[1/d]\x1b[0m Open Dock   \x1b[1;37m[2/h]\x1b[0m Open HQ   \x1b[1;37m[3/w]\x1b[0m World Monitor   \x1b[1;37m[4/s]\x1b[0m Swagger Docs\n`)
-  process.stdout.write(`  \x1b[1;37m[5/a]\x1b[0m AI Gateway  \x1b[1;37m[6/g]\x1b[0m Moondeck  \x1b[1;37m[u]\x1b[0m   Show URLs      \x1b[1;37m[e]\x1b[0m   Show Errors\n`)
+  process.stdout.write(`  \x1b[1;37m[5/a]\x1b[0m AI Gateway  \x1b[1;37m[6/g]\x1b[0m Moondeck  \x1b[1;37m[7/k]\x1b[0m SKYLINK  \x1b[1;37m[u]\x1b[0m Show URLs  \x1b[1;37m[e]\x1b[0m Show Errors\n`)
   process.stdout.write(`  \x1b[1;37m[c]\x1b[0m   Clear Screen \x1b[1;37m[q]\x1b[0m   Quit & Stop All Services (or Ctrl+C)\n`)
   process.stdout.write(`\x1b[90m${'─'.repeat(80)}\x1b[0m\n\n`)
 }
@@ -311,6 +322,8 @@ if (process.stdin.isTTY) {
         openUrl('http://localhost:3004')
       } else if (key === '0' || key === 'r' || key === 'R') {
         openUrl('http://localhost:3000')
+      } else if (key === '7' || key === 'k' || key === 'K') {
+        openUrl('http://localhost:3005/health')
       } else if (key === 'u' || key === 'U') {
         printDirectoryTable()
       } else if (key === 'c' || key === 'C') {
@@ -331,7 +344,7 @@ for (const app of selected) {
   const label = app.tag.padEnd(width)
   const child = spawn(isWindows ? 'pnpm.cmd' : 'pnpm', ['--filter', app.pkg, 'dev'], {
     stdio: ['ignore', 'pipe', 'pipe'],
-    env: process.env,
+    env: { ...process.env, ...app.env },
     windowsHide: true,
     shell: isWindows,
   })

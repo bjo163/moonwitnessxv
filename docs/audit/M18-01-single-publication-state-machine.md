@@ -30,7 +30,7 @@ Withdrawal, correction, takedown, and appeal behavior stays with M18-04; immutab
 - Positive gate evidence: `pnpm --filter @moonwitness/radio exec tsx --test test/mizan.test.ts test/corpus-reader.test.ts` — exit 0, 13 passed, 0 failed. M14-07 demonstrates the fully reviewed, exact-SHA, counterevidence-resolved, MIZAN-bound, paired-pilot case can be **eligible for later governance review** while publication stays false; the same suite also verifies a cleared source edition can be read through its allowed projection.
 - Negative gate evidence: the same command verifies an incomplete review remains ineligible with `COUNTEREVIDENCE_MISSING` and `PILOT_NEEDS_TWO_INDEPENDENT_ANNOTATIONS`; it also verifies rights-unknown editions and translations expose no text bytes. The M14 endpoint reports `publicationAvailable: false` in both cases.
 - Prerequisite evidence: `pnpm --filter @moonwitness/radio exec tsx --test test/mizan.test.ts test/corpus-ingestion.test.ts` — exit 0, 9 passed, 0 failed, including M07-07 idempotent ingestion and rights-status capture plus M14-07 release-criteria coverage. Public byte withholding is verified by the M08-05 cases in the primary command above.
-- `git diff --check -- docs/audit/M18-01-single-publication-state-machine.md` — pending final diff review.
+- `git diff --check -- docs/audit/M18-01-single-publication-state-machine.md` — exit 0 at integration; staged diff contained only this 41-line specification.
 
 ## Security, rights, and limitations
 
@@ -38,4 +38,4 @@ This artifact derives the common workflow and vetoes from accepted ADR-0003, rat
 
 **Rollback:** remove this specification file. It changes no runtime behavior or stored data.
 
-**Result SHA:** pending integrator integration/review. **Next eligible:** M18-02 and M18-03 should implement this gate's evidence storage and immutable release boundary; M19-19 must remain blocked until M18-01 is reviewed and closed and D08's approved projection exists.
+**Integrated result SHA:** `79c6c43` (`docs: specify single publication rights gate`). **Integrator review:** accepted as the scoped specification required by M18-01; it adds no accepted ADR or runtime claim. **Next eligible:** M18-02 and M18-03 should implement this gate's evidence storage and immutable release boundary; M19-19 may proceed with a fail-closed mitigation but must remain open until D08's approved projection exists.

@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { PORTS } from '@moonwitness/core'
+import { assertPublicHttpUrl, PORTS, SKYLINK_URL_DEFAULT } from '@moonwitness/core'
 import { ADDON_ENV_KEY_LIST, RADIO_ENV_KEYS } from '../src/config.js'
 
 /**
@@ -89,4 +89,10 @@ test('the dev scripts agree with the shared port contract', () => {
       assert.ok(text.includes(String(port)), `${file} no longer mentions port ${port}`)
     }
   }
+})
+
+test('SKYLINK has a shared client URL and is blocked as an egress destination', () => {
+  assert.equal(PORTS.skylink, 3005)
+  assert.equal(SKYLINK_URL_DEFAULT, `http://127.0.0.1:${PORTS.skylink}`)
+  assert.throws(() => assertPublicHttpUrl('http://skylink:3005/health'), /refused private target/)
 })
