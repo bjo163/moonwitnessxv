@@ -2,7 +2,7 @@
 
 - **Milestone**: M02 — XV Governance and Source of Truth
 - **Status**: RATIFIED
-- **Reference**: [BLUEPRINT.md §5 — Fundamental Ontology Constraints](file:///z:/project/moonradio/BLUEPRINT.md)
+- **Reference**: [BLUEPRINT.md §5 — Fundamental Ontology Constraints](../../BLUEPRINT.md)
 
 ---
 

@@ -2,7 +2,7 @@
 
 - **Milestone**: M02 — XV Governance and Source of Truth
 - **Status**: RATIFIED
-- **Reference**: [BLUEPRINT.md §7 — Historical Federation and Migration Model](file:///z:/project/moonradio/BLUEPRINT.md)
+- **Reference**: [BLUEPRINT.md §7 — Historical Federation and Migration Model](../../BLUEPRINT.md)
 
 ---
 

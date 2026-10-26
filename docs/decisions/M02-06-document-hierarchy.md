@@ -2,7 +2,7 @@
 
 - **Milestone**: M02 — XV Governance and Source of Truth
 - **Status**: RATIFIED
-- **Reference**: [BLUEPRINT.md §0, §1](file:///z:/project/moonradio/BLUEPRINT.md), [TODO.md](file:///z:/project/moonradio/TODO.md)
+- **Reference**: [BLUEPRINT.md §0, §1](../../BLUEPRINT.md), [TODO.md](../../TODO.md)
 
 ---
 
@@ -26,13 +26,13 @@ graph TD
 
 ## 2. Peran Masing-Masing Lapisan Dokumen
 
-1. [**`MASTER_VISION_NARRATIVE_XV.md`**](file:///z:/project/moonradio/docs/vision/MASTER_VISION_NARRATIVE_XV.md)
+1. [**`MASTER_VISION_NARRATIVE_XV.md`**](../vision/MASTER_VISION_NARRATIVE_XV.md)
    - **Peran**: Menjawab *mengapa* proyek ini ada, latar belakang filosofis, riset lintas repositori, dan narasi 99 bab.
    - **Batasan**: DILARANG memuat daftar todo teknis atau status checklist tugas.
-2. [**`BLUEPRINT.md`**](file:///z:/project/moonradio/BLUEPRINT.md)
+2. [**`BLUEPRINT.md`**](../../BLUEPRINT.md)
    - **Peran**: Kontrak arsitektur sistem, pembagian domain D00–D13, kontrak transisi ARSY Hub, dan batas keselamatan data.
    - **Batasan**: Menjelaskan *target arsitektur*, bukan bukti bahwa modul telah selesai dibuat.
-3. [**`TODO.md`**](file:///z:/project/moonradio/TODO.md)
+3. [**`TODO.md`**](../../TODO.md)
    - **Peran**: **SATU-SATUNYA SUMBER KEBENARAN STATUS KERJA**. Memuat 29 milestone (M00 s/d M28) dan 203 ID tugas unik dengan syarat bukti (*evidence gates*).
    - **Batasan**: Suatu tugas hanya boleh dicentang (`[x]`) jika telah lulus verifikasi pada SHA tertentu.
 4. **Kode & Log Pengujian**:

@@ -2,7 +2,7 @@
 
 - **Milestone**: M02 — XV Governance and Source of Truth
 - **Status**: RATIFIED
-- **Reference**: [BLUEPRINT.md §4 — One Owner per Domain](file:///z:/project/moonradio/BLUEPRINT.md)
+- **Reference**: [BLUEPRINT.md §4 — One Owner per Domain](../../BLUEPRINT.md)
 
 ---
 

@@ -2,7 +2,7 @@
 
 - **Milestone**: M03 — ACL, Privacy, Consent and Abuse Prevention
 - **Status**: RATIFIED
-- **Reference**: [BLUEPRINT.md §4, §8](file:///z:/project/moonradio/BLUEPRINT.md)
+- **Reference**: [BLUEPRINT.md §4, §8](../../BLUEPRINT.md)
 
 ---
 

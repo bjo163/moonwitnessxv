@@ -3,7 +3,7 @@
 - **Status**: ACCEPTED
 - **Date**: 2026-10-26
 - **Context**: MoonWitness XV Content Integrity, Copyright & Privacy Framework
-- **Reference**: [BLUEPRINT.md §3, §6](file:///z:/project/moonradio/BLUEPRINT.md)
+- **Reference**: [BLUEPRINT.md §3, §6](../../BLUEPRINT.md)
 
 ---
 

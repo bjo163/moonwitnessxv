@@ -9,7 +9,7 @@
 
 ## 1. Disambiguation: Editorial Chapters vs Original Manuscripts
 
-A critical boundary ratified in [BLUEPRINT.md §5](file:///z:/project/moonradio/BLUEPRINT.md):
+A critical boundary ratified in [BLUEPRINT.md §5](../../BLUEPRINT.md):
 - **The 99 Chapters of V10/V10.1** in MoonWitness XIV are **editorial story/essay chapters written by modern authors**.
 - They are **NOT** primary revelation texts, ancient manuscripts, or divine scriptures.
 - Treating modern editorial chapters as canonical sacred text is strictly prohibited.
