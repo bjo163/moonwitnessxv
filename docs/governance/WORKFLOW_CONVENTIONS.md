@@ -8,9 +8,9 @@
 - For independent governance work, use `[GOV] Concise outcome`; use `[PREP]` for a clearly bounded preparation request. Do not assign an invented milestone ID.
 - Issues are coordination records only. Check the current inventory before creating one; do not duplicate tasks or bulk-sync TODO to Issues.
 
-## Topic branch names
+## Branch Strategy: Dev and Main Only
 
-Proposed form: `<type>/<task-id>-<short-kebab-description>` for TODO-linked work, or `<type>/<short-kebab-description>` for independent work. Use lowercase type and description. Examples are illustrative; do not create branches from this document.
+**Owner Policy (Active):** Do not create topic or feature branches. Only `dev` and `main` are maintained. All development, testing, and milestone delivery occurs directly on `dev`. Commits on `dev` are fast-forwarded to `main` upon verification.
 
 | Type | Use |
 | --- | --- |
@@ -25,7 +25,7 @@ Proposed form: `<type>/<task-id>-<short-kebab-description>` for TODO-linked work
 | `perf` | Verified performance work |
 | `revert` | Explicitly authorized reversal |
 
-Examples: `feat/M03-03-expired-cookie-check`, `docs/M05-03-addon-boundaries`, `chore/phase-6-governance-consolidation`.
+
 
 ## Conventional Commits
 
