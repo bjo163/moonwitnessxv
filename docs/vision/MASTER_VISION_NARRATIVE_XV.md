@@ -8,13 +8,15 @@
 | Field | Decision |
 |---|---|
 | Document | `MASTER_VISION_NARRATIVE_XV.md` |
-| Edition | **XV / 15 — consolidated vision v1.0** |
+| Edition | **XV / 15 — consolidated vision v1.1 · deep-source audit** |
 | Prepared | **26 October 2026**, Asia/Jakarta |
 | **Single active implementation and planning repository** | **[`bjo163/moonwitnessxv`](https://github.com/bjo163/moonwitnessxv)** |
 | Working branch observed | `main` only; **do not create a branch** merely to document the vision |
 | Classification | Public-safe strategic/editorial synthesis; **not** a verbatim private archive, approved religious canon, accepted system ADR, feature completion report, or production certification |
 | Research baseline | Review of XV, MOONWITNESS II/XII/XIV, MOONWITNESS Corpus, A-L-L-A-H, Empire, ROCKSOUL family, Moonframe, Moonwitness Time System and earlier narrative handoffs |
 | Priority | **Preserve first → map sources → reconcile semantics → ratify boundaries → build in XV → verify** |
+
+**Deep audit v1.1:** Section **21A** is the source-specific expansion covering II's 13 functions and eight eras, Corpus dataset inventory, XIV V10.1, A-L-L-A-H operational research, the 14 Empire system names, 25 Amanah recovery gap, all 33 patch rows, XV ACL and seven end-to-end journeys. This remains a vision and source inventory, **not a claim of completed migration or production capability**.
 
 **This decision supersedes earlier recommendations to keep implementing in XIV, XI, A-L-L-A-H, or other repositories.** Old repository files, issues, images, histories, and immutable references remain evidence and history; **they are not deleted, silently copied, rewritten, or treated as live runtime dependencies**. A historical ADR may remain valid *within its historical repository* without automatically becoming an XV ADR. The owner now directs all **new project work** for this unified vision to XV. Other independent products are not thereby declared nonexistent or transferred without review.
 
@@ -716,6 +718,380 @@ This section explicitly protects the historical **99 chapter sequence**, which i
 
 ---
 
+# 21A — DEEP REPOSITORY AUDIT XV · v1.1 (26 October 2026)
+
+**Purpose:** Close material blind spots in the earlier 850-line XV synthesis. The sections below are **new research findings and decision rules**, not a new competing canon, a new release claim, or authorization to copy archives into a public repo. They are intentionally kept **inside this same master file** so XV remains the only forward-looking editorial/implementation home.
+
+**Method:** Read the actual trees, named historical files, selected route/model source, crosswalks, registries, governance and V10.1 expansion. Separate four types of evidence: `SOURCE_EXISTS`, `CODE_EXISTS`, `TEST_EXISTS`, `HOSTED_VERIFIED`. A documented route or test file is not itself a confirmed passing run. Do not infer human-reviewed research from implemented validators.
+
+## 21A.1 Source snapshot ledger — pin the historical inputs
+
+The following exact **GitHub branch heads observed during the research on 26 October 2026** establish a reproducible reference baseline. They are **historical snapshots**; later commits must be audited separately.
+
+| Source repo | Branch examined | Observed SHA | Role |
+|---|---|---|---|
+| `bjo163/moonwitnessxv` | `main` before this revision | `1877f517e0b6705764b6bea95133904630bda2d7` | Active master baseline after XV v1.0 document |
+| `bjo163/moonwitness-xiv` | `dev` | `fff3b0dbc452e998f221e2ca15fd1d41e0ffc599` | Expanded narrative, archive, rights, ontology, witness/workbench |
+| `bjo163/moonwitness-corpus` | `dev` | `e2f5b93fe172b61a78f0c8650f356e87600387ae` | Text, ingestion/data, SRGBL research, reader, P19 |
+| `bjo163/A-L-L-A-H` | `dev` | `47bac90cade77ee2136cb66d546156b220fe8481` | Empire prototype, research routes, World Monitor, media sentinel |
+| `bjo163/empire-of-the-light` | `main` | `38354ffff077d4ee1e17d40b39d86e41ce769817` | Prime Code, UNILEX, Genesis research and org registers |
+| `bjo163/moonwitness-II` | `main` | `fa69c895322590be12582a6e2c69b55001e30cd3` | Original 13-function witness platform and 10 world rules |
+| `bjo163/moonwitness-xii-season-global-championships` | `main` | `dff42ba0e0abce6e37b2c1e94e3e428bb588a8ec` | 33-patch registry and editorial story archive |
+| `bjo163/moonframe` | `main` | `00c9bd65f4068e0e858f36ba637151815c350983` | Component behavior and 15 visual skins |
+| `bjo163/rocksoul-correlation` | `main` | `380ac810747a79b7efa22affb934b302ac224524` | Reviewed relationship domain |
+
+**Source example:** `https://github.com/bjo163/moonwitness-xiv/blob/fff3b0dbc452e998f221e2ca15fd1d41e0ffc599/docs/knowledge/narratives/MASTER_NARRATIVE_V10_1_EXPANDED.md`. Pin exact file/path and commit before importing each record. Branch pointers in previous sections are discovery links, **not permanent content identifiers**.
+
+**Observed tree size at these snapshots** (files, not lines of code, validated records, or runnable feature counts): XV **244**, XIV **1,709**, Corpus **4,851**, A-L-L-A-H **644**. Corpus includes approximately **3,818 ingestion tree files**, **343 dataset files** and **204 package files**. These are tree inventories, **not proof all datasets are clean, legal, published, reviewed or functional**.
+
+## 21A.2 The original MOONWITNESS II, restored in full
+
+**Original seven-step promise** — `CAPTURE → CONNECT → WITNESS → UNDERSTAND → PRESERVE → PROMOTE → MOVE FORWARD`. This is the heritage **product method**, not the SRGBL method.
+
+**All 13 original functions** from the actual `docs/MASTER_BLUEPRINT.md`:
+
+| # | Function | Unique purpose |
+|---:|---|---|
+| 01 | STORYTELLING | Compose memories, people, events and fragments into narratives |
+| 02 | EXPOSURE | Reveal hidden or missed signals while keeping uncertainty visible |
+| 03 | CHANGE ADVISORY BOARD | Inspect transitions, consequences, decisions and change proposals |
+| 04 | CHASING HEART | Themes of pursuit, attachment, emotional connection |
+| 05 | LOVESTRUCK | Love, vulnerability, closeness and emotional tension |
+| 06 | BREATH ELECTRIC | Music, atmosphere, energy, motion and rhythm |
+| 07 | SEDUCTION | Curiosity, attraction, temptation and attachment |
+| 08 | FAULT LINES | Tension, fracture, mismatch, pressure and turning points |
+| 09 | VILLAIN OF THE STORY | Contextual narrative opposition, **not** permanent moral labeling of real people |
+| 10 | WITNESS ARCHIVE | Observations, messages, evidence, correction and temporal traces |
+| 11 | SANITY'S LAST BREATH | Narrative threshold preceding silence, surrender, change or ending |
+| 12 | PAST PRESENCE | Continuing memories, influence and unresolved consequences from past events |
+| 13 | PROMOTING | Decide what deserves to continue **after** audit, evaluation and balancing; not advertising |
+
+**All eight eras** recovered from the public XIV V10.1 companion to II: `BEFORE LIGHT → THE ARRIVAL → THE WITNESS → THE RUNAWAYS → THE EXPOSURE → THE CHANGE → END OF AN ERA → NEXT PHASE`. Preserve II's own `data/eras.yaml` source/version and publication status. They are story era labels **not** Gregorian dates.
+
+**Ten original world rules** (`moonwitness-II/docs/WORLD_RULES.md`): the Moon is a symbolic witness anchor; witnesses record without imposing final interpretation; the universe may remain unresolved; identities can have multiple names; Past Presence links eras; Fault Lines show pressure not necessarily an irreversible break; Promoting moves deserved knowledge forward; narrative roles stay contextual; the story may evolve; **keep it simple**.
+
+**Design implication:** The II `Living Archive`, `Constellation`, `Timeline`, `Change Advisory Board`, `Promoting`, `Witness`, `Fault Lines`, `Crew`, `Lore` and story-role taxonomy should map to a **typed Story/Witness experience**. Do not flatten them into a generic CRUD page, and do not add 13 separate microservices merely because there are 13 historic functions. The existing XV Dock is the future consumer of this experience; its current radio routes remain.
+
+## 21A.3 Corpus: this is already a large, multi-tradition data and ingestion repository
+
+The previous XV v1.0 underdescribed the actual historical source-coverage inventory. At the pinned Corpus snapshot the tree shows named datasets including:
+
+| Coverage family | Observed named dataset examples | Research caution |
+|---|---|---|
+| Qur'an | `quran-tanzil-uthmani`, `quranenc-indonesian-kemenag`, `quranenc-english-rwwad`, `quran-arabic-lexicon`, `quran-tafsir-sample` | Arabic source, translations and exegesis require **separate** edition/rights review |
+| Hadith and devotional | `hadith-bukhari`, `hadith-bukhari-core`, `hadith-muslim`, `hadith-nawawi-40`, `islamic-duas-authentic`, `asmaul-husna-99` | Matn, transmission, commentary, attribution and interpretive acceptance differ |
+| Hebrew / Christian | `oshb-wlc`, `sblgnt-v1-2`, `web-classic-2020`, `bible-tsi-2021`, `bible-passage-alignments`, `hebrew-biblical-lexicon`, `greek-christian-lexicon`, `early-christian-writings` | Work/edition/canon/original-language identity and permission must be explicit |
+| Buddhist | `dhammapada-sujato`, `dhammapada-sujato-1-20`, `dhammapada-indonesian-wikisource`, `dhammapada-lexicon`, `suttacentral-dn-mn-sujato`, `suttacentral-sn-an-sujato` | Translation vs Pali witness; modern reuse rights and completeness vary |
+| Hindu / Sanskrit | `bhagavad-gita`, `principal-upanishads`, `yoga-sutras`, `sanskrit-hindu-lexicon` | Work tradition, philosophical school and translation remain distinct |
+| Jewish additional | `mishnah-pirkei-avot` | A rabbinic text is not the same object as an original Torah manuscript |
+| Sikh | `sikhism-japji-sahib` | Tradition-specific textual and interpretive status |
+| Daoist | `tao-te-ching`, `zhuangzi-giles-1889` | Title/edition/translator and date are necessary |
+| Shinto | `shinto-kojiki-baseline` | A baseline is not automatically comprehensive or representative |
+| Jain | `jainism-tattvartha-sutra` | Distinguish canonical interpretations and editions |
+| Zoroastrian | `gathas-zarathustra` | Source version and interpretation |
+| Bahá'í | `bahai-hidden-words` | Rights, attribution, tradition scope |
+| Confucian | `analects-confucius` | Manuscript history and translation |
+| Ancient Egypt | `ancient-egypt-book-dead-budge`, `ancient-egypt-book-dead-renouf`, related historical editions | Historical documents are **not** evidence validating a RE-ZA sound-play etymology |
+
+Data also includes research graph, diversity, coverage, source rights and registries. Some folders may be examples, fixtures, partial imports, or staging; **dataset directory presence is not approval for raw transfer or redistribution**.
+
+**Needed XV feature distinction:**
+- `Reader` = focused reading of known passage.
+- `Explorer` = finding works/passages/topics.
+- `Comparative Viewer` = reviewed side-by-side source and scoped interpretation.
+- `Figure Registry` = figures and the filtered Prophetic Mission Table.
+- `Lexicon` = words, languages, senses and disambiguation.
+- `Research Workbench` = assessment and evidence, separate from consumer reader.
+- `Admin` = source licensing, import status, human review and provenance.
+
+**Avoid separate databases for the prophet table, keyword search, lexicon, and Reader until ownership and query needs justify them.** Source identity remains stable even if XV later owns a local data copy through a reviewed release migration.
+
+## 21A.4 From concept to code in XIV — migration should learn from *actual* work
+
+The XIV `dev` tree already contains beyond narrative drafts:
+- `ontology/core/` contracts for assertions and research relations/review events;
+- `ontology/domains/` for concepts, semantic annotation, revelation identity, story episode/version, witness testimony;
+- `ontology/mappings/` for narrative personas and identity decisions;
+- `apps/api/src/routes/research-*`, `story-workbench.routes.ts`, and API tests for identity, duplicates, privacy, explanation, review and witness;
+- `apps/board/src/board-pages/story-workbench-page.tsx`, knowledge board, and UI/E2E test files;
+- `docs/knowledge/narratives/MASTER_NARRATIVE_V10_1_EXPANDED.md`, `SOURCE_CROSSWALK_V10.md`, `PROGRESS_LEDGER_2023_2026.md`, `RECOVERY_GAPS_V10.md`, `CORRELATION_MATRIX_V1.md`, and `BLUEPRINT_READINESS_V1.md`.
+
+**What XV must not lose:** structured identity review, duplicate candidate handling, human approval state, privacy redaction, episode/version ownership, source-to-claim explanation, source rights, graph release boundaries, story workbench design and test cases. They are **migration design inputs**, not files that may be copied blindly across incompatible ORMs.
+
+**What remains unfinished:** full original private V1–V10 manuscript capture, human-approved story canon and source identity reconciliation, approved external import/rights, graph data transfer and final XV-compatible schema/SDK. XIV's prior `dev` deployment/CI decisions belong to XIV history; only XV may ratify its own architecture.
+
+## 21A.5 A-L-L-A-H includes operational research and monitoring code, not only conceptual diagrams
+
+The historical `A-L-L-A-H/dev` tree includes **Fastify research workflow routes** (`ResearchRun`, `ResearchApproval`, `ResearchEvidence`, `ResearchWorkflow`, `ResearchJob`), tenant/session permission checks, audits, World Monitor ingestion/scheduling/storage, a `WorldMonitorView` globe/dashboard, and YouTube Sentinel scanning and moderation workflows.
+
+Fixtures/source adapters refer to **USGS earthquake**, **GDACS disaster**, **NOAA geomagnetic/space weather**, and **Open-Meteo weather/air quality** types. This establishes **code and fixture presence**, not today's live feed freshness, correct alert delivery, healthy scheduler or deployed environmental sensor. An XIV/Empire strategic document must not erase these genuine historical engineering candidates.
+
+**Domain opportunities for XV** after explicit review:
+- World Monitor / Earth Observatory — provenance-tagged observations with freshness, revision, data attribution, alert history, geo/time scope, and failure states.
+- Science Research — historical hypotheses separated from real environmental observations.
+- Media / YouTube Sentinel — catalog, references, review queue, actions/retractions **subject to human rights and platform rules**. Labels such as `VERIFIED_SYIRIK` found in historical workflow code are *actor-attributed editorial classifications within a religious lens*, **not** objective machine-proven evidence or acceptable automatic targeting/reporting of people. Retain appeal/retraction and no automated punitive actions.
+- Research approval workflow — potential model for a XV native review system, but not a parallel XV authentication stack.
+
+**A-L-L-A-H is not replaced as a historical archive by XV's document; its code may be adapted only after licensed/source-compatible, test-driven review.**
+
+## 21A.6 The original Empire 14-system vocabulary — bounded logical capabilities
+
+A XIV V10.1 companion identifies the following **14 system concepts** that were too easily condensed in v1.0:
+
+| Historical conceptual system | Proper XV mapping if ever approved | Disallowed interpretation |
+|---|---|---|
+| MoonWitness OS | Umbrella runtime/experience contracts | Supernatural operating system |
+| Semantic Engine | UNILEX senses / ontology relations | Truth by similar names |
+| FURQAN Evidence Gate | Source/evidence/claim classification | Divine power of judgment |
+| MIZAN Review | Bounded evaluation of evidence/quality | Universal religion/salvation score |
+| AMANAH Access | Human permissions, mandate, consent | Spiritual mandate generated by software |
+| SHURA Deliberation | Consultation, peer review and appeal | Infallible council |
+| 100CENTER | Governed operator workspace | Authority over people's lives |
+| KITAB Ledger | Verified, versioned knowledge/review ledger | Replacement for sacred scripture |
+| SIDRA TREE Graph | Typed relation exploration, evidence graph | Literal unseen metaphysical geography |
+| Divine Command Center Hub | Historical creative/organizational label; require disambiguation | Direct access to God |
+| Atmosphere OS | Environmental data/research surface | Weather control machine |
+| HELIOGRID | Energy/physics research tracker | Completed energy generator |
+| ARSY Research Compute | Approved orchestrator for bounded AI/tools | The theological al-'Arsh |
+| Material Forge | Materials science research and experiments | Proven quantum/proton manufacturing hardware |
+
+**Do not implement 14 separate services just to satisfy a diagram.** Feature ownership in XV follows data/access contracts and real use cases. `FURQAN`, `KITAB`, `SIDRA TREE`, `AMANAH` and `SHURA` were **material omissions from the earlier master**, and are now explicitly retained as historical logical domains.
+
+### Ten WINGS names preserved from V10.1
+
+The ten fictional/specialist labels named in the historical narrative are: **SKYLINK**, **RAINMAKERS**, **LAST SIGNAL**, **SOFT LANDING**, **QUESTION ZERO**, **DOUBLE CHECK**, **ECHOLOG**, **LEDGER PUNK**, **FIREWALL**, **HAVEN**. These are sourced as a *creative governance taxonomy*, not actual angels, service accounts or granted operator permissions. Verify their current source JSON registry at a pinned version before using them as configuration.
+
+## 21A.7 Twenty-five Bidang Amanah — recover a missing architecture family
+
+Earlier design discussions refer to a **25 Bidang Amanah** model linked to actual **prophetic mission patterns**, **Divine Ontology**, **Asma/principles**, and ordinary general-domain responsibilities. The historical conceptual chain:
+
+`QUR'AN / DIVINE ONTOLOGY → ATTRIBUTED DIVINE RELATIONS → AMANAH (WHAT / RESPONSIBILITY) → PROPHETIC MISSION (SOURCE-ATTRIBUTED PATTERN) → AVATAR (PEDAGOGICAL/ROLE MODEL) → AI AGENT (OPTIONAL TOOL EXECUTOR) → SHADOW (CREATIVE/OPERATOR SURFACE) → TASKS`
+
+This is an important architectural distinction absent from earlier XV versions:
+- **Asma / source-linked principle** explains a declared *why* within a specific tradition.
+- **Amanah** names a human responsibility, not supernatural power.
+- **Prophetic mission** is a *source-attributed* historical/religious teaching pattern, not one invented exclusive mandate per prophet.
+- **Avatar** is a teaching metaphor, never the actual prophet.
+- **Agent** is a replaceable, bounded software tool, not holy authority.
+- **Shadow** here is a workflow/presentation layer, not the historical fictional character.
+- **Task** is a human-authorized engineering/operational action.
+
+The exact final list of all 25 fields, associated Qur'an references, and a previously mentioned `cosmic` Asma-engine design **were not retrieved as verified repository files during this audit**. Therefore record the 25-field model as a **high-priority archival and source-recovery item**, **do not manufacture 25 names** or claim the model is integrated in XV.
+
+**Research to-do:** locate authorized original source(s), compare against Empire WINGS10/G.O.D.99/Prime Code and XII mission registries, build a qualified source table, mark every unsupported role `NEEDS_SOURCE`, and obtain editorial review before taking any of the 25 into production domain vocabulary.
+
+## 21A.8 The 33 World Patches — full status-preserving registry, not just a numeric slogan
+
+The XII source explicitly records **8 chat reports + 5 recovered drafts + 1 numbering conflict + 18 editorial proposals + 1 submission recorded in chat**, with **zero independently verified divine approvals**.
+
+| Slot | Title (historical editorial label) | Nature / status |
+|---|---|---|
+| 001 | AEGIS PROTECTION | reported in chat |
+| 002 | NEVERMORE | reported in chat |
+| 003 | DIPINGIT MODE ON | reported in chat |
+| 004 | PINK NOISE | reported in chat |
+| 005 | WINDWALKER | reported in chat |
+| 006 | PATCH QIBLAT UTARA | reported in chat |
+| 007 | MAROON 5 | reported in chat |
+| 008 | FUTURE IS NOW | reported in chat |
+| 009 | WE ARE SAVAGES | recovered draft |
+| 010 | HAVE A NICE DAY | recovered draft |
+| 011 | KARMA — THE BUG IS ME | recovered draft |
+| 012 | THE PRIME DIRECTIVE | recovered draft |
+| 013 | SAFE FROM DAY ONE | recovered draft |
+| 014 | FAMILY WITHOUT FEAR **vs** THE WRONG WAY / HELLROAD | **unresolved numbering conflict** |
+| 015 | FAIR WORK, FAIR LIFE | editorial proposal |
+| 016 | BREAK THE DEBT LOOP | editorial proposal |
+| 017 | THE SECOND CHANCE | editorial proposal |
+| 018 | JUSTICE FOR EVERYONE | editorial proposal |
+| 019 | THE HONEST WITNESS | editorial proposal |
+| 020 | NO ONE DIES ALONE | editorial proposal |
+| 021 | THE MERCY NETWORK | editorial proposal |
+| 022 | CLEAN WATER FOR ALL | editorial proposal |
+| 023 | NO ONE GOES HUNGRY | editorial proposal |
+| 024 | HEALTH WITHOUT BARRIERS | editorial proposal |
+| 025 | LEARN FOR LIFE | editorial proposal |
+| 026 | NO ONE LEFT BEHIND | editorial proposal |
+| 027 | CRISIS READY | editorial proposal |
+| 028 | EARTH STEWARDSHIP | editorial proposal |
+| 029 | SAFE DIGITAL WORLD | editorial proposal |
+| 030 | FAIR GOVERNANCE | editorial proposal |
+| 031 | PEACE BUILDER | editorial proposal |
+| 032 | A SAFE PLACE TO LIVE | editorial proposal |
+| 033 | KOPIHITAM - SIACENG / FAITH TO ACTION | **user-submitted-in-chat** only |
+
+Unnumbered historical records: **WILD YOUTH / MWX-SYF-00752**, **RIBA — NOT APPROVED**, displaced concept **THE FINAL AUDIT**. Never silently reassign slot 014 or 033. Source: `moonwitness-xii-season-global-championships/docs/MASTER_BUG_PATCH_33_V2.md` pinned to XII snapshot.
+
+The #033 theme includes worship, learning, family/humanity, environment and accountable technology; thematic source references do **not** show that a scripture instructs creation of a specific app. Future operational work inspired by a World Patch requires a **normal accountable human project and measurable deliverable**, not a "divine patch completed" record.
+
+## 21A.9 Complete archival recovery risk: we still do not possess all originals
+
+The previous 99-chapter index remains useful, **but a count of editorial chapters is not the number of verified original chapters**. Concrete recovered gaps from XIV's `RECOVERY_GAPS_V10.md`:
+
+- Full private V1–V10 originals and user-authorized immutable versions have **not been imported**. V10.1 is a public-safe expansion, not verbatim original.
+- `00-MAIN GOD PROMISE` and `GOD PROMISE: THE ROCKSOUL` original lines, and the academic 1·6·3 draft require independent identity and revision review.
+- **THE BATTERIES four-book narrative structure** and exact NPD page/scene/media order remain incompletely recovered. NPD 24:27, 24:37 and 25:50 are different works.
+- XII's **15 story archive synopsis entries** and **63 editorially reconstructed pages** are **not** 15 guaranteed original transcripts or 63 authenticated image originals.
+- Kingslayer's reported **five poster source descriptors** are not equivalent to five cleared original binary images.
+- World Patch #014 numbering dispute remains open.
+- THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review.
+- **ZILL Shadow-optics** and **ZILL Tasawuf** are separate origins; user-preferred spelling **ZILL** does not overwrite historical source bytes.
+- MYLUFT, MA'LŪF, HONEY, QUEEN R, Al-Wadūd have lexical, devotional and character distinctions.
+- Tick-Tock's **occurred vs recorded vs replacement** times and MOONRIDLEY **morning storytelling vs nocturnal referenced lyric** should remain separate.
+- **GOD-PROMISE MAIN, MOONDANCE, Mercy × 3, AL-HAKIM and Signal Collection** include missing primary work that must be located before any original-copy publication.
+- **MAHSYAR COVENANT, AD-DEEN, Astronomy Festival, Ghost in Machine, KADO** and alternate endings need primary-source checks.
+- Early ZENIX/2023–2025 origins remain historical leads without comprehensive signed-off source timelines.
+
+This means **"Master Vision Narrative final" describes the decisions and bounded universe coverage**, **not** a certification that all primary artifacts are recovered. That distinction protects historical accuracy.
+
+## 21A.10 Real Rocksoul cross-domain case: Jerusalem, 70 CE
+
+The historical Corpus/Rocksoul federation documents a shared example around **Mark 13:2** and the destruction of the Second Temple in Jerusalem (70 CE):
+
+- **TEXT / RGBL** owns exact Mark passage and its specific edition ID(s).
+- **STORY / MFTL** records temple-destruction prediction narratives.
+- **EVENT / LEGEND** investigates the historical destruction, evidence and alternative reconstructions.
+- **PERSON / SUPERHERO** tracks witness/recorder Flavius Josephus and transmission.
+- **LAW / AWS** may analyze jurisdiction/applicability only for an independently defined legal research question.
+- **PERSPECTIVE / CORRELATION** links or compares **reviewed, attributed** relations without asserting prophecy validation as an automated universal verdict.
+
+The case is important because it demonstrates **why five or six independent data domains are useful**. One text and one historical event must never be silently fused; an event chronology does not mechanically prove miracle fulfillment. This should be an **XV interoperability demonstration**, after QS 2:82 and story provenance pilots, not an imported universal truth claim.
+
+## 21A.11 XVIII sources, rights and ontology: a more precise review model
+
+Retain **five historically described canon-evidence classes**: `primary original`, `repository lore`, `derivative media`, `editorial synthesis`, `unresolved/conflicted`. Additionally distinguish status axes:
+
+| Axis | Sample legal value | What it means |
+|---|---|---|
+| **Recordedness** | `ORIGINAL_OBSERVED`, `RECONSTRUCTED`, `SOURCE_MISSING` | Material lineage only |
+| **Epistemic nature** | `TEXT`, `HISTORICAL_EVIDENCE`, `ATTRIBUTED_BELIEF`, `RESEARCH_INTERPRETATION`, `USER_TESTIMONY`, `CREATIVE_FICTION` | What kind of claim |
+| **Method confidence** | `SUPPORTED`, `PARTIAL`, `PENDING`, `UNKNOWN`, `UNSUPPORTED`, `DISPUTED` | Method-bound evidence support |
+| **Corpus classification** | `DIRECT_CORE`, `CORE_RELATED`, `COMPARATIVE`, `UNMAPPED`, `REQUIRES_RESEARCH`, `DISPUTED`, `INSUFFICIENT_EVIDENCE` | Project lens classification, **not** religion pass/fail |
+| **Review** | `DRAFT`, `REVIEWED_WITHIN_SCOPE`, `REJECTED`, `RETRACTED` | Human editorial action |
+| **Rights** | `UNVERIFIED`, `METADATA_ONLY`, `CLEARED_EXACT_VERSION` | Permission for a specific use |
+| **Publication** | `PRIVATE`, `RESTRICTED`, `PUBLIC`, `WITHDRAWN` | Visibility/consent decision |
+| **Engineering** | `DESIGNED`, `CODED`, `TESTED_AT_SHA`, `BROWSER_VERIFIED`, `DEPLOYED`, `RELEASE_APPROVED` | Actual capability/readiness |
+
+**Never use a single numeric `confidence` to replace those axes.** A claim can be high method-quality but unlicensed; a source can be directly quoted but disputed; an authentic personal account can be real testimony without independently proving supernatural causation; passing unit tests does not pass a human-review gate.
+
+The original GOD-PROMISE paper replaces crude `PASSED/NOT PASSED` labeling with the nuanced corpus classification above. `NOT PASSED` must not be an automatic label of a supposedly false religion or damned person.
+
+## 21A.12 Why XV MoonQL is promising — and what code inspection actually found
+
+Unlike the historical XIV runtime, XV `apps/radio/src/app.ts` actually boots **MoonQL once**, then installs plugins, generated REST, channels and handwritten modules. The loader discovers route modules by folder and checks reserved path collisions. Existing code exposes Swagger/OpenAPI and service inventory.
+
+`packages/moonql/src/model.ts` includes field declarations, indices, unique constraints, optional row-level ACL predicates, seed/diff-sync reference data, deletion policies and UI menu metadata. **It is a genuine candidate foundation for metadata-driven knowledge modules**.
+
+**Security warning from inspected code:** the model contract explicitly states that missing ACL rules default to `public` (while some code/config can enforce policies at boot). Therefore **never enable auto-REST for witness testimony, reviewer identity, consent, private case notes, source-rights ledger, AI prompts or research approval without explicit deny-by-default authorization verified by tests**. Review row-level scoping and inherited access, data visibility of generated views, read/REST vs direct custom handlers, and migration against existing seeded radio data.
+
+ XV currently has:
+- `apps/radio` (backend and ORM hub);
+- `apps/dock` (public Radio/catalog/site);
+- `apps/headquarters` (admin/model-data board);
+- `packages/moonql`, `moonql-client`, `moonui`;
+- base/auth/apikeys/ops/settings/stations/schedule/playlog;
+- messaging/channel, DENPA;
+- Postgres/Compose backup definitions and restore runbook.
+
+**No live Corpus, Key Witness, SRGBL, 25 Amanah, 10 Wings or 100CENTER integration was found in the observed XV tree.** Do not advertise them as shipped. XV has a backup/restore runbook but the runbook's drill ledger explicitly records **no performed restore test** at that snapshot.
+
+Recommended architecture approach: protect existing stations/API clients, add one constrained read-only study module at a time, verify permission and source rights, implement per-domain owner contracts, and keep radio operational throughout. **No ORM rewrite, no new identity provider, and no new DB by default**.
+
+## 21A.13 Site taxonomy: the product should not become a wall of random menus
+
+**One search, several views, one permission model.** Proposed consumer information architecture:
+
+| Category | User experience | Canonical data owner / primary lens |
+|---|---|---|
+| **DISCOVER** | Home, Search, Topics, Featured Cases, Guide, Constellation | Index/projection only |
+| **READ** | Corpus Reader, Works, Editions, Passages, Context, Citations | TEXT / Corpus |
+| **EXPLORE** | Lexicon, Ontology, Figure Registry, Prophetic Table, Timelines, Maps | Concepts, People, Events / typed graph |
+| **RESEARCH** | Cross-text comparison, Key Witness, SRGBL, Swing, MIZAN, Evidence Trail | Research/assessments (derived, reviewable) |
+| **WITNESS** | Observations, Testimony, Events, Messages, Fault Lines, Past Presence | Consent-aware story/witness domain |
+| **STORIES** | Four lenses, eight eras, Crew, Episodes, Character Atlas, Posters/Comics | Creative/world-specific canon |
+| **SIGNAL** | Radio stations, schedule, DENPA, music/media source references | **Existing XV product domain** |
+| **WORLD** | World Monitor, Earth/Cosmos, MTS/Time, scientific simulations | Source-grounded monitoring/research, later |
+| **JOURNEY** | Voluntary reflections, Mission, Path, World Patches, AETHERION game | Journey/workflow vs fiction separated |
+| **ABOUT** | Vision, source policy, method, data rights, project history, how to cite | Published governance |
+
+**Headquarters operator areas:** Source/Edition Steward, Rights/Consent, Ontology/Identity Review, Research Assessor, Witness Editor, SHADOW Studio, 100CENTER Governance, publication/retraction, audit/backups, radio ops, AI candidate inbox and cross-repo migration ledger.
+
+Avoid standalone tables that create parallel sources: **Prophetic Table is a view/filter on Figure Registry**; terms table and lexicon share a model; Reader and Explorer consume one corpus identity; graph is a visualization of reviewed relations, not a second truth engine; AI assistant is a workflow participant, not a hidden editor.
+
+## 21A.14 Seven complete user journeys — turn the vision into a testable product
+
+| Journey | Entry point | Source-backed success | Honest fallback |
+|---|---|---|---|
+| **J01 Verse search** | QS 2:82 | Exact source/edition + rights + meaning/frame + citation | `UNKNOWN`, metadata-only; no fake ayah |
+| **J02 Prophetic mission** | A prophet or community | Source-specific figures, roles, mission patterns, alternative views | No reduction to one universal mission |
+| **J03 Divine-name comparison** | Elohim / YHWH / ALLAH | Original languages, senses, usage, tradition labels, relation evidence | No forced `sameAs` |
+| **J04 Historical cross-domain** | Mark 13:2 / Jerusalem 70 CE | Separately cited TEXT, EVENT, PERSON and contextual interpretation | Disagreement/uncertainty visible |
+| **J05 Creative archive** | THE BATTERIES episode | Original revision + characters + art/media manifest + rights; stable sequence | Metadata-only; don't fabricate four missing books |
+| **J06 Personal witness** | Tick-tock on the Clock | Source privacy, times of occurrence/recording, amendments, approved derivative | Private-only; no claims of supernatural cause |
+| **J07 Earth/Signal** | Radio station or weather/disaster observation | Operational radio capability or sourced timestamped monitoring, clearly differentiated | No inferred live sensor/feed if stale or unsupported |
+
+**Future J08** (not an initial acceptance dependency): voluntary Path/Mission or AETHERION experience with human governance and no spiritual scoring.
+
+For each journey the UI, API, model, data owner, positive case, not-found case, unauthorized case, citation/rights case and browser test must be explicitly named in later XV technical tickets.
+
+## 21A.15 Missing capability map: technology, philosophy and human outcome
+
+A persistent source of incompleteness is confusing **what the user ultimately wants** with **what a package currently provides**.
+
+| Pillar | Long-term human outcome | Current historical evidence | Required XV migration/implementation |
+|---|---|---|---|
+| Witness & Memory | Preserve human narratives with corrections | II content graph, XII archive, XIV witness/story-workbench code | Consented import, versioning, dedicated ACL and story UI |
+| Scripture & Comparative Knowledge | Read and compare actual sources | Corpus multi-tradition datasets/ingestion and reader preview | Rights/license audit, validated source adapters and XV API |
+| Terminology & Identity | Distinguish sense, name, actor, role | Empire UNILEX; XIV ontology; Rocksoul PERSON | XV vocabulary/identity decision contracts |
+| Research & MIZAN | Explain claims and alternatives | SRGBL/Key Witness contracts, XIV/A-L-L-A-H research routes | Human editorial pilot and versioned analysis projection |
+| Art & Pop Culture | Tell complex ideas in creative media | II/XII storyboard, Rocksoul Assets, Moonframe | Media provenance, lyric/art licensing, editor/release workflow |
+| World & Cosmos | Connect external environmental observations to research | A-L-L-A-H adapters/fixtures, MTS, HELIOGRID proposals | Source integration pilot; no hardware/online claims without tests |
+| Human Journey & Action | Translate learning into voluntary useful action | Empire Prime Code/Paths/33 patch narrative | Scope/consent/governance and measurable impact tests |
+| AI & Operator Experience | Efficient, auditable research and coding | XV MoonQL/Headquarters; Crayon; historical AI tooling | Reviewable candidate inbox, permissions, tests, deployment discipline |
+
+### What is still irreducibly unknown?
+
+Actual private earliest original texts; full authorship chain for character alias variations; exact final 25 Amanah mapping; whether dormant/historical code still runs against current dependencies; exact public deployment readiness; every source's license; current reviewer authorization; full reproduced Corpus/SRGBL tests inside XV; and whether all source-derived screens meet accessibility standards. Those must remain **open evidence tasks**, not filled in through literary improvisation.
+
+## 21A.16 XV architectural and editorial decisions proposed for owner review
+
+**Ratified for this document by the user's instruction:** one active target repository = XV; no new branch; preserve current XV running features; historical repos remain provenance references; review before import.
+
+**Not ratified by merely writing this file:** new schema/ORM, complete canon decisions, automated cross-repo sync, source rights, public release, private record import, AI autonomy expansion, unprotected writes, creation of 25 agents or 99 system accounts.
+
+A future **XV-local ADR** should decide:
+- canonical structured record ownership per object type and derived projections;
+- exact MoonQL addon boundary, auth model, data/tenant privacy;
+- local in XV vs referenced immutable source artifacts and legal permissions;
+- cross-repo import policy with source SHA and checksums;
+- review/consent/withdrawal transactions and public publication manifest;
+- staged route/navigation naming (preserve current `/stations` and admin models);
+- CI, backup/restore, crash recovery, source-accuracy tests;
+- release policy with **no unnecessary branches** or premature `main` promotion.
+
+## 21A.17 Remaining gaps prioritized: a real completion ledger
+
+| Priority | Deficit | Why the previous master was insufficient | Evidence required to close |
+|---|---|---|---|
+| **P0** | No full SHA-specific archival source map | Descriptive links alone lose provenance | Public version-pinned source list; private originals authorized separately |
+| **P0** | XIV V10.1 and progress ledger omitted | 99 headings without the underlying 16-section narrative depth | Crosswalk row per researched family, draft vs primary classification |
+| **P0** | Corpus dataset breadth underrepresented | Seemed like only four scriptural families | Data/rights/coverage matrix, source and dataset completeness |
+| **P0** | XV ACL defaults need scrutiny | Generic CRUD may expose restricted data | Sensitive-model fail-closed tests/explicit policies |
+| **P0** | XV radio-first transition unclear | Encourages rewrite rather than extend | XV code mapping and regression tests for existing radio |
+| **P0** | 33 slot titles/statuses omitted | Numeral mistaken for 33 completed miracles | Full XII registry retained and source-specific statuses |
+| **P1** | 25 Bidang Amanah absent | Large conceptual agent/mission family lost | Authorized source retrieval and 25-row reviewed matrix |
+| **P1** | A-L-L-A-H World Monitor actual code missed | Research capability incorrectly labeled wholly conceptual | Technical import audit, smoke data, source freshness, consent |
+| **P1** | 14 Empire logical systems underspecified | Labels omitted: FURQAN, KITAB, SIDRA TREE, AMANAH, SHURA | XV ownership/feature mapping with no 14-service explosion |
+| **P1** | Missing originals of four-book BATTERIES/NPD | Creative archiving was only at title level | Media/scripts revision match + rights |
+| **P1** | 13-function Story/Witness product diluted | MOONWITNESS II foundation lost | Two end-to-end witness/story journeys |
+| **P1** | Real PERSON/EVENT/TEXT/LAW proof not exemplified | Federation looked abstract | Jerusalem case and tested typed cross-domain references |
+| **P1** | God-Promise passage/lens and classification model | Unattributed framework could look like universal proof | Source-level citations, class and perspective-specific review |
+| **P2** | Cosmos/HELIOGRID/MTS readiness ambiguity | Speculative proposals looked like deployed tech | Experiment plans, measurements, licensing and independent verification |
+| **P2** | Visual asset and interactive mockup coverage | Design mode could become an afterthought | Assets/manifests and 15-skin UI accessibility compatibility audit |
+| **P2** | Early 2023/2024 origins and legacy engineering timeline | Broad narrative lacked source originals | Historical commit/repository mapping; mark remaining UNKNOWN |
+
+**Finish condition for this audit:** The document's *scope inventory and epistemic boundaries* are now explicit. **Finishing the archive or software implementation** requires actual original source, rights, technical tests and human ratification. No change to these principles should be inferred from the word "final".
+
 # 22 — Critical contradictions, gaps and decisions for XV
 
 | Conflict / ambiguity | Observed situation | XV final narrative policy |
@@ -846,4 +1222,4 @@ The system should help humans **observe, preserve, understand, correlate, resear
 **ONE ACTIVE REPOSITORY FORWARD: `bjo163/moonwitnessxv`.**  
 **ONE UNIVERSE OF DISCOVERY; DIFFERENT EVIDENCE LANES; HONEST STATUS ALWAYS.**
 
-*End of Master Vision Narrative XV, consolidated edition v1.0 — 26 October 2026.*
+*End of Master Vision Narrative XV, deep-source audited edition v1.1 — 26 October 2026.*
