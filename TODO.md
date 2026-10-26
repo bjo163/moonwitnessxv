@@ -19,7 +19,7 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 | Group | Milestones | Purpose |
 |---|---|---|
-| **G0 — FOUNDATION** | M00–M05 | Audit, CI, governance, ACL, disaster recovery, API contract |
+| **G0 — FOUNDATION** | M00–M05 plus **M28 ARSY rename** | Audit, CI, governance, ACL, disaster recovery, API contract |
 | **G1 — SOURCE** | M06–M11 | Historic source crosswalk, corpus, reader, lexicon, ontology, figures |
 | **G2 — RESEARCH** | M12–M15 | Typed relations, SRGBL/Key Witness, MIZAN, comparative case |
 | **G3 — WITNESS & CREATIVE** | M16–M19 | Personal witness, creative canon, publishing, design |
@@ -28,6 +28,8 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 | **G6 — RELEASE** | M27 | Real full-stack tests, privacy, rights and approved launch |
 
 **Scope gate:** The first Reader release does not require Story/SHADOW or AI. Publishing a Story does additionally require M17 source/consent approval; using AI does additionally require M21 security and candidate approval. Do not conflate optional feature gating with first-release gating.
+
+**ARSY migration (ADR-0001):** **M28 is an intentionally appended G0 milestone** (not a late/post-release feature): task IDs M00–M27 are preserved, and M28 must complete **before new Corpus modules and M27 release**. The existing `apps/radio` backend is the technical predecessor of **ARSY**; new target `apps/arsy` and `@moonwitness/arsy` are NOT YET RENAMED. Radio stations and playback remain within ARSY as SIGNAL/RADIO. Source of truth: [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md).
 
 **P0 crosscut:** M22 protects Radio from the first engineering change even though grouped in G4. `M03` precedes any private source ingestion, `M04` before production, `M06` before historical data transfer, `M18` before public release. First useful scope is Radio unchanged + QS 2:82 licensed/metadata-only reader + one typed source/term + explicitly reviewed evidence + secure admin and actual restore. G5 must not block that release.
 
@@ -155,7 +157,7 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 ## M07 — Corpus source rights and ingestion pilot
 
-**Group:** G1 · **Priority:** P0 · **Prerequisites:** M03,M04,M06 · **Scope:** Proposed text addon, rights registry, source API.
+**Group:** G1 · **Priority:** P0 · **Prerequisites:** M03,M04,M06,M28 · **Scope:** Proposed text addon, rights registry, source API.
 
 **Exit gate:** QS 2:82 exact source/edition metadata without illegal raw bytes. This is a planning gate, not a completion claim.
 
@@ -495,13 +497,13 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 ## M27 — Full-stack acceptance, release evidence and human go/no-go
 
-**Group:** G6 · **Priority:** P0 · **Prerequisites:** M01,M03,M04,M08,M14,M18,M19,M20,M22 · **Scope:** Exact release SHA, selected-scoped features, real tests and restore.
+**Group:** G6 · **Priority:** P0 · **Prerequisites:** M01,M03,M04,M08,M14,M18,M19,M20,M22,M28 · **Scope:** Exact release SHA, selected-scoped features, real tests and restore.
 
 **Exit gate:** No publication until security/rights/data/recovery passes. Only real evidence closes this gate.
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M27-01** — Freeze intended release feature set and exact commit manifest | P0 | D2 | M01-07,M20-07 | Experimental optional features excluded unless separately accepted |
+| - [ ] | **M27-01** — Freeze intended release feature set and exact commit manifest | P0 | D2 | M01-07,M20-07,M28-07 | Experimental optional features excluded unless separately accepted |
 | - [ ] | **M27-02** — Execute build/lint/typecheck/tests/SDK/PG/docker matrix | P0 | D4 | M27-01 | Actual logs and pass/fail at source SHA |
 | - [ ] | **M27-03** — Execute Radio + Reader + HQ security/browser E2E | P0 | D4 | M27-02,M19-07,M22-07 | User journeys J01/J03/J07 pass, denied role tests visible |
 | - [ ] | **M27-04** — Restore isolated backup and prove row/manifest integrity | P0 | D3 | M04-07,M27-01 | Recovery run recorded and verified |
@@ -512,18 +514,37 @@ All checkboxes begin **unchecked**, even where related infrastructure already ex
 
 ---
 
-## Consistency controls for the 28-milestone register
 
-**Priority order:** always protect Radio, permissions, sources, persistence, review and production restoration before adding unrelated surfaces. Although M22 appears under G4, run its P0 suite from the beginning. Stated milestone dependencies are conceptual gates: a task must also respect source rights and privacy even if its individual row does not restate them.
+## M28 — ARSY Hub rename and compatibility migration
 
-**Overlapping implementation is prohibited:** one canonical TEXT owner for Reader and Explorer; one Figure Registry (Prophetic Table is a view); one Lexicon source for Terms; one Ontology for reviewed edges (Constellation is a derived graph); one Story model for SHADOW scenes and the public Story Universe; one user/IAM system for HQ/100CENTER; Radio continues using existing stations and schedule. No new backend merely for an Empire name.
+**Group:** G0 (Foundation) · **Priority:** P0 · **Prerequisites:** M00,M05,M22-01 · **Scope:** Existing `apps/radio`, workspace package, root scripts, pnpm lock, Docker Compose and Dockerfiles, current and future API environment names, test coverage, README and developer runbooks.
+
+**Exit gate:** **`ARSY` becomes the single physical Fastify/MoonQL/API hub** at `apps/arsy` and `@moonwitness/arsy`; there is no second `apps/radio` runtime, while existing **Radio/SIGNAL** features, port `3000`, API routes and data remain compatible. Naming acceptance is ratified in [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md); actual code migration and tests remain unchecked.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M28-01** — Inventory all hub-name references and freeze old API/Radio fixtures | P0 | D2 | M00-02,M22-01 | Capture references in root scripts, lock importer, Dockerfiles, Compose DNS, frontend BFFs, env aliases, tests, generated SDK, metrics and runbooks with source SHA |
+| - [ ] | **M28-02** — Ratify ARSY technical compatibility map using accepted ADR-0001 | P0 | D2 | M28-01,M02-03 | Specify names, safe deprecated env aliases, public routes, port `3000`, DB and no-duplicate-Hub rule; no unreviewed breaking change |
+| - [ ] | **M28-03** — Move, not copy, backend workspace `apps/radio` to `apps/arsy` | P0 | D4 | M28-02 | Rename `@moonwitness/radio` to `@moonwitness/arsy`; preserve module/ORM logic and single process; no duplicated models or migrations |
+| - [ ] | **M28-04** — Migrate package filters, pnpm lock, Dockerfiles, Compose and runners | P0 | D4 | M28-03 | Regenerate lock with pnpm; update all paths/build scripts/ports; retain tested `radio` internal DNS compatibility or transition mapping for Dock/HQ |
+| - [ ] | **M28-05** — Reconcile ARSY config/type/service branding with legacy Radio env compatibility | P0 | D3 | M28-04 | Prefer `ARSY_API_URL`, `ARSY_PORT`, etc only after full consumer update; accept documented `RADIO_*` aliases deterministically and reject conflicting values; leave actual Radio domain names intact |
+| - [ ] | **M28-06** — Execute full end-to-end hub rename regression and rollback drill | P0 | D4 | M28-04,M28-05,M22-07 | At exact SHA pass frozen pnpm installation, verify/typecheck/SDK, real Postgres, API/ACL, Docker Hub + 2 web images, Dock/HQ, Radio playback, channels/webhooks and rollback |
+| - [ ] | **M28-07** — Complete ARSY migration changelog, service map and operator handoff | P0 | D2 | M28-06 | No leftover active import path `apps/radio` in current code (historical docs excepted), no parallel Hub, working Radio stations and named reviewed release evidence |
+
+**Operator instruction:** do not implement ARSY as a second Fastify service or create a new repository; migrate the existing one with compatible aliases. The older term ARSY Research Compute is retained as a **future optional capability in this same Hub**, not a separate running agent and not a claim of theological authority. **M28 is executed after foundation/compatibility baselines and before first new Corpus migration or M27 release, regardless of its appended number.**
+
+## Consistency controls for the 29-milestone register
+
+**Priority order:** rename the **Hub application** to ARSY only after M28 compatibility gates; always protect the independent **Radio/SIGNAL feature**, permissions, sources, persistence, review and production restoration before adding unrelated surfaces. Although M22 appears under G4, run its P0 suite from the beginning. Stated milestone dependencies are conceptual gates: a task must also respect source rights and privacy even if its individual row does not restate them.
+
+**Overlapping implementation is prohibited:** **ARSY = single Fastify/MoonQL Hub (currently code-named radio), not a second service**; one canonical TEXT owner for Reader and Explorer; one Figure Registry (Prophetic Table is a view); one Lexicon source for Terms; one Ontology for reviewed edges (Constellation is a derived graph); one Story model for SHADOW scenes and the public Story Universe; one user/IAM system for HQ/100CENTER; Radio continues using existing stations and schedule. No new backend merely for an Empire name.
 
 **Narrative boundary:** fiction characters are not theological referents; the user's `ZILL` interpretation remains separate from Shadow-optics and historic `ZIIL`; 10 WINGS is not 10 AETHERION realms; GOD99 is not Asmaul Husna 99 or 99 Human States; 33 patch slots are reported/drafts/proposals/conflicts/in-chat status, not divine approvals. The full 99 chapter V10 is an index of editorial coverage, **not authenticated originals**.
 
-**The next useful release** prioritizes exact source/citation + one reviewed term/figure + human research review, preserving Radio and rights/restore. World Monitor, Cosmos, HELIOGRID, 25 Amanah, AETHERION and optional AI do not block that first slice and cannot be marketed as live implementations.
+**The next useful release** includes the tested ARSY Hub rename and prioritizes exact source/citation + one reviewed term/figure + human research review, preserving Radio and rights/restore. World Monitor, Cosmos, HELIOGRID, 25 Amanah, AETHERION and optional AI do not block that first slice and cannot be marketed as live implementations.
 
 **Progress evidence to capture when work begins:** `task-id`, `source-SHA`, `files`, `tests and logs`, `source/rights` where applicable, `reviewer/decision`, `blocked/risks`, `new-SHA`, `date/timezone`. A future agent must not tick unchecked boxes simply because similar files or issues exist in XII/XIV/Corpus.
 
-**Target register:** 28 milestones × 7 unique tasks = **196 work packets** organized into G0–G6. This file defines **planning tasks**, not 196 GitHub issues, implementations, production releases, or promises of elapsed delivery time.
+**Target register:** 29 milestones × 7 unique tasks = **203 work packets** organized into G0–G6. This file defines **planning tasks**, not 196 GitHub issues, implementations, production releases, or promises of elapsed delivery time.
 
 **End of XV Master TODO v1.0 — 26 October 2026.**
