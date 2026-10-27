@@ -150,6 +150,15 @@ test('docker: the radio build stage compiles only what it copied', () => {
   assert.ok(build!.includes('COPY packages ./packages'), 'the whole library tree is one COPY, so no package can be forgotten')
 })
 
+test('docker: the hub SDK tool dependency is built before the hub', () => {
+  const build = stages(dockerfile).get('build')
+  assert.ok(build, 'Dockerfile has a build stage')
+  const cliBuild = build!.indexOf('pnpm --filter @moonwitness/cli build')
+  const hubBuild = build!.indexOf('pnpm --filter @moonwitness/arsy build')
+  assert.ok(cliBuild >= 0, 'the SDK generator CLI dependency is compiled in the image build stage')
+  assert.ok(hubBuild > cliBuild, 'ARSY is compiled after the CLI declarations exist')
+})
+
 test('docker: the build context excludes generated output', () => {
   const lines = dockerignore.split(/\r?\n/).map((line) => line.trim())
   for (const pattern of ['**/node_modules', '**/dist', '**/.next']) {

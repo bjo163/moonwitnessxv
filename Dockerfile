@@ -37,10 +37,11 @@ COPY apps/arsy ./apps/arsy
 # `tsc -b` needs every project in apps/arsy's reference graph. .dockerignore
 # keeps node_modules, dist and .next out of the context: this is sources only.
 COPY packages ./packages
-# ARSY's tsconfig references its whole graph, so this single `tsc -b` compiles
-# the libraries it needs and then the hub — no cockpit Vite pass, no dev-only
-# libs, and none of the app builds the root `pnpm build` would demand.
-RUN pnpm --filter @moonwitness/arsy build
+# The SDK generator is compiled as an ARSY tool and imports the shared CLI,
+# which is a dev dependency rather than an ARSY runtime package. Build it first
+# so the project-reference compiler can resolve its declarations; then compile
+# the hub without pulling unrelated app builds into this image.
+RUN pnpm --filter @moonwitness/cli build && pnpm --filter @moonwitness/arsy build
 
 # ---- Production deps only ----
 # same derivation rule as `deps`: --prod still has to see every importer
