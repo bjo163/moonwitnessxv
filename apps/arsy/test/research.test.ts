@@ -252,7 +252,8 @@ async function makeApp() {
 }
 
 async function getCase(app: FastifyInstance, code: string): Promise<CaseView> {
-  const res = await app.inject().get(`/orm/research/case?code=${encodeURIComponent(code)}`).end()
+  const headers = await adminHeaders(app, '/orm')
+  const res = await app.inject().get(`/orm/research/case?code=${encodeURIComponent(code)}`).headers(headers).end()
   assert.equal(res.statusCode, 200, res.body)
   return dataOf<CaseView>(res)
 }
@@ -271,7 +272,8 @@ test('M13-01: pinned P19 contract, issue register and engineering-only review bo
     await moonql.close()
   })
 
-  const res = await app.inject().get('/orm/research/overview').end()
+  const headers = await adminHeaders(app, '/orm')
+  const res = await app.inject().get('/orm/research/overview').headers(headers).end()
   assert.equal(res.statusCode, 200, res.body)
   const overview = dataOf<OverviewView>(res)
 
@@ -696,7 +698,7 @@ test('M13-05: a Key Witness is one cited bounded reading with explicit limits', 
     assert.equal(witness.claimKind, 'BOUNDED_DERIVED_READING')
   }
 
-  const traceRes = await app.inject().get(`/orm/research/trace?code=${encodeURIComponent(AR_CASE)}`).end()
+  const traceRes = await app.inject().get(`/orm/research/trace?code=${encodeURIComponent(AR_CASE)}`).headers(headers).end()
   assert.equal(traceRes.statusCode, 200, traceRes.body)
   const trace = dataOf<TraceView>(traceRes)
   assert.equal(trace.trace.length, 5)
@@ -718,7 +720,7 @@ test('M13-06: maturity, quality, witness support and direction stay independent'
   })
   const headers = await adminHeaders(app, '/orm')
 
-  const metricsRes = await app.inject().get(`/orm/research/metrics?code=${encodeURIComponent(AR_CASE)}`).end()
+  const metricsRes = await app.inject().get(`/orm/research/metrics?code=${encodeURIComponent(AR_CASE)}`).headers(headers).end()
   assert.equal(metricsRes.statusCode, 200, metricsRes.body)
   const metrics = dataOf<MetricsEnvelope>(metricsRes)
   assert.equal(metrics.metrics.maturity.score, 15)
@@ -745,7 +747,7 @@ test('M13-06: maturity, quality, witness support and direction stay independent'
   assert.equal(metrics.policy.witnessMax, 100)
 
   const translationMetrics = dataOf<MetricsEnvelope>(
-    await app.inject().get(`/orm/research/metrics?code=${encodeURIComponent(ID_CASE)}`).end(),
+    await app.inject().get(`/orm/research/metrics?code=${encodeURIComponent(ID_CASE)}`).headers(headers).end(),
   )
   assert.equal(translationMetrics.metrics.maturity.score, 3)
   assert.equal(translationMetrics.metrics.quality.status, 'unknown')
@@ -927,7 +929,7 @@ test('M13-07: Positive Correction/OFFSIDE require a declared lens, preserved cou
   const post = async (path: string, body: Record<string, unknown>) =>
     await app.inject().post(`/orm/research/${path}`).headers(headers).body(body).end()
 
-  const listRes = await app.inject().get('/orm/research/hypotheses').end()
+  const listRes = await app.inject().get('/orm/research/hypotheses').headers(headers).end()
   assert.equal(listRes.statusCode, 200, listRes.body)
   const list = dataOf<HypothesisList>(listRes)
   assert.equal(list.total, 3)
@@ -1078,7 +1080,7 @@ test('M13-07: Positive Correction/OFFSIDE require a declared lens, preserved cou
   assert.equal(rejected.statusCode, 200, rejected.body)
   assert.equal(dataOf<{ hypothesis: { status: string } }>(rejected).hypothesis.status, 'REJECTED')
 
-  const after = dataOf<HypothesisList>(await app.inject().get('/orm/research/hypotheses').end())
+  const after = dataOf<HypothesisList>(await app.inject().get('/orm/research/hypotheses').headers(headers).end())
   assert.equal(after.total, 4)
   assert.ok(after.items.some((entry) => entry.hypothesisCode === 'HYP-TEST-PC' && entry.status === 'CANDIDATE'))
   assert.ok(after.items.every((entry) => entry.selfValidated === false))

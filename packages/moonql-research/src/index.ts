@@ -1,6 +1,6 @@
 import {
   ADMIN_ONLY,
-  ADMIN_WRITE,
+  ADMIN_FULL,
   bool,
   defineAddon,
   defineModel,
@@ -359,7 +359,7 @@ export const research = defineAddon({
     research_cases: defineModel({
       label: 'Research Case',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Research', icon: 'RC', order: 10 },
       fields: {
         caseCode: str({ maxLength: 60, unique: true }),
@@ -382,7 +382,7 @@ export const research = defineAddon({
     research_frames: defineModel({
       label: 'Research Frame',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Research', icon: 'FR', order: 20 },
       fields: {
         frameCode: str({ maxLength: 60, unique: true }),
@@ -408,7 +408,7 @@ export const research = defineAddon({
     research_claims: defineModel({
       label: 'Research R2 Text Claim',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Research', icon: 'CL', order: 30 },
       fields: {
         claimCode: str({ maxLength: 80, unique: true }),
@@ -429,7 +429,7 @@ export const research = defineAddon({
     research_relations: defineModel({
       label: 'Research G3 Relation',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Research', icon: 'RL', order: 40 },
       fields: {
         relationCode: str({ maxLength: 100, unique: true }),
@@ -451,7 +451,7 @@ export const research = defineAddon({
     research_witnesses: defineModel({
       label: 'Key Witness',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Research', icon: 'KW', order: 50 },
       fields: {
         witnessCode: str({ maxLength: 80, unique: true }),
@@ -489,7 +489,7 @@ export const research = defineAddon({
     research_quality_runs: defineModel({
       label: 'Research Quality Run',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Research', icon: 'QR', order: 60 },
       fields: {
         runCode: str({ maxLength: 80, unique: true }),
@@ -514,7 +514,7 @@ export const research = defineAddon({
     research_hypotheses: defineModel({
       label: 'Research Hypotheses',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Research', icon: 'HY', order: 70 },
       fields: {
         hypothesisCode: str({ maxLength: 80, unique: true }),
@@ -650,7 +650,7 @@ export const research = defineAddon({
     overview: {
       method: 'GET',
       path: '/research/overview',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       menu: { group: 'Research', icon: 'OV', order: 10 },
       handler: async ({ orm }) => researchOverview(orm),
     },
@@ -658,7 +658,7 @@ export const research = defineAddon({
     case: {
       method: 'GET',
       path: '/research/case',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ query, orm }) => {
         const code = asText(query.code)
         if (!code) throw badRequest('research case code is required')
@@ -669,7 +669,7 @@ export const research = defineAddon({
     metrics: {
       method: 'GET',
       path: '/research/metrics',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ query, orm }) => {
         const code = asText(query.code)
         if (!code) throw badRequest('research case code is required')
@@ -680,7 +680,7 @@ export const research = defineAddon({
     trace: {
       method: 'GET',
       path: '/research/trace',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ query, orm }) => {
         const code = asText(query.code)
         if (!code) throw badRequest('research case code is required')
@@ -691,7 +691,7 @@ export const research = defineAddon({
     hypotheses: {
       method: 'GET',
       path: '/research/hypotheses',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ query, orm }) => listHypotheses(orm, nonEmpty(query.code) ?? undefined),
     },
 

@@ -104,12 +104,12 @@ test(
 
     const headers = await adminHeaders(app, '/orm')
     const getCase = async (code: string): Promise<PgCaseView> => {
-      const res = await app.inject().get(`/orm/research/case?code=${encodeURIComponent(code)}`).end()
+      const res = await app.inject().get(`/orm/research/case?code=${encodeURIComponent(code)}`).headers(headers).end()
       assert.equal(res.statusCode, 200, res.body)
       return dataOf<PgCaseView>(res)
     }
 
-    const overviewRes = await app.inject().get('/orm/research/overview').end()
+    const overviewRes = await app.inject().get('/orm/research/overview').headers(headers).end()
     assert.equal(overviewRes.statusCode, 200, overviewRes.body)
     const overview = dataOf<PgOverview>(overviewRes)
     assert.equal(overview.meta.pins.p19Specs.sha256, 'c87c2a498dbe5340fe5a4ef3680f9c55d858beb89362f88d28832f314fa8c456')

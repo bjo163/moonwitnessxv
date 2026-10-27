@@ -259,14 +259,14 @@ export const comparativeEndpoints: Record<string, EndpointDef> = {
   comparativeCase: {
     method: 'GET',
     path: '/research/comparative-case',
-    requires: 'public',
+    requires: ADMIN_ONLY,
     handler: async () => buildJerusalemComparativeView(),
   },
 
   comparativeCaseByCode: {
     method: 'GET',
     path: '/research/comparative-case/jerusalem-70ce',
-    requires: 'public',
+    requires: ADMIN_ONLY,
     handler: async () => buildJerusalemComparativeView(),
   },
 

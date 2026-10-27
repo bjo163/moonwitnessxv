@@ -873,7 +873,7 @@ test('UI-P05e GAP (PERMISSIVE-TODAY): /ontology/constellation publishes the revi
 })
 
 // --------------------------------------------------------------------------- 12
-test('UI-F20 (PERMISSIVE-TODAY): ADMIN_WRITE leaves raw REST reads public on the projection source tables', async (t) => {
+test('M34-04: raw Research REST requires an admin; unrelated projection-source ACLs are unchanged', async (t) => {
   const { app, moonql } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -882,11 +882,16 @@ test('UI-F20 (PERMISSIVE-TODAY): ADMIN_WRITE leaves raw REST reads public on the
   await seedBlockedEditions(moonql)
   const { stableId } = await seedUnapprovedTerm(moonql)
 
-  const publicReads: Array<{ path: string; why: string }> = [
+  const researchReads: Array<{ path: string; why: string }> = [
     { path: '/orm/research_cases', why: 'case codes, citation keys and rights snapshots' },
     { path: '/orm/research_frames', why: 'unreviewed frame claims' },
     { path: '/orm/research_claims', why: 'unreviewed claim rows' },
+    { path: '/orm/research_relations', why: 'unreviewed claim relations' },
+    { path: '/orm/research_witnesses', why: 'narrative witness conclusions' },
+    { path: '/orm/research_quality_runs', why: 'case-linked quality evidence' },
     { path: '/orm/research_hypotheses', why: 'CANDIDATE hypotheses' },
+  ]
+  const otherPublicReads: Array<{ path: string; why: string }> = [
     { path: '/orm/onto_entities', why: 'CONTESTED entities' },
     { path: '/orm/onto_aliases', why: 'CANDIDATE aliases' },
     { path: '/orm/onto_relations', why: 'UNKNOWN/DISPUTED edges' },
@@ -914,9 +919,30 @@ test('UI-F20 (PERMISSIVE-TODAY): ADMIN_WRITE leaves raw REST reads public on the
     '/orm/graph_adjacency',
     '/orm/corpus_editions',
   ])
-  for (const { path, why } of publicReads) {
+  const admin = await adminHeaders(app, '/orm')
+  for (const { path, why } of researchReads) {
     const res = await get(app, path)
-    assert.equal(res.statusCode, 200, `${path} is public-by-model today (reads stay open under ADMIN_WRITE): ${why}`)
+    assert.equal(res.statusCode, 401, `${path} must deny anonymous raw Research reads: ${why}`)
+    assertNoBytesIn(`anonymous ${path}`, res.body, [...allSynthMarkers, CLEARED_BYTES, CLEARED_TRANSLATION_BYTES])
+    const privateRes = await app.inject().get(path).headers(admin).end()
+    assert.equal(privateRes.statusCode, 200, `${path} remains available to an authenticated admin`)
+    const rows = privateRes.json().data as unknown[]
+    assert.ok(Array.isArray(rows), `${path} returns an admin row list`)
+    if (path === '/orm/research_cases' || path === '/orm/research_claims' || path === '/orm/research_hypotheses') {
+      assert.ok(rows.length > 0, `${path} has seeded rows for the positive control`)
+    }
+    const row = rows[0] as Row | undefined
+    if (row && typeof row.id === 'string') {
+      const privateDetail = await app.inject().get(`${path}/${encodeURIComponent(row.id)}`).headers(admin).end()
+      assert.equal(privateDetail.statusCode, 200, `${path}/:id remains available to an authenticated admin`)
+      const anonymousDetail = await app.inject().get(`${path}/${encodeURIComponent(row.id)}`).end()
+      assert.equal(anonymousDetail.statusCode, 401, `${path}/:id must deny anonymous raw Research reads`)
+      assertNoBytesIn(`anonymous ${path}/:id`, anonymousDetail.body, [...allSynthMarkers, CLEARED_BYTES, CLEARED_TRANSLATION_BYTES])
+    }
+  }
+  for (const { path, why } of otherPublicReads) {
+    const res = await get(app, path)
+    assert.equal(res.statusCode, 200, `${path} behavior is outside M34-04: ${why}`)
     const rows = res.json().data as unknown[]
     assert.ok(Array.isArray(rows), `${path} returns a row list`)
     if (nonEmpty.has(path)) assert.ok(rows.length > 0, `${path} returns rows`)
@@ -945,23 +971,11 @@ test('UI-F20 (PERMISSIVE-TODAY): ADMIN_WRITE leaves raw REST reads public on the
     SYNTH.blockedTranslation,
     SYNTH.ambiguousRival,
   ]
-  // EXCEPTION, recorded rather than hidden: these two ADMIN_WRITE tables quote licensed
-  // translation text and therefore fail the byte check. Test 13 proves that leak in full.
-  const knownLeakPaths = new Set(['/orm/research_claims', '/orm/research_witnesses'])
-  for (const { path } of publicReads) {
-    if (knownLeakPaths.has(path)) continue
+  for (const { path } of otherPublicReads) {
     const body = (await get(app, path)).body
     assertNoBytesIn(`raw ${path}`, body, corpusMarkers)
     assertNoBytesIn(`raw ${path}`, body, [CLEARED_BYTES, CLEARED_TRANSLATION_BYTES])
   }
-  for (const path of knownLeakPaths) {
-    assert.match(
-      (await get(app, path)).body,
-      new RegExp(CLEARED_TRANSLATION_BYTES),
-      `KNOWN LEAK (see next test): raw ${path} publishes licensed translation text`,
-    )
-  }
-
   // Positive controls: the tables that opted out of public reads really opted out.
   for (const path of [
     '/orm/corpus_passages',
@@ -999,20 +1013,7 @@ test('UI-F20 (PERMISSIVE-TODAY): ADMIN_WRITE leaves raw REST reads public on the
 })
 
 // --------------------------------------------------------------------------- 13
-/**
- * CONFIRMED LEAK — this test asserts the (permissive) behaviour that exists TODAY so the
- * evidence cannot be lost. When the gate lands, flip the `assert.match` byte checks to
- * `assertNoBytesIn` and the 200s to 401s; the test then becomes the denial proof.
- *
- * What is leaking: the licensed Indonesian translation text of QS 2:82. Its own table,
- * `corpus_translations`, is ADMIN_FULL (packages/moonql-corpus/src/index.ts:172-175) and is
- * correctly 401 for an anonymous caller — but the same bytes are copied into research
- * narrative fields, which are only ADMIN_WRITE (moonql-research/src/index.ts:408-427,
- * 451-487) and therefore publicly readable, and they are then re-emitted by endpoints whose
- * `requires` is literally 'public' (moonql-research/src/index.ts:650-696). Seed source of the
- * copied phrase: moonql-research/src/seed.ts:379 (claim) and :470 (witness conclusion).
- */
-test('UI-F20 LEAK (CONFIRMED): research routes publish licensed translation text that corpus_translations withholds', async (t) => {
+test('M34-04: anonymous Research reads deny without leaking sensitive bytes; admin retains raw access', async (t) => {
   const { app, moonql } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -1029,54 +1030,51 @@ test('UI-F20 LEAK (CONFIRMED): research routes publish licensed translation text
   assert.ok(licensed, 'the licensed Indonesian seed row exists (read in-process, where ACL does not apply)')
   assert.match(String(licensed.translationText), new RegExp(CLEARED_TRANSLATION_BYTES))
 
-  // B. Leak path 1 — ADMIN_WRITE raw REST over the research narrative tables.
-  const claimsRaw = await get(app, '/orm/research_claims')
-  assert.equal(claimsRaw.statusCode, 200, 'PERMISSIVE-TODAY: ADMIN_WRITE does not gate list/get')
-  assert.ok(claimsRaw.body.includes('CLM-QS2-82-ID-TRANS'))
-  assert.match(claimsRaw.body, new RegExp(CLEARED_TRANSLATION_BYTES), 'LEAK: research_claims.claim quotes the licensed text')
-  const witnessesRaw = await get(app, '/orm/research_witnesses')
-  assert.equal(witnessesRaw.statusCode, 200)
-  assert.match(
-    witnessesRaw.body,
-    new RegExp(CLEARED_TRANSLATION_BYTES),
-    'LEAK: research_witnesses.conclusion quotes the licensed text',
-  )
-
-  // C. Leak path 2 — the projections the Dock Reader/Research views actually call.
-  type CaseBody = {
-    source: { rawTextExposed: boolean; translation: { code: string; rightsStatus: string } | null }
-    claims: Array<{ claimCode: string; claim: string; evidenceSpan: string | null }>
-    witnesses: Array<{ witnessCode: string; conclusion: string }>
+  // Anonymous raw Research reads deny; admin controls demonstrate existing private workflows.
+  const admin = await adminHeaders(app, '/orm')
+  for (const path of ['/orm/research_claims', '/orm/research_witnesses']) {
+    const denied = await get(app, path)
+    assert.equal(denied.statusCode, 401)
+    assertNoBytesIn(`denied ${path}`, denied.body, [...allSynthMarkers, CLEARED_BYTES, CLEARED_TRANSLATION_BYTES])
+    const privateRead = await app.inject().get(path).headers(admin).end()
+    assert.equal(privateRead.statusCode, 200, privateRead.body)
+    assert.match(privateRead.body, new RegExp(CLEARED_TRANSLATION_BYTES), `${path} remains available in private admin workflow`)
   }
-  const caseRes = await get(app, '/orm/research/case', { code: 'RC-QS-002-082-ID' })
-  assert.equal(caseRes.statusCode, 200, '/research/case is requires:"public"')
-  const caseBody = dataOf<CaseBody>(caseRes)
-  assert.equal(caseBody.source.rawTextExposed, false, 'the payload states no raw text is exposed...')
-  const quotingClaims = caseBody.claims.filter((claim) => claim.claim.includes(CLEARED_TRANSLATION_BYTES))
-  assert.ok(
-    quotingClaims.length > 0,
-    '...while claims[].claim carries it verbatim (projection.ts:133-141) — contradicted self-report',
-  )
-  assert.ok(
-    caseBody.witnesses.some((witness) => witness.conclusion.includes(CLEARED_TRANSLATION_BYTES)),
-    'witnesses[].conclusion carries it too (projection.ts:173-180)',
-  )
-  const traceRes = await get(app, '/orm/research/trace', { code: 'RC-QS-002-082-ID' })
-  assert.equal(traceRes.statusCode, 200)
-  assert.match(traceRes.body, new RegExp(CLEARED_TRANSLATION_BYTES), 'LEAK: /research/trace conclusions[] (projection.ts:435-443)')
 
-  // Which public research surfaces are affected, measured rather than guessed.
+  const endpointCases = [
+    { path: '/orm/research/overview' },
+    { path: '/orm/research/hypotheses' },
+    { path: '/orm/research/case', query: { code: 'RC-QS-002-082-ID' } },
+    { path: '/orm/research/metrics', query: { code: 'RC-QS-002-082-ID' } },
+    { path: '/orm/research/trace', query: { code: 'RC-QS-002-082-ID' } },
+    { path: '/orm/research/comparative-case' },
+    { path: '/orm/research/comparative-case/jerusalem-70ce' },
+  ]
+  for (const { path, query } of endpointCases) {
+    const denied = await get(app, path, query)
+    assert.equal(denied.statusCode, 401, `${path} denies anonymous Research access`)
+    assertNoBytesIn(`denied ${path}`, denied.body, [...allSynthMarkers, CLEARED_BYTES, CLEARED_TRANSLATION_BYTES])
+    const req = app.inject().get(path).headers(admin)
+    const privateRead = await (query ? req.query(query) : req).end()
+    assert.equal(privateRead.statusCode, 200, `${path} remains available to authenticated admin`)
+  }
+
+  // Verify the licensed text remains readable only behind the admin boundary.
+  const adminCase = await app.inject().get('/orm/research/case').query({ code: 'RC-QS-002-082-ID' }).headers(admin).end()
+  assert.match(adminCase.body, new RegExp(CLEARED_TRANSLATION_BYTES))
+
+  // Which private research surfaces carry the licensed bytes, measured rather than guessed.
   const cases = (await moonql.model('research_cases').list({ limit: 50 })) as Row[]
   const scanTargets: Array<{ label: string; path: string; query?: Record<string, string> }> = [
-    { label: 'public /orm/research/overview', path: '/orm/research/overview' },
-    { label: 'public /orm/research/hypotheses', path: '/orm/research/hypotheses' },
+    { label: 'admin /orm/research/overview', path: '/orm/research/overview' },
+    { label: 'admin /orm/research/hypotheses', path: '/orm/research/hypotheses' },
     ...cases.map((row) => ({
-      label: `public /orm/research/case ${String(row.caseCode)}`,
+      label: `admin /orm/research/case ${String(row.caseCode)}`,
       path: '/orm/research/case',
       query: { code: String(row.caseCode) },
     })),
     ...cases.map((row) => ({
-      label: `public /orm/research/trace ${String(row.caseCode)}`,
+      label: `admin /orm/research/trace ${String(row.caseCode)}`,
       path: '/orm/research/trace',
       query: { code: String(row.caseCode) },
     })),
@@ -1084,26 +1082,24 @@ test('UI-F20 LEAK (CONFIRMED): research routes publish licensed translation text
   const perCaseLeaks: string[] = []
   const aggregateLeaks: string[] = []
   for (const { label, path, query } of scanTargets) {
-    const res = await get(app, path, query)
+    const req = app.inject().get(path).headers(admin)
+    const res = await (query ? req.query(query) : req).end() as unknown as Res
     assert.equal(res.statusCode, 200, `${label} answered`)
     if (!res.body.includes(CLEARED_TRANSLATION_BYTES)) continue
     ;(query ? perCaseLeaks : aggregateLeaks).push(label)
   }
   assert.ok(
     perCaseLeaks.length > 0,
-    `no public per-case surface leaked ${CLEARED_TRANSLATION_BYTES} — the leak is gone; rewrite this test as a denial proof`,
+    `the authenticated admin control no longer contains expected case text ${CLEARED_TRANSLATION_BYTES}`,
   )
   assert.ok(
     perCaseLeaks.every((label) => label.includes('RC-QS-002-082-ID')),
     `a case outside the licensed-translation lane leaked: ${perCaseLeaks.join(', ')}`,
   )
-  // The aggregate surfaces are the containment: overview and hypotheses carry counts and
-  // stage verdicts only, so the leak is scoped to the per-case projections + raw tables.
+  // Aggregate payloads do not carry the licensed translation bytes either.
   assert.deepEqual(aggregateLeaks, [], `aggregate research surfaces also leaked licensed text: ${aggregateLeaks.join(', ')}`)
 
-  // D. The leak is not a one-off typo in the seed: the research surface applies NO rights veto.
-  //    A synthetic case snapshotted as RIGHTS_UNKNOWN, with self-declaring marker text, is just
-  //    as public as the cleared one.
+  // The admin may inspect synthetic uncleared research, while anonymous callers receive no bytes.
   const synthCase = await moonql.model('research_cases').create({
     caseCode: 'SYNTH-RC-RIGHTS-UNKNOWN',
     title: 'Synthetic uncleared case (fixture, not testimony)',
@@ -1127,12 +1123,16 @@ test('UI-F20 LEAK (CONFIRMED): research routes publish licensed translation text
     evidenceSha: null,
   })
   const synthRaw = await get(app, '/orm/research_claims')
-  assert.match(synthRaw.body, new RegExp(SYNTH.researchClaim), 'LEAK: an uncleared claim is public through raw REST')
+  assert.equal(synthRaw.statusCode, 401)
+  assertNoBytesIn('anonymous uncleared raw Research', synthRaw.body, [SYNTH.researchClaim, SYNTH.researchSpan])
   const synthCaseRes = await get(app, '/orm/research/case', { code: 'SYNTH-RC-RIGHTS-UNKNOWN' })
-  assert.equal(synthCaseRes.statusCode, 200)
-  assert.match(synthCaseRes.body, new RegExp(SYNTH.researchClaim), 'LEAK: the public projection re-emits it')
-  assert.match(synthCaseRes.body, new RegExp(SYNTH.researchSpan), 'LEAK: including the evidence span')
-  assert.equal(dataOf<{ source: { rawTextExposed: boolean } }>(synthCaseRes).source.rawTextExposed, false)
+  assert.equal(synthCaseRes.statusCode, 401)
+  assertNoBytesIn('anonymous uncleared Research projection', synthCaseRes.body, [SYNTH.researchClaim, SYNTH.researchSpan])
+  const privateSynth = await app.inject().get('/orm/research/case').query({ code: 'SYNTH-RC-RIGHTS-UNKNOWN' }).headers(admin).end()
+  assert.equal(privateSynth.statusCode, 200)
+  assert.match(privateSynth.body, new RegExp(SYNTH.researchClaim))
+  assert.match(privateSynth.body, new RegExp(SYNTH.researchSpan))
+  assert.equal(dataOf<{ source: { rawTextExposed: boolean } }>(privateSynth).source.rawTextExposed, false)
   // ...while the identical address through the corpus reader is still withheld.
   const readerView = await get(app, '/orm/corpus/reader', { citation: 'SYNTH 1:1' })
   assert.equal(dataOf<{ state: string }>(readerView).state, 'rights_blocked')
@@ -1140,7 +1140,7 @@ test('UI-F20 LEAK (CONFIRMED): research routes publish licensed translation text
 })
 
 // --------------------------------------------------------------------------- 14
-test('M19-19/M27-08: no public research projection can render a released state', async (t) => {
+test('M34-04/M19-19/M27-08: no anonymous research projection or release state is exposed', async (t) => {
   const { app, moonql } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -1149,7 +1149,7 @@ test('M19-19/M27-08: no public research projection can render a released state',
 
   const cases = (await moonql.model('research_cases').list({ limit: 50 })) as Row[]
   assert.ok(cases.length > 0, 'research fixtures are seeded for the scan')
-  const publicPaths: Array<{ path: string; query?: Record<string, string> }> = [
+  const researchPaths: Array<{ path: string; query?: Record<string, string> }> = [
     { path: '/orm/research/overview' },
     { path: '/orm/research/metrics', query: { code: String(cases[0]!.caseCode) } },
     { path: '/orm/research/trace', query: { code: String(cases[0]!.caseCode) } },
@@ -1180,16 +1180,21 @@ test('M19-19/M27-08: no public research projection can render a released state',
     return found
   }
 
-  for (const { path, query } of publicPaths) {
+  const admin = await adminHeaders(app, '/orm')
+  for (const { path, query } of researchPaths) {
     const res = await get(app, path, query)
-    assert.equal(res.statusCode, 200, `${path} is a public research projection`)
-    assert.equal(truthyPublicationFlags(res.json().data).length, 0, `${path} must report nothing as published`)
+    assert.equal(res.statusCode, 401, `${path} denies anonymous Research reads`)
     assertNoBytesIn(`research ${path}`, res.body, [...allSynthMarkers])
+    const req = app.inject().get(path).headers(admin)
+    const privateRes = await (query ? req.query(query) : req).end()
+    assert.equal(privateRes.statusCode, 200, `${path} remains admin-readable`)
+    assert.equal(truthyPublicationFlags(privateRes.json().data).length, 0, `${path} must report nothing as published`)
+    assertNoBytesIn(`admin research ${path}`, privateRes.body, [...allSynthMarkers])
   }
 
   // The withholding is stated, not merely absent.
   const overview = dataOf<{ meta: { p19ReleaseDecision: string }; policy: Record<string, unknown> }>(
-    await get(app, '/orm/research/overview'),
+    await app.inject().get('/orm/research/overview').headers(admin).end(),
   )
   assert.equal(overview.meta.p19ReleaseDecision, 'BLOCKED')
   assert.equal(overview.policy.humanReviewAvailableInMilestone, false)
@@ -1198,16 +1203,16 @@ test('M19-19/M27-08: no public research projection can render a released state',
   const firstCase = dataOf<{
     review: { humanReviewed: boolean; state: string; label: string }
     source: { rawTextExposed: boolean }
-  }>(await get(app, '/orm/research/case', { code: String(cases[0]!.caseCode) }))
-  assert.equal(firstCase.review.humanReviewed, false, 'a public case never claims human review')
-  assert.equal(firstCase.source.rawTextExposed, false, 'a public case never exposes source bytes')
+  }>(await app.inject().get('/orm/research/case').query({ code: String(cases[0]!.caseCode) }).headers(admin).end())
+  assert.equal(firstCase.review.humanReviewed, false, 'a private case never claims human review')
+  assert.equal(firstCase.source.rawTextExposed, false, 'the case projection never exposes raw source bytes')
 
   const hypotheses = dataOf<{ items: Array<{ verified: boolean; humanReviewed: boolean; status: string }> }>(
-    await get(app, '/orm/research/hypotheses'),
+    await app.inject().get('/orm/research/hypotheses').headers(admin).end(),
   )
   assert.ok(hypotheses.items.length > 0)
   for (const item of hypotheses.items) {
-    assert.equal(item.verified, false, 'a seeded hypothesis stays unverified in the public projection')
+    assert.equal(item.verified, false, 'a seeded hypothesis stays unverified in the private research view')
     assert.equal(item.humanReviewed, false)
     assert.equal(item.status, 'CANDIDATE')
   }

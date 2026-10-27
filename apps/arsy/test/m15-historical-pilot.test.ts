@@ -27,7 +27,7 @@ import { adminHeaders, TEST_ADMIN_PASSWORD } from './helpers/auth.js'
  * - Josephus source and transmission scope (M15-03).
  * - Refusal of automatic miraculous-fulfillment verdicts (M15-04).
  * - Strict domain separation across TEXT, EVENT, PERSON, STORY (M15-05).
- * - Evidence-centered public explanatory comparative case view (M15-06).
+ * - Evidence-centered comparative case data remains available only to an authenticated admin (M15-06).
  * - Rejection of false temporal matches and adversarial proof claims (M15-07).
  */
 
@@ -70,7 +70,8 @@ test('M15-02: Jerusalem 70 CE event attestation and archaeological distinction',
     await app.close()
   })
 
-  const res = await app.inject().get('/orm/research/comparative-case').end()
+  const headers = await adminHeaders(app, '/orm')
+  const res = await app.inject().get('/orm/research/comparative-case').headers(headers).end()
   assert.equal(res.statusCode, 200)
   const view = dataOf<ComparativePilotView>(res)
 
@@ -94,7 +95,8 @@ test('M15-03: Josephus source and transmission scope with court bias counterevid
     await app.close()
   })
 
-  const res = await app.inject().get('/orm/research/comparative-case').end()
+  const headers = await adminHeaders(app, '/orm')
+  const res = await app.inject().get('/orm/research/comparative-case').headers(headers).end()
   assert.equal(res.statusCode, 200)
   const view = dataOf<ComparativePilotView>(res)
 
@@ -198,17 +200,21 @@ test('M15-05: Strict domain typing: TEXT, EVENT, PERSON, STORY are distinct; cro
   assert.equal(linkData.crossDomainMerged, false)
 })
 
-test('M15-06: Evidence-centered public explanatory comparative case view', async (t) => {
+test('M15-06: comparative case view is private pending D08 review and release', async (t) => {
   const { app } = await makeApp()
   t.after(async () => {
     await app.close()
   })
 
-  const res = await app.inject().get('/orm/research/comparative-case').end()
+  const anonymous = await app.inject().get('/orm/research/comparative-case').end()
+  assert.equal(anonymous.statusCode, 401)
+  assert.doesNotMatch(anonymous.body, /Jerusalem|Josephus|TXT-MARK/)
+  const headers = await adminHeaders(app, '/orm')
+  const res = await app.inject().get('/orm/research/comparative-case').headers(headers).end()
   assert.equal(res.statusCode, 200)
   const view = dataOf<ComparativePilotView>(res)
 
-  // Public view contains all 4 distinct domains
+  // The private view contains all 4 distinct domains.
   assert.equal(view.domains.texts.length, 3)
   assert.equal(view.domains.events.length, 1)
   assert.equal(view.domains.persons.length, 3)
