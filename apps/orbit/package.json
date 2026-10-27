@@ -15,14 +15,17 @@
     "@moonwitness/core": "workspace:*",
     "@moonwitness/moonui": "workspace:*",
     "@moonwitness/web-config": "workspace:*",
+    "@react-three/fiber": "^9.1.0",
     "next": "^16.4.3",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "three": "^0.174.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.174.0",
     "typescript": "^5.7.3"
   }
 }

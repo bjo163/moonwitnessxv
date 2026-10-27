@@ -12,7 +12,7 @@ loadRootEnv(process.cwd())
 
 /** @type {import('next').NextConfig} */
 const config = {
-  transpilePackages: ['@moonwitness/moonui'],
+  transpilePackages: ['@moonwitness/moonui', 'three', '@react-three/fiber'],
   poweredByHeader: false,
   allowedDevOrigins: ['127.0.0.1', 'localhost', '127.0.0.1:3007', 'localhost:3007'],
   async headers() {
