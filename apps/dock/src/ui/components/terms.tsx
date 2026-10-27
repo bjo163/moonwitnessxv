@@ -11,6 +11,7 @@ import type {
 } from '@/data/queries/terms'
 import { dockHrefFor } from '@/lib/locale-context.mjs'
 import { getProvenanceCopy, reviewLabel } from '@/lib/provenance-copy'
+import { getStatesCopy } from '@/lib/states-copy'
 import { SourceEvidence } from './provenance'
 
 const STATUS_TONE: Record<string, BadgeTone> = {
@@ -40,9 +41,10 @@ const MATCH_TONE: Record<string, BadgeTone> = {
 const toneFor = (status: string): BadgeTone => STATUS_TONE[status] ?? 'night'
 const relationTone = (status: string): BadgeTone => RELATION_TONE[status] ?? 'night'
 
-function FormChips({ forms, compact = false }: { forms: TermForm[]; compact?: boolean }): ReactNode {
+function FormChips({ forms, locale, compact = false }: { forms: TermForm[]; locale: Locale; compact?: boolean }): ReactNode {
+  const states = getStatesCopy(locale)
   const shown = compact ? forms.slice(0, 4) : forms
-  if (shown.length === 0) return <p className="dk-terms-meta">No form has been recorded.</p>
+  if (shown.length === 0) return <p className="dk-terms-meta">{states.emptyFormsRecorded}</p>
   return (
     <ul className="dk-terms-forms" aria-label="Written forms">
       {shown.map((form) => (
@@ -150,13 +152,11 @@ export function TermIndexTable({ page, locale = 'en' }: { page: TermsPage; local
 
 export function TermList({ page, locale = 'en' }: { page: TermsPage; locale?: Locale }): ReactNode {
   const localeHref = dockHrefFor(locale)
+  const states = getStatesCopy(locale)
   if (page.terms.length === 0) {
     return (
-      <Panel title="No term matches" subtitle="The projection only includes terms backed by an approved citation source.">
-        <EmptyState
-          title="Try a broader search"
-          hint="Search matches stable IDs, labels, definitions and recorded forms. A term without an approved source stays outside this table."
-        />
+      <Panel title={states.emptyTermsTitle} subtitle={states.emptyTermsSubtitle}>
+        <EmptyState title={states.emptyTermsSearchTitle} hint={states.emptyTermsSearchHint} />
       </Panel>
     )
   }
@@ -184,7 +184,7 @@ export function TermList({ page, locale = 'en' }: { page: TermsPage; locale?: Lo
           <p className="dk-terms-definition">{term.definition}</p>
           <p className="dk-terms-context">{term.contextNote}</p>
 
-          <FormChips forms={term.forms} compact />
+          <FormChips forms={term.forms} locale={locale} compact />
 
           <div className="dk-terms-row-foot">
             <span className="dk-terms-meta">
@@ -245,6 +245,7 @@ export function MatchPreviewView({ preview }: { preview: MatchPreview }): ReactN
 export function TermDetailView({ detail, locale = 'en' }: { detail: TermDetail; locale?: Locale }): ReactNode {
   const { term } = detail
   const localeHref = dockHrefFor(locale)
+  const states = getStatesCopy(locale)
   return (
     <div className="dk-terms-detail">
       {term.editorialStatus === 'DEPRECATED' ? (
@@ -270,13 +271,13 @@ export function TermDetailView({ detail, locale = 'en' }: { detail: TermDetail; 
 
           <section className="dk-terms-section" aria-labelledby="term-forms-heading">
             <h2 id="term-forms-heading">Forms — language, script, direction</h2>
-            <FormChips forms={detail.forms} />
+            <FormChips forms={detail.forms} locale={locale} />
           </section>
 
           <section className="dk-terms-section" aria-labelledby="term-meanings-heading">
             <h2 id="term-meanings-heading">Senses — context-scoped meanings</h2>
             {detail.senses.length === 0 ? (
-              <p className="dk-terms-meta">No sense is recorded.</p>
+              <p className="dk-terms-meta">{states.emptySensesRecorded}</p>
             ) : (
               <ul className="dk-terms-senses">
                 {detail.senses.map((sense) => (

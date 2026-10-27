@@ -79,7 +79,7 @@ export default async function ReaderPage({
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Badge tone="cyan">{citation}</Badge>
             <LinkButton href={localeHref('/reader/compare')} variant="primary" size="sm">
-              1·6·3 COMPARATIVE WORKBENCH →
+              {copy.formComparativeWorkbench}
             </LinkButton>
           </div>
         }
@@ -92,14 +92,20 @@ export default async function ReaderPage({
             subtitle="The Reader never guesses: absent, blocked and ambiguous are explicit states."
           >
             <form className="dk-reader-form" method="get" action={localeHref('/reader')} role="search">
-              <Field label="Citation" htmlFor="citation" hint="Example: QS 2:82">
-                <TextInput id="citation" name="citation" defaultValue={citation} placeholder="QS 2:82" required />
+              <Field label={copy.formCitation} htmlFor="citation" hint={copy.formCitationHint}>
+                <TextInput
+                  id="citation"
+                  name="citation"
+                  defaultValue={citation}
+                  placeholder={copy.formCitationPlaceholder}
+                  required
+                />
               </Field>
-              <Field label="Edition (optional)" htmlFor="edition" hint="Pin a version by its edition code">
+              <Field label={copy.formEdition} htmlFor="edition" hint={copy.formEditionHint}>
                 <TextInput id="edition" name="edition" defaultValue={edition ?? ''} placeholder="quran_cairo_hafs" />
               </Field>
               <Button type="submit" variant="accent">
-                READ SOURCE
+                {copy.formReadSource}
               </Button>
             </form>
           </Panel>

@@ -3,9 +3,11 @@ import type { Locale } from '@moonwitness/core'
 import { Alert, Badge, Panel, type BadgeTone } from '@moonwitness/moonui'
 import { CitationCopy } from '../client/CitationCopy'
 import type { ReaderCandidate, ReaderResult, ReaderSource } from '@/data/queries/reader'
+import { getReaderCopy } from '@/lib/reader-copy'
 import { PanelState } from './states'
 import type { StatesCopy } from '@/lib/states-copy'
 import { rightsLabel } from '@/lib/provenance-copy'
+import { getProvenanceCopy } from '@/lib/provenance-copy'
 import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const BLOCKED = '[TEXT_BLOCKED_PENDING_RIGHTS_CLEARANCE]'
@@ -20,6 +22,8 @@ const sourceHref = (candidate: ReaderCandidate, localeHref: LocaleHref): string 
 }
 
 function SourceIdentity({ citation, locale }: { citation: ReaderSource; locale: Locale }): ReactNode {
+  const copy = getReaderCopy(locale)
+  const provenance = getProvenanceCopy(locale)
   return (
     <dl className="dk-reader-source">
       <dt>Work</dt>
@@ -30,12 +34,12 @@ function SourceIdentity({ citation, locale }: { citation: ReaderSource; locale: 
 
       <dt>Edition</dt>
       <dd>
-        {citation.editionName ?? 'UNRESOLVED EDITION'}
+        {citation.editionName ?? copy.unresolvedEdition}
         {citation.editionCode ? <span className="m-muted"> [{citation.editionCode}]</span> : null}
       </dd>
 
       <dt>Publisher</dt>
-      <dd>{citation.editorOrPublisher ?? 'UNRECORDED'}</dd>
+      <dd>{citation.editorOrPublisher ?? provenance.unrecorded}</dd>
 
       <dt>Original language</dt>
       <dd>{citation.originalLanguage ?? 'UNKNOWN'}</dd>
@@ -53,13 +57,13 @@ function SourceIdentity({ citation, locale }: { citation: ReaderSource; locale: 
             {citation.sourceUri}
           </a>
         ) : (
-          'UNRECORDED'
+          provenance.unrecorded
         )}
       </dd>
 
-      <dt>Provenance version</dt>
+      <dt>{provenance.fieldProvenanceSha}</dt>
       <dd>
-        <code>{citation.provenanceSha ?? 'UNRECORDED'}</code>
+        <code>{citation.provenanceSha ?? provenance.unrecorded}</code>
       </dd>
 
       <dt>Source date</dt>
@@ -89,6 +93,8 @@ export function ReaderView({
   locale?: Locale
 }): ReactNode {
   const localeHref = dockHrefFor(locale)
+  const rail = getReaderCopy(locale)
+  const provenance = getProvenanceCopy(locale)
   if (result.state === 'invalid' || result.state === 'absent') {
     return (
       <Panel title={copy.emptyReaderPanel} subtitle={result.message}>
@@ -118,7 +124,7 @@ export function ReaderView({
             <li key={`${candidate.editionCode ?? 'no-code'}-${candidate.citationKey ?? citation}`}>
               <a className="dk-reader-candidate" href={sourceHref(candidate, localeHref)}>
                 <span className="dk-reader-candidate-name">
-                  {candidate.workTitle ?? 'UNKNOWN WORK'} — {candidate.editionName ?? 'UNRESOLVED EDITION'}
+                  {candidate.workTitle ?? 'UNKNOWN WORK'} — {candidate.editionName ?? rail.unresolvedEdition}
                 </span>
                 <span className="dk-reader-candidate-meta m-muted">
                   {candidate.editionCode ?? 'no-code'} · {rightsLabel(candidate.rightsStatus, locale)} ·{' '}
@@ -138,7 +144,7 @@ export function ReaderView({
   // ADR-0003/ADR-0009: a rights-blocked result must never render passage text,
   // even if an upstream projection accidentally returns it.
   const withheld = result.state === 'rights_blocked'
-  const provenanceShort = source?.provenanceSha ? source.provenanceSha.slice(0, 12) : 'UNRECORDED'
+  const provenanceShort = source?.provenanceSha ? source.provenanceSha.slice(0, 12) : provenance.unrecorded
 
   return (
     <div className="dk-reader-grid">
@@ -148,7 +154,7 @@ export function ReaderView({
             <h2 className="dk-reader-title" id="reader-passage-title">
               {source?.key ?? citation}
             </h2>
-            <p className="dk-reader-note">{source?.editionName ?? 'UNRESOLVED EDITION'}</p>
+            <p className="dk-reader-note">{source?.editionName ?? rail.unresolvedEdition}</p>
           </div>
           <Badge tone={tone}>
             {cleared ? 'RIGHTS CLEARED' : rightsLabel(source?.rightsStatus ?? 'RIGHTS_UNKNOWN', locale)}
