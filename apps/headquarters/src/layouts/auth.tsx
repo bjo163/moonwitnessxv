@@ -3,6 +3,7 @@ import { BrandLogo, Crown, LinkButton, ZineNote, Chevron } from '@moonwitness/mo
 import type { Locale } from '@moonwitness/core'
 import { DOCK_URL, SITE_NAME } from '@/lib/env'
 import { loginCopy } from '@/lib/login-copy'
+import { LocaleSelector } from '@/ui/client/LocaleSelector'
 
 /**
  * The "Enter SHADOW" punk-zine login surface matching reference Image 3:
@@ -30,6 +31,7 @@ export function AuthLayout({ children, locale }: { children: ReactNode; locale: 
           <ZineNote tone="dark" tilt="left">
             {copy.sameMoon}
           </ZineNote>
+          <LocaleSelector locale={locale} />
           {DOCK_URL ? (
             <LinkButton href={DOCK_URL} variant="accent" size="md">
               {copy.followSignal} <Chevron dir="right" />
