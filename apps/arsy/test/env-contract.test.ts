@@ -98,16 +98,27 @@ test('a local .env (when present) uses only known keys', () => {
   assert.deepEqual(unknown, [], `unknown keys in .env: ${unknown.join(', ')}`)
 })
 
-test('the dev scripts agree with the shared port contract', () => {
+test('the dev registry agrees with the shared port contract', () => {
   // scripts/*.mjs are plain JS: they cannot import core before it is built, so
-  // they keep literals. This test is what keeps those literals honest.
+  // they keep literals — but in exactly one place now. This test is what keeps
+  // that registry equal to PORTS, and keeps the literals from creeping back.
   const root = join(process.cwd(), '..', '..')
-  for (const file of ['scripts/dev.mjs', 'scripts/free-ports.mjs']) {
-    const text = readFileSync(join(root, file), 'utf8')
-    for (const port of Object.values(PORTS)) {
-      assert.ok(text.includes(String(port)), `${file} no longer mentions port ${port}`)
-    }
-  }
+  const registry = readFileSync(join(root, 'scripts/apps.registry.mjs'), 'utf8')
+  const declared = [...registry.matchAll(/^\s*port:\s*(\d+),/gm)]
+    .map((match) => Number(match[1]))
+    .sort((a, b) => a - b)
+  const shared = Object.values(PORTS)
+    .slice()
+    .sort((a, b) => a - b)
+  assert.deepEqual(declared, shared, 'registry ports must equal PORTS exactly (no missing app, no orphan port)')
+
+  const runner = readFileSync(join(root, 'scripts/dev.mjs'), 'utf8')
+  assert.match(runner, /from '\.\/apps\.registry\.mjs'/, 'the runner must read the registry')
+  assert.doesNotMatch(runner, /const APPS = \[/, 'no inline app list may come back')
+
+  const sweeper = readFileSync(join(root, 'scripts/free-ports.mjs'), 'utf8')
+  assert.match(sweeper, /from '\.\/apps\.registry\.mjs'/, 'the sweeper must derive ports from the registry')
+  assert.doesNotMatch(sweeper, /const PORTS = \[\d/, 'no literal port array may come back')
 })
 
 test('SKYLINK has a shared client URL and is blocked as an egress destination', () => {
@@ -121,9 +132,9 @@ test('ECHOLOG has a dedicated shared port and cannot inherit the hub PORT', () =
   assert.equal(ECHOLOG_URL_DEFAULT, `http://127.0.0.1:${PORTS.echolog}`)
   assert.throws(() => assertPublicHttpUrl('http://echolog:3006/health'), /refused private target/)
 
-  const runner = readFileSync(join(process.cwd(), '..', '..', 'scripts/dev.mjs'), 'utf8')
-  assert.match(runner, /tag: 'echolog',[\s\S]*?port: 3006,[\s\S]*?env: \{ ECHOLOG_PORT: '3006' \}/)
-  assert.match(runner, /if \(app\.tag === 'echolog'\) delete childEnv\.PORT/)
+  const registry = readFileSync(join(process.cwd(), '..', '..', 'scripts/apps.registry.mjs'), 'utf8')
+  assert.match(registry, /tag: 'echolog',[\s\S]*?port: 3006,[\s\S]*?env: \{ ECHOLOG_PORT: '3006' \}/)
+  assert.match(registry, /tag: 'echolog',[\s\S]*?deleteEnv: \['PORT'\]/)
 })
 
 test('root build and test scripts include ECHOLOG while build:libs remains derived', () => {

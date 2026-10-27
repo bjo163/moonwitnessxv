@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 /**
- * Dev runner escape hatch: frees the dev ports (ARSY Hub / radio alias :3000, dock :3001,
- * headquarters :3002, ai gateway :3003, cockpit :3004, SKYLINK :3005, ECHOLOG :3006) and the repo's leftover dev processes.
+ * Dev runner escape hatch: frees every port the registry declares
+ * (hub :3000, dock :3001, HQ :3002, ai gateway :3003, cockpit :3004,
+ * SKYLINK :3005, ECHOLOG :3006, ORBIT :3007) and the repo's leftover dev processes.
+ *
+ * The list comes from `scripts/apps.registry.mjs` — the same module `pnpm dev`
+ * spawns from — so a new app cannot be forgotten here again (ORBIT was).
  *
  * `pnpm dev` (scripts/dev.mjs) already kills its own process tree on Ctrl+C, but
  * an earlier run started some other way — a bare `next dev`, a crashed watcher,
@@ -18,8 +22,9 @@
  */
 import { execFileSync } from 'node:child_process'
 import { waitForPortsFree } from './port-utils.mjs'
+import { PORTED } from './apps.registry.mjs'
 
-const PORTS = [3000, 3001, 3002, 3003, 3004, 3005, 3006]
+const PORTS = PORTED.map((app) => app.port)
 const isWindows = process.platform === 'win32'
 
 const run = (file, args) => execFileSync(file, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })

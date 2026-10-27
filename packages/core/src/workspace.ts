@@ -12,8 +12,11 @@ export const SITE_NAME = 'Moonwitness'
 /** API mount prefix of the hub (every REST route lives under it). */
 export const API_PREFIX = '/api/v1'
 
-/** Fixed dev/preview ports: hub :3000, public site :3001, command center :3002, ai gateway :3003, cockpit :3004, SKYLINK :3005, ECHOLOG :3006. */
-export const PORTS = { hub: 3000, dock: 3001, headquarters: 3002, aigateway: 3003, cockpit: 3004, skylink: 3005, echolog: 3006 } as const
+/** Fixed dev/preview ports: hub :3000, public site :3001, command center :3002, ai gateway :3003, cockpit :3004, SKYLINK :3005, ECHOLOG :3006, ORBIT :3007. */
+export const PORTS = { hub: 3000, dock: 3001, headquarters: 3002, aigateway: 3003, cockpit: 3004, skylink: 3005, echolog: 3006, orbit: 3007 } as const
+
+/** Display order for anything that lists the ported apps (docs, runner, cockpit). */
+export const PORT_ORDER = ['hub', 'dock', 'headquarters', 'aigateway', 'cockpit', 'skylink', 'echolog', 'orbit'] as const
 
 /** Loopback origin of the hub itself, without the API prefix: what host-side plugins dial. */
 export const HUB_ORIGIN_DEFAULT = `http://127.0.0.1:${PORTS.hub}`
@@ -35,6 +38,9 @@ export const SKYLINK_URL_DEFAULT = `http://127.0.0.1:${PORTS.skylink}`
 
 /** Default loopback origin for ECHOLOG clients. */
 export const ECHOLOG_URL_DEFAULT = `http://127.0.0.1:${PORTS.echolog}`
+
+/** Default loopback origin of the ORBIT spatial frontend. */
+export const ORBIT_URL_DEFAULT = `http://127.0.0.1:${PORTS.orbit}`
 
 /**
  * Both loopback spellings of the cockpit window. A CSP frame-ancestors list and

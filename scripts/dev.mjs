@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 /**
- * Dev runner for the seven processes (ARSY hub, dock, headquarters, ai gateway, sentinel, SKYLINK, ECHOLOG).
+ * Dev runner for every runnable app in this monorepo.
+ *
+ * The inventory lives in `scripts/apps.registry.mjs` — not here. That module is
+ * what `pnpm ports:free`, `pnpm apps`, the Cockpit config and the contract tests
+ * read, so a new app is added once instead of four times.
  *
  * Why not `pnpm --parallel`? It makes the child Next.js processes start with a
  * non-development NODE_ENV ("You are using a non-standard NODE_ENV value"),
@@ -12,7 +16,7 @@
  * highlights ERROR lines in bold red, logs errors to `dev-errors.log`,
  * and provides interactive hotkeys to launch any frontend/API in browser with 1 key.
  *
- *   pnpm dev                         # build libs, then run everything
+ *   pnpm dev                         # build libs, then run every runnable app
  *   node scripts/dev.mjs arsy,dock   # subset (radio remains a transition alias)
  */
 import { spawn, execFileSync } from 'node:child_process'
@@ -21,6 +25,7 @@ import { appendFileSync, existsSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { resolveHubPort, waitForPortsFree } from './port-utils.mjs'
+import { ALIASES, APPS } from './apps.registry.mjs'
 
 const repoRoot = dirname(dirname(fileURLToPath(import.meta.url)))
 const LOG_FILE = join(repoRoot, 'dev-errors.log')
@@ -48,88 +53,35 @@ const ANSI = {
   boldGreen: '\x1b[1;32m',
 }
 
-const APPS = [
-  {
-    tag: 'arsy',
-    pkg: '@moonwitness/arsy',
-    // same documented alias rule the hub uses (ARSY_PORT -> RADIO_PORT -> PORT);
-    // otherwise the runner would pre-flight a port the hub never binds
-    port: resolveHubPort(process.env, 3000),
-    color: ANSI.boldCyan,
-    name: 'ARSY Hub · Radio/SIGNAL Core & ORM',
-    url: 'http://localhost:3000',
-    desc: 'Core Fastify hub, ORM REST engine, SSE on-air stream, & OpenAPI docs',
-  },
-  {
-    tag: 'dock',
-    pkg: '@moonwitness/dock',
-    port: 3001,
-    color: ANSI.boldMagenta,
-    name: 'Public Radio Dock',
-    url: 'http://localhost:3001',
-    desc: 'Public radio station player, schedule grid, & World Monitor radar ticker',
-  },
-  {
-    tag: 'hq',
-    pkg: '@moonwitness/headquarters',
-    port: 3002,
-    color: ANSI.boldBlue,
-    name: 'Command Headquarters (HQ)',
-    url: 'http://localhost:3002',
-    desc: 'Mission control admin, station CRUD, ops telemetry, & World Monitor 3-Tier',
-  },
-  {
-    tag: 'ai',
-    pkg: '@moonwitness/aigateway',
-    port: Number(process.env.AI_GATEWAY_PORT ?? 3003),
-    color: ANSI.boldYellow,
-    name: 'AI Gateway Router',
-    url: 'http://localhost:3003',
-    desc: 'Free-first OpenAI chat completions (Gemini, Groq, OpenRouter, Ollama, Heuristic)',
-  },
-  {
-    tag: 'sentinel',
-    pkg: '@moonwitness/sentinel',
-    color: ANSI.boldGreen,
-    name: 'Sentinel Worker Agent',
-    url: null,
-    desc: 'Autonomous radar scraper & poller (YouTube RSS, Playwright, OpenClaw, AI Agent)',
-  },
-  {
-    tag: 'skylink',
-    pkg: '@moonwitness/skylink',
-    port: 3005,
-    env: { PORT: '3005' },
-    color: ANSI.boldCyan,
-    name: 'SKYLINK Communication Service',
-    url: 'http://localhost:3005/health',
-    desc: 'Health-only D18 service skeleton; providers and messaging remain planned',
-  },
-  {
-    tag: 'echolog',
-    pkg: '@moonwitness/echolog',
-    port: 3006,
-    env: { ECHOLOG_PORT: '3006' },
-    color: ANSI.boldGreen,
-    name: 'ECHOLOG Storage Service',
-    url: 'http://localhost:3006/health',
-    desc: 'Health-only D19 service skeleton; storage driver remains unconfigured',
-  },
-  {
-    tag: 'orbit',
-    pkg: '@moonwitness/orbit',
-    port: 3007,
-    env: { ORBIT_PORT: '3007' },
-    color: ANSI.boldCyan,
-    name: 'ORBIT · Spatial Agent Operations',
-    url: 'http://localhost:3007',
-    desc: 'Spatial 3D/2D agent operations frontend (simulated fixtures, ARSY read-only)',
-  },
-]
+// Port overrides stay here: they depend on the live environment, not on the inventory.
+const APPS_RESOLVED = APPS.map((app) => {
+  // same documented alias rule the hub uses (ARSY_PORT -> RADIO_PORT -> PORT);
+  // otherwise the runner would pre-flight a port the hub never binds
+  if (app.tag === 'arsy') return { ...app, port: resolveHubPort(process.env, app.port) }
+  if (app.tag === 'ai') return { ...app, port: Number(process.env.AI_GATEWAY_PORT ?? app.port) }
+  return app
+})
+
+const COLOR_BY_NAME = {
+  cyan: ANSI.boldCyan,
+  magenta: ANSI.boldMagenta,
+  blue: ANSI.boldBlue,
+  yellow: ANSI.boldYellow,
+  green: ANSI.boldGreen,
+}
+const colorOf = (app) => COLOR_BY_NAME[app.color] ?? ANSI.boldWhite
+const runnableApps = APPS_RESOLVED.filter((app) => app.dev)
+const scaffoldApps = APPS_RESOLVED.filter((app) => !app.dev)
+const urlOf = (app) => (app.port ? `http://localhost:${app.port}${app.health === '/' ? '' : app.health}` : null)
 
 const only = (process.argv[2] ?? '').split(',').map((s) => s.trim()).filter(Boolean)
-const requested = new Set(only.map((tag) => (tag === 'radio' ? 'arsy' : tag)))
-const selected = only.length > 0 ? APPS.filter((app) => requested.has(app.tag)) : APPS
+const requested = new Set(only.map((tag) => ALIASES[tag] ?? tag))
+const selected = only.length > 0 ? runnableApps.filter((app) => requested.has(app.tag)) : runnableApps
+const unknown = [...requested].filter((tag) => !APPS_RESOLVED.some((app) => app.tag === tag))
+if (unknown.length > 0) {
+  console.error(`unknown app tag(s): ${unknown.join(', ')} — run \`pnpm apps\` to list them`)
+  process.exit(1)
+}
 const isWindows = process.platform === 'win32'
 const width = Math.max(...selected.map((app) => app.tag.length))
 
@@ -181,31 +133,37 @@ function printDirectoryTable() {
   process.stdout.write(`\x1b[1;35m│\x1b[0m  \x1b[1;37m▲ MOONWITNESS MONOREPO SUITE\x1b[0m  \x1b[90m·\x1b[0m  \x1b[1;32mDEV MISSION CONTROL\x1b[0m                      \x1b[1;35m│\x1b[0m\n`)
   process.stdout.write(`\x1b[1;35m╰${line}╯\x1b[0m\n\n`)
 
-  process.stdout.write(`\x1b[1;37m● FRONTENDS & USER INTERFACES\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;35m[1 / d]\x1b[0m  \x1b[1;35mPublic Radio Dock\x1b[0m         ➜  \x1b[1;36mhttp://localhost:3001\x1b[0m\n`)
-  process.stdout.write(`         \x1b[90m└─ Live player, weekly schedule, & World Monitor radar ticker\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;34m[2 / h]\x1b[0m  \x1b[1;34mCommand Headquarters (HQ)\x1b[0m ➜  \x1b[1;36mhttp://localhost:3002\x1b[0m\n`)
-  process.stdout.write(`         \x1b[90m├─ Mission Control & CRUD station management\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;33m[3 / w]\x1b[0m  \x1b[1;33mWorld Monitor 3-Tier\x1b[0m      ➜  \x1b[1;36mhttp://localhost:3002/world-monitor\x1b[0m\n`)
-  process.stdout.write(`         \x1b[90m└─ Radars ──► Sources ──► Signals & AI Triage drilldown\x1b[0m\n\n`)
+  const section = (title, apps) => {
+    if (apps.length === 0) return
+    process.stdout.write(`\x1b[1;37m● ${title}\x1b[0m\n`)
+    for (const app of apps) {
+      const keys = app.keys.length > 0 ? `[${app.keys.join(' / ')}]` : '[–]'
+      const target = urlOf(app) ? `➜  \x1b[1;36m${urlOf(app)}\x1b[0m` : '\x1b[90m[no HTTP surface]\x1b[0m'
+      process.stdout.write(`  ${colorOf(app)}${keys.padEnd(9)}\x1b[0m ${app.name.padEnd(34)} ${target}\n`)
+      process.stdout.write(`           \x1b[90m└─ ${app.desc}\x1b[0m\n`)
+    }
+    process.stdout.write('\n')
+  }
 
-  process.stdout.write(`\x1b[1;37m● ENGINES, APIS & SERVICES\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;36m[0 / r]\x1b[0m  \x1b[1;36mRadio Core Launchpad\x1b[0m      ➜  \x1b[1;36mhttp://localhost:3000\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;36m[4 / s]\x1b[0m  \x1b[1;36mOpenAPI Swagger UI Docs\x1b[0m   ➜  \x1b[1;36mhttp://localhost:3000/docs\x1b[0m\n`)
-  process.stdout.write(`         \x1b[90m├─ REST API Prefix: http://localhost:3000/api/v1\x1b[0m\n`)
-  process.stdout.write(`         \x1b[90m└─ Health Status:   http://localhost:3000/api/v1/health\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;33m[5 / a]\x1b[0m  \x1b[1;33mAI Gateway Router\x1b[0m         ➜  \x1b[1;36mhttp://localhost:3003/v1/models\x1b[0m\n`)
-  process.stdout.write(`         \x1b[90m└─ Free-First Completions: http://localhost:3003/v1/chat/completions\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;35m[6 / g]\x1b[0m  \x1b[1;35mMoondeck GUI Cockpit\x1b[0m      ➜  \x1b[1;36mhttp://localhost:3004\x1b[0m\n`)
-  process.stdout.write(`         \x1b[90m└─ Standalone Windows Desktop GUI: pnpm gui\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;36m[7 / k]\x1b[0m  \x1b[1;36mSKYLINK Health Service\x1b[0m     ➜  \x1b[1;36mhttp://localhost:3005/health\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;32m[8]\x1b[0m    \x1b[1;32mECHOLOG Health Service\x1b[0m     ➜  \x1b[1;36mhttp://localhost:3006/health\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;32m[sentinel]\x1b[0m \x1b[1;32mSentinel Worker Daemon\x1b[0m ➜  \x1b[90m[Active Poller · YouTube, Playwright, Agent]\x1b[0m\n\n`)
+  section('FRONTENDS & USER INTERFACES', selected.filter((app) => app.kind === 'web'))
+  section('ENGINES, APIS & WORKERS', selected.filter((app) => app.kind !== 'web'))
+
+  process.stdout.write(`\x1b[1;37m● CONTEXT LINKS\x1b[0m\n`)
+  process.stdout.write(`  \x1b[1;37m[3 / w]\x1b[0m  World Monitor 3-Tier      ➜  \x1b[1;36mhttp://localhost:3002/world-monitor\x1b[0m\n`)
+  process.stdout.write(`  \x1b[1;37m[4 / s]\x1b[0m  OpenAPI Swagger UI Docs   ➜  \x1b[1;36mhttp://localhost:3000/docs\x1b[0m\n\n`)
+
+  if (scaffoldApps.length > 0) {
+    process.stdout.write(`\x1b[1;37m● LISTED SCAFFOLDS (never spawned)\x1b[0m\n`)
+    for (const app of scaffoldApps) {
+      process.stdout.write(`  \x1b[90m${app.tag} · ${app.note ?? 'no dev script'}\x1b[0m\n`)
+    }
+    process.stdout.write('\n')
+  }
 
   process.stdout.write(`\x1b[1;37m● INTERACTIVE SHORTCUTS (Press key in terminal)\x1b[0m\n`)
-  process.stdout.write(`  \x1b[1;37m[1/d]\x1b[0m Open Dock   \x1b[1;37m[2/h]\x1b[0m Open HQ   \x1b[1;37m[3/w]\x1b[0m World Monitor   \x1b[1;37m[4/s]\x1b[0m Swagger Docs\n`)
-  process.stdout.write(`  \x1b[1;37m[5/a]\x1b[0m AI Gateway  \x1b[1;37m[6/g]\x1b[0m Moondeck  \x1b[1;37m[7/k]\x1b[0m SKYLINK  \x1b[1;37m[8]\x1b[0m ECHOLOG  \x1b[1;37m[u]\x1b[0m Show URLs  \x1b[1;37m[e]\x1b[0m Show Errors\n`)
-  process.stdout.write(`  \x1b[1;37m[c]\x1b[0m   Clear Screen \x1b[1;37m[q]\x1b[0m   Quit & Stop All Services (or Ctrl+C)\n`)
+  const shortcuts = selected.flatMap((app) => app.keys.map((key) => `[${key}] ${app.tag}`)).join('   ')
+  process.stdout.write(`  ${shortcuts}\n`)
+  process.stdout.write(`  \x1b[1;37m[3/w]\x1b[0m World Monitor  \x1b[1;37m[4/s]\x1b[0m Swagger  \x1b[1;37m[u]\x1b[0m URLs  \x1b[1;37m[e]\x1b[0m Errors  \x1b[1;37m[c]\x1b[0m Clear  \x1b[1;37m[q]\x1b[0m Quit\n`)
   process.stdout.write(`\x1b[90m${'─'.repeat(80)}\x1b[0m\n\n`)
 }
 
@@ -271,7 +229,7 @@ function formatLogLine(app, line) {
   }
 
   const divider = `${ANSI.gray}│${ANSI.reset}`
-  const tag = `${app.color}${paddedTag}${ANSI.reset}`
+  const tag = `${colorOf(app)}${paddedTag}${ANSI.reset}`
   return `${tag} ${divider} ${displayContent}\n`
 }
 
@@ -321,6 +279,17 @@ for (const signal of isWindows ? ['SIGINT', 'SIGTERM', 'SIGBREAK', 'SIGHUP'] : [
 }
 
 // Setup interactive terminal keyboard shortcuts
+const HOTKEYS = new Map()
+for (const app of selected) {
+  const target = urlOf(app)
+  if (!target) continue
+  for (const key of app.keys) HOTKEYS.set(key.toLowerCase(), target)
+}
+HOTKEYS.set('3', 'http://localhost:3002/world-monitor')
+HOTKEYS.set('w', 'http://localhost:3002/world-monitor')
+HOTKEYS.set('4', 'http://localhost:3000/docs')
+HOTKEYS.set('s', 'http://localhost:3000/docs')
+
 if (process.stdin.isTTY) {
   try {
     process.stdin.setRawMode(true)
@@ -332,32 +301,21 @@ if (process.stdin.isTTY) {
         shutdown(0)
         return
       }
-      if (key === '1' || key === 'd' || key === 'D') {
-        openUrl('http://localhost:3001')
-      } else if (key === '2' || key === 'h' || key === 'H') {
-        openUrl('http://localhost:3002')
-      } else if (key === '3' || key === 'w' || key === 'W') {
-        openUrl('http://localhost:3002/world-monitor')
-      } else if (key === '4' || key === 's' || key === 'S') {
-        openUrl('http://localhost:3000/docs')
-      } else if (key === '5' || key === 'a' || key === 'A') {
-        openUrl('http://localhost:3003/v1/models')
-      } else if (key === '6' || key === 'g' || key === 'G') {
-        openUrl('http://localhost:3004')
-      } else if (key === '0' || key === 'r' || key === 'R') {
-        openUrl('http://localhost:3000')
-      } else if (key === '7' || key === 'k' || key === 'K') {
-        openUrl('http://localhost:3005/health')
-      } else if (key === '8') {
-        openUrl('http://localhost:3006/health')
-      } else if (key === 'u' || key === 'U') {
+      if (key === 'u' || key === 'U') {
         printDirectoryTable()
-      } else if (key === 'c' || key === 'C') {
+        return
+      }
+      if (key === 'c' || key === 'C') {
         console.clear()
         printDirectoryTable()
-      } else if (key === 'e' || key === 'E') {
-        showRecentErrors()
+        return
       }
+      if (key === 'e' || key === 'E') {
+        showRecentErrors()
+        return
+      }
+      const target = HOTKEYS.get(key.toLowerCase())
+      if (target) openUrl(target)
     })
   } catch {
     /* non-raw terminal */
@@ -368,8 +326,8 @@ printDirectoryTable()
 
 for (const app of selected) {
   const label = app.tag.padEnd(width)
-  const childEnv = { ...process.env, ...app.env }
-  if (app.tag === 'echolog') delete childEnv.PORT
+  const childEnv = { ...process.env, ...(app.env ?? {}) }
+  for (const key of app.deleteEnv ?? []) delete childEnv[key]
   const child = spawn(isWindows ? 'pnpm.cmd' : 'pnpm', ['--filter', app.pkg, 'dev'], {
     stdio: ['ignore', 'pipe', 'pipe'],
     env: childEnv,
