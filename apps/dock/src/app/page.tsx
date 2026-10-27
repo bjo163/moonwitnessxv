@@ -5,6 +5,7 @@ import { homePayload } from '@/data/queries/program'
 import { Player } from '@/ui/client/Player'
 import { LiveTicker } from '@/ui/client/LiveTicker'
 import { Hero } from '@/ui/components/shell'
+import { SpaceGrid } from '@/ui/components/spaces'
 import {
   ArchiveTimeline,
   ChartBars,
@@ -45,13 +46,15 @@ export default async function HomePage() {
   const copy = getLandingCopy(locale)
   const payload = await homePayload()
   if (!payload.liveDataAvailable) {
-    return <div className="dk-home-stack"><OfflineLanding copy={copy} /></div>
+    return <div className="dk-home-stack"><OfflineLanding copy={copy} /><SpaceGrid locale={locale} /></div>
   }
   const live = payload.stations.find((station) => station.id === payload.now?.stationId) ?? payload.stations[0]
 
   return (
     <div className="dk-home-stack">
       <Hero counts={{ stations: payload.counts.stations, countries: payload.counts.countries }} nowTitle={payload.now?.title} locale={locale} />
+
+      <SpaceGrid locale={locale} />
 
       <ZineFeatureTrio
         now={payload.now}

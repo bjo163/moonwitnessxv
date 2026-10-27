@@ -409,10 +409,16 @@ export function Hero({
 
       <div className="dk-hero-content">
         <div className="dk-hero-left">
+          <span className="dk-eyebrow">{copy.homeEyebrow}</span>
+
           <div className="dk-hero-title-wrap">
             <Crown tone="gold" size="lg" />
             <h1 className="dk-hero-title">MOONWITNESS</h1>
           </div>
+
+          <p className="dk-hero-motto">
+            {copy.heroMottoLead} <span className="dk-display-accent">{copy.heroMottoAccent}</span>
+          </p>
 
           <Tape tone="accent">{copy.heroEyebrow}</Tape>
 
@@ -427,9 +433,13 @@ export function Hero({
           </p>
           <p className="dk-hero-sub">{copy.approvedMission}</p>
 
-          <div className="m-row" style={{ gap: 14 }}>
+          <div className="m-row" style={{ gap: 14, flexWrap: 'wrap' }}>
             <LinkButton href={localizedDockHref('/stations', '', '', locale)} variant="primary" size="md">
               {copy.exploreSignals} <Chevron dir="right" />
+            </LinkButton>
+
+            <LinkButton href={localizedDockHref('/reader', '', '', locale)} variant="paper" size="md">
+              {copy.exploreSources} <Chevron dir="right" />
             </LinkButton>
 
             <div className="dk-hero-badge">
