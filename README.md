@@ -3,18 +3,20 @@
 
 ## MoonWitness XV — master program documents
 
-**Low-context AI docs:** [Master Design](MASTER_DESIGN.md) · [Architecture](docs/architecture/README.md) · [AI execution contract](docs/planning/AI_EXECUTION_CONTRACT.md). Eleven new milestone scopes remain planning-only; SKYLINK currently provides only its health-only skeleton, and no new full product app is claimed implemented.
+**Low-context AI docs:** [Master Design](MASTER_DESIGN.md) · [Architecture](docs/architecture/README.md) · [AI execution contract](docs/planning/AI_EXECUTION_CONTRACT.md). Several milestone scopes remain planning-only. SKYLINK and ECHOLOG have bounded implementations with integration/release gates still open; ORBIT is accepted but planned; LUMEN remains proposed under ADR-0010/M41. Do not equate a directory or passing unit tests with production certification.
 
 
-**Official XV planning flow:** [Master Vision Narrative](docs/vision/MASTER_VISION_NARRATIVE_XV.md) → [MASTER BLUEPRINT](BLUEPRINT.md) → [MASTER TODO / 40 milestones and 338 task IDs](TODO.md). **New unified MoonWitness work belongs in this repository only.** Earlier MoonWitness, Corpus, A-L-L-A-H, Empire and Rocksoul repositories remain historical/source references or individually reviewed import candidates.
+**Official XV planning flow:** [Master Vision Narrative](docs/vision/MASTER_VISION_NARRATIVE_XV.md) → [MASTER BLUEPRINT](BLUEPRINT.md) → [MASTER TODO / 42 milestones and 360 unique task IDs](TODO.md). **New unified MoonWitness work belongs in this repository only.** Earlier MoonWitness, Corpus, A-L-L-A-H, Empire and Rocksoul repositories remain historical/source references or individually reviewed import candidates.
 
-**Accepted naming decision:** the backend currently called `apps/radio` / `@moonwitness/radio` is now **ARSY — MoonWitness Application & Orchestration Hub** as a product/architecture name. Its **physical rename** to `apps/arsy` / `@moonwitness/arsy` is tracked by [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md) and [M28](TODO.md#m28--arsy-hub-rename-and-compatibility-migration) and **has not yet been executed**. Existing Radio stations/schedule/listening are retained as the **SIGNAL/RADIO** domain inside ARSY. No new Fastify backend is created; port 3000 and existing API routes remain compatible. **Current code and examples below still use the old identifiers until M28 is verified.**
+**LUMEN proposal (M41):** a TypeScript agent framework package plus an internal worker application is documented in [deep research](docs/research/LUMEN-framework-deep-research.md), [architecture](docs/architecture/LUMEN.md) and [proposed ADR-0010](docs/decisions/ADR-0010-lumen-agent-runtime.md). It is not yet accepted or implemented; ARSY remains the only Hub and canonical run-state owner.
 
-The six established application entries below correspond to current workspaces and ARSY-Hub-as-`radio` / MoonQL functionality. M38-07 has since added a seventh SKYLINK workspace containing only a health route; messaging providers, D18 storage and operator UI remain unimplemented. ECHOLOG is accepted as the planned eighth workspace, but its directory and service do not exist. Corpus, ontology, comparative research, SHADOW, 100CENTER, World Monitor and Journey are **planned capability areas**, **not automatically live features** merely because they appear in the vision. Use the TODO evidence gates before declaring a task complete; source/privacy/security/recovery checks are mandatory before importing sensitive content.
+**Accepted naming decision:** ARSY is the single existing Fastify + MoonQL Hub, and the in-place move to `apps/arsy` / `@moonwitness/arsy` is present on `dev`. M28-13/M28-14 regression, integration, Docker and release evidence remain open; the path move is not a production certification. Radio stations/schedule/listening remain the **SIGNAL/RADIO** domain in the same service. No duplicate Fastify Hub is allowed; keep port 3000 and `/api/v1` compatible. See [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md) and [M28](TODO.md#m28--arsy-hub-rename-and-compatibility-migration).
 
-Modular **TypeScript/pnpm** monorepo with six established application workspaces plus the M38-07 SKYLINK health-only skeleton. **Do not equate an app directory with a production-certified service.**
+Current `dev` has eight app directories: `apps/arsy`, `apps/dock`, `apps/headquarters`, `apps/cockpit`, `apps/aigateway`, `apps/sentinel`, `apps/skylink` and `apps/echolog`. SKYLINK's bounded control plane/provider adapters exist but ARSY integration, operator UI and final end-to-end gates remain open (M38-12..14). ECHOLOG's filesystem content-addressed storage and bounded S3-compatible subset exist; its consumer UI and final end-to-end/rollback gates remain open (M39-11/12). ORBIT and LUMEN are proposals/plans, not existing app directories. Corpus, ontology, comparative research, SHADOW, 100CENTER, World Monitor and Journey remain planned capability areas. Use TODO and exact-SHA evidence before claiming implementation or production readiness; rights, privacy, security and recovery gates remain mandatory.
 
-**Ecosystem direction (PLANNED, not deployed):** Empire of the Light / `a-l-l-a-h.com` Lighthouse experience (initially reuse Dock), Harbor community, SHADOW creative authoring, MoonLab research, WORKS commerce and a conditional HELIOGRID read-only energy operations app after calibrated pilot. Those proposed app surfaces share D00 auth, one ARSY/MoonQL Hub and global `id`/`en` UI conventions; SKYLINK is the sole accepted bounded D18 service exception, not a second identity or general-purpose Hub. See [Blueprint §2A](BLUEPRINT.md#2a--global-ecosystem-surfaces-and-implementation-reality-proposal-26-october-2026), and [Immediate Execution](TODO.md#immediate-execution--foundation--global-i18n--first-bilingual-public-release) for **planning**; a health-only scaffold does not claim the communication surface is implemented.
+Modular **TypeScript/pnpm** monorepo with eight current app directories. The existence of a workspace does not imply production certification; the LUMEN worker and ORBIT frontend are not created.
+
+**Ecosystem direction (PLANNED, not deployed):** Empire of the Light / `a-l-l-a-h.com` Lighthouse experience (initially reuse Dock), Harbor community, SHADOW creative authoring, MoonLab research, WORKS commerce and a conditional HELIOGRID read-only energy operations app after calibrated pilot. Those proposed app surfaces share D00 auth, one ARSY/MoonQL Hub and global `id`/`en` UI conventions; SKYLINK is the bounded D18 service and ECHOLOG the bounded stateless D19 object service, neither a second Hub. See [Blueprint §2A](BLUEPRINT.md#2a--global-ecosystem-surfaces-and-implementation-reality-proposal-26-october-2026) and [Immediate Execution](TODO.md#immediate-execution--foundation--global-i18n--first-bilingual-public-release) for **planning**; service integration/release gates remain explicit.
 
 **First delivery target:** existing Dock landing page in `/id` and `/en`; M19-09–18 record localized route, SEO, fallback, and accessibility evidence. Frozen Docker/Compose readiness and publication are still unverified; `pnpm verify` passing alone is **not** production Docker or public deployment evidence. ARSY's physical Radio rename remains pending.
 
@@ -22,14 +24,16 @@ Current application surfaces and accepted planned targets:
 
 | App | Port | Role |
 |---|---|---|
-| **ARSY Hub (currently `@moonwitness/radio`)** | 3000 | Single Fastify + MoonQL API/ORM hub; migration target `@moonwitness/arsy` (M28) |
+| **ARSY Hub (`@moonwitness/arsy`)** | 3000 | Single Fastify + MoonQL API/ORM hub; in-place path/package move is present in `dev`, with M28-13/M28-14 acceptance still open |
 | **`@moonwitness/headquarters`** | 3002 | Admin command center (Next.js 16, RSC + server actions) |
 | **`@moonwitness/dock`** | 3001 | Public homepage, station catalog and schedule (Next.js 16, RSC) |
 | **`@moonwitness/cockpit`** | 3004 by default (local) | Developer Vite/React GUI + process supervision; not a public production admin |
 | **`@moonwitness/aigateway`** | 3003 by default (internal) | Bounded model inference adapter; not an independent truth owner |
 | **`@moonwitness/sentinel`** | Worker, no public HTTP port expected | Source-monitor ingestion/background tasks; not publication authority |
-| **`@moonwitness/skylink`** (accepted M38; health-only skeleton) | 3005 by default (local) | `/health` only; provider messaging, D18 store and operator UI remain planned; **not** a second Hub |
-| **ECHOLOG** (accepted, planned M39; app not present) | planned `3006` | Target stateless object storage + attachments; D19; no tables; **not** a second Hub |
+| **`@moonwitness/skylink`** (M38) | 3005 by default (local) | Bounded REST/WebSocket control plane and provider adapters; ARSY integration, operator UI and final e2e gates remain open; D18, not a second Hub |
+| **`@moonwitness/echolog`** (M39) | 3006 by default (local) | Filesystem content-addressed storage and bounded S3-compatible subset; consumer UI/final e2e gates remain open; D19, no tables |
+| **ORBIT** (M40; proposed app) | not reserved | Planned spatial frontend; 3D plus accessible 2D, no backend/domain owner |
+| **LUMEN Runtime** (M41; proposed app) | not reserved | Proposed internal worker paired with `@moonwitness/lumen`; no public task API, database, identity or model-routing owner; ADR-0010 pending |
 
 The hub behind everything:
 
@@ -55,7 +59,7 @@ moonwitness/
 ├─ docker-compose.yml         # current db + radio-name Hub :3000 + dock :3001 + hq :3002; target Compose service arsy
 ├─ docker-compose.db.yml      # Postgres only (pnpm db:up) for host-side development
 ├─ apps/
-│  ├─ radio/                  # CURRENT path; ARSY Hub target apps/arsy / @moonwitness/arsy (M28)
+│  ├─ arsy/                   # current path/package move; M28-13/M28-14 acceptance gates remain open
 │  │  └─ src/
 │  │     ├─ server.ts · app.ts · config.ts · fastify.d.ts
 │  │     ├─ lib/  channels.ts (Channel contract + ChannelManager) · types.ts (TypedModule) · loader.ts
@@ -69,7 +73,8 @@ moonwitness/
 │  │  └─ src/{app,data,ui,layouts,lib}/  # LDD layers, see below
 │  ├─ dock/                   # @moonwitness/dock — public site (Next.js 16)
 │  │  └─ src/{app,data,ui,layouts,lib}/
-│  └─ skylink/                # @moonwitness/skylink — M38-07 health-only service skeleton
+│  ├─ skylink/                # @moonwitness/skylink — bounded D18 service; integration gates remain open
+│  └─ echolog/                # @moonwitness/echolog — bounded stateless D19 object storage
 └─ packages/
    ├─ core/                   # @moonwitness/core — httpError helpers, the envelope + the /_schema types
    ├─ moonql/                 # @moonwitness/moonql — the declarative ORM: descriptors → tables, repos, REST, views, bus, codegen
@@ -88,9 +93,9 @@ moonwitness/
    ├─ skylink-core/           # @moonwitness/skylink-core — M38-07 message/provider contract types only
 ```
 
-**Remaining M38 target layout (planned):** `packages/skylink-store`, `packages/skylink-whatsapp`, and `packages/skylink-telegram`. `apps/skylink` and `packages/skylink-core` currently contain only the M38-07 health/service-contract skeleton. See [SKYLINK architecture](docs/architecture/SKYLINK.md); provider, storage, UI and ARSY integration are not implemented.
+**Current M38 layout:** `apps/skylink`, `packages/skylink-core`, `packages/skylink-store`, `packages/skylink-whatsapp` and `packages/skylink-telegram` exist in `dev`. Provider/control-plane implementation is present; M38-12..14 ARSY integration, operator UI and end-to-end/release evidence remain open. See [SKYLINK architecture](docs/architecture/SKYLINK.md).
 
-**M39 target layout (planned; none of these directories exists yet):** `apps/echolog` and `packages/echolog-core`. Contract: [ECHOLOG architecture](docs/architecture/ECHOLOG.md). ECHOLOG is stateless by design — it owns no tables, so the closed SQL-owner set stays `{moonql, skylink-store}`; implementation starts only at M39-06.
+**Current M39 layout:** `apps/echolog` and `packages/echolog-core` exist in `dev`. ECHOLOG is stateless by design and owns no tables; the accepted SQL-owner set remains bounded to the existing MoonQL and SKYLINK-store owners. M39-11/12 UI, e2e and rollback gates remain open. See [ECHOLOG architecture](docs/architecture/ECHOLOG.md).
 
 ## Requirements
 
@@ -151,11 +156,11 @@ that forgets is reported at boot by `MOONQL_ACL_POLICY` (and the build fails wit
 
 ### Objects & attachments (moving to ECHOLOG)
 
-> **Target architecture ([ADR-0007](docs/decisions/ADR-0007-echolog-storage.md), [ECHOLOG contract](docs/architecture/ECHOLOG.md)):** once M39-06 onward is complete, immutable, content-addressed objects will live in the standalone `@moonwitness/echolog` service on `:3006` (D19). Consumers will store `{object_key, digest, size, content_type}` only; bytes will never pass through ARSY or enter Postgres. The service, drivers and bucket have not been implemented or provisioned yet.
+> **Current bounded implementation ([ADR-0007](docs/decisions/ADR-0007-echolog-storage.md), [ECHOLOG contract](docs/architecture/ECHOLOG.md)):** `@moonwitness/echolog` currently implements filesystem-backed content-addressed objects and a limited S3-compatible subset on its configured service port. Consumers should store object references only; bytes do not enter Postgres. Consumer UI and final e2e/rollback evidence remain open, and this is not full AWS S3 compatibility.
 
 ### Channels (IM — moving to SKYLINK)
 
-> **Target architecture ([ADR-0006](docs/decisions/ADR-0006-skylink-communication-surface.md), [SKYLINK contract](docs/architecture/SKYLINK.md)):** once M38 is implemented, multi-provider IM will live in the standalone `@moonwitness/skylink` service on `:3005` (D18). The routes below remain on ARSY as an **admin proxy** so existing clients do not break; they are not the long-term owning surface.
+> **Current bounded implementation ([ADR-0006](docs/decisions/ADR-0006-skylink-communication-surface.md), [SKYLINK contract](docs/architecture/SKYLINK.md)):** multi-provider messaging control belongs to `@moonwitness/skylink` on its internal service boundary (D18). ARSY's existing channel routes remain compatibility/admin-proxy surfaces until M38-12..14 integration and release checks are complete.
 
 Admin-only: these routes can pair, unpair and **send as the operator**, and
 `detail.qr` is the live pairing code, so the whole group sits behind `['admin']`.
@@ -292,7 +297,7 @@ export default defineAddon({
 ### Add a feature
 
 1. New package `packages/moonql-<name>` with one `defineAddon` (+ optional `depends`, `views`, `endpoints`, `cron`, `hooks`).
-2. One import line in `apps/radio/src/addons.ts`.
+2. One import line in `apps/arsy/src/addons.ts`.
 3. Boot — moonql installs addons in dependency order, syncs the schema (CREATE TABLE / ADD COLUMN / CREATE [UNIQUE] INDEX only, never drops), seeds empty tables, arms crons and mounts routes + views. Done.
 
 Row types are inferred: descriptors carry phantom types, so addon hooks get typed
@@ -579,7 +584,7 @@ Docker checklist: create `.env` from `.env.example` (compose fails without
   same decision at the two other layers.
 - BFF responses use `okJson` / `failJson` / `errorMessage` from
   `@moonwitness/moonql-client`, so a hub 400 never arrives as a generic 502.
-- `.env.example` is a checked contract (`apps/radio/test/env-contract.test.ts`):
+- `.env.example` is a checked contract (`apps/arsy/test/env-contract.test.ts`):
   unknown or missing keys fail the test suite, and the template keeps placeholders
   instead of credentials.
 - Unauthenticated entry points (`/auth/login`, `/listen`) are rate-limited per ip

@@ -8,32 +8,37 @@
 
 ## ARSY — accepted central Hub identity (ADR-0001)
 
-**Owner-approved naming decision, 26 October 2026:** **ARSY = the single existing Fastify + MoonQL + API + plugins + channel backend currently implemented at `apps/radio` / `@moonwitness/radio`.** It is a **rename/migration of that SAME service**, not an extra backend. **Radio becomes the bounded `SIGNAL/RADIO` service/domain within ARSY**; station/player/schedule/playlog/WhatsApp/DENPA functionality remains supported where actually implemented.
+**Owner-approved naming decision, 26 October 2026:** ARSY is the single existing Fastify + MoonQL + API + plugin Hub. The current dev tree contains the in-place move to **apps/arsy / @moonwitness/arsy**. This is the same service, not a second backend. M28-13/M28-14 regression, integration, Docker and release evidence remain open, so the path/package move is not full production certification.
 
-| Architectural label | Current implementation (source-audit fact) | **Accepted future identifier** |
+| Architectural label | Current dev implementation/state | Compatibility invariant |
 |---|---|---|
-| Hub application | `apps/radio` | **`apps/arsy`** |
-| Hub pnpm package | `@moonwitness/radio` | **`@moonwitness/arsy`** |
-| Compose Hub service | `radio` | **`arsy`**, with tested temporary internal DNS compatibility for Dock/HQ |
-| Operational label | radio Hub | **ARSY — MoonWitness Application & Orchestration Hub** |
-| Radio capability | station/schedule/playlog, signal & channels | **SIGNAL/RADIO module**, not a separately duplicated API |
-| Port / public API | `3000` / `/api/v1` / `/docs` | **Stay stable by default** |
-| Hub environment names | `RADIO_API_URL`, `RADIO_PORT`, `RADIO_PREFIX`, `RADIO_TITLE` | Preferred `ARSY_*` only with documented, tested legacy aliases; old values not broken silently |
+| Hub application | **apps/arsy** | One Fastify + MoonQL Hub only |
+| Hub package | **@moonwitness/arsy** | Same service identity; no duplicate API |
+| Compose/service aliases | Must be checked against current runtime config and M28 evidence | One service, stable external compatibility |
+| Operational label | ARSY — MoonWitness Application & Orchestration Hub | No claim of autonomous/divine authority |
+| Radio capability | Stations, schedule, playlog, listening and channels | Remains the bounded SIGNAL/RADIO domain |
+| Port / public API | 3000 / /api/v1 / /docs | Preserve unless separately reviewed and tested |
+| Identity and run state | D00/ARSY contracts | One authorization authority and one canonical task-state owner |
 
-**Source-of-truth ADR:** [ADR-0001 — ARSY is the XV Hub](docs/decisions/ADR-0001-arsy-is-xv-hub.md). **Implementation backlog:** [TODO milestone M28](TODO.md#M28--arsy-hub-rename-and-compatibility-migration). The decision is accepted, **physical code rename is pending and not claimed shipped**.
+**Source-of-truth ADR:** [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md). **Migration status:** the app/package move is present in dev; M28 remains open for compatibility, regression, integration, Docker and rollback evidence.
 
-Current files and tables with `radio` in their paths/names are **historically correct runtime observations** until the physical migration is tested. New architectural plans should use **ARSY** as the hub, but implementation references must use the current actual path until M28 completes.
+Legacy references to apps/radio and @moonwitness/radio remain in historical snapshots and may survive in compatibility variables/tests. They must not be blindly rewritten without inspecting the current file. Current source paths and test evidence take precedence over copied historical documentation.
 
-**Role separation:** ARSY = backend/runtime and future bounded orchestration; 100CENTER = governed operator experience inside Headquarters; SHADOW = creative/editorial workspace; MoonQL = existing ORM; Radio = domain feature; historical ARSY Research Compute ambitions are *extensions not yet implemented*. ARSY is an application name, not religious al-'Arsh, divine authority, supernatural mechanism or self-governing AI.
+### ARSY compatibility and release gates
 
-### ARSY non-breaking migration contract
+- The in-place move to apps/arsy must remain one Hub, one MoonQL bootstrap and one database authority; never run apps/radio and apps/arsy as parallel production Hubs.
+- Preserve /api/v1, port 3000, table IDs, Radio media/player routes, auth, Swagger and error envelope.
+- Verify workspace scripts, pnpm lock importer, Dockerfiles/Compose, internal DNS, environment aliases, generated SDK, test fixtures and operational docs against the actual dev tree.
+- Preserve old RADIO_* environment names during any approved compatibility window; conflicting values must fail explicitly.
+- M28-13/M28-14 need exact-SHA evidence for relevant tests, Docker builds, PostgreSQL parity, integration and rollback before a production-ready claim.
+- No database table rename merely because the Hub package is named ARSY.
+- The owner policy remains direct work on dev; no new feature branches or force pushes.
 
-- **One running Hub before and after**, one MoonQL bootstrap, one database authority; **never start apps/radio and apps/arsy as two parallel production services**.
-- Move the directory and package instead of copying; **preserve `/api/v1`, port 3000, table IDs, radio media/player routes, clients, auth, Swagger, and error envelope**.
-- Update root pnpm filters, `pnpm-lock.yaml` through pnpm regeneration, Dockerfiles and Compose DNS, runners, app manifests, generated SDK, test fixtures, config aliases and docs as **one tested migration**.
-- If a new `ARSY_API_URL` or `ARSY_PORT` is introduced, accept the old Radio-specific environment names during a documented compatibility window and **fail on conflicting simultaneous values**, rather than silently changing destinations.
-- Run Hub/PG/Radio/Dock/HQ/SDK/ACL/WA/DENPA/Docker smoke and actual fallback/rollback checks before marking M28 complete.
-- **No new source code rename has been executed as part of this architecture decision.**
+## LUMEN — proposed agent framework and worker boundary (ADR-0010, not yet ratified)
+
+LUMEN is a proposed TypeScript framework at `packages/lumen` plus a separately runnable internal worker at `apps/lumen-runtime` (M41). This is a proposal, not an implementation claim. ARSY remains the only Hub, the canonical identity/authorization and run-state owner; AI Gateway remains the model router; Headquarters/100CENTER owns human decisions; ORBIT remains presentation-only. LUMEN may not own SQL tables, connect directly to PostgreSQL, expose a public task API, bypass the AI Gateway, or approve its own tools.
+
+The framework core is built from scratch, but standard schema validation, testing and telemetry components should be reused. V1 is one agent per run with explicit versioned sequential steps, bounded budgets, checkpoint/retry/cancellation, tool allowlisting and approval pause/resume. Delivery is treated as at-least-once with idempotency where supported; exactly-once arbitrary side effects and a general-purpose deterministic workflow replay engine are not promised. Long-term memory/vector DB, multi-agent swarms, arbitrary-code tools and Rust are deferred until a measured need and separate review. Full rationale, risks and source references live in [LUMEN research](docs/research/LUMEN-framework-deep-research.md); the proposed decision is [ADR-0010](docs/decisions/ADR-0010-lumen-agent-runtime.md), and the sole task plan is M41 in [TODO](TODO.md).
 
 ## 0 — Decision and acceptance horizon
 
@@ -49,7 +54,7 @@ At master audit commit `43dfcdebfbaa1a7a078d2a0657a10cfdae2ce298`, XV tree conta
 
 | Existing implementation | Evidence paths | Contract to preserve |
 |---|---|---|
-| Fastify Hub, one MoonQL bootstrap | `apps/radio/src/app.ts`, `apps/radio/src/addons.ts` | One API, generated REST + explicit modules + channels |
+| Fastify Hub, one MoonQL bootstrap | `apps/arsy/src/app.ts`, `apps/arsy/src/addons.ts` | One API, generated REST + explicit modules + channels |
 | ORM, migration, addon registry, typed models | `packages/moonql/src/{boot,model,registry,rest,sync}.ts` | No duplicated models or routes; additive auto-sync only |
 | SDK and OpenAPI | `packages/moonql-client`, `apps/radio/src/plugins/swagger.ts`, `apps/radio/src/tools/gen-sdk.ts` | Keep schema drift checks and envelope |
 | Public Dock / Radio | `apps/dock/src/app`, `packages/moonql-stations`, `moonql-schedule`, `moonql-playlog` | Preserve station catalog/playback, live schedule, privacy |
@@ -57,7 +62,7 @@ At master audit commit `43dfcdebfbaa1a7a078d2a0657a10cfdae2ce298`, XV tree conta
 | Identity, ops and messaging | `moonql-auth`, `moonql-apikeys`, `moonql-ops`, `whatsapp`, `denpa` | Single authorization source; opt-in external integrations |
 | Dev, tests, restore recipe | `package.json`, `apps/radio/test`, `docker-compose.yml`, `docs/runbook-restore.md` | Do not equate existence with passing tests/drill |
 
-**Proven risk:** `packages/moonql/src/acl.ts` treats undefined ACL as public. `apps/radio/src/config.ts` defaults `MOONQL_ACL_POLICY=warn`, whereas Docker Compose sets `require` for anonymous REST writes. That guard **does not prove GET/list/views/expand/export of sensitive models are protected**. `apps/headquarters/src/middleware.ts` tests cookie presence, not credential validity (Hub enforces actual authorization); generic MoonQL ops audits are asynchronous and not tamper-proof. The restore runbook has an empty execution ledger. All require gates before restricted data enters XV.
+**Proven risk:** `packages/moonql/src/acl.ts` treats undefined ACL as public. `apps/arsy/src/config.ts` defaults `MOONQL_ACL_POLICY=warn`, whereas Docker Compose sets `require` for anonymous REST writes. That guard **does not prove GET/list/views/expand/export of sensitive models are protected**. `apps/headquarters/src/middleware.ts` tests cookie presence, not credential validity (Hub enforces actual authorization); generic MoonQL ops audits are asynchronous and not tamper-proof. The restore runbook has an empty execution ledger. All require gates before restricted data enters XV.
 
 **Existing route convention** is the Hub `/api/v1` prefix, with `/docs` OpenAPI. **ADR-0001 supersedes the previous advice against renaming `apps/radio`: the owner selected ARSY as the Hub name.** Perform the physical rename **only with M28's compatibility and test gates**. Never create a second API/ORM authority merely to rename the existing Hub.
 
@@ -259,4 +264,4 @@ Historically documented roles: Corpus/RGBL=TEXT; Rocksoul MFTL=STORY; Legend=EVE
 
 ## 8 — Security and integrity gates (must precede private ingestion)
 
-P0: deny-by-default sensitive list/get/create/update/delete, view projections, expand/filter/search/export, row ownership and cross-tenant request paths; enforce at API, not just UI. Non-sensitive public stations deliberately stay public. Critical sources: `packages/moonql/src/acl.ts`, `apps/radio/src/config.ts`, `apps/radio/src/modules
+P0: deny-by-default sensitive list/get/create/update/delete, view projections, expand/filter/search/export, row ownership and cross-tenant request paths; enforce at API, not just UI. Non-sensitive public stations deliberately stay public. Critical sources: `packages/moonql/src/acl.ts`, `apps/arsy/src/config.ts`, `apps/radio/src/modules

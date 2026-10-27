@@ -38,5 +38,9 @@
 - [M35 — WORKS economic and financial operations pilot](M35.md)
 - [M36 — HELIOGRID measured read-only energy pilot](M36.md)
 - [M37 — Cross-app identity and deployment boundaries](M37.md)
+- [M38 — SKYLINK multi-channel communication surface](M38.md)
+- [M39 — ECHOLOG storage and attachments](M39.md)
+- [M40 — ORBIT spatial agent operations frontend](M40.md)
+- [M41 — LUMEN agent framework and internal runtime](M41.md)
 
-38 milestone identities, including M29–M37 proposals. Original IDs and checkboxes remain in [TODO](../../TODO.md).
+42 milestone identities from M00–M41, including proposals that remain unimplemented. Original IDs and checkboxes remain in [TODO](../../TODO.md).

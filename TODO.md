@@ -62,7 +62,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 | **G4 — OPERATIONS** | M20–M23 plus **M38 SKYLINK** plus **M39 ECHOLOG** | 100CENTER, optional AI, existing Radio/WA/DENPA, Journey; SKYLINK = standalone multi-channel communication surface (D18); ECHOLOG = standalone object storage & attachments, stateless (D19) |
 | **G5 — OPTIONAL RESEARCH** | M24–M26 | World monitoring, Science/Time, legacy registries and source recovery |
 | **G6 — RELEASE** | M27 | Real full-stack tests, privacy, rights and approved launch |
-| **G7 — ECOSYSTEM** | M29–M37 plus **M40 ORBIT** | AI handoffs, Master Design, optional Empire surfaces, cross-app identity, and standalone ORBIT spatial frontend (no new backend) |
+| **G7 — ECOSYSTEM** | M29–M37 plus **M40 ORBIT** and proposed **M41 LUMEN** | AI execution contracts, Master Design, optional Empire surfaces, cross-app identity, ORBIT frontend, and LUMEN framework/worker proposal (not a second Hub) |
 
 **Scope gate:** The first Reader release does not require Story/SHADOW or AI. Publishing a Story does additionally require M17 source/consent approval; using AI does additionally require M21 security and candidate approval. Do not conflate optional feature gating with first-release gating.
 
@@ -875,6 +875,31 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 **Execution order:** M40-01 first; M40-03 and M40-05 can proceed in parallel after the workspace exists. M40-06 waits for verified M28/M29 evidence. M40-08 waits for M20/M37. Keep every task unchecked until scoped test evidence and exact SHA exist. ORBIT is a frontend, not a service/domain; do not create D20, another database/login, AI executor, second Hub, or cloned HQ approval engine.
 
-**Target register:** **41 milestones** (29 preserved M00–M28 + M29–M37 + appended M38, M39, M40), 267 preserved IDs from M00–M28 + 45 IDs from M29–M37 + 14 SKYLINK IDs + 12 ECHOLOG IDs + 10 ORBIT IDs = **348 unique task IDs**. Prior checkmarks and evidence remain unchanged. TODO is the only active task/status register.
+## M41 — LUMEN agent framework and internal runtime
 
-**End of XV Master TODO — modular planning v3, 27 October 2026.**
+**Group:** G7 · **Priority:** P1 · **Prerequisites:** explicit ratification of [ADR-0010](docs/decisions/ADR-0010-lumen-agent-runtime.md); relevant M29 lease/handoff contracts; M28 compatibility gates before live integration. **Status:** PLANNED; research and specifications only, no LUMEN code or service created.
+
+**Outcome:** a MoonWitness-owned TypeScript framework at `packages/lumen` / `@moonwitness/lumen`, plus a separately runnable internal worker app at `apps/lumen-runtime` / `@moonwitness/lumen-runtime`, both inside the XV monorepo. This is a worker process, not a second Hub, public task API, database owner, identity service, model router or UI.
+
+**Architecture/research:** [LUMEN contract](docs/architecture/LUMEN.md) · [deep-research findings](docs/research/LUMEN-framework-deep-research.md) · [proposed ADR-0010](docs/decisions/ADR-0010-lumen-agent-runtime.md) · [milestone specification](docs/milestones/M41.md). Individual task packets are linked below. M41-01 must ratify ADR-0010 before implementation leaves proceed. Offline core work uses fake adapters while required M28/M29 live integration gates remain open. No checkbox is closed by this planning change.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M41-01** — Ratify the LUMEN architecture boundary | P1 | D2 | M02-06 | ADR is explicitly accepted/revised/rejected by owner; PROPOSED remains until explicit ratification. [Packet](docs/tasks/M41/M41-01.md) |
+| - [ ] | **M41-02** — Specify canonical run, step and event contracts | P1 | D3 | M41-01, M29-02, M29-05 | Typed run/step/event/lease/checkpoint versions and invalid-state tests; no invented ARSY endpoints. [Packet](docs/tasks/M41/M41-02.md) |
+| - [ ] | **M41-03** — Scaffold reusable LUMEN framework package | P1 | D3 | M41-02, M01-02, M05-08 | Isolated package build/typecheck/tests; importing package has no network/server/database side effects. [Packet](docs/tasks/M41/M41-03.md) |
+| - [ ] | **M41-04** — Implement bounded single-agent execution loop | P1 | D4 | M41-03 | One agent, injected model/tool ports, hard iteration/deadline/cancel limits, fake-adapter positive/negative tests. [Packet](docs/tasks/M41/M41-04.md) |
+| - [ ] | **M41-05** — Implement typed tool registry and policy enforcement | P1 | D4 | M41-03, M03-06 | Allowlisted tools, schema validation, trusted capability context, deny-by-default tests; no arbitrary shell/network tool. [Packet](docs/tasks/M41/M41-05.md) |
+| - [ ] | **M41-06** — Add the existing AI Gateway adapter | P1 | D3 | M41-04, M05-15 | Use actual gateway contracts; provider routing stays in gateway; timeout/auth/provider errors fail safely. [Packet](docs/tasks/M41/M41-06.md) |
+| - [ ] | **M41-07** — Integrate versioned steps, checkpoints and ARSY leases | P1 | D5 | M41-02, M41-04, M29-02, M29-05, M28-13, M28-14 | Live adapter only after M28/M29 evidence; fenced leases, saved step results, restart recovery and idempotency; no direct DB. [Packet](docs/tasks/M41/M41-07.md) |
+| - [ ] | **M41-08** — Implement human-approval pause and resume | P1 | D4 | M41-05, M41-07, M20-02, M20-06, M20-07, M37-02, M37-03, M37-05 | Exact run/tool/version/argument-hash/expiry binding; stale or altered approvals never execute tools. [Packet](docs/tasks/M41/M41-08.md) |
+| - [ ] | **M41-09** — Build standalone internal worker application | P1 | D4 | M41-06, M41-07, M41-08 | Separately built worker, controlled shutdown/readiness, no public task API, direct DB or new queue. [Packet](docs/tasks/M41/M41-09.md) |
+| - [ ] | **M41-10** — Add tracing, metrics, redaction and budgets | P1 | D3 | M41-04, M41-06, M41-09 | Correlated telemetry; sensitive content excluded by default; enforced run/tool budgets only from trustworthy usage data. [Packet](docs/tasks/M41/M41-10.md) |
+| - [ ] | **M41-11** — Prove failure recovery and security invariants | P1 | D5 | M41-04..10, M03, M04, M28-13, M28-14, M29-02, M29-05 | Crash/duplicate/expired lease/retry/cancel/timeout/approval-injection tests; uncertain side effects remain explicit. [Packet](docs/tasks/M41/M41-11.md) |
+| - [ ] | **M41-12** — End-to-end acceptance, developer docs and release gate | P1 | D4 | M41-01..11, M28-13, M28-14, M29, M03, M04 | Clean build/tests, integration and rollback evidence; package/runtime docs match code; no production claim without observed deployment. [Packet](docs/tasks/M41/M41-12.md) |
+
+**Execution order:** M41-01 first. After ratification, M41-04 and M41-05 may proceed in parallel after M41-03. M41-07 and downstream real-runtime integration stay blocked until the applicable M28/M29 gates are verified. LUMEN v1 uses one agent and explicit sequential steps; multi-agent, long-term memory/vector storage, arbitrary code tools and Rust are deferred. Keep all status checkboxes unchecked until exact-SHA evidence and reviewer sign-off exist.
+
+**Target register:** **42 milestones** (29 preserved M00–M28 + M29–M37 + appended M38, M39, M40 and M41), 267 preserved IDs from M00–M28 + 45 IDs from M29–M37 + 14 SKYLINK IDs + 12 ECHOLOG IDs + 10 ORBIT IDs + 12 LUMEN IDs = **360 unique task IDs**. Prior checkmarks and evidence remain unchanged. TODO is the only active task/status register.
+
+**End of XV Master TODO — modular planning v4, 27 October 2026.**
