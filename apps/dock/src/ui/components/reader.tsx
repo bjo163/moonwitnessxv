@@ -230,25 +230,27 @@ export function ReaderView({
         </section>
       </article>
 
-      <Panel
-        title="Reproducible citation"
-        subtitle="Exact edition, provenance version, source date and retrieval timestamp."
-      >
-        {result.citationText ? (
-          <>
-            <pre className="dk-reader-citation" aria-label="Reproducible citation text" tabIndex={0}>
-              {result.citationText}
-            </pre>
-            <CitationCopy text={result.citationText} citationKey={source?.key ?? citation} locale={locale} />
-          </>
-        ) : (
-          <p className="dk-reader-note">{copy.emptyReaderCitation}</p>
-        )}
-        <p className="dk-reader-note dk-reader-version">
-          Edition selector: use the optional edition field to pin a version when an address exists in more than one
-          edition.
-        </p>
-      </Panel>
+      <div id="reader-citation" className="dk-reader-export-anchor">
+        <Panel
+          title="Reproducible citation"
+          subtitle="Exact edition, provenance version, source date and retrieval timestamp."
+        >
+          {result.citationText ? (
+            <>
+              <pre className="dk-reader-citation" aria-label="Reproducible citation text" tabIndex={0}>
+                {result.citationText}
+              </pre>
+              <CitationCopy text={result.citationText} citationKey={source?.key ?? citation} locale={locale} />
+            </>
+          ) : (
+            <p className="dk-reader-note">{copy.emptyReaderCitation}</p>
+          )}
+          <p className="dk-reader-note dk-reader-version">
+            Edition selector: use the optional edition field to pin a version when an address exists in more than one
+            edition.
+          </p>
+        </Panel>
+      </div>
     </div>
   )
 }

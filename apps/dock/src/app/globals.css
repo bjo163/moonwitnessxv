@@ -941,7 +941,146 @@ body {
   color: var(--accent);
 }
 
+/* ---------- UI-P05b: Reader contents rail + reading record ---------- */
+.dk-reader-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(210px, 250px) minmax(220px, 300px);
+  gap: 18px;
+  align-items: start;
+}
+.dk-reader-main {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.dk-reader-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  padding: 14px;
+}
+.dk-reader-rail-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.dk-reader-rail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dk-reader-rail-heading {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.dk-reader-rail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dk-reader-rail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px dashed var(--border);
+  padding-top: 6px;
+}
+.dk-reader-rail-item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.dk-reader-rail-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.dk-reader-rail-meta {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.dk-reader-rail-link {
+  color: var(--cyan);
+  text-decoration: none;
+}
+.dk-reader-rail-link:hover,
+.dk-reader-rail-link:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+.dk-reader-rail-link[aria-current='true'] {
+  color: var(--fg);
+  font-weight: 700;
+}
+.dk-reader-rail-empty,
+.dk-reader-rail-export {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.dk-reader-record {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+.dk-reader-record-row {
+  display: grid;
+  gap: 2px;
+  border-top: 1px dashed var(--border);
+  padding-top: 8px;
+}
+.dk-reader-record-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.dk-reader-record-row dt {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.dk-reader-record-row dd {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.dk-reader-record-reason {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 900px) {
+  .dk-reader-layout {
+    grid-template-columns: 1fr;
+  }
+  .dk-reader-main {
+    gap: 14px;
+  }
   .dk-reader-grid {
     grid-template-columns: 1fr;
   }
