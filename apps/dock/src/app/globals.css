@@ -173,6 +173,17 @@ body {
   text-shadow: 3px 3px 0 #ffffff;
   transform: skewX(-8deg);
 }
+.dk-hero-motto {
+  margin: 8px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
 .dk-hero-sub {
   margin: 2px 0;
   font-family: var(--font-zine);
@@ -2038,6 +2049,162 @@ body {
   }
 }
 
+/* ---------- UI-XV: reference type scale ---------- */
+.dk-display {
+  font-family: var(--font-display);
+  font-size: clamp(2.125rem, 6vw, 4.5rem);
+  line-height: 0.94;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.dk-display-accent {
+  color: var(--pink);
+}
+
+.dk-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.dk-caption {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.dk-mono-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- UI-XV: four-space entry (ADR-0009) ---------- */
+.dk-space-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s3);
+}
+
+.dk-space-card {
+  --space-tone: var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--space-tone);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.dk-space-card[data-tone="accent"] {
+  --space-tone: var(--accent);
+}
+
+.dk-space-card[data-tone="cyan"] {
+  --space-tone: var(--cyan);
+}
+
+.dk-space-card[data-tone="pink"] {
+  --space-tone: var(--pink);
+}
+
+.dk-space-card[data-tone="moon"] {
+  --space-tone: var(--moon);
+}
+
+.dk-space-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--chalk-dim);
+}
+
+.dk-space-card:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.dk-space-icon {
+  color: var(--space-tone);
+  display: inline-flex;
+}
+
+.dk-space-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.dk-space-body {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.dk-space-note {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--muted);
+  margin: 0;
+}
+
+.dk-space-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+.dk-space-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--space-tone);
+}
+
+@media (max-width: 1024px) {
+  .dk-space-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .dk-space-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1920px) {
+  .dk-space-grid {
+    max-width: 1680px;
+    margin-inline: auto;
+  }
+}
+
 /* ---------- Reduced-Motion Accessibility Safeguards ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -2059,6 +2226,7 @@ body {
   }
 
   .dk-station:hover,
+  .dk-space-card:hover,
   .m-btn:hover {
     transform: none !important;
   }
