@@ -19,6 +19,7 @@ import { createTelegramSkylinkChannel, DuplicateSkylinkChannelIdError, SkylinkCh
 import type { SkylinkConfig } from '../src/config.js'
 import { createSkylinkServer } from '../src/server.js'
 import { SkylinkEventBus } from '../src/ws.js'
+import { fetchMessages, openOperatorSocket } from '../client/lib/api.js'
 
 const SERVICE_KEY = 'synthetic-skylink-service-key-value-00001'
 const TELEGRAM_SECRET = 'synthetic-skylink-telegram-webhook-secret-01'
@@ -468,6 +469,60 @@ void test('SKYLINK REST and WS enforce service/ARSY auth and publish channel eve
   const firstOperatorFrame = nextFrame(operatorSocket)
   operatorSocket.send(JSON.stringify({ type: 'auth', authorization: `Bearer ${validToken}` }))
   assert.deepEqual(await firstOperatorFrame, { type: 'auth', ok: true })
+
+  // Exercise the same WebSocket client used by the operator UI. Its event
+  // callback is the state update wired to App's `events` state; then fetch the
+  // D18 message through the exact client API function used by the inbox.
+  const previousLocation = Object.getOwnPropertyDescriptor(globalThis, 'location')
+  Object.defineProperty(globalThis, 'location', { configurable: true, value: new URL(serverUrl) })
+  const uiState: { socket: string; events: Record<string, unknown>[] } = { socket: 'idle', events: [] }
+  let resolveUiConnected: () => void = () => {}
+  const uiConnected = new Promise<void>((resolve) => { resolveUiConnected = resolve })
+  let resolveInbound: (event: Record<string, unknown>) => void = () => {}
+  const uiInboundEvent = new Promise<Record<string, unknown>>((resolve) => { resolveInbound = resolve })
+  const uiSocket = openOperatorSocket(validToken, {
+    onState: (state) => {
+      uiState.socket = state
+      if (state === 'connected') resolveUiConnected()
+    },
+    onEvent: (event) => {
+      uiState.events = [event, ...uiState.events].slice(0, 30)
+      if (event.type === 'message.inbound') resolveInbound(event)
+    },
+  })
+  t.after(() => {
+    uiSocket.close()
+    if (previousLocation) Object.defineProperty(globalThis, 'location', previousLocation)
+    else Reflect.deleteProperty(globalThis, 'location')
+  })
+  await within(uiConnected, 'operator UI WebSocket authentication')
+
+  const uiUpdateId = Date.now() + 100
+  const uiWebhook = await app.inject({
+    method: 'POST', url: '/api/v1/webhooks/telegram',
+    headers: { 'content-type': 'application/json', 'x-telegram-bot-api-secret-token': TELEGRAM_SECRET },
+    payload: JSON.stringify({
+      update_id: uiUpdateId,
+      message: { from: { id: 77 }, chat: { id: 88 }, text: 'synthetic inbound UI body' },
+    }),
+  })
+  assert.equal(uiWebhook.statusCode, 202)
+  const uiEvent = await within(uiInboundEvent, 'inbound WebSocket event to UI state')
+  assert.equal(uiEvent.type, 'message.inbound')
+  assert.equal(uiState.socket, 'connected')
+  assert.equal(uiState.events.find((event) => event.type === 'message.inbound')?.messageId, uiEvent.messageId)
+
+  const originalUiFetch = globalThis.fetch
+  globalThis.fetch = ((input, init) => {
+    const target = typeof input === 'string' && input.startsWith('/') ? new URL(input, serverUrl) : input
+    return originalUiFetch(target, init)
+  }) as typeof fetch
+  try {
+    const uiMessages = await fetchMessages(inboundConversation.id, validToken, new AbortController().signal)
+    assert.ok(uiMessages.data.some((message) => message.body === 'synthetic inbound UI body'))
+  } finally {
+    globalThis.fetch = originalUiFetch
+  }
 
   const stateFrame = nextFrame(operatorSocket)
   const start = await app.inject({

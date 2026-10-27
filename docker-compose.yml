@@ -7,6 +7,9 @@ name: moonwitness
 #   POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB   database identity
 #   MOONQL_AUTH_ADMIN_PASSWORD                        seeded HQ admin
 #   WHATSAPP_ENABLED / WHATSAPP_AUTO_CONNECT          IM channel
+#   SKYLINK_SERVICE_KEY                               ARSY-to-SKYLINK credential (required with profile `skylink` and flag on)
+#   SKYLINK_TELEGRAM_BOT_TOKEN / SKYLINK_TELEGRAM_WEBHOOK_SECRET
+#                                                     optional Telegram provider credentials
 #   DENPA_ENABLED / DENPA_TOKEN                       inbound webhook
 #   CORS_ORIGIN                                       comma-separated allow-list
 #
@@ -110,6 +113,10 @@ services:
       # DENPA 電波 inbound webhook: off unless a token is supplied (see module).
       DENPA_ENABLED: ${DENPA_ENABLED:-false}
       DENPA_TOKEN: ${DENPA_TOKEN:-}
+      # SKYLINK owns provider channel identity when explicitly enabled.
+      SKYLINK_ENABLED: ${SKYLINK_ENABLED:-false}
+      SKYLINK_URL: http://skylink:3005
+      SKYLINK_SERVICE_KEY: ${SKYLINK_SERVICE_KEY:-}
     volumes:
       - whatsapp-session:/data
     healthcheck:
@@ -128,6 +135,35 @@ services:
         # through the deprecated `radio` DNS name during the compatibility window.
         aliases:
           - radio
+
+  skylink:
+    profiles: ["skylink"]
+    build:
+      context: .
+      dockerfile: Dockerfile.skylink
+    image: moonwitness-skylink
+    container_name: moonwitness-skylink
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3005:3005"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3005"
+      DATABASE_URL: postgresql://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}
+      SKYLINK_ARSY_URL: http://arsy:3000
+      SKYLINK_SERVICE_KEY: ${SKYLINK_SERVICE_KEY:-}
+      SKYLINK_TELEGRAM_BOT_TOKEN: ${SKYLINK_TELEGRAM_BOT_TOKEN:-}
+      SKYLINK_TELEGRAM_WEBHOOK_SECRET: ${SKYLINK_TELEGRAM_WEBHOOK_SECRET:-}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3005/health').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
 
   headquarters:
     build:

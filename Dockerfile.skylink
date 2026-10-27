@@ -1,0 +1,57 @@
+# syntax=docker/dockerfile:1
+# Dedicated runtime for SKYLINK. The default Dockerfile remains the ARSY Hub.
+
+# ---- Base ----
+FROM node:24-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+WORKDIR /repo
+
+# ---- Install deps ----
+FROM base AS deps
+COPY scripts/setup-git-hooks.mjs ./scripts/
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+RUN --mount=type=bind,source=.,target=/ctx,readonly \
+    cd /ctx \
+    && find apps packages -mindepth 2 -maxdepth 2 -name package.json | while read -r m; do \
+         mkdir -p "/repo/$(dirname "$m")" && cp "/ctx/$m" "/repo/$m"; \
+       done
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
+
+# ---- Build ----
+FROM deps AS build
+COPY tsconfig.base.json ./
+COPY packages ./packages
+COPY apps/skylink ./apps/skylink
+RUN pnpm build:libs && pnpm --filter @moonwitness/skylink build
+
+# ---- Production deps ----
+FROM base AS prod-deps
+COPY scripts/setup-git-hooks.mjs ./scripts/
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+RUN --mount=type=bind,source=.,target=/ctx,readonly \
+    cd /ctx \
+    && find apps packages -mindepth 2 -maxdepth 2 -name package.json | while read -r m; do \
+         mkdir -p "/repo/$(dirname "$m")" && cp "/ctx/$m" "/repo/$m"; \
+       done
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --prod
+
+# ---- Runtime ----
+FROM node:24-slim AS runtime
+ENV NODE_ENV=production
+WORKDIR /repo
+COPY --from=prod-deps /repo ./
+COPY --from=build /repo/packages/core/dist packages/core/dist
+COPY --from=build /repo/packages/moonui/dist packages/moonui/dist
+COPY --from=build /repo/packages/skylink-core/dist packages/skylink-core/dist
+COPY --from=build /repo/packages/skylink-store/dist packages/skylink-store/dist
+COPY --from=build /repo/packages/skylink-store/migrations packages/skylink-store/migrations
+COPY --from=build /repo/packages/skylink-telegram/dist packages/skylink-telegram/dist
+COPY --from=build /repo/apps/skylink/package.json apps/skylink/package.json
+COPY --from=build /repo/apps/skylink/dist apps/skylink/dist
+EXPOSE 3005
+CMD ["node", "apps/skylink/dist/index.js"]

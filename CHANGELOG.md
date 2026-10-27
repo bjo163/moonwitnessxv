@@ -8,6 +8,7 @@ available.
 ## [Unreleased]
 
 ### Added
+- SKYLINK now has a dedicated runtime image and an opt-in, loopback-published Compose service with a healthcheck. M38-14 synthetic integration tests verify the existing operator event path and flag-off rollback; no real Telegram delivery is claimed.
 - Release and changelog guidance in `docs/audit/M01-05-release-lifecycle.md`.
 - Automated fast-forward promotion from verified `dev` to `main` without redundant checks or approval gates.
 - Integration branch `dev` with PR gating and safety checks.

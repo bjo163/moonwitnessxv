@@ -179,7 +179,7 @@ void test('malformed SKYLINK registry fails closed without aborting ARSY boot', 
   }
 })
 
-void test('flag on: ARSY registers, lists, sends and controls through a real SKYLINK', {
+void test('M38-14: synthetic ARSY→SKYLINK→provider round trip rolls back with D18 rows preserved', {
   skip: databaseUrl === undefined || databaseUrl === '' ? 'DATABASE_URL is required for the D18-backed SKYLINK send path' : false,
   timeout: 30_000,
 }, async (t) => {
@@ -268,6 +268,36 @@ void test('flag on: ARSY registers, lists, sends and controls through a real SKY
   assert.equal(skylink.seen.some((entry) => entry.cookie), false, 'no cookie is ever sent to SKYLINK')
   const anonymous = await arsy.inject().post('/api/v1/channels/telegram/send').body({ to: 'chat-fixture', text: 'x' }).end()
   assert.equal(anonymous.statusCode, 401)
+
+  // Roll back in a second ARSY instance to the previous local-channel path while
+  // the same SKYLINK/Postgres store remains online. This proves the feature flag
+  // can be turned off without deleting or rewriting the D18 evidence above.
+  const beforeRollback = await listMessages(store.db, conversations[0]!.id)
+  const callsBeforeRollback = skylink.seen.filter((entry) => entry.url === '/api/v1/send').length
+  const rolledBack = await buildApp(hubConfig({ SKYLINK_URL: 'http://127.0.0.1:9' }))
+  t.after(() => rolledBack.close())
+  assert.equal(rolledBack.skylink, null, 'flag-off rollback constructs no SKYLINK client')
+  rolledBack.channels.register({
+    id: 'telegram',
+    label: 'Telegram local rollback fixture',
+    status: () => ({ state: 'open' }),
+    send: async ({ to }) => ({ channel: 'telegram', to, ok: true, id: 'rollback-local-1' }),
+  })
+  const rollbackHeaders = await adminHeaders(rolledBack)
+  const localSend = await rolledBack.inject()
+    .post('/api/v1/channels/telegram/send')
+    .headers(rollbackHeaders)
+    .body({ to: 'chat-fixture', text: 'synthetic rollback body' })
+    .end()
+  assert.equal(localSend.statusCode, 200, localSend.body)
+  assert.equal(localSend.json().data.id, 'rollback-local-1', 'the local channel still handles delivery')
+  assert.equal(skylink.seen.filter((entry) => entry.url === '/api/v1/send').length, callsBeforeRollback)
+  const afterRollback = await listMessages(store.db, conversations[0]!.id)
+  assert.deepEqual(
+    afterRollback.map(({ id, direction, body }) => ({ id, direction, body })),
+    beforeRollback.map(({ id, direction, body }) => ({ id, direction, body })),
+    'flag-off local delivery leaves the prior D18 rows unchanged',
+  )
 })
 
 void test('flag on: a missing service key is a 401 the hub surfaces without crashing', {
