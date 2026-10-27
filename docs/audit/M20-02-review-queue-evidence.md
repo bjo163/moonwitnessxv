@@ -12,10 +12,10 @@
 | `positive_test_and_output` | `pnpm exec node --test test/planning/review-queue-predicate.test.mjs` → 4 passed, 0 failed: disjoint scoped human allowed; self, overlap, missing scope, machine, guest, delegated grant, stale digest/version and admin without scope denied. This fixture is a reference check of the written predicate, not application code. `pnpm --filter @moonwitness/arsy exec tsx --test test/mizan.test.ts` → 7 passed, 0 failed; M14-01 asserts self-approval returns 403/four-eyes. The test booted MoonQL's in-memory engine; `DATABASE_URL` was not set in the shell. |
 | `negative_test_and_output` | `pnpm --filter @moonwitness/arsy exec tsx --test ../../apps/headquarters/test/hq-authz-guard.test.ts` → 23 passed, 0 failed: anonymous redirect, non-admin forbidden, unavailable on Hub 503/unreachable, unpublished endpoint/rule forbidden, and no denial carries a credential or identity. The M14 suite also covers guest and self-approval refusals. |
 | `security_rights_privacy` | No rights or publication decision was made. Restricted classification, approval-within-scope, quorum, retention and withdrawal/appeal are registered `BLOCKED-ON-D08`; scope grants, principal linkage and any reviewer login role are `NEEDS_ADR`. No HQ database, second identity, second Hub or second approval engine is proposed. No private source, witness body, token, cookie, credential or personal data appears in either artifact. |
-| `reviewer` | Independent M20-02 review is in progress; no TODO closure until exact-result review is recorded. |
+| `reviewer` | Independent read-only reviewer `/root/m20_02_design_review` accepted the design at source SHA `b8db42df4fe33fa715e57a09e359b543a1d6b39b`; no blocker for the design-only acceptance. |
 | `rollback` | Delete the two design/audit files and the reference predicate test. They change no runtime behaviour and no stored data. |
-| `result_sha` | pending scoped integration commit on `dev` |
-| `limitations` | Read/static analysis plus the existing test suites only. The queue, its tables and endpoints do not exist, so no live hub, database, browser or Docker run could exercise them; the predicate run evaluates the written rule, not an implementation. M20-01's N1/N3 text is stale relative to the current tree (see F1). No TypeScript changed, so no typecheck was required. `MASTER_DESIGN.md` has no Headquarters/100CENTER section to cite (25 lines total). |
+| `result_sha` | `b8db42df4fe33fa715e57a09e359b543a1d6b39b` (design, audit, and reference predicate committed on `dev`) |
+| `limitations` | Read/static analysis and tests only. The queue, tables and endpoints do not exist, so no live hub, database, browser or Docker run could exercise them; the predicate test evaluates the written rule, not an implementation. M20-01's N1/N3 text is stale relative to the current tree (see F1). No TypeScript changed, so no typecheck was required. `MASTER_DESIGN.md` has no Headquarters/100CENTER section to cite (25 lines total). No CI run is claimed for this documentation/test commit. |
 | `next_eligible_task` | After integrator closure: M20-03 and M20-04. Any proposed implementation work in §9 must first be registered as a TODO leaf. Restricted decisions remain gated by D08 and the §10 decisions. |
 
 ## 1. Prerequisites and baseline
@@ -23,7 +23,7 @@
 - M20-01 is closed in TODO (row 495) at audit SHA `d6b8847f7aae168e4dcb4208c2c8d3acc6c6715e`; its baseline was `76ecdc5` (`docs/audit/M20-01-hq-model-ui-route-guards-ops.md:4`).
 - M18-01 is closed and specifies the single publication path `DRAFT → IN_REVIEW → APPROVED_WITHIN_SCOPE → PUBLISHED`, with D08 enforcement still unimplemented (`docs/audit/M18-01-single-publication-state-machine.md:12-26,37`).
 - The task lease SHA was `00b0064`. During this task parallel sessions committed `eef0c54` (M28-05) and later `b24bedd` (M40-06). Re-read at both: `git diff --name-only 00b0064..b24bedd -- apps/headquarters packages/moonql packages/moonql-auth packages/moonql-research packages/moonql-ops packages/moonql-apikeys` printed nothing, so every cited line below is valid at all three SHAs.
-- TODO row 496 (`M20-02`) remains unchecked pending exact-result commit and independent review.
+- TODO row 496 (`M20-02`) was unchecked at the source SHA; the integrator records closure in the follow-up TODO commit after the independent review at `b8db42d`.
 
 ## 2. Method and evidence basis
 
@@ -203,6 +203,6 @@ This confirms the current HQ guard/denial behaviour that the queue page must reu
 
 ## 8. Status
 
-- Design: **READY FOR INTEGRATOR CLOSURE** after the design-only reference suite, reviewer, and exact-result commit are recorded.
-- Implementation of restricted decisions: **BLOCKED-ON-D08** and the `NEEDS_ADR` items in design §10. No unregistered M20-02-L1 task exists; any hub/HQ implementation work must first be registered in TODO. Enabling real grants and decisions remains `NEEDS_ADR`, and any rights-gated approval remains D08-blocked.
-- TODO row 496 is still unchecked. The result SHA is pending the scoped integration commit; no runtime implementation or deployment is claimed.
+- Design: **CLOSED** at source SHA `b8db42df4fe33fa715e57a09e359b543a1d6b39b` after the predicate tests and independent review.
+- Implementation of restricted decisions: **BLOCKED-ON-D08** and the `NEEDS_ADR` items in design §10. No unregistered subtask ID is assigned; any hub/HQ implementation work must first be registered in TODO. Enabling real grants and decisions remains `NEEDS_ADR`, and any rights-gated approval remains D08-blocked.
+- The integrator records TODO row 496 as checked in the following status update. No runtime implementation or deployment is claimed.
