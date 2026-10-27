@@ -1214,7 +1214,8 @@ body {
 .dk-terms-relation p,
 .dk-terms-review p,
 .dk-terms-log-entry p,
-.dk-terms-source-citation {
+.dk-terms-source-citation,
+.dk-terms-citation {
   margin: 0;
   font-size: 13px;
   line-height: 1.6;

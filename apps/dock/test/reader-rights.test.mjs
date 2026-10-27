@@ -37,7 +37,7 @@ test('a rights-blocked result can never render passage text', () => {
 test('provenance names edition, rights and hash without hiding them behind a dialog', () => {
   assert.match(readerSource, /className="dk-reader-provenance-strip"/)
   assert.match(readerSource, /Edition <strong>\{source\?\.editionCode \?\? 'UNRESOLVED'\}<\/strong>/)
-  assert.match(readerSource, /rightsLabel\(source\?\.rightsStatus \?\? 'RIGHTS_UNKNOWN'\)/)
+  assert.match(readerSource, /rightsLabel\(source\?\.rightsStatus \?\? 'RIGHTS_UNKNOWN', locale\)/)
   assert.match(readerSource, /SHA <code>\{provenanceShort\}<\/code>/)
   assert.match(readerSource, /provenanceShort = source\?\.provenanceSha \? source\.provenanceSha\.slice\(0, 12\)/)
 })

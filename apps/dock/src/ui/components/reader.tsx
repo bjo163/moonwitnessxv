@@ -5,6 +5,7 @@ import { CitationCopy } from '../client/CitationCopy'
 import type { ReaderCandidate, ReaderResult, ReaderSource } from '@/data/queries/reader'
 import { PanelState } from './states'
 import type { StatesCopy } from '@/lib/states-copy'
+import { rightsLabel } from '@/lib/provenance-copy'
 import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const BLOCKED = '[TEXT_BLOCKED_PENDING_RIGHTS_CLEARANCE]'
@@ -12,23 +13,13 @@ const BLOCKED = '[TEXT_BLOCKED_PENDING_RIGHTS_CLEARANCE]'
 /** The locale-bound href builder from `dockHrefFor`; a component never names a locale itself. */
 type LocaleHref = ReturnType<typeof dockHrefFor>
 
-const RIGHTS_LABEL: Record<string, string> = {
-  RIGHTS_EXACT_VERSION_CLEARED: 'Rights cleared for this exact version',
-  RIGHTS_UNKNOWN: 'Rights unknown',
-  METADATA_ONLY: 'Metadata only',
-  RESTRICTED: 'Restricted',
-  PUBLIC_DOMAIN: 'Public domain, exact version not verified',
-}
-
-const rightsLabel = (status: string): string => RIGHTS_LABEL[status] ?? status
-
 const sourceHref = (candidate: ReaderCandidate, localeHref: LocaleHref): string => {
   const params = new URLSearchParams({ citation: candidate.citationKey ?? '' })
   if (candidate.editionCode) params.set('edition', candidate.editionCode)
   return localeHref('/reader', `?${params.toString()}`)
 }
 
-function SourceIdentity({ citation }: { citation: ReaderSource }): ReactNode {
+function SourceIdentity({ citation, locale }: { citation: ReaderSource; locale: Locale }): ReactNode {
   return (
     <dl className="dk-reader-source">
       <dt>Work</dt>
@@ -50,7 +41,7 @@ function SourceIdentity({ citation }: { citation: ReaderSource }): ReactNode {
       <dd>{citation.originalLanguage ?? 'UNKNOWN'}</dd>
 
       <dt>Permission</dt>
-      <dd>{rightsLabel(citation.rightsStatus)}</dd>
+      <dd>{rightsLabel(citation.rightsStatus, locale)}</dd>
 
       <dt>License</dt>
       <dd>{citation.licenseName ?? 'UNKNOWN'}</dd>
@@ -130,7 +121,7 @@ export function ReaderView({
                   {candidate.workTitle ?? 'UNKNOWN WORK'} — {candidate.editionName ?? 'UNRESOLVED EDITION'}
                 </span>
                 <span className="dk-reader-candidate-meta m-muted">
-                  {candidate.editionCode ?? 'no-code'} · {rightsLabel(candidate.rightsStatus)} ·{' '}
+                  {candidate.editionCode ?? 'no-code'} · {rightsLabel(candidate.rightsStatus, locale)} ·{' '}
                   {candidate.licenseName ?? 'UNKNOWN LICENSE'}
                 </span>
               </a>
@@ -159,7 +150,9 @@ export function ReaderView({
             </h2>
             <p className="dk-reader-note">{source?.editionName ?? 'UNRESOLVED EDITION'}</p>
           </div>
-          <Badge tone={tone}>{cleared ? 'RIGHTS CLEARED' : rightsLabel(source?.rightsStatus ?? 'RIGHTS_UNKNOWN')}</Badge>
+          <Badge tone={tone}>
+            {cleared ? 'RIGHTS CLEARED' : rightsLabel(source?.rightsStatus ?? 'RIGHTS_UNKNOWN', locale)}
+          </Badge>
         </header>
 
         {result.state === 'rights_blocked' ? (
@@ -172,11 +165,11 @@ export function ReaderView({
           </h3>
           <p className="dk-reader-provenance-strip">
             Edition <strong>{source?.editionCode ?? 'UNRESOLVED'}</strong> ·{' '}
-            {rightsLabel(source?.rightsStatus ?? 'RIGHTS_UNKNOWN')} · SHA <code>{provenanceShort}</code>
+            {rightsLabel(source?.rightsStatus ?? 'RIGHTS_UNKNOWN', locale)} · SHA <code>{provenanceShort}</code>
           </p>
           <details className="dk-provenance">
             <summary>Full provenance, licence and retrieval record</summary>
-            {source ? <SourceIdentity citation={source} /> : null}
+            {source ? <SourceIdentity citation={source} locale={locale} /> : null}
           </details>
         </section>
 
@@ -216,7 +209,9 @@ export function ReaderView({
                     <strong>{row.translatorName ?? 'Unknown translator'}</strong>
                     <span className="m-muted">
                       {row.licenseName ?? 'UNKNOWN LICENSE'} ·{' '}
-                      {row.blocked ? `withheld (translation rights: ${rightsLabel(row.rightsStatus)})` : rightsLabel(row.rightsStatus)}
+                      {row.blocked
+                        ? `withheld (translation rights: ${rightsLabel(row.rightsStatus, locale)})`
+                        : rightsLabel(row.rightsStatus, locale)}
                     </span>
                   </div>
                   {row.text && !withheld ? (

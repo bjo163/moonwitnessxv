@@ -10,6 +10,8 @@ import type {
   TermsPage,
 } from '@/data/queries/terms'
 import { dockHrefFor } from '@/lib/locale-context.mjs'
+import { getProvenanceCopy, reviewLabel } from '@/lib/provenance-copy'
+import { SourceEvidence } from './provenance'
 
 const STATUS_TONE: Record<string, BadgeTone> = {
   DRAFT_REVIEW: 'accent',
@@ -68,29 +70,18 @@ function FormChips({ forms, compact = false }: { forms: TermForm[]; compact?: bo
   )
 }
 
-function SourceList({ sources }: { sources: TermSource[] }): ReactNode {
-  if (sources.length === 0) return <p className="dk-terms-meta">No source is attached.</p>
+function SourceList({ sources, locale }: { sources: TermSource[]; locale: Locale }): ReactNode {
+  const copy = getProvenanceCopy(locale)
+  if (sources.length === 0) return <p className="dk-terms-meta">{copy.noSource}</p>
   return (
     <ul className="dk-terms-sources">
       {sources.map((source, index) => (
         <li className="dk-terms-source" key={`${source.code ?? 'source'}-${index}`}>
           <div className="m-row" style={{ gap: 8, flexWrap: 'wrap' }}>
-            <Badge tone={toneFor(source.reviewStatus ?? 'PROPOSED')}>{source.reviewStatus ?? 'UNKNOWN'}</Badge>
-            <strong>{source.title ?? source.code ?? 'Unnamed source'}</strong>
+            <Badge tone={toneFor(source.reviewStatus ?? 'PROPOSED')}>{reviewLabel(source.reviewStatus, locale)}</Badge>
+            <strong>{source.title ?? source.code ?? copy.unrecorded}</strong>
           </div>
-          {source.code ? <span className="dk-terms-meta">code: {source.code}</span> : null}
-          {source.citation ? <p className="dk-terms-source-citation">{source.citation}</p> : null}
-          {source.provenanceSha ? (
-            <code className="dk-terms-hash" aria-label="Provenance SHA-256">
-              {source.provenanceSha}
-            </code>
-          ) : null}
-          {source.sourceUri ? (
-            <a className="dk-terms-source-link" href={source.sourceUri} rel="noreferrer noopener" target="_blank">
-              {source.sourceUri}
-            </a>
-          ) : null}
-          {source.approvalNote ? <p className="dk-terms-meta">{source.approvalNote}</p> : null}
+          <SourceEvidence source={source} locale={locale} classPrefix="dk-terms" />
         </li>
       ))}
     </ul>
@@ -317,7 +308,7 @@ export function TermDetailView({ detail, locale = 'en' }: { detail: TermDetail; 
 
           <section className="dk-terms-section" aria-labelledby="term-sources-heading">
             <h2 id="term-sources-heading">Sources and provenance</h2>
-            <SourceList sources={detail.sources} />
+            <SourceList sources={detail.sources} locale={locale} />
           </section>
         </article>
 

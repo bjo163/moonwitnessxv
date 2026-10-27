@@ -6,10 +6,10 @@ import type {
   GraphAlias,
   GraphEdge,
   GraphNode,
-  GraphSource,
   IdentityDecision,
   ReviewRubric,
 } from '@/data/queries/constellation'
+import { SourceEvidence } from './provenance'
 import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const IDENTITY_TONE: Record<string, BadgeTone> = {
@@ -51,30 +51,7 @@ const CONFLICT_TONE: Record<string, BadgeTone> = {
 
 const toneFor = (map: Record<string, BadgeTone>, status: string): BadgeTone => map[status] ?? 'night'
 
-function SourceLine({ source }: { source: GraphSource | null }): ReactNode {
-  if (!source) return <span className="dk-graph-meta">No source is attached.</span>
-  return (
-    <span className="dk-graph-source">
-      <span className="dk-graph-meta">
-        source: {source.code ?? 'unnamed'} · {source.sourceType ?? 'UNKNOWN_TYPE'} ·{' '}
-        {source.reviewStatus ?? 'UNREVIEWED'}
-      </span>
-      {source.citation ? <span className="dk-graph-citation">{source.citation}</span> : null}
-      {source.provenanceSha ? (
-        <code className="dk-graph-hash" aria-label="Provenance SHA-256">
-          {source.provenanceSha}
-        </code>
-      ) : null}
-      {source.sourceUri ? (
-        <a className="dk-graph-source-link" href={source.sourceUri} rel="noreferrer noopener" target="_blank">
-          {source.sourceUri}
-        </a>
-      ) : null}
-    </span>
-  )
-}
-
-function AliasChips({ aliases }: { aliases: GraphAlias[] }): ReactNode {
+function AliasChips({ aliases, locale }: { aliases: GraphAlias[]; locale: Locale }): ReactNode {
   if (aliases.length === 0) return <span className="dk-graph-meta">No alias is recorded.</span>
   return (
     <ul className="dk-graph-aliases" aria-label="Aliases">
@@ -90,14 +67,14 @@ function AliasChips({ aliases }: { aliases: GraphAlias[] }): ReactNode {
           {alias.reviewer ? <span className="dk-graph-meta">reviewer: {alias.reviewer}</span> : null}
           {alias.reason ? <span className="dk-graph-citation">{alias.reason}</span> : null}
           {alias.evidenceRef ? <span className="dk-graph-meta">evidence: {alias.evidenceRef}</span> : null}
-          <SourceLine source={alias.source} />
+          <SourceEvidence source={alias.source} locale={locale} classPrefix="dk-graph" />
         </li>
       ))}
     </ul>
   )
 }
 
-function NodeCard({ node }: { node: GraphNode }): ReactNode {
+function NodeCard({ node, locale }: { node: GraphNode; locale: Locale }): ReactNode {
   return (
     <article className="dk-graph-node" aria-labelledby={`graph-node-${node.stableId}`}>
       <div className="dk-graph-node-head">
@@ -132,8 +109,8 @@ function NodeCard({ node }: { node: GraphNode }): ReactNode {
         )}
       </div>
 
-      <AliasChips aliases={node.aliases} />
-      <SourceLine source={node.source} />
+      <AliasChips aliases={node.aliases} locale={locale} />
+      <SourceEvidence source={node.source} locale={locale} classPrefix="dk-graph" />
     </article>
   )
 }
@@ -165,7 +142,7 @@ function EdgeRow({ edge, locale = 'en' }: { edge: GraphEdge; locale?: Locale }):
       {edge.reviewer ? <span className="dk-graph-meta">reviewer: {edge.reviewer}</span> : null}
       {edge.reason ? <p className="dk-graph-citation">{edge.reason}</p> : null}
       {edge.evidenceRef ? <span className="dk-graph-meta">evidence: {edge.evidenceRef}</span> : null}
-      <SourceLine source={edge.source} />
+      <SourceEvidence source={edge.source} locale={locale} classPrefix="dk-graph" />
     </li>
   )
 }
@@ -309,7 +286,7 @@ export function ConstellationView({
         ) : (
           <div className="dk-graph-nodes">
             {projection.nodes.map((node) => (
-              <NodeCard node={node} key={node.stableId} />
+              <NodeCard node={node} key={node.stableId} locale={locale} />
             ))}
           </div>
         )}
@@ -361,7 +338,7 @@ export function ConstellationView({
                 {conflict.evidenceRef ? (
                   <span className="dk-graph-meta">evidence: {conflict.evidenceRef}</span>
                 ) : null}
-                <SourceLine source={conflict.source} />
+                <SourceEvidence source={conflict.source} locale={locale} classPrefix="dk-graph" />
               </li>
             ))}
           </ul>

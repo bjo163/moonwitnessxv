@@ -4,7 +4,6 @@ import { Badge, EmptyState, Panel, type BadgeTone } from '@moonwitness/moonui'
 import type {
   ActorEvent,
   ActorRole,
-  ActorSource,
   ActorTradition,
   AvatarPolicy,
   FigureDetail,
@@ -13,6 +12,7 @@ import type {
   MissionRow,
   MissionTable,
 } from '@/data/queries/actors'
+import { SourceEvidence } from './provenance'
 import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const SCOPE_TONE: Record<string, BadgeTone> = {
@@ -68,29 +68,6 @@ const AVATAR_TONE: Record<string, BadgeTone> = {
 }
 
 const toneFor = (map: Record<string, BadgeTone>, status: string): BadgeTone => map[status] ?? 'night'
-
-function SourceLine({ source }: { source: ActorSource | null }): ReactNode {
-  if (!source) return <span className="dk-actors-meta">No source is attached.</span>
-  return (
-    <span className="dk-actors-source">
-      <span className="dk-actors-meta">
-        source: {source.code ?? 'unnamed'} · {source.sourceType ?? 'UNKNOWN_TYPE'} ·{' '}
-        {source.reviewStatus ?? 'UNREVIEWED'}
-      </span>
-      {source.citation ? <span className="dk-actors-citation">{source.citation}</span> : null}
-      {source.provenanceSha ? (
-        <code className="dk-actors-hash" aria-label="Provenance SHA-256">
-          {source.provenanceSha}
-        </code>
-      ) : null}
-      {source.sourceUri ? (
-        <a className="dk-actors-source-link" href={source.sourceUri} rel="noreferrer noopener" target="_blank">
-          {source.sourceUri}
-        </a>
-      ) : null}
-    </span>
-  )
-}
 
 function TraditionBadge({ tradition }: { tradition: ActorTradition | null }): ReactNode {
   if (!tradition) return <Badge tone="night">NO TRADITION</Badge>
@@ -180,7 +157,7 @@ function MissionCard({ row, locale = 'en' }: { row: MissionRow; locale?: Locale 
         </p>
       ) : null}
 
-      <SourceLine source={row.source} />
+      <SourceEvidence source={row.source} locale={locale} classPrefix="dk-actors" />
     </li>
   )
 }
@@ -263,7 +240,7 @@ export function MissionTableView({ table, locale = 'en' }: { table: MissionTable
   )
 }
 
-function RoleRow({ role }: { role: ActorRole }): ReactNode {
+function RoleRow({ role, locale }: { role: ActorRole; locale: Locale }): ReactNode {
   return (
     <li className="dk-actors-role" data-role-code={role.roleCode}>
       <div className="dk-actors-role-head">
@@ -282,7 +259,7 @@ function RoleRow({ role }: { role: ActorRole }): ReactNode {
           reviewer: {role.reviewer} · evidence: {role.evidenceRef ?? '—'}
         </p>
       ) : null}
-      <SourceLine source={role.source} />
+      <SourceEvidence source={role.source} locale={locale} classPrefix="dk-actors" />
     </li>
   )
 }
@@ -327,7 +304,7 @@ function FigureCard({ figure, locale = 'en' }: { figure: FigureListItem; locale?
         </ul>
       ) : null}
 
-      <SourceLine source={figure.source} />
+      <SourceEvidence source={figure.source} locale={locale} classPrefix="dk-actors" />
     </li>
   )
 }
@@ -365,7 +342,7 @@ export function FigureRegistryView({ registry, locale = 'en' }: { registry: Figu
   )
 }
 
-function EventCard({ event }: { event: ActorEvent }): ReactNode {
+function EventCard({ event, locale }: { event: ActorEvent; locale: Locale }): ReactNode {
   return (
     <li className="dk-actors-event" data-event-code={event.eventCode} data-chronology={event.chronologyConfidence}>
       <div className="dk-actors-event-head">
@@ -405,7 +382,7 @@ function EventCard({ event }: { event: ActorEvent }): ReactNode {
         <dd>{event.passageRef ? <code>{event.passageRef}</code> : 'No passage reference is recorded.'}</dd>
       </dl>
 
-      <SourceLine source={event.source} />
+      <SourceEvidence source={event.source} locale={locale} classPrefix="dk-actors" />
     </li>
   )
 }
@@ -448,7 +425,7 @@ function ReadingPanel({ detail, locale = 'en' }: { detail: FigureDetail; locale?
   )
 }
 
-function AvatarPanel({ detail }: { detail: FigureDetail }): ReactNode {
+function AvatarPanel({ detail, locale }: { detail: FigureDetail; locale: Locale }): ReactNode {
   const policy: AvatarPolicy = detail.policy
   return (
     <Panel title="Avatar policy" subtitle={policy.notice}>
@@ -488,7 +465,7 @@ function AvatarPanel({ detail }: { detail: FigureDetail }): ReactNode {
               </div>
               <p className="dk-actors-readable">{avatar.pedagogicalUse}</p>
               <p className="dk-actors-disclosure">{avatar.disclosure}</p>
-              <SourceLine source={avatar.source} />
+              <SourceEvidence source={avatar.source} locale={locale} classPrefix="dk-actors" />
             </li>
           ))}
         </ul>
@@ -523,7 +500,7 @@ export function FigureDetailView({ detail, locale = 'en' }: { detail: FigureDeta
         <p className="dk-actors-notice" role="note">
           {detail.noExclusive.notice}
         </p>
-        <SourceLine source={detail.figure.source} />
+        <SourceEvidence source={detail.figure.source} locale={locale} classPrefix="dk-actors" />
       </Panel>
 
       <Panel title="Roles" subtitle={detail.roleNotice}>
@@ -532,7 +509,7 @@ export function FigureDetailView({ detail, locale = 'en' }: { detail: FigureDeta
         ) : (
           <ul className="dk-actors-roles" aria-label={`Roles for ${detail.figure.labelEn}`}>
             {detail.roles.map((role) => (
-              <RoleRow role={role} key={role.roleCode} />
+              <RoleRow role={role} key={role.roleCode} locale={locale} />
             ))}
           </ul>
         )}
@@ -546,14 +523,14 @@ export function FigureDetailView({ detail, locale = 'en' }: { detail: FigureDeta
         ) : (
           <ul className="dk-actors-events" aria-label={`Events for ${detail.figure.labelEn}`}>
             {detail.events.map((event) => (
-              <EventCard event={event} key={event.eventCode} />
+              <EventCard event={event} key={event.eventCode} locale={locale} />
             ))}
           </ul>
         )}
         <p className="dk-actors-meta">Chronology labels: {detail.chronology.labels.join(' · ')}</p>
       </Panel>
 
-      <AvatarPanel detail={detail} />
+      <AvatarPanel detail={detail} locale={locale} />
 
       <Panel title="Sources" subtitle="Every claim above cites one of these approved sources.">
         {detail.sources.length === 0 ? (
@@ -561,9 +538,8 @@ export function FigureDetailView({ detail, locale = 'en' }: { detail: FigureDeta
         ) : (
           <ul className="dk-actors-sources">
             {detail.sources.map((source) => (
-              <li key={source.code ?? 'unnamed'}>
-                <strong>{source.code ?? 'unnamed'}</strong> <span className="dk-actors-meta">{source.title ?? ''}</span>
-                <SourceLine source={source} />
+              <li key={source.code ?? 'source'}>
+                <SourceEvidence source={source} locale={locale} classPrefix="dk-actors" />
               </li>
             ))}
           </ul>

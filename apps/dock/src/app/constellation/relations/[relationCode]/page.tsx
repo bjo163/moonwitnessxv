@@ -38,7 +38,7 @@ export default async function RelationPage({ params }: { params: Promise<{ relat
         ]}
         actions={<Badge tone={relation.kind === 'CANDIDATE' ? 'accent' : 'cyan'}>{relation.kind}</Badge>}
       />
-      <RelationDetailView detail={detail} />
+      <RelationDetailView detail={detail} locale={locale} />
     </div>
   )
 }

@@ -5,10 +5,10 @@ import type {
   GraphCandidateSummary,
   GraphOverview,
   GraphRelation,
-  GraphSource,
   RelationDetail,
   RelationEntity,
 } from '@/data/queries/graph'
+import { SourceEvidence } from './provenance'
 import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const STATE_TONE: Record<string, BadgeTone> = {
@@ -26,32 +26,6 @@ const toneFor = (status: string): BadgeTone => STATE_TONE[status] ?? 'night'
 
 const kindLabel = (relation: GraphRelation): string =>
   relation.kind === 'CANDIDATE' ? 'Candidate claim — not a graph edge' : 'Reviewed ontology relation'
-
-function SourceBlock({ source }: { source: GraphSource | null }): ReactNode {
-  if (!source) return <span className="dk-graph-meta">No source is attached.</span>
-  return (
-    <div className="dk-graph-source">
-      <span className="dk-graph-meta">
-        source: {source.code ?? 'unnamed'} · {source.sourceType ?? 'UNKNOWN_TYPE'} ·{' '}
-        {source.reviewStatus ?? 'UNREVIEWED'}
-      </span>
-      {source.title ? <span className="dk-graph-meta">{source.title}</span> : null}
-      {source.citation ? <span className="dk-graph-citation">{source.citation}</span> : null}
-      {source.provenanceSha ? (
-        <code className="dk-graph-hash" aria-label="Source provenance SHA-256">
-          {source.provenanceSha}
-        </code>
-      ) : (
-        <span className="dk-graph-meta">The source carries no provenance SHA.</span>
-      )}
-      {source.sourceUri ? (
-        <a className="dk-graph-source-link" href={source.sourceUri} rel="noreferrer noopener" target="_blank">
-          {source.sourceUri}
-        </a>
-      ) : null}
-    </div>
-  )
-}
 
 function EntityFacts({
   role,
@@ -98,7 +72,7 @@ function releaseLine(detail: RelationDetail): string {
     : 'Not in the active release. A reviewed relation still needs a release build and activation.'
 }
 
-export function RelationDetailView({ detail }: { detail: RelationDetail }): ReactNode {
+export function RelationDetailView({ detail, locale = 'en' }: { detail: RelationDetail; locale?: Locale }): ReactNode {
   const { relation, release, policy } = detail
   const isCandidate = relation.kind === 'CANDIDATE'
   return (
@@ -196,7 +170,7 @@ export function RelationDetailView({ detail }: { detail: RelationDetail }): Reac
           <dt>Evidence reference</dt>
           <dd>{relation.evidence.ref ?? 'none'}</dd>
         </dl>
-        <SourceBlock source={relation.source} />
+        <SourceEvidence source={relation.source} locale={locale} classPrefix="dk-graph" />
       </section>
 
       <section className="dk-graph-detail-review" aria-labelledby="graph-relation-review">
