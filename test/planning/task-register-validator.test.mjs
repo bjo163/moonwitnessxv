@@ -11,8 +11,10 @@ const todo = `| Status | Task | Priority | Difficulty | Depends on | Acceptance 
 | - [ ] | **M02-01** — Fourth | P1 | D1 | M01 | [mail](mailto:team@example.com) |`;
 const docs = [
   { path: 'TODO.md', content: todo },
-  { path: 'docs/guide.md', content: '# Start\n\nSee [home](../README.md#home), [self](#start), [encoded](source%20file.ts?raw=1), and [root](/README.md#home).\n' },
+  { path: 'docs/guide.md', content: '# Start\n\nSee [home](../README.md#home), [self](#start), [encoded](source%20file.ts?raw=1), [hash-name](source%23file.ts), [question-name](source%3Ffile.ts), and [root](/README.md#home).\n' },
   { path: 'docs/source file.ts', content: undefined },
+  { path: 'docs/source#file.ts', content: undefined },
+  { path: 'docs/source?file.ts', content: undefined },
   { path: 'README.md', content: '# Home\n' },
 ];
 

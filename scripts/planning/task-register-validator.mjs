@@ -109,13 +109,17 @@ function validateLinks(markdownFiles, root, errors) {
           errors.push(diagnostic('LINK_UNSAFE', source, index + 1, `Unsupported link scheme: ${target}`));
           continue;
         }
-        let decoded;
-        try { decoded = decodeURIComponent(target); } catch {
+        const [pathAndQuery, rawFragment = ''] = target.split('#', 2);
+        const encodedPath = pathAndQuery.split('?', 1)[0];
+        let rawPath;
+        let fragment;
+        try {
+          rawPath = decodeURIComponent(encodedPath);
+          fragment = decodeURIComponent(rawFragment);
+        } catch {
           errors.push(diagnostic('LINK_MALFORMED', source, index + 1, `Malformed percent-encoding: ${target}`));
           continue;
         }
-        const [pathAndQuery, rawFragment = ''] = decoded.split('#', 2);
-        const rawPath = pathAndQuery.split('?', 1)[0];
         const relativeTarget = rawPath === '' ? source : rawPath.startsWith('/') ? rawPath.slice(1) : path.posix.normalize(path.posix.join(path.posix.dirname(source), rawPath));
         const resolved = path.resolve(root, relativeTarget);
         const rootPath = path.resolve(root);
@@ -137,9 +141,9 @@ function validateLinks(markdownFiles, root, errors) {
           errors.push(diagnostic('LINK_MISSING', source, index + 1, `Missing local Markdown target: ${target}`));
           continue;
         }
-        if (rawFragment && typeof targetContent === 'string') {
-          const fragment = rawFragment.toLowerCase();
-          if (!headingSlugs(targetContent).has(fragment)) errors.push(diagnostic('LINK_FRAGMENT_MISSING', source, index + 1, `Missing heading fragment #${rawFragment} in ${targetPath}`));
+        if (fragment && typeof targetContent === 'string') {
+          const normalizedFragment = fragment.toLowerCase();
+          if (!headingSlugs(targetContent).has(normalizedFragment)) errors.push(diagnostic('LINK_FRAGMENT_MISSING', source, index + 1, `Missing heading fragment #${fragment} in ${targetPath}`));
         }
       }
     }
