@@ -44,6 +44,9 @@ importers:
       '@fastify/cors':
         specifier: ^10.0.1
         version: 10.1.0
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       fastify:
         specifier: ^5.2.1
         version: 5.12.7
@@ -354,6 +357,12 @@ importers:
       '@moonwitness/skylink-core':
         specifier: workspace:*
         version: link:../../packages/skylink-core
+      '@moonwitness/skylink-store':
+        specifier: workspace:*
+        version: link:../../packages/skylink-store
+      '@moonwitness/skylink-telegram':
+        specifier: workspace:*
+        version: link:../../packages/skylink-telegram
       fastify:
         specifier: ^5.2.1
         version: 5.12.7
@@ -361,6 +370,12 @@ importers:
         specifier: ^4.6.7
         version: 4.6.7
     devDependencies:
+      '@moonwitness/moonql':
+        specifier: workspace:*
+        version: link:../../packages/moonql
+      '@moonwitness/moonql-auth':
+        specifier: workspace:*
+        version: link:../../packages/moonql-auth
       '@types/node':
         specifier: ^22.10.5
         version: 22.20.5

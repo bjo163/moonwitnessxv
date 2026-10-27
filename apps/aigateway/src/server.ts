@@ -3,6 +3,12 @@ import cors from '@fastify/cors'
 import { AiRouter } from './router.js'
 import type { ChatCompletionRequest } from './types.js'
 import { generateDeterministicEmbedding } from './embeddings.js'
+import {
+  aiGatewayLocale,
+  localizedModelDescription,
+  localizedProviderStatuses,
+  localizedValidationMessage,
+} from './presentation.js'
 
 export interface ServerOptions {
   router?: AiRouter
@@ -33,15 +39,21 @@ export function buildServer(opts: ServerOptions = {}): FastifyInstance {
   })
 
   // Provider status inspection
-  app.get('/v1/providers', async () => {
+  app.get('/v1/providers', async (req, reply) => {
+    const languageHeader = req.headers['accept-language']
+    const locale = aiGatewayLocale(Array.isArray(languageHeader) ? undefined : languageHeader)
+    reply.header('Vary', 'Accept-Language')
     return {
       object: 'list',
-      data: router.getProviderStatuses(),
+      data: localizedProviderStatuses(router.getProviderStatuses(), locale),
     }
   })
 
   // OpenAI-compatible model listing
-  app.get('/v1/models', async () => {
+  app.get('/v1/models', async (req, reply) => {
+    const languageHeader = req.headers['accept-language']
+    const locale = aiGatewayLocale(Array.isArray(languageHeader) ? undefined : languageHeader)
+    reply.header('Vary', 'Accept-Language')
     const models = router.listModels()
     return {
       object: 'list',
@@ -54,18 +66,21 @@ export function buildServer(opts: ServerOptions = {}): FastifyInstance {
         root: m.id,
         parent: null,
         pricing: m.pricing,
-        description: m.description,
+        description: localizedModelDescription(m, locale),
       })),
     }
   })
 
   // OpenAI-compatible Chat Completions
   app.post<{ Body: ChatCompletionRequest }>('/v1/chat/completions', async (req, reply) => {
+    const languageHeader = req.headers['accept-language']
+    const locale = aiGatewayLocale(Array.isArray(languageHeader) ? undefined : languageHeader)
+    reply.header('Vary', 'Accept-Language')
     const body = req.body
     if (!body || !Array.isArray(body.messages) || body.messages.length === 0) {
       return reply.status(400).send({
         error: {
-          message: 'Invalid request: "messages" array is required and must not be empty.',
+          message: localizedValidationMessage('messagesRequired', locale),
           type: 'invalid_request_error',
           param: 'messages',
           code: null,
@@ -91,11 +106,14 @@ export function buildServer(opts: ServerOptions = {}): FastifyInstance {
 
   // OpenAI-compatible Embeddings Endpoint
   app.post<{ Body: { input: string | string[]; model?: string } }>('/v1/embeddings', async (req, reply) => {
+    const languageHeader = req.headers['accept-language']
+    const locale = aiGatewayLocale(Array.isArray(languageHeader) ? undefined : languageHeader)
+    reply.header('Vary', 'Accept-Language')
     const { input, model } = req.body ?? {}
     if (!input) {
       return reply.status(400).send({
         error: {
-          message: 'Invalid request: "input" parameter is required.',
+          message: localizedValidationMessage('inputRequired', locale),
           type: 'invalid_request_error',
           param: 'input',
           code: null,
