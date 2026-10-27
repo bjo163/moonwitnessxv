@@ -127,3 +127,32 @@ test('M40-02: Monorepo isolation boundaries and zero private HQ imports', () => 
     )
   }
 })
+
+test('M40-10: a URL locale reaches the server render and nothing else can', async () => {
+  const { NextRequest } = await import('next/server.js')
+  const { middleware } = await import('../src/middleware.ts')
+  const forwarded = (url, headers) =>
+    middleware(new NextRequest(url, headers ? { headers } : {}))
+      .headers.get('x-middleware-request-x-orbit-locale')
+  const overridden = (url, headers) =>
+    middleware(new NextRequest(url, headers ? { headers } : {}))
+      .headers.get('x-middleware-override-headers')
+
+  assert.equal(forwarded('http://127.0.0.1:3007/?locale=id'), 'id')
+  assert.equal(forwarded('http://127.0.0.1:3007/?locale=en'), 'en')
+  assert.equal(forwarded('http://127.0.0.1:3007/?locale=fr'), '', 'unsupported locale is not forwarded')
+  assert.equal(forwarded('http://127.0.0.1:3007/'), '')
+  // A hand-written header must never survive: the value is rewritten every request.
+  assert.equal(overridden('http://127.0.0.1:3007/', { 'x-orbit-locale': 'id' }), 'x-orbit-locale')
+  assert.equal(forwarded('http://127.0.0.1:3007/', { 'x-orbit-locale': 'id' }), '')
+})
+
+test('M40-10: the root layout sets the document language from the forwarded locale', () => {
+  const layout = readFileSync(resolve(appRoot, 'src/app/layout.tsx'), 'utf8').replace(/\r\n/g, '\n')
+  assert.match(layout, /ORBIT_LOCALE_HEADER/, 'layout must read the edge-forwarded locale')
+  assert.match(layout, /getRequestLocale\(forwarded === '' \? null : forwarded\)/)
+  assert.match(layout, /<html lang=\{locale\}/, 'document language must follow the resolved locale')
+
+  const header = readFileSync(resolve(appRoot, 'src/lib/orbit-locale-header.ts'), 'utf8')
+  assert.match(header, /export const ORBIT_LOCALE_HEADER = 'x-orbit-locale'/)
+})

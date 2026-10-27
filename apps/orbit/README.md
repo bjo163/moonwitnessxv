@@ -48,6 +48,15 @@ The review origin is resolved server-side and handed to the page as projection
 data, so this variable is never inlined into client code. A denied origin
 renders an unavailable review surface instead of a link.
 
+## Locale
+
+`?locale=` selects the UI language through the shared ADR-0005 precedence:
+explicit value, then the persisted `mw_locale` cookie, then `Accept-Language`.
+The root layout cannot read `searchParams`, so `src/middleware.ts` rewrites the
+`x-orbit-locale` request header from the URL on every HTML request — an
+unsupported or hand-forged value clears it — and the layout resolves the same
+locale as the page, so `<html lang>` always matches the copy it labels.
+
 ## Deployment
 
 ORBIT is registered once, in `scripts/apps.registry.mjs` (`tag: 'orbit'`, port

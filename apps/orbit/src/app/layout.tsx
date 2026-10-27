@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import { headers } from 'next/headers'
 import '@moonwitness/moonui/moon.css'
 import './globals.css'
 import { getRequestLocale } from '../lib/request-locale'
 import { orbitCopy } from '../lib/orbit-copy'
+import { ORBIT_LOCALE_HEADER } from '../lib/orbit-locale-header'
 
 export const metadata: Metadata = {
   title: 'ORBIT — Spatial Agent Operations | MoonWitness XV',
@@ -11,7 +13,9 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const locale = await getRequestLocale()
+  // A layout has no searchParams, so the edge entry point hands the URL locale here.
+  const forwarded = (await headers()).get(ORBIT_LOCALE_HEADER)
+  const locale = await getRequestLocale(forwarded === '' ? null : forwarded)
   const copy = orbitCopy(locale)
 
   return (
