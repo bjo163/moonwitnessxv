@@ -73,11 +73,26 @@ export function OrbitNodeInspector({
         />
         <CardBody>
           <div className="orbit-inspector-body">
-            {/* Top Provenance & Type Badges */}
+            {/* Top Provenance, Type & Freshness Badges */}
             <div className="orbit-inspector-badges">
-              <Badge tone="accent">{copy.provenanceSimulated}</Badge>
+              <Badge tone="accent">
+                {workstation?.provenance === 'LIVE' || agent?.provenance === 'LIVE'
+                  ? 'PROVENANCE: LIVE'
+                  : copy.provenanceSimulated}
+              </Badge>
               {workstation && <Badge tone="cyan">{copy.nodeTypeWorkstation}</Badge>}
               {agent && <Badge tone="ok">{copy.nodeTypeAgent}</Badge>}
+              {(workstation?.freshness || agent?.freshness) && (
+                <Badge
+                  tone={
+                    (workstation?.freshness || agent?.freshness) === 'FRESH'
+                      ? 'ok'
+                      : 'hot'
+                  }
+                >
+                  {copy.freshnessLabel}: {workstation?.freshness || agent?.freshness}
+                </Badge>
+              )}
             </div>
 
             {/* Workstation Details */}
