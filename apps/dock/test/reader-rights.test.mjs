@@ -51,7 +51,7 @@ test('the full provenance record is a native disclosure with a visible focus rin
 
 test('source language and direction stay on the source text', () => {
   assert.match(readerSource, /lang=\{result\.arabic\.language\} dir=\{result\.arabic\.direction\}/)
-  assert.match(readerSource, /dir=\{row\.languageCode === 'ar' \? 'rtl' : 'ltr'\}/)
+  assert.match(readerSource, /dir=\{row\.direction \?\? 'auto'\}/)
 })
 
 test('the reader header names the requested citation when it is not the default', () => {

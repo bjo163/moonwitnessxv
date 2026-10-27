@@ -125,16 +125,29 @@ export interface SkylinkRoutesOptions extends AuthOptions {
 export function registerSkylinkRoutes(app: FastifyInstance, options: SkylinkRoutesOptions): void {
   const authenticate = createSkylinkAuthenticator(options)
 
+  /** The registry view: id/label/state only — never QR, JIDs, accounts or message content. */
+  const channelSummaries = async () => Promise.all(options.getChannels().map(async (channel) => ({
+    id: channel.id,
+    label: channel.label,
+    state: (await channel.status()).state,
+  })))
+
   app.get('/api/v1/channels', {
     schema: { response: { 200: arrayEnvelope(channelSchema), 401: errorSchema, 403: errorSchema, 503: errorSchema } },
   }, async (request, reply) => {
     if (!await authorizePolicy(request, reply, authenticate, 'admin')) return
-    const channels = await Promise.all(options.getChannels().map(async (channel) => ({
-      id: channel.id,
-      label: channel.label,
-      state: (await channel.status()).state,
-    })))
-    return ok(reply, channels)
+    return ok(reply, await channelSummaries())
+  })
+
+  // M38-12: a scoped service client (ARSY) registers as a consumer and receives the
+  // registry SKYLINK owns. Stateless on purpose — it creates no channel, writes no
+  // row, and it is the only service-key read on this surface. Widening the key to
+  // start/logout/conversations stays refused by policy below.
+  app.post('/api/v1/channels/register', {
+    schema: { response: { 200: arrayEnvelope(channelSchema), 401: errorSchema, 403: errorSchema, 503: errorSchema } },
+  }, async (request, reply) => {
+    if (!await authorizePolicy(request, reply, authenticate, 'service')) return
+    return ok(reply, await channelSummaries())
   })
 
   app.post('/api/v1/send', {
@@ -305,7 +318,7 @@ async function authorize(
   return auth.principal
 }
 
-type RoutePolicy = 'admin-or-service-send' | 'admin'
+type RoutePolicy = 'admin-or-service-send' | 'admin' | 'service'
 
 async function authorizePolicy(
   request: FastifyRequest,
@@ -316,12 +329,16 @@ async function authorizePolicy(
   const principal = await authorize(request, reply, authenticate)
   if (!principal) return null
 
-  // The shared service key has one narrow scope: machine-initiated send.
-  // All control-plane and D18 reads require an ARSY administrator.
-  const allowed = (policy === 'admin-or-service-send' && (principal.kind === 'service' || (principal.kind === 'arsy' && principal.role === 'admin')))
+  // The shared service key has two narrow scopes: machine-initiated send, and the
+  // channel-registration handshake (id/label/state only). All other control-plane
+  // and D18 reads require an ARSY administrator.
+  const allowed = (policy === 'service' && principal.kind === 'service')
+    || (policy === 'admin-or-service-send' && (principal.kind === 'service' || (principal.kind === 'arsy' && principal.role === 'admin')))
     || (policy === 'admin' && principal.kind === 'arsy' && principal.role === 'admin')
   if (!allowed) {
-    fail(reply, 403, 'forbidden', 'This operation requires an ARSY administrator.')
+    fail(reply, 403, 'forbidden', policy === 'service'
+      ? 'This operation requires the SKYLINK service credential.'
+      : 'This operation requires an ARSY administrator.')
     return null
   }
   return principal

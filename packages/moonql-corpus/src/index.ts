@@ -262,6 +262,7 @@ export const corpus = defineAddon({
         code: str({ maxLength: 80 }),
         passageRef: m2o('corpus_passages', { index: true }),
         languageCode: str({ maxLength: 10, default: 'id' }),
+        direction: sel(['ltr', 'rtl'] as const, { null: true }),
         translatorName: str({ maxLength: 120, default: 'Kementerian Agama RI' }),
         translationText: text(),
         rightsStatus: sel(RIGHTS_STATUSES, { default: 'RIGHTS_EXACT_VERSION_CLEARED' }),
@@ -281,6 +282,7 @@ export const corpus = defineAddon({
               code: 'QS_2_82_id_kemenag',
               passageRef: String(passage.id),
               languageCode: 'id',
+              direction: 'ltr',
               translatorName: 'Kemenag RI',
               translationText:
                 'Adapun orang-orang yang beriman dan beramal saleh, mereka itulah penghuni surga. Mereka kekal di dalamnya.',
@@ -384,6 +386,9 @@ export const corpus = defineAddon({
           const cleared = editionCleared && row.rightsStatus === CLEARED
           return {
             languageCode: nonEmpty(row.languageCode) ?? 'und',
+            // Preserve an explicit owner-supplied direction. Legacy rows remain unknown;
+            // the consuming text element uses the browser's bidi auto direction.
+            direction: row.direction === 'rtl' || row.direction === 'ltr' ? row.direction : null,
             translatorName: nonEmpty(row.translatorName),
             licenseName: nonEmpty(row.licenseName),
             rightsStatus: nonEmpty(row.rightsStatus) ?? 'RIGHTS_UNKNOWN',

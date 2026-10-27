@@ -221,7 +221,7 @@ export function ReaderView({
                     </span>
                   </div>
                   {row.text && !withheld ? (
-                    <p lang={row.languageCode} dir={row.languageCode === 'ar' ? 'rtl' : 'ltr'}>
+                    <p lang={row.languageCode} dir={row.direction ?? 'auto'}>
                       {row.text}
                     </p>
                   ) : (

@@ -25,6 +25,7 @@ export interface ReaderCandidate extends Omit<ReaderSource, 'key' | 'sourceDate'
 
 export interface ReaderTranslation {
   languageCode: string
+  direction: 'ltr' | 'rtl' | null
   translatorName: string | null
   licenseName: string | null
   rightsStatus: string
