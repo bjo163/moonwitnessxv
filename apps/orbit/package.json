@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@moonwitness/core": "workspace:*",
+    "@moonwitness/moonql-client": "workspace:*",
     "@moonwitness/moonui": "workspace:*",
     "@moonwitness/web-config": "workspace:*",
     "@react-three/fiber": "^9.1.0",

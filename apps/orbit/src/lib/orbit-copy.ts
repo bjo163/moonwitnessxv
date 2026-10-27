@@ -78,6 +78,11 @@ export const orbitCatalog = defineLocaleCatalog({
     statusUnauthorized: 'UNAUTHORIZED',
     freshnessLabel: 'Freshness',
     provenanceLabel: 'Provenance',
+    liveBadge: 'LIVE',
+    statusConnected: 'CONNECTED',
+    statusOffline: 'OFFLINE',
+    offlineNotice: 'ARSY Hub connection is offline. Operating in truthful disconnected / fallback state.',
+    switchSimulatedFallback: 'View Local Simulation',
   },
   id: {
     brandTitle: 'ORBIT',
@@ -144,6 +149,11 @@ export const orbitCatalog = defineLocaleCatalog({
     statusUnauthorized: 'TIDAK DIIZINKAN',
     freshnessLabel: 'Kesegaran',
     provenanceLabel: 'Asal Data',
+    liveBadge: 'LANGSUNG',
+    statusConnected: 'TERHUBUNG',
+    statusOffline: 'LURING',
+    offlineNotice: 'Koneksi ARSY Hub luring. Beroperasi dalam status terputus / cadangan yang jujur.',
+    switchSimulatedFallback: 'Lihat Simulasi Lokal',
   },
 })
 

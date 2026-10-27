@@ -1,14 +1,23 @@
 import type { Locale } from '@moonwitness/core'
 import { Badge, LiveDot } from '@moonwitness/moonui'
 import type { OrbitCopyKey } from '../lib/orbit-copy'
+import type { ConnectionStatus, FreshnessStatus } from '../lib/projections/types.ts'
 
 export interface OrbitShellHeaderProps {
   locale: Locale
   copy: Readonly<Record<OrbitCopyKey, string>>
-  connectionStatus: string
+  connectionStatus: ConnectionStatus | string
+  freshness?: FreshnessStatus
+  lastSyncTimestamp?: string
 }
 
-export function OrbitShellHeader({ locale, copy, connectionStatus }: OrbitShellHeaderProps) {
+export function OrbitShellHeader({
+  locale,
+  copy,
+  connectionStatus,
+  freshness,
+  lastSyncTimestamp,
+}: OrbitShellHeaderProps) {
   return (
     <header className="orbit-header" role="banner">
       <div className="orbit-title-group">
@@ -30,11 +39,68 @@ export function OrbitShellHeader({ locale, copy, connectionStatus }: OrbitShellH
 
         {/* Operational Status Badges */}
         <div className="orbit-status-bar" role="status" aria-label="Operational Mode">
-          <Badge tone="accent">
-            <LiveDot />
-            {copy.provenanceSimulated}
-          </Badge>
-          <Badge tone="night">ARSY: {connectionStatus}</Badge>
+          {connectionStatus === 'LIVE_CONNECTED' && freshness === 'FRESH' && (
+            <>
+              <Badge tone="ok">
+                <LiveDot />
+                {copy.liveBadge}
+              </Badge>
+              <Badge tone="night">ARSY: {copy.statusConnected}</Badge>
+            </>
+          )}
+
+          {connectionStatus === 'LIVE_CONNECTED' && freshness === 'STALE' && (
+            <>
+              <Badge tone="accent">
+                ⚠ {copy.freshnessStale}
+              </Badge>
+              <Badge tone="night">ARSY: {copy.statusConnected}</Badge>
+            </>
+          )}
+
+          {connectionStatus === 'LIVE_CONNECTED' && freshness === 'UNKNOWN' && (
+            <>
+              <Badge tone="accent">
+                ? {copy.freshnessUnknown}
+              </Badge>
+              <Badge tone="night">ARSY: {copy.statusConnected}</Badge>
+            </>
+          )}
+
+          {connectionStatus === 'OFFLINE' && (
+            <>
+              <Badge tone="hot">
+                ● {copy.statusOffline}
+              </Badge>
+              <Badge tone="night">{copy.arsyOffline}</Badge>
+            </>
+          )}
+
+          {connectionStatus === 'UNAUTHORIZED' && (
+            <>
+              <Badge tone="hot">
+                ⛔ {copy.statusUnauthorized}
+              </Badge>
+              <Badge tone="night">ARSY: 401/403</Badge>
+            </>
+          )}
+
+          {connectionStatus === 'SIMULATED_LOCAL' && (
+            <>
+              <Badge tone="accent">
+                <LiveDot />
+                {copy.provenanceSimulated}
+              </Badge>
+              <Badge tone="night">{copy.arsyStandalone}</Badge>
+            </>
+          )}
+
+          {connectionStatus !== 'LIVE_CONNECTED' &&
+            connectionStatus !== 'OFFLINE' &&
+            connectionStatus !== 'UNAUTHORIZED' &&
+            connectionStatus !== 'SIMULATED_LOCAL' && (
+              <Badge tone="night">ARSY: {connectionStatus}</Badge>
+            )}
         </div>
 
         {/* Language / Locale Selector */}
