@@ -15,6 +15,12 @@ test('positive: eligible leaf claim records worker, baseline, exclusive scope an
   const lease = claim('M29-02', 'worker-a', { completed: ['M29-01'] });
   assert.equal(lease.state, 'CLAIMED');
   assert.equal(lease.baselineSha, baselineSha);
+  assert.deepEqual(lease.paths, [
+    'docs/planning/MULTI_AGENT_TASK_LEASE_CONTRACT.md',
+    'scripts/planning/task-lease-contract-check.mjs',
+    'test/planning/task-lease-contract-check.test.mjs',
+    'docs/audit/M29-02-multi-agent-lease-contract.md'
+  ]);
   assert.equal(validateReportedPaths(lease, lease.paths), true);
 });
 
@@ -24,6 +30,26 @@ test('positive: independent eligible leaves can run with disjoint scopes', () =>
     worker: 'worker-b', baselineSha, completed: ['M29-01', 'M29-02'], claims: [first]
   });
   assert.notDeepEqual(first.paths, second.paths);
+});
+
+test('positive: validator task scope metadata matches artifacts and remains nonoverlapping', () => {
+  const validator = claim('M29-03', 'worker-validator');
+  const fixtures = claim('M29-04', 'worker-fixtures');
+
+  assert.deepEqual(validator.paths, [
+    'docs/planning/TASK_REGISTER_VALIDATOR.md',
+    'scripts/planning/task-register-validator.mjs',
+    'test/planning/task-register-validator.test.mjs',
+    'docs/audit/M29-03-task-register-validator.md'
+  ]);
+  assert.deepEqual(fixtures.paths, [
+    'test/planning/task-register-invalid-fixtures.test.mjs',
+    'test/planning/fixtures/task-register',
+    'docs/audit/M29-04-invalid-fixtures.md'
+  ]);
+  assert.equal(validator.paths.some(path => fixtures.paths.includes(path)), false);
+  assert.equal(validateReportedPaths(validator, validator.paths), true);
+  assert.equal(validateReportedPaths(fixtures, fixtures.paths), true);
 });
 
 test('negative: reject umbrella, duplicate task, unmet dependency, one worker double claim, and out-of-scope writes', () => {
