@@ -37,6 +37,15 @@ Exported from `packages/moonui/src/index.ts`. Safe for Server-Side Rendering (SS
 - `<Nav>`, `<TabBar>`, `<UserChip>`: Structured navigation primitives.
 - `<Card>`, `<CardHeader>`, `<CardBody>`, `<Panel>`, `<Badge>`, `<EmptyState>`, `<DataTable>`.
 
+### Dock Space Entry (app-local, ADR-0009)
+These live in `apps/dock/src/ui/components/` because Dock is their only consumer; promotion into MoonUI requires a second consuming app.
+- `<SpaceGrid locale>`: one `<section aria-labelledby>` landmark holding exactly four `<SpaceCard>`s (READ `/reader`, EXPLORE `/terms`, CREATE `/studio`, SIGNAL `/stations`). It never renders a second `<nav>` and never a second `<h1>`, so `landmarks.test.mjs` keeps one navigation landmark and one page heading. Hrefs pass through `localizedDockHref` so `/id` and `/en` are preserved.
+- `<SpaceCard>`: anchor card with `data-tone` in `accent | cyan | pink | moon` driving a 3px top rule (`--space-tone`), a MoonUI `Icon*`, a phrase-sized title, a one-line description and an arrow link label. It renders **no numeric counter** and no `LIVE` badge; the status is words only.
+- `<StatusTag status>`: exactly three literals — `REAL`, `PLANNED`, `DEMO`. Anything else fails type-check, so a screen cannot invent a fourth claim.
+- `<PanelState state copy>`: maps `loading | empty | error | ready` onto `Spinner` (`role="status"`), `EmptyState`, `Alert` (`role="alert"`) and the children. Pages no longer hand-compose these four states.
+
+Invariants for all four: visible `:focus-visible` outline, keyboard reachability, no hover-only affordance, `min-width: 0` so a long title wraps instead of forcing horizontal scroll, and copy that comes from the bilingual catalog rather than a literal.
+
 ---
 
 ## 3. Client Interactive & Sensory Primitives (`@moonwitness/moonui/client`)

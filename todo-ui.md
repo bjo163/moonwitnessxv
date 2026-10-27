@@ -2,6 +2,8 @@
 > **UI realization playbook · 27 October 2026 · scope: 12 visual references · target branch: `dev`.**
 > **IMPORTANT:** This document is a **micro-execution checklist**, *not* a second canonical task/status register. [TODO.md](TODO.md) owns milestone completion and checked status; [MASTER_DESIGN.md](MASTER_DESIGN.md) owns visual/behavior semantics; [BLUEPRINT.md](BLUEPRINT.md) owns domain boundaries. Tick these `UI-*` steps only as local implementation notes; close linked `Mxx-yy` in canonical TODO **only after exact-SHA evidence**.
 > All 12 screens are conceptual UI references. A screenshot never proves that its feature, API, data, integration, deployment, or user permission exists.
+>
+> **Execution waves (docs-first, revised 2026-10-27).** Normative layer first: [ADR-0009](docs/decisions/ADR-0009-public-ui-reference-adoption.md) · [MASTER_DESIGN dock semantics](MASTER_DESIGN.md) · [Component Bible §Dock Space Entry](docs/design/COMPONENTS.md) · [App surfaces](docs/design/APPS.md) · [mockup implementation status](docs/design/mockups-xv/README.md) · packets [M19-02](docs/tasks/M19/M19-02.md), [M19-03](docs/tasks/M19/M19-03.md), [M19-04](docs/tasks/M19/M19-04.md) · [blockers register](docs/audit/ui-blocked-screens-8737fe4.md). Wave order: **D** docs/ADR → **1** shared primitives → **2** screen 01 → **3** screen 05 → **4** screen 06 → **5** evidence. A leaf is ticked only in the wave that produced its test and geometry evidence.
 
 ## 0. Source of truth and branch contract
 - **Repo:** `bjo163/moonwitnessxv`; work on **existing `dev` only**; no feature branch and no new Hub, database, ORM or second renderer.
@@ -46,6 +48,22 @@
 ## 3. Twelve screens — leaf microtasks
 
 **Definition of Done per screen:** functional route in its approved existing app, correct data boundary, no deceptive mock telemetry, id/en labels, keyboard navigation, 360–1920 responsive snapshots, negative permissions/rights where relevant, focused tests and exact SHA. A checked visual reference task **does not** complete its parent `Mxx` milestone.
+
+**Blocked screens (no fake surfaces).** Per [ADR-0009](docs/decisions/ADR-0009-public-ui-reference-adoption.md) §2.5, these screens stay `[ ]` until their owner decision exists; the unblock action per screen is recorded in the [blockers register](docs/audit/ui-blocked-screens-8737fe4.md).
+
+| Screen | Owner blocking it | Unblock action |
+|---|---|---|
+| UI-P02 Project Universe | M17 | route + data-owner decision |
+| UI-P03 Story Forge | M33 | SHADOW scope acceptance |
+| UI-P04 Poster Lab | M18/M33 | export approval + asset consent |
+| UI-P07 MoonLab | M34 | private case workspace scope |
+| UI-P08 World Monitor | M24 | freshness/uncertainty model |
+| UI-P09 Publishing Hub | M18/M20 | publishing state machine |
+| UI-P10 Harbor Commons | M32/M37 | ADR authorizing the app |
+| UI-P11 WORKS Economy | M35/M37 | ADR + D15/D16 review |
+| UI-P12 SKYLINK Messaging | M38 | M38 code phase + UI authorization |
+
+Executable this cycle: **UI-P01**, **UI-P05**, **UI-P06**.
 
 ### UI-P01 — DOCK & LIGHTHOUSE (P0)
 Reference: [`01_dock_lighthouse.svg`](docs/design/mockups-xv/01_dock_lighthouse.svg) · Canonical task owner: **M19-09..19 / M31** · Code owner: `apps/dock` · route: `/id, /en`.

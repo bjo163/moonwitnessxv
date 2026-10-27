@@ -26,3 +26,21 @@
 - Images are **reference assets**. Audit origin, illustration rights, font licensing and content approvals before embedding any raster or derivative into publicly shipped product UI.
 - Real application statuses, statistics, citations, accounts and delivery trails must come from verified domain owners; never ship mock data as `LIVE`.
 - Implement public Dock, private HQ and future planned surfaces according to architecture boundaries and `todo-ui.md`; avoid duplicate renderers and non-semantic token drift.
+
+## Implementation status (ADR-0009)
+A concept view is never evidence that a feature exists. This table states what the code does today; blocked screens carry the owner action that unblocks them, and nothing is built with sample data to resemble an image. Full detail: [blockers register](../../audit/ui-blocked-screens-8737fe4.md) · [ADR-0009](../../decisions/ADR-0009-public-ui-reference-adoption.md).
+
+| # | Screen | Owner route today | Status |
+|---|---|---|---|
+| 01 | LIGHTHOUSE / DOCK | `apps/dock` `/` — four-space entry READ/EXPLORE/CREATE/SIGNAL | **PARTIAL** — header band + space entry shipped; mockup rail/search/index chrome rejected |
+| 02 | PROJECT UNIVERSE | none (`grep /projects` = 0) | **BLOCKED (M17)** — route and data owner undecided |
+| 03 | STORY FORGE | HQ generic model editor | **BLOCKED (M33)** — SHADOW scope not accepted |
+| 04 | POSTER LAB | `/studio` generator (no canvas/export model) | **BLOCKED (M18/M33)** — export approval + asset consent absent |
+| 05 | CORPUS READER | `apps/dock` `/reader` | **PARTIAL** — provenance disclosure shipped; D08 denial tests in M19-19 |
+| 06 | UNILEX EXPLORER | `apps/dock` `/terms`, `/figures`, `/constellation` | **PARTIAL** — keyboard list alternative shipped |
+| 07 | MOONLAB RESEARCH | public `/research` only | **BLOCKED (M34)** — private case workspace undecided |
+| 08 | WORLD MONITOR | Dock `#world-monitor` card + HQ `/world-monitor` | **BLOCKED (M24)** — freshness/uncertainty model undecided |
+| 09 | PUBLISHING HUB | HQ generic CRUD | **BLOCKED (M18/M20)** — draft→rights→reviewer→released absent |
+| 10 | HARBOR COMMONS | — | **BLOCKED (M32/M37)** — no ADR, no app |
+| 11 | WORKS / ECONOMY | — | **BLOCKED (M35/M37)** — D15/D16 source-of-truth review missing |
+| 12 | SKYLINK MESSAGING | `apps/skylink` service skeleton only | **BLOCKED (M38)** — inbox UI not authorized; API incomplete |
