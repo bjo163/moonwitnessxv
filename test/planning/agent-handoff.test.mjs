@@ -9,9 +9,9 @@ const TODO = fs.readFileSync(path.resolve(path.dirname(fileURLToPath(import.meta
 
 const VALID_ENVELOPE = {
   task_id: 'M29-05',
-  baseline_sha: '04533ab27b765f198c4449022b04f2a83f17b902',
+  baseline_sha: 'fee8334ee599c3c3b86d8cabe8389b2f7ab64f11',
   result_sha: 'worktree-only',
-  worker: 'AI pair programmer',
+  worker: 'root integrator',
   claimed_paths: [
     'docs/planning/LOW_CONTEXT_AGENT_HANDOFF.md',
     'scripts/planning/agent-handoff-validator.mjs',
@@ -20,19 +20,15 @@ const VALID_ENVELOPE = {
     'docs/audit/M29-05-handoff.md'
   ],
   actual_changed_paths: [
-    'docs/planning/LOW_CONTEXT_AGENT_HANDOFF.md',
-    'scripts/planning/agent-handoff-validator.mjs',
-    'scripts/planning/task-lease-contract-check.mjs',
-    'test/planning/agent-handoff.test.mjs',
-    'docs/audit/M29-05-handoff.md'
+    'test/planning/agent-handoff.test.mjs'
   ],
   positive_test: {
     command: 'node --test test/planning/agent-handoff.test.mjs',
-    observed_output: 'M29-05 acceptance is proved by the positive envelope test; exact command output is recorded in the audit.'
+    observed_output: 'The positive envelope test accepts M29-05 and binds the currently selected M28-13 successor; exact output is recorded in the audit.'
   },
   negative_test: {
-    command: 'node --test test/planning/agent-handoff.test.mjs',
-    observed_output: 'Negative cases reject malformed fields, non-existent IDs, invalid paths, scope violations, invalid SHA, unverified deployment, and false security/rights declarations.'
+    command: 'node --test --test-name-pattern=negative test/planning/agent-handoff.test.mjs',
+    observed_output: 'Negative cases reject malformed/incomplete metadata, umbrella and unknown IDs, invalid paths, scope violations, invalid SHA, fabricated deployment, and false security/rights declarations.'
   },
   security_rights_privacy: {
     no_secrets: true,
@@ -40,17 +36,17 @@ const VALID_ENVELOPE = {
     preserved_source_rights: true,
     no_fabricated_deployment: true
   },
-  reviewer: 'Root Integrator',
-  rollback_plan: 'Revert the five claimed paths after checking dependents; preserve unrelated changes.',
-  limitations: 'Verifies handoff contracts only; does not claim live production deployment.',
-  next_eligible_task: 'M41-02'
+  reviewer: 'Independent low-context receiver (see audit)',
+  rollback_plan: 'Revert only test/planning/agent-handoff.test.mjs from this task result; preserve unrelated changes.',
+  limitations: 'Local handoff verification only; the receiver separately checks predecessor evidence and successor eligibility; no live deployment is claimed.',
+  next_eligible_task: 'M28-13'
 };
 
 test('positive: valid low-context handoff envelope is verified and binds an existing successor ID', () => {
   const result = verifyAgentHandoff(VALID_ENVELOPE, { todoMarkdown: TODO });
   assert.equal(result.ok, true);
   assert.equal(result.taskId, 'M29-05');
-  assert.equal(result.nextEligibleTask, 'M41-02');
+  assert.equal(result.nextEligibleTask, 'M28-13');
   assert.ok(result.verifiedAt);
 });
 
