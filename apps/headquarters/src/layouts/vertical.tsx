@@ -16,7 +16,13 @@ import { getSchema } from '@/data/schema'
 import { menuGroups } from '@/data/queries/registry'
 import type { SessionUser } from '@/data/types'
 import { SideNav } from '@/ui/client/SideNav'
-import { missionControlGroup, operationalStatusLabel, resolveShellLocale, shellCopy } from '@/lib/shell-copy'
+import {
+  demoAlertStatusLabel,
+  missionControlGroup,
+  operationalStatusLabel,
+  resolveShellLocale,
+  shellCopy,
+} from '@/lib/shell-copy'
 
 /**
  * Mission Control shell (Image 4): punk-zine sidebar powered by `@moonwitness/moonui`
@@ -110,10 +116,10 @@ export async function VerticalLayout({ user, children }: { user: SessionUser; ch
               href="/#alerts"
               className="m-row"
               style={{ textDecoration: 'none', gap: 4 }}
-              aria-label={operationalStatusLabel(locale, { source: 'demo', status: 'statusDemoAlerts' })}
+              aria-label={demoAlertStatusLabel(locale, 3)}
             >
               <span className="m-mono m-muted">{copy.alertsLink}</span>
-              <Badge tone="pink">3</Badge>
+              <Badge tone="pink">3 · DEMO</Badge>
             </a>
 
             <div className="m-row" style={{ gap: 8, alignItems: 'center' }}>

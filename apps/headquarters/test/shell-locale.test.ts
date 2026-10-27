@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import {
   DEMO_OPERATIONAL_KEYS,
   REAL_OPERATIONAL_KEYS,
+  demoAlertStatusLabel,
   missionControlGroup,
   operationalStatusLabel,
   resolveShellLocale,
@@ -87,6 +89,25 @@ void test('operational statuses keep a live status separate from an honest demo 
     assert.notEqual(localized, liveHub)
     assert.notEqual(localized, liveHubId)
   }
+})
+
+void test('demo alert count is visibly marked and has localized accessible context', async () => {
+  const source = await readFile(new URL('../src/layouts/vertical.tsx', import.meta.url), 'utf8')
+
+  assert.match(source, /<Badge tone="pink">3 · DEMO<\/Badge>/)
+  assert.match(
+    source,
+    /aria-label=\{demoAlertStatusLabel\(locale, 3\)\}/,
+  )
+
+  assert.equal(
+    demoAlertStatusLabel('en', 3),
+    'Alerts: 3. Alerts preview: a demo count, not live telemetry',
+  )
+  assert.equal(
+    demoAlertStatusLabel('id', 3),
+    'Peringatan: 3. Pratinjau peringatan: jumlah demo, bukan telemetri langsung',
+  )
 })
 
 void test('an unknown or unsupported locale falls back deterministically to English', () => {

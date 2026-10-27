@@ -135,3 +135,9 @@ export function missionControlGroup(locale: Locale): NavGroup {
 export function operationalStatusLabel(locale: Locale, status: OperationalStatus): string {
   return shellCatalog[locale][status.status]
 }
+
+/** Accessible context for the intentionally static demo alert count. */
+export function demoAlertStatusLabel(locale: Locale, count: number): string {
+  const copy = shellCopy(locale)
+  return `${copy.alertsLink}: ${count}. ${copy.statusDemoAlerts}`
+}
