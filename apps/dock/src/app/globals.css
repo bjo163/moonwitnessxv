@@ -2205,6 +2205,73 @@ body {
   }
 }
 
+/* ---------- UI-XV: reader provenance disclosure ---------- */
+.dk-reader-block-title {
+  margin: 0 0 6px;
+}
+
+.dk-reader-provenance-strip {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.dk-reader-provenance-strip strong {
+  color: var(--fg);
+}
+
+.dk-provenance {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  padding: 10px 12px;
+}
+
+.dk-provenance > summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.dk-provenance > summary:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.dk-provenance .dk-reader-source {
+  margin-top: 10px;
+}
+
+/* ---------- UI-XV: lexicon table index (screen 06) ---------- */
+.dk-term-index {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 10px 12px;
+}
+
+.dk-term-index > summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.dk-term-index > summary:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.dk-term-index .m-table-wrap {
+  margin-top: 10px;
+}
+
 /* ---------- Reduced-Motion Accessibility Safeguards ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,

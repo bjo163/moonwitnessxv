@@ -23,7 +23,13 @@ export default async function ReaderPage({
     <div className="m-stack" style={{ gap: 20 }}>
       <PageHeader
         title="Corpus Reader"
-        subtitle="Exact source identity · rights-gated text · reproducible citation"
+        subtitle={
+          citation === DEFAULT_CITATION && !edition
+            ? 'Exact source identity · rights-gated text · reproducible citation'
+            : `Exact source identity · rights-gated text · reproducible citation · ${citation}${
+                edition ? ` · ${edition}` : ''
+              }`
+        }
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Reader' }]}
         actions={
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

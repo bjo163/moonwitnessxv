@@ -119,6 +119,10 @@ export function ReaderView({
   const source = result.citation
   const cleared = source?.rightsStatus === 'RIGHTS_EXACT_VERSION_CLEARED'
   const tone: BadgeTone = cleared ? 'ok' : 'hot'
+  // ADR-0003/ADR-0009: a rights-blocked result must never render passage text,
+  // even if an upstream projection accidentally returns it.
+  const withheld = result.state === 'rights_blocked'
+  const provenanceShort = source?.provenanceSha ? source.provenanceSha.slice(0, 12) : 'UNRECORDED'
 
   return (
     <div className="dk-reader-grid">
@@ -138,13 +142,22 @@ export function ReaderView({
         ) : null}
 
         <section className="dk-reader-block" aria-labelledby="reader-source-heading">
-          <h3 id="reader-source-heading">Source identity</h3>
-          {source ? <SourceIdentity citation={source} /> : null}
+          <h3 id="reader-source-heading" className="dk-reader-block-title">
+            Source identity
+          </h3>
+          <p className="dk-reader-provenance-strip">
+            Edition <strong>{source?.editionCode ?? 'UNRESOLVED'}</strong> ·{' '}
+            {rightsLabel(source?.rightsStatus ?? 'RIGHTS_UNKNOWN')} · SHA <code>{provenanceShort}</code>
+          </p>
+          <details className="dk-provenance">
+            <summary>Full provenance, licence and retrieval record</summary>
+            {source ? <SourceIdentity citation={source} /> : null}
+          </details>
         </section>
 
         <section className="dk-reader-block" aria-labelledby="reader-arabic-heading">
           <h3 id="reader-arabic-heading">Arabic source text</h3>
-          {result.arabic ? (
+          {!withheld && result.arabic ? (
             <>
               <p className="dk-reader-arabic" lang={result.arabic.language} dir={result.arabic.direction}>
                 {result.arabic.text}
@@ -181,7 +194,7 @@ export function ReaderView({
                       {row.blocked ? `withheld (translation rights: ${rightsLabel(row.rightsStatus)})` : rightsLabel(row.rightsStatus)}
                     </span>
                   </div>
-                  {row.text ? (
+                  {row.text && !withheld ? (
                     <p lang={row.languageCode} dir={row.languageCode === 'ar' ? 'rtl' : 'ltr'}>
                       {row.text}
                     </p>
