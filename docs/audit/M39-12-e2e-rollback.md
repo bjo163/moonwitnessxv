@@ -96,6 +96,29 @@ Worker: M39-12 e2e agent (this task). Reviewer: pending integrator — this file
 - **Build/type at the same SHA:** `pnpm --filter @moonwitness/echolog typecheck` → exit 0 for service, test and client TypeScript; `pnpm --filter @moonwitness/echolog build` → exit 0; `pnpm exec eslint apps/echolog` → exit 0, 0 errors and 1 existing disclosed complexity warning in `src/modules/s3/routes.ts`.
 - **Storage-boundary evidence at the same SHA:** `pnpm --filter @moonwitness/arsy exec tsx --test test/workspace-topology.test.ts` → 7/7 passed, including the closed SQL-driver owner set. The test runs in process against a temporary filesystem root; no Postgres database is configured or used by ECHOLOG. `git diff --check` → exit 0.
 - **Dependency status:** M39-10 and M39-11 are checked in the canonical TODO at this verification SHA. Their exact-SHA implementation and integration evidence is recorded in their respective TODO rows and audits; this M39-12 run does not re-run their full gates.
-- **Current status: OPEN pending independent review and packet step 3.** The server/storage half of rollback is demonstrated: stop the service, verify the previous endpoint refuses connections, inspect intact objects and sidecars on the volume, restart on that volume, and verify byte-identical reads and preserved refusals. The M39-12 packet additionally asks to demonstrate a consumer degrading to local/no-op. SKYLINK's first ECHOLOG attachment consumer is not implemented (M38-12..14 remain open), so that consumer-side behavior cannot be exercised. This gap is not waived by this audit and no TODO closure is proposed here.
+- **Status at the original 724fb review: OPEN.** The server/storage rollback was demonstrated, but the consumer side still needed evidence. At that point SKYLINK attachments were planned and not present; that remains true, but the packet does not require SKYLINK specifically to serve as the consumer.
 - **Other limits:** restart is sequential and in-process; multi-process contention and power-loss durability remain unverified under M39-08. This temp-volume drill is not off-host backup/retention/restore evidence; M04-05 remains separate and open. No application process is left running by the suite.
-- **Reviewer:** independent read-only review at `724fb1556f7f58c39e8c71550bce8c1e6e4cba38` reproduced 36/36 tests, typecheck/build success, scoped ESLint with 0 errors and one disclosed warning, and SQL-owner guard 7/7. The reviewer agrees the packet step-3 consumer fallback remains unproven; M39-12 must stay open until that behavior is demonstrated or the packet scope is formally revised.
+- **Reviewer at 724fb:** independent read-only review reproduced 36/36 tests, typecheck/build success, scoped ESLint with 0 errors and one disclosed warning, and SQL-owner guard 7/7. It correctly left the task open because packet step 3 had not yet been demonstrated.
+
+## Integrated consumer rollback evidence
+
+**Source and test verification SHA:** `49180c9d0b56d81a2623f53a7d54f1ed46a21457` (`dev` and `main`). The ECHOLOG source and tests are unchanged from `724fb1556f7f58c39e8c71550bce8c1e6e4cba38`; `git diff --quiet 724fb155..49180c9 -- apps/echolog packages/echolog-core` returned 0. The exact CI run [40529310035](https://github.com/bjo163/moonwitnessxv/actions/runs/40529310035) passed monorepo verification and guarded promotion. The present TODO/audit closure update changes documentation only; its commit will receive its own exact-SHA CI run.
+
+The actual ECHOLOG operator console is the consumer exercised for packet step 3. I launched the client on loopback port `3116` with its backend proxy pointed at intentionally unbound loopback port `3016`; an existing unrelated ECHOLOG listener on `3006` was left untouched. A synthetic, valid four-field reference was seeded in browser local storage, then a synthetic expired operator session was armed. The browser observed:
+
+- Health showed **not reachable**; the one tracked reference remained visible in the count and remained byte-for-byte present in local storage after a full page reload.
+- Metadata read failed visibly as `unreadable`; no fallback metadata or object bytes were fabricated.
+- Upload stayed disabled, and the recorded browser requests were only `GET /health/ready` and `GET /api/v1/objects/.../meta`; no `POST`, `PUT` or `DELETE` was sent.
+- The session and reference were synthetic test inputs only. No production credential, user object, or private data was used.
+
+This consumer-side observation complements the existing REST/S3 round-trip test: that test stops instance A, verifies its endpoint refuses connections while object files and sidecars remain intact, then starts instance B on the same storage root and verifies byte-identical reads and retained hold refusals. Together these prove the service rollback and the real operator console's local/no-op behavior when the service is unavailable. They do **not** claim SKYLINK attachment delivery; that consumer remains planned.
+
+At integrated source SHA `49180c9d0b56d81a2623f53a7d54f1ed46a21457`, revalidation produced:
+
+- `pnpm --filter @moonwitness/echolog test` — 36/36 passed, including shared REST/S3 storage, fail-closed negatives, and stop/restart persistence.
+- `pnpm --filter @moonwitness/echolog typecheck` — exit 0; `pnpm --filter @moonwitness/echolog build` — exit 0.
+- `pnpm exec eslint apps/echolog` — exit 0, 0 errors and 1 disclosed complexity warning in `src/modules/s3/routes.ts`. The stricter `--max-warnings 0` invocation exits 1 solely for that warning; it was not silently counted as clean.
+- `pnpm --filter @moonwitness/arsy exec tsx --test test/workspace-topology.test.ts` — 7/7 passed, including the closed SQL-owner set.
+- Root `CHANGELOG.md` contains the Unreleased ECHOLOG/D19 entry. No deployment, off-host backup restore, or SKYLINK attachment-delivery claim is made; M04-05 remains open.
+
+**Independent review:** read-only review confirmed the operator console is a real ECHOLOG API consumer, retains its local reference, reports unreadable metadata, leaves upload disabled and makes no mutating request while the service is unavailable. The reviewer confirmed packet step 3 is satisfied generically; SKYLINK is not required by this packet to be the consumer.
