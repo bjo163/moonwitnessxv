@@ -18,11 +18,12 @@ const isDryRun = args.includes('--dry-run')
 const shouldTag = args.includes('--tag')
 const isCi = args.includes('--ci')
 
-function git(gitArgs, { optional = false } = {}) {
+function git(gitArgs, { optional = false, env } = {}) {
   try {
     return execFileSync('git', gitArgs, {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', optional ? 'ignore' : 'inherit'],
+      ...(env ? { env: { ...process.env, ...env } } : {}),
     }).trim()
   } catch (err) {
     if (optional) return ''
@@ -243,7 +244,12 @@ if (isCi) {
     )
   }
 
-  git(['tag', '-a', nextTag, '-m', `Release ${nextTag}`])
+  git(['tag', '-a', nextTag, '-m', `Release ${nextTag}`], {
+    env: {
+      GIT_COMMITTER_NAME: 'github-actions[bot]',
+      GIT_COMMITTER_EMAIL: '41898282+github-actions[bot]@users.noreply.github.com',
+    },
+  })
   console.log(`✔ Created Git Tag \x1b[32m${nextTag}\x1b[0m at ${headSha.slice(0, 10)}`)
 
   git(['push', 'origin', `refs/tags/${nextTag}`])
