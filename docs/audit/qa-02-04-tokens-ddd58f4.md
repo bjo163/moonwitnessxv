@@ -76,9 +76,20 @@ Observed locally at `ddd58f4`:
 | `pnpm --filter @moonwitness/dock typecheck` | `tsc --noEmit`, exit 0 |
 | `pnpm ui:check` | 132 files, 0 violations |
 | `pnpm --filter @moonwitness/moonui test` | 26 pass / 0 fail |
-| Dock/HQ/Orbit/Cockpit production build | **not run locally** — see §0; it is covered by CI's `pnpm verify` → `build && build:web` at the exact SHA |
+| Dock/HQ/Orbit/Cockpit production build | covered by CI at this exact SHA — see below |
 
-CI at `ddd58f4` was started by the push (run `40485038395`, "CI Verify & Gate"); its conclusion is recorded separately and QA-04 is only closed once that run is green at this exact SHA. Until then QA-04 is **partially evidenced**, not complete.
+CI at `ddd58f4` (run `40485038395`, pushed at 09:59:52Z) reported per job:
+
+| Job | Conclusion |
+| --- | --- |
+| Monorepo Verification & Safety Gates | **success** |
+| Promote verified dev to main | failure — `Confirm dev has not moved and main can fast-forward`, `EXPECTED_SHA: ddd58f45f15b3c07812ffaa5fd5ea8135bc3c4d4`, exit 1 |
+
+The failing job is the promotion guard, and it failed for the correct reason: `fe8e84c` was pushed to `dev` while the run was in flight, so `dev` had moved and `main` could no longer fast-forward to the verified SHA. That is the guard doing its job, not a verification failure. The verification job itself ran `pnpm verify` (`build && ui:check && lint && gen:sdk:check && test && build:web`) on a clean checkout of `ddd58f4` and passed, which supplies the build half QA-04 asks for.
+
+**QA-04 is therefore satisfied at exact SHA `ddd58f4`**: lint 0 errors, Dock focused tests 208/208, MoonUI 26/26, Dock typecheck exit 0, and app builds green in CI at that SHA. The standing limitation is unchanged — a green CI run is verification of a commit, not evidence of a deployment.
+
+One incidental confirmation from reading the root scripts (`package.json` `build`, `build:web`, `verify`, `test`): `pnpm verify` builds arsy, aigateway, sentinel, cockpit, skylink and echolog, then HQ, Dock and Orbit, and its `test` step runs the **full** Dock suite including `home-offline.test.mjs` — which is green in CI. That is direct evidence the local failure is the port-3001 collision with the operator's own dev server and not a product defect.
 
 ## 4. Report-only items for the owner
 

@@ -13,8 +13,20 @@ import { fileURLToPath } from 'node:url'
 export const DOCK_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', 'apps', 'dock')
 export const REPO_ROOT = resolve(DOCK_ROOT, '..', '..')
 
-/** The evidence directory: PNGs + geometry.json, nothing else. */
-export const SCREENS_DIR = join(REPO_ROOT, 'docs', 'audit', 'screens')
+/**
+ * The evidence directory: PNGs + geometry.json, nothing else.
+ *
+ * `UI_SCREENS_DIR` redirects the whole evidence set outside the repository for
+ * an exploratory run. Concurrent sessions keep uncommitted screenshots in
+ * `docs/audit/screens/`, and a re-run overwrites the same deterministic names,
+ * so a measurement that only needs to prove a geometry claim can write to a
+ * scratch directory instead of destroying another session's committed-intent
+ * evidence. A run that is meant to become repository evidence omits the
+ * variable and lands in the default path.
+ */
+export const SCREENS_DIR = process.env.UI_SCREENS_DIR
+  ? resolve(process.env.UI_SCREENS_DIR)
+  : join(REPO_ROOT, 'docs', 'audit', 'screens')
 export const GEOMETRY_PATH = join(SCREENS_DIR, 'geometry.json')
 
 /** Design baseline the covered screens were audited against. */
