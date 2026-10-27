@@ -21,7 +21,7 @@ import {
 } from '../projections/operational-projection.ts'
 import type { OrbitStateProjection, ReviewSurface } from '../projections/types.ts'
 import { SIMULATED_OPERATIONS } from '../../fixtures/simulated-operations.ts'
-import { LOOPBACK_REVIEW_SURFACE, resolveReviewSurface } from '../handoff/approval-handoff.ts'
+import { LOOPBACK_REVIEW_SURFACE, resolveReviewSurface } from './review-surface.ts'
 
 export interface RuntimeClientOptions {
   env?: Record<string, string | undefined>
@@ -162,9 +162,22 @@ export async function fetchOrbitOperationalState(
       },
       signal: controller?.signal,
       cache: 'no-store',
+      // ORBIT trusts exactly the endpoint it resolved. Following a redirect
+      // would let whoever answers that URL move the probe to an origin nobody
+      // authorised and still be rendered as verified live state.
+      redirect: 'manual',
     })
 
     if (timeoutId) clearTimeout(timeoutId)
+
+    if (response.status >= 300 && response.status < 400) {
+      return buildOfflineState(
+        hubUrl,
+        now,
+        `HTTP ${response.status} redirect from ARSY Hub probe refused (fixed-origin trust)`,
+        reviewSurface,
+      )
+    }
 
     // Handle authentication/authorization failures
     if (response.status === 401 || response.status === 403) {

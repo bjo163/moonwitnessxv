@@ -23,7 +23,7 @@ import type {
   ProvenanceType,
   ProjectionOptions,
 } from './types.ts'
-import { LOOPBACK_REVIEW_SURFACE } from '../handoff/approval-handoff.ts'
+import { LOOPBACK_REVIEW_SURFACE } from '../server/review-surface.ts'
 
 const DEFAULT_STALE_THRESHOLD_MS = 60_000 // 60 seconds
 

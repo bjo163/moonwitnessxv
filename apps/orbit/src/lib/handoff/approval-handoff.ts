@@ -8,9 +8,12 @@
  * 100CENTER review surface (ADR-0001, ADR-0004, M20-02 design), so this module
  * produces display descriptors only — there is no approve, reject or publish
  * path anywhere in it.
+ *
+ * M40-09: this module is client-safe by construction. It reads no environment
+ * and no origin constant; the review surface arrives as a parameter resolved on
+ * the server by `src/lib/server/review-surface.ts`.
  */
 
-import { FRONTEND_URLS } from '@moonwitness/core'
 import type {
   ConnectionStatus,
   ReviewSurface,
@@ -33,64 +36,11 @@ export interface ApprovalHandoff {
 }
 
 /**
- * Loopback review surface used when the deployment configures nothing.
- *
- * Same shared port table the hub's service index advertises, so ORBIT cannot
- * drift onto a different 100CENTER origin than the rest of the workspace.
- */
-export const LOOPBACK_REVIEW_SURFACE: ReviewSurface = {
-  available: true,
-  origin: FRONTEND_URLS.headquarters,
-}
-
-const ABSENT_REVIEW_SURFACE: ReviewSurface = {
-  available: false,
-  denial: 'ORIGIN_UNRESOLVED',
-}
-
-/**
  * The 100CENTER review path is fixed by ORBIT, never read from a payload.
  * Anything the hub sends inside a task record is data to display, not a
  * location to navigate to.
  */
 const REVIEW_PATH = '/review'
-
-/**
- * Validate one configured 100CENTER origin.
- *
- * An empty value is an explicit denial rather than a guess, and a
- * credential-bearing or non-http(s) value can never become a link target.
- */
-export function validateReviewOrigin(raw: string | undefined): ReviewSurface {
-  if (raw === undefined || raw.trim() === '') return ABSENT_REVIEW_SURFACE
-  let parsed: URL
-  try {
-    parsed = new URL(raw)
-  } catch {
-    return { available: false, denial: 'ORIGIN_MALFORMED' }
-  }
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    return { available: false, denial: 'ORIGIN_SCHEME_UNSUPPORTED' }
-  }
-  if (parsed.username.length > 0 || parsed.password.length > 0) {
-    return { available: false, denial: 'ORIGIN_CREDENTIALS_FORBIDDEN' }
-  }
-  return { available: true, origin: parsed.origin }
-}
-
-/**
- * Resolve the review surface from a server environment.
- *
- * Kept server-side so no environment value is read inside a client component;
- * the browser only ever receives the validated origin.
- */
-export function resolveReviewSurface(
-  env: Record<string, string | undefined> = process.env,
-): ReviewSurface {
-  const configured = env.NEXT_PUBLIC_HEADQUARTERS_URL
-  if (configured === undefined) return LOOPBACK_REVIEW_SURFACE
-  return validateReviewOrigin(configured)
-}
 
 /** Approval is required only when the projected record itself says so. */
 export function isApprovalRequired(task: TaskProjection): boolean {

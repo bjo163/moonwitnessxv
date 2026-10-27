@@ -17,10 +17,12 @@ import { fileURLToPath, URL } from 'node:url'
 import {
   buildApprovalHandoff,
   isApprovalRequired,
+} from '../src/lib/handoff/approval-handoff.ts'
+import {
   resolveReviewSurface,
   validateReviewOrigin,
   LOOPBACK_REVIEW_SURFACE,
-} from '../src/lib/handoff/approval-handoff.ts'
+} from '../src/lib/server/review-surface.ts'
 import { SIMULATED_OPERATIONS } from '../src/fixtures/simulated-operations.ts'
 import { orbitCopy } from '../src/lib/orbit-copy.ts'
 
