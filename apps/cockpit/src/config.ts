@@ -83,7 +83,6 @@ export const DEFAULT_CONFIG: MoondeckConfig = {
       name: 'ORBIT Spatial Ops',
       pkg: '@moonwitness/orbit',
       port: PORTS.orbit,
-      type: 'web',
       color: '#a855f7',
       icon: 'OR',
       description: 'Spatial 3D/2D operations frontend on simulated fixtures (M40)',

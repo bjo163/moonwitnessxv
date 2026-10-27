@@ -299,7 +299,7 @@ export function createCockpitServer(
     let success = false
     if (action === 'start') success = await supervisor.start(tag)
     else if (action === 'stop') success = supervisor.stop(tag)
-    else if (action === 'restart') success = supervisor.restart(tag)
+    else if (action === 'restart') success = await supervisor.restart(tag)
 
     return {
       tag,
@@ -311,8 +311,17 @@ export function createCockpitServer(
 
   // Bulk control
   app.post('/api/services/start-all', async () => {
-    supervisor.startAll()
-    return { success: true, services: supervisor.getStates() }
+    // Await the batch: fire-and-forget answered before any port probe finished,
+    // so it reported success for eight refusals and a pre-probe snapshot.
+    const results = await Promise.all(
+      supervisor.getStates().map((state) => supervisor.start(state.tag)),
+    )
+    const refused = results.filter((started) => !started).length
+    return {
+      success: refused === 0,
+      refused,
+      services: supervisor.getStates(),
+    }
   })
 
   app.post('/api/services/stop-all', async () => {

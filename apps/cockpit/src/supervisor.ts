@@ -1,5 +1,5 @@
 import { spawn, type ChildProcess, execFileSync } from 'node:child_process'
-import { createServer } from 'node:net'
+import { connect } from 'node:net'
 import { createInterface } from 'node:readline'
 import { appendFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -83,17 +83,38 @@ export class ProcessSupervisor extends EventEmitter {
    * A second supervisor on the same port is the most common local failure:
    * `pnpm dev` is already running and the operator presses Start here. Refuse
    * with a message that names the cause instead of a raw EADDRINUSE later.
+   *
+   * Probe by *connecting*, not by binding: on Windows a bind to 127.0.0.1 does
+   * not conflict with a wildcard listener, so a bind probe misses `radio`
+   * (0.0.0.0), `dock`, `hq` and `orbit` (next dev) — exactly the services this
+   * guard exists for. A refused connection means the port is free.
    */
   private async portIsBusy(port?: number): Promise<boolean> {
-    if (typeof port !== 'number') return false
-    return new Promise((resolve) => {
-      const probe = createServer()
-      probe.once('error', () => resolve(true))
-      probe.once('listening', () => {
-        probe.close(() => resolve(false))
+    if (typeof port !== 'number' || !Number.isInteger(port) || port <= 0 || port >= 65536) {
+      return false
+    }
+
+    const probeHost = (host: string) =>
+      new Promise<boolean>((resolve) => {
+        const socket = connect({ port, host })
+        let settled = false
+        const finish = (busy: boolean) => {
+          if (settled) return
+          settled = true
+          socket.destroy()
+          resolve(busy)
+        }
+        socket.once('connect', () => finish(true))
+        socket.once('error', (error) => {
+          // ECONNREFUSED is the only "nothing is listening" answer; a timeout or
+          // any other error must be treated as busy so we never spawn blindly.
+          finish((error as NodeJS.ErrnoException).code !== 'ECONNREFUSED')
+        })
+        socket.setTimeout(500, () => finish(true))
       })
-      probe.listen(port, '127.0.0.1')
-    })
+
+    const results = await Promise.all([probeHost('127.0.0.1'), probeHost('::1')])
+    return results.some(Boolean)
   }
 
   public async start(tag: string): Promise<boolean> {
@@ -204,14 +225,17 @@ export class ProcessSupervisor extends EventEmitter {
     return true
   }
 
-  public restart(tag: string): boolean {
+  public async restart(tag: string): Promise<boolean> {
     const state = this.states.get(tag)
     if (state) state.restarts++
     this.stop(tag)
-    setTimeout(() => {
-      void this.start(tag)
-    }, 400).unref()
-    return true
+    await new Promise((resolve) => {
+      setTimeout(resolve, 400)
+    })
+    // Report the real outcome: the deferred start can now be refused by the
+    // port guard, and answering `true` here would show STOPPED then ERROR with
+    // no explanation.
+    return this.start(tag)
   }
 
   private processOutputLine(tag: string, rawLine: string, fromStderr: boolean): void {

@@ -19,7 +19,7 @@
 
 ## Rules
 
-1. **One supervisor at a time.** Do not run `pnpm dev` and Cockpit "Start All" for the same app. Two spawns on one port end in `EADDRINUSE`; the Cockpit refuses to start a tag whose port is already bound and names the likely cause.
+1. **One supervisor at a time.** Do not run `pnpm dev` and Cockpit "Start All" for the same app. Two spawns on one port end in `EADDRINUSE`; the Cockpit probes the port by connecting to both `127.0.0.1` and `::1` (so wildcard `0.0.0.0` listeners count too) and refuses to start a tag whose port answers, naming `pnpm dev` as the likely cause.
 2. **No port without a contract.** Adding an app with a port requires the value in `PORTS`, in the registry, and (if supervised) in `apps/cockpit/src/config.ts`. The coverage test fails otherwise.
 3. **`dev: false` means honest absence.** A scaffold is listed and printed as such; it is never spawned with a placeholder command.
 4. **The registry is plain ESM on purpose.** `pnpm ports:free` must work on a clean checkout before `build:libs`, so no `@moonwitness/core` import is allowed there.

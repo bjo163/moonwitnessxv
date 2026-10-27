@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createServer } from 'node:net'
+import { createServer, type AddressInfo } from 'node:net'
 import { statSync } from 'node:fs'
 import { join } from 'node:path'
 import { loadMoondeckConfig, DEFAULT_CONFIG } from '../src/config.js'
@@ -35,19 +35,57 @@ void test('ProcessSupervisor: initializes states for all services', () => {
   }
 })
 
-void test('ProcessSupervisor: refuses to double-spawn a service whose port is taken', async () => {
-  const supervisor = new ProcessSupervisor(DEFAULT_CONFIG)
-  const probe = createServer()
-  await new Promise<void>((resolve) => probe.listen(3005, '127.0.0.1', () => resolve()))
+/** Occupy an ephemeral port on a given host so the test never races a real service. */
+async function occupy(host: string): Promise<{ port: number; close: () => Promise<void> }> {
+  const server = createServer()
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', reject)
+    server.listen(0, host, () => resolve())
+  })
+  const { port } = server.address() as AddressInfo
+  return {
+    port,
+    close: () => new Promise<void>((resolve) => server.close(() => resolve())),
+  }
+}
+
+function configWithSkylinkPort(port: number) {
+  return {
+    ...DEFAULT_CONFIG,
+    services: DEFAULT_CONFIG.services.map((svc) => (svc.tag === 'skylink' ? { ...svc, port } : svc)),
+  }
+}
+
+// Both address families matter: `radio` binds 0.0.0.0 and `dock`/`hq`/`orbit` are
+// wildcard Next servers, while SKYLINK/ECHOLOG bind loopback. A bind-based probe
+// only saw the loopback case and let the wildcard ones through on Windows.
+for (const host of ['127.0.0.1', '0.0.0.0']) {
+  void test(`ProcessSupervisor: refuses to double-spawn when ${host} holds the port`, async () => {
+    const holder = await occupy(host)
+    const supervisor = new ProcessSupervisor(configWithSkylinkPort(holder.port))
+    try {
+      const started = await supervisor.start('skylink')
+      assert.equal(started, false, 'a bound port must not be spawned twice')
+      const state = supervisor.getState('skylink')
+      assert.equal(state?.status, 'ERROR')
+      assert.match(state?.lastError ?? '', /already in use/)
+      assert.match(state?.lastError ?? '', /pnpm dev/, 'the message must name the likely cause')
+    } finally {
+      await holder.close()
+      supervisor.stopAll()
+    }
+  })
+}
+
+void test('ProcessSupervisor: restart reports the real outcome instead of a fixed true', async () => {
+  const holder = await occupy('127.0.0.1')
+  const supervisor = new ProcessSupervisor(configWithSkylinkPort(holder.port))
   try {
-    const started = await supervisor.start('skylink')
-    assert.equal(started, false, 'a bound port must not be spawned twice')
-    const state = supervisor.getState('skylink')
-    assert.equal(state?.status, 'ERROR')
-    assert.match(state?.lastError ?? '', /already in use/)
-    assert.match(state?.lastError ?? '', /pnpm dev/, 'the message must name the likely cause')
+    const restarted = await supervisor.restart('skylink')
+    assert.equal(restarted, false, 'a restart that cannot bind must not claim success')
+    assert.equal(supervisor.getState('skylink')?.status, 'ERROR')
   } finally {
-    await new Promise<void>((resolve) => probe.close(() => resolve()))
+    await holder.close()
     supervisor.stopAll()
   }
 })
