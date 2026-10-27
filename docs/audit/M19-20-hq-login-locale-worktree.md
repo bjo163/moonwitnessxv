@@ -1,6 +1,16 @@
 # M19-20 — Headquarters login localization worktree evidence
 
-**State:** M19-20 closed at source SHA `35b26e8171b555b4b2cddfd931832ad18e417009`; TODO records the closure. The task packet `docs/tasks/M19/M19-20.md` is absent, so acceptance was taken from the canonical TODO row. Historical worktree evidence is retained below.
+**State:** Reopened by integrator on 2026-10-27 after production-image `/login` returned HTTP 500; the historical closure below is superseded pending exact-SHA CI for the corrective change. The task packet `docs/tasks/M19/M19-20.md` is absent, so acceptance is taken from the canonical TODO row. Historical evidence is retained below.
+
+## Corrective runtime follow-up (worktree based on `7d2e9d8877407f6409ee9663d1222620e1628578`)
+
+- `packages/moonui/src/form.tsx`: `Toggle` now omits `onChange` when haptics are disabled and no caller handler exists, avoiding event-handler serialization from a Server Component.
+- `apps/headquarters/src/app/login/page.tsx`: the server-rendered `remember` checkbox sets `haptic={false}` while retaining native `name`, `defaultChecked`, and the existing POST form action.
+- `apps/headquarters/test/login-locale.test.ts`: added a regression assertion for the native form and haptic opt-out.
+- On the `dev` worktree based on `7d2e9d8`, the focused login test passed 5/5; HQ and MoonUI typechecks, scoped ESLint, and `git diff --check` passed.
+- `docker build -f Dockerfile.web --build-arg APP=headquarters -t moonradio-m19-20-7d2e9d-hq:latest .` succeeded. The image ran in the isolated `m28-06-49ec-net` network as `m19-20-7d2e9d-hq-smoke`; `GET /login` returned HTTP 200 and rendered the remember field. Container startup logs showed Next.js ready and no RSC event-handler error.
+- Image manifest digest: `4f86568687cb3282b549ff21b13d01a7b2b2d48376bf576913076c2d5429ea1c`. This is a local working-tree build, not an exact committed SHA or deployment. No credentials, valid login submission, or live Hub session was used. Exact-SHA CI and independent review remain pending; keep TODO unchecked until those are complete.
+- Rollback: revert only the Toggle handler behavior, HQ `haptic={false}` prop, and focused regression assertion.
 
 ## Change
 

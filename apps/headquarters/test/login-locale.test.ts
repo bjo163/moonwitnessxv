@@ -26,6 +26,15 @@ void test('auth layout renders the localized tagline from the shared login catal
   assert.doesNotMatch(source, /PEOPLE · PLACES · IDEAS · CULTURES · BEYOND BORDERS\./)
 })
 
+void test('server login keeps remember checkbox native and opts out of Toggle haptics', async () => {
+  const source = await import('node:fs/promises').then(({ readFile }) =>
+    readFile(new URL('../src/app/login/page.tsx', import.meta.url), 'utf8'),
+  )
+
+  assert.match(source, /<form action="\/api\/session" method="post"/)
+  assert.match(source, /<Toggle name="remember" defaultChecked haptic=\{false\} label=\{copy\.rememberMe\} \/>/)
+})
+
 void test('only stable known error codes select localized login notices', () => {
   assert.equal(loginErrorMessage('en', 'required'), 'Enter your email or username and password to continue.')
   assert.equal(loginErrorMessage('id', 'invalid'), 'Data masuk tidak diterima. Periksa kembali lalu coba lagi.')

@@ -155,16 +155,20 @@ export function Toggle({
   label?: ReactNode
   haptic?: boolean
 }): ReactNode {
+  const handle = haptic || onChange
+    ? (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (haptic) {
+          triggerHaptic('switch')
+        }
+        onChange?.(e)
+      }
+    : undefined
+
   return (
     <label className="m-toggle">
       <input
         type="checkbox"
-        onChange={(e) => {
-          if (haptic) {
-            triggerHaptic('switch')
-          }
-          onChange?.(e)
-        }}
+        onChange={handle}
         {...rest}
       />
       {label}

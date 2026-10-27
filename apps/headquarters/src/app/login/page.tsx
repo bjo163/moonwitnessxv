@@ -63,7 +63,7 @@ export default async function LoginPage({
             </Field>
 
             <div className="m-row" style={{ justifyContent: 'space-between', fontSize: 12 }}>
-              <Toggle name="remember" defaultChecked label={copy.rememberMe} />
+              <Toggle name="remember" defaultChecked haptic={false} label={copy.rememberMe} />
               <a href="/login" style={{ color: 'var(--cyan)' }}>
                 {copy.forgotPassword}
               </a>
