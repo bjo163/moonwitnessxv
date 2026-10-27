@@ -20,11 +20,9 @@
  * same style as `relation-inspector.test.mjs`.
  *
  * Where the hub projection cannot carry a claim, this file asserts the narrower
- * documented rule instead of a detector: `ReaderTranslation` has no `direction`
- * field, and `PublicLiveTransmissionsOutput` has neither `language` nor
- * `direction`. Inventing a script detector in the Dock would be the wrong fix, so
- * clause 3 pins the existing gap to one site, forbids a second one, forbids a
- * heuristic in the Denpa deck, and requires the audit note to record it.
+ * documented rule instead of a detector: `PublicLiveTransmissionsOutput` has
+ * neither `language` nor `direction`. The Corpus reader now supplies translation
+ * direction explicitly; the Denpa attribution gap remains separate.
  */
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
@@ -226,26 +224,18 @@ test('UI2-G10 every attributed source span takes both lang and dir from the proj
   }
 })
 
-test('UI2-G10 the one documented language-literal direction stays exactly one', () => {
-  // `/corpus/reader` gives a translation row a `languageCode` but no `direction`
-  // (src/data/queries/reader.ts, ReaderTranslation), so the row states `lang` from
-  // the projection and takes `dir` from a single documented literal test on 'ar'.
-  // That is the widest claim the current contract supports: it is correct for the
-  // Arabic rows the corpus returns and it is WRONG for a right-to-left translation
-  // such as Hebrew, which would inherit ltr. The fix is a projected `direction`
-  // beside `languageCode`, not a second guess in the Dock.
+test('UI2-G10 translation direction comes from the authoritative Corpus projection', () => {
   const translations = /export interface ReaderTranslation \{([\s\S]*?)\n\}/.exec(read('src', 'data', 'queries', 'reader.ts'))
   assert.ok(translations, 'ReaderTranslation must stay an exported projection interface')
   assert.match(translations[1], /languageCode: string/, 'the row must keep the language the span is attributed with')
-  assert.doesNotMatch(translations[1], /direction/, 'no direction is projected today; if one arrives, this clause must be retired')
+  assert.match(translations[1], /direction: 'ltr' \| 'rtl' \| null/, 'direction is explicit when known and unknown for legacy rows')
 
-  const sites = sourceFiles('src').filter((rel) => read(rel).includes("? 'rtl' : 'ltr'"))
-  assert.deepEqual(sites, ['src/ui/components/reader.tsx'], 'the Dock derives a direction from a language literal at exactly one audited site')
   assert.match(
     read('src', 'ui', 'components', 'reader.tsx'),
-    /<p lang=\{row\.languageCode\} dir=\{row\.languageCode === 'ar' \? 'rtl' : 'ltr'\}>/,
-    'the translation row must keep its lang attribution',
+    /<p lang=\{row\.languageCode\} dir=\{row\.direction \?\? 'auto'\}>/,
+    'known direction comes from Corpus and legacy unknown direction uses bidi auto',
   )
+  assert.doesNotMatch(sourceFiles('src').map((rel) => read(rel)).join('\n'), /languageCode\s*===\s*['"][^'"]+['"]\s*\?\s*['"](?:rtl|ltr)['"]/, 'Dock must not infer direction from language codes')
 })
 
 test('UI2-G10 the Denpa deck renders witness text unattributed and must not guess a language', () => {
@@ -265,11 +255,10 @@ test('UI2-G10 the Denpa deck renders witness text unattributed and must not gues
   // Honesty clause: the gap may not be papered over with a homegrown detector.
   assert.doesNotMatch(view, /\p{Script=Arabic}|\p{Script=Hebrew}|getComputedStyle|Intl\.Locale|isRTL/iu, 'the Dock must not grow a language detector')
 
-  // And the gap must stay written down where a reviewer can find it.
+  // The remaining Denpa gap must stay written down where a reviewer can find it.
   const notes = auditNotes()
   assert.ok(notes.length > 0, 'UI2-G10 requires an audit note beside this test')
   assert.match(notes[0], /GAP-DENPA-UNATTRIBUTED/, 'the unattributed witness text must be recorded as a gap, not a pass')
-  assert.match(notes[0], /GAP-READER-TRANSLATION-DIR/, 'the derived translation direction must be recorded as a gap')
 })
 
 // --- 3 · locale prefixes stay the helper's, on the gate's own surfaces --------

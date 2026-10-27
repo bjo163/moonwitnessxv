@@ -52,6 +52,7 @@ test('M08-02/03/04: reader returns exact work, edition, rights, translation and 
 
   const indonesian = body.translations.find((row: { languageCode: string }) => row.languageCode === 'id')
   assert.ok(indonesian)
+  assert.equal(indonesian.direction, 'ltr')
   assert.equal(indonesian.translatorName, 'Kemenag RI')
   assert.ok(indonesian.text.includes('penghuni surga'))
 
@@ -59,6 +60,41 @@ test('M08-02/03/04: reader returns exact work, edition, rights, translation and 
   assert.match(body.citationText, /quran_cairo_hafs/)
   assert.match(body.citationText, /provenance=c0a8f1e7/)
   assert.match(body.citationText, /source-date=2026-10-26T00:00:00\.000Z/)
+})
+
+test('translation direction is supplied by Corpus and legacy rows remain unknown', async (t) => {
+  const { app, moonql } = await makeApp()
+  t.after(async () => {
+    await app.close()
+    await moonql.close()
+  })
+
+  const passage = (await moonql.model('corpus_passages').list({ where: { citationKey: 'QS 2:82' } }))[0]!
+  const hebrew = await moonql.model('corpus_translations').create({
+    code: 'legacy_hebrew_direction', passageRef: passage.id, languageCode: 'he', translatorName: 'Synthetic fixture',
+    translationText: 'שָׁלוֹם', rightsStatus: 'RIGHTS_EXACT_VERSION_CLEARED', licenseName: 'Synthetic test fixture',
+  })
+  await moonql.model('corpus_translations').create({
+    code: 'greek_ltr_direction', passageRef: passage.id, languageCode: 'el', direction: 'ltr', translatorName: 'Synthetic fixture',
+    translationText: 'ἄνθρωπος', rightsStatus: 'RIGHTS_EXACT_VERSION_CLEARED', licenseName: 'Synthetic test fixture',
+  })
+  const response = await app.inject().get('/orm/corpus/reader').query({ citation: 'QS 2:82' }).end()
+  assert.equal(response.statusCode, 200)
+  const projected = response.json().data.translations.find((item: { languageCode: string; text: string | null; direction: string | null }) => item.languageCode === 'he')
+  assert.equal(projected.text, 'שָׁלוֹם')
+  assert.equal(projected.direction, null, 'missing authoritative direction stays unknown rather than being guessed')
+
+  await moonql.model('corpus_translations').update(String(hebrew.id), { direction: 'rtl' })
+  const rtlResponse = await app.inject().get('/orm/corpus/reader').query({ citation: 'QS 2:82' }).end()
+  const rtl = rtlResponse.json().data.translations.find((item: { languageCode: string; text: string | null; direction: string | null }) => item.languageCode === 'he')
+  const greek = rtlResponse.json().data.translations.find((item: { languageCode: string; text: string | null; direction: string | null }) => item.languageCode === 'el')
+  assert.equal(rtl.direction, 'rtl', 'the explicit Corpus field controls source direction')
+  assert.equal(rtl.text, 'שָׁלוֹם', 'diacritics and exact text remain unchanged')
+  assert.equal(greek.direction, 'ltr', 'Greek direction comes from the explicit Corpus field')
+  assert.equal(greek.text, 'ἄνθρωπος', 'Greek text and diacritics remain unchanged')
+  assert.match(rtlResponse.json().data.citationText, /QS 2:82/)
+  assert.ok(!rtlResponse.json().data.citationText.includes('שָׁלוֹם'))
+  assert.ok(!rtlResponse.json().data.citationText.includes('ἄνθρωπος'))
 })
 
 test('M08-05: absent and malformed citations never invent a verse', async (t) => {

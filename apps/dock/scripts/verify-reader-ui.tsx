@@ -40,6 +40,7 @@ const available: ReaderResult = {
   translations: [
     {
       languageCode: 'id',
+      direction: 'ltr',
       translatorName: 'Kemenag RI',
       licenseName: 'Public Domain / Open Translation',
       rightsStatus: 'RIGHTS_EXACT_VERSION_CLEARED',
@@ -48,6 +49,7 @@ const available: ReaderResult = {
     },
     {
       languageCode: 'en',
+      direction: 'ltr',
       translatorName: 'Unlicensed Translator',
       licenseName: 'Unknown',
       rightsStatus: 'RIGHTS_UNKNOWN',
@@ -69,6 +71,7 @@ const blocked: ReaderResult = {
   translations: [
     {
       languageCode: 'id',
+      direction: 'ltr',
       translatorName: 'Private Translator',
       licenseName: 'Private License',
       rightsStatus: 'RIGHTS_EXACT_VERSION_CLEARED',
