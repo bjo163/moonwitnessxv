@@ -42,6 +42,8 @@ function declarationOf(source, signature) {
 const samePairSource = declarationOf(querySource, 'export async function readSamePairRelations(')
 const alternativesViewSource = declarationOf(viewSource, 'export function RelationAlternativesView(')
 const samePairRowSource = declarationOf(viewSource, 'function SamePairRow(')
+const detailSource = declarationOf(viewSource, 'export function RelationDetailView(')
+const entityFactsSource = declarationOf(viewSource, 'function EntityFacts(')
 
 // --- UI-P06d · the data owner stays D03's existing public projection ---------
 
@@ -204,8 +206,8 @@ test('UI-P06d a candidate that is not released is never worded as accepted', () 
   assert.match(samePairRowSource, /data-in-release=\{claim\.inActiveRelease \? 'true' : 'false'\}/)
   assert.match(
     samePairRowSource,
-    /\{claim\.inActiveRelease \? 'RELEASE MEMBER' : 'NOT IN RELEASE'\}/,
-    'release membership may only be claimed from the projected flag',
+    /\{claim\.inActiveRelease \? copy\.badgeReleaseMember : copy\.badgeNotInRelease\}/,
+    'release membership may only be claimed from the projected flag, in the rendered locale',
   )
   assert.doesNotMatch(samePairRowSource, /\b(?:ACCEPTED|CONFIRMED|SETTLED|AUTHORITATIVE)\b/)
   assert.match(alternativesViewSource, /\{copy\.alternativesCandidateNote\}/)
@@ -244,6 +246,77 @@ test('UI-P06c every inspector link is locale-bound and no view decides a locale 
   assert.doesNotMatch(samePairRowSource, /locale\s*=\s*'en'/)
   assert.doesNotMatch(alternativesViewSource, /locale\s*=\s*'en'/)
   assert.match(viewSource, /import \{ dockHrefFor \} from '@\/lib\/locale-context\.mjs'/)
+})
+
+test('UI-P06c the detail half names every rendered row from the catalogue, in the rendered locale', () => {
+  // The leaves only close when the page a public reader sees is usable in
+  // Indonesian too, so the detail half is asserted row by row, not "mostly".
+  for (const row of [
+    'fieldStatus',
+    'fieldEpistemic',
+    'fieldRelease',
+    'fieldFrame',
+    'fieldEvidenceSha',
+    'fieldExactSha',
+    'fieldEvidencePresent',
+    'fieldEvidenceRef',
+    'fieldClaimReason',
+    'fieldDecisionNote',
+    'fieldDecidedAt',
+    'fieldSameAsPolicy',
+  ]) {
+    assert.match(
+      detailSource,
+      new RegExp(`<dt>\\{copy\\.${row}\\}</dt>`),
+      `the <dt> for ${row} must be catalogue-bound`,
+    )
+    assert.notEqual(provenanceCopy.id[row], provenanceCopy.en[row], `${row} must be translated, not copied`)
+  }
+  for (const heading of ['evidenceHeading', 'reviewTrailHeading', 'policyHeading', 'uncertaintyHeading']) {
+    assert.match(detailSource, new RegExp(`\\{copy\\.${heading}\\}`), `${heading} must render from the catalogue`)
+  }
+  // A badge is still locale copy: the status code stays raw, the sentence does not.
+  assert.match(detailSource, /\{relation\.verified \? <Badge tone="ok">\{copy\.badgeVerified\}<\/Badge>/)
+  assert.match(
+    detailSource,
+    /\{relation\.inActiveRelease \? copy\.badgeInRelease : copy\.badgeNotInRelease\}/,
+    'release membership is stated from the projected flag only, never from a local English literal',
+  )
+  assert.match(detailSource, /\{isCandidate \? copy\.noticeCandidate : copy\.noticeRelation\}/)
+  assert.match(detailSource, /\{isCandidate \? copy\.evidenceNoSpanCandidate : copy\.evidenceNoSpanRelation\}/)
+  assert.match(detailSource, /\{relation\.evidence\.exactSha \? copy\.exactShaYes : copy\.exactShaNo\}/)
+  assert.match(
+    detailSource,
+    /<code>\{relation\.epistemicStatus\}<\/code> \{copy\.unknownStaysUnresolvedSuffix\}/,
+    'the unresolved-status notice keeps the raw code and translates the sentence around it',
+  )
+  // A helper that builds a sentence cannot be locale-blind.
+  assert.match(viewSource, /function releaseLine\(detail: RelationDetail, copy: ProvenanceCopy\)/)
+  assert.match(viewSource, /const kindLabel = \(relation: GraphRelation, copy: ProvenanceCopy\)/)
+  assert.match(entityFactsSource, /\{copy\.entityLabel\} <code>\{stableId\}<\/code> \{copy\.entityNotProjected\}/)
+  assert.match(
+    detailSource,
+    /<EntityFacts role=\{copy\.roleFrom\}[\s\S]*<EntityFacts role=\{copy\.roleTo\}/,
+    'endpoint roles come from the catalogue, so a pair is not labelled in English on an Indonesian page',
+  )
+
+  // What used to be hardcoded is gone, not merely duplicated.
+  for (const literal of [
+    "'RELEASE MEMBER'",
+    "'IN ACTIVE RELEASE'",
+    "'NOT IN RELEASE'",
+    'VERIFIED BY REVIEWER',
+    '<dt>Status</dt>',
+    '<dt>Epistemic</dt>',
+    '<dt>Evidence SHA-256</dt>',
+    '<dt>Frame</dt>',
+    'Review trail',
+    'Release and evidence policy',
+    'is not part of the ontology projection',
+    'No graph release is active',
+  ]) {
+    assert.ok(!viewSource.includes(literal), `${literal} must not survive as a component-side string`)
+  }
 })
 
 test('UI-P06c the inspector names every row from the shared catalogue in both locales', () => {

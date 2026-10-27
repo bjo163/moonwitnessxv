@@ -11,7 +11,7 @@ import type {
   SamePairRelations,
 } from '@/data/queries/graph'
 import { SourceEvidence } from './provenance'
-import { getProvenanceCopy } from '@/lib/provenance-copy'
+import { getProvenanceCopy, type ProvenanceCopy } from '@/lib/provenance-copy'
 import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const STATE_TONE: Record<string, BadgeTone> = {
@@ -27,17 +27,19 @@ const STATE_TONE: Record<string, BadgeTone> = {
 
 const toneFor = (status: string): BadgeTone => STATE_TONE[status] ?? 'night'
 
-const kindLabel = (relation: GraphRelation): string =>
-  relation.kind === 'CANDIDATE' ? 'Candidate claim — not a graph edge' : 'Reviewed ontology relation'
+const kindLabel = (relation: GraphRelation, copy: ProvenanceCopy): string =>
+  relation.kind === 'CANDIDATE' ? copy.kindCandidateKicker : copy.kindRelationKicker
 
 function EntityFacts({
   role,
   stableId,
   entity,
+  copy,
 }: {
   role: string
   stableId: string
   entity: RelationEntity | null
+  copy: ProvenanceCopy
 }): ReactNode {
   return (
     <div className="dk-graph-detail-entity">
@@ -56,23 +58,21 @@ function EntityFacts({
         </>
       ) : (
         <span className="dk-graph-meta">
-          Entity <code>{stableId}</code> is not part of the ontology projection.
+          {copy.entityLabel} <code>{stableId}</code> {copy.entityNotProjected}
         </span>
       )}
     </div>
   )
 }
 
-function releaseLine(detail: RelationDetail): string {
+function releaseLine(detail: RelationDetail, copy: ProvenanceCopy): string {
   const { relation, release } = detail
   if (relation.inActiveRelease) {
     return release
-      ? `This relation is part of the active release ${release.releaseCode}.`
-      : 'This relation is marked as part of the active release.'
+      ? `${copy.releaseActivePrefix} ${release.releaseCode}.`
+      : copy.releaseActiveNoCode
   }
-  return relation.kind === 'CANDIDATE'
-    ? 'Not in the active release. Approval alone does not put a candidate into the graph.'
-    : 'Not in the active release. A reviewed relation still needs a release build and activation.'
+  return relation.kind === 'CANDIDATE' ? copy.releaseNotActiveCandidate : copy.releaseNotActiveRelation
 }
 
 export function RelationDetailView({ detail, locale = 'en' }: { detail: RelationDetail; locale?: Locale }): ReactNode {
@@ -108,7 +108,7 @@ export function RelationDetailView({ detail, locale = 'en' }: { detail: Relation
     >
       <header className="dk-graph-detail-head">
         <div>
-          <p className="dk-graph-detail-kicker">{kindLabel(relation)}</p>
+          <p className="dk-graph-detail-kicker">{kindLabel(relation, copy)}</p>
           <h2 className="dk-graph-detail-title" id="graph-relation-heading">
             {relation.fromLabel} <code>{relation.from}</code> — <em>{relation.relationType}</em> →{' '}
             {relation.toLabel} <code>{relation.to}</code>
@@ -124,17 +124,15 @@ export function RelationDetailView({ detail, locale = 'en' }: { detail: Relation
           {isCandidate && relation.status ? (
             <Badge tone={toneFor(relation.status)}>{relation.status}</Badge>
           ) : null}
-          {relation.verified ? <Badge tone="ok">VERIFIED BY REVIEWER</Badge> : null}
+          {relation.verified ? <Badge tone="ok">{copy.badgeVerified}</Badge> : null}
           <Badge tone={relation.inActiveRelease ? 'cyan' : 'night'}>
-            {relation.inActiveRelease ? 'IN ACTIVE RELEASE' : 'NOT IN RELEASE'}
+            {relation.inActiveRelease ? copy.badgeInRelease : copy.badgeNotInRelease}
           </Badge>
         </div>
       </header>
 
       <p className="dk-graph-notice" role="note">
-        {isCandidate
-          ? 'A candidate is a claim under review. It is never presented as a graph edge; it needs a reviewer, exact evidence, a release build and an activation.'
-          : 'A reviewed relation is part of the ontology record. It still enters the presented graph only through an immutable release.'}
+        {isCandidate ? copy.noticeCandidate : copy.noticeRelation}
       </p>
 
       <dl className="dk-graph-detail-facts">
@@ -151,22 +149,21 @@ export function RelationDetailView({ detail, locale = 'en' }: { detail: Relation
         <dd>
           {relation.fromEntity?.kind ?? copy.unrecorded} → {relation.toEntity?.kind ?? copy.unrecorded}
         </dd>
-        <dt>Status</dt>
+        <dt>{copy.fieldStatus}</dt>
         <dd>{relation.statusLabel}</dd>
-        <dt>Epistemic</dt>
+        <dt>{copy.fieldEpistemic}</dt>
         <dd>
           {relation.epistemicLabel} ({relation.epistemicStatus})
         </dd>
         <dt>{copy.fieldAssertedBy}</dt>
         <dd>{relation.assertedBy ?? copy.unrecorded}</dd>
-        <dt>Release</dt>
-        <dd>{releaseLine(detail)}</dd>
+        <dt>{copy.fieldRelease}</dt>
+        <dd>{releaseLine(detail, copy)}</dd>
       </dl>
 
       {relation.unknown ? (
         <p className="dk-graph-detail-unknown" role="note">
-          {relation.epistemicStatus} stays unresolved. Absence of evidence is not a decision, and UNKNOWN may stay
-          unresolved.
+          <code>{relation.epistemicStatus}</code> {copy.unknownStaysUnresolvedSuffix}
         </p>
       ) : null}
 
@@ -191,86 +188,91 @@ export function RelationDetailView({ detail, locale = 'en' }: { detail: Relation
       </section>
 
       <div className="dk-graph-detail-entities">
-        <EntityFacts role="From" stableId={relation.from} entity={relation.fromEntity} />
-        <EntityFacts role="To" stableId={relation.to} entity={relation.toEntity} />
+        <EntityFacts role={copy.roleFrom} stableId={relation.from} entity={relation.fromEntity} copy={copy} />
+        <EntityFacts role={copy.roleTo} stableId={relation.to} entity={relation.toEntity} copy={copy} />
       </div>
 
       <section className="dk-graph-detail-evidence" aria-labelledby="graph-relation-evidence">
-        <h3 id="graph-relation-evidence">Evidence</h3>
+        <h3 id="graph-relation-evidence">{copy.evidenceHeading}</h3>
         {relation.evidence.span ? (
           <blockquote className="dk-graph-detail-span">{relation.evidence.span}</blockquote>
         ) : (
           <p className="dk-graph-meta">
-            {isCandidate
-              ? 'No evidence span is recorded. A candidate without a span cannot be approved.'
-              : 'A reviewed relation is evidenced by its ontology source; no separate span is stored.'}
+            {isCandidate ? copy.evidenceNoSpanCandidate : copy.evidenceNoSpanRelation}
           </p>
         )}
         <dl className="dk-graph-detail-facts">
-          <dt>Frame</dt>
-          <dd>{relation.evidence.frame ?? 'not recorded'}</dd>
-          <dt>Evidence SHA-256</dt>
+          <dt>{copy.fieldFrame}</dt>
+          <dd>{relation.evidence.frame ?? copy.notRecorded}</dd>
+          <dt>{copy.fieldEvidenceSha}</dt>
           <dd>
             {relation.evidence.sha ? (
               <code className="dk-graph-detail-sha">{relation.evidence.sha}</code>
             ) : (
-              'missing'
+              copy.missingValue
             )}
           </dd>
-          <dt>Exact SHA</dt>
-          <dd>
-            {relation.evidence.exactSha ? 'yes — pinned to the source provenance' : 'no — not pinned to an exact SHA'}
-          </dd>
-          <dt>Evidence present</dt>
-          <dd>{relation.evidence.present ? 'yes' : 'no'}</dd>
-          <dt>Evidence reference</dt>
-          <dd>{relation.evidence.ref ?? 'none'}</dd>
+          <dt>{copy.fieldExactSha}</dt>
+          <dd>{relation.evidence.exactSha ? copy.exactShaYes : copy.exactShaNo}</dd>
+          <dt>{copy.fieldEvidencePresent}</dt>
+          <dd>{relation.evidence.present ? copy.yesValue : copy.noValue}</dd>
+          <dt>{copy.fieldEvidenceRef}</dt>
+          <dd>{relation.evidence.ref ?? copy.noneValue}</dd>
         </dl>
         <SourceEvidence source={relation.source} locale={locale} classPrefix="dk-graph" />
       </section>
 
       <section className="dk-graph-detail-review" aria-labelledby="graph-relation-review">
-        <h3 id="graph-relation-review">Review trail</h3>
+        <h3 id="graph-relation-review">{copy.reviewTrailHeading}</h3>
         <dl className="dk-graph-detail-facts">
           <dt>{copy.fieldReviewer}</dt>
-          <dd>{relation.reviewer ?? (isCandidate ? 'No reviewer yet' : 'Not recorded')}</dd>
-          <dt>Claim reason</dt>
-          <dd>{relation.reason ?? 'No reason recorded'}</dd>
-          <dt>Decision note</dt>
-          <dd>{relation.decisionNote ?? 'No decision note'}</dd>
-          <dt>Decided at</dt>
-          <dd>{relation.decidedAt ?? 'Not decided'}</dd>
+          <dd>{relation.reviewer ?? (isCandidate ? copy.reviewerNoneCandidate : copy.reviewerNotRecorded)}</dd>
+          <dt>{copy.fieldClaimReason}</dt>
+          <dd>{relation.reason ?? copy.noReason}</dd>
+          <dt>{copy.fieldDecisionNote}</dt>
+          <dd>{relation.decisionNote ?? copy.noDecisionNote}</dd>
+          <dt>{copy.fieldDecidedAt}</dt>
+          <dd>{relation.decidedAt ?? copy.notDecided}</dd>
           {isCandidate ? (
             <>
-              <dt>sameAs policy</dt>
+              <dt>{copy.fieldSameAsPolicy}</dt>
               <dd>{policy.sameAsApproval}</dd>
             </>
           ) : null}
         </dl>
         {isCandidate && relation.relationType === 'sameAs' ? (
           <p className="dk-graph-detail-warning" role="note">
-            sameAs can never be approved as a correlation candidate; identity changes belong to the M10 identity
-            review.
+            {copy.sameAsWarning}
           </p>
         ) : null}
       </section>
 
       <section className="dk-graph-detail-policy" aria-labelledby="graph-relation-policy">
-        <h3 id="graph-relation-policy">Release and evidence policy</h3>
+        <h3 id="graph-relation-policy">{copy.policyHeading}</h3>
         <ul className="dk-graph-rules">
-          <li>Evidence at exact SHA required: {policy.evidenceAtExactSha ? 'yes' : 'no'}</li>
-          <li>Evidence span required for approval: {policy.evidenceSpanRequiredForApproval ? 'yes' : 'no'}</li>
-          <li>Automatic approval: {policy.automaticApproval ? 'enabled' : 'never'}</li>
-          <li>Release immutable: {policy.releaseImmutable ? 'yes' : 'no'}</li>
-          <li>Revoked candidates visible: {policy.revokedVisible ? 'yes' : 'no'}</li>
+          <li>
+            {copy.policyEvidenceExactSha}: {policy.evidenceAtExactSha ? copy.yesValue : copy.noValue}
+          </li>
+          <li>
+            {copy.policyEvidenceSpan}: {policy.evidenceSpanRequiredForApproval ? copy.yesValue : copy.noValue}
+          </li>
+          <li>
+            {copy.policyAutomaticApproval}: {policy.automaticApproval ? copy.policyEnabled : copy.policyNever}
+          </li>
+          <li>
+            {copy.policyReleaseImmutable}: {policy.releaseImmutable ? copy.yesValue : copy.noValue}
+          </li>
+          <li>
+            {copy.policyRevokedVisible}: {policy.revokedVisible ? copy.yesValue : copy.noValue}
+          </li>
         </ul>
         <p className="dk-graph-meta">{policy.deduplication}</p>
       </section>
 
       <p className="dk-graph-meta">
         {release
-          ? `Active release ${release.releaseCode} · graph SHA ${release.graphSha}`
-          : 'No graph release is active.'}
+          ? `${copy.activeReleasePrefix} ${release.releaseCode} · ${copy.graphShaPrefix} ${release.graphSha}`
+          : copy.noActiveRelease}
       </p>
     </article>
   )
@@ -302,7 +304,7 @@ function SamePairRow({ alternative, locale }: { alternative: SamePairAlternative
           <Badge tone={toneFor(claim.status)}>{claim.status}</Badge>
           <Badge tone={toneFor(claim.epistemicStatus)}>{claim.epistemicStatus}</Badge>
           <Badge tone={claim.inActiveRelease ? 'cyan' : 'night'}>
-            {claim.inActiveRelease ? 'RELEASE MEMBER' : 'NOT IN RELEASE'}
+            {claim.inActiveRelease ? copy.badgeReleaseMember : copy.badgeNotInRelease}
           </Badge>
         </div>
       </div>
@@ -404,6 +406,7 @@ export function RelationAlternativesView({
 
 function CandidateRow({ candidate, locale = 'en' }: { candidate: GraphCandidateSummary; locale?: Locale }): ReactNode {
   const localeHref = dockHrefFor(locale)
+  const copy = getProvenanceCopy(locale)
   return (
     <li
       className="dk-graph-release-candidate"
@@ -418,7 +421,7 @@ function CandidateRow({ candidate, locale = 'en' }: { candidate: GraphCandidateS
           <Badge tone={toneFor(candidate.status)}>{candidate.status}</Badge>
           <Badge tone={toneFor(candidate.epistemicStatus)}>{candidate.epistemicStatus}</Badge>
           <Badge tone={candidate.inActiveRelease ? 'cyan' : 'night'}>
-            {candidate.inActiveRelease ? 'RELEASE MEMBER' : 'NOT IN RELEASE'}
+            {candidate.inActiveRelease ? copy.badgeReleaseMember : copy.badgeNotInRelease}
           </Badge>
         </div>
       </div>
