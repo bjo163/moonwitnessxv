@@ -72,3 +72,15 @@ After lint is repaired, **remaining downstream tests/codegen/build:web have not 
 - **Did not** run checkout-local `pnpm verify`, PostgreSQL tests, image similarity, Vercel deployment, manual browser navigation or CI re-run in this planning pass.
 - **Do not** modify `TODO.md` completion rows on a documentation-only commit.
 - `main` is older than `dev`; do not force sync/push while CI failing. The verified promotion pipeline owns the transition.
+
+
+## 7. New commits discovered during publication — latest CI preflight supersession
+While this review was being recorded, local AI pushed 3 more commits through `76ecdc58fa3798a2f0f4fc0cf6fc97da10920ac3`, including `scripts/app-create.mjs` and a new root `@playwright/test@^1.64.1` dependency in `package.json`. They did **not** touch the UI-II scope docs, but they changed the actual CI first-failure mode.
+
+- [GitHub Actions run #40433978334](https://github.com/bjo163/moonwitnessxv/actions/runs/40433978334) on plan-publication SHA `4648a0efcc4c96f2b8bba587714323a94cbc70a2` failed **at `pnpm install --frozen-lockfile`**, before build/lint/test.
+- The log explicitly reports `ERR_PNPM_OUTDATED_LOCKFILE`: root `package.json` specifies `@playwright/test@^1.64.1` and the checked-in `pnpm-lock.yaml` does not. Do not bypass `--frozen-lockfile`; under **UI2-G00** synchronize the lockfile in a deliberate package/tooling-owner commit, verify frozen install, then rerun full CI.
+- After frozen install succeeds, earlier `pnpm lint` failures from run #40430593808 remain **historical known risks**, not a claim they are still reproducible on the new HEAD. Diagnose/fix against actual newest SHA.
+- Playwright is now a dependency **declaration**, not evidence that screenshots/browser tests are running. `UI2-G07` still requires runner/browser setup, screenshot fixture storage, breakpoints and results.
+- No app/QA/task is marked completed by this documentation addendum. Updated finding takes precedence over the earlier P0-lint-first summary where the two conflict.
+
+**Canonical execution order is now: UI2-G00 frozen-lockfile → UI2-G01 lint → UI2-G13 full verification.** Independent read-only audit tasks can proceed in parallel.

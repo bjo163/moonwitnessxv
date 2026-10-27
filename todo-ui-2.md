@@ -14,6 +14,16 @@
 ## Priority, difficulty, evidence semantics
 `P0` security/CI/legal/release blocker; `P1` needed for the approved UI outcome; `P2` optional refinement. `D1` audit/test-only, `D2` isolated component, `D3` bounded few-file implementation, `D4` cross-domain/security or browser behavior. A checkbox here is a **candidate work unit**, not proof; integrator updates [TODO.md](TODO.md) only for canonical Mxx acceptance after exact-SHA tests and reviewer evidence.
 
+
+## Critical live update — frozen install now fails before lint
+**Observed at CI run [#40433978334](https://github.com/bjo163/moonwitnessxv/actions/runs/40433978334)**, following local commits up to `76ecdc58fa3798a2f0f4fc0cf6fc97da10920ac3`: `pnpm install --frozen-lockfile` fails with `ERR_PNPM_OUTDATED_LOCKFILE` because `package.json` added `@playwright/test@^1.64.1` without updating `pnpm-lock.yaml`.
+
+- [ ] **UI2-G00 · P0 · D1/D2 · Tooling/lockfile integrator:** synchronize lockfile with the intentional Playwright dependency using the project's pinned Node 24 and pnpm 10.33.4. Commit only validated manifest/lockfile changes; test `pnpm install --frozen-lockfile` in a clean workspace, then rerun CI. **Do not** use `--no-frozen-lockfile` in CI or temporarily delete the dependency to hide the inconsistency. Also ensure root install/test scripts and Docker contracts remain consistent.
+- [ ] **UI2-G01 (existing row below):** after G00, revisit the 10 historical lint errors observed on `d54ad43`; rerun exact HEAD because they may have changed.
+- [ ] **UI2-G07 (existing row below):** `@playwright/test` in package.json is not itself a working screenshot harness; ensure browser installation, breakpoints, baseline artifacts and CI runner evidence.
+
+**Precedence:** G00 → G01 → G13. No cross-app UI release or merge-to-main before all applicable exact-SHA gates pass. See [audit addendum](docs/audit/ui2-preflight-2026-10-27.md#7-new-commits-discovered-during-publication--latest-ci-preflight-supersession).
+
 ## Wave zero — parallel prerequisites (Gxx microtasks)
 | State | ID | Priority | Difficulty | Depends | Owner | Allowed initial file scope | Exact deliverable / DoD |
 |---|---|---|---|---|---|---|---|
