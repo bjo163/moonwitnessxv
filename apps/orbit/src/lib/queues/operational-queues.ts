@@ -46,6 +46,7 @@ export interface OperationalQueues {
   agents: AgentProjection[]
   taskQueue: TaskProjection[]
   recentTraces: TraceProjection[]
+  identityConflictCount: number
   counts: {
     workstations: number
     agents: number
@@ -131,16 +132,39 @@ export function filterTraceQueue(
  * Preserves canonical array order from the projection.
  */
 export function buildOperationalQueues(projection: OrbitStateProjection): OperationalQueues {
-  const workstations = projection.workstations ?? []
-  const agents = projection.agents ?? []
-  const taskQueue = projection.taskQueue ?? []
-  const recentTraces = projection.recentTraces ?? []
+  const projectedWorkstations = projection.workstations ?? []
+  const projectedAgents = projection.agents ?? []
+  const projectedTasks = projection.taskQueue ?? []
+  const projectedTraces = projection.recentTraces ?? []
+
+  const duplicateWorkstationIds = findDuplicateIds(projectedWorkstations)
+  const duplicateAgentIds = findDuplicateIds(projectedAgents)
+  const duplicateNodeIds = findDuplicateIds([...projectedWorkstations, ...projectedAgents])
+  const duplicateTaskIds = findDuplicateIds(projectedTasks)
+  const duplicateTraceIds = findDuplicateIds(projectedTraces)
+
+  // Any repeated identifier is ambiguous for selection or React keys. Remove every
+  // occurrence deterministically, retaining the relative order of unambiguous rows.
+  const workstations = projectedWorkstations.filter(
+    (item) => !duplicateWorkstationIds.has(item.id) && !duplicateNodeIds.has(item.id)
+  )
+  const agents = projectedAgents.filter(
+    (item) => !duplicateAgentIds.has(item.id) && !duplicateNodeIds.has(item.id)
+  )
+  const taskQueue = projectedTasks.filter((item) => !duplicateTaskIds.has(item.id))
+  const recentTraces = projectedTraces.filter((item) => !duplicateTraceIds.has(item.id))
+  const identityConflictIds = new Set([
+    ...duplicateNodeIds,
+    ...duplicateTaskIds,
+    ...duplicateTraceIds,
+  ])
 
   return {
     workstations,
     agents,
     taskQueue,
     recentTraces,
+    identityConflictCount: identityConflictIds.size,
     counts: {
       workstations: workstations.length,
       agents: agents.length,
@@ -151,6 +175,21 @@ export function buildOperationalQueues(projection: OrbitStateProjection): Operat
       blocked: agents.filter((a) => a.state === 'FAILED').length,
     },
   }
+}
+
+function findDuplicateIds<T extends { id: string }>(records: readonly T[]): Set<string> {
+  const seen = new Set<string>()
+  const duplicates = new Set<string>()
+  for (const record of records) {
+    if (seen.has(record.id)) duplicates.add(record.id)
+    seen.add(record.id)
+  }
+  return duplicates
+}
+
+/** Escape closes a task inspector only when one is currently selected. */
+export function shouldDismissTaskInspectorOnKey(key: string, selectedTaskId: string | null): boolean {
+  return key === 'Escape' && selectedTaskId !== null
 }
 
 /**

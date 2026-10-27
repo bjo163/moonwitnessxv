@@ -26,7 +26,7 @@ Pursuant to [ADR-0004](../decisions/ADR-0004-empire-surfaces.md), [docs/architec
    - The whole toolbar is `disabled` when the projection is restricted.
 
 3. **Shared-selection workspace — [`OrbitOperationsWorkspace.tsx`](../../apps/orbit/src/components/OrbitOperationsWorkspace.tsx):**
-   - One `selectNode` handler drives both the 3D spatial viewport and the 2D workstation/agent lists, so scene and list always resolve the same record; ids are asserted unique across collections.
+   - One `selectNode` handler drives both the 3D spatial viewport and the 2D workstation/agent lists, so scene and list always resolve the same record. Runtime duplicate-id validation is documented in the post-closure follow-up below; the original suite only checked fixture uniqueness.
    - A separate `selectTask` control opens a task inspector that reports only projected fields (`status`, `priority`, `id`, handoff payload) plus the agent actually bound to that task.
    - Fail-closed restricted view: `connectionStatus === 'UNAUTHORIZED'` yields zero displayable rows, an explicit `role="alert"` restricted notice, and a disabled filter bar — even if a future API returned partial arrays alongside the denial.
    - Honest degraded states: `queueEmptyState` when a filter matches nothing, `queueNoActivity` when a node has no bound trace, and the diagnosis-only `queueFailedState` for `OFFLINE`/`UNKNOWN`/errored projections.
@@ -141,3 +141,43 @@ No ARSY, Headquarters, Dock, or 100CENTER data is touched by this change, so rol
 
 - **Result SHA:** recorded on the commit that contains this audit (see the commit reference in the push output).
 - **Next eligible task:** `M40-08` — Human-approval handoff to Headquarters / 100CENTER. Note that `M40-08` lists `M20-02/M20-06/M20-07` and `M37-02/M37-03/M37-05` as prerequisites; `M20-06`/`M20-07` are still unchecked in TODO, so M40-08 must be delivered as the server-side denial contract plus the honest handoff boundary without claiming a live HQ review engine.
+
+## 7. Post-closure reviewer follow-up (worktree-only at `49ec20ec2b224bcb37c61d15de84aa494cead79e`)
+
+Independent review found two gaps in the original evidence: Escape closed the node inspector but did not close the separately selected task inspector, and the uniqueness assertion covered only fixture ids rather than runtime projections. The following M40-07-scoped corrections are pending integration and exact-SHA CI:
+
+- `shouldDismissTaskInspectorOnKey` closes a selected task inspector on Escape only. Other keys and Escape with no selected task leave selection unchanged.
+- `buildOperationalQueues` now detects repeated node ids across workstations/agents and repeated ids within task and trace collections. Every occurrence of an ambiguous id is removed from display deterministically; unambiguous rows retain source order. `identityConflictCount` drives a generic alert without printing the colliding ids.
+- Added positive/negative assertions for Escape dismissal and duplicate ids, including cross-collection node collisions, duplicate task/trace ids, and preservation of unrelated rows.
+
+Observed follow-up verification:
+
+```text
+pnpm --filter @moonwitness/orbit exec node --test test/orbit-queues-inspectors.test.mjs
+14 passed, 0 failed
+
+pnpm --filter @moonwitness/orbit typecheck
+exit 0
+
+pnpm exec eslint apps/orbit/src/components/OrbitOperationsWorkspace.tsx apps/orbit/src/lib/queues/operational-queues.ts apps/orbit/test/orbit-queues-inspectors.test.mjs
+exit 0
+
+pnpm --filter @moonwitness/orbit test
+57 tests, 56 passed, 1 failed
+```
+
+The package-suite failure is outside this follow-up: `test/orbit-spatial-scene.test.mjs` still expects the literal `hqLink` in `OrbitNodeInspector.tsx`, while that file is concurrently modified to call `buildApprovalHandoff`. Those files belong to separate ORBIT handoff work and were not changed under this M40-07 lease. No full-suite pass is claimed for the follow-up tree.
+
+
+## 8. Corrective verification on dev worktree (baseline 39a7e27)
+
+The implementation review confirmed the two reopened defects are fixed. This verification ran against the shared development worktree with the reviewed M40-07 follow-up and concurrent M40-08 follow-up changes present; it is not an exact commit result yet.
+
+- Focused queue/inspector tests: 14/14 passed (Escape dismissal and duplicate workstation/agent/task/trace ids included).
+- Full ORBIT package suite: 85/85 passed.
+- pnpm --filter @moonwitness/orbit typecheck: exit 0.
+- Scoped ESLint for ORBIT workspace, queue helper, handoff runtime client and relevant tests: exit 0.
+- pnpm --filter @moonwitness/orbit build: exit 0; Next.js emitted 3 routes.
+- pnpm ui:check: 132 files scanned, 0 violations.
+
+The worktree corrections are not committed or on the remote yet; exact-SHA CI and guarded promotion remain pending. The task stays unchecked. The separate Windows checkout of baseline 39a7e27 exposed a CRLF-sensitive source assertion in the M40-08 test; CI uses Linux LF checkouts, and the shared dev worktree full ORBIT suite passed. This note supersedes the earlier package-failure observation above for the corrected worktree only; it does not change evidence for the earlier result SHA.

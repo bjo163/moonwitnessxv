@@ -27,6 +27,7 @@ import {
   resolveAgentTraces,
   resolveAgentTasks,
   resolveWorkstationTraces,
+  shouldDismissTaskInspectorOnKey,
   distinctZones,
   distinctAgentStates,
   distinctTaskStatuses,
@@ -56,6 +57,37 @@ test('M40-07: buildOperationalQueues reports honest counts from the canonical pr
 
   // Arrays are the same references/order as the projection: no re-ordering, no invention
   assert.deepEqual(queues.taskQueue.map((t) => t.id), SIMULATED_OPERATIONS.taskQueue.map((t) => t.id))
+})
+
+test('M40-07: duplicate projected ids fail closed for every ambiguous row', () => {
+  const workstation = SIMULATED_OPERATIONS.workstations[0]
+  const agent = SIMULATED_OPERATIONS.agents[0]
+  const task = SIMULATED_OPERATIONS.taskQueue[0]
+  const trace = SIMULATED_OPERATIONS.recentTraces[0]
+  assert.ok(workstation && agent && task && trace)
+
+  const queues = buildOperationalQueues({
+    ...SIMULATED_OPERATIONS,
+    workstations: [...SIMULATED_OPERATIONS.workstations, workstation],
+    agents: [...SIMULATED_OPERATIONS.agents, { ...agent, id: workstation.id }],
+    taskQueue: [...SIMULATED_OPERATIONS.taskQueue, { ...task }],
+    recentTraces: [...SIMULATED_OPERATIONS.recentTraces, { ...trace }],
+  })
+
+  assert.equal(queues.identityConflictCount, 3)
+  assert.equal(queues.workstations.some((record) => record.id === workstation.id), false)
+  assert.equal(queues.agents.some((record) => record.id === workstation.id), false)
+  assert.equal(queues.taskQueue.some((record) => record.id === task.id), false)
+  assert.equal(queues.recentTraces.some((record) => record.id === trace.id), false)
+  assert.ok(queues.workstations.length > 0, 'unambiguous records remain in source order')
+  assert.ok(queues.taskQueue.length > 0)
+  assert.ok(queues.recentTraces.length > 0)
+})
+
+test('M40-07: Escape dismisses a selected task inspector only', () => {
+  assert.equal(shouldDismissTaskInspectorOnKey('Escape', 'task-sec-401'), true)
+  assert.equal(shouldDismissTaskInspectorOnKey('Enter', 'task-sec-401'), false)
+  assert.equal(shouldDismissTaskInspectorOnKey('Escape', null), false)
 })
 
 test('M40-07: filterTaskQueue matches status, priority, agent and search without fabricating', () => {
@@ -285,6 +317,7 @@ test('M40-07: queue components exist and honour the accessibility + safe-state c
     'filterTraceQueue',
     'resolveAgentTasks',
     'resolveWorkstationTraces',
+    'shouldDismissTaskInspectorOnKey',
   ]) {
     assert.ok(ws.includes(fn), `workspace must use ${fn} from the pure queue layer`)
   }
@@ -294,6 +327,7 @@ test('M40-07: queue components exist and honour the accessibility + safe-state c
   assert.ok(ws.includes('copy.queueFailedState'), 'failed state must render diagnosis notice')
   assert.ok(ws.includes('data.errorMessage'), 'error details feed a safe generic failure notice')
   assert.ok(ws.includes('selectedTaskId'), 'task rows have a selectable inspector')
+  assert.ok(ws.includes('queues.identityConflictCount'), 'runtime duplicate ids show an explicit notice')
   assert.ok(ws.includes('const displayData = isRestricted'), 'denied projections are cleared before rendering the scene')
   assert.ok(ws.includes('data={displayData}'), 'scene receives only the safe projection')
   assert.ok(ws.includes('aria-pressed={isSelected}'), 'selectable records expose their current selection')
@@ -339,6 +373,7 @@ test('M40-07: new copy keys keep exact en/id parity', () => {
     'queueEmptyState',
     'queueRestrictedState',
     'queueFailedState',
+    'queueIdentityConflictState',
     'queueActivityHeading',
     'queueNoActivity',
     'queueSourceLabel',
