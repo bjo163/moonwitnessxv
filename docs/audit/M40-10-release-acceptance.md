@@ -258,7 +258,8 @@ Each M40 claim was re-read against output that exists in the repository:
 **Not claimed, and still open:**
 
 - HQ-side decision denial, four-eyes enforcement and role re-check: M20-06, M20-07, M37-05.
-- Any deployment or release. Nothing was published; `dev` promotion to `main` is CI's job.
+- Any production deployment or user-facing application release. The verified source was promoted
+  from `dev` to `main` by CI, but no application deployment or production release occurred.
 - A live 100CENTER review queue was never contacted; the link target was validated against the
   server-resolved surface, which in this environment is the loopback default.
 - An ARSY regression lane: no path outside `apps/orbit` and `docs` changed here, and `apps/arsy`
@@ -270,14 +271,10 @@ Each M40 claim was re-read against output that exists in the repository:
 
 ## 7. Working-tree hazard observed, not touched
 
-At the time of writing, the shared worktree's `TODO.md` carries a stale single-line edit that
-un-ticks **M40-09** (committed closed in `93985d5`) — most likely a save made from a copy taken
-before that commit. The committed file at `HEAD` is correct; only the working copy differs. This
-audit and the M40-10 commit do not include it, and the row was staged by blob surgery against
-`git show HEAD:TODO.md`, so the closure notes for M40-09 and M40-07 survive in the commit.
-Restoring the working copy is left to its author, deliberately: it is another session's
-uncommitted file, and this task does not delete other people's work. If it is committed as-is,
-M40-09's closure note must be re-applied.
+At the time of the original evidence window, the shared worktree's `TODO.md` carried a stale
+single-line edit that un-ticked **M40-09**. That discrepancy was later reconciled in the
+integrated TODO at `49180c9`; M40-09 is checked there with its exact-SHA evidence. This paragraph
+records the historical worktree condition and is no longer a current hazard.
 
 ## 8. Rollback of this task
 
@@ -286,3 +283,50 @@ two test files, `apps/orbit/README.md`, this audit, the packet and two TODO rows
 owns no table, no migration and no deployment, so reverting it returns the previous build
 behaviour with no data step; the only functional consequence is that `<html lang>` stops
 following `?locale=` again, which §3 documents as the pre-existing defect.
+
+## 9. Exact-source revalidation and rollback at the integrated SHA
+
+**Source SHA:** `f0dc50601db43fd86a897021c794477c986d9445` (`dev` and `main`). ORBIT and LUMEN
+source files at this SHA are byte-identical to the M40-10 source under review; the only ORBIT
+source delta after the earlier evidence window is the M40-10 locale/runtime gate introduced by
+`dbc5f01`. No ORBIT source changed after `f0dc506` during this evidence update. Exact GitHub Actions
+run [40531091097](https://github.com/bjo163/moonwitnessxv/actions/runs/40531091097) completed
+successfully and promoted this SHA to `main`.
+
+At this source SHA, a fresh production build completed and generated `/`, `/_not-found`,
+`/api/ops/state` and the proxy middleware entry. Next.js 16.4.3 emitted its middleware-convention
+deprecation notice; the build exited 0. With `ORBIT_SCAN_BUNDLE=1` and
+`ORBIT_RUNTIME_SMOKE=1`, `pnpm --filter @moonwitness/orbit test` passed **88/88** including the
+client-bundle credential scan and six production-runtime scenarios (denial, healthy/stale state,
+unreachable hub, conflicting hub URLs and redirect refusal). `pnpm --filter @moonwitness/orbit
+typecheck` and `pnpm exec eslint apps/orbit --max-warnings 0` both exited 0.
+
+A Chrome production-browser walkthrough against the fresh build observed:
+
+- `/?mode=simulated` rendered `lang="en"`, a WebGL canvas, the accessible 2D grid and an explicit
+  `PROVENANCE: SIMULATED` marker.
+- Enter on the approval-required task selected the row and produced only the server-validated
+  100CENTER link `http://localhost:3002/review?task=task-sec-401&role=SECURITY_AUDITOR` with
+  `rel="noopener noreferrer"` and `target="_blank"`. There were zero mutating controls and zero
+  requests matching review/approve/publish. Escape cleared selection.
+- In a separate page, the view switch changed from one WebGL canvas to no canvas, while the 2D grid
+  and accessible fallback text remained. `/?locale=id&mode=simulated` rendered `lang="id"` and
+  localized copy.
+
+The full exact-SHA rollback rehearsal used a disposable detached worktree at `f0dc506`. I applied
+the inverse `apps/orbit` patch for every M40 source commit, in reverse order: `dbc5f01` (M40-10),
+`d1a311d`, `ce99dfc`, `93985d5`, `7d2e9d8`, `a5352e0`, `3e89805`, `b24bedd`, `bf9d458`,
+`007b7ac`, `fbf176e` and `724fb15` (the initial M40-01/02 scaffold). The last commit also contains
+LUMEN; only its `apps/orbit` paths were reversed, preserving the separate LUMEN implementation.
+`git diff --quiet 724fb15^ -- apps/orbit` returned 0: the rollback restored ORBIT byte-for-byte
+to the pre-scaffold tree. The staged rollback contained 46 paths, all under `apps/orbit`; checks
+under `apps/arsy`, `apps/headquarters`, `apps/dock`, `packages/lumen` and `apps/lumen-runtime`
+returned empty. `git diff --cached --check` passed, no conflict remained, and the temporary
+worktree was removed. This full path-scoped rehearsal supersedes the earlier five-commit rehearsal
+in §5 and demonstrates that removing ORBIT leaves ARSY/HQ/Dock and the independently owned LUMEN
+code untouched.
+
+The extraction review in §6 remains in force: ORBIT has no database, identity or approval owner;
+HQ-side decisions, deployment, a live 100CENTER queue and ARSY production certification are not
+claimed. Exact CI at this source SHA also covers the current LUMEN workspace tests. An independent
+read-only review of the updated packet and this evidence found no remaining M40-10 blocker.
