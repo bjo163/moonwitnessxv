@@ -75,6 +75,7 @@ function AliasChips({ aliases, locale }: { aliases: GraphAlias[]; locale: Locale
 }
 
 function NodeCard({ node, locale }: { node: GraphNode; locale: Locale }): ReactNode {
+  const localeHref = dockHrefFor(locale)
   return (
     <article className="dk-graph-node" aria-labelledby={`graph-node-${node.stableId}`}>
       <div className="dk-graph-node-head">
@@ -102,7 +103,14 @@ function NodeCard({ node, locale }: { node: GraphNode; locale: Locale }): ReactN
         </span>
         {node.unilexStableId ? (
           <span className="dk-graph-meta">
-            UNILEX: <code>{node.unilexStableId}</code>
+            UNILEX:{' '}
+            <a
+              className="dk-graph-source-link"
+              href={localeHref(`/terms/${node.unilexStableId}`)}
+              aria-label={`Open the UNILEX entry ${node.unilexStableId}`}
+            >
+              <code>{node.unilexStableId}</code>
+            </a>
           </span>
         ) : (
           <span className="dk-graph-meta">UNILEX: no term mapping</span>
