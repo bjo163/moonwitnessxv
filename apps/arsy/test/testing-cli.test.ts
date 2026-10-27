@@ -14,7 +14,9 @@ import {
   printHelp,
   runCli,
 } from '@moonwitness/cli'
-import type { QuadTime } from '@moonwitness/types'
+// ARSY depends on @moonwitness/core, which owns the same QuadTime contract;
+// @moonwitness/types is not an ARSY dependency, so it cannot be resolved here.
+import type { QuadTime } from '@moonwitness/core'
 
 describe('@moonwitness/testing harness', () => {
   it('generates synthetic 8-bit PCM audio with valid buffer dimensions and values', () => {

@@ -95,10 +95,13 @@ test('topology: no source file reaches outside its own package', () => {
   for (const { dir } of members) {
     for (const file of sources(dir)) {
       const fileDir = dirname(file)
-      for (const match of readFileSync(file, 'utf8').matchAll(/(?:from|import)\s*\(?\s*['"](\.[^'"]+)['"]/g)) {
-        const target = resolve(fileDir, match[1])
+      const specifiers = [...readFileSync(file, 'utf8').matchAll(/(?:from|import)\s*\(?\s*['"](\.[^'"]+)['"]/g)]
+        .map((match) => match[1])
+        .filter((specifier): specifier is string => specifier !== undefined)
+      for (const specifier of specifiers) {
+        const target = resolve(fileDir, specifier)
         if (!target.startsWith(memberRoot(dir))) {
-          offenders.push(`${relative(ROOT, file)} imports ${match[1]} — outside ${dir}`)
+          offenders.push(`${relative(ROOT, file)} imports ${specifier} — outside ${dir}`)
         }
       }
     }
@@ -214,11 +217,13 @@ test('topology: the root build scripts are derived, not enumerated', () => {
     'build:libs must select the packages glob rather than naming packages',
   )
   assert.doesNotMatch(root.scripts['build:libs'] ?? '', /--filter @moonwitness\//, 'no per-package filters in build:libs')
-  assert.ok(root.scripts.build.includes('build:libs'), 'build must reuse build:libs rather than repeat the list')
+  // `Record<string, string>` + noUncheckedIndexedAccess: read the key once, honestly.
+  const build = root.scripts['build'] ?? ''
+  assert.ok(build.includes('build:libs'), 'build must reuse build:libs rather than repeat the list')
   for (const app of ['arsy', 'aigateway', 'sentinel', 'cockpit', 'skylink', 'echolog']) {
-    assert.ok(root.scripts.build.includes(`@moonwitness/${app} build`), `build must cover @moonwitness/${app}`)
+    assert.ok(build.includes(`@moonwitness/${app} build`), `build must cover @moonwitness/${app}`)
   }
   // the two Next apps are deliberately elsewhere: root `build` is the API/image
   // chain and `build:web` owns the Next production builds
-  assert.doesNotMatch(root.scripts.build, /--filter @moonwitness\/(dock|headquarters) build/, 'Next apps stay in build:web')
+  assert.doesNotMatch(build, /--filter @moonwitness\/(dock|headquarters) build/, 'Next apps stay in build:web')
 })

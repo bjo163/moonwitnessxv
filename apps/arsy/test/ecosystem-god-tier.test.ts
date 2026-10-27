@@ -86,10 +86,15 @@ describe('Ecosystem God-Tier Innovations Test Suite', () => {
       assert.ok(span.spanId.length > 0)
 
       const headers = serializeEpistemicTraceHeader(span)
-      assert.ok(headers.traceparent.startsWith('00-'))
-      assert.match(headers.baggage, /epistemic_class=CANONICAL/)
+      // the W3C pair the serializer emits: asserted present before being reparsed
+      const traceparent = headers['traceparent']
+      const baggage = headers['baggage']
+      assert.ok(traceparent, 'traceparent header must be emitted')
+      assert.ok(baggage, 'baggage header must be emitted')
+      assert.ok(traceparent.startsWith('00-'))
+      assert.match(baggage, /epistemic_class=CANONICAL/)
 
-      const parsed = parseEpistemicTraceHeader(headers.traceparent, headers.baggage)
+      const parsed = parseEpistemicTraceHeader(traceparent, baggage)
       assert.ok(parsed)
       assert.equal(parsed.epistemicClass, 'CANONICAL')
       assert.equal(parsed.rightsStatus, 'RIGHTS_CLEARED')

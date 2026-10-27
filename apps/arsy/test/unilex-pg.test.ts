@@ -33,7 +33,9 @@ interface TermsBody {
 
 interface TermBody {
   term: { stableId: string; editorialStatus: string }
-  forms: Array<{ languageCode: string; direction: string; headword: string }>
+  // mirrors the /orm/unilex/term form projection (moonql-unilex: formCode,
+  // languageCode, scriptCode, direction, headword, ...)
+  forms: Array<{ languageCode: string; scriptCode: string; direction: string; headword: string }>
   relations: Array<{ relationType: string; status: string; targetStableId: string | null }>
 }
 
@@ -93,7 +95,7 @@ test(
 
     assert.equal(moonql.engine, 'pg', 'this drill must not silently fall back to memory')
 
-    const listRes = await app.inject().get('/orm/unilex/terms').query({ limit: 100 }).end()
+    const listRes = await app.inject().get('/orm/unilex/terms').query({ limit: '100' }).end()
     assert.equal(listRes.statusCode, 200)
     const list = dataOf<TermsBody>(listRes)
     assert.equal(list.state, 'ok')

@@ -119,6 +119,7 @@ interface FigureRegistry {
     roles: number
     events: number
     avatars: number
+    readings: number
     competingFigures: number
   }
   figures: FigureSummary[]

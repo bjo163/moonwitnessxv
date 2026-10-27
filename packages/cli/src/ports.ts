@@ -11,7 +11,7 @@ import { PORTS } from '@moonwitness/core'
  */
 const MONOREPO_PORTS = Object.values(PORTS)
 
-export function freeMonorepoPorts(ports = MONOREPO_PORTS): { freed: number[]; errors: string[] } {
+export function freeMonorepoPorts(ports: readonly number[] = MONOREPO_PORTS): { freed: number[]; errors: string[] } {
   const freed: number[] = []
   const errors: string[] = []
   const isWindows = process.platform === 'win32'

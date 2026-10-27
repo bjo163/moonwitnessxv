@@ -206,7 +206,7 @@ test('M09-01/02: 71 pinned concepts keep source, context and editorial status', 
     await moonql.close()
   })
 
-  const res = await app.inject().get('/orm/unilex/terms').query({ limit: 100 }).end()
+  const res = await app.inject().get('/orm/unilex/terms').query({ limit: '100' }).end()
   assert.equal(res.statusCode, 200)
   const body = dataOf<TermsBody>(res)
 
@@ -467,7 +467,7 @@ test('M09-05: Terms Table is a projection filtered by approved source and scope'
   })
 
   const registry = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ source: 'empire-unilex-v0.1', limit: 100 }).end(),
+    await app.inject().get('/orm/unilex/terms').query({ source: 'empire-unilex-v0.1', limit: '100' }).end(),
   )
   assert.equal(registry.total, 71)
   assert.ok(!registry.terms.some((term) => term.stableId === 'P030' || term.stableId === 'P031'))
@@ -491,7 +491,7 @@ test('M09-05: Terms Table is a projection filtered by approved source and scope'
   assert.equal(fiction.terms[0]?.stableId, 'P031')
 
   const scripture = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ lane: 'SCRIPTURE', limit: 100 }).end(),
+    await app.inject().get('/orm/unilex/terms').query({ lane: 'SCRIPTURE', limit: '100' }).end(),
   )
   assert.ok(scripture.total > 0)
   assert.ok(scripture.terms.every((term) => term.lane === 'SCRIPTURE'))
@@ -502,7 +502,7 @@ test('M09-05: Terms Table is a projection filtered by approved source and scope'
   assert.equal(mismatched.total, 0, 'scope is applied to senses, not just labels')
 
   const page = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ limit: 2, offset: 1 }).end(),
+    await app.inject().get('/orm/unilex/terms').query({ limit: '2', offset: '1' }).end(),
   )
   assert.equal(page.total, 73)
   assert.equal(page.terms.length, 2)
@@ -540,7 +540,7 @@ test('M09-05: Terms Table is a projection filtered by approved source and scope'
   )
   assert.equal(hidden.total, 0, 'a term backed only by an unapproved source is not projected')
 
-  const afterDraft = dataOf<TermsBody>(await app.inject().get('/orm/unilex/terms').query({ limit: 100 }).end())
+  const afterDraft = dataOf<TermsBody>(await app.inject().get('/orm/unilex/terms').query({ limit: '100' }).end())
   assert.equal(afterDraft.total, 73, 'the draft term stays out of the public projection')
 
   const badLane = await app.inject().get('/orm/unilex/terms').query({ lane: 'NOPE' }).end()

@@ -15,7 +15,10 @@
     "declaration": false,
     "declarationMap": false,
     "types": ["node"],
-    "rootDir": "..",
+    // Sengaja tanpa `rootDir`: proyek ini tidak memancarkan apa pun (noEmit), jadi
+    // rootDir hanya akan memicu TS6059 untuk sumber yang sah di luar apps/arsy —
+    // `test/aigateway.test.ts` mengimpor ../../aigateway/src karena paket
+    // `@moonwitness/aigateway` tidak mengekspos buildServer/provider lewat exports map.
     "lib": ["ES2022"]
   },
   // `src/fastify.d.ts` ikut di-include: di situlah `app.moonql`/`app.channels`

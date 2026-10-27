@@ -51,7 +51,10 @@ test('journey: seeded patches contain 33 slots and historical sources', async (t
   const hist = patches.find((p) => p.slot === 'UNNUMBERED-01')
   assert.ok(hist, 'UNNUMBERED-01 must exist')
   assert.equal(hist.status, 'UNNUMBERED_HISTORICAL')
-  assert.ok(hist.historicalNotes?.includes('early season notebooks'), 'Historical notes must cite provenance')
+  // model rows are Record<string, unknown>, so the text column is narrowed before use
+  const historicalNotes = hist.historicalNotes
+  assert.ok(typeof historicalNotes === 'string', 'historicalNotes is a text column')
+  assert.ok(historicalNotes.includes('early season notebooks'), 'Historical notes must cite provenance')
 })
 
 test('journey: view journeyPatchesOverview returns public projection', async (t) => {
