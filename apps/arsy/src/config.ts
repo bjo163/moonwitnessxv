@@ -1,9 +1,14 @@
 import { z } from 'zod'
-import { API_PREFIX as API_PREFIX_DEFAULT, FRONTEND_URLS, PORTS, SITE_NAME } from '@moonwitness/core'
+import { API_PREFIX as API_PREFIX_DEFAULT, FRONTEND_URLS, PORTS, SITE_NAME, SKYLINK_URL_DEFAULT } from '@moonwitness/core'
 
-// ---- The single, validated source of configuration ----
+// ---- The single, validated source of configuration for the ARSY hub ----
 // All env parsing lives here, once. Invalid environment -> fail fast at boot
 // with one clear error listing every bad variable.
+//
+// M28-05: the ARSY_* spellings are preferred. The legacy RADIO_* names (and the
+// generic PORT / API_PREFIX / API_TITLE defaults) stay readable for environments
+// written before the rename. When several spellings are present they must agree:
+// a disagreement refuses the boot instead of silently choosing a winner.
 
 const bool = (fallback: boolean) =>
   z
@@ -51,6 +56,14 @@ const EnvSchema = z.object({
   DENPA_ENABLED: bool(false),
   DENPA_TOKEN: z.string().default(''),
 
+  // M38-12: off means the in-process channel factories below, exactly as before,
+  // and not one outbound call. On means SKYLINK owns channel identity and this
+  // process only consumes the registry it reports (ADR-0006).
+  SKYLINK_ENABLED: bool(false),
+  SKYLINK_URL: z.string().url().default(SKYLINK_URL_DEFAULT),
+  // Service credential, read from the environment only and never logged.
+  SKYLINK_SERVICE_KEY: z.string().default(''),
+
   DOCK_URL: z.string().default(FRONTEND_URLS.dock),
 
   // Unauthenticated entry points (/auth/login, /listen): attempts per window per ip.
@@ -65,10 +78,16 @@ const EnvSchema = z.object({
 })
 
 /**
- * Every variable the hub itself understands. Exported so `.env.example` can be
- * checked against the real contract instead of drifting away from it.
+ * Every variable the ARSY hub itself understands. Exported so `.env.example`
+ * can be checked against the real contract instead of drifting away from it.
  */
-export const RADIO_ENV_KEYS: string[] = Object.keys(EnvSchema.shape)
+export const ARSY_ENV_KEYS: string[] = Object.keys(EnvSchema.shape)
+
+/**
+ * @deprecated Legacy name for {@link ARSY_ENV_KEYS}, kept so existing importers
+ * keep compiling during the rename window. New code should use ARSY_ENV_KEYS.
+ */
+export const RADIO_ENV_KEYS: string[] = ARSY_ENV_KEYS
 
 /**
  * The only variables addons may read through `ctx.env`. Addons never see
@@ -93,7 +112,8 @@ const ADDON_ENV_KEYS = [
 /** exported for the env contract test (`.env.example` may only use known keys) */
 export const ADDON_ENV_KEY_LIST: string[] = [...ADDON_ENV_KEYS]
 
-export interface RadioConfig {
+/** Validated runtime configuration of the ARSY hub. */
+export interface ArsyConfig {
   host: string
   port: number
   env: 'development' | 'production' | 'test'
@@ -114,6 +134,8 @@ export interface RadioConfig {
     }
   }
   denpa: { enabled: boolean; token: string }
+  /** M38-12: `SKYLINK_ENABLED` selects who owns channel identity (default: this process). */
+  skylink: { enabled: boolean; url: string; serviceKey: string }
   /** outbound fetch policy: names this process must never call, plus its own port */
   egress: { denyHosts: string[] }
   /** explicit allow-list slice handed to addons as `ctx.env` */
@@ -122,7 +144,13 @@ export interface RadioConfig {
   frontends: { dock: string; headquarters: string }
 }
 
-export function parseConfig(environment: Record<string, string | undefined>): RadioConfig {
+/**
+ * @deprecated Legacy type name for {@link ArsyConfig}, kept so existing imports
+ * keep compiling during the rename window. New code should use ArsyConfig.
+ */
+export type RadioConfig = ArsyConfig
+
+export function parseConfig(environment: Record<string, string | undefined>): ArsyConfig {
   // Treat empty strings (e.g. `PORT=` in .env) as "not set".
   const cleaned = Object.fromEntries(
     Object.entries(environment).filter(([, v]) => v !== ''),
@@ -178,16 +206,25 @@ export function parseConfig(environment: Record<string, string | undefined>): Ra
       },
     },
     denpa: { enabled: e.DENPA_ENABLED, token: e.DENPA_TOKEN },
+    skylink: { enabled: e.SKYLINK_ENABLED, url: e.SKYLINK_URL, serviceKey: e.SKYLINK_SERVICE_KEY },
     egress: { denyHosts: e.EGRESS_DENY_HOSTS.split(',').map((host) => host.trim()).filter(Boolean) },
     addonEnv: Object.fromEntries(ADDON_ENV_KEYS.map((key) => [key, environment[key]])),
     frontends: { dock: e.DOCK_URL, headquarters: e.HQ_URL },
   }
 }
 
-export function loadConfig(): RadioConfig {
+export function loadConfig(): ArsyConfig {
   return parseConfig(process.env)
 }
 
+/**
+ * Resolve one logical setting across its documented spellings.
+ *
+ * `preferredName` only labels the error; it is never used to break a tie. Every
+ * spelling that is actually configured must resolve to the same value, so an
+ * operator who sets `ARSY_PORT` and `RADIO_PORT` differently gets a refusal
+ * naming both variables instead of a hub that quietly dials one of them.
+ */
 function resolveAlias<T>(
   preferredName: string,
   keys: readonly string[],
@@ -206,7 +243,9 @@ function resolveAlias<T>(
     return fallback
   }
   if (configured.some(({ value }) => !Object.is(value, first.value))) {
-    throw new Error(`Conflicting environment aliases for ${preferredName}: ${configured.map(({ key }) => key).join(', ')} must have the same value.`)
+    throw new Error(
+      `Conflicting environment aliases for ${preferredName}: ${configured.map(({ key }) => key).join(', ')} are set to different values. Set only one spelling, or give every configured spelling the same value.`,
+    )
   }
   return first.value
 }
