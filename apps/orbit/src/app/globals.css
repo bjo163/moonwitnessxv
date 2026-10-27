@@ -613,6 +613,163 @@ body {
   color: var(--muted);
 }
 
+/* View Mode Switcher */
+.orbit-view-mode-btn {
+  background-color: var(--surface);
+  color: var(--cyan);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.orbit-view-mode-btn:hover {
+  border-color: var(--cyan);
+  background-color: var(--surface-2);
+}
+
+/* WebGL Fallback Stage */
+.orbit-webgl-fallback-stage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  background-color: var(--surface);
+  overflow-y: auto;
+}
+
+.orbit-fallback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.orbit-fallback-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.orbit-fallback-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orbit-fallback-notice {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.orbit-fallback-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.orbit-fallback-a11y-guide {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.orbit-guide-icon {
+  font-size: 1.1rem;
+}
+
+.orbit-guide-text {
+  font-size: 0.8rem;
+  color: var(--fg);
+  line-height: 1.5;
+}
+
+.orbit-fallback-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.orbit-fallback-switch-btn {
+  background-color: var(--surface-2);
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.orbit-fallback-switch-btn:hover {
+  background-color: var(--surface);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.2);
+}
+
+/* Responsive Breakpoints for Mobile & Narrow Screens */
+@media (max-width: 768px) {
+  .orbit-main {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  .orbit-header {
+    padding: 10px 14px;
+  }
+
+  .orbit-nav-bar {
+    padding: 8px 14px;
+  }
+
+  .orbit-spatial-container,
+  .orbit-spatial-stage {
+    min-height: auto;
+  }
+
+  .orbit-spatial-canvas-container {
+    height: 340px;
+  }
+
+  .orbit-2d-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .orbit-inspector-drawer {
+    position: relative;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    max-height: none;
+    box-shadow: none;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .orbit-quick-select-bar {
+    display: none;
+  }
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -24,6 +24,7 @@ export function OrbitOperationsWorkspace({
   copy,
 }: OrbitOperationsWorkspaceProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<'spatial' | 'accessible'>('spatial')
 
   const { workstations, agents, taskQueue, recentTraces } = data
 
@@ -41,6 +42,8 @@ export function OrbitOperationsWorkspace({
           copy={copy}
           selectedNodeId={selectedNodeId}
           onSelectNode={setSelectedNodeId}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
       </section>
 

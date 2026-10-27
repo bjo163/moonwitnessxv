@@ -52,8 +52,11 @@ export function OrbitScene({
     >
       <Canvas
         camera={{ position: [0, 8, 14], fov: 45 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        dpr={[1, 2]}
+        frameloop={prefersReducedMotion ? 'demand' : 'always'}
         onPointerMissed={() => onSelectNode(null)}
+        aria-label="3D Spatial Operations Canvas"
       >
         {/* Controlled Ambient and Directional Lighting */}
         <ambientLight color={SPATIAL_TOKENS.surface} intensity={1.8} />

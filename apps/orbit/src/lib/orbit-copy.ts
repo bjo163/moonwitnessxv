@@ -62,6 +62,16 @@ export const orbitCatalog = defineLocaleCatalog({
     escToClose: 'Press Esc to close inspector',
     approvalRequiredNotice: 'Action approval required in 100CENTER HQ',
     quickSelectLabel: 'Quick Node Select',
+    webglUnavailableNotice:
+      'WebGL acceleration is unavailable or disabled in this environment. Operating in 100% accessible 2D fallback mode.',
+    webglFallbackActive: '2D Accessible Fallback Active',
+    viewModeToggleLabel: 'View mode switcher',
+    keyboardNavigationGuide:
+      'Keyboard navigation: Tab to focus nodes, Enter or Space to inspect, Esc to close inspector.',
+    switchTo2DView: 'Switch to 2D View',
+    switchTo3DView: 'Switch to 3D View',
+    performanceBudgetNotice:
+      '3D Performance Budget: 60 FPS target · Procedural geometry only · Zero external models',
   },
   id: {
     brandTitle: 'ORBIT',
@@ -112,6 +122,16 @@ export const orbitCatalog = defineLocaleCatalog({
     escToClose: 'Tekan Esc untuk menutup inspektur',
     approvalRequiredNotice: 'Persetujuan tindakan diperlukan di HQ 100CENTER',
     quickSelectLabel: 'Pilihan Cepat Node',
+    webglUnavailableNotice:
+      'Akselerasi WebGL tidak tersedia atau dinonaktifkan di lingkungan ini. Beroperasi dalam mode cadangan 2D yang 100% aksesibel.',
+    webglFallbackActive: 'Cadangan 2D Aksesibel Aktif',
+    viewModeToggleLabel: 'Pengalih mode tampilan',
+    keyboardNavigationGuide:
+      'Navigasi keyboard: Tab untuk fokus node, Enter atau Spasi untuk memeriksa, Esc untuk menutup inspektur.',
+    switchTo2DView: 'Beralih ke Tampilan 2D',
+    switchTo3DView: 'Beralih ke Tampilan 3D',
+    performanceBudgetNotice:
+      'Batas Kinerja 3D: Target 60 FPS · Geometri prosedural murni · Nol model eksternal',
   },
 })
 
