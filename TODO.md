@@ -905,4 +905,3 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 **Target register:** **42 milestones** (29 preserved M00–M28 + M29–M37 + appended M38, M39, M40 and M41), 267 preserved IDs from M00–M28 + 45 IDs from M29–M37 + 14 SKYLINK IDs + 12 ECHOLOG IDs + 10 ORBIT IDs + 12 LUMEN IDs = **360 unique task IDs**. Prior checkmarks and evidence remain unchanged. TODO is the only active task/status register.
 
 **End of XV Master TODO — modular planning v4, 27 October 2026.**
-
