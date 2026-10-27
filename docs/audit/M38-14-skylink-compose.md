@@ -4,8 +4,7 @@
 
 - **task_id:** M38-14
 - **baseline_sha:** `a079bf778aa53901efe43fac285e661c4add3c7d` (`dev`)
-- **working_tree_head:** `a079bf778aa53901efe43fac285e661c4add3c7d`; M38-14 edits are uncommitted and remain reviewable in the shared worktree.
-- **result_sha:** pending integration commit; this task did not commit or push.
+- **result_sha:** `97dcd046bb20664b174161bb69836e74ea0d8f36` (`dev` and promoted `main`).
 - **actual_changed_files:** `Dockerfile.skylink`, `docker-compose.yml`, `apps/skylink/test/compose-contract.test.ts`, `apps/skylink/test/control-plane.test.ts`, `apps/arsy/test/skylink-client.test.ts`, `docs/tasks/M38/M38-14.md`, `CHANGELOG.md`, and this audit.
 
 ## Runtime and tests
@@ -15,6 +14,7 @@ All commands below ran in the Z: `dev` worktree. `DATABASE_URL` came from the ig
 | Command | Observed result |
 | --- | --- |
 | `docker compose config --quiet` with `SKYLINK_SERVICE_KEY` absent | Exit 0; default Compose configuration is accepted with the feature off and no key. |
+| `docker compose --profile skylink config --quiet` with `SKYLINK_SERVICE_KEY` absent | Exit 0; the opted-in Compose model also parses, while the service itself remains fail-closed at production startup without its required key. |
 | `docker compose --profile skylink build skylink` | Exit 0; dedicated image built, including server, UI assets, workspace runtime packages and D18 migration files. |
 | `docker compose --profile skylink up -d --no-build skylink` with a process-only synthetic `SKYLINK_SERVICE_KEY` | Container started; database dependency was healthy. |
 | `docker compose --profile skylink ps skylink` | `moonwitness-skylink` reported `Up (healthy)` with `127.0.0.1:3005->3005/tcp`. |
@@ -25,6 +25,7 @@ All commands below ran in the Z: `dev` worktree. `DATABASE_URL` came from the ig
 | `pnpm --filter @moonwitness/arsy exec tsx --test test/compose-contract.test.ts` | 12 tests, 12 passed; every Compose service has a healthcheck. |
 | `pnpm --filter @moonwitness/cockpit exec tsx --test test/cockpit.test.ts` | 9 tests, 9 passed; Cockpit already supervises eight services and includes SKYLINK. |
 | `pnpm exec eslint apps/skylink/test/compose-contract.test.ts apps/skylink/test/control-plane.test.ts apps/arsy/test/skylink-client.test.ts` | Exit 0. |
+| GitHub Actions run [40524990372](https://github.com/bjo163/moonwitnessxv/actions/runs/40524990372) on `97dcd046bb20664b174161bb69836e74ea0d8f36` | Monorepo verification passed; guarded promotion fast-forwarded the same SHA to `main`. |
 
 ## Security, privacy and limits
 
@@ -34,5 +35,5 @@ All commands below ran in the Z: `dev` worktree. `DATABASE_URL` came from the ig
 - The provider, webhook and service key in tests are synthetic. Real Telegram delivery, a real Telegram webhook, production deployment, and rendered browser screenshot evidence were not performed. The test invokes the exact existing operator client `openOperatorSocket()` event callback and `fetchMessages()` API function used by the UI; it does not launch a browser.
 - SKYLINK is behind the opt-in Compose profile `skylink`; with the profile inactive, ARSY flag-off config does not depend on SKYLINK and accepts an unset service key. To use ARSY with SKYLINK enabled, configure the service key and start the profile service before ARSY. M38-12 performs one registration attempt at ARSY boot, so a simultaneous first boot can miss the registry; automatic retry is outside this packet's permitted runtime-code scope.
 - A broader baseline Cockpit run earlier reported 43/44 because of the unrelated dirty progress-locale keys in `apps/cockpit/client`/its locale usage test. The final M38-14 scoped Cockpit config/supervisor test passed 9/9; unrelated UI changes were left untouched.
-- **reviewer:** independent review requested from the integrator; pending.
+- **reviewer:** integrator reviewed the scoped diff and evidence. No blocking finding remained; a fixed Compose service-count assertion was removed so a future service addition will not break SKYLINK verification.
 - **rollback:** disable the `skylink` Compose profile and set `SKYLINK_ENABLED=false`; ARSY uses its local channel path. The rollback test confirms no SKYLINK send and preserved D18 rows.
