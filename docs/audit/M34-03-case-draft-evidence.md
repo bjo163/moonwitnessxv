@@ -2,6 +2,7 @@
 
 **Task:** M34-03 — Specify source-linked case and hypothesis drafts.
 **Baseline `dev` SHA:** `8a105edead6f7afb616c89079ca5975108f85719`.
+**Integrated result SHA:** `addd94dac49c4b04e06e9d9d8465325c519b5304`.
 **Worker:** `/root/m34_03_scope` under ratified M29-02 task lease.
 **Claimed and actual paths:** `docs/planning/M34-03-case-draft-spec.md`; `docs/audit/M34-03-case-draft-evidence.md`. No TODO or source-code path is in scope.
 
@@ -28,7 +29,7 @@ Commands and checks run:
 - A read-only `validateTaskRegister` invocation with tracked Markdown files plus the two new artifacts — 360 task rows parsed, 0 diagnostics in either new document.
 - A PowerShell trailing-whitespace scan of both new artifacts — no matches.
 
-No runtime test was executed: this deliverable is a design contract, and existing tests cannot verify a not-yet-built HQ route or case intent endpoint. At original inspection baseline `8a105edead6f7afb616c89079ca5975108f85719`, the hypothesis route accepted `proposedBy` from the request body; the later integrator review baseline is `4eb54542211fce107aa553438c1076569c894ef8` and does not change the source-inspection claim. An independent reviewer checked the final spec against accepted policy and current source at `4eb5454` and found no remaining blocker; exact-SHA CI for the integrated artifact is still required before TODO closure. Citation-match validation, server-derived proposer identity, and a case intent endpoint need focused positive/negative runtime tests before implementation/UI work can claim those behaviors.
+No task-specific runtime test was executed: this deliverable is a design contract, and existing tests cannot verify a not-yet-built HQ route or case intent endpoint. At original inspection baseline `8a105edead6f7afb616c89079ca5975108f85719`, the hypothesis route accepted `proposedBy` from the request body; the later integrator review baseline is `4eb54542211fce107aa553438c1076569c894ef8` and does not change the source-inspection claim. An independent reviewer checked the integrated artifact at exact result SHA `addd94dac49c4b04e06e9d9d8465325c519b5304` and found no blocker. GitHub Actions run [40494093753](https://github.com/bjo163/moonwitnessxv/actions/runs/40494093753) passed dependency/secret gates and the full `pnpm verify` workflow at that SHA; guarded promotion passed and both `dev` and `main` now point to the result. Citation-match validation, server-derived proposer identity, and a case intent endpoint need focused positive/negative runtime tests before implementation/UI work can claim those behaviors.
 
 ## Limitations, rollback, next task
 
