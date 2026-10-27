@@ -30,7 +30,7 @@ This is not browser end-to-end proof, production SSO, cross-domain cookie exchan
 
 An earlier complete root `pnpm test` attempt after the script change stopped in Dock before reaching later packages: an existing local server on port 3001 blocked the offline landing probe, and the then-dirty Dock worktree made one `relation-inspector.test.mjs` text assertion stale. The assertion was subsequently updated in Dock commit `7f1c06d`; this M37-05 worker did not rerun the full root suite. The exact integrated commit still requires CI before TODO closure.
 
-Independent reviewer approved the bounded auth/session evidence, the added root test-command wiring, and the documented limitations. M37-05 remains open until this change is integrated and CI passes on that exact SHA.
+Independent reviewer approved the bounded auth/session evidence, the added root test-command wiring, and the documented limitations.
 
 ## Rollback
 
@@ -39,5 +39,5 @@ Rollback removes the `hq-authz-guard.test.ts` argument from the root `package.js
 ## Current verification state
 
 - Re-ran the targeted HQ slice on baseline `7f1c06d` with the package-script edit: 38/38 passed. `pnpm --filter @moonwitness/headquarters typecheck` exited 0. The earlier ORBIT 43/43 run is retained as separate corroborating evidence; M37-05 did not modify ORBIT.
-- Before M37-05 integration, `package.json` and this audit were worktree-only. Their integration commit and exact-SHA CI result are recorded in the task handoff; no TODO checkbox is changed here.
-- CI run `40476362621` at `bd11cf2` predates the package-script change and is not evidence for it. The failed full-suite attempt described above also predates Dock commit `7f1c06d` and did not validate the integrated source.
+- Before M37-05 integration, `package.json` and this audit were worktree-only. The test-chain integration is present at exact source SHA `91d844da7da5ba2c53126f9c7731b47e9af492b2`; CI run `40507170705` passed full verification at that SHA and guarded-promoted it to `main`. The root suite includes the HQ 38-test and ORBIT 43-test slices recorded above.
+- CI run `40476362621` at `bd11cf2` predates the package-script change and is not evidence for it. The failed full-suite attempt described above also predates Dock commit `7f1c06d` and did not validate the integrated source. The passing exact-SHA CI above supersedes that incomplete attempt for M37-05; it still does not prove live SSO or deployment.
