@@ -6,7 +6,7 @@
 **Date:** 2026-10-27
 **Worker:** AI Pair Programmer
 **Reviewer:** Root Integrator
-**Status:** CLOSED (`- [x]`)
+**Status:** CLOSED at exact SHA `cfa989b79569a4193ee03ca11c1dca9e91acc729`; full verification and guarded promotion passed in run [40526040337](https://github.com/bjo163/moonwitnessxv/actions/runs/40526040337).
 
 ---
 
@@ -139,45 +139,22 @@ No ARSY, Headquarters, Dock, or 100CENTER data is touched by this change, so rol
 
 ## 6. Result and Next Eligible Task
 
-- **Result SHA:** recorded on the commit that contains this audit (see the commit reference in the push output).
-- **Next eligible task:** `M40-08` — Human-approval handoff to Headquarters / 100CENTER. Note that `M40-08` lists `M20-02/M20-06/M20-07` and `M37-02/M37-03/M37-05` as prerequisites; `M20-06`/`M20-07` are still unchecked in TODO, so M40-08 must be delivered as the server-side denial contract plus the honest handoff boundary without claiming a live HQ review engine.
+- **Result SHA:** `cfa989b79569a4193ee03ca11c1dca9e91acc729` (`dev` and `main`). The original implementation is `a5352e0`; follow-up correction `d1a311d` is an ancestor of the result SHA.
+- **Next eligible task:** `M40-09` — cross-app auth, deployment and extraction boundaries. Its code is present and its original closure record was inadvertently unchecked by stale TODO content in commit `7a5cba9`; reconcile that row against its audit and exact-SHA evidence before M40-10.
 
-## 7. Post-closure reviewer follow-up (worktree-only at `49ec20ec2b224bcb37c61d15de84aa494cead79e`)
+## 7. Corrective implementation and exact-SHA closure
 
-Independent review found two gaps in the original evidence: Escape closed the node inspector but did not close the separately selected task inspector, and the uniqueness assertion covered only fixture ids rather than runtime projections. The following M40-07-scoped corrections are pending integration and exact-SHA CI:
+The reopened defects were fixed in `d1a311deab7e209f7e1924d1479713560b55005d` and are present at the result SHA. Escape dismisses a selected task inspector only; repeated workstation/agent IDs across node collections and repeated task/trace IDs are removed fail-closed from display, with a generic alert that does not reveal the IDs. The test suite covers these positive and negative cases.
 
-- `shouldDismissTaskInspectorOnKey` closes a selected task inspector on Escape only. Other keys and Escape with no selected task leave selection unchanged.
-- `buildOperationalQueues` now detects repeated node ids across workstations/agents and repeated ids within task and trace collections. Every occurrence of an ambiguous id is removed from display deterministically; unambiguous rows retain source order. `identityConflictCount` drives a generic alert without printing the colliding ids.
-- Added positive/negative assertions for Escape dismissal and duplicate ids, including cross-collection node collisions, duplicate task/trace ids, and preservation of unrelated rows.
+Verification on the result SHA `cfa989b79569a4193ee03ca11c1dca9e91acc729` (commands run in the shared `dev` checkout):
 
-Observed follow-up verification:
+- `pnpm --filter @moonwitness/orbit test` — 88/88 passed, including M40-07 Escape/duplicate-ID coverage.
+- `pnpm --filter @moonwitness/orbit typecheck` — exit 0.
+- `pnpm exec eslint apps/orbit --max-warnings 0` — exit 0, no warnings.
+- `pnpm --filter @moonwitness/orbit build` — exit 0; 3 routes generated.
+- `pnpm ui:check` — 137 files scanned, 0 violations.
+- `pnpm --filter @moonwitness/arsy exec tsx --test test/arsy-env-compat.test.ts test/moonql-web-kit.test.ts test/compose-contract.test.ts` — 28/28 passed.
+- Exact GitHub Actions run [40526040337](https://github.com/bjo163/moonwitnessxv/actions/runs/40526040337) — Monorepo Verification passed, including build/lint/SDK/tests/build:web; guarded fast-forward promotion to `main` passed.
+- Independent read-only review at the result SHA confirmed the corrective code/tests and found no code, privacy, or accessibility blocker.
 
-```text
-pnpm --filter @moonwitness/orbit exec node --test test/orbit-queues-inspectors.test.mjs
-14 passed, 0 failed
-
-pnpm --filter @moonwitness/orbit typecheck
-exit 0
-
-pnpm exec eslint apps/orbit/src/components/OrbitOperationsWorkspace.tsx apps/orbit/src/lib/queues/operational-queues.ts apps/orbit/test/orbit-queues-inspectors.test.mjs
-exit 0
-
-pnpm --filter @moonwitness/orbit test
-57 tests, 56 passed, 1 failed
-```
-
-The package-suite failure is outside this follow-up: `test/orbit-spatial-scene.test.mjs` still expects the literal `hqLink` in `OrbitNodeInspector.tsx`, while that file is concurrently modified to call `buildApprovalHandoff`. Those files belong to separate ORBIT handoff work and were not changed under this M40-07 lease. No full-suite pass is claimed for the follow-up tree.
-
-
-## 8. Corrective verification on dev worktree (baseline 39a7e27)
-
-The implementation review confirmed the two reopened defects are fixed. This verification ran against the shared development worktree with the reviewed M40-07 follow-up and concurrent M40-08 follow-up changes present; it is not an exact commit result yet.
-
-- Focused queue/inspector tests: 14/14 passed (Escape dismissal and duplicate workstation/agent/task/trace ids included).
-- Full ORBIT package suite: 85/85 passed.
-- pnpm --filter @moonwitness/orbit typecheck: exit 0.
-- Scoped ESLint for ORBIT workspace, queue helper, handoff runtime client and relevant tests: exit 0.
-- pnpm --filter @moonwitness/orbit build: exit 0; Next.js emitted 3 routes.
-- pnpm ui:check: 132 files scanned, 0 violations.
-
-The worktree corrections are not committed or on the remote yet; exact-SHA CI and guarded promotion remain pending. The task stays unchecked. The separate Windows checkout of baseline 39a7e27 exposed a CRLF-sensitive source assertion in the M40-08 test; CI uses Linux LF checkouts, and the shared dev worktree full ORBIT suite passed. This note supersedes the earlier package-failure observation above for the corrected worktree only; it does not change evidence for the earlier result SHA.
+The earlier worktree-only results above are superseded by this committed correction, exact-SHA verification and promotion. M40-07 is closed; M40-08 is separately closed in TODO. No live deployment, HQ decision engine, or production release is claimed.

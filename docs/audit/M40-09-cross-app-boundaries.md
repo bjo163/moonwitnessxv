@@ -226,5 +226,20 @@ evidence.
 
 ## 7. Next eligible task
 
-M40-10 — exact-SHA release acceptance, rollback rehearsal and extraction review for M40-01..10, with
-LUMEN/M41 confirmed closed by its own suite rather than by a TODO row.
+M40-10 — exact-SHA release acceptance, rollback rehearsal and extraction review for M40-01..10.
+
+## 8. Integrated exact-SHA revalidation
+
+The original evidence above was recorded at baseline `39a7e273`. The ORBIT source tree is byte-for-byte
+unchanged between `dbc5f01dad478fce74250fe253b801f98d1d5729` and integrated result SHA
+`cfa989b79569a4193ee03ca11c1dca9e91acc729`; M40-07 and M40-08 are also checked in `TODO.md` at that
+result. On the result SHA, the complete ORBIT suite passed 88/88 with both opt-in scans enabled
+(`ORBIT_SCAN_BUNDLE=1` and `ORBIT_RUNTIME_SMOKE=1`), covering the built client bundle and production
+runtime boundary scenarios. Standalone typecheck, ESLint with `--max-warnings 0`, production build,
+UI gate and ARSY regression passed as recorded in the integrated M40-07 audit.
+
+Exact GitHub Actions run [40526040337](https://github.com/bjo163/moonwitnessxv/actions/runs/40526040337)
+passed full monorepo verification and guarded promotion of this same SHA to `main`. Independent
+read-only integration review confirmed the M40-09 prerequisites and found no remaining ORBIT-side
+boundary blocker. This evidence does not claim a live HQ decision service, deployment, or production
+release. Current result and source SHA are `cfa989b79569a4193ee03ca11c1dca9e91acc729`.
