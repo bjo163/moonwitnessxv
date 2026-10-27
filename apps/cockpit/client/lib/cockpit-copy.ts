@@ -100,6 +100,7 @@ export interface CockpitCopyCatalog {
   colAction: string
   statusBound: string
   statusIdle: string
+  workerNoPort: string
   btnOpenPreview: string
   btnFreePorts: string
 
@@ -308,6 +309,7 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     colAction: 'ACTION',
     statusBound: 'BOUND / LISTENING',
     statusIdle: 'IDLE / FREE',
+    workerNoPort: 'WORKER',
     btnOpenPreview: 'OPEN IN PREVIEW',
     btnFreePorts: 'RELEASE ALL PORTS',
 
@@ -515,6 +517,7 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     colAction: 'AKSI',
     statusBound: 'TERIKAT / MENDENGAR',
     statusIdle: 'BEBAS / IDLE',
+    workerNoPort: 'PEKERJA',
     btnOpenPreview: 'BUKA DI PRATINJAU',
     btnFreePorts: 'LEPASKAN SEMUA PORT',
 

@@ -27,12 +27,15 @@ export interface ServiceState {
 }
 
 export interface AppConfig {
-  repoRoot: string
+  /** Cockpit's own listen port (the supervisor host), from /api/config. */
+  port: number
+  title?: string
   services: Array<{
     tag: string
     name: string
     pkg: string
     port?: number
+    type?: 'service' | 'worker'
     url?: string
     icon: string
     color: string
@@ -43,8 +46,8 @@ export interface AppConfig {
 export interface LogEntry {
   id: string
   timestamp: string
-  service: string
-  color: string
+  /** Matches the server `LogEntry.tag`; there is no `service`/`color` on the wire. */
+  tag: string
   message: string
   level: 'info' | 'warn' | 'error' | 'debug'
 }

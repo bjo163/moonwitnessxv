@@ -151,6 +151,9 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
   assert.equal(configRes.statusCode, 200)
   const configBody = JSON.parse(configRes.body)
   assert.equal(configBody.port, 3004)
+  // Mutating routes need the per-boot token the server ships on /api/config.
+  const cockpitToken = (configBody.token ?? '') as string
+  assert.ok(cockpitToken.length > 0, 'config must deliver the cockpit token')
 
   // /api/status
   const statusRes = await app.inject({ method: 'GET', url: '/api/status' })
@@ -200,6 +203,7 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
   const addChannelRes = await app.inject({
     method: 'POST',
     url: '/api/channels',
+    headers: { 'x-moondeck-token': cockpitToken },
     payload: {
       name: 'Custom Test Stream',
       type: 'iptv',
@@ -213,7 +217,11 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
   assert.equal(addedBody.type, 'iptv')
 
   // Validation rejection
-  const invalidAction = await app.inject({ method: 'POST', url: '/api/services/radio/invalid' })
+  const invalidAction = await app.inject({
+    method: 'POST',
+    url: '/api/services/radio/invalid',
+    headers: { 'x-moondeck-token': cockpitToken },
+  })
   assert.equal(invalidAction.statusCode, 400)
 
   // TODO register progress is a read-only projection of the real TODO.md

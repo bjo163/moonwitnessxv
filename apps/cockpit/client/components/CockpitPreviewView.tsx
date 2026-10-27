@@ -1,21 +1,10 @@
 import type { ReactNode, RefObject } from 'react'
 import { Button, TextInput } from '@moonwitness/moonui'
+import type { AppConfig } from '../types'
 import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
-export interface PreviewShortcut {
-  label: string
-  url: string
-}
-
-export const PREVIEW_SHORTCUTS: PreviewShortcut[] = [
-  { label: 'Radio (3000)', url: 'http://127.0.0.1:3000' },
-  { label: 'AI Gateway (3001)', url: 'http://127.0.0.1:3001' },
-  { label: 'Sentinel (3002)', url: 'http://127.0.0.1:3002' },
-  { label: 'Headquarters (3003)', url: 'http://127.0.0.1:3003' },
-  { label: 'Dock (3004)', url: 'http://127.0.0.1:3004' },
-]
-
 export interface CockpitPreviewViewProps {
+  config: AppConfig | null
   previewUrl: string
   setPreviewUrl: (url: string) => void
   openPreview: (url: string) => void
@@ -23,7 +12,20 @@ export interface CockpitPreviewViewProps {
   copy: CockpitCopyCatalog
 }
 
+/**
+ * Shortcuts are derived from /api/config so they can never drift from real port
+ * ownership; the previous static list mapped services to the wrong ports.
+ * A `:<port>` suffix keeps the chip label unambiguous without a hardcoded number.
+ */
+function shortcuts(config: AppConfig | null): Array<{ label: string; url: string }> {
+  if (!config) return []
+  return config.services
+    .filter((svc) => svc.type !== 'worker' && svc.port !== undefined && svc.url)
+    .map((svc) => ({ label: `${svc.name} :${String(svc.port)}`, url: svc.url as string }))
+}
+
 export function CockpitPreviewView({
+  config,
   previewUrl,
   setPreviewUrl,
   openPreview,
@@ -72,10 +74,10 @@ export function CockpitPreviewView({
           </Button>
         </div>
 
-        <div style={{ display: 'flex', gap: 6 }}>
-          {PREVIEW_SHORTCUTS.map((s) => (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {shortcuts(config).map((s) => (
             <Button
-              key={s.label}
+              key={s.url}
               variant="ghost"
               size="sm"
               style={{ fontSize: 11, padding: '3px 8px' }}

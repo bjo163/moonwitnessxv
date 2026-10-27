@@ -133,7 +133,7 @@ export function App(): ReactNode {
   const [showErrorsOnly, setShowErrorsOnly] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [autoScroll, setAutoScroll] = useState(true)
-  const [previewUrl, setPreviewUrl] = useState('http://127.0.0.1:3001')
+  const [previewUrl, setPreviewUrl] = useState('')
   const [errorLines, setErrorLines] = useState<string[]>([])
   const [crtShader, setCrtShader] = useState(false)
   const [isHelpOpen, setIsHelpOpen] = useState(false)
@@ -472,6 +472,14 @@ export function App(): ReactNode {
     }
   }
 
+  // Default the preview to the first service that exposes a URL, so the tab is
+  // never left pointing at a hard-coded port that may not match /api/config.
+  useEffect(() => {
+    if (previewUrl || !config) return
+    const first = config.services.find((s) => s.url)
+    if (first?.url) setPreviewUrl(first.url)
+  }, [config, previewUrl])
+
   const formatUptime = (secs: number) => {
     if (secs < 60) return `${secs}s`
     const m = Math.floor(secs / 60)
@@ -482,7 +490,7 @@ export function App(): ReactNode {
   }
 
   const filteredLogs = useMemo(() => {
-    return logs.map((l) => `[${l.timestamp}] [${l.service.toUpperCase()}] ${l.message}`).filter((msg) => {
+    return logs.map((l) => `[${l.timestamp}] [${l.tag.toUpperCase()}] ${l.message}`).filter((msg) => {
       if (filterTag !== 'all' && !msg.includes(`[${filterTag.toUpperCase()}]`)) return false
       if (showErrorsOnly && !msg.toLowerCase().includes('error')) return false
       if (searchTerm && !msg.toLowerCase().includes(searchTerm.toLowerCase())) return false
@@ -595,6 +603,7 @@ export function App(): ReactNode {
 
           {activeTab === 'preview' ? (
             <CockpitPreviewView
+              config={config}
               previewUrl={previewUrl}
               setPreviewUrl={setPreviewUrl}
               openPreview={openPreview}
@@ -650,6 +659,7 @@ export function App(): ReactNode {
 
           {activeTab === 'ports' ? (
             <CockpitPortsView
+              config={config}
               serviceStates={serviceStates}
               openPreview={openPreview}
               copy={copy}

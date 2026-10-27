@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import type { ChannelItem, ChannelMediaType, ServiceState, StartAllResult } from '../types'
+import { cockpitAuthHeaders } from '../lib/cockpit-token'
 
 export interface CockpitActionsOptions {
   customName: string
@@ -41,7 +42,10 @@ export function useCockpitActions({
     if (pendingTags.current.has(tag)) return
     pendingTags.current.add(tag)
     try {
-      const res = await fetch(`/api/services/${tag}/${action}`, { method: 'POST' })
+      const res = await fetch(`/api/services/${tag}/${action}`, {
+        method: 'POST',
+        headers: cockpitAuthHeaders(),
+      })
       const data = (await res.json()) as { state?: ServiceState }
       if (data.state) {
         const nextState = data.state
@@ -60,7 +64,7 @@ export function useCockpitActions({
     try {
       const res = await fetch('/api/channels', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...cockpitAuthHeaders() },
         body: JSON.stringify({
           name: customName,
           streamUrl: customUrl,
@@ -88,7 +92,7 @@ export function useCockpitActions({
     setIsStartingAll(true)
     setStartAllSummary(null)
     try {
-      const res = await fetch('/api/services/start-all', { method: 'POST' })
+      const res = await fetch('/api/services/start-all', { method: 'POST', headers: cockpitAuthHeaders() })
       const data = (await res.json()) as StartAllResult & { services?: ServiceState[] }
       setStartAllSummary(data)
       if (Array.isArray(data.services)) {
@@ -106,14 +110,14 @@ export function useCockpitActions({
   }
 
   const stopAll = async () => {
-    await fetch('/api/services/stop-all', { method: 'POST' })
+    await fetch('/api/services/stop-all', { method: 'POST', headers: cockpitAuthHeaders() })
     setStartAllSummary(null)
   }
 
   const freePorts = async () => {
     setIsFreeingPorts(true)
     try {
-      const res = await fetch('/api/ports/free', { method: 'POST' })
+      const res = await fetch('/api/ports/free', { method: 'POST', headers: cockpitAuthHeaders() })
       const data = (await res.json()) as { message?: string }
       alert(data.message || 'Ports freed')
     } catch (err: unknown) {
@@ -136,7 +140,7 @@ export function useCockpitActions({
 
   const clearLedger = async () => {
     if (!confirm('Clear all logged errors?')) return
-    await fetch('/api/errors', { method: 'DELETE' })
+    await fetch('/api/errors', { method: 'DELETE', headers: cockpitAuthHeaders() })
     await loadLedger()
   }
 

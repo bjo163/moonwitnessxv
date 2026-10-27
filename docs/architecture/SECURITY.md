@@ -21,3 +21,14 @@ Source rights/consent in accepted ADR-0003 and D08 override public UI. `ADMIN_WR
 - **Scan status is reported honestly.** `scan: skipped` is not `clean`; the UI must say which one it is, and no `LIVE`/`NOMINAL` badge may imply a scan that never ran.
 - **Egress.** `echolog` belongs on the `@moonwitness/core` egress deny list so a provider URL cannot be pointed back at the storage service.
 - **Related gate:** the owner-deferred off-host backup task waits for an S3-compatible target hosted off the backup machine and a demonstrated restore. ECHOLOG running on the same host does not satisfy “off-host.”
+
+## Cockpit local control plane
+
+Cockpit is a loopback-only supervisor that can spawn/kill workspace processes (`pnpm --filter <pkg> dev`), release ports, and read the error ledger. Its trust model is "same machine, same operator", which is enforced as follows:
+
+- **The server binds `127.0.0.1` only** (`apps/cockpit/src/index.ts`). It is never exposed publicly; there is no identity system and no multi-user story.
+- **CORS accepts only loopback origins.** `@fastify/cors` is configured with a predicate that allows `http(s)://(127.0.0.1|localhost|[::1])(:port)` and refuses anything else, so a page on another host cannot read responses (`apps/cockpit/src/server.ts`, `LOOPBACK_ORIGIN`).
+- **Mutating routes require a per-boot token.** Every `POST/PUT/PATCH/DELETE` must carry `x-moondeck-token` matching a token generated at boot and delivered only through the same-origin `GET /api/config`. The same `preHandler` also rejects a non-loopback `Host` (DNS rebinding) and a non-loopback `Origin` (cross-site form/fetch) with 403, and a missing/invalid token with 401. The token is a CSRF guard for one process lifetime — it is not a secret store, is never logged, and must not be reused as an identity credential.
+- **Static assets are contained.** `/assets/*` resolves the requested path and refuses anything outside the built assets directory, serving only an allow-listed set of static extensions; the ledger and error-log paths are never taken from a request.
+- **The in-memory channel list is bounded** (`MAX_CHANNELS`) with a scheme-validated `http/https` `streamUrl`, so a runaway client cannot grow the process heap without limit. Channels are session-scoped and not persisted: Cockpit owns no SQL and must not become a data owner.
+- **Review gate:** changes to the `preHandler`, the CORS predicate, the token delivery path, or `/api/ports/free` must re-verify these properties with the tests in `apps/cockpit/test/` (no token → 401, foreign `Origin` → 403, rebinding `Host` → 403, traversal → 404).

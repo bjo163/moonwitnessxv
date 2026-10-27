@@ -2,15 +2,41 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import { apiBaseUrl } from '@moonwitness/moonql-client'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import { join, dirname, resolve } from 'node:path'
+import { join, dirname, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
 import { fetchIcyMetadata } from '@moonwitness/core'
 import { DEFAULT_MEDIA_CHANNELS, type ChannelItem } from './channels.js'
 import { findRepoRoot } from './paths.js'
 import type { ProgressTracker } from './progressTracker.js'
-import type { MoondeckConfig } from './types.js'
+import type { MoondeckConfig, ServiceState } from './types.js'
 import type { ProcessSupervisor } from './supervisor.js'
+
+// Cockpit binds loopback only; a browser request whose Origin or Host is not a
+// loopback name is either cross-site (CSRF) or a DNS-rebinding attempt, so it
+// never reaches the control plane. Non-browser callers send no Origin.
+const LOOPBACK_HOST = /^(\[::1\]|127\.0\.0\.1|localhost)(:\d{1,5})?$/
+const LOOPBACK_ORIGIN = /^https?:\/\/(\[::1\]|127\.0\.0\.1|localhost)(:\d{1,5})?$/
+const TOKEN_HEADER = 'x-moondeck-token'
+const MUTATING_METHODS = new Set(['POST', 'DELETE', 'PUT', 'PATCH'])
+const MAX_CHANNELS = 200
+
+/** Project a ServiceState onto only the fields the wire should carry (M2). */
+function publicServiceState(s: ServiceState | undefined): unknown {
+  if (!s) return undefined
+  return {
+    tag: s.tag,
+    name: s.name,
+    pkg: s.pkg,
+    status: s.status,
+    pid: s.pid,
+    port: s.port,
+    uptimeSeconds: s.uptimeSeconds,
+    restarts: s.restarts,
+    lastErrorCode: s.lastErrorCode,
+    lastErrorPort: s.lastErrorPort,
+  }
+}
 
 function findPublicDir(): string {
   const current = dirname(fileURLToPath(import.meta.url))
@@ -38,7 +64,42 @@ export function createCockpitServer(
     logger: false,
   })
 
-  app.register(cors, { origin: true })
+  // A fresh per-boot token, delivered only to the same-origin built client via
+  // /api/config and echoed on every mutating request. It is a CSRF guard for a
+  // loopback control surface, not a secret store or an identity system. Uses the
+  // Web Crypto global so the restricted `node:crypto` import stays out of here.
+  const token = `${crypto.randomUUID()}${crypto.randomUUID()}`
+
+  app.register(cors, {
+    origin: (origin, cb) => {
+      cb(null, origin ? LOOPBACK_ORIGIN.test(origin) : false)
+    },
+  })
+
+  app.addHook('preHandler', (req, reply, done) => {
+    if (!MUTATING_METHODS.has(req.method)) {
+      done()
+      return
+    }
+    const host = req.headers.host ?? ''
+    if (!LOOPBACK_HOST.test(host)) {
+      void reply.code(403).send({ error: 'forbidden host' })
+      done()
+      return
+    }
+    const origin = req.headers.origin
+    if (origin !== undefined && !LOOPBACK_ORIGIN.test(origin)) {
+      void reply.code(403).send({ error: 'cross-origin request rejected' })
+      done()
+      return
+    }
+    if (req.headers[TOKEN_HEADER] !== token) {
+      void reply.code(401).send({ error: 'missing or invalid cockpit token' })
+      done()
+      return
+    }
+    done()
+  })
 
   const publicDir = findPublicDir()
   // Deliberately not `resolve(publicDir, '../../..')`: when the Vite bundle wins
@@ -57,12 +118,31 @@ export function createCockpitServer(
   // Static assets from Vite bundle
   app.get('/assets/*', async (req, reply) => {
     const wildcard = (req.params as { '*': string })['*'] ?? ''
-    const assetPath = join(publicDir, 'assets', wildcard)
-    if (!existsSync(assetPath)) return reply.code(404).send('Asset not found')
-    if (assetPath.endsWith('.js')) reply.type('application/javascript; charset=utf-8')
-    else if (assetPath.endsWith('.css')) reply.type('text/css; charset=utf-8')
-    else if (assetPath.endsWith('.svg')) reply.type('image/svg+xml')
-    else if (assetPath.endsWith('.png')) reply.type('image/png')
+    const assetRoot = resolve(publicDir, 'assets')
+    const assetPath = resolve(assetRoot, wildcard)
+    // Contain within the assets dir (block `../` traversal) and only serve known
+    // static types.
+    if (assetPath !== assetRoot && !assetPath.startsWith(assetRoot + sep)) {
+      return reply.code(404).send('Asset not found')
+    }
+    const ext = assetPath.slice(assetPath.lastIndexOf('.')).toLowerCase()
+    const types: Record<string, string> = {
+      '.js': 'application/javascript; charset=utf-8',
+      '.mjs': 'application/javascript; charset=utf-8',
+      '.css': 'text/css; charset=utf-8',
+      '.svg': 'image/svg+xml',
+      '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.webp': 'image/webp',
+      '.woff2': 'font/woff2',
+      '.ico': 'image/x-icon',
+    }
+    const mime = types[ext]
+    if (!mime || !existsSync(assetPath)) {
+      return reply.code(404).send('Asset not found')
+    }
+    reply.type(mime)
     return reply.send(readFileSync(assetPath))
   })
 
@@ -123,10 +203,12 @@ export function createCockpitServer(
     timestamp: new Date().toISOString(),
   }))
 
-  // Configuration
-  app.get('/api/config', async () => config)
+  // Configuration (plus the boot token, readable only same-origin because CORS
+  // refuses non-loopback origins). The client echoes it on mutating requests.
+  app.get('/api/config', async () => ({ ...config, token }))
 
   const mediaChannels: ChannelItem[] = [...DEFAULT_MEDIA_CHANNELS]
+  let channelSeq = 0
 
   // Media Channels & Stations (BGM, Radio, IPTV)
   app.get('/api/channels', async () => {
@@ -182,8 +264,24 @@ export function createCockpitServer(
     if (!body.name || !body.streamUrl || !body.type) {
       return reply.code(400).send({ error: 'Name, streamUrl, and type (bgm, radio, iptv) are required' })
     }
+    if (!['bgm', 'radio', 'iptv'].includes(body.type)) {
+      return reply.code(400).send({ error: 'type must be one of bgm, radio, iptv' })
+    }
+    let parsedUrl: URL
+    try {
+      parsedUrl = new URL(body.streamUrl)
+    } catch {
+      return reply.code(400).send({ error: 'streamUrl must be a valid absolute URL' })
+    }
+    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+      return reply.code(400).send({ error: 'streamUrl must use the http or https scheme' })
+    }
+    // Bounded in-memory list; a long-lived session must not grow without limit.
+    if (mediaChannels.length >= MAX_CHANNELS) {
+      return reply.code(409).send({ error: `channel list is full (max ${String(MAX_CHANNELS)})` })
+    }
     const newChannel: ChannelItem = {
-      id: `custom-${Date.now()}`,
+      id: `custom-${Date.now().toString(36)}-${String(++channelSeq)}`,
       name: body.name,
       type: body.type,
       streamUrl: body.streamUrl,
@@ -226,7 +324,7 @@ export function createCockpitServer(
   // Status of all services
   app.get('/api/status', async () => {
     return {
-      services: supervisor.getStates(),
+      services: supervisor.getStates().map(publicServiceState),
       system: {
         uptime: process.uptime(),
         node: process.version,
@@ -264,7 +362,8 @@ export function createCockpitServer(
     }
 
     const onState = (state: unknown) => {
-      reply.raw.write(`event: state\ndata: ${JSON.stringify(state)}\n\n`)
+      const projected = publicServiceState(state as ServiceState)
+      reply.raw.write(`event: state\ndata: ${JSON.stringify(projected)}\n\n`)
     }
 
     const onProgress = (payload: unknown) => {
@@ -305,7 +404,7 @@ export function createCockpitServer(
       tag,
       action,
       success,
-      state: supervisor.getState(tag),
+      state: publicServiceState(supervisor.getState(tag)),
     }
   })
 
@@ -320,13 +419,13 @@ export function createCockpitServer(
       success: refused === 0,
       refused,
       results,
-      services: supervisor.getStates(),
+      services: supervisor.getStates().map(publicServiceState),
     }
   })
 
   app.post('/api/services/stop-all', async () => {
     supervisor.stopAll()
-    return { success: true, services: supervisor.getStates() }
+    return { success: true, services: supervisor.getStates().map(publicServiceState) }
   })
 
   // Error ledger inspection

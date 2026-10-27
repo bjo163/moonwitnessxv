@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { AppConfig, ChannelItem, LogEntry, ProgressPayload, ServiceState } from '../types'
+import { setCockpitToken } from '../lib/cockpit-token'
 
 export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => ChannelItem[]) => void) {
   const [config, setConfig] = useState<AppConfig | null>(null)
@@ -11,12 +12,19 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
   // socket per page, one tracker listener per page, one per-host connection.
   const [progressPayload, setProgressPayload] = useState<ProgressPayload | null>(null)
   const [progressLive, setProgressLive] = useState(false)
+  // Wall-clock time at which the cockpit process started, derived once from the
+  // first /api/status snapshot so the displayed uptime can tick locally without
+  // re-polling the server every second.
+  const bootAtRef = useRef<number | null>(null)
 
   // Clock
   useEffect(() => {
     const update = () => {
       const now = new Date()
       setClock(now.toTimeString().split(' ')[0] ?? '')
+      if (bootAtRef.current !== null) {
+        setUptime(Math.floor((Date.now() - bootAtRef.current) / 1000))
+      }
     }
     update()
     const timer = setInterval(update, 1000)
@@ -32,10 +40,14 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
           fetch('/api/status'),
           fetch('/api/channels'),
         ])
-        const cfgData = (await cfgRes.json()) as AppConfig
+        const cfgData = (await cfgRes.json()) as AppConfig & { token?: string }
+        if (cfgData.token) setCockpitToken(cfgData.token)
         const statData = (await statRes.json()) as { services: ServiceState[]; system?: { uptime: number } }
         setConfig(cfgData)
-        if (statData.system?.uptime) setUptime(Math.floor(statData.system.uptime))
+        if (statData.system?.uptime) {
+          bootAtRef.current = Date.now() - statData.system.uptime * 1000
+          setUptime(Math.floor(statData.system.uptime))
+        }
         const map: Record<string, ServiceState> = {}
         for (const s of statData.services) {
           map[s.tag] = s
