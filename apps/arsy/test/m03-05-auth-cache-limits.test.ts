@@ -110,10 +110,12 @@ test('M03-05: API key cache TTL and capacity are isolated from parallel test clo
     clearKeyCache()
     const originalNow = Date.now
     const start = originalNow()
+    let now = start
     const firstHash = 'synthetic-api-key-hash-0'
-    setCachedApiKeyUser(firstHash, { id: 'synthetic-user-0', roles: ['bot'], meta: { keyId: 'synthetic-key-0', name: 'fixture' } })
-    Date.now = () => start + 60_001
+    Date.now = () => now
     try {
+      setCachedApiKeyUser(firstHash, { id: 'synthetic-user-0', roles: ['bot'], meta: { keyId: 'synthetic-key-0', name: 'fixture' } })
+      now = start + 60_001
       assert.equal(getCachedApiKeyUser(firstHash), null, 'an API key identity older than 60 seconds must expire')
     } finally {
       Date.now = originalNow
