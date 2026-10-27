@@ -24,6 +24,7 @@
   "dependencies": {
     "@fastify/cors": "^10.0.1",
     "@moonwitness/core": "workspace:*",
+    "@moonwitness/moonql-client": "workspace:*",
     "@moonwitness/moonui": "workspace:*",
     "fastify": "^5.2.1",
     "hls.js": "^1.7.3",

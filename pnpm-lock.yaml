@@ -190,6 +190,9 @@ importers:
       '@moonwitness/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@moonwitness/moonql-client':
+        specifier: workspace:*
+        version: link:../../packages/moonql-client
       '@moonwitness/moonui':
         specifier: workspace:*
         version: link:../../packages/moonui
