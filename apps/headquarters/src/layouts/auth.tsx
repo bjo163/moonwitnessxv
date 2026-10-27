@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { BrandLogo, Crown, LinkButton, ZineNote, Chevron } from '@moonwitness/moonui'
 import type { Locale } from '@moonwitness/core'
-import { SITE_NAME } from '@/lib/env'
+import { DOCK_URL, SITE_NAME } from '@/lib/env'
 import { loginCopy } from '@/lib/login-copy'
 
 /**
@@ -30,9 +30,11 @@ export function AuthLayout({ children, locale }: { children: ReactNode; locale: 
           <ZineNote tone="dark" tilt="left">
             {copy.sameMoon}
           </ZineNote>
-          <LinkButton href="/" variant="accent" size="md">
-            {copy.followSignal} <Chevron dir="right" />
-          </LinkButton>
+          {DOCK_URL ? (
+            <LinkButton href={DOCK_URL} variant="accent" size="md">
+              {copy.followSignal} <Chevron dir="right" />
+            </LinkButton>
+          ) : null}
         </div>
       </header>
 

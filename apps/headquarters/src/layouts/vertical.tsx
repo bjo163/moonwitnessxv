@@ -16,6 +16,8 @@ import { getSchema } from '@/data/schema'
 import { menuGroups } from '@/data/queries/registry'
 import type { SessionUser } from '@/data/types'
 import { SideNav } from '@/ui/client/SideNav'
+import { LocaleSelector } from '@/ui/client/LocaleSelector'
+import { DOCK_URL } from '@/lib/env'
 import {
   demoAlertStatusLabel,
   missionControlGroup,
@@ -111,6 +113,8 @@ export async function VerticalLayout({ user, children }: { user: SessionUser; ch
 
           <div className="m-row" style={{ gap: 12, alignItems: 'center' }}>
             <MtsTelemetryClock compact />
+            <LocaleSelector locale={locale} />
+            {DOCK_URL ? <a href={DOCK_URL}>Dock</a> : null}
 
             <a
               href="/#alerts"
