@@ -6,7 +6,7 @@
 - Branch / working baseline: `dev` / `de4282426d322da119316d81f3b5c82943e56998`.
 - Latest `origin/main` checked before edits: `2a5805c178d3671ad875d05c7d35cecccb929ae1`.
 - Prerequisites M05-09 and M28-05 were checked as closed in TODO.
-- Result SHA: pending integrator commit; this worker did not edit TODO, commit, or push.
+- Result SHA: `947fdff2bfb1c11fe985a2d546a21fe7722cadd9`; this is the task source/test commit. Exact-SHA CI is pending at this work session.
 
 ## Result
 
@@ -30,7 +30,7 @@ No locale affects authentication decisions, status codes, response envelope fiel
 - Error translation is an explicit exact-message allowlist. Provider/runtime text and dynamic route/path text are not translated. Validation internals are retained in the existing `details` field while the human summary is safe and localized.
 - Existing auth checks and responses were exercised: bad credentials still return 401, a user-role caller still receives 403 on an admin-only API-key route, and malformed login input still returns 400. No credentials or source/rights data were changed.
 - The HTML responses were verified via Fastify injection; no browser interaction or production deployment is claimed.
-- `apps/arsy/src/app.ts` already contained a separate in-progress M38 Skylink change at the baseline. The M05-14 edit adds locale selection to the root HTML response and must be reviewed/staged without discarding that shared work.
+- The shared checkout also had separate uncommitted M38 SKYLINK edits in `apps/arsy/src/app.ts`. The integrator staged only the M05-14 locale import and root HTML handler hunk; M38 lines remain unstaged and outside this task commit.
 
 ## Reviewer, rollback, next task
 
