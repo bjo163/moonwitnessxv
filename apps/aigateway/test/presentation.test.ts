@@ -5,6 +5,12 @@ import { buildServer } from '../src/server.js'
 import { localizedProviderStatuses } from '../src/presentation.js'
 
 test('provider and model descriptions honor only supported UI languages', async (t) => {
+  const original = process.env.AI_ENABLED
+  process.env.AI_ENABLED = 'true'
+  t.after(() => {
+    if (original === undefined) delete process.env.AI_ENABLED
+    else process.env.AI_ENABLED = original
+  })
   const router = new AiRouter([{
     name: 'fixture-provider',
     defaultModel: 'fixture-model-v1',
@@ -87,6 +93,12 @@ test('validation copy localizes without changing HTTP or OpenAI error contracts'
 })
 
 test('health and runtime provider failures keep nonlocalized machine/raw output', async (t) => {
+  const original = process.env.AI_ENABLED
+  process.env.AI_ENABLED = 'true'
+  t.after(() => {
+    if (original === undefined) delete process.env.AI_ENABLED
+    else process.env.AI_ENABLED = original
+  })
   const router = new AiRouter([{
     name: 'fixture-provider',
     defaultModel: 'fixture-model-v1',
@@ -109,7 +121,7 @@ test('health and runtime provider failures keep nonlocalized machine/raw output'
   })
   assert.equal(failure.statusCode, 200)
   const completion = failure.json<{ router_telemetry: { attempts: string[] } }>()
-  assert.ok(completion.router_telemetry.attempts[0]?.includes('Provider unavailable'))
+  assert.equal(completion.router_telemetry.attempts[0], 'fixture-provider(fixture-model-v1):failed')
 })
 
 test('unknown provider diagnostics are preserved verbatim', () => {

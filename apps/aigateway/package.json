@@ -15,6 +15,7 @@
     "dev": "node --watch --import tsx --env-file-if-exists=../../.env src/index.ts",
     "build": "tsc -b",
     "start": "node --env-file-if-exists=../../.env dist/index.js",
+    "test": "tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

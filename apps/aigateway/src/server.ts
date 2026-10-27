@@ -91,11 +91,10 @@ export function buildServer(opts: ServerOptions = {}): FastifyInstance {
     try {
       const response = await router.route(body)
       return reply.send(response)
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Internal AI gateway routing error'
+    } catch {
       return reply.status(500).send({
         error: {
-          message,
+          message: 'Internal AI gateway routing error',
           type: 'api_error',
           param: null,
           code: null,

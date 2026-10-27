@@ -6,8 +6,8 @@ const messages = defineLocaleCatalog({
   en: {
     providerActive: 'Active / configured',
     providerUnavailable: 'Missing API key or offline',
-    freeModel: 'Automatic cascading free-first router ({providers})',
-    autoModel: 'Alias for free-first cascading router',
+    freeModel: 'Automatic cascading router ({providers})',
+    autoModel: 'Alias for automatic cascading router ({providers})',
     directModel: 'Direct provider model on {provider}',
     messagesRequired: 'Invalid request: "messages" array is required and must not be empty.',
     inputRequired: 'Invalid request: "input" parameter is required.',
@@ -15,15 +15,13 @@ const messages = defineLocaleCatalog({
   id: {
     providerActive: 'Aktif / telah dikonfigurasi',
     providerUnavailable: 'Kunci API tidak tersedia atau layanan sedang offline',
-    freeModel: 'Router otomatis berjenjang dengan prioritas gratis ({providers})',
-    autoModel: 'Alias untuk router berjenjang dengan prioritas gratis',
+    freeModel: 'Router otomatis berjenjang ({providers})',
+    autoModel: 'Alias untuk router otomatis berjenjang ({providers})',
     directModel: 'Model provider langsung pada {provider}',
     messagesRequired: 'Permintaan tidak valid: array "messages" wajib diisi dan tidak boleh kosong.',
     inputRequired: 'Permintaan tidak valid: parameter "input" wajib diisi.',
   },
 })
-
-const providerOrder = 'Gemini -> Groq -> OpenRouter -> Ollama -> Heuristic'
 
 export function aiGatewayLocale(acceptLanguage: string | undefined): Locale {
   return preferredLocale(acceptLanguage) ?? 'en'
@@ -46,10 +44,13 @@ function localizedProviderReason(reason: string | undefined, locale: Locale): st
 }
 
 export function localizedModelDescription(model: ModelDescriptor, locale: Locale): string {
+  const providers = model.description.match(/\(([^()]*)\)$/)?.[1] ?? ''
   if (model.id === 'free') {
-    return getLocaleMessage(messages, locale, 'freeModel').replace('{providers}', providerOrder)
+    return getLocaleMessage(messages, locale, 'freeModel').replace('{providers}', providers)
   }
-  if (model.id === 'auto') return getLocaleMessage(messages, locale, 'autoModel')
+  if (model.id === 'auto') {
+    return getLocaleMessage(messages, locale, 'autoModel').replace('{providers}', providers)
+  }
   return getLocaleMessage(messages, locale, 'directModel').replace('{provider}', model.provider)
 }
 

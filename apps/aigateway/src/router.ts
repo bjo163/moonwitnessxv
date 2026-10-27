@@ -15,13 +15,21 @@ export class AiRouter {
   private readonly providers: AiProvider[]
 
   constructor(customProviders?: AiProvider[]) {
-    this.providers = customProviders ?? [
+    const configuredProviders: AiProvider[] = customProviders ?? [
       new GeminiProvider(),
       new GroqProvider(),
       new OpenRouterProvider(),
       new OllamaProvider(),
       new HeuristicProvider(),
     ]
+    // Inference can expose private prompts to a local daemon or a cloud provider.
+    // Require an explicit opt-in before any model provider is considered.
+    if (process.env.AI_ENABLED === 'true') {
+      this.providers = configuredProviders
+    } else {
+      const heuristicProviders = configuredProviders.filter((provider) => provider.name === 'heuristic')
+      this.providers = heuristicProviders.length > 0 ? heuristicProviders : [new HeuristicProvider()]
+    }
   }
 
   getProviderStatuses(): ProviderStatus[] {
@@ -34,18 +42,19 @@ export class AiRouter {
   }
 
   listModels(): ModelDescriptor[] {
+    const providerOrder = this.providers.map((provider) => provider.name).join(' -> ')
     const list: ModelDescriptor[] = [
       {
         id: 'free',
         provider: 'router',
         pricing: 'free',
-        description: 'Automatic cascading free-first router (Gemini -> Groq -> OpenRouter -> Ollama -> Heuristic)',
+        description: `Automatic cascading router (${providerOrder})`,
       },
       {
         id: 'auto',
         provider: 'router',
         pricing: 'free',
-        description: 'Alias for free-first cascading router',
+        description: `Alias for automatic cascading router (${providerOrder})`,
       },
     ]
 
@@ -75,9 +84,8 @@ export class AiRouter {
           const resp = await directProvider.chat(request)
           resp.router_telemetry.attempts = [`direct:${directProvider.name}(${requestedModel})`]
           return resp
-        } catch (err) {
-          const reason = err instanceof Error ? err.message : String(err)
-          attempts.push(`${directProvider.name}(${requestedModel}):failed(${reason.slice(0, 60)})`)
+        } catch {
+          attempts.push(`${directProvider.name}(${requestedModel}):failed`)
         }
       }
     }
@@ -93,9 +101,9 @@ export class AiRouter {
         const resp = await provider.chat(request)
         resp.router_telemetry.attempts = [...attempts, `${provider.name}:success`]
         return resp
-      } catch (err) {
-        const reason = err instanceof Error ? err.message : String(err)
-        attempts.push(`${provider.name}:failed(${reason.slice(0, 60)})`)
+      } catch {
+        // Provider error bodies may echo prompts, credentials, or private source text.
+        attempts.push(`${provider.name}:failed`)
       }
     }
 
