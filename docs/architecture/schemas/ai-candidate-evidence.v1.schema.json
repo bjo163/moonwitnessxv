@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "candidate": {
+      "type": "object",
+      "properties": {
+        "candidateRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "CLAIM",
+            "EDIT",
+            "TOOL_CALL"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "const": "AI_SUGGESTION"
+        }
+      },
+      "required": [
+        "candidateRef",
+        "kind",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "modelId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "modelRevision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "gatewayRequestRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      },
+      "required": [
+        "provider",
+        "modelId",
+        "gatewayRequestRef"
+      ],
+      "additionalProperties": false
+    },
+    "prompt": {
+      "type": "object",
+      "properties": {
+        "templateRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "templateRef",
+        "version",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sourceRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "editionRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "contentSha256": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "authorizationRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "sourceRef",
+          "contentSha256",
+          "authorizationRef"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "consent": {
+      "type": "object",
+      "properties": {
+        "decisionRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "GRANTED",
+            "DENIED",
+            "WITHDRAWN",
+            "UNKNOWN"
+          ]
+        },
+        "scopeRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "observedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        }
+      },
+      "required": [
+        "decisionRef",
+        "state",
+        "scopeRef",
+        "observedAt"
+      ],
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "outputRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "outputSha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "outputRef",
+        "outputSha256"
+      ],
+      "additionalProperties": false
+    },
+    "toolCalls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "lumenRunId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "lumenStepId": {
+            "type": "string",
+            "pattern": "^step_[1-9][0-9]*_.+$"
+          },
+          "lumenEventId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "toolId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "toolVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "argumentSha256": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "approvalRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "lumenRunId",
+          "lumenStepId",
+          "lumenEventId",
+          "toolId",
+          "toolVersion",
+          "argumentSha256"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "candidate",
+    "model",
+    "prompt",
+    "provenance",
+    "consent",
+    "output",
+    "toolCalls"
+  ],
+  "additionalProperties": false
+}
