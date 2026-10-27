@@ -120,8 +120,8 @@ Reference: [`06_unilex_explorer.svg`](docs/design/mockups-xv/06_unilex_explorer.
 
 - [ ] **UI-P06a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
 - [ ] **UI-P06b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
-- [ ] **UI-P06c · D3:** Typed alias, figure, event and source relation inspector.
-- [ ] **UI-P06d · D3:** Relation provenance, alternatives and uncertainty, not invented synonymy.
+- [x] **UI-P06c · D3:** Typed alias, figure, event and source relation inspector. **[evidence](docs/audit/ui-p06c-d-locale-7f1c06d.md)**
+- [x] **UI-P06d · D3:** Relation provenance, alternatives and uncertainty, not invented synonymy. **[evidence](docs/audit/ui-p06c-d-locale-7f1c06d.md)**
 - [x] **UI-P06e · D3:** Accessible list alternative to graph for keyboard and mobile.
 - [ ] **UI-P06f · D2:** Save 390px/768px/1440px/1920px id/en screenshots and run keyboard/empty/error/reduced-motion checks.
 
