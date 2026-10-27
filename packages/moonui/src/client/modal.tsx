@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, type ReactNode } from 'react'
+import React, { useEffect, useId, useRef, type ReactNode } from 'react'
 import { triggerHaptic } from './haptics.js'
 
 export interface ModalProps {
@@ -11,6 +11,13 @@ export interface ModalProps {
   footer?: ReactNode
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl'
   className?: string
+  /**
+   * ARIA role of the dialog surface. `"dialog"` by default; `AlertDialog`
+   * passes `"alertdialog"` so assistive tech interrupts for the confirmation.
+   */
+  role?: 'dialog' | 'alertdialog'
+  /** id of an element rendered inside the body that describes the dialog. */
+  describedBy?: string
 }
 
 export interface KbdItem {
@@ -31,7 +38,7 @@ export function KbdLegend({ items, className = '' }: KbdLegendProps): ReactNode 
     <div className={`flex flex-wrap items-center gap-3 font-mono text-[11px] text-[var(--muted)] ${className}`}>
       {items.map((item, idx) => (
         <span key={idx} className="inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 rounded bg-[var(--surface2)] border border-[var(--border)] text-[var(--fg)] text-[10px] shadow-sm">
+          <kbd className="px-1.5 py-0.5 rounded bg-[var(--surface-2)] border border-[var(--border)] text-[var(--fg)] text-[10px] shadow-sm">
             {item.key}
           </kbd>
           <span className="text-[var(--muted)]">{item.label}</span>
@@ -42,7 +49,13 @@ export function KbdLegend({ items, className = '' }: KbdLegendProps): ReactNode 
 }
 
 /**
- * Tactile Modal Dialog with Accessible Focus Trap, Backdrop Blur and Monospace Esc Handle
+ * Tactile Modal Dialog with Accessible Focus Trap, Backdrop Blur and Monospace Esc Handle.
+ *
+ * The rendered title element owns a generated id and the dialog surface is
+ * labelled by it (`aria-labelledby`), so a screen reader announces the dialog
+ * without the caller wiring anything. The Escape handler, the Tab focus trap
+ * and the focus restoration live in the `isOpen` effect below — they are part
+ * of the contract and must not regress.
  */
 export function Modal({
   isOpen,
@@ -52,9 +65,13 @@ export function Modal({
   footer,
   maxWidth = 'md',
   className = '',
+  role = 'dialog',
+  describedBy,
 }: ModalProps): ReactNode {
   const modalRef = useRef<HTMLDivElement>(null)
   const prevFocusedRef = useRef<HTMLElement | null>(null)
+  const titleId = useId()
+  const hasTitle = title !== undefined && title !== null && title !== ''
 
   useEffect(() => {
     if (!isOpen) return
@@ -122,8 +139,10 @@ export function Modal({
 
   return (
     <div
-      role="dialog"
+      role={role}
       aria-modal="true"
+      aria-labelledby={hasTitle ? titleId : undefined}
+      aria-describedby={describedBy}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
     >
       {/* Backdrop */}
@@ -146,7 +165,7 @@ export function Modal({
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)] bg-[var(--surface)]">
-          <div className="font-mono text-sm uppercase tracking-wider text-[var(--cyan)] flex items-center gap-2">
+          <div id={titleId} className="font-mono text-sm uppercase tracking-wider text-[var(--cyan)] flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[var(--cyan)] animate-pulse" />
             {title}
           </div>
@@ -156,7 +175,7 @@ export function Modal({
               triggerHaptic('tap')
               onClose()
             }}
-            className="font-mono text-xs text-[var(--muted)] hover:text-[var(--fg)] px-2 py-1 rounded hover:bg-[var(--surface2)] transition-colors"
+            className="font-mono text-xs text-[var(--muted)] hover:text-[var(--fg)] px-2 py-1 rounded hover:bg-[var(--surface-2)] transition-colors"
             title="Press Esc to close"
           >
             [ESC]
@@ -189,7 +208,11 @@ export interface AlertDialogProps {
 }
 
 /**
- * Tactical Cyberpunk Confirmation / Alert Dialog with Accessible Focus Guard
+ * Tactical Cyberpunk Confirmation / Alert Dialog with Accessible Focus Guard.
+ *
+ * Reuses <Modal> for the trap/Escape/restore behaviour but asserts
+ * `role="alertdialog"` and points `aria-describedby` at the message, so the
+ * question is announced as the interruption it is.
  */
 export function AlertDialog({
   isOpen,
@@ -201,12 +224,16 @@ export function AlertDialog({
   cancelLabel = 'Cancel',
   tone = 'danger',
 }: AlertDialogProps): ReactNode {
+  const messageId = useId()
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title={title ?? 'Alert'}
       maxWidth="sm"
+      role="alertdialog"
+      describedBy={messageId}
       footer={
         <div className="flex items-center justify-end gap-3 w-full">
           <button
@@ -236,7 +263,9 @@ export function AlertDialog({
         </div>
       }
     >
-      <div className="text-sm text-[var(--fg)] leading-relaxed">{message}</div>
+      <div id={messageId} className="text-sm text-[var(--fg)] leading-relaxed">
+        {message}
+      </div>
     </Modal>
   )
 }

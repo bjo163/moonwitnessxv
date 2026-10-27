@@ -206,6 +206,58 @@ pre,
   color: rgba(247, 244, 236, 0.85);
 }
 
+/* ---------- Distressed Zine Frame (the one torn-edge owner) ----------
+   The same clip-path technique the tape, sticker, paper-card and cyber-button
+   rules already use, but centralised behind <DistressedBorder> so no surface
+   re-derives it. Colour comes only from semantic tokens. */
+.m-distressed {
+  position: relative;
+  display: block;
+  padding: var(--s4);
+  background: var(--surface);
+  color: var(--fg);
+  box-shadow: var(--shadow);
+  clip-path: polygon(
+    0% 3%, 6% 1%, 13% 3%, 21% 0%, 29% 3%, 37% 1%, 45% 3%, 54% 0%, 62% 3%, 70% 1%, 79% 3%, 88% 0%, 96% 2%, 100% 5%,
+    98% 15%, 100% 27%, 97% 39%, 100% 51%, 98% 63%, 100% 75%, 97% 87%, 100% 96%,
+    93% 99%, 84% 97%, 74% 100%, 64% 97%, 55% 100%, 45% 97%, 35% 100%, 25% 97%, 15% 100%, 6% 98%, 1% 95%,
+    3% 84%, 0% 71%, 3% 58%, 0% 45%, 3% 32%, 0% 18%
+  );
+}
+.m-distressed-edge {
+  position: absolute;
+  inset: var(--s1);
+  border: var(--line);
+  pointer-events: none;
+  clip-path: polygon(
+    1% 5%, 8% 3%, 16% 5%, 24% 2%, 32% 5%, 41% 3%, 49% 5%, 57% 2%, 66% 5%, 74% 3%, 82% 5%, 91% 2%, 99% 4%,
+    97% 14%, 99% 28%, 96% 42%, 99% 56%, 97% 70%, 96% 84%, 99% 95%,
+    90% 98%, 80% 95%, 69% 98%, 58% 95%, 47% 98%, 36% 95%, 25% 98%, 13% 95%, 3% 97%,
+    5% 85%, 2% 70%, 5% 55%, 2% 40%, 4% 25%, 1% 12%
+  );
+}
+.m-distressed[data-tone="pink"] .m-distressed-edge {
+  border-color: var(--pink);
+}
+.m-distressed[data-tone="cyan"] .m-distressed-edge {
+  border-color: var(--cyan);
+}
+.m-distressed[data-tone="accent"] .m-distressed-edge {
+  border-color: var(--accent);
+}
+.m-distressed[data-edge="rough"] {
+  clip-path: polygon(2% 0%, 100% 3%, 98% 97%, 0% 100%);
+}
+.m-distressed[data-edge="rough"] .m-distressed-edge {
+  clip-path: polygon(0% 2%, 98% 0%, 100% 96%, 2% 100%);
+}
+.m-distressed[data-edge="cut"] {
+  clip-path: polygon(8px 0%, 100% 0%, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%, 0% 8px);
+}
+.m-distressed[data-edge="cut"] .m-distressed-edge {
+  clip-path: polygon(6px 0%, 100% 0%, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0% 100%, 0% 6px);
+}
+
 /* ---------- Layout Shell ---------- */
 .m-shell {
   display: grid;

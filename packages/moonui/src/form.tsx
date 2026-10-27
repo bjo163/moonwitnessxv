@@ -1,7 +1,9 @@
+import { Children, cloneElement, isValidElement } from 'react'
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
   InputHTMLAttributes,
+  MouseEvent,
   ReactNode,
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
@@ -12,6 +14,23 @@ import { triggerHaptic, type HapticPattern } from './client/haptics.js'
 export type ButtonVariant = 'primary' | 'accent' | 'cyan' | 'paper' | 'ghost' | 'danger' | 'cyber'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
+/**
+ * Label + control + help/error text, with the ARIA wiring done for you.
+ *
+ * `aria-describedby` (hint OR error, whichever is actually rendered) and
+ * `aria-invalid` are injected into the control element passed as `children`
+ * — that is how this stays non-breaking: call sites keep writing
+ * `<Field htmlFor="x"><TextInput id="x" /></Field>` and need no new props.
+ * Three behaviours are worth knowing, because they are not visible here:
+ * 1. the ids derive from `htmlFor` (`<htmlFor>-hint` / `<htmlFor>-error`), so a
+ *    `Field` without `htmlFor` renders its hint/error unlinked — the label
+ *    needs it anyway;
+ * 2. `children` elements that already declare `aria-describedby` /
+ *    `aria-invalid` keep theirs (explicit consumer wiring wins, per attribute);
+ * 3. `<input type="hidden">` children are skipped, and any wrapper element
+ *    (a `div`, a Fragment) receives nothing useful — put the control as the
+ *    direct child, which is what every in-repo call site already does.
+ */
 export function Field({
   label,
   htmlFor,
@@ -25,14 +44,50 @@ export function Field({
   error?: ReactNode
   children: ReactNode
 }): ReactNode {
+  const hintId = htmlFor ? `${htmlFor}-hint` : undefined
+  const errorId = htmlFor ? `${htmlFor}-error` : undefined
+  const showHint = Boolean(hint) && !error
+  const describedBy = [showHint ? hintId : undefined, error ? errorId : undefined]
+    .filter((id): id is string => Boolean(id))
+    .join(' ')
+
+  const annotated = Children.map(children, (child) => {
+    if (!isValidElement(child)) {
+      return child
+    }
+    const props = child.props as { type?: unknown; 'aria-describedby'?: unknown; 'aria-invalid'?: unknown }
+    if (props.type === 'hidden') {
+      return child
+    }
+    const extra: Record<string, unknown> = {}
+    if (describedBy && props['aria-describedby'] === undefined) {
+      extra['aria-describedby'] = describedBy
+    }
+    if (error && props['aria-invalid'] === undefined) {
+      extra['aria-invalid'] = 'true'
+    }
+    if (Object.keys(extra).length === 0) {
+      return child
+    }
+    return cloneElement(child, extra)
+  })
+
   return (
     <div className="m-field">
       <label className="m-field-label" htmlFor={htmlFor}>
         {label}
       </label>
-      {children}
-      {hint && !error ? <span className="m-field-hint">{hint}</span> : null}
-      {error ? <span className="m-field-error">{error}</span> : null}
+      {annotated}
+      {showHint ? (
+        <span id={hintId} className="m-field-hint">
+          {hint}
+        </span>
+      ) : null}
+      {error ? (
+        <span id={errorId} className="m-field-error">
+          {error}
+        </span>
+      ) : null}
     </div>
   )
 }
@@ -134,6 +189,18 @@ export function Button({
   haptic?: HapticPattern | boolean
   loading?: boolean
 }): ReactNode {
+  // React refuses to render a host element that carries a function prop from a
+  // Server Component, and these buttons are rendered by server routes — so the
+  // handler exists only when the caller actually asked for one.
+  const handle = haptic || onClick
+    ? (e: MouseEvent<HTMLButtonElement>) => {
+        if (haptic) {
+          triggerHaptic(typeof haptic === 'string' ? haptic : 'tap')
+        }
+        onClick?.(e)
+      }
+    : undefined
+
   return (
     <button
       className={cn('m-btn', className)}
@@ -142,12 +209,7 @@ export function Button({
       type={type ?? 'button'}
       disabled={disabled || loading}
       aria-busy={loading ? 'true' : undefined}
-      onClick={(e) => {
-        if (haptic) {
-          triggerHaptic(typeof haptic === 'string' ? haptic : 'tap')
-        }
-        onClick?.(e)
-      }}
+      onClick={handle}
       {...rest}
     >
       {loading ? (
@@ -185,17 +247,21 @@ export function LinkButton({
   size?: ButtonSize
   haptic?: HapticPattern | boolean
 }): ReactNode {
+  const handle = haptic || onClick
+    ? (e: MouseEvent<HTMLAnchorElement>) => {
+        if (haptic) {
+          triggerHaptic(typeof haptic === 'string' ? haptic : 'tap')
+        }
+        onClick?.(e)
+      }
+    : undefined
+
   return (
     <a
       className={cn('m-btn', className)}
       data-variant={variant}
       data-size={size}
-      onClick={(e) => {
-        if (haptic) {
-          triggerHaptic(typeof haptic === 'string' ? haptic : 'tap')
-        }
-        onClick?.(e)
-      }}
+      onClick={handle}
       {...rest}
     >
       {children}

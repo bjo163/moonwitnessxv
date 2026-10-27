@@ -11,6 +11,9 @@ import {
   TableSkeleton,
   GlitchText,
   CyberFrame,
+  Crown,
+  BrandLogo,
+  DistressedBorder,
 } from '../dist/index.js'
 
 describe('MoonUI Core Primitives SSR Rendering', () => {
@@ -102,5 +105,69 @@ describe('MoonUI Core Primitives SSR Rendering', () => {
     assert.ok(frameHtml.includes('class="m-cyber-frame"'))
     assert.ok(frameHtml.includes('data-tone="pink"'))
     assert.ok(frameHtml.includes('Tactical HUD'))
+  })
+
+  it('renders DistressedBorder with the shared torn-edge class contract', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(DistressedBorder, { tone: 'pink', edge: 'cut', className: 'hq-panel' }, 'Transmission 001')
+    )
+    assert.ok(html.includes('class="m-distressed hq-panel"'), 'composes with consumer classes, no second renderer')
+    assert.ok(html.includes('data-tone="pink"'))
+    assert.ok(html.includes('data-edge="cut"'))
+    assert.ok(html.includes('Transmission 001'))
+
+    const defaults = renderToStaticMarkup(React.createElement(DistressedBorder, null, 'plain'))
+    assert.ok(defaults.includes('class="m-distressed"'))
+    assert.ok(defaults.includes('data-tone="chalk"'))
+    assert.ok(defaults.includes('data-edge="torn"'))
+  })
+
+  it('keeps the distressed edge purely decorative and token-coloured', () => {
+    const html = renderToStaticMarkup(React.createElement(DistressedBorder, { tone: 'cyan' }, 'Signal'))
+    assert.ok(
+      html.includes('class="m-distressed-edge" aria-hidden="true"'),
+      'the torn outline is a graphic, never read out'
+    )
+    assert.ok(!/#[0-9a-fA-F]{3,8}/.test(html), 'the frame exposes no raw hex literal')
+    assert.ok(!html.includes('style='), 'colour comes from moon.css classes and semantic tokens, not inline styles')
+  })
+
+  it('renders Crown and BrandLogo through currentColor so the palette stays in tokens', () => {
+    const crownHtml = renderToStaticMarkup(React.createElement(Crown, { tone: 'cyan', size: 'lg' }))
+    assert.ok(crownHtml.includes('stroke="currentColor"'))
+    assert.ok(crownHtml.includes('data-tone="cyan"'))
+    assert.ok(crownHtml.includes('data-size="lg"'))
+    assert.ok(crownHtml.includes('aria-hidden="true"'))
+    assert.ok(!/#[0-9a-fA-F]{3,8}/.test(crownHtml), 'the crown carries no hex of its own')
+
+    const brandHtml = renderToStaticMarkup(
+      React.createElement(BrandLogo, { href: '/denpa', subtitle: 'Empire of static', size: 'lg' })
+    )
+    assert.ok(brandHtml.includes('class="m-brand-wrap"'))
+    assert.ok(brandHtml.includes('data-size="lg"'))
+    assert.ok(brandHtml.includes('href="/denpa"'), 'BrandLogo reuses the one Crown primitive')
+    assert.ok(brandHtml.includes('<svg'))
+  })
+})
+
+describe('Server-safe button contract', () => {
+  // A Server Component may render Button and LinkButton, and React refuses to
+  // serialise a function prop onto a host element — so the handler has to be
+  // genuinely absent, not merely inert.
+  it('carries no handler when the caller asked for no interaction', () => {
+    const plain = Button({ type: 'submit' }, 'Search') as React.ReactElement<{ onClick?: unknown }>
+    assert.equal(plain.props.onClick, undefined, 'a server-rendered Button must not expose onClick')
+
+    const link = LinkButton({ href: '/reader/compare' }, 'Compare') as React.ReactElement<{ onClick?: unknown }>
+    assert.equal(link.props.onClick, undefined, 'a server-rendered LinkButton must not expose onClick')
+  })
+
+  it('keeps the handler when a caller or a haptic pattern needs one', () => {
+    const onClick = (): void => {}
+    const interactive = Button({ onClick }, 'Copy') as React.ReactElement<{ onClick?: unknown }>
+    assert.equal(typeof interactive.props.onClick, 'function')
+
+    const hapticOnly = LinkButton({ href: '/id', haptic: true }, 'Open') as React.ReactElement<{ onClick?: unknown }>
+    assert.equal(typeof hapticOnly.props.onClick, 'function', 'haptic alone still earns its handler')
   })
 })

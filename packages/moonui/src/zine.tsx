@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { type HTMLAttributes, type ReactNode } from 'react'
 import { cn } from './cn.js'
 import { ProgressBar, type ProgressTone } from './data.js'
 import { Chevron } from './glyph.js'
@@ -9,6 +9,11 @@ export type CrownSize = 'sm' | 'md' | 'lg'
 /**
  * Hand-drawn 3-point Basquiat crown SVG — the shared signature icon across
  * Dock, Headquarters, and Login.
+ *
+ * Colour is never passed in: `stroke="currentColor"` plus the `.m-crown-svg`
+ * rule in `moon.css` resolve the tone through the `--accent` / `--cyan` /
+ * `--pink` custom properties, so this icon cannot drift from the token set.
+ * `BrandLogo` composes this same primitive instead of redrawing the crown.
  */
 export function Crown({
   tone = 'gold',
@@ -80,6 +85,50 @@ export function ZineNote({
 }): ReactNode {
   return (
     <div className={cn('m-zine-sticker', className)} data-tone={tone} data-tilt={tilt}>
+      {children}
+    </div>
+  )
+}
+
+export type DistressedTone = 'chalk' | 'pink' | 'cyan' | 'accent'
+export type DistressedEdge = 'torn' | 'rough' | 'cut'
+
+export interface DistressedBorderProps extends HTMLAttributes<HTMLDivElement> {
+  /** chalk-white marker outline by default; tone only recolours the ring */
+  tone?: DistressedTone
+  /** silhouette of the frame: jagged tear, single-pass wobble, or chamfered cut */
+  edge?: DistressedEdge
+  children?: ReactNode
+}
+
+/**
+ * The one distressed zine frame in the design system.
+ *
+ * Until now the torn-edge treatment existed only as four private `clip-path`
+ * rules scattered over `moon.css` (tape, sticker, paper card, cyber button), so
+ * every app that wanted the look had to re-derive it. This primitive owns it:
+ * a clipped container plus one decorative, `aria-hidden` outline ring that is
+ * clipped on a slightly different polygon, which is what reads as a hand-drawn
+ * double stroke.
+ *
+ * Everything visual stays in `.m-distressed*` classes and semantic tokens
+ * (`--surface`, `--fg`, `--chalk`, `--pink`, `--cyan`, `--accent`, `--shadow`,
+ * `--line`, spacing) — no colour is passed through props, so a frame cannot
+ * drift from the palette. Pair it with `<Crown>` / `<BrandLogo>` (same
+ * currentColor + custom-property discipline) rather than redrawing the mark.
+ *
+ * Server-safe: no state, no effects, no hooks.
+ */
+export function DistressedBorder({
+  tone = 'chalk',
+  edge = 'torn',
+  className,
+  children,
+  ...rest
+}: DistressedBorderProps): ReactNode {
+  return (
+    <div className={cn('m-distressed', className)} data-tone={tone} data-edge={edge} {...rest}>
+      <span className="m-distressed-edge" aria-hidden="true" />
       {children}
     </div>
   )
