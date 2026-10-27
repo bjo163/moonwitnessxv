@@ -1,6 +1,6 @@
 # M05-21 — Generated app workspace integration worktree evidence
 
-**State:** positive/negative integration evidence in the shared worktree; not closed. Baseline HEAD before this work: `bb751262d9ae215620acc634998fb63ab6e4b887` on `dev`, equal to `origin/dev`. No result SHA exists. M05-19 and M05-20 are still open pending exact-SHA integration evidence.
+**State:** positive/negative integration evidence is implemented; closure awaits exact-SHA CI and integrated review. Original baseline HEAD: `bb751262d9ae215620acc634998fb63ab6e4b887` on `dev`, equal to `origin/dev`.
 
 **Revalidation:** current `HEAD`/`origin/dev` advanced to `2a3aaf16a19a01264de6f1cab4079a1ea65f6cec` through unrelated integration commits. The disposable workspace smoke reran successfully against current App Factory worktree output; repo lock remains unchanged. No GitHub status/run exists for the current branch SHA.
 
@@ -28,3 +28,23 @@
 - No Docker image for the generated Vite app was built. Current `Dockerfile.web` would be the wrong runtime contract for it.
 - Independent review, exact integration SHA, and CI remain required before closure. M05-22 remains ineligible until M05-21 is integrated and accepted.
 - Rollback: delete this diagnostic and audit report; the test's temporary workspace is automatically removed. Repository `pnpm-lock.yaml` and generated app directories were not changed.
+
+## Revalidation after M05-19/M05-20 integration
+
+- **Observed SHA:** `664cb082bafcfc52bf9e333911449af240a7813c` on `dev` and `origin/dev`; M05-19 and M05-20 are checked in TODO at this revision.
+- `pnpm exec node scripts/diagnostics/app-factory-workspace-smoke.mjs` — exit 0. The fresh disposable frontend and worker resolved from workspace manifests; lockfile-only resolution, frozen install, typechecks, Vite build, route tests, lint, and worker build passed. The traversal negative case was rejected and left `apps/` empty. The repository lockfile remained unchanged.
+- `pnpm exec eslint scripts/diagnostics/app-factory-workspace-smoke.mjs` — exit 0.
+- The packet's `apps/radio/src/addons.ts` path is obsolete after the app rename; the current addon registry is `apps/arsy/src/addons.ts`. `Dockerfile.web` and `pnpm verify:docker` map only the existing Next.js apps Dock and Headquarters. Generated frontend output is Vite-based; no production app/route or Vite container contract has been approved. No Docker image was built and no unsupported Vite target was introduced.
+- Exact-SHA CI [40500018547](https://github.com/bjo163/moonwitnessxv/actions/runs/40500018547) completed successfully for `664cb082bafcfc52bf9e333911449af240a7813c` and promoted the same SHA to `main`. CI verifies the repository's standard gates; it does not execute the M05-21 disposable workspace smoke.
+- Independent integrated review found the workspace positive/negative evidence and the no-Vite-container boundary consistent with current contracts. The review also confirms the smoke reuses already-built core/MoonUI `dist`, so it does not prove those libraries rebuild from source inside the generated fixture.
+- **Status remains open pending owner resolution of the container criterion:** the evidence proves generated workspace behavior and that no current production container contract justifies a Vite target; it does not produce a runnable generated-app image. No Docker image for generated Vite output was built, and no target was invented.
+
+## Container mapping verification at `deb1fa74a7d6c37059bcf9f6219ca05b28dfce06`
+
+- Added `test/app-factory/container-mapping.test.mjs`, a deterministic contract test of the App Factory template and `Dockerfile.web`.
+- `pnpm exec node --test test/app-factory/container-mapping.test.mjs` — 3/3 passed: generated frontend is Vite with no Next artifacts; Dock and Headquarters manifests match `Dockerfile.web`'s Next build/runtime; generated Vite is rejected by that Next-only contract.
+- `pnpm exec node scripts/diagnostics/app-factory-workspace-smoke.mjs` — exit 0 at this source revision; frontend and worker lockfile generation/frozen install, typechecks, Vite build, route tests, lint, worker build passed; traversal slug rejected without writing an app.
+- Built Dock from a clean `git archive` snapshot at `deb1fa74a7d6c37059bcf9f6219ca05b28dfce06` using `docker build -f Dockerfile.web --build-arg APP=dock --build-arg APP_PORT=3001`; image `moonwitnessx:m05-21-dock-deb1fa7` built successfully (image config digest `sha256:c7866d135e11cb0cb427a117ebe1577f7dfc06004d22012a3dd4b98be3d33577`).
+- Built Headquarters from the same clean snapshot using `docker build -f Dockerfile.web --build-arg APP=headquarters --build-arg APP_PORT=3002`; image `moonwitnessx:m05-21-hq-deb1fa7` built successfully (image config digest `sha256:67235978a92a4e046432b9f39b709ada76c751c848b649e458f2040c45c87198`). Next.js reported its existing middleware deprecation warning; builds completed successfully.
+- No Vite container target or production route was justified or created. The positive container mapping applies to the two existing Next applications; the negative contract test prevents treating the Vite starter as a valid `Dockerfile.web` target. No generated-Vite image or deployment is claimed.
+- Independent read-only review found the mapping test accurate and consistent with the packet. The full CI run at `deb1fa7` predates this new test; integration and exact-SHA CI for the new test remain required before closure.
