@@ -32,4 +32,4 @@ No secrets, private witness data, new domain owner, app API, task-status registe
 
 The integrator inspected the proposal, harness, and focused tests. An independent read-only reviewer inspected commit `8c2e219` and found no blocker; the owner ratified the contract in this conversation. Roll back only the four task files in commit `8c2e219` after confirming no dependent task used them; preserve unrelated worktree changes. The harness is an executable acceptance fixture, not atomic cross-process locking and must not be presented as a production lock system.
 
-**TODO status:** M29-02 may close at exact result SHA `8c2e2198a46f9b1c9c66b802241b3def9e8e0358`; M29-03 is now eligible and is handled separately.
+**TODO status:** Reopened pending M29-01's integrated-SHA evidence. Historical artifact and owner ratification remain valid; rerun the harness after M29-01 closes before marking this task complete.

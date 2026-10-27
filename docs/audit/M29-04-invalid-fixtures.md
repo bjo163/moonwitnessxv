@@ -29,4 +29,6 @@ At `d61f8a8077422b26607008bb5eaf348e89f3728a`:
 
 No production source, command wiring, TODO status, network, or real witness data was changed. This is fixture proof only; it does not wire the validator into root verification/CI. Roll back only the seven files listed above from commit `d61f8a8`; preserve all unrelated worktree changes.
 
-**Next eligible task:** M29-05 — verify one low-context agent handoff.
+**Status:** Reopened pending M29-03 revalidation after M29-02 integration. The earlier exact-SHA fixture test remains historical evidence; repeat it only after the predecessor is closed in TODO.
+
+**Next eligible task:** M29-05 after M29-04 is revalidated and closed.

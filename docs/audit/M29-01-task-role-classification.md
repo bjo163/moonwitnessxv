@@ -6,7 +6,7 @@
 **Date:** 2026-10-27
 **Worker:** AI Pair Programmer
 **Reviewer:** Independent read-only reviewer (corrective review: no remaining code/test blockers)
-**Status:** OPEN — exact integrated-SHA evidence pending
+**Status:** Evidence verified at source SHA `dee9b40dabeacbef7007a46e650a8b3257915c30`; M29-01 closure is recorded in the current TODO update. Independent reviewer found no blocker.
 
 ---
 
@@ -63,6 +63,15 @@ node --test test/planning/task-role-classification.test.mjs
 
 - **Rollback Procedure:** Delete `scripts/planning/task-classifier.mjs`, `test/planning/task-role-classification.test.mjs`, `docs/planning/TASK_ROLE_CLASSIFICATION.md`, and revert the `M29-01` row in `TODO.md`.
 - **Limitations:** This task classifies task roles only; it does not claim multi-agent leasing contracts (`M29-02`), handoff implementations (`M29-05`), or LUMEN runtime integration.
-- **Review finding and correction:** The initial implementation classified any syntactically shaped ID as a leaf, even when absent from TODO. `validateTaskClaim` now checks task existence against the supplied/current register and throws `UNKNOWN_TASK`; tests now verify that all 21 mappings exactly match the umbrella set and every mapped child exists as a same-milestone leaf. The independent reviewer rechecked the correction and found no remaining code/test blocker. Exact-SHA proof is pending.
+- **Review finding and correction:** The initial implementation classified any syntactically shaped ID as a leaf, even when absent from TODO. `validateTaskClaim` now checks task existence against the supplied/current register and throws `UNKNOWN_TASK`; tests verify that all 21 mappings exactly match the umbrella set and every mapped child exists as a same-milestone leaf. The independent reviewer rechecked the correction and found no remaining code/test blocker.
 - **Rollback:** Revert only the classifier, focused test, registry and this evidence report after checking dependent tasks; preserve all unrelated worktree changes.
-- **Next Eligible Task:** `M29-02` remains subject to exact-SHA revalidation after M29-01 is integrated; no downstream task is unlocked by this worktree-only report.
+- **Next Eligible Task:** `M29-02` becomes eligible after this status evidence is integrated; its lease harness will be revalidated separately against the resulting `dev` SHA.
+
+## Integrated exact-SHA revalidation
+
+At `dee9b40dabeacbef7007a46e650a8b3257915c30`, using a clean isolated verification checkout:
+
+- `node --test test/planning/task-role-classification.test.mjs` — 2 passed, 0 failed; 360 unique TODO rows, 21 umbrellas, 339 leaves, complete child mappings, and invalid/umbrella/conflicting claim rejection.
+- M02-06 is checked in TODO and its hierarchy artifact is present.
+- Independent read-only review at this exact SHA found no classifier issue; reviewer did not run tests.
+- Node `v24.22.1`; frozen workspace install used pnpm `10.33.4` in an isolated verification worktree.
