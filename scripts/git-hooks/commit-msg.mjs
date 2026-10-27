@@ -22,7 +22,7 @@ if (
 // Conventional Commits pattern:
 // type(scope)!: subject
 const CONVENTIONAL_REGEX =
-  /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_\-\.\/]+\))?(!)?: .+/
+  /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_\-./]+\))?(!)?: .+/
 
 const firstLine = msg.split('\n')[0].trim()
 

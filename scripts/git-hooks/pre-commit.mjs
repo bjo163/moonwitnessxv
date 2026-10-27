@@ -44,7 +44,7 @@ try {
   execSync(`node "${join(repoRoot, 'scripts', 'check-ui-consistency.mjs')}"`, { stdio: 'inherit' })
 
   exit(0)
-} catch (err) {
+} catch {
   console.error('\n\x1b[31m[GIT GATE: PRE-COMMIT FAILED]\x1b[0m Pre-commit quality checks failed.')
   exit(1)
 }

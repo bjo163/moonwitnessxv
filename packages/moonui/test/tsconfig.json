@@ -1,0 +1,19 @@
+{
+  // Proyek khusus berkas tes packages/moonui (pola yang sama dengan
+  // apps/arsy/test/tsconfig.json): noEmit, terlihat oleh ESLint
+  // projectService tanpa ikut ter-emit ke dist/. Tes mengimpor hasil build
+  // paket (../dist/*.d.ts), jadi proyek referensi harus di-build lebih dulu.
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "incremental": false,
+    "declaration": false,
+    "declarationMap": false,
+    "types": ["node", "react"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx"
+  },
+  "include": ["./**/*.ts"],
+  "references": [{ "path": "../tsconfig.json" }]
+}

@@ -25,6 +25,10 @@ export const GLOBAL_IGNORES = [
   '**/.next/types/**',
   'coverage/**',
   '**/public/**',
+  // Per-agent teamwork workspaces under .agents/ are machine-local scratch
+  // content (gitignored at .gitignore:19). They are not repository source and
+  // must not be linted.
+  '.agents/teamwork/**',
 ]
 
 export const typescriptRules = {
@@ -111,9 +115,9 @@ export function createMoonwitnessConfig(options = {}) {
       },
     },
 
-    // 2. React Hooks (Dock, HQ, MoonUI)
+    // 2. React Hooks (Dock, HQ, MoonUI, Cockpit and ECHOLOG operator clients)
     {
-      files: ['apps/dock/**/*.tsx', 'apps/headquarters/**/*.tsx', 'packages/moonui/**/*.tsx', 'apps/cockpit/client/**/*.tsx'],
+      files: ['apps/dock/**/*.tsx', 'apps/headquarters/**/*.tsx', 'packages/moonui/**/*.tsx', 'apps/cockpit/client/**/*.tsx', 'apps/echolog/client/**/*.tsx'],
       plugins: {
         'react-hooks': reactHooks,
         '@moonwitness': moonwitnessPlugin,
@@ -213,6 +217,13 @@ export function createMoonwitnessConfig(options = {}) {
         'packages/cli/**/*.{ts,js}',
         '*.config.mjs',
         '*.config.js',
+        // Node test runners (*.mjs) under package test/ dirs: they execute in
+        // the Node runtime, so the same runtime globals declared above apply.
+        // (Root test/ and app test/ *.mjs already pass via explicit
+        // `import process from 'node:process'`-style imports and inline
+        // `/* global */` comments; adding globals there would trip
+        // no-redeclare, so the pattern is scoped to packages/*/test only.)
+        'packages/*/test/**/*.mjs',
       ],
       languageOptions: {
         ecmaVersion: 2023,
@@ -244,12 +255,28 @@ export function createMoonwitnessConfig(options = {}) {
 
     // 5. Test Files
     {
-      files: ['apps/arsy/test/**/*.ts', 'test/**/*.ts'],
+      files: [
+        'apps/arsy/test/**/*.ts',
+        'test/**/*.ts',
+        'apps/aigateway/test/**/*.ts',
+        'packages/moonui/test/**/*.ts',
+        'packages/skylink-whatsapp/test/**/*.ts',
+      ],
       rules: {
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/require-await': 'off',
         '@typescript-eslint/no-floating-promises': 'off',
         '@moonwitness/no-theological-sameas': 'off',
+      },
+    },
+
+    // node:test fixtures in MoonUI's tests import the full token surface for
+    // drift coverage; some re-exports are asserted through the module object,
+    // so unused named imports here are not dead code in the app sense.
+    {
+      files: ['packages/moonui/test/**/*.ts'],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
       },
     }
   )
