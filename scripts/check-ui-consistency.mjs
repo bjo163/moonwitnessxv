@@ -92,6 +92,7 @@ const MANDATORY_MOONUI_SURFACES = [
   'apps/headquarters/src/app/(admin)/page.tsx',
   'apps/headquarters/src/app/(admin)/world-monitor/page.tsx',
   'apps/cockpit/client/App.tsx',
+  'apps/echolog/client/App.tsx',
 ]
 
 /** App stylesheets to check for local primitive cloning */
@@ -99,6 +100,7 @@ const APP_STYLESHEETS = [
   'apps/dock/src/app/globals.css',
   'apps/headquarters/src/app/globals.css',
   'apps/cockpit/client/cockpit-layout.css',
+  'apps/echolog/client/echolog-layout.css',
 ]
 
 /** Recursively scan directory for files matching extension */
@@ -162,6 +164,7 @@ const filesToInspect = [
   ...scanFiles('apps/dock/src', ['.tsx', '.css']),
   ...scanFiles('apps/headquarters/src', ['.tsx', '.css']),
   ...scanFiles('apps/cockpit/client', ['.tsx', '.css']),
+  ...scanFiles('apps/echolog/client', ['.tsx', '.css']),
   'apps/arsy/src/lib/launchpad.ts',
 ]
 
