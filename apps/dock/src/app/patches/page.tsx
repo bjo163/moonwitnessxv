@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
-import { Alert, Badge, PageHeader } from '@moonwitness/moonui'
+import { Badge, CardSkeleton, PageHeader } from '@moonwitness/moonui'
 import { readPatchesRegistry, type PatchesRegistry } from '@/data/queries/journey'
+import { panelErrorMessage } from '@/data/queries/error'
 import { PatchesExplorer } from '@/ui/client/PatchesExplorer'
+import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
@@ -18,14 +20,21 @@ export default async function PatchesPage(): Promise<ReactNode> {
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
   const copy = getStatesCopy(locale)
 
-  let registry: PatchesRegistry | null = null
-  let error: string | null = null
-
-  try {
-    registry = await readPatchesRegistry()
-  } catch (err) {
-    error = err instanceof Error ? err.message : copy.errorPatchesUnavailable
+  const panelCopy: PanelCopy = {
+    loadingLabel: copy.loadingContent,
+    emptyTitle: copy.emptyPatches,
+    errorMessage: copy.errorPatchesUnavailable,
   }
+
+  // The header badges are derived from the same read, so the registry is awaited
+  // here; the explorer itself still speaks all four states through PanelState.
+  const outcome = await readPanel<PatchesRegistry>(
+    readPatchesRegistry,
+    panelCopy,
+    (registry) => registry.patches.length === 0 && registry.mandates.length === 0,
+    (err) => panelErrorMessage(err, copy.errorPatchesUnavailable),
+  )
+  const registry = outcome.state === 'ready' ? outcome.value : null
 
   return (
     <div className="m-stack" style={{ gap: 20 }}>
@@ -47,13 +56,20 @@ export default async function PatchesPage(): Promise<ReactNode> {
         }
       />
 
-      {error ? <Alert tone="hot">{error}</Alert> : null}
-      {registry ? (
-        <PatchesExplorer
-          initialPatches={registry.patches}
-          initialMandates={registry.mandates}
-        />
-      ) : null}
+      <OutcomePanel
+        outcome={outcome}
+        copy={panelCopy}
+        skeleton={
+          <div className="m-grid m-grid-3" style={{ gap: 14 }}>
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+        }
+      >
+        {(value) => <PatchesExplorer initialPatches={value.patches} initialMandates={value.mandates} />}
+      </OutcomePanel>
     </div>
   )
 }

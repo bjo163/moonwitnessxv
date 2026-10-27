@@ -1,9 +1,10 @@
-import { MoonApiError } from '@moonwitness/moonql-client'
-import { Alert, Badge, PageHeader } from '@moonwitness/moonui'
+import { Badge, CardSkeleton, PageHeader, TableSkeleton } from '@moonwitness/moonui'
 import { readConstellation, type ConstellationProjection } from '@/data/queries/constellation'
 import { readGraphOverview, type GraphOverview } from '@/data/queries/graph'
+import { panelErrorMessage } from '@/data/queries/error'
 import { ConstellationView } from '@/ui/components/constellation'
 import { GraphReleasePanel } from '@/ui/components/graph-relation'
+import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
@@ -15,26 +16,46 @@ export const metadata = {
   description: 'A read-only ontology projection with sourced aliases, typed edges and reviewer identity decisions.',
 }
 
+/**
+ * Two panels, two reads: the projection and the release overview fail apart,
+ * so a missing release never erases the graph and an empty graph never erases
+ * the release queue. Both are awaited because the page header carries the
+ * graph identity, which belongs to the projection.
+ */
 export default async function ConstellationPage() {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
   const copy = getStatesCopy(locale)
 
-  let projection: ConstellationProjection | null = null
-  let error: string | null = null
-  try {
-    projection = await readConstellation()
-  } catch (err) {
-    error = err instanceof MoonApiError ? err.message : copy.errorConstellationUnavailable
+  const graphCopy: PanelCopy = {
+    loadingLabel: copy.loadingContent,
+    emptyTitle: copy.emptyGraph,
+    emptyHint: copy.emptyGraphHint,
+    errorMessage: copy.errorConstellationUnavailable,
+  }
+  const releaseCopy: PanelCopy = {
+    loadingLabel: copy.loadingContent,
+    emptyTitle: copy.emptyGraphRelease,
+    emptyHint: copy.emptyGraphHint,
+    errorMessage: copy.errorGraphUnavailable,
   }
 
-  let overview: GraphOverview | null = null
-  let graphError: string | null = null
-  try {
-    overview = await readGraphOverview()
-  } catch (err) {
-    graphError = err instanceof MoonApiError ? err.message : copy.errorGraphUnavailable
-  }
+  const [projectionOutcome, overviewOutcome] = await Promise.all([
+    readPanel<ConstellationProjection>(
+      readConstellation,
+      graphCopy,
+      (projection) => projection.nodes.length === 0,
+      (err) => panelErrorMessage(err, copy.errorConstellationUnavailable),
+    ),
+    readPanel<GraphOverview>(
+      readGraphOverview,
+      releaseCopy,
+      (overview) => overview.active === null && overview.candidates.length === 0,
+      (err) => panelErrorMessage(err, copy.errorGraphUnavailable),
+    ),
+  ])
+
+  const projection = projectionOutcome.state === 'ready' ? projectionOutcome.value : null
 
   return (
     <div className="m-stack" style={{ gap: 20 }}>
@@ -45,10 +66,23 @@ export default async function ConstellationPage() {
         actions={projection ? <Badge tone="cyan">{projection.graphId}</Badge> : undefined}
       />
 
-      {error ? <Alert tone="hot">{error}</Alert> : null}
-      {graphError ? <Alert tone="hot">{graphError}</Alert> : null}
-      {projection ? <ConstellationView projection={projection} /> : null}
-      {overview ? <GraphReleasePanel overview={overview} /> : null}
+      <OutcomePanel
+        outcome={projectionOutcome}
+        copy={graphCopy}
+        skeleton={
+          <div className="m-stack" style={{ gap: 14 }}>
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+        }
+      >
+        {(value) => <ConstellationView projection={value} />}
+      </OutcomePanel>
+
+      <OutcomePanel outcome={overviewOutcome} copy={releaseCopy} skeleton={<TableSkeleton rows={4} cols={3} />}>
+        {(value) => <GraphReleasePanel overview={value} />}
+      </OutcomePanel>
     </div>
   )
 }

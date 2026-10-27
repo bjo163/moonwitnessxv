@@ -14,12 +14,10 @@ export interface TransmitResponse {
 }
 
 export async function readLiveTransmissions(): Promise<PublicLiveTransmissionsOutput[]> {
-  try {
-    const res = await serverClient().view('publicLiveTransmissions').read({ limit: 50 })
-    return res.rows
-  } catch {
-    return []
-  }
+  // A failed read propagates instead of becoming an empty list: an outage and a
+  // quiet band are different facts, and the panel shows them differently.
+  const res = await serverClient().view('publicLiveTransmissions').read({ limit: 50 })
+  return res.rows
 }
 
 export async function transmitDenpa(payload: TransmitPayload): Promise<TransmitResponse> {

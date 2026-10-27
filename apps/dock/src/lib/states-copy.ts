@@ -75,7 +75,7 @@ export const statesCopy = defineLocaleCatalog({
     playerPlay: 'PLAY',
     playerStop: 'STOP',
 
-    // Errors & Boundaries (20 keys)
+    // Errors & Boundaries (24 keys)
     errorBoundaryTitle: 'Transmission Interrupted',
     errorBoundaryDescription:
       'An unexpected error occurred while processing this transmission. You may retry or return to the safe home frequency.',
@@ -98,8 +98,12 @@ export const statesCopy = defineLocaleCatalog({
     errorMatchPreviewUnavailable: 'The match preview is unavailable.',
     errorRightsBlocked: 'Text withheld: source rights are not cleared.',
     errorTranslationBlocked: 'Translation withheld — rights are not cleared.',
+    errorStationsUnavailable: 'The Signal Catalog is unavailable.',
+    errorScheduleUnavailable: 'The weekly transmission grid is unavailable.',
+    errorDenpaUnavailable: 'The live transmission feed is unavailable.',
+    errorReaderUnavailable: 'The Corpus Reader is unavailable.',
 
-    // Empty States (27 keys)
+    // Empty States (35 keys)
     emptyNoStations: 'No stations match that filter.',
     emptyStationNoCountry: 'This station has no country reference.',
     emptyStationNoSchedule: 'No slots scheduled for this station yet.',
@@ -129,6 +133,15 @@ export const statesCopy = defineLocaleCatalog({
     emptyDenpaTransmissions: 'No active transmissions captured on this frequency band. Be the first to transmit!',
     emptyPatches: 'No patches match the selected filter.',
     emptyResearch: 'No research records match your search.',
+    emptyGraph: 'The graph is empty',
+    emptyGraphHint: 'Seed the ontology tables before projecting a Constellation.',
+    emptyMatchPreviewIdle: 'Enter both surfaces to compute a comparison. Nothing is previewed before you submit.',
+    emptyReaderPanel: 'No matching source',
+    emptyNowPlaying: 'Nothing is on air right now.',
+    emptyScheduleSlots: 'No slots are scheduled on the weekly grid yet.',
+    emptyScheduleSlotsHint:
+      'The grid shows only windows recorded in the hub; it never fills a day with an invented slot.',
+    emptyGraphRelease: 'No reviewed release is published yet.',
   },
   id: {
     // Forms (56 keys)
@@ -203,7 +216,7 @@ export const statesCopy = defineLocaleCatalog({
     playerPlay: 'PUTAR',
     playerStop: 'HENTIKAN',
 
-    // Errors & Boundaries (20 keys)
+    // Errors & Boundaries (24 keys)
     errorBoundaryTitle: 'Transmisi Terputus',
     errorBoundaryDescription:
       'Terjadi kesalahan yang tidak diharapkan saat memproses transmisi ini. Anda dapat mencoba lagi atau kembali ke frekuensi beranda.',
@@ -226,8 +239,12 @@ export const statesCopy = defineLocaleCatalog({
     errorMatchPreviewUnavailable: 'Pratinjau kecocokan tidak tersedia.',
     errorRightsBlocked: 'Teks ditahan: hak cipta sumber belum disetujui.',
     errorTranslationBlocked: 'Terjemahan ditahan — hak cipta belum disetujui.',
+    errorStationsUnavailable: 'Katalog Sinyal tidak tersedia.',
+    errorScheduleUnavailable: 'Jaringan transmisi mingguan tidak tersedia.',
+    errorDenpaUnavailable: 'Umpan siaran langsung tidak tersedia.',
+    errorReaderUnavailable: 'Pembaca Korpus tidak tersedia.',
 
-    // Empty States (27 keys)
+    // Empty States (35 keys)
     emptyNoStations: 'Tidak ada stasiun yang cocok dengan filter ini.',
     emptyStationNoCountry: 'Stasiun ini tidak memiliki referensi negara.',
     emptyStationNoSchedule: 'Belum ada slot terjadwal untuk stasiun ini.',
@@ -257,6 +274,15 @@ export const statesCopy = defineLocaleCatalog({
     emptyDenpaTransmissions: 'Tidak ada siaran aktif yang tertangkap pada pita frekuensi ini. Jadilah yang pertama memancarkan siaran!',
     emptyPatches: 'Tidak ada patch yang cocok dengan saringan yang dipilih.',
     emptyResearch: 'Tidak ada catatan penelitian yang cocok dengan pencarian Anda.',
+    emptyGraph: 'Graf kosong',
+    emptyGraphHint: 'Isi tabel ontologi sebelum memproyeksikan Konstelasi.',
+    emptyMatchPreviewIdle: 'Masukkan kedua permukaan untuk menghitung perbandingan. Tidak ada pratinjau sebelum Anda mengirim.',
+    emptyReaderPanel: 'Tidak ada sumber yang cocok',
+    emptyNowPlaying: 'Tidak ada siaran yang sedang mengudara.',
+    emptyScheduleSlots: 'Belum ada slot terjadwal pada jaringan mingguan.',
+    emptyScheduleSlotsHint:
+      'Jaringan hanya menampilkan jendela yang tercatat di hub; tidak pernah mengisi hari dengan slot buatan.',
+    emptyGraphRelease: 'Belum ada rilis terverifikasi yang diterbitkan.',
   },
 })
 

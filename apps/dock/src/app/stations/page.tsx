@@ -1,5 +1,6 @@
 import {
   Button,
+  CardSkeleton,
   Field,
   LinkButton,
   PageHeader,
@@ -8,9 +9,11 @@ import {
   SelectInput,
   TextInput,
 } from '@moonwitness/moonui'
-import { listStations } from '@/data/queries/catalog'
+import { listStations, type StationPage } from '@/data/queries/catalog'
+import { panelErrorMessage } from '@/data/queries/error'
 import { PAGE_SIZE } from '@/lib/env'
 import { StationGrid } from '@/ui/components/sections'
+import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
@@ -27,7 +30,22 @@ export default async function StationsPage({
   const copy = getStatesCopy(locale)
 
   const filters = await searchParams
-  const page = await listStations(filters)
+
+  const panelCopy: PanelCopy = {
+    loadingLabel: copy.loadingContent,
+    emptyTitle: copy.emptyNoStations,
+    errorMessage: copy.errorStationsUnavailable,
+  }
+
+  // One read feeds the grid, the filter options and the pagination, so it is
+  // awaited here; the grid still renders all four states through PanelState.
+  const outcome = await readPanel<StationPage>(
+    () => listStations(filters),
+    panelCopy,
+    (page) => page.rows.length === 0,
+    (err) => panelErrorMessage(err, copy.errorStationsUnavailable),
+  )
+  const page = outcome.state === 'ready' ? outcome.value : null
 
   const hrefFor = (target: number): string => {
     const params = new URLSearchParams()
@@ -45,7 +63,11 @@ export default async function StationsPage({
     <div className="m-stack" style={{ gap: 20 }}>
       <PageHeader
         title="Signal Catalog"
-        subtitle={`${filtered ? `${page.total} of ${page.catalogSize}` : page.catalogSize} public stations in the network`}
+        subtitle={
+          page
+            ? `${filtered ? `${page.total} of ${page.catalogSize}` : page.catalogSize} public stations in the network`
+            : undefined
+        }
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Signals' }]}
       />
 
@@ -60,7 +82,7 @@ export default async function StationsPage({
               name="genre"
               defaultValue={filters.genre ?? ''}
               placeholder={copy.formAllGenres}
-              options={page.genres.map((genre) => ({ value: genre, label: genre }))}
+              options={(page?.genres ?? []).map((genre) => ({ value: genre, label: genre }))}
             />
           </Field>
           <Field label={copy.formCountry} htmlFor="country">
@@ -69,7 +91,7 @@ export default async function StationsPage({
               name="country"
               defaultValue={filters.country ?? ''}
               placeholder={copy.formAllCountries}
-              options={page.countries.map((country) => ({ value: country.id, label: country.name }))}
+              options={(page?.countries ?? []).map((country) => ({ value: country.id, label: country.name }))}
             />
           </Field>
           <Button type="submit" variant="accent">
@@ -81,9 +103,29 @@ export default async function StationsPage({
         </form>
       </Panel>
 
-      <StationGrid stations={page.rows} locale={locale} />
-
-      <Pagination page={page.page} pageSize={PAGE_SIZE} total={page.total} hrefFor={hrefFor} />
+      <OutcomePanel
+        outcome={outcome}
+        copy={panelCopy}
+        skeleton={
+          <div className="dk-grid">
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+        }
+      >
+        {(stationPage) => (
+          <>
+            <StationGrid stations={stationPage.rows} locale={locale} />
+            <Pagination
+              page={stationPage.page}
+              pageSize={PAGE_SIZE}
+              total={stationPage.total}
+              hrefFor={hrefFor}
+            />
+          </>
+        )}
+      </OutcomePanel>
     </div>
   )
 }

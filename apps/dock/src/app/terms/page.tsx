@@ -1,12 +1,13 @@
-import { MoonApiError } from '@moonwitness/moonql-client'
-import { Alert, Badge, Button, Field, PageHeader, Panel, Pagination, SelectInput, TextInput } from '@moonwitness/moonui'
+import { Badge, Button, Field, PageHeader, Pagination, Panel, SelectInput, TableSkeleton, TextInput } from '@moonwitness/moonui'
 import {
   readMatchPreview,
   readTerms,
   type MatchPreview,
   type TermsPage,
 } from '@/data/queries/terms'
+import { panelErrorMessage } from '@/data/queries/error'
 import { MatchPreviewView, TermIndexTable, TermList } from '@/ui/components/terms'
+import { DataPanel, OutcomePanel, PanelState, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
@@ -63,25 +64,33 @@ export default async function TermsPageView({
   const page = Math.max(1, Number.parseInt(params.page ?? '1', 10) || 1)
   const offset = (page - 1) * PAGE_SIZE
 
-  let termsPage: TermsPage | null = null
-  let termsError: string | null = null
-  try {
-    termsPage = await readTerms({ ...filters, limit: PAGE_SIZE, offset })
-  } catch (err) {
-    termsError = err instanceof MoonApiError ? err.message : copy.errorTermsUnavailable
+  const listCopy: PanelCopy = {
+    loadingLabel: copy.loadingContent,
+    emptyTitle: copy.emptyTermsTitle,
+    emptyHint: copy.emptyTermsSearchHint,
+    errorMessage: copy.errorTermsUnavailable,
   }
+  const previewCopy: PanelCopy = {
+    loadingLabel: copy.loadingContent,
+    emptyTitle: copy.emptyMatchPreviewIdle,
+    emptyHint: copy.formTermsSearchHint,
+    errorMessage: copy.errorMatchPreviewUnavailable,
+  }
+
+  // The filter shell reads its options from the same projection, so the list is
+  // awaited here; the panel still speaks all four states through PanelState.
+  const outcome = await readPanel<TermsPage>(
+    () => readTerms({ ...filters, limit: PAGE_SIZE, offset }),
+    listCopy,
+    (termsPage) => termsPage.terms.length === 0,
+    (err) => panelErrorMessage(err, copy.errorTermsUnavailable),
+  )
+  const registryReady = outcome.state === 'ready'
+  const options = registryReady ? outcome.value.options : { lanes: [], scopes: [], statuses: [], sources: [] }
+  const total = registryReady ? outcome.value.total : null
 
   const left = stringOf(params.left)
   const right = stringOf(params.right)
-  let preview: MatchPreview | null = null
-  let previewError: string | null = null
-  if (left !== '' && right !== '') {
-    try {
-      preview = await readMatchPreview(left, right)
-    } catch (err) {
-      previewError = err instanceof MoonApiError ? err.message : copy.errorMatchPreviewUnavailable
-    }
-  }
 
   return (
     <div className="m-stack" style={{ gap: 20 }}>
@@ -89,41 +98,43 @@ export default async function TermsPageView({
         title="UNILEX Terms"
         subtitle="Source-backed terminology · forms kept in their own script · every identity is reviewed"
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Terms' }]}
-        actions={termsPage ? <Badge tone="cyan">{termsPage.total} terms</Badge> : undefined}
+        actions={total === null ? undefined : <Badge tone="cyan">{total} terms</Badge>}
       />
 
-      {termsPage ? (
-        <Panel title="Registry" subtitle="The seed is pinned, versioned and explicitly not a validated universal dictionary.">
-          <div className="dk-terms-registry">
-            <p className="dk-terms-notice" role="note">
-              {termsPage.registry.notice}
-            </p>
-            <dl className="dk-terms-registry-meta">
-              <dt>Version</dt>
-              <dd>
-                {termsPage.registry.version} · {termsPage.registry.status}
-              </dd>
-              <dt>Pinned seed</dt>
-              <dd>
-                {termsPage.registry.seedCount} concepts · {termsPage.registry.pin}
-              </dd>
-              <dt>Path</dt>
-              <dd>
-                <code>{termsPage.registry.path}</code>
-              </dd>
-              <dt>Raw SHA-256</dt>
-              <dd>
-                <code className="dk-terms-hash">{termsPage.registry.rawSha256}</code>
-              </dd>
-              <dt>Addenda</dt>
-              <dd>
-                {termsPage.registry.addenda.version}: {termsPage.registry.addenda.ids.join(', ')} —{' '}
-                {termsPage.registry.addenda.notice}
-              </dd>
-            </dl>
-          </div>
-        </Panel>
-      ) : null}
+      <OutcomePanel outcome={outcome} copy={listCopy} skeleton={<TableSkeleton rows={8} cols={7} />}>
+        {(termsPage) => (
+          <Panel title="Registry" subtitle="The seed is pinned, versioned and explicitly not a validated universal dictionary.">
+            <div className="dk-terms-registry">
+              <p className="dk-terms-notice" role="note">
+                {termsPage.registry.notice}
+              </p>
+              <dl className="dk-terms-registry-meta">
+                <dt>Version</dt>
+                <dd>
+                  {termsPage.registry.version} · {termsPage.registry.status}
+                </dd>
+                <dt>Pinned seed</dt>
+                <dd>
+                  {termsPage.registry.seedCount} concepts · {termsPage.registry.pin}
+                </dd>
+                <dt>Path</dt>
+                <dd>
+                  <code>{termsPage.registry.path}</code>
+                </dd>
+                <dt>Raw SHA-256</dt>
+                <dd>
+                  <code className="dk-terms-hash">{termsPage.registry.rawSha256}</code>
+                </dd>
+                <dt>Addenda</dt>
+                <dd>
+                  {termsPage.registry.addenda.version}: {termsPage.registry.addenda.ids.join(', ')} —{' '}
+                  {termsPage.registry.addenda.notice}
+                </dd>
+              </dl>
+            </div>
+          </Panel>
+        )}
+      </OutcomePanel>
 
       <Panel title="Filter the Terms Table" subtitle="Search matches IDs, labels, definitions and recorded forms.">
         <form className="dk-terms-filter-form" method="get" action="/terms" role="search">
@@ -136,7 +147,7 @@ export default async function TermsPageView({
               name="lane"
               defaultValue={filters.lane}
               placeholder={copy.formAllLanes}
-              options={(termsPage?.options.lanes ?? []).map((lane) => ({ value: lane, label: lane }))}
+              options={options.lanes.map((lane) => ({ value: lane, label: lane }))}
             />
           </Field>
           <Field label={copy.formScope} htmlFor="terms-scope">
@@ -145,7 +156,7 @@ export default async function TermsPageView({
               name="scope"
               defaultValue={filters.scope}
               placeholder={copy.formAllScopes}
-              options={(termsPage?.options.scopes ?? []).map((scope) => ({ value: scope, label: scope }))}
+              options={options.scopes.map((scope) => ({ value: scope, label: scope }))}
             />
           </Field>
           <Field label={copy.formEditorialStatus} htmlFor="terms-status">
@@ -154,7 +165,7 @@ export default async function TermsPageView({
               name="status"
               defaultValue={filters.status}
               placeholder={copy.formAllStatuses}
-              options={(termsPage?.options.statuses ?? []).map((status) => ({ value: status, label: status }))}
+              options={options.statuses.map((status) => ({ value: status, label: status }))}
             />
           </Field>
           <Field label={copy.formSource} htmlFor="terms-source">
@@ -163,7 +174,7 @@ export default async function TermsPageView({
               name="source"
               defaultValue={filters.source}
               placeholder={copy.formAllSources}
-              options={(termsPage?.options.sources ?? [])
+              options={options.sources
                 .filter((source) => source.code)
                 .map((source) => ({
                   value: source.code as string,
@@ -177,20 +188,20 @@ export default async function TermsPageView({
         </form>
       </Panel>
 
-      {termsError ? <Alert tone="hot">{termsError}</Alert> : null}
-
-      {termsPage ? (
-        <>
-          <TermIndexTable page={termsPage} />
-          <TermList page={termsPage} />
-          <Pagination
-            page={page}
-            pageSize={PAGE_SIZE}
-            total={termsPage.total}
-            hrefFor={(target) => termsHref(filters, target)}
-          />
-        </>
-      ) : null}
+      <OutcomePanel outcome={outcome} copy={listCopy} skeleton={<TableSkeleton rows={8} cols={7} />}>
+        {(termsPage) => (
+          <>
+            <TermIndexTable page={termsPage} />
+            <TermList page={termsPage} />
+            <Pagination
+              page={page}
+              pageSize={PAGE_SIZE}
+              total={termsPage.total}
+              hrefFor={(target) => termsHref(filters, target)}
+            />
+          </>
+        )}
+      </OutcomePanel>
 
       <Panel
         title="Match preview"
@@ -211,8 +222,26 @@ export default async function TermsPageView({
             {copy.formPreviewMatch}
           </Button>
         </form>
-        {previewError ? <Alert tone="hot">{previewError}</Alert> : null}
-        {preview ? <MatchPreviewView preview={preview} /> : null}
+
+        {left !== '' && right !== '' ? (
+          <DataPanel
+            load={() => readMatchPreview(left, right)}
+            copy={previewCopy}
+            mapError={(err) => panelErrorMessage(err, copy.errorMatchPreviewUnavailable)}
+            skeleton={<TableSkeleton rows={2} cols={4} />}
+          >
+            {(preview: MatchPreview) => <MatchPreviewView preview={preview} />}
+          </DataPanel>
+        ) : (
+          <PanelState
+            state="empty"
+            loadingLabel={previewCopy.loadingLabel}
+            emptyTitle={previewCopy.emptyTitle}
+            emptyHint={previewCopy.emptyHint}
+          >
+            {null}
+          </PanelState>
+        )}
       </Panel>
     </div>
   )

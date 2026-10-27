@@ -1,5 +1,5 @@
 /**
- * Required 115 keys for Dock forms, loading indicators, error boundaries, and empty states.
+ * Required 127 keys for Dock forms, loading indicators, error boundaries, and empty states.
  */
 export const REQUIRED_STATES_UI_KEYS = [
   // Forms (56 keys)
@@ -74,7 +74,7 @@ export const REQUIRED_STATES_UI_KEYS = [
   'playerPlay',
   'playerStop',
 
-  // Errors & Boundaries (20 keys)
+  // Errors & Boundaries (24 keys)
   'errorBoundaryTitle',
   'errorBoundaryDescription',
   'errorTryAgain',
@@ -95,8 +95,12 @@ export const REQUIRED_STATES_UI_KEYS = [
   'errorMatchPreviewUnavailable',
   'errorRightsBlocked',
   'errorTranslationBlocked',
+  'errorStationsUnavailable',
+  'errorScheduleUnavailable',
+  'errorDenpaUnavailable',
+  'errorReaderUnavailable',
 
-  // Empty States (27 keys)
+  // Empty States (35 keys)
   'emptyNoStations',
   'emptyStationNoCountry',
   'emptyStationNoSchedule',
@@ -124,4 +128,12 @@ export const REQUIRED_STATES_UI_KEYS = [
   'emptyDenpaTransmissions',
   'emptyPatches',
   'emptyResearch',
+  'emptyGraph',
+  'emptyGraphHint',
+  'emptyMatchPreviewIdle',
+  'emptyReaderPanel',
+  'emptyNowPlaying',
+  'emptyScheduleSlots',
+  'emptyScheduleSlotsHint',
+  'emptyGraphRelease',
 ]

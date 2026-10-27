@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation'
-import { Badge, LinkButton, PageHeader, Panel, StatCard, Chevron } from '@moonwitness/moonui'
+import { Badge, CardSkeleton, LinkButton, PageHeader, Panel, StatCard, Chevron } from '@moonwitness/moonui'
 import { getStation } from '@/data/queries/catalog'
 import { clock } from '@/lib/time'
 import { Player } from '@/ui/client/Player'
+import { PanelState } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
@@ -41,24 +42,31 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
       <Player stationId={station.id} stationName={station.name} streamUrl={station.streamUrl} />
 
       <Panel title="Reference Telemetry" subtitle="country, region, currency and language metadata">
-        {country ? (
+        <PanelState
+          state={country ? 'ready' : 'empty'}
+          loadingLabel={copy.loadingContent}
+          emptyTitle={copy.emptyStationNoCountry}
+          errorMessage={copy.emptyStationNoCountry}
+        >
           <div className="m-grid m-grid-3">
-            <StatCard label="country" value={`${country.name} (${country.code})`} />
-            <StatCard label="region" value={country.region ?? '—'} />
-            <StatCard label="calling code" value={country.calling ?? '—'} />
-            <StatCard label="currency" value={country.currencyRefRecord?.name ?? '—'} />
-            <StatCard label="language" value={country.officialLangRecord?.name ?? '—'} />
+            <StatCard label="country" value={`${country?.name ?? '—'} (${country?.code ?? '—'})`} />
+            <StatCard label="region" value={country?.region ?? '—'} />
+            <StatCard label="calling code" value={country?.calling ?? '—'} />
+            <StatCard label="currency" value={country?.currencyRefRecord?.name ?? '—'} />
+            <StatCard label="language" value={country?.officialLangRecord?.name ?? '—'} />
             <StatCard label="logged plays" value={plays} />
           </div>
-        ) : (
-          <p className="m-muted">{copy.emptyStationNoCountry}</p>
-        )}
+        </PanelState>
       </Panel>
 
       <Panel title={`Schedule (${slots.length} slots)`} subtitle="weekly transmission windows in UTC">
-        {slots.length === 0 ? (
-          <p className="m-muted">{copy.emptyStationNoSchedule}</p>
-        ) : (
+        <PanelState
+          state={slots.length === 0 ? 'empty' : 'ready'}
+          loadingLabel={copy.loadingContent}
+          emptyTitle={copy.emptyStationNoSchedule}
+          errorMessage={copy.emptyStationNoSchedule}
+          loadingPlaceholder={<CardSkeleton />}
+        >
           <div className="dk-grid">
             {slots.map((slot) => (
               <div className="dk-station" key={slot.id}>
@@ -75,7 +83,7 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
               </div>
             ))}
           </div>
-        )}
+        </PanelState>
       </Panel>
     </div>
   )

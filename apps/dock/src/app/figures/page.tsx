@@ -1,7 +1,8 @@
-import { MoonApiError } from '@moonwitness/moonql-client'
-import { Alert, Badge, PageHeader } from '@moonwitness/moonui'
-import { readFigures, type FigureRegistry } from '@/data/queries/actors'
+import { Badge, CardSkeleton, PageHeader } from '@moonwitness/moonui'
+import { readFigures } from '@/data/queries/actors'
+import { panelErrorMessage } from '@/data/queries/error'
 import { FigureRegistryView } from '@/ui/components/actors'
+import { DataPanel } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
@@ -18,14 +19,6 @@ export default async function FiguresPageView() {
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
   const copy = getStatesCopy(locale)
 
-  let registry: FigureRegistry | null = null
-  let error: string | null = null
-  try {
-    registry = await readFigures()
-  } catch (err) {
-    error = err instanceof MoonApiError ? err.message : copy.errorFiguresUnavailable
-  }
-
   return (
     <div className="m-stack" style={{ gap: 20 }}>
       <PageHeader
@@ -37,13 +30,37 @@ export default async function FiguresPageView() {
             <a className="dk-actors-header-link" href="/missions">
               MISSION TABLE
             </a>
-            {registry ? <Badge tone="cyan">{registry.counts.figures} figures</Badge> : null}
           </div>
         }
       />
 
-      {error ? <Alert tone="hot">{error}</Alert> : null}
-      {registry ? <FigureRegistryView registry={registry} /> : null}
+      <DataPanel
+        load={readFigures}
+        copy={{
+          loadingLabel: copy.loadingContent,
+          emptyTitle: copy.emptyFiguresRegistry,
+          emptyHint: copy.emptyFiguresRegistryHint,
+          errorMessage: copy.errorFiguresUnavailable,
+        }}
+        isEmpty={(registry) => registry.figures.length === 0}
+        mapError={(err) => panelErrorMessage(err, copy.errorFiguresUnavailable)}
+        skeleton={
+          <div className="m-grid m-grid-3" style={{ gap: 14 }}>
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+        }
+      >
+        {(registry) => (
+          <>
+            <div className="m-row" style={{ gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <Badge tone="cyan">{registry.counts.figures} figures</Badge>
+            </div>
+            <FigureRegistryView registry={registry} />
+          </>
+        )}
+      </DataPanel>
     </div>
   )
 }

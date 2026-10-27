@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
-import { Alert, Badge, EmptyState, Panel, type BadgeTone } from '@moonwitness/moonui'
+import { Alert, Badge, Panel, type BadgeTone } from '@moonwitness/moonui'
 import { CitationCopy } from '../client/CitationCopy'
 import type { ReaderCandidate, ReaderResult, ReaderSource } from '@/data/queries/reader'
+import { PanelState } from './states'
+import type { StatesCopy } from '@/lib/states-copy'
 
 const BLOCKED = '[TEXT_BLOCKED_PENDING_RIGHTS_CLEARANCE]'
 
@@ -73,20 +75,35 @@ function SourceIdentity({ citation }: { citation: ReaderSource }): ReactNode {
   )
 }
 
+/**
+ * The passage panel body. Absent and invalid readings are the panel's empty
+ * state; ambiguous and rights-blocked readings carry content, so they stay
+ * ready. Every sentence here comes from the states catalogue: the Reader has no
+ * private wording for a failed read.
+ */
 export function ReaderView({
   result,
   citation,
+  copy,
 }: {
   result: ReaderResult
   citation: string
+  copy: StatesCopy
 }): ReactNode {
   if (result.state === 'invalid' || result.state === 'absent') {
     return (
-      <Panel title="No matching source" subtitle={result.message}>
-        <EmptyState
-          title={result.state === 'invalid' ? 'That citation cannot be read' : 'No passage is indexed for this citation'}
-          hint="The Reader only shows an indexed, rights-checked source. It never fills a gap with an invented verse."
-        />
+      <Panel title={copy.emptyReaderPanel} subtitle={result.message}>
+        <PanelState
+          state="empty"
+          loadingLabel={copy.loadingContent}
+          emptyTitle={
+            result.state === 'invalid' ? copy.emptyReaderInvalidTitle : copy.emptyReaderAbsentTitle
+          }
+          emptyHint={copy.emptyReaderHint}
+          errorMessage={copy.errorReaderUnavailable}
+        >
+          {null}
+        </PanelState>
       </Panel>
     )
   }
@@ -94,8 +111,8 @@ export function ReaderView({
   if (result.state === 'ambiguous') {
     return (
       <Panel
-        title="Choose an edition"
-        subtitle={result.message ?? 'Several editions carry this address; the Reader will not choose one silently.'}
+        title={copy.emptyReaderAmbiguousTitle}
+        subtitle={result.message ?? copy.emptyReaderAmbiguousSubtitle}
       >
         <ul className="dk-reader-candidates">
           {result.candidates.map((candidate) => (
@@ -138,7 +155,7 @@ export function ReaderView({
         </header>
 
         {result.state === 'rights_blocked' ? (
-          <Alert tone="hot">{result.message ?? 'Text withheld: source rights are not cleared.'}</Alert>
+          <Alert tone="hot">{result.message ?? copy.errorRightsBlocked}</Alert>
         ) : null}
 
         <section className="dk-reader-block" aria-labelledby="reader-source-heading">
@@ -169,7 +186,7 @@ export function ReaderView({
           ) : (
             <div className="dk-reader-blocked" role="note" aria-label="Arabic text withheld pending rights clearance">
               <code>{result.blockedPlaceholder ?? BLOCKED}</code>
-              <span className="m-muted">{result.message ?? 'Text withheld: source rights are not cleared.'}</span>
+              <span className="m-muted">{result.message ?? copy.errorRightsBlocked}</span>
             </div>
           )}
         </section>
@@ -177,7 +194,7 @@ export function ReaderView({
         <section className="dk-reader-block" aria-labelledby="reader-translations-heading">
           <h3 id="reader-translations-heading">Licensed parallel translations</h3>
           {result.translations.length === 0 ? (
-            <p className="dk-reader-note">No licensed translation is indexed for this passage.</p>
+            <p className="dk-reader-note">{copy.emptyReaderTranslations}</p>
           ) : (
             <ul className="dk-reader-translations">
               {result.translations.map((row, index) => (
@@ -200,7 +217,7 @@ export function ReaderView({
                     </p>
                   ) : (
                     <p className="dk-reader-blocked-inline">
-                      {BLOCKED} Translation withheld — rights are not cleared.
+                      {BLOCKED} {copy.errorTranslationBlocked}
                     </p>
                   )}
                 </li>
@@ -222,7 +239,7 @@ export function ReaderView({
             <CitationCopy text={result.citationText} citationKey={source?.key ?? citation} />
           </>
         ) : (
-          <p className="dk-reader-note">No citation can be produced for this state.</p>
+          <p className="dk-reader-note">{copy.emptyReaderCitation}</p>
         )}
         <p className="dk-reader-note dk-reader-version">
           Edition selector: use the optional edition field to pin a version when an address exists in more than one

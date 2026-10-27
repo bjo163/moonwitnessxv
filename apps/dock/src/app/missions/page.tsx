@@ -1,7 +1,8 @@
-import { MoonApiError } from '@moonwitness/moonql-client'
-import { Alert, Badge, Button, Field, PageHeader, Pagination, Panel, SelectInput, TextInput } from '@moonwitness/moonui'
-import { readMissions, type MissionTable } from '@/data/queries/actors'
+import { Badge, Button, Field, PageHeader, Pagination, Panel, SelectInput, TableSkeleton, TextInput } from '@moonwitness/moonui'
+import { readMissions } from '@/data/queries/actors'
+import { panelErrorMessage } from '@/data/queries/error'
 import { MissionTableView } from '@/ui/components/actors'
+import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
@@ -50,13 +51,19 @@ export default async function MissionsPageView({ searchParams }: { searchParams:
   const page = Math.max(1, Number.parseInt(params.page ?? '1', 10) || 1)
   const offset = (page - 1) * PAGE_SIZE
 
-  let table: MissionTable | null = null
-  let error: string | null = null
-  try {
-    table = await readMissions({ ...filters, limit: PAGE_SIZE, offset })
-  } catch (err) {
-    error = err instanceof MoonApiError ? err.message : copy.errorMissionsUnavailable
+  const panelCopy: PanelCopy = {
+    loadingLabel: copy.loadingContent,
+    emptyTitle: copy.emptyMissionsFilter,
+    emptyHint: copy.emptyMissionsFilterHint,
+    errorMessage: copy.errorMissionsUnavailable,
   }
+  const outcome = await readPanel(
+    () => readMissions({ ...filters, limit: PAGE_SIZE, offset }),
+    panelCopy,
+    (table) => table.rows.length === 0,
+    (err) => panelErrorMessage(err, copy.errorMissionsUnavailable),
+  )
+  const table = outcome.state === 'ready' ? outcome.value : null
 
   return (
     <div className="m-stack" style={{ gap: 20 }}>
@@ -120,19 +127,19 @@ export default async function MissionsPageView({ searchParams }: { searchParams:
         </form>
       </Panel>
 
-      {error ? <Alert tone="hot">{error}</Alert> : null}
-
-      {table ? (
-        <>
-          <MissionTableView table={table} />
-          <Pagination
-            page={page}
-            pageSize={PAGE_SIZE}
-            total={table.total}
-            hrefFor={(target) => missionsHref(filters, target)}
-          />
-        </>
-      ) : null}
+      <OutcomePanel outcome={outcome} copy={panelCopy} skeleton={<TableSkeleton rows={6} cols={5} />}>
+        {(missionTable) => (
+          <>
+            <MissionTableView table={missionTable} />
+            <Pagination
+              page={page}
+              pageSize={PAGE_SIZE}
+              total={missionTable.total}
+              hrefFor={(target) => missionsHref(filters, target)}
+            />
+          </>
+        )}
+      </OutcomePanel>
     </div>
   )
 }
