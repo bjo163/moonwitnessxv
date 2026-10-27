@@ -32,9 +32,11 @@ export interface TelegramInboundMessage {
 }
 
 export type TelegramWebhookResult =
-  | { statusCode: 202; messageId: string }
+  | { statusCode: 202; messageId: string; conversationId: string }
   | { statusCode: 204 }
-  | { statusCode: 400 | 401 | 409; code: 'invalid_update' | 'unauthorized' | 'duplicate_update' }
+  | { statusCode: 400; code: 'invalid_update' }
+  | { statusCode: 401; code: 'unauthorized' }
+  | { statusCode: 409; code: 'duplicate_update' }
 
 /** Transport adapter. The SKYLINK service owns routing, secret provisioning, and lifecycle. */
 export class TelegramAdapter implements ProviderAdapter {
@@ -119,7 +121,7 @@ export class TelegramAdapter implements ProviderAdapter {
         body: message.text,
         status: 'received',
       })
-      return { statusCode: 202, messageId: stored.id }
+      return { statusCode: 202, messageId: stored.id, conversationId: conversation.id }
     } catch (error) {
       if (isUniqueViolation(error)) return { statusCode: 409, code: 'duplicate_update' }
       throw error

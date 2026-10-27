@@ -53,6 +53,15 @@ export async function findChannelAccount(
   return row ?? null
 }
 
+export async function listChannelAccounts(db: SkylinkDatabase): Promise<ChannelAccount[]> {
+  return db.select().from(channelAccounts).orderBy(desc(channelAccounts.createdAt), desc(channelAccounts.id)).limit(MAX_PAGE_SIZE)
+}
+
+export async function getChannelAccount(db: SkylinkDatabase, id: string): Promise<ChannelAccount | null> {
+  const [row] = await db.select().from(channelAccounts).where(eq(channelAccounts.id, id)).limit(1)
+  return row ?? null
+}
+
 export async function createConversation(db: SkylinkDatabase, input: NewConversation): Promise<Conversation> {
   const [row] = await db.insert(conversations).values(input).returning()
   if (!row) throw new Error('Failed to create conversation')
@@ -68,6 +77,17 @@ export async function findConversation(
     .where(and(eq(conversations.channelAccountId, channelAccountId), eq(conversations.externalId, externalId)))
     .limit(1)
   return row ?? null
+}
+
+export async function getConversation(db: SkylinkDatabase, id: string): Promise<Conversation | null> {
+  const [row] = await db.select().from(conversations).where(eq(conversations.id, id)).limit(1)
+  return row ?? null
+}
+
+export async function listRecentConversations(db: SkylinkDatabase, limit = DEFAULT_PAGE_SIZE): Promise<Conversation[]> {
+  return db.select().from(conversations)
+    .orderBy(desc(conversations.updatedAt), desc(conversations.id))
+    .limit(pageSize(limit))
 }
 
 export async function appendMessage(db: SkylinkDatabase, input: NewMessage): Promise<Message> {

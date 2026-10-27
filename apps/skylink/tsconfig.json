@@ -7,6 +7,8 @@
   },
   "include": ["src"],
   "references": [
-    { "path": "../../packages/skylink-core" }
+    { "path": "../../packages/skylink-core" },
+    { "path": "../../packages/skylink-store" },
+    { "path": "../../packages/skylink-telegram" }
   ]
 }

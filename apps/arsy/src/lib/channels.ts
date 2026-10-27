@@ -19,6 +19,15 @@ export interface SendResult {
   error?: string
 }
 
+export class DuplicateChannelIdError extends Error {
+  readonly code = 'DUPLICATE_CHANNEL_ID'
+
+  constructor(id: string) {
+    super(`Channel id is already registered: ${id}`)
+    this.name = 'DuplicateChannelIdError'
+  }
+}
+
 /**
  * A pluggable instant-messaging channel (WhatsApp, Telegram, ...).
  * Each channel plugin exports a factory returning one of these.
@@ -49,6 +58,7 @@ export class ChannelManager {
   private readonly channels = new Map<string, Channel>()
 
   register(channel: Channel): void {
+    if (this.channels.has(channel.id)) throw new DuplicateChannelIdError(channel.id)
     this.channels.set(channel.id, channel)
   }
 

@@ -9,7 +9,7 @@
     "dev": "node --import tsx --env-file-if-exists=../../.env src/index.ts",
     "start": "node --env-file-if-exists=../../.env dist/index.js",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
-    "test": "tsx --test test/**/*.test.ts"
+    "test": "node --env-file-if-exists=../../.env --import tsx --test test/*.test.ts"
   },
   "dependencies": {
     "@fastify/websocket": "^11.3.4",
