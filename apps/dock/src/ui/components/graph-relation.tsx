@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type { Locale } from '@moonwitness/core'
 import { Badge, Panel, type BadgeTone } from '@moonwitness/moonui'
 import type {
   GraphCandidateSummary,
@@ -8,6 +9,7 @@ import type {
   RelationDetail,
   RelationEntity,
 } from '@/data/queries/graph'
+import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const STATE_TONE: Record<string, BadgeTone> = {
   PENDING: 'accent',
@@ -244,7 +246,8 @@ export function RelationDetailView({ detail }: { detail: RelationDetail }): Reac
   )
 }
 
-function CandidateRow({ candidate }: { candidate: GraphCandidateSummary }): ReactNode {
+function CandidateRow({ candidate, locale = 'en' }: { candidate: GraphCandidateSummary; locale?: Locale }): ReactNode {
+  const localeHref = dockHrefFor(locale)
   return (
     <li
       className="dk-graph-release-candidate"
@@ -252,7 +255,7 @@ function CandidateRow({ candidate }: { candidate: GraphCandidateSummary }): Reac
       data-in-release={candidate.inActiveRelease ? 'true' : 'false'}
     >
       <div className="dk-graph-release-candidate-head">
-        <a className="dk-graph-candidate-link" href={`/constellation/relations/${candidate.candidateCode}`}>
+        <a className="dk-graph-candidate-link" href={localeHref(`/constellation/relations/${candidate.candidateCode}`)}>
           <code>{candidate.candidateCode}</code>
         </a>
         <div className="m-row" style={{ gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
@@ -277,7 +280,13 @@ function CandidateRow({ candidate }: { candidate: GraphCandidateSummary }): Reac
   )
 }
 
-export function GraphReleasePanel({ overview }: { overview: GraphOverview }): ReactNode {
+export function GraphReleasePanel({
+  overview,
+  locale = 'en',
+}: {
+  overview: GraphOverview
+  locale?: Locale
+}): ReactNode {
   const { active, pointer, counts, separation, candidates, policy } = overview
   return (
     <Panel
@@ -366,7 +375,7 @@ export function GraphReleasePanel({ overview }: { overview: GraphOverview }): Re
           ) : (
             <ul className="dk-graph-release-candidates">
               {candidates.map((candidate) => (
-                <CandidateRow candidate={candidate} key={candidate.candidateCode} />
+                <CandidateRow candidate={candidate} key={candidate.candidateCode} locale={locale} />
               ))}
             </ul>
           )}

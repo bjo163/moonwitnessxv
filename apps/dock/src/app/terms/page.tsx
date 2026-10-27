@@ -9,7 +9,7 @@ import { panelErrorMessage } from '@/data/queries/error'
 import { MatchPreviewView, TermIndexTable, TermList } from '@/ui/components/terms'
 import { DataPanel, OutcomePanel, PanelState, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader, localizedDockHref } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -34,14 +34,14 @@ interface TermsSearchParams {
 
 const stringOf = (value: string | undefined): string => (typeof value === 'string' ? value.trim() : '')
 
-function termsHref(filters: Record<string, string>, page: number): string {
+function termsHref(filters: Record<string, string>, page: number, locale: ReturnType<typeof localeFromMiddlewareHeader>): string {
   const params = new URLSearchParams()
   for (const [key, value] of Object.entries(filters)) {
     if (value !== '') params.set(key, value)
   }
   if (page > 1) params.set('page', String(page))
   const query = params.toString()
-  return query ? `/terms?${query}` : '/terms'
+  return localizedDockHref('/terms', query ? `?${query}` : '', '', locale)
 }
 
 export default async function TermsPageView({
@@ -51,6 +51,7 @@ export default async function TermsPageView({
 }) {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   const params = await searchParams
@@ -97,7 +98,7 @@ export default async function TermsPageView({
       <PageHeader
         title="UNILEX Terms"
         subtitle="Source-backed terminology · forms kept in their own script · every identity is reviewed"
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Terms' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Terms' }]}
         actions={total === null ? undefined : <Badge tone="cyan">{total} terms</Badge>}
       />
 
@@ -137,7 +138,7 @@ export default async function TermsPageView({
       </OutcomePanel>
 
       <Panel title="Filter the Terms Table" subtitle="Search matches IDs, labels, definitions and recorded forms.">
-        <form className="dk-terms-filter-form" method="get" action="/terms" role="search">
+        <form className="dk-terms-filter-form" method="get" action={localeHref('/terms')} role="search">
           <Field label={copy.formSearch} htmlFor="terms-q" hint={copy.formTermsSearchHint}>
             <TextInput id="terms-q" name="q" defaultValue={filters.q} placeholder={copy.formTermsSearchPlaceholder} maxLength={80} />
           </Field>
@@ -191,13 +192,13 @@ export default async function TermsPageView({
       <OutcomePanel outcome={outcome} copy={listCopy} skeleton={<TableSkeleton rows={8} cols={7} />}>
         {(termsPage) => (
           <>
-            <TermIndexTable page={termsPage} />
-            <TermList page={termsPage} />
+            <TermIndexTable page={termsPage} locale={locale} />
+            <TermList page={termsPage} locale={locale} />
             <Pagination
               page={page}
               pageSize={PAGE_SIZE}
               total={termsPage.total}
-              hrefFor={(target) => termsHref(filters, target)}
+              hrefFor={(target) => termsHref(filters, target, locale)}
             />
           </>
         )}
@@ -207,7 +208,7 @@ export default async function TermsPageView({
         title="Match preview"
         subtitle="Surface comparison only. The preview never claims identity and never writes a relation."
       >
-        <form className="dk-terms-match-form" method="get" action="/terms" role="search">
+        <form className="dk-terms-match-form" method="get" action={localeHref('/terms')} role="search">
           {Object.entries(filters).map(([key, value]) =>
             value !== '' ? <input key={key} type="hidden" name={key} value={value} /> : null,
           )}

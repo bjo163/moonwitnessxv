@@ -6,7 +6,7 @@ import { serverClient } from '@/data/sdk'
 import { todayWeekday } from '@/lib/time'
 import { NowPlayingCard, WeekGrid } from '@/ui/components/sections'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -16,6 +16,7 @@ type NowPlaying = Awaited<ReturnType<typeof nowPlaying>>
 export default async function SchedulePage() {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   const nowCopy: PanelCopy = {
@@ -55,7 +56,7 @@ export default async function SchedulePage() {
             ? 'Weekly transmission grid · UTC'
             : `Weekly transmission grid · ${slotCount} slots · UTC`
         }
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Archive' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Archive' }]}
         actions={slotCount === null ? undefined : <Badge tone="cyan">{slotCount} active slots</Badge>}
       />
 

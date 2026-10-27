@@ -15,7 +15,7 @@ import { PAGE_SIZE } from '@/lib/env'
 import { StationGrid } from '@/ui/components/sections'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -27,6 +27,7 @@ export default async function StationsPage({
 }) {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   const filters = await searchParams
@@ -54,7 +55,7 @@ export default async function StationsPage({
     if (filters.country) params.set('country', filters.country)
     if (target > 1) params.set('page', String(target))
     const query = params.toString()
-    return `/stations${query ? `?${query}` : ''}`
+    return localeHref('/stations', query ? `?${query}` : '')
   }
 
   const filtered = Boolean(filters.q || filters.genre || filters.country)
@@ -68,11 +69,11 @@ export default async function StationsPage({
             ? `${filtered ? `${page.total} of ${page.catalogSize}` : page.catalogSize} public stations in the network`
             : undefined
         }
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Signals' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Signals' }]}
       />
 
       <Panel title="Filter Signals" subtitle="search by station name, genre, or origin country">
-        <form className="m-row" style={{ alignItems: 'flex-end', gap: 14 }} method="get" action="/stations">
+        <form className="m-row" style={{ alignItems: 'flex-end', gap: 14 }} method="get" action={localeHref('/stations')}>
           <Field label={copy.formSearch} htmlFor="q">
             <TextInput id="q" name="q" defaultValue={filters.q ?? ''} placeholder={copy.formSearchStationPlaceholder} icon="FIND" />
           </Field>
@@ -97,7 +98,7 @@ export default async function StationsPage({
           <Button type="submit" variant="accent">
             {copy.formFilter}
           </Button>
-          <LinkButton href="/stations" variant="ghost">
+          <LinkButton href={localeHref('/stations')} variant="ghost">
             {copy.formReset}
           </LinkButton>
         </form>

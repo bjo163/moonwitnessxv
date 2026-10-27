@@ -4,7 +4,7 @@ import { panelErrorMessage } from '@/data/queries/error'
 import { MissionTableView } from '@/ui/components/actors'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader, localizedDockHref } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -26,19 +26,21 @@ interface MissionSearchParams {
 
 const stringOf = (value: string | undefined): string => (typeof value === 'string' ? value.trim() : '')
 
-function missionsHref(filters: Record<string, string>, page: number): string {
+/** Pagination keeps the rendered locale: a page change must not drop the `/id` prefix. */
+function missionsHref(filters: Record<string, string>, page: number, locale: ReturnType<typeof localeFromMiddlewareHeader>): string {
   const params = new URLSearchParams()
   for (const [key, value] of Object.entries(filters)) {
     if (value !== '') params.set(key, value)
   }
   if (page > 1) params.set('page', String(page))
   const query = params.toString()
-  return query ? `/missions?${query}` : '/missions'
+  return localizedDockHref('/missions', query ? `?${query}` : '', '', locale)
 }
 
 export default async function MissionsPageView({ searchParams }: { searchParams: Promise<MissionSearchParams> }) {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   const params = await searchParams
@@ -70,10 +72,10 @@ export default async function MissionsPageView({ searchParams }: { searchParams:
       <PageHeader
         title="Prophetic Mission Table"
         subtitle="A filtered view over the Figure Registry · every claim keeps its tradition and source"
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Missions' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Missions' }]}
         actions={
           <div className="m-row" style={{ gap: 8, flexWrap: 'wrap' }}>
-            <a className="dk-actors-header-link" href="/figures">
+            <a className="dk-actors-header-link" href={localeHref('/figures')}>
               FIGURE REGISTRY
             </a>
             {table ? <Badge tone="cyan">{table.total} mission claims</Badge> : null}
@@ -85,7 +87,7 @@ export default async function MissionsPageView({ searchParams }: { searchParams:
         title="Filter the table"
         subtitle="Search matches the claim title, problem, community and figure labels. Nothing is widened silently."
       >
-        <form className="dk-actors-filter-form" method="get" action="/missions" role="search">
+        <form className="dk-actors-filter-form" method="get" action={localeHref('/missions')} role="search">
           <Field label={copy.formSearch} htmlFor="missions-q" hint={copy.formMissionsSearchHint}>
             <TextInput id="missions-q" name="q" defaultValue={filters.q} placeholder={copy.formMissionsSearchPlaceholder} maxLength={120} />
           </Field>
@@ -130,12 +132,12 @@ export default async function MissionsPageView({ searchParams }: { searchParams:
       <OutcomePanel outcome={outcome} copy={panelCopy} skeleton={<TableSkeleton rows={6} cols={5} />}>
         {(missionTable) => (
           <>
-            <MissionTableView table={missionTable} />
+            <MissionTableView table={missionTable} locale={locale} />
             <Pagination
               page={page}
               pageSize={PAGE_SIZE}
               total={missionTable.total}
-              hrefFor={(target) => missionsHref(filters, target)}
+              hrefFor={(target) => missionsHref(filters, target, locale)}
             />
           </>
         )}

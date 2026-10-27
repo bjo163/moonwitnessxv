@@ -6,7 +6,7 @@ import { serverClient } from '@/data/sdk'
 import { DenpaTransceiver } from '@/ui/client/DenpaTransceiver'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -19,6 +19,7 @@ export const metadata = {
 export default async function DenpaPage(): Promise<ReactNode> {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   const panelCopy: PanelCopy = {
@@ -46,7 +47,7 @@ export default async function DenpaPage(): Promise<ReactNode> {
       <PageHeader
         title="DENPA Transceiver (電波)"
         subtitle="Tactical Shortwave Inbound Broadcast Deck · Zero Data In Clear · Epistemic Telemetry Feed"
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Denpa' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Denpa' }]}
         actions={
           <div className="m-row" style={{ gap: 8, flexWrap: 'wrap' }}>
             {feed ? <Badge tone="cyan">{feed.length} on-air</Badge> : null}
@@ -68,7 +69,9 @@ export default async function DenpaPage(): Promise<ReactNode> {
           </div>
         }
       >
-        {(transmissions) => <DenpaTransceiver initialTransmissions={transmissions} stations={stations} />}
+        {(transmissions) => (
+          <DenpaTransceiver initialTransmissions={transmissions} stations={stations} locale={locale} />
+        )}
       </OutcomePanel>
     </div>
   )

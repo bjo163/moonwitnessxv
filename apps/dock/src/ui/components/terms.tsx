@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type { Locale } from '@moonwitness/core'
 import { Alert, Badge, Chevron, DataTable, EmptyState, Panel, type BadgeTone, type ColumnDef } from '@moonwitness/moonui'
 import type {
   IdentityReview,
@@ -8,6 +9,7 @@ import type {
   TermSource,
   TermsPage,
 } from '@/data/queries/terms'
+import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const STATUS_TONE: Record<string, BadgeTone> = {
   DRAFT_REVIEW: 'accent',
@@ -113,14 +115,15 @@ function IdentityReviewRow({ review }: { review: IdentityReview }): ReactNode {
   )
 }
 
-export function TermIndexTable({ page }: { page: TermsPage }): ReactNode {
+export function TermIndexTable({ page, locale = 'en' }: { page: TermsPage; locale?: Locale }): ReactNode {
   type Row = TermsPage['terms'][number]
+  const localeHref = dockHrefFor(locale)
   const columns: ColumnDef<Row>[] = [
     {
       key: 'term',
       label: 'Term',
       render: (row) => (
-        <a className="dk-terms-link" href={`/terms/${row.stableId}`}>
+        <a className="dk-terms-link" href={localeHref(`/terms/${row.stableId}`)}>
           {row.preferredEn}
         </a>
       ),
@@ -154,7 +157,8 @@ export function TermIndexTable({ page }: { page: TermsPage }): ReactNode {
   )
 }
 
-export function TermList({ page }: { page: TermsPage }): ReactNode {
+export function TermList({ page, locale = 'en' }: { page: TermsPage; locale?: Locale }): ReactNode {
+  const localeHref = dockHrefFor(locale)
   if (page.terms.length === 0) {
     return (
       <Panel title="No term matches" subtitle="The projection only includes terms backed by an approved citation source.">
@@ -172,7 +176,7 @@ export function TermList({ page }: { page: TermsPage }): ReactNode {
         <article className="dk-terms-row" key={term.stableId} aria-labelledby={`term-title-${term.stableId}`}>
           <div className="dk-terms-row-head">
             <div>
-              <a className="dk-terms-link" href={`/terms/${term.stableId}`} id={`term-title-${term.stableId}`}>
+              <a className="dk-terms-link" href={localeHref(`/terms/${term.stableId}`)} id={`term-title-${term.stableId}`}>
                 {term.preferredEn}
               </a>
               <div className="dk-terms-meta">
@@ -197,7 +201,7 @@ export function TermList({ page }: { page: TermsPage }): ReactNode {
               {term.sources.length === 1 ? '' : 's'} · {term.relations.length} relation
               {term.relations.length === 1 ? '' : 's'}
             </span>
-            <a className="dk-terms-detail-link" href={`/terms/${term.stableId}`}>
+            <a className="dk-terms-detail-link" href={localeHref(`/terms/${term.stableId}`)}>
               Read term <Chevron dir="right" />
             </a>
           </div>
@@ -247,8 +251,9 @@ export function MatchPreviewView({ preview }: { preview: MatchPreview }): ReactN
   )
 }
 
-export function TermDetailView({ detail }: { detail: TermDetail }): ReactNode {
+export function TermDetailView({ detail, locale = 'en' }: { detail: TermDetail; locale?: Locale }): ReactNode {
   const { term } = detail
+  const localeHref = dockHrefFor(locale)
   return (
     <div className="dk-terms-detail">
       {term.editorialStatus === 'DEPRECATED' ? (
@@ -331,7 +336,7 @@ export function TermDetailView({ detail }: { detail: TermDetail }): ReactNode {
                     </div>
                     <span>
                       {relation.targetStableId ? (
-                        <a className="dk-terms-link" href={`/terms/${relation.targetStableId}`}>
+                        <a className="dk-terms-link" href={localeHref(`/terms/${relation.targetStableId}`)}>
                           {relation.targetStableId}
                           {relation.targetLabel ? ` — ${relation.targetLabel}` : ''}
                         </a>

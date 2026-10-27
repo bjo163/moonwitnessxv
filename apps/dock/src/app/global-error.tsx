@@ -1,17 +1,9 @@
 'use client'
 
 import { useEffect, useState, type ReactNode } from 'react'
+import { clientDockLocale } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 import type { Locale } from '@moonwitness/core'
-
-function detectClientLocale(): Locale {
-  if (typeof document !== 'undefined') {
-    const lang = document.documentElement.lang
-    if (lang === 'id' || lang === 'en') return lang
-    if (window.location.pathname.startsWith('/id')) return 'id'
-  }
-  return 'en'
-}
 
 export default function GlobalError({
   error,
@@ -20,10 +12,10 @@ export default function GlobalError({
   error: Error & { digest?: string }
   reset: () => void
 }): ReactNode {
-  const [locale, setLocale] = useState<Locale>(detectClientLocale)
+  const [locale, setLocale] = useState<Locale>(clientDockLocale)
 
   useEffect(() => {
-    setLocale(detectClientLocale())
+    setLocale(clientDockLocale())
   }, [])
 
   const copy = getStatesCopy(locale)

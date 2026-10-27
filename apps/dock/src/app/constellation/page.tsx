@@ -6,7 +6,7 @@ import { ConstellationView } from '@/ui/components/constellation'
 import { GraphReleasePanel } from '@/ui/components/graph-relation'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -25,6 +25,7 @@ export const metadata = {
 export default async function ConstellationPage() {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   const graphCopy: PanelCopy = {
@@ -62,7 +63,7 @@ export default async function ConstellationPage() {
       <PageHeader
         title="Constellation"
         subtitle="One sourced graph · aliases are claims · a merge is a reviewer decision"
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Constellation' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Constellation' }]}
         actions={projection ? <Badge tone="cyan">{projection.graphId}</Badge> : undefined}
       />
 
@@ -77,11 +78,11 @@ export default async function ConstellationPage() {
           </div>
         }
       >
-        {(value) => <ConstellationView projection={value} />}
+        {(value) => <ConstellationView projection={value} locale={locale} />}
       </OutcomePanel>
 
       <OutcomePanel outcome={overviewOutcome} copy={releaseCopy} skeleton={<TableSkeleton rows={4} cols={3} />}>
-        {(value) => <GraphReleasePanel overview={value} />}
+        {(value) => <GraphReleasePanel overview={value} locale={locale} />}
       </OutcomePanel>
     </div>
   )

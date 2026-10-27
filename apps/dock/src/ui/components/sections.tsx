@@ -20,6 +20,8 @@ import type { ChartRow, NowPlaying } from '@/data/types'
 import { clock } from '@/lib/time'
 import { slotWindow } from '@/data/queries/program'
 import { getLandingCopy } from '@/lib/landing-copy'
+import { dockHrefFor } from '@/lib/locale-context.mjs'
+import { zineLines } from '@/lib/zine-lines'
 
 /**
  * The minimum a station card needs, expressed AS THE HUB SHAPE (`countryRefRecord`
@@ -56,11 +58,12 @@ export function ZineFeatureTrio({
   locale: Locale
 }): ReactNode {
   const copy = getLandingCopy(locale)
+  const localeHref = dockHrefFor(locale)
   const signalHref = now?.stationId
-    ? `/stations/${now.stationId}`
+    ? localeHref(`/stations/${now.stationId}`)
     : leadStationId
-      ? `/stations/${leadStationId}`
-      : '/stations'
+      ? localeHref(`/stations/${leadStationId}`)
+      : localeHref('/stations')
 
   return (
     <section className="dk-trio" aria-label={copy.featuredTransmissions}>
@@ -128,7 +131,7 @@ export function ZineFeatureTrio({
             </p>
 
             <div>
-              <LinkButton href="/stations" variant="cyan" size="sm">
+              <LinkButton href={localeHref('/stations')} variant="cyan" size="sm">
                 {copy.exploreStories} <Chevron dir="right" />
               </LinkButton>
             </div>
@@ -162,7 +165,7 @@ export function ZineFeatureTrio({
             </p>
 
             <div>
-              <LinkButton href="/schedule" variant="accent" size="sm">
+              <LinkButton href={localeHref('/schedule')} variant="accent" size="sm">
                 {copy.viewSchedule} <Chevron dir="right" />
               </LinkButton>
             </div>
@@ -189,6 +192,7 @@ export function CrewConstellation({
   locale: Locale
 }): ReactNode {
   const copy = getLandingCopy(locale)
+  const localeHref = dockHrefFor(locale)
 
   return (
     <Card className="dk-constellation-card" id="constellation">
@@ -202,7 +206,7 @@ export function CrewConstellation({
             {copy.stationMapDescription}
           </p>
           <div className="m-row" style={{ gap: 12 }}>
-            <LinkButton href="/stations" variant="primary" size="sm">
+            <LinkButton href={localeHref('/stations')} variant="primary" size="sm">
               {copy.exploreStations} <Chevron dir="right" />
             </LinkButton>
             <ZineNote tone="dark" tilt="left">
@@ -221,7 +225,7 @@ export function CrewConstellation({
             {stations.slice(0, 5).map((station, idx) => (
               <a
                 key={station.id}
-                href={`/stations/${station.id}`}
+                href={localeHref(`/stations/${station.id}`)}
                 className={`dk-map-pin dk-map-pin-${idx + 1}`}
                 title={`${station.name} (${station.countryRefRecord?.name ?? copy.stationPinGlobal})`}
               >
@@ -252,13 +256,7 @@ export function CrewConstellation({
           </Card>
 
           <div className="dk-moon-orbit-tag">
-            <span>
-              DIFFERENT
-              <br />
-              WITNESSES.
-              <br />
-              SAME MOON.
-            </span>
+            <span>{zineLines(copy.orbitWitnesses)}</span>
           </div>
         </div>
       </CardBody>
@@ -268,6 +266,7 @@ export function CrewConstellation({
 
 export function ArchiveTimeline({ slotCount, locale }: { slotCount: number; locale: Locale }): ReactNode {
   const copy = getLandingCopy(locale)
+  const localeHref = dockHrefFor(locale)
   return (
     <Card id="archive">
       <CardBody className="dk-archive">
@@ -282,7 +281,7 @@ export function ArchiveTimeline({ slotCount, locale }: { slotCount: number; loca
             <span className="m-mono">{formatLocaleNumber(slotCount, locale)} {copy.scheduleSlots}</span>
           </p>
           <div>
-            <LinkButton href="/schedule" variant="cyan" size="sm">
+            <LinkButton href={localeHref('/schedule')} variant="cyan" size="sm">
               {copy.browseArchive} <Chevron dir="right" />
             </LinkButton>
           </div>
@@ -290,7 +289,7 @@ export function ArchiveTimeline({ slotCount, locale }: { slotCount: number; loca
 
         <div className="dk-archive-track">
           {ARCHIVE_SIGNALS.map((item, idx) => (
-            <a href="/schedule" className="dk-archive-node" key={item.img}>
+            <a href={localeHref('/schedule')} className="dk-archive-node" key={item.img}>
               <div className="dk-archive-thumb-wrap">
                 <img src={item.img} alt={item.title} className="dk-archive-thumb" />
                 {idx < ARCHIVE_SIGNALS.length - 1 ? (
@@ -307,13 +306,7 @@ export function ArchiveTimeline({ slotCount, locale }: { slotCount: number; loca
 
         <div className="m-stack" style={{ alignItems: 'center', textAlign: 'center', gap: 6 }}>
           <Crown tone="gold" size="md" />
-          <ZineNote tone="dark" tilt="right">
-            STORIES
-            <br />
-            KEEP
-            <br />
-            ORBITING.
-          </ZineNote>
+          <ZineNote tone="dark" tilt="right">{zineLines(copy.archiveOrbitNote)}</ZineNote>
         </div>
       </CardBody>
     </Card>
@@ -474,9 +467,9 @@ export function NowPlayingCard({ now, live, locale = 'en' }: { now: NowPlaying |
   )
 }
 
-export function StationCard({ station }: { station: StationLike }): ReactNode {
+export function StationCard({ station, locale = 'en' }: { station: StationLike; locale?: Locale }): ReactNode {
   return (
-    <a className="dk-station" href={`/stations/${station.id}`}>
+    <a className="dk-station" href={dockHrefFor(locale)(`/stations/${station.id}`)}>
       <div className="m-row" style={{ justifyContent: 'space-between' }}>
         <strong>{station.name}</strong>
         <Badge tone={station.status === 'active' || station.status === 'live' ? 'accent' : 'night'}>
@@ -496,7 +489,7 @@ export function StationGrid({ stations, locale = 'en' }: { stations: StationLike
   return (
     <div className="dk-grid">
       {stations.map((station) => (
-        <StationCard key={station.id} station={station} />
+        <StationCard key={station.id} station={station} locale={locale} />
       ))}
     </div>
   )

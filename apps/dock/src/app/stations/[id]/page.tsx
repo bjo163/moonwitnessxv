@@ -5,7 +5,7 @@ import { clock } from '@/lib/time'
 import { Player } from '@/ui/client/Player'
 import { PanelState } from '@/ui/components/states'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -13,6 +13,7 @@ export const dynamic = 'force-dynamic'
 export default async function StationPage({ params }: { params: Promise<{ id: string }> }) {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   const { id } = await params
@@ -26,13 +27,13 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
       <PageHeader
         title={station.name}
         subtitle={`${station.genre ?? copy.fallbackUnformatted} · ${station.countryRefRecord?.name ?? copy.fallbackUnknownCountry} · ${plays} logged play${plays === 1 ? '' : 's'}`}
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Signals', href: '/stations' }, { label: station.name }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Signals', href: localeHref('/stations') }, { label: station.name }]}
         actions={
           <span className="m-row">
             <Badge tone={station.statusLabel === 'live' ? 'ok' : 'accent'}>
               {station.statusLabel === 'live' ? 'on the air' : 'off the air'}
             </Badge>
-            <LinkButton href="/stations" variant="ghost" size="sm">
+            <LinkButton href={localeHref('/stations')} variant="ghost" size="sm">
               <Chevron dir="left" /> Back to catalog
             </LinkButton>
           </span>

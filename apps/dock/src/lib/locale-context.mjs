@@ -1,3 +1,4 @@
+/* global document, window */
 import { isLocale } from '@moonwitness/core'
 
 /** @typedef {import('@moonwitness/core').Locale} Locale */
@@ -35,6 +36,18 @@ export function localizedDockHref(pathname, search, hash, requestedLocale) {
   return `${localizedPath}${safeSearch}${safeHash}`
 }
 
+/**
+ * Binds one trusted request locale so a component can build internal links without
+ * repeating the locale argument. `localizedDockHref` above stays the only place a
+ * `/id` or `/en` prefix is produced.
+ * @param {Locale} locale
+ * @returns {(pathname: string, search?: string, hash?: string) => string}
+ */
+export function dockHrefFor(locale) {
+  const resolved = isLocale(locale) ? locale : 'en'
+  return (pathname, search = '', hash = '') => localizedDockHref(pathname, search, hash, resolved)
+}
+
 /** @param {string} pathname @param {string} cookieHeader @returns {Locale} */
 export function currentDockLocale(pathname, cookieHeader) {
   const routeLocale = /^\/(id|en)(?=\/|$)/.exec(pathname)?.[1]
@@ -49,6 +62,22 @@ export function currentDockLocale(pathname, cookieHeader) {
 }
 
 /** @typedef {{ cookie: string }} CookieStore */
+/**
+ * Client-side locale read for interactive islands that must navigate without waiting
+ * for a server render. It mirrors the rendered document language, then the pathname
+ * prefix, and only then the accepted default. Server components keep using the
+ * middleware header, which is the trusted source.
+ * @returns {Locale}
+ */
+export function clientDockLocale() {
+  if (typeof document !== 'undefined') {
+    const lang = document.documentElement.lang
+    if (isLocale(lang)) return lang
+    if (window.location.pathname.startsWith('/id')) return 'id'
+  }
+  return 'en'
+}
+
 /** @param {string} requestedLocale @param {CookieStore} cookieStore @param {boolean} secure @returns {boolean} */
 export function persistDockLocalePreference(requestedLocale, cookieStore, secure) {
   if (!isLocale(requestedLocale)) return false

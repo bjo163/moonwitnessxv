@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Alert, PageHeader } from '@moonwitness/moonui'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -14,6 +14,7 @@ export const metadata = {
 export default async function ResearchPage(): Promise<ReactNode> {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   return (
@@ -21,7 +22,7 @@ export default async function ResearchPage(): Promise<ReactNode> {
       <PageHeader
         title="SRGBL Research & MIZAN Review Ledger"
         subtitle="S1–L5 Stage Gates · Key Witness Scoring · Adversarial Hypotheses · Four-Eyes MIZAN Governance"
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Research' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Research' }]}
       />
 
       <Alert tone="hot">{copy.errorResearchUnavailable}</Alert>

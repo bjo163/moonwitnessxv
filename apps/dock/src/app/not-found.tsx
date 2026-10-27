@@ -1,6 +1,6 @@
 import { headers } from 'next/headers'
 import { LinkButton, PageHeader, Panel } from '@moonwitness/moonui'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic'
 export default async function NotFound() {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   return (
@@ -15,7 +16,7 @@ export default async function NotFound() {
       <PageHeader
         title={copy.errorNotFoundTitle}
         subtitle={copy.errorNotFoundDescription}
-        breadcrumbs={[{ label: 'Home', href: `/${locale}` }, { label: '404' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: '404' }]}
       />
       <Panel title={copy.errorNotFoundTitle} subtitle={copy.errorNotFoundDescription}>
         <div className="m-stack" style={{ gap: 16 }}>
@@ -23,7 +24,7 @@ export default async function NotFound() {
             {copy.errorNotFoundDescription}
           </p>
           <div>
-            <LinkButton href={`/${locale}`} variant="accent">
+            <LinkButton href={localeHref('/')} variant="accent">
               {copy.errorExploreSignals}
             </LinkButton>
           </div>

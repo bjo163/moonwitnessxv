@@ -3,6 +3,7 @@
 import { useState, useTransition, useEffect, type ReactNode } from 'react'
 import type { PublicLiveTransmissionsOutput } from '@moonwitness/moonql-client'
 import type { Locale } from '@moonwitness/core'
+import { clientDockLocale } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 import {
   Alert,
@@ -31,23 +32,14 @@ export interface DenpaTransceiverProps {
   locale?: Locale
 }
 
-function detectClientLocale(): Locale {
-  if (typeof document !== 'undefined') {
-    const lang = document.documentElement.lang
-    if (lang === 'id' || lang === 'en') return lang
-    if (window.location.pathname.startsWith('/id')) return 'id'
-  }
-  return 'en'
-}
-
 export function DenpaTransceiver({ initialTransmissions, stations, locale }: DenpaTransceiverProps): ReactNode {
-  const [activeLocale, setActiveLocale] = useState<Locale>(() => locale ?? detectClientLocale())
+  const [activeLocale, setActiveLocale] = useState<Locale>(() => locale ?? clientDockLocale())
 
   useEffect(() => {
     if (locale) {
       setActiveLocale(locale)
     } else {
-      setActiveLocale(detectClientLocale())
+      setActiveLocale(clientDockLocale())
     }
   }, [locale])
 

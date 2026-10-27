@@ -17,7 +17,7 @@ import {
   ZineSkaPosterSection,
 } from '@/ui/components/sections'
 import { todayWeekday } from '@/lib/time'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getLandingCopy, type LandingCopy } from '@/lib/landing-copy'
 
 export const dynamic = 'force-dynamic'
@@ -43,6 +43,7 @@ function OfflineLanding({ copy }: { copy: LandingCopy }) {
 export default async function HomePage() {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getLandingCopy(locale)
   const payload = await homePayload()
   if (!payload.liveDataAvailable) {
@@ -143,14 +144,18 @@ export default async function HomePage() {
               <Tape tone="pink">{copy.liveRadioTelemetry}</Tape>
               <h2 className="dk-section-heading">{copy.signalsInDock}</h2>
             </div>
-            <LinkButton href="/stations" variant="accent" size="sm">
+            <LinkButton href={localeHref('/stations')} variant="accent" size="sm">
               {copy.allStations} ({formatLocaleNumber(payload.counts.stations, locale)}) <Chevron dir="right" />
             </LinkButton>
           </div>
 
           <div className="m-grid m-grid-2">
             <NowPlayingCard now={payload.now} live={<LiveTicker initial={payload.now} />} locale={locale} />
-            <ChartBars title={copy.mostPlayedSignals} rows={payload.topStations} empty={copy.noListens} />
+            <ChartBars
+              title={copy.mostPlayedSignals}
+              rows={payload.topStations.map((row) => (row.href ? { ...row, href: localeHref(row.href) } : row))}
+              empty={copy.noListens}
+            />
           </div>
 
           <StationGrid stations={payload.stations} locale={locale} />

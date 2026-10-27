@@ -5,7 +5,7 @@ import { panelErrorMessage } from '@/data/queries/error'
 import { PatchesExplorer } from '@/ui/client/PatchesExplorer'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -18,6 +18,7 @@ export const metadata = {
 export default async function PatchesPage(): Promise<ReactNode> {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   const panelCopy: PanelCopy = {
@@ -41,7 +42,7 @@ export default async function PatchesPage(): Promise<ReactNode> {
       <PageHeader
         title="World Patches & Historical Context"
         subtitle="33 Canonical Patches · Dual-title Conflict Preserved · Declarative MoonQL Journey Domain"
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Patches' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Patches' }]}
         actions={
           registry ? (
             <div className="m-row" style={{ gap: 8, flexWrap: 'wrap' }}>

@@ -18,7 +18,11 @@ const css = fs.readFileSync(path.resolve(appDir, 'src', 'app', 'globals.css'), '
 
 test('the terms page exposes a keyboard-reachable table index', () => {
   assert.match(termsPage, /import \{ MatchPreviewView, TermIndexTable, TermList \} from '@\/ui\/components\/terms'/)
-  assert.match(termsPage, /<TermIndexTable page=\{termsPage\} \/>\s+<TermList page=\{termsPage\} \/>/)
+  assert.match(
+    termsPage,
+    /<TermIndexTable page=\{termsPage\} locale=\{locale\} \/>\s+<TermList page=\{termsPage\} locale=\{locale\} \/>/,
+    'the index and the list must receive the rendered locale, never default to English',
+  )
 })
 
 test('the index is a native disclosure over MoonUI DataTable, not a custom widget', () => {
@@ -40,7 +44,11 @@ test('the index lists the evidence columns a reader needs to judge a term', () =
   for (const column of ['Stable ID', 'Indonesian', 'Lane', 'Status', 'Senses', 'Sources', 'Relations']) {
     assert.ok(index.includes(`label: '${column}'`), `index must show a ${column} column`)
   }
-  assert.match(index, /href=\{`\/terms\/\$\{row\.stableId\}`\}/, 'rows must link to the stable-id route')
+  assert.match(
+    index,
+    /localeHref\(`\/terms\/\$\{row\.stableId\}`\)/,
+    'rows must link to the stable-id route through the locale helper',
+  )
 })
 
 test('the index summary states its own scope and the empty state is explicit', () => {

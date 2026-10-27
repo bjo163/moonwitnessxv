@@ -4,7 +4,7 @@ import { panelErrorMessage } from '@/data/queries/error'
 import { FigureRegistryView } from '@/ui/components/actors'
 import { DataPanel } from '@/ui/components/states'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -17,6 +17,7 @@ export const metadata = {
 export default async function FiguresPageView() {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   return (
@@ -24,10 +25,10 @@ export default async function FiguresPageView() {
       <PageHeader
         title="Figure Registry"
         subtitle="One referent per figure · a shared name never merges · every role and mission keeps its source"
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Figures' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Figures' }]}
         actions={
           <div className="m-row" style={{ gap: 8, flexWrap: 'wrap' }}>
-            <a className="dk-actors-header-link" href="/missions">
+            <a className="dk-actors-header-link" href={localeHref('/missions')}>
               MISSION TABLE
             </a>
           </div>
@@ -57,7 +58,7 @@ export default async function FiguresPageView() {
             <div className="m-row" style={{ gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
               <Badge tone="cyan">{registry.counts.figures} figures</Badge>
             </div>
-            <FigureRegistryView registry={registry} />
+            <FigureRegistryView registry={registry} locale={locale} />
           </>
         )}
       </DataPanel>

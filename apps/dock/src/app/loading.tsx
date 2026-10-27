@@ -2,23 +2,15 @@
 
 import { useEffect, useState, type ReactNode } from 'react'
 import { Spinner } from '@moonwitness/moonui'
+import { clientDockLocale } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 import type { Locale } from '@moonwitness/core'
 
-function detectClientLocale(): Locale {
-  if (typeof document !== 'undefined') {
-    const lang = document.documentElement.lang
-    if (lang === 'id' || lang === 'en') return lang
-    if (window.location.pathname.startsWith('/id')) return 'id'
-  }
-  return 'en'
-}
-
 export default function Loading(): ReactNode {
-  const [locale, setLocale] = useState<Locale>(detectClientLocale)
+  const [locale, setLocale] = useState<Locale>(clientDockLocale)
 
   useEffect(() => {
-    setLocale(detectClientLocale())
+    setLocale(clientDockLocale())
   }, [])
 
   const copy = getStatesCopy(locale)

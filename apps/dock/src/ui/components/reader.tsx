@@ -1,11 +1,16 @@
 import type { ReactNode } from 'react'
+import type { Locale } from '@moonwitness/core'
 import { Alert, Badge, Panel, type BadgeTone } from '@moonwitness/moonui'
 import { CitationCopy } from '../client/CitationCopy'
 import type { ReaderCandidate, ReaderResult, ReaderSource } from '@/data/queries/reader'
 import { PanelState } from './states'
 import type { StatesCopy } from '@/lib/states-copy'
+import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const BLOCKED = '[TEXT_BLOCKED_PENDING_RIGHTS_CLEARANCE]'
+
+/** The locale-bound href builder from `dockHrefFor`; a component never names a locale itself. */
+type LocaleHref = ReturnType<typeof dockHrefFor>
 
 const RIGHTS_LABEL: Record<string, string> = {
   RIGHTS_EXACT_VERSION_CLEARED: 'Rights cleared for this exact version',
@@ -17,10 +22,10 @@ const RIGHTS_LABEL: Record<string, string> = {
 
 const rightsLabel = (status: string): string => RIGHTS_LABEL[status] ?? status
 
-const sourceHref = (candidate: ReaderCandidate): string => {
+const sourceHref = (candidate: ReaderCandidate, localeHref: LocaleHref): string => {
   const params = new URLSearchParams({ citation: candidate.citationKey ?? '' })
   if (candidate.editionCode) params.set('edition', candidate.editionCode)
-  return `/reader?${params.toString()}`
+  return localeHref('/reader', `?${params.toString()}`)
 }
 
 function SourceIdentity({ citation }: { citation: ReaderSource }): ReactNode {
@@ -85,11 +90,14 @@ export function ReaderView({
   result,
   citation,
   copy,
+  locale = 'en',
 }: {
   result: ReaderResult
   citation: string
   copy: StatesCopy
+  locale?: Locale
 }): ReactNode {
+  const localeHref = dockHrefFor(locale)
   if (result.state === 'invalid' || result.state === 'absent') {
     return (
       <Panel title={copy.emptyReaderPanel} subtitle={result.message}>
@@ -117,7 +125,7 @@ export function ReaderView({
         <ul className="dk-reader-candidates">
           {result.candidates.map((candidate) => (
             <li key={`${candidate.editionCode ?? 'no-code'}-${candidate.citationKey ?? citation}`}>
-              <a className="dk-reader-candidate" href={sourceHref(candidate)}>
+              <a className="dk-reader-candidate" href={sourceHref(candidate, localeHref)}>
                 <span className="dk-reader-candidate-name">
                   {candidate.workTitle ?? 'UNKNOWN WORK'} — {candidate.editionName ?? 'UNRESOLVED EDITION'}
                 </span>
@@ -236,7 +244,7 @@ export function ReaderView({
             <pre className="dk-reader-citation" aria-label="Reproducible citation text" tabIndex={0}>
               {result.citationText}
             </pre>
-            <CitationCopy text={result.citationText} citationKey={source?.key ?? citation} />
+            <CitationCopy text={result.citationText} citationKey={source?.key ?? citation} locale={locale} />
           </>
         ) : (
           <p className="dk-reader-note">{copy.emptyReaderCitation}</p>

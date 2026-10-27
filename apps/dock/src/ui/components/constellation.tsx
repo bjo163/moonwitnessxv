@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type { Locale } from '@moonwitness/core'
 import { Badge, EmptyState, Panel, type BadgeTone } from '@moonwitness/moonui'
 import type {
   ConstellationProjection,
@@ -9,6 +10,7 @@ import type {
   IdentityDecision,
   ReviewRubric,
 } from '@/data/queries/constellation'
+import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const IDENTITY_TONE: Record<string, BadgeTone> = {
   CANDIDATE: 'accent',
@@ -136,13 +138,14 @@ function NodeCard({ node }: { node: GraphNode }): ReactNode {
   )
 }
 
-function EdgeRow({ edge }: { edge: GraphEdge }): ReactNode {
+function EdgeRow({ edge, locale = 'en' }: { edge: GraphEdge; locale?: Locale }): ReactNode {
+  const localeHref = dockHrefFor(locale)
   return (
     <li className="dk-graph-edge" data-verified={edge.verified ? 'true' : 'false'}>
       <div className="dk-graph-edge-head">
         <a
           className="dk-graph-edge-link"
-          href={`/constellation/relations/${edge.edgeCode}`}
+          href={localeHref(`/constellation/relations/${edge.edgeCode}`)}
           aria-label={`Open relation detail for ${edge.edgeCode}`}
         >
           <span className="dk-graph-edge-route">
@@ -232,7 +235,13 @@ function ReviewRubricPanel({ rubric }: { rubric: ReviewRubric }): ReactNode {
   )
 }
 
-export function ConstellationView({ projection }: { projection: ConstellationProjection }): ReactNode {
+export function ConstellationView({
+  projection,
+  locale = 'en',
+}: {
+  projection: ConstellationProjection
+  locale?: Locale
+}): ReactNode {
   const { counts } = projection
   return (
     <div className="dk-graph">
@@ -312,7 +321,7 @@ export function ConstellationView({ projection }: { projection: ConstellationPro
         ) : (
           <ul className="dk-graph-edges">
             {projection.edges.map((edge) => (
-              <EdgeRow edge={edge} key={edge.edgeCode} />
+              <EdgeRow edge={edge} key={edge.edgeCode} locale={locale} />
             ))}
           </ul>
         )}

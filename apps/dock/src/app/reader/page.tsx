@@ -4,7 +4,7 @@ import { panelErrorMessage } from '@/data/queries/error'
 import { ReaderView } from '@/ui/components/reader'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
-import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
+import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 export const dynamic = 'force-dynamic'
@@ -21,6 +21,7 @@ export default async function ReaderPage({
 }) {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
+  const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
 
   const params = await searchParams
@@ -54,11 +55,11 @@ export default async function ReaderPage({
                 edition ? ` · ${edition}` : ''
               }`
         }
-        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Reader' }]}
+        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Reader' }]}
         actions={
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Badge tone="cyan">{citation}</Badge>
-            <LinkButton href="/reader/compare" variant="primary" size="sm">
+            <LinkButton href={localeHref('/reader/compare')} variant="primary" size="sm">
               1·6·3 COMPARATIVE WORKBENCH →
             </LinkButton>
           </div>
@@ -66,7 +67,7 @@ export default async function ReaderPage({
       />
 
       <Panel title="Look up a citation" subtitle="The Reader never guesses: absent, blocked and ambiguous are explicit states.">
-        <form className="dk-reader-form" method="get" action="/reader" role="search">
+        <form className="dk-reader-form" method="get" action={localeHref('/reader')} role="search">
           <Field label="Citation" htmlFor="citation" hint="Example: QS 2:82">
             <TextInput id="citation" name="citation" defaultValue={citation} placeholder="QS 2:82" required />
           </Field>
@@ -89,7 +90,7 @@ export default async function ReaderPage({
           </div>
         }
       >
-        {(result) => <ReaderView result={result} citation={citation} copy={copy} />}
+        {(result) => <ReaderView result={result} citation={citation} copy={copy} locale={locale} />}
       </OutcomePanel>
     </div>
   )

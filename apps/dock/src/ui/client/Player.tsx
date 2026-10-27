@@ -15,6 +15,7 @@ import {
   type TunedStation,
 } from '@moonwitness/moonui/client'
 import { TimeShiftPlayer } from './TimeShiftPlayer'
+import { clientDockLocale, dockHrefFor } from '@/lib/locale-context.mjs'
 
 /** A session shorter than this is a skip: nobody drifts into it by accident. */
 const SKIP_AFTER_SECONDS = 30
@@ -356,7 +357,7 @@ export function Player({
               stations={tunedStations}
               onSelectStation={(st) => {
                 if (st.id !== stationId) {
-                  window.location.href = `/stations/${st.id}`
+                  window.location.assign(dockHrefFor(clientDockLocale())(`/stations/${st.id}`))
                 }
               }}
               showSMeter={true}

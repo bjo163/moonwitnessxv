@@ -13,6 +13,7 @@ import type { Locale } from '@moonwitness/core'
 import { SITE_NAME, SITE_TAGLINE } from '@/lib/env'
 import { getLandingCopy } from '@/lib/landing-copy'
 import { localizedDockHref } from '@/lib/locale-context.mjs'
+import { zineLines } from '@/lib/zine-lines'
 import { LocaleSwitcher } from './locale-switcher'
 
 // Canonical destination routes preserved for verify drills: href="/terms", href="/constellation", href="/reader", href="/stations"
@@ -187,12 +188,14 @@ export function SiteHeader({
       ? 'Buka navigasi'
       : 'Open navigation'
 
+  const copy = getLandingCopy(initialLocale)
+
   return (
     <header className="dk-header">
       <BrandLogo href={localizedDockHref('/', '', '', initialLocale)} size="md" />
 
       {/* Desktop primary & full navigation */}
-      <nav className="dk-nav" aria-label="Main navigation">
+      <nav className="dk-nav" aria-label={copy.navMainLabel}>
         {NAV_LINKS.map((link) => {
           const active = isRouteActive(initialPath, link.href)
           const href = getLocalizedNavHref(link.href, initialLocale)
@@ -216,21 +219,21 @@ export function SiteHeader({
         <a
           href={localizedDockHref('/stations', '', '', initialLocale)}
           className="dk-icon-btn"
-          aria-label="Search signals"
-          title="Search signals"
+          aria-label={copy.navSearchLabel}
+          title={copy.navSearchLabel}
         >
           SRC
         </a>
         <a
           href={localizedDockHref('/', '', '#constellation', initialLocale)}
           className="dk-icon-btn"
-          aria-label="Global network"
-          title="Global network"
+          aria-label={copy.navNetworkLabel}
+          title={copy.navNetworkLabel}
         >
           NET
         </a>
         <LinkButton href="#join-crew" variant="paper" size="sm">
-          JOIN THE CREW <Chevron dir="right" />
+          {copy.joinTheCrew} <Chevron dir="right" />
         </LinkButton>
         <Crown tone="gold" size="md" />
         <button
@@ -307,7 +310,7 @@ export function SiteHeader({
 
         <div style={{ marginTop: 'auto', paddingTop: 24, borderTop: '1px solid rgba(247, 244, 236, 0.15)', display: 'flex', gap: 12, alignItems: 'center' }}>
           <LinkButton href="#join-crew" variant="paper" size="sm" onClick={closeMenu}>
-            JOIN THE CREW <Chevron dir="right" />
+            {copy.joinTheCrew} <Chevron dir="right" />
           </LinkButton>
         </div>
       </div>
@@ -330,6 +333,7 @@ export function SiteHeader({
 }
 
 export function SiteFooter({ initialLocale = 'en' }: { initialLocale?: Locale } = {}): ReactNode {
+  const copy = getLandingCopy(initialLocale)
   return (
     <footer className="dk-footer" id="join-crew">
       <div className="dk-join-banner">
@@ -340,52 +344,32 @@ export function SiteFooter({ initialLocale = 'en' }: { initialLocale?: Locale } 
           <span className="dk-icon-btn" aria-hidden="true">
             GLB
           </span>
-          <ZineNote tone="dark" tilt="none">
-            MESSAGES
-            <br />
-            RECEIVED
-            <br />
-            AROUND
-            <br />
-            THE WORLD.
-          </ZineNote>
+          <ZineNote tone="dark" tilt="none">{zineLines(copy.footerMessagesReceived)}</ZineNote>
         </div>
 
         <div className="dk-join-center">
-          <h2 className="dk-join-title">JOIN THE CREW.</h2>
+          <h2 className="dk-join-title">{copy.footerJoinTitle}</h2>
           <p className="dk-join-copy">
-            MORE STORIES.
+            {zineLines(copy.footerJoinCopy)}
             <br />
-            MORE PLACES.
-            <br />
-            MORE PERSPECTIVES.
-            <br />
-            <strong>A BRIGHTER WORLD.</strong>
+            <strong>{copy.footerJoinAccent}</strong>
           </p>
           <LinkButton href={localizedDockHref('/stations', '', '', initialLocale)} variant="paper" size="md">
-            BECOME A MOONWITNESS <Chevron dir="right" />
+            {copy.footerBecomeWitness} <Chevron dir="right" />
           </LinkButton>
         </div>
 
         <div className="m-row" style={{ justifyContent: 'flex-end' }}>
-          <ZineNote tone="accent" tilt="left">
-            PEOPLE. PLACES.
-            <br />
-            STORIES.
-            <br />
-            ANOTHER SIDE
-            <br />
-            OF REALITY.
-          </ZineNote>
+          <ZineNote tone="accent" tilt="left">{zineLines(copy.footerPeopleNote)}</ZineNote>
         </div>
       </div>
 
       <div className="dk-footer-meta">
         <div>
-          <strong>{SITE_NAME}</strong> // Create · Curate · Publish · {SITE_TAGLINE}
+          <strong>{SITE_NAME}</strong> // {copy.footerPipeline} · {SITE_TAGLINE}
         </div>
         <div className="m-muted">
-          SAME MOON · DIFFERENT WITNESSES · powered by moonql hub <Crown tone="gold" size="sm" />
+          {copy.footerWitnesses} · {copy.footerPoweredBy} <Crown tone="gold" size="sm" />
         </div>
       </div>
     </footer>
@@ -464,32 +448,14 @@ export function Hero({
         </div>
 
         <div className="dk-hero-right" aria-hidden="true">
-          <ZineNote tone="paper" tilt="right">
-            LOOK
-            <br />
-            FURTHER
-            <br />
-            THAN
-            <br />
-            WE DO.
-          </ZineNote>
+          <ZineNote tone="paper" tilt="right">{zineLines(copy.heroNoteLookFurther)}</ZineNote>
 
-          <ZineNote tone="dark" tilt="left">
-            SAME MOON
-            <br />
-            DIFFERENT
-            <br />
-            WITNESSES!
-          </ZineNote>
+          <ZineNote tone="dark" tilt="left">{zineLines(copy.heroNoteSameMoon)}</ZineNote>
 
           <ZineNote tone="paper" tilt="left">
-            A GLOBAL
+            {copy.heroNetwork}
             <br />
-            STORY NETWORK
-            <br />
-            FOR CURIOUS
-            <br />
-            HUMANS.
+            {copy.heroAudience}
           </ZineNote>
         </div>
       </div>

@@ -47,7 +47,8 @@ export function getDockMetadata(locale?: Locale | string | null, routePath?: str
   const validLocale: Locale = isLocale(locale) ? locale : 'en'
   const siteUrl = getDockBaseUrl()
 
-  let rawPath = typeof routePath === 'string' && routePath.trim() !== '' ? routePath.trim() : (validLocale === 'id' ? '/id' : '/en')
+  let rawPath =
+    typeof routePath === 'string' && routePath.trim() !== '' ? routePath.trim() : localizedDockHref('/', '', '', validLocale)
   if (rawPath.startsWith('http://') || rawPath.startsWith('https://')) {
     try {
       const parsed = new URL(rawPath)

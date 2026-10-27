@@ -3,18 +3,10 @@
 import { useState, useEffect, type ReactNode } from 'react'
 import { Button } from '@moonwitness/moonui'
 import type { Locale } from '@moonwitness/core'
+import { clientDockLocale } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 
 type CopyStatus = 'idle' | 'copied' | 'failed'
-
-function detectClientLocale(): Locale {
-  if (typeof document !== 'undefined') {
-    const lang = document.documentElement.lang
-    if (lang === 'id' || lang === 'en') return lang
-    if (window.location.pathname.startsWith('/id')) return 'id'
-  }
-  return 'en'
-}
 
 export function CitationCopy({
   text,
@@ -25,14 +17,14 @@ export function CitationCopy({
   citationKey: string
   locale?: Locale
 }): ReactNode {
-  const [activeLocale, setActiveLocale] = useState<Locale>(() => locale ?? detectClientLocale())
+  const [activeLocale, setActiveLocale] = useState<Locale>(() => locale ?? clientDockLocale())
   const [status, setStatus] = useState<CopyStatus>('idle')
 
   useEffect(() => {
     if (locale) {
       setActiveLocale(locale)
     } else {
-      setActiveLocale(detectClientLocale())
+      setActiveLocale(clientDockLocale())
     }
   }, [locale])
 

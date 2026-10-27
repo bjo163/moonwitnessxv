@@ -2,17 +2,9 @@
 
 import { useEffect, useState, type ReactNode } from 'react'
 import { Alert, Button, LinkButton, Panel } from '@moonwitness/moonui'
+import { clientDockLocale, dockHrefFor } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
 import type { Locale } from '@moonwitness/core'
-
-function detectClientLocale(): Locale {
-  if (typeof document !== 'undefined') {
-    const lang = document.documentElement.lang
-    if (lang === 'id' || lang === 'en') return lang
-    if (window.location.pathname.startsWith('/id')) return 'id'
-  }
-  return 'en'
-}
 
 export default function ErrorBoundary({
   error,
@@ -21,13 +13,14 @@ export default function ErrorBoundary({
   error: Error & { digest?: string }
   reset: () => void
 }): ReactNode {
-  const [locale, setLocale] = useState<Locale>(detectClientLocale)
+  const [locale, setLocale] = useState<Locale>(clientDockLocale)
 
   useEffect(() => {
-    setLocale(detectClientLocale())
+    setLocale(clientDockLocale())
   }, [])
 
   const copy = getStatesCopy(locale)
+  const localeHref = dockHrefFor(locale)
 
   return (
     <div className="m-stack" style={{ gap: 20, maxWidth: 640, margin: '40px auto' }}>
@@ -38,7 +31,7 @@ export default function ErrorBoundary({
             <Button type="button" variant="accent" onClick={() => reset()}>
               {copy.errorTryAgain}
             </Button>
-            <LinkButton href={`/${locale}`} variant="ghost">
+            <LinkButton href={localeHref('/')} variant="ghost">
               {copy.errorReturnHome}
             </LinkButton>
           </div>

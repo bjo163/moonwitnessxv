@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type { Locale } from '@moonwitness/core'
 import { Badge, EmptyState, Panel, type BadgeTone } from '@moonwitness/moonui'
 import type {
   ActorEvent,
@@ -12,6 +13,7 @@ import type {
   MissionRow,
   MissionTable,
 } from '@/data/queries/actors'
+import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const SCOPE_TONE: Record<string, BadgeTone> = {
   SCRIPTURE: 'cyan',
@@ -134,7 +136,8 @@ function MissionFacts({ row }: { row: MissionRow }): ReactNode {
   )
 }
 
-function MissionCard({ row }: { row: MissionRow }): ReactNode {
+function MissionCard({ row, locale = 'en' }: { row: MissionRow; locale?: Locale }): ReactNode {
+  const localeHref = dockHrefFor(locale)
   return (
     <li
       className="dk-actors-mission"
@@ -145,7 +148,7 @@ function MissionCard({ row }: { row: MissionRow }): ReactNode {
       <div className="dk-actors-mission-head">
         <div>
           <h3 className="dk-actors-mission-name">
-            <a href={`/figures/${row.figureCode}`}>{row.labelEn}</a> <code>{row.figureCode}</code>
+            <a href={localeHref(`/figures/${row.figureCode}`)}>{row.labelEn}</a> <code>{row.figureCode}</code>
           </h3>
           <p className="dk-actors-mission-title">{row.title}</p>
           <span className="dk-actors-meta">
@@ -182,7 +185,7 @@ function MissionCard({ row }: { row: MissionRow }): ReactNode {
   )
 }
 
-export function MissionTableView({ table }: { table: MissionTable }): ReactNode {
+export function MissionTableView({ table, locale = 'en' }: { table: MissionTable; locale?: Locale }): ReactNode {
   return (
     <div className="dk-actors-stack">
       <StatGrid
@@ -218,7 +221,7 @@ export function MissionTableView({ table }: { table: MissionTable }): ReactNode 
         ) : (
           <ul className="dk-actors-missions" aria-label="Prophetic mission rows">
             {table.rows.map((row) => (
-              <MissionCard row={row} key={row.missionCode} />
+              <MissionCard row={row} key={row.missionCode} locale={locale} />
             ))}
           </ul>
         )}
@@ -284,13 +287,14 @@ function RoleRow({ role }: { role: ActorRole }): ReactNode {
   )
 }
 
-function FigureCard({ figure }: { figure: FigureListItem }): ReactNode {
+function FigureCard({ figure, locale = 'en' }: { figure: FigureListItem; locale?: Locale }): ReactNode {
+  const localeHref = dockHrefFor(locale)
   return (
     <li className="dk-actors-figure" data-figure-code={figure.figureCode}>
       <div className="dk-actors-figure-head">
         <div>
           <h3 className="dk-actors-figure-name">
-            <a href={`/figures/${figure.figureCode}`}>{figure.labelEn}</a>
+            <a href={localeHref(`/figures/${figure.figureCode}`)}>{figure.labelEn}</a>
           </h3>
           <span className="dk-actors-meta">
             {figure.labelId} · <code>{figure.figureCode}</code>
@@ -328,7 +332,7 @@ function FigureCard({ figure }: { figure: FigureListItem }): ReactNode {
   )
 }
 
-export function FigureRegistryView({ registry }: { registry: FigureRegistry }): ReactNode {
+export function FigureRegistryView({ registry, locale = 'en' }: { registry: FigureRegistry; locale?: Locale }): ReactNode {
   return (
     <div className="dk-actors-stack">
       <StatGrid
@@ -352,7 +356,7 @@ export function FigureRegistryView({ registry }: { registry: FigureRegistry }): 
         ) : (
           <ul className="dk-actors-figures" aria-label="Figure Registry">
             {registry.figures.map((figure) => (
-              <FigureCard figure={figure} key={figure.figureCode} />
+              <FigureCard figure={figure} key={figure.figureCode} locale={locale} />
             ))}
           </ul>
         )}
@@ -406,7 +410,7 @@ function EventCard({ event }: { event: ActorEvent }): ReactNode {
   )
 }
 
-function ReadingPanel({ detail }: { detail: FigureDetail }): ReactNode {
+function ReadingPanel({ detail, locale = 'en' }: { detail: FigureDetail; locale?: Locale }): ReactNode {
   return (
     <Panel
       title="Competing readings"
@@ -433,7 +437,7 @@ function ReadingPanel({ detail }: { detail: FigureDetail }): ReactNode {
               <p className="dk-actors-readable">{reading.tradition?.description}</p>
               <ul className="dk-actors-missions">
                 {reading.missions.map((mission) => (
-                  <MissionCard row={mission} key={mission.missionCode} />
+                  <MissionCard row={mission} key={mission.missionCode} locale={locale} />
                 ))}
               </ul>
             </section>
@@ -493,7 +497,7 @@ function AvatarPanel({ detail }: { detail: FigureDetail }): ReactNode {
   )
 }
 
-export function FigureDetailView({ detail }: { detail: FigureDetail }): ReactNode {
+export function FigureDetailView({ detail, locale = 'en' }: { detail: FigureDetail; locale?: Locale }): ReactNode {
   return (
     <div className="dk-actors-stack">
       <Panel
@@ -534,7 +538,7 @@ export function FigureDetailView({ detail }: { detail: FigureDetail }): ReactNod
         )}
       </Panel>
 
-      <ReadingPanel detail={detail} />
+      <ReadingPanel detail={detail} locale={locale} />
 
       <Panel title="Events and chronology" subtitle={detail.chronology.notice}>
         {detail.events.length === 0 ? (
