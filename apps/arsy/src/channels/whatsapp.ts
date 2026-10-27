@@ -1,4 +1,3 @@
-import { HUB_ORIGIN_DEFAULT } from '@moonwitness/core'
 import { WhatsAppClient } from '@moonwitness/skylink-whatsapp'
 import type { MessageHandler } from '@moonwitness/skylink-whatsapp'
 import type { Channel, ChannelFactory, SendResult } from '../lib/channels.js'
@@ -18,7 +17,13 @@ const createWhatsAppChannel: ChannelFactory = (config: RadioConfig): Channel | n
     const rawText = message.text.trim()
     const text = rawText.toLowerCase()
     const to = message.remoteJid
-    const api = `${HUB_ORIGIN_DEFAULT}${config.api.prefix}`
+    // The bot reads its own hub back over loopback. Use the port this process
+    // actually bound, not the shared default constant: on a custom
+    // PORT/ARSY_PORT the constant would dial an empty port and every data
+    // command would silently fall through to its canned fallback. This is a
+    // self-call, so it deliberately uses raw fetch and is not routed through the
+    // egress gate (which is applied per call-site, not by patching global fetch).
+    const api = `http://127.0.0.1:${String(config.port)}${config.api.prefix}`
     const send = (value: string) => sender.sendText(to, value)
     if (text === 'ping') return void (await send('pong'))
     if (text === 'help' || text === '!help') {

@@ -5,12 +5,17 @@ import type { FastifyInstance } from 'fastify'
 /**
  * Fixed-window limiter for the hub's unauthenticated entry points.
  *
- * `/auth/login` runs a real scrypt hash per attempt and `/listen` writes two
- * rows per call, so both are worth more than the request itself to a script.
- * Deliberately dependency-free and in-memory: the hub is a single process, and
- * a distributed limiter would be a promise it cannot keep.
+ * `/auth/login` runs a real scrypt hash per attempt; `/listen`, `/denpa/transmit`
+ * and the timeshift `/beacon` each persist rows, so all of them are worth more
+ * than the request itself to a script. They stay public because real clients are
+ * browsers and the audio ingest, so the mitigation is a per-ip budget rather than
+ * an admin gate. Deliberately dependency-free and in-memory: the hub is a single
+ * process, and a distributed limiter would be a promise it cannot keep.
+ *
+ * Matched against `routeOptions.url` (the registered pattern), never the concrete
+ * URL, so an id in the path cannot mint a fresh bucket per id.
  */
-const LIMITED_SUFFIXES = ['/auth/login', '/listen', '/on-air']
+const LIMITED_SUFFIXES = ['/auth/login', '/listen', '/on-air', '/denpa/transmit', '/timeshift/beacon']
 
 export default fp(async (fastify: FastifyInstance) => {
   const { max, windowMs } = fastify.config.security.rateLimit

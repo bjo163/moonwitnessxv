@@ -1,7 +1,7 @@
 // The advertised origins come from the shared contract: the launchpad is the page
 // that tells an operator where things live, so it must not be a second place that
 // gets to decide the ports.
-import { AI_GATEWAY_PUBLIC_URL, defineLocaleCatalog, FRONTEND_URLS, type Locale } from '@moonwitness/core'
+import { AI_GATEWAY_PUBLIC_URL, defineLocaleCatalog, FRONTEND_URLS, PORTS, type Locale } from '@moonwitness/core'
 
 export interface LaunchpadData {
   name: string
@@ -15,6 +15,13 @@ export interface LaunchpadData {
   studio: string
   frontends?: { dock?: string; headquarters?: string }
 }
+
+// The interpolated values come from config/env (API_TITLE etc.); this page renders
+// for any browser visitor of `/`, so a title containing markup must not inject it.
+const esc = (value: string): string =>
+  value.replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c,
+  )
 
 const launchpadCopy = defineLocaleCatalog({
   en: {
@@ -52,7 +59,7 @@ export function renderLaunchpadHtml(data: LaunchpadData, locale: Locale = 'en'):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${data.name} · Dev Mission Control</title>
+  <title>${esc(data.name)} · Dev Mission Control</title>
   <style>
     :root {
       --bg: #07060b;
@@ -249,16 +256,16 @@ export function renderLaunchpadHtml(data: LaunchpadData, locale: Locale = 'en'):
         <span class="dot"></span>
         <span style="font-family: var(--font-mono); font-size: 12px; color: var(--green);">${copy.active}</span>
       </div>
-      <h1>${data.name} ${copy.missionControl}</h1>
+      <h1>${esc(data.name)} ${copy.missionControl}</h1>
       <p class="subtitle">${copy.subtitle}</p>
     </header>
 
     <div class="status-bar">
-      <div class="status-item"><span class="dot"></span> Radio Core: <strong>:3000</strong></div>
-      <div class="status-item"><span class="dot"></span> Dock: <strong>:3001</strong></div>
-      <div class="status-item"><span class="dot"></span> Headquarters: <strong>:3002</strong></div>
-      <div class="status-item"><span class="dot"></span> AI Gateway: <strong>:3003</strong></div>
-      <div class="status-item" style="margin-left: auto;">Engine: <strong>${data.engine}</strong></div>
+      <div class="status-item"><span class="dot"></span> Radio Core: <strong>:${String(PORTS.hub)}</strong></div>
+      <div class="status-item"><span class="dot"></span> Dock: <strong>:${String(PORTS.dock)}</strong></div>
+      <div class="status-item"><span class="dot"></span> Headquarters: <strong>:${String(PORTS.headquarters)}</strong></div>
+      <div class="status-item"><span class="dot"></span> AI Gateway: <strong>:${String(PORTS.aigateway)}</strong></div>
+      <div class="status-item" style="margin-left: auto;">Engine: <strong>${esc(data.engine)}</strong></div>
     </div>
 
     <div>
@@ -326,7 +333,7 @@ export function renderLaunchpadHtml(data: LaunchpadData, locale: Locale = 'en'):
     </div>
 
     <footer class="links-bar">
-      <span>Moonwitness v${data.version}</span>
+      <span>Moonwitness v${esc(data.version)}</span>
       &bull;
       <a href="/docs/json">OpenAPI JSON</a>
       &bull;

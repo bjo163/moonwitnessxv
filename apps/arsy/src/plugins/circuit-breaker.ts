@@ -81,12 +81,15 @@ const circuitBreakerPlugin: FastifyPluginAsync<CircuitBreakerOptions> = async (
     }
 
     // 2. Execute with bounded timeout
+    let timer: ReturnType<typeof setTimeout> | undefined
     try {
       const result = await Promise.race([
         action(),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error(`Timeout after ${timeoutMs}ms`)), timeoutMs),
-        ),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => reject(new Error(`Timeout after ${timeoutMs}ms`)), timeoutMs)
+          // Never let a bookkeeping timer keep the process alive on its own.
+          timer.unref()
+        }),
       ])
 
       // Success handling
@@ -121,6 +124,10 @@ const circuitBreakerPlugin: FastifyPluginAsync<CircuitBreakerOptions> = async (
       }
 
       return typeof fallback === 'function' ? (fallback as () => Promise<T>)() : fallback
+    } finally {
+      // The race has settled either way; without this the timer stays armed after
+      // every fast call and accumulates pending timers under sustained traffic.
+      if (timer !== undefined) clearTimeout(timer)
     }
   }
 

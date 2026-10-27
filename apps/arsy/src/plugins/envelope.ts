@@ -23,10 +23,11 @@ export default fp(async (fastify) => {
     // Fastify has already serialised the handler's return value with the route's
     // response schema, so the envelope is applied to that text — wrapping before
     // serialization would have the schema strip `ok`/`data` back off again.
-    const first = payload.charCodeAt(0)
     if (reply.statusCode < 400) {
-      // success: no parse, no re-stringify, one flat concatenation
-      if (first !== 0x7b /* { */ && first !== 0x5b /* [ */) return payload
+      // Success: one flat concatenation, no parse/re-stringify. A bare JSON
+      // primitive (string/number/bool/null) is a valid `data` value, so it is
+      // wrapped too — a 2xx JSON response always carries the {ok,data,timestamp}
+      // contract, and consumers never have to guess whether a scalar was wrapped.
       return `{"ok":true,"data":${payload},"timestamp":${JSON.stringify(new Date().toISOString())}}`
     }
 

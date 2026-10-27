@@ -1,4 +1,4 @@
-import { pseudonym } from '@moonwitness/core'
+import { httpError, pseudonym } from '@moonwitness/core'
 import denpa from '@moonwitness/denpa'
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 
@@ -25,13 +25,25 @@ const messageOf = (payload: unknown): string => {
   return JSON.stringify(payload ?? '').slice(0, MESSAGE_CAP)
 }
 
-/** A request may name a station; an unknown name is dropped, not invented. */
+/**
+ * A request may point at a station. Accept either the station's name (the webhook
+ * hint) or its id (what the Dock transceiver sends), and drop anything that
+ * resolves to no real station — a dangling ref must never be stored. An unresolvable
+ * hint is dropped, not invented.
+ */
+const resolveStationRef = async (fastify: FastifyInstance, hint: unknown): Promise<string | null> => {
+  if (typeof hint !== 'string' || !hint.trim()) return null
+  const trimmed = hint.trim()
+  const byName = await fastify.moonql.model('stations').list({ where: { name: trimmed }, limit: 1 })
+  if (byName[0]) return String(byName[0].id)
+  const byId = await fastify.moonql.model('stations').get(trimmed).catch(() => null)
+  return byId ? String(byId.id) : null
+}
+
+/** Webhook form of the same rule: the station hint rides under `payload.station`. */
 const stationRefOf = async (fastify: FastifyInstance, payload: unknown): Promise<string | null> => {
   if (!payload || typeof payload !== 'object') return null
-  const hint = (payload as { station?: unknown }).station
-  if (typeof hint !== 'string' || !hint.trim()) return null
-  const rows = await fastify.moonql.model('stations').list({ where: { name: hint.trim() }, limit: 1 })
-  return rows[0] ? String(rows[0].id) : null
+  return resolveStationRef(fastify, (payload as { station?: unknown }).station)
 }
 
 interface TransmitBody {
@@ -61,16 +73,20 @@ export default async function denpaModule(fastify: FastifyInstance) {
   }, async (req: FastifyRequest<{ Body: TransmitBody }>, reply: FastifyReply) => {
     const rawMessage = req.body?.message?.trim() ?? ''
     if (!rawMessage) {
-      return reply.code(400).send({ ok: false, error: 'message cannot be empty' })
+      // Thrown, not returned as a raw {ok:false}: the envelope builds its error
+      // body from {statusCode,message}, so a hand-rolled shape loses the reason.
+      throw httpError(400, 'message cannot be empty')
     }
     const message = rawMessage.slice(0, MESSAGE_CAP)
     const pseudo = req.body.pseudonym?.trim() || await senderOf(req.ip || 'anonymous')
+    // The Dock sends a station id; a bogus ref is dropped instead of stored.
+    const stationRef = await resolveStationRef(fastify, req.body.stationRef)
 
     const transmission = await fastify.moonql.model('denpa_transmissions').create({
       tokenHash: 'web_listener',
       pseudonym: pseudo,
       message,
-      stationRef: req.body.stationRef || null,
+      stationRef,
       status: 'ON_AIR',
       broadcastAt: new Date().toISOString(),
     })
@@ -81,7 +97,7 @@ export default async function denpaModule(fastify: FastifyInstance) {
         await fastify.moonql.model('requests').create({
           message,
           sender: pseudo,
-          stationRef: req.body.stationRef || null,
+          stationRef,
         })
       }
     } catch (err) {
