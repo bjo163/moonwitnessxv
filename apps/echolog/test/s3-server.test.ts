@@ -134,6 +134,25 @@ void test('ListObjectsV2 continuation orders mixed-case and punctuation keys wit
   assert.deepEqual(actual, expected)
 })
 
+void test('ListObjectsV2 with max-keys zero returns a resumable empty page', async (t) => {
+  const { client } = await setup(t)
+  await client.send(new PutObjectCommand({ Bucket: BUCKET, Key: 'zero/first', Body: Buffer.from('first'), ContentType: 'application/octet-stream' }))
+
+  const emptyPage = await client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: 'zero/', MaxKeys: 0 }))
+  assert.deepEqual(emptyPage.Contents ?? [], [])
+  assert.equal(emptyPage.KeyCount, 0)
+  assert.equal(emptyPage.IsTruncated, true)
+  assert.ok(emptyPage.NextContinuationToken)
+
+  const resumedPage = await client.send(new ListObjectsV2Command({
+    Bucket: BUCKET,
+    Prefix: 'zero/',
+    MaxKeys: 1,
+    ContinuationToken: emptyPage.NextContinuationToken,
+  }))
+  assert.deepEqual(resumedPage.Contents?.map(({ Key }) => Key), ['zero/first'])
+})
+
 void test('S3 namespace publication and GC serialize so concurrent uploads remain readable', async (t) => {
   const root = await mkdtemp(join(tmpdir(), 'echolog-s3-gc-'))
   t.after(async () => rm(root, { recursive: true, force: true }))

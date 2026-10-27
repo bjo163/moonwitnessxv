@@ -192,7 +192,7 @@ async function listObjects(
       }
       after = cursor.after
       skippedPrefix = typeof cursor.skippedPrefix === 'string' ? cursor.skippedPrefix : null
-      validateObjectKey(after)
+      if (after !== '') validateObjectKey(after)
       if (skippedPrefix !== null) validateObjectKey(skippedPrefix)
     } catch {
       return sendError(reply, 400, 'InvalidToken', 'The continuation token is invalid.', resource)
@@ -217,8 +217,10 @@ async function listObjects(
   const page = merged.slice(0, maxKeys)
   const truncated = merged.length > page.length
   const lastPageKey = page[page.length - 1]?.key
-  const nextToken = truncated && lastPageKey
-    ? Buffer.from(JSON.stringify({ after: lastPageKey, ...(commonPrefixes.has(lastPageKey) ? { skippedPrefix: lastPageKey } : {}) })).toString('base64url')
+  const cursorAfter = lastPageKey ?? after
+  const cursorSkippedPrefix = lastPageKey && commonPrefixes.has(lastPageKey) ? lastPageKey : skippedPrefix
+  const nextToken = truncated
+    ? Buffer.from(JSON.stringify({ after: cursorAfter, ...(cursorSkippedPrefix ? { skippedPrefix: cursorSkippedPrefix } : {}) })).toString('base64url')
     : null
   const xml = `<?xml version="1.0" encoding="UTF-8"?><ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>${xmlEscape(bucket)}</Name><Prefix>${xmlEscape(prefix)}</Prefix><KeyCount>${page.length}</KeyCount><MaxKeys>${maxKeys}</MaxKeys><IsTruncated>${truncated}</IsTruncated>${page.map(({ record }) => record ? `<Contents><Key>${xmlEscape(record.key)}</Key><LastModified>${xmlEscape(new Date(record.last_modified).toISOString())}</LastModified><ETag>&quot;${xmlEscape(record.etag)}&quot;</ETag><Size>${record.size}</Size><StorageClass>STANDARD</StorageClass></Contents>` : '').join('')}${[...commonPrefixes].filter((value) => page.some((item) => item.key === value)).map((value) => `<CommonPrefixes><Prefix>${xmlEscape(value)}</Prefix></CommonPrefixes>`).join('')}${nextToken ? `<NextContinuationToken>${nextToken}</NextContinuationToken>` : ''}</ListBucketResult>`
   return reply.code(200).type('application/xml').header('x-amz-bucket-region', region).send(xml)
