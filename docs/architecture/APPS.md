@@ -6,7 +6,7 @@
 
 | Workspace | Ownership | Current evidence boundary |
 |---|---|---|
-| `apps/arsy` / `@moonwitness/arsy` | D00 identity/session, Fastify API, MoonQL and backend runtime | In-place M28 move is present; M28-13/M28-14 integration, regression and release evidence remain open. |
+| `apps/arsy` / `@moonwitness/arsy` | D00 identity/session, Fastify API, MoonQL and backend runtime | In-place M28 move, exact-SHA regression, integration and rollback evidence are recorded at `dbc5f01`; M28-07 handoff docs and M28-15 deployment compatibility proof remain open. No production deployment is claimed. |
 | `apps/dock` | Public Next.js reading/discovery frontend | Source-rights and scoped release gates still apply. |
 | `apps/headquarters` | Privileged Next.js review/governance frontend; 100CENTER | Human approval and audit remain here; individual M20 gates require evidence. |
 | `apps/cockpit` | Local Vite developer/technician GUI and process supervisor | Not a public admin, agent executor or runtime source of truth. |

@@ -18,6 +18,7 @@ available.
 - Baseline evidence for the twelve design references: [UI audit](docs/audit/ui-baseline-8737fe4.md) and the [blocked-screen register](docs/audit/ui-blocked-screens-8737fe4.md).
 
 ### Changed
+- Recorded the verified in-place ARSY Hub migration and exact-SHA rollback rehearsal at source `dbc5f01` in the [operator handoff](docs/runbook-arsy-migration.md). This is compatibility/runtime evidence, not a production deployment; M28-15 remains open.
 - Streamlined CI pipeline to run verification exactly once on `dev` and eliminate duplicate verification on `main`.
 - Reference design mockups (`docs/design/mockups-xv`) are reference-only and never shipped as product art; a per-asset rights ledger is required first ([ADR-0009](docs/decisions/ADR-0009-public-ui-reference-adoption.md)).
 - The `promote` job now tags and publishes a GitHub Release for each verified commit that reaches `main`; the workflow never rewrites `CHANGELOG.md` or `package.json`.

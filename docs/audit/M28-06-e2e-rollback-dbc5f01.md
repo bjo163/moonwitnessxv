@@ -42,4 +42,4 @@ The later repeat of the synthetic playback, after the rollback comparison had co
 - Rollback is reversible: stop the disposable containers and remove the isolated network/database. No source, schema migration, shared database or production service was changed.
 - Cleanup completed: all `m28-06-dbc5-*` and `m28-06-rollback-*` containers plus `m28-06-dbc5-net` were removed; the temporary credential file and data dumps were deleted. The three exact-SHA image tags were retained locally for reproducibility.
 
-**Result:** M28-06 acceptance evidence collected at exact source SHA `dbc5f01dad478fce74250fe253b801f98d1d5729`; independent review pending before the integrator updates TODO.
+**Review:** Independent review completed after the audit corrections; no blocker remained. **Result:** M28-06 acceptance evidence collected at exact source SHA `dbc5f01dad478fce74250fe253b801f98d1d5729`; the integrator recorded closure in TODO at commit `ed92b12`.

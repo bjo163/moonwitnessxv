@@ -1,7 +1,7 @@
 # ADR-0001 — ARSY is the MoonWitness XV application hub
 
 - **Date:** 2026-10-26 (Asia/Jakarta)
-- **Status:** ACCEPTED naming/ownership; in-place app/package move is present on dev; M28-13/M28-14 compatibility and release acceptance remain OPEN.
+- **Status:** ACCEPTED naming/ownership; in-place app/package move and M28-13/M28-14 compatibility evidence are recorded at exact source SHA `dbc5f01`; live deployment compatibility remains OPEN under M28-15.
 - **Repository of record:** `bjo163/moonwitnessxv`; development is on existing `dev`, with promotion after verification.
 - **Requested by:** project owner in conversation: "Agar ARSY itu adalah radio ... radio tidak relevan soalnya namanya ... tolong di update lagi."
 - **Scope:** application naming, logical ownership, compatibility, and migration acceptance; not the theological referent al-'Arsh, nor an AI authority.
@@ -49,35 +49,23 @@
 
 ## Why this is the chosen decision
 
-The existing Hub was moved in place to `apps/arsy` / `@moonwitness/arsy` in the current dev tree. It remains the single general-purpose backend and Radio stays a bounded domain. Reusing this one Hub avoids competing API/data ownership and duplicate bootstraps. M28-13/M28-14 regression and release gates remain open; directory presence does not certify production readiness.
+The existing Hub was moved in place to `apps/arsy` / `@moonwitness/arsy` in the current dev tree. It remains the single general-purpose backend and Radio stays a bounded domain. Reusing this one Hub avoids competing API/data ownership and duplicate bootstraps. M28-13/M28-14 compatibility, integration and rollback evidence is recorded at exact source SHA `dbc5f01`; M28-15 live deployment compatibility proof remains open. Directory presence and local runtime drills do not certify production readiness.
 
-Do **not** create a separate `apps/arsy` service alongside an `apps/radio` production Hub. The in-place path/package move is present in dev; finish M28 compatibility and release evidence while ensuring only one Hub runtime remains.
+Do **not** create a separate `apps/arsy` service alongside an `apps/radio` production Hub. The in-place path/package move is present in dev; the exact-SHA integration and rollback rehearsal is recorded, and M28-15 must still verify the actual deployment while ensuring only one Hub runtime remains.
 
-## Actual dependency and compatibility impact (confirmed from XV source)
+## Migration surfaces and current compatibility contract
 
-1. Root `package.json`: `build`, `start`, `dev:hub`, `test`, `gen:sdk`, `gen:sdk:check`, scripts and filters referencing `@moonwitness/radio`.
-2. `apps/radio/package.json`: package identifier, scripts/test/globs/TS project references.
-3. `pnpm-lock.yaml`: `apps/radio` workspace importer must be regenerated **by pnpm**; hand-editing a lockfile is risky.
-4. `Dockerfile` and `Dockerfile.web`: both copy `apps/radio/package.json`; backend runtime also uses `apps/radio/dist/server.js`.
-5. `docker-compose.yml`: service `radio`, `depends_on: radio`, internal DNS URL `http://radio:3000/api/v1`, Hub title and environment aliases.
-6. `scripts/dev.mjs`: `radio` tag and package filter, `RADIO_PORT`.
-7. `.env.example` and `apps/radio/test/env-contract.test.ts`: `RADIO_API_URL`, `RADIO_PORT`, `RADIO_PREFIX`, `RADIO_TITLE` and config keys. Existing `RADIO_*` remain documented compatibility aliases until deprecation is tested and approved.
-8. `apps/radio/src/config.ts`, `app.ts` and associated tests: `RadioConfig`, `RADIO_ENV_KEYS`, old naming in documentation/markers.
-9. Frontend server-side Hub URL wiring and workspace scripts/tests (Dock, Headquarters, SDK) must be inspected for old variable/service names.
-10. Backup/runbook, metrics labels, service index, container naming, smoke tests and operational documentation may expose old names; preserve external API/data contracts.
-11. **No database table rename merely because the hub package is renamed.** Migrations require separate approval and real restore proof.
+1. `apps/arsy` and `@moonwitness/arsy` are the canonical app/package; root scripts, lockfile, Dockerfiles and package imports use that path.
+2. Compose names the service `arsy`, and deliberately retains internal DNS alias `radio` for Dock and Headquarters consumers during the compatibility window.
+3. `ARSY_PORT`, `ARSY_PREFIX`, `ARSY_TITLE` and `ARSY_API_URL` are preferred. `RADIO_*` and generic Hub aliases remain supported; conflicting values fail closed.
+4. Port `3000`, `/api/v1`, station APIs and playback remain compatible. Radio is a domain inside the Hub, not another backend.
+5. **No database table rename merely because the Hub package is named ARSY.** Migrations require separate approval and real restore proof.
 
-## Compatibility and release acceptance sequence — **tracked in TODO milestone M28**
+## Remaining deployment acceptance — **tracked as M28-15 in TODO**
 
-1. **Inventory** all name dependencies, source HEAD and Radio baseline; capture old API/SDK/DB fixtures.
-2. **Ratify the semantic boundary**: `ARSY` = runtime; `SIGNAL/RADIO` = functional domain; `100CENTER` = authorized operations UI; `SHADOW` = editorial UI.
-3. **Verify the in-place move** `apps/radio` → `apps/arsy` and package identity `@moonwitness/arsy` in the current tree; reconcile remaining imports, project references, scripts and tests with actual source rather than applying a second rename.
-4. Update pnpm workspace import lock, package root filters, both Dockerfiles, Compose service, internal DNS with transition alias, scripts/dev runners and CI. Maintain old env names during rollout; new preferred env names resolve deterministically, never silently competing.
-5. Update internal code symbols/logging/titles and docs while keeping radio-domain vocabulary in stations/schedules/player.
-6. Validate `pnpm install --frozen-lockfile`, `pnpm verify`, `pnpm typecheck`, all Docker builds, PG test, SDK drift, REST/health/metrics, Hub index, Dock, HQ, Webhook/WA, Radio playback, 401/403 access, backups and rollback.
-7. Verify deployment/compose network transition and recovery, document exact SHA, deprecation window/redirect plan, no duplicate Hub service, then mark migration tasks complete.
+The in-place move, app integration, Docker/runtime checks and local rollback are recorded at source `dbc5f01`; see the [operator handoff](../runbook-arsy-migration.md) and [M28-06 audit](../audit/M28-06-e2e-rollback-dbc5f01.md). M28-15 must verify the actual target environment and record its deployed source/image identity, service/DNS/API compatibility, authorized and denied behavior, health/routes and reviewed rollback. Do not infer these results from local images or CI.
 
-**Release blocker:** the path/package move exists in dev but full M28 compatibility acceptance is **not complete**. Never claim tests green or production deployed without exact-SHA evidence. Until gates close, describe ARSY as the single Hub with M28-13/M28-14 integration/release acceptance open.
+**Release blocker:** the path/package move exists in dev and M28-13/M28-14 exact-SHA evidence is recorded, but full M28 deployment acceptance is **not complete** until M28-15. Never claim production deployed without deployment evidence. Describe ARSY as the single Hub; the `dbc5f01` runtime rehearsal is not a production deployment.
 
 ## Explicit non-goals
 
@@ -91,6 +79,6 @@ Do **not** create a separate `apps/arsy` service alongside an `apps/radio` produ
 
 ## Reconciliation with prior documents
 
-Earlier snapshots correctly record the original `apps/radio` implementation. The current dev tree now contains the in-place path/package move, while the M28 integration and release tasks remain open. Do not rewrite historical snapshots or infer production readiness from the move. [BLUEPRINT.md](../../BLUEPRINT.md) defines architecture and [TODO.md](../../TODO.md) owns M28 task status.
+Earlier snapshots correctly record the original `apps/radio` implementation. The current dev tree contains the in-place path/package move; M28-13/M28-14 evidence is recorded at `dbc5f01` and live deployment compatibility remains open under M28-15. Do not rewrite historical snapshots or infer production readiness from the move. [BLUEPRINT.md](../../BLUEPRINT.md) defines architecture and [TODO.md](../../TODO.md) owns M28 task status.
 
-**Decision:** ACCEPTED naming/ownership. **Implementation:** in-place app/package move present in dev. **Integration/release evidence:** incomplete; M28-13/M28-14 remain open.
+**Decision:** ACCEPTED naming/ownership. **Implementation:** in-place app/package move present in dev. **Integration/rollback evidence:** recorded at exact source SHA `dbc5f01`. **Live deployment evidence:** incomplete; M28-15 remains open.

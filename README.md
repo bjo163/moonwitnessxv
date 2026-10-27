@@ -10,21 +10,21 @@
 
 **LUMEN architecture (M41):** a TypeScript agent framework package plus an internal worker application is documented in [deep research](docs/research/LUMEN-framework-deep-research.md), [architecture](docs/architecture/LUMEN.md) and [accepted ADR-0010](docs/decisions/ADR-0010-lumen-agent-runtime.md). Architectural boundary accepted 27 October 2026; code/service creation remains planned under M41 gates. ARSY remains the only Hub and canonical run-state owner.
 
-**Accepted naming decision:** ARSY is the single existing Fastify + MoonQL Hub, and the in-place move to `apps/arsy` / `@moonwitness/arsy` is present on `dev`. M28-13/M28-14 regression, integration, Docker and release evidence remain open; the path move is not a production certification. Radio stations/schedule/listening remain the **SIGNAL/RADIO** domain in the same service. No duplicate Fastify Hub is allowed; keep port 3000 and `/api/v1` compatible. See [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md) and [M28](TODO.md#m28--arsy-hub-rename-and-compatibility-migration).
+**Accepted naming decision:** ARSY is the single existing Fastify + MoonQL Hub. The in-place move to `apps/arsy` / `@moonwitness/arsy`, exact-SHA regression, app integration, Docker build and image rollback evidence are recorded at source SHA `dbc5f01`; operator handoff docs are tracked in M28-07 and live deployment compatibility proof remains M28-15. This is not production deployment certification. Radio stations/schedule/listening remain the **SIGNAL/RADIO** domain in the same service. No duplicate Fastify Hub is allowed; keep port 3000 and `/api/v1` compatible. See [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md), [ARSY operator handoff](docs/runbook-arsy-migration.md) and [M28](TODO.md#m28--arsy-hub-rename-and-compatibility-migration).
 
 Current `dev` has ten app workspaces: `apps/arsy`, `apps/dock`, `apps/headquarters`, `apps/cockpit`, `apps/aigateway`, `apps/sentinel`, `apps/skylink`, `apps/echolog`, `apps/orbit` and `apps/lumen-runtime` (an empty `apps/api` directory is not a package). SKYLINK's bounded control plane/provider adapters exist but ARSY integration, operator UI and final end-to-end gates remain open (M38-12..14). ECHOLOG's filesystem content-addressed storage and bounded S3-compatible subset exist; its consumer UI and final end-to-end/rollback gates remain open (M39-11/12). ORBIT's frontend shell runs on spatial fixtures on local port 3007, with M40 implementation gates open. `apps/lumen-runtime` is a scaffold with tests but **no dev server** (M41 planned). Corpus, ontology, comparative research, SHADOW, 100CENTER, World Monitor and Journey remain planned capability areas. Use TODO and exact-SHA evidence before claiming implementation or production readiness; rights, privacy, security and recovery gates remain mandatory.
 
 Modular **TypeScript/pnpm** monorepo with ten app workspaces. The existence of a workspace does not imply production certification: ORBIT runs on fixtures only, the LUMEN worker has no server, and no SKYLINK/ECHOLOG operator UI is shipped.
 
-**Ecosystem direction (PLANNED, not deployed):** Empire of the Light / `a-l-l-a-h.com` Lighthouse experience (initially reuse Dock), Harbor community, SHADOW creative authoring, MoonLab research, WORKS commerce and a conditional HELIOGRID read-only energy operations app after calibrated pilot. Those proposed app surfaces share D00 auth, one ARSY/MoonQL Hub and global `id`/`en` UI conventions; SKYLINK is the bounded D18 service and ECHOLOG the bounded stateless D19 object service, neither a second Hub. See [Blueprint §2A](BLUEPRINT.md#2a--global-ecosystem-surfaces-and-implementation-reality-proposal-26-october-2026) and [Immediate Execution](TODO.md#immediate-execution--foundation--global-i18n--first-bilingual-public-release) for **planning**; service integration/release gates remain explicit.
+**Ecosystem direction (PLANNED, not deployed):** Empire of the Light / `a-l-l-a-h.com` Lighthouse experience (initially reuse Dock), Harbor community, SHADOW creative authoring, MoonLab research, WORKS commerce and a conditional HELIOGRID read-only energy operations app after calibrated pilot. Those proposed app surfaces share D00 auth, one ARSY/MoonQL Hub and global `id`/`en` UI conventions; SKYLINK is the bounded D18 service and ECHOLOG the bounded stateless D19 object service, neither a second Hub. See [Blueprint §2A](BLUEPRINT.md#2a--global-ecosystem-surfaces-and-implementation-reality-proposal-26-october-2026) and [Immediate Execution](TODO.md#immediate-execution--foundation-global-i18n-first-bilingual-public-release) for **planning**; service integration/release gates remain explicit.
 
-**First delivery target:** existing Dock landing page in `/id` and `/en`; M19-09–18 record localized route, SEO, fallback, and accessibility evidence. Frozen Docker/Compose readiness and publication are still unverified; `pnpm verify` passing alone is **not** production Docker or public deployment evidence. ARSY's physical Radio rename remains pending.
+**First delivery target:** existing Dock landing page in `/id` and `/en`; M19-09–18 record localized route, SEO, fallback, and accessibility evidence. Frozen Docker/Compose readiness and publication are still unverified; `pnpm verify` passing alone is **not** production Docker or public deployment evidence. ARSY's physical path/package rename is in place; deployment compatibility proof remains open under M28-15.
 
 Current application surfaces and accepted planned targets:
 
 | App | Port | Role |
 |---|---|---|
-| **ARSY Hub (`@moonwitness/arsy`)** | 3000 | Single Fastify + MoonQL API/ORM hub; in-place path/package move is present in `dev`, with M28-13/M28-14 acceptance still open |
+| **ARSY Hub (`@moonwitness/arsy`)** | 3000 | Single Fastify + MoonQL API/ORM hub; exact-SHA compatibility, regression and rollback evidence recorded at `dbc5f01`; M28-07 handoff and M28-15 deployment proof remain open |
 | **`@moonwitness/headquarters`** | 3002 | Admin command center (Next.js 16, RSC + server actions) |
 | **`@moonwitness/dock`** | 3001 | Public homepage, station catalog and schedule (Next.js 16, RSC) |
 | **`@moonwitness/cockpit`** | 3004 by default (local) | Developer Vite/React GUI + process supervision; not a public production admin |
@@ -39,7 +39,7 @@ Process, port and supervision assignment is defined once in `scripts/apps.regist
 
 The hub behind everything:
 
-- **ARSY** — name/ownership of this already existing central API/ORM/plugin runtime (filesystem change pending M28)
+- **ARSY** — canonical identity of the existing central API/ORM/plugin runtime; path/package move and exact-SHA compatibility/rollback evidence are recorded, while deployment proof remains open (M28-15)
 - **stations** — radio station management (CRUD)
 - **moonql addons** — declarative ORM features (schedule, playlog, settings, auth, api keys, ops) with auto-REST, views and a metadata-driven Studio admin
 - **channels** — outbound IM channels (WhatsApp first, add more as plugins); **target: served by [SKYLINK](docs/architecture/SKYLINK.md) (D18, ADR-0006), with these routes kept as an admin proxy**
@@ -56,12 +56,12 @@ exactly as it was. Clean, minimal, plugin-system driven, Docker-ready.
 moonwitness/
 ├─ pnpm-workspace.yaml        # apps/* + packages/*
 ├─ tsconfig.base.json         # shared TS config (NodeNext, strict)
-├─ Dockerfile                 # ARSY Hub (current code path radio): multi-stage, one image
+├─ Dockerfile                 # ARSY Hub (apps/arsy): multi-stage, one image
 ├─ Dockerfile.web             # dock / headquarters (ARG APP)
-├─ docker-compose.yml         # current db + radio-name Hub :3000 + dock :3001 + hq :3002; target Compose service arsy
+├─ docker-compose.yml         # db + ARSY Hub :3000 (legacy DNS alias radio) + dock :3001 + hq :3002
 ├─ docker-compose.db.yml      # Postgres only (pnpm db:up) for host-side development
 ├─ apps/
-│  ├─ arsy/                   # current path/package move; M28-13/M28-14 acceptance gates remain open
+│  ├─ arsy/                   # canonical Hub path; exact-SHA regression/rollback passed, docs/deployment gates remain
 │  │  └─ src/
 │  │     ├─ server.ts · app.ts · config.ts · fastify.d.ts
 │  │     ├─ lib/  channels.ts (Channel contract + ChannelManager) · types.ts (TypedModule) · loader.ts
