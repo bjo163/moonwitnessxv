@@ -39,6 +39,9 @@ jobs:
       - name: Audit dependency advisories
         run: pnpm audit --audit-level=high
 
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Scan Git history for secrets
         if: ${{ always() && steps.install_dependencies.conclusion == 'success' }}
         run: |
