@@ -22,10 +22,10 @@
 ## 2. Shared microtasks (execution sequence)
 | Done | ID | Priority | Difficulty | Dependency | Exact deliverable / acceptance |
 |---|---|---|---|---|---|
-| [ ] | UI-F01 | P0 | D1 | — | Audit current dev HEAD, inventory Dock/HQ/Cockpit/MoonUI/routes; archive SHA and code evidence. |
-| [ ] | UI-F02 | P0 | D2 | UI-F01 | Map each mockup panel to one actual code owner and one canonical Mxx task; proposed ≠ shipped. |
-| [ ] | UI-F03 | P0 | D2 | UI-F01 | Inspect rights, licences, consent and origin of PNG screenshots, textured images and fonts before import. |
-| [ ] | UI-F04 | P0 | D1 | UI-F02 | Identify existing MoonUI primitives (Card, Panel, Nav, Tabs, DataTable, Tooltip, Modal, Skeleton). |
+| [x] | UI-F01 | P0 | D1 | — | Audit current dev HEAD, inventory Dock/HQ/Cockpit/MoonUI/routes; archive SHA and code evidence. **[evidence](docs/audit/ui-baseline-8737fe4.md#1-inventory-ui-f01)** |
+| [x] | UI-F02 | P0 | D2 | UI-F01 | Map each mockup panel to one actual code owner and one canonical Mxx task; proposed ≠ shipped. **[map](docs/audit/ui-baseline-8737fe4.md#2-reference--owner--reality-map-ui-f02)** |
+| [x] | UI-F03 | P0 | D2 | UI-F01 | Inspect rights, licences, consent and origin of PNG screenshots, textured images and fonts before import. **[ledger](docs/audit/ui-baseline-8737fe4.md#3-rights--licence-review-of-the-reference-assets-ui-f03)** |
+| [x] | UI-F04 | P0 | D1 | UI-F02 | Identify existing MoonUI primitives (Card, Panel, Nav, Tabs, DataTable, Tooltip, Modal, Skeleton). **[inventory](docs/audit/ui-baseline-8737fe4.md#4-moonui-primitive-inventory-ui-f04)** |
 | [ ] | UI-F05 | P1 | D2 | UI-F04 | Translate mockup hierarchy to responsive shell; reuse existing Dock public shell and HQ private shell. |
 | [ ] | UI-F06 | P1 | D2 | UI-F05 | Establish typography scale for display, titles, body, captions and monospaced status. |
 | [ ] | UI-F07 | P1 | D2 | UI-F05 | Define responsive 360/390/768/1024/1440/1920 width behavior and avoid horizontal page overflow. |
