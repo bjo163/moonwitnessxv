@@ -1,34 +1,62 @@
 # M29-05 — Low-Context Agent Handoff Evidence
 
 **Task:** M29-05 — Verify one low-context agent handoff
-**Baseline:** `3c60a74212dcb5d62868b390b4ca662d312ab4f2`
-**Worker:** root integrator; independent subagent served as a read-only low-context recipient
-**Current status:** OPEN; evidence below diagnoses an invalid first handoff and a corrected read-only handoff. The artifacts have not been committed or independently reviewed at an integrated SHA.
+**Baseline:** `fee8334ee599c3c3b86d8cabe8389b2f7ab64f11`
+**Result:** `597b31a491e37b39a53c3dadf0930c5e1389ab63`
+**Worker:** root integrator
+**Current status:** Exact-SHA implementation and receiver checks pass. Integrator review/status recording remains pending.
 
-## Positive and negative handoff evidence
+## Handoff evidence
 
-The first isolated handoff was deliberately started without TODO or packet context. The worker invented a nonexistent `M29-06`. This is a negative result: it must not authorize work or advance the register. No repository files were changed by that attempt.
+An earlier context-free attempt invented nonexistent `M29-06`; it made no repository changes and did not authorize work. A later handoff at baseline `fee8334` proposed `M41-02`, but the receiver correctly rejected it because M41-01 was unchecked. That first envelope also used imprecise negative-test wording and lacked exact-SHA output. The fixture was corrected to bind the verified P0 successor `M28-13`, and the negative command now explicitly selects negative cases.
 
-A corrected read-only handoff supplied the committed canonical register from `git show 6eddc101ef947cf857cede40d67d46dd668ca807:TODO.md`, the task packet and lease contract. The recipient correctly reported M29-05 as the final M29 leaf, confirmed M29-04 as its predecessor, and identified P0 M01-07 as the next priority candidate. It did not modify files. The recipient ran relevant suites in a shared dirty checkout, so those results alone are not exact-tree proof.
-
-The root integrator reran the focused suites in the current dirty worktree after adding TODO existence checks, strict field types, exact-true security/rights flags, and safe repository-relative path validation:
+At result SHA `597b31a`, the exact implementation diff from baseline `fee8334` changes only:
 
 ```text
-node --test test/planning/task-lease-contract-check.test.mjs test/planning/task-register-validator.test.mjs test/planning/task-register-invalid-fixtures.test.mjs test/planning/task-role-classification.test.mjs test/planning/agent-handoff.test.mjs
+test/planning/agent-handoff.test.mjs
 ```
 
-Observed: 14 tests, 14 passed, 0 failed, 0 skipped; scoped ESLint and `git diff --check` also passed after fixes. Because the checkout is dirty and includes untracked M29-01/M29-05 artifacts, this proves behavior in the current worktree only, not the committed tree. The M29-05-specific tests establish valid-envelope acceptance and rejection for malformed fields, incomplete envelope, umbrella task, unknown task/successor IDs, unsafe paths, scope breach, invalid SHA, false/non-boolean security and rights declarations, and unverified deployment claim.
+The lease claim for M29-05 declared these five paths:
 
-## Scope and review findings
+```text
+docs/audit/M29-05-handoff.md
+docs/planning/LOW_CONTEXT_AGENT_HANDOFF.md
+scripts/planning/agent-handoff-validator.mjs
+scripts/planning/task-lease-contract-check.mjs
+test/planning/agent-handoff.test.mjs
+```
 
-The artifacts currently claimed are `docs/planning/LOW_CONTEXT_AGENT_HANDOFF.md`, `scripts/planning/agent-handoff-validator.mjs`, `scripts/planning/task-lease-contract-check.mjs`, `test/planning/agent-handoff.test.mjs`, and this report. The lease harness now declares all five paths. Independent review initially identified TODO ID, strict rights/privacy, directional path-scope, rollback wording, and predecessor-verification gaps. The corrected worktree review found no remaining code/spec/test blockers; exact-SHA integration evidence is pending. The reviewer made no changes.
+The report itself is the integrator evidence artifact; it is being updated after the implementation SHA, so it is not part of that result-SHA implementation diff.
 
-The initial draft incorrectly reported 13 handoff tests, described verifier behavior that the code did not enforce, claimed a next task without checking priority/dependencies, and marked the task closed. That draft is superseded by this diagnostic report. The validator now checks successor ID existence, but does not establish successor priority, open status, dependency eligibility, test truth, or SHA provenance; the receiver must verify these separately. M29-05 remains unchecked.
+## Exact-SHA positive and negative checks
+
+At clean detached checkout `C:\Users\bjo16\.codex\worktrees\m29-current-sha-verify\moonradio`, `HEAD` was `597b31a491e37b39a53c3dadf0930c5e1389ab63` and the worktree was clean before dependency installation. Observed:
+
+| Command | Result |
+|---|---|
+| `node --test test/planning/agent-handoff.test.mjs` | 3 passed, 0 failed |
+| `node --test --test-name-pattern=negative test/planning/agent-handoff.test.mjs` | 2 passed, 0 failed |
+| `node --test test/planning/task-register-invalid-fixtures.test.mjs` | 4 passed, 0 failed (M29-04 predecessor evidence) |
+| `pnpm exec eslint test/planning/agent-handoff.test.mjs` | exit 0, no diagnostics |
+| `git diff --check` | exit 0, no diagnostics |
+
+The envelope test binds M29-05, baseline `fee8334ee599c3c3b86d8cabe8389b2f7ab64f11`, result `597b31a491e37b39a53c3dadf0930c5e1389ab63`, changed path above, and next candidate M28-13. The negative command exercises malformed structures, unknown IDs, umbrella tasks, unsafe/out-of-scope paths, invalid SHA, fabricated deployment, and false security/rights declarations.
+
+## Independent receiving-agent review
+
+An independent read-only low-context receiver verified at exact result SHA `597b31a`:
+
+- M29-05 is a LEAF and M29-04 is checked in the canonical TODO; the predecessor fixture suite passed 4/4.
+- The declared M29-05 lease scope matches the task's exclusive paths, and the baseline-to-result implementation diff changes only `test/planning/agent-handoff.test.mjs`.
+- The receiver reproduced both handoff commands (3/3 and 2/2) and `git diff --check`.
+- M28-13 is an open P0 LEAF; its listed dependencies M28-12 and M22-07 are checked. The handoff validator only checks successor ID existence, so this eligibility finding is a separate receiver check.
+
+The initial receiver rejected the superseded envelope because it proposed blocked M41-02 and lacked exact-SHA evidence. After updating this report to capture the corrected evidence, the receiver's original rejection is treated as a review finding addressed by this report; a fresh receiver acceptance is still required before status closure.
 
 ## Security, rights, rollback, and limits
 
-No secrets, private witness material, source content, deployment access, or external service were used. The handoff validator is a local envelope checker, not an atomic coordination service; its schema checks declarations but cannot prove evidence truth, source rights, predecessor completion, or successor eligibility. The invalid-context attempt demonstrates that agents must be given the authoritative register and packet before interpreting task IDs.
+No secrets, private witness material, external services, source content, deployment access, or live deployment are involved. The envelope's security and rights fields are affirmative declarations; they are not cryptographic proof. The validator does not prove tests were run, SHA provenance, predecessor completion, or successor priority/eligibility; those require independent review against the exact checkout and TODO.
 
-Rollback is limited to the M29-05 paths after confirming no dependent work relies on them. Preserve all unrelated staged, unstaged, and untracked files. Do not reset or clean the shared checkout.
+Rollback is limited to `test/planning/agent-handoff.test.mjs` for the implementation diff, after checking dependencies. Preserve this audit and all unrelated staged, unstaged, and untracked files. Do not reset or clean the shared checkout.
 
-**Next priority candidate:** P0 M01-07; this report does not claim it is unblocked by M29-05. Exact integrated-tree evidence is still required before M29-05 can close.
+**Next eligible candidate:** M28-13, P0, open LEAF with M28-12 and M22-07 checked. This is a recommendation from TODO ordering/dependency inspection, not an authorization to mark any status complete. M29-05 remains unchecked pending fresh receiver acceptance and integrator status recording.
