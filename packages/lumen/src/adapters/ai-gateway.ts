@@ -1,5 +1,28 @@
 import type { ModelGatewayPort, ModelRequest, ModelResponse } from '../index.js';
 
+type JsonRecord = Record<string, unknown>;
+
+function isJsonRecord(value: unknown): value is JsonRecord {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function readRecord(value: unknown): JsonRecord | undefined {
+  return isJsonRecord(value) ? value : undefined;
+}
+
+function parseToolArguments(value: unknown): Record<string, unknown> | undefined {
+  if (typeof value === 'string') {
+    try {
+      const parsed: unknown = JSON.parse(value);
+      return isJsonRecord(parsed) ? parsed : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  return isJsonRecord(value) ? value : undefined;
+}
+
 export type GatewayErrorCode =
   | 'UNAUTHORIZED'
   | 'FORBIDDEN'
@@ -207,10 +230,10 @@ export class AiGatewayAdapter implements ModelGatewayPort {
       );
     }
 
-    let json: any;
+    let json: unknown;
     try {
       json = await res.json();
-    } catch (parseErr: unknown) {
+    } catch {
       throw new LumenGatewayError(
         'Failed to parse AI Gateway response as JSON',
         'MALFORMED_RESPONSE',
@@ -219,7 +242,7 @@ export class AiGatewayAdapter implements ModelGatewayPort {
       );
     }
 
-    if (!json || typeof json !== 'object' || !Array.isArray(json.choices) || json.choices.length === 0) {
+    if (!isJsonRecord(json) || !Array.isArray(json.choices) || json.choices.length === 0) {
       throw new LumenGatewayError(
         'Malformed AI Gateway response: missing choices array',
         'MALFORMED_RESPONSE',
@@ -228,33 +251,58 @@ export class AiGatewayAdapter implements ModelGatewayPort {
       );
     }
 
-    const firstChoice = json.choices[0];
-    const message = firstChoice.message ?? {};
+    const firstChoice = readRecord(json.choices[0]);
+    if (!firstChoice) {
+      throw new LumenGatewayError(
+        'Malformed AI Gateway response: first choice must be an object',
+        'MALFORMED_RESPONSE',
+        res.status,
+        false
+      );
+    }
+    const message = readRecord(firstChoice.message) ?? {};
     const content = typeof message.content === 'string' ? message.content : '';
 
     const toolCalls: Array<{ id: string; name: string; arguments: Record<string, unknown> }> = [];
 
     // 1. Structured OpenAI-compatible tool_calls
     if (Array.isArray(message.tool_calls)) {
-      for (const tc of message.tool_calls) {
-        let args: Record<string, unknown> = {};
-        if (tc.function?.arguments) {
-          if (typeof tc.function.arguments === 'string') {
-            try {
-              args = JSON.parse(tc.function.arguments);
-            } catch {
-              args = { raw: tc.function.arguments };
-            }
-          } else if (typeof tc.function.arguments === 'object' && tc.function.arguments !== null) {
-            args = tc.function.arguments as Record<string, unknown>;
-          }
-        } else if (tc.arguments) {
-          args = typeof tc.arguments === 'string' ? JSON.parse(tc.arguments) : tc.arguments;
+      for (const value of message.tool_calls) {
+        const call = readRecord(value);
+        if (!call) {
+          throw new LumenGatewayError(
+            'Malformed AI Gateway response: tool call must be an object',
+            'MALFORMED_RESPONSE',
+            res.status,
+            false
+          );
+        }
+        const functionData = readRecord(call.function);
+        const functionArguments = functionData?.arguments;
+        const topLevelArguments = call.arguments;
+        const rawArguments = functionArguments || topLevelArguments;
+        const args = parseToolArguments(rawArguments);
+        const rawName = functionData?.name || call.name;
+        if (typeof rawName !== 'string' || rawName.trim().length === 0) {
+          throw new LumenGatewayError(
+            'Malformed AI Gateway response: tool call is missing a function name',
+            'MALFORMED_RESPONSE',
+            res.status,
+            false
+          );
+        }
+        if (!args) {
+          throw new LumenGatewayError(
+            'Malformed AI Gateway response: tool call arguments must be a JSON object',
+            'MALFORMED_RESPONSE',
+            res.status,
+            false
+          );
         }
 
         toolCalls.push({
-          id: String(tc.id || `call_${Date.now()}_${toolCalls.length}`),
-          name: String(tc.function?.name || tc.name || 'unknown_tool'),
+          id: String(call.id || `call_${Date.now()}_${toolCalls.length}`),
+          name: rawName,
           arguments: args,
         });
       }
@@ -268,11 +316,13 @@ export class AiGatewayAdapter implements ModelGatewayPort {
       }
     }
 
-    const usage = json.usage
+    const rawUsage = json.usage;
+    const usageData = readRecord(rawUsage);
+    const usage = rawUsage
       ? {
-          promptTokens: Number(json.usage.prompt_tokens ?? 0),
-          completionTokens: Number(json.usage.completion_tokens ?? 0),
-          totalTokens: Number(json.usage.total_tokens ?? 0),
+          promptTokens: Number(usageData?.prompt_tokens ?? 0),
+          completionTokens: Number(usageData?.completion_tokens ?? 0),
+          totalTokens: Number(usageData?.total_tokens ?? 0),
         }
       : undefined;
 
@@ -291,15 +341,15 @@ export class AiGatewayAdapter implements ModelGatewayPort {
     if (!candidate) return null;
 
     try {
-      const parsed = JSON.parse(candidate);
-      if (parsed && typeof parsed === 'object') {
+      const parsed: unknown = JSON.parse(candidate);
+      if (isJsonRecord(parsed)) {
         const toolName = parsed.tool || parsed.name || parsed.action;
         const toolArgs = parsed.arguments || parsed.args || parsed.parameters;
-        if (typeof toolName === 'string' && toolArgs && typeof toolArgs === 'object') {
+        if (typeof toolName === 'string' && isJsonRecord(toolArgs)) {
           return {
             id: `call_${Date.now()}`,
             name: toolName,
-            arguments: toolArgs as Record<string, unknown>,
+            arguments: toolArgs,
           };
         }
       }

@@ -170,7 +170,7 @@ export class ArsyLeaseAdapter implements RunControlPort, CheckpointPort {
     return true;
   }
 
-  async completeRun(runId: string, result: Record<string, unknown>): Promise<void> {
+  async completeRun(runId: string, _result: Record<string, unknown>): Promise<void> {
     const record = this.canonicalStore.get(runId);
     if (!record) {
       throw new LumenLeaseError(`Run "${runId}" not found`, 'RUN_NOT_FOUND');
@@ -183,7 +183,7 @@ export class ArsyLeaseAdapter implements RunControlPort, CheckpointPort {
     record.run.updatedAt = this.clock().toISOString();
   }
 
-  async failRun(runId: string, error: { code: string; message: string }): Promise<void> {
+  async failRun(runId: string, _error: { code: string; message: string }): Promise<void> {
     const record = this.canonicalStore.get(runId);
     if (!record) {
       throw new LumenLeaseError(`Run "${runId}" not found`, 'RUN_NOT_FOUND');
@@ -196,7 +196,7 @@ export class ArsyLeaseAdapter implements RunControlPort, CheckpointPort {
     record.run.updatedAt = this.clock().toISOString();
   }
 
-  async pauseRunForApproval(runId: string, approvalToken: string): Promise<void> {
+  async pauseRunForApproval(runId: string, _approvalToken: string): Promise<void> {
     const record = this.canonicalStore.get(runId);
     if (!record) {
       throw new LumenLeaseError(`Run "${runId}" not found`, 'RUN_NOT_FOUND');

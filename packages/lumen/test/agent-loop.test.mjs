@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { executeAgentLoop } from '../dist/index.js';
+/* global AbortController */
 
 test('positive: agent loop finishes directly when model returns final answer', async () => {
   const fakeGateway = {
@@ -39,7 +40,7 @@ test('positive: agent loop finishes directly when model returns final answer', a
 test('positive: agent loop executes allowlisted tool and continues to final completion', async () => {
   let callCount = 0;
   const fakeGateway = {
-    async requestInference({ messages }) {
+    async requestInference() {
       callCount++;
       if (callCount === 1) {
         return {

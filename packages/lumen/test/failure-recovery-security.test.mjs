@@ -5,8 +5,6 @@ import {
   ArsyLeaseAdapter,
   LumenApprovalError,
   LumenLeaseError,
-  LumenTelemetrySink,
-  TokenBudgetManager,
   ToolRegistry,
   executeAgentLoop,
 } from '../dist/index.js';
@@ -16,7 +14,6 @@ test('positive: e2e recovery across controlled worker crash and lease epoch hand
   const clock = () => currentTime;
 
   const arsyAdapter = new ArsyLeaseAdapter({ clockFn: clock });
-  const approvalAdapter = new ApprovalGateAdapter({ clockFn: clock });
   const toolRegistry = new ToolRegistry();
 
   let toolExecutionCount = 0;

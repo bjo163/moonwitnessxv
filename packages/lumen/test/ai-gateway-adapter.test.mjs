@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+/* global Response */
 import {
   AiGatewayAdapter,
   LumenGatewayError,
@@ -209,6 +210,38 @@ test('negative: handles timeout, network error, and malformed json safely withou
       return true;
     }
   );
+});
+
+test('negative: malformed structured tool calls fail closed instead of inventing a tool or arguments', async () => {
+  const malformedCalls = [
+    null,
+    {},
+    { function: { arguments: '{"incidentId":"INC-42"}' } },
+    { function: { name: 'lookup_incident' } },
+    { function: { name: 'lookup_incident', arguments: 'not-json' } },
+    { function: { name: 'lookup_incident', arguments: '[]' } },
+  ];
+
+  for (const malformedCall of malformedCalls) {
+    const adapter = new AiGatewayAdapter({
+      fetchFn: async () =>
+        new Response(
+          JSON.stringify({
+            choices: [{ message: { tool_calls: [malformedCall] } }],
+          }),
+          { status: 200 }
+        ),
+    });
+
+    await assert.rejects(
+      async () => adapter.requestInference({ messages: [{ role: 'user', content: 'Check incident INC-42' }] }),
+      (err) => {
+        assert(err instanceof LumenGatewayError);
+        assert.equal(err.code, 'MALFORMED_RESPONSE');
+        return true;
+      }
+    );
+  }
 });
 
 test('positive: redactSensitive correctly redacts Bearer, Gemini, Groq, and OpenRouter keys', () => {

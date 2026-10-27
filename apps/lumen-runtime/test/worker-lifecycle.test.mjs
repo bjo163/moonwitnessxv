@@ -37,7 +37,7 @@ test('positive: runtime starts with fake adapters, claims fixture, executes run,
   // Fake Model Gateway
   let modelCallCount = 0;
   const fakeGateway = {
-    async requestInference(req) {
+    async requestInference() {
       modelCallCount++;
       if (modelCallCount === 1) {
         return {
