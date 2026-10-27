@@ -3,6 +3,8 @@ import type { ViewName } from '@moonwitness/moonql-client'
 import { Badge, Button, DataTable, PageHeader, Panel, TextInput } from '@moonwitness/moonui'
 import { getSchema } from '@/data/schema'
 import { serverClient } from '@/data/sdk'
+import { guardView } from '@/lib/authz'
+import { AccessDenied } from '@/ui/widgets/AccessDenied'
 
 export default async function ViewRunPage({
   params,
@@ -17,6 +19,11 @@ export default async function ViewRunPage({
   const doc = await getSchema()
   const meta = doc.views[view]
   if (!meta) notFound()
+
+  // the view's own published `acl` rule gates the read: `recentPlays`-style
+  // admin views are refused here instead of running the query and eating a 403
+  const guard = await guardView(meta)
+  if (!guard.allowed) return <AccessDenied code={guard.code} />
 
   const page = await serverClient()
     .view(view as ViewName)

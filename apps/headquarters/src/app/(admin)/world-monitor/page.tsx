@@ -16,6 +16,10 @@ import {
   type ProgressTone,
 } from '@moonwitness/moonui'
 import { getMonitorOverview } from '@/data/queries/monitor'
+import { getSchema } from '@/data/schema'
+import { can } from '@moonwitness/moonql-client'
+import { guardEndpoint } from '@/lib/authz'
+import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { ThreatRadarMap } from '@/ui/client/ThreatRadarMap'
 
 interface SearchParams {
@@ -85,6 +89,22 @@ export default async function WorldMonitorPage({
   searchParams: Promise<SearchParams>
 }) {
   const params = await searchParams
+
+  const doc = await getSchema()
+  // read gate: the hub's published `/monitor/overview` ACL, checked server-side
+  // before the snapshot is requested. The affordances further down follow each
+  // monitor model's own published rule, so nothing here is a HQ-invented role.
+  const guard = await guardEndpoint(doc, 'GET', '/monitor/overview')
+  if (!guard.allowed) return <AccessDenied code={guard.code} />
+  const user = guard.user
+
+  const modelAllows = (model: string, op: 'create'): boolean => {
+    const meta = doc.models[model]
+    return meta ? can(meta, user, op) : false
+  }
+  const canCreateRadar = modelAllows('monitor_radars', 'create')
+  const canCreateSource = modelAllows('monitor_sources', 'create')
+
   const overview = await getMonitorOverview()
 
   const selectedRadarId = params.radar || undefined
@@ -161,12 +181,16 @@ export default async function WorldMonitorPage({
               SENTINEL 3-TIER ENGINE
             </ZineNote>
             <div className="m-row" style={{ gap: 8 }}>
-              <LinkButton href="/models/monitor_radars/new" variant="primary" size="sm">
-                + New Radar
-              </LinkButton>
-              <LinkButton href="/models/monitor_sources/new" variant="cyan" size="sm">
-                + New Source
-              </LinkButton>
+              {canCreateRadar ? (
+                <LinkButton href="/models/monitor_radars/new" variant="primary" size="sm">
+                  + New Radar
+                </LinkButton>
+              ) : null}
+              {canCreateSource ? (
+                <LinkButton href="/models/monitor_sources/new" variant="cyan" size="sm">
+                  + New Source
+                </LinkButton>
+              ) : null}
               <LinkButton href="/models/monitor_signals" variant="ghost" size="sm">
                 All Signals
               </LinkButton>

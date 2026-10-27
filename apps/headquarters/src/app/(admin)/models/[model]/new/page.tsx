@@ -4,8 +4,10 @@ import { createRecordAction } from '@/data/actions'
 import { isModelName } from '@/data/queries/registry'
 import { optionsFor } from '@/data/queries/records'
 import { getSchema } from '@/data/schema'
+import { guardModel } from '@/lib/authz'
 import type { SelectOption } from '@/data/types'
 import { RecordForm } from '@/ui/widgets/RecordForm'
+import { AccessDenied } from '@/ui/widgets/AccessDenied'
 
 export default async function NewRecordPage({
   params,
@@ -21,6 +23,11 @@ export default async function NewRecordPage({
   const doc = await getSchema()
   const meta = doc.models[model]
   if (!meta) notFound()
+
+  // create is a privileged affordance: the hub's published ACL for THIS model is
+  // enforced here, server-side, before any related-row options are fetched.
+  const guard = await guardModel(meta, 'create')
+  if (!guard.allowed) return <AccessDenied code={guard.code} />
 
   const relations = [...new Set(Object.values(meta.fields).map((field) => field.relation?.model).filter(Boolean))]
   const entries = await Promise.all(relations.map(async (relation) => [relation, await optionsFor(relation!)] as const))

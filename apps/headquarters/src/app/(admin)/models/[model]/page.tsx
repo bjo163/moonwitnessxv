@@ -4,8 +4,9 @@ import { Alert, Button, PageHeader, Pagination, Panel, TextInput } from '@moonwi
 import { deleteRecordAction } from '@/data/actions'
 import { isModelName } from '@/data/queries/registry'
 import { listRecords } from '@/data/queries/records'
-import { me } from '@/data/queries/session'
 import { getSchema } from '@/data/schema'
+import { guardModel } from '@/lib/authz'
+import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { ModelTable } from '@/ui/widgets/ModelTable'
 
 const hrefFor = (model: string, q: string | undefined, page: number): string => {
@@ -31,10 +32,16 @@ export default async function ModelRowsPage({
   const meta = doc.models[model]
   if (!meta) notFound()
 
+  // listing is the privileged part of this page: the hub's published `list` rule
+  // for THIS model is checked before any row is fetched, so a caller who would
+  // get a 403 from the API never sees a table (or triggers the query at all)
+  const guard = await guardModel(meta, 'list')
+  if (!guard.allowed) return <AccessDenied code={guard.code} />
+  const user = guard.user
+
   const result = await listRecords(model as ModelName, { q, page })
   // affordances follow the published ACL for THIS caller, not just "a route
   // exists": a user-role admin used to be offered buttons that answered 403
-  const user = await me()
   const canCreate = can(meta, user, 'create')
   const canUpdate = can(meta, user, 'update')
   const canDelete = can(meta, user, 'remove')

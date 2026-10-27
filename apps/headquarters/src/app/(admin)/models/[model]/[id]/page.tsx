@@ -5,8 +5,9 @@ import { deleteRecordAction, updateRecordAction } from '@/data/actions'
 import { isModelName } from '@/data/queries/registry'
 import { getRecord, optionsFor } from '@/data/queries/records'
 import { getSchema } from '@/data/schema'
-import { me } from '@/data/queries/session'
+import { guardModel } from '@/lib/authz'
 import type { SelectOption } from '@/data/types'
+import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { RecordForm } from '@/ui/widgets/RecordForm'
 
 export default async function EditRecordPage({
@@ -24,6 +25,13 @@ export default async function EditRecordPage({
   const meta = doc.models[model]
   if (!meta) notFound()
 
+  // this page both reads and writes a row: the hub's published `get` rule is
+  // enforced before the record is fetched, and the edit form is only rendered
+  // when the same published ACL also grants `update`
+  const guard = await guardModel(meta, 'get')
+  if (!guard.allowed) return <AccessDenied code={guard.code} />
+  const user = guard.user
+
   const record = await getRecord(model as ModelName, id)
 
   const relations = [...new Set(Object.values(meta.fields).map((field) => field.relation?.model).filter(Boolean))]
@@ -31,7 +39,8 @@ export default async function EditRecordPage({
   const relationOptions: Record<string, SelectOption[]> = Object.fromEntries(entries)
 
   // same rule as the list page: only offer what this caller's roles allow
-  const canDelete = can(meta, await me(), 'remove')
+  const canUpdate = can(meta, user, 'update')
+  const canDelete = can(meta, user, 'remove')
 
   return (
     <div className="m-stack">
@@ -55,14 +64,18 @@ export default async function EditRecordPage({
         }
       />
       {error ? <Alert tone="hot">{error}</Alert> : null}
-      <RecordForm
-        model={model}
-        meta={meta}
-        mode="update"
-        values={record}
-        relationOptions={relationOptions}
-        action={updateRecordAction.bind(null, model, id)}
-      />
+      {canUpdate ? (
+        <RecordForm
+          model={model}
+          meta={meta}
+          mode="update"
+          values={record}
+          relationOptions={relationOptions}
+          action={updateRecordAction.bind(null, model, id)}
+        />
+      ) : (
+        <Alert tone="accent">This account may read this record but not edit it; the form is not offered.</Alert>
+      )}
       <Panel title="Raw payload" subtitle="what the API actually stores (hydrated row)">
         <pre className="m-mono" style={{ margin: 0, fontSize: 12, overflow: 'auto' }}>
           {JSON.stringify(record, null, 2)}

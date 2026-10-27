@@ -17,6 +17,9 @@ import {
 } from '@moonwitness/moonui'
 import { dashboard } from '@/data/queries/ops'
 import { getMonitorOverview } from '@/data/queries/monitor'
+import { getSchema } from '@/data/schema'
+import { guardEndpoint } from '@/lib/authz'
+import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { EventStream } from '@/ui/client/EventStream'
 import { AuditFeed, JobTable } from '@/ui/widgets/Feeds'
 import { TierBadge } from '@/ui/widgets/ModelTable'
@@ -109,6 +112,13 @@ const EMPIRE_14_SYSTEMS = [
 ] as const
 
 export default async function DashboardPage() {
+  const doc = await getSchema()
+  // the telemetry blocks (engine, crons, job runs, audit trail, live bus) all
+  // come from `/ops/dashboard` + `/ops/stream`, whose published ACL is admin-only:
+  // checked before the fetch instead of letting a non-admin render crash on a 403
+  const guard = await guardEndpoint(doc, 'GET', '/ops/dashboard')
+  if (!guard.allowed) return <AccessDenied code={guard.code} />
+
   const [ops, monitor] = await Promise.all([dashboard(), getMonitorOverview()])
   const totalRows = ops.models.reduce((sum, model) => sum + model.count, 0)
   const crons = ops.crons

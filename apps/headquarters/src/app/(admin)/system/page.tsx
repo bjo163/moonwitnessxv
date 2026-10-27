@@ -1,13 +1,23 @@
 import { Badge, DataTable, LiveDot, PageHeader, Panel, StatCard } from '@moonwitness/moonui'
 import { dashboard } from '@/data/queries/ops'
 import { getSchema } from '@/data/schema'
+import { guardEndpoint } from '@/lib/authz'
 import { TierBadge } from '@/ui/widgets/ModelTable'
+import { AccessDenied } from '@/ui/widgets/AccessDenied'
 
 const anchor = (method: string, path: string): string =>
   `${method.toLowerCase()}-${path.replace(/^\/+/, '').replace(/[^a-zA-Z0-9]+/g, '-')}`
 
 export default async function SystemPage() {
-  const [doc, ops] = await Promise.all([getSchema(), dashboard()])
+  const doc = await getSchema()
+
+  // this page renders whatever `/ops/dashboard` returns (engine, crons, job and
+  // audit history). The gate is that endpoint's own published ACL, so the rule
+  // still belongs to the hub and the telemetry is never fetched to be refused.
+  const guard = await guardEndpoint(doc, 'GET', '/ops/dashboard')
+  if (!guard.allowed) return <AccessDenied code={guard.code} />
+
+  const ops = await dashboard()
 
   return (
     <div className="m-stack">
