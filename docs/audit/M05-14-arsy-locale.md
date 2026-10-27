@@ -6,7 +6,7 @@
 - Branch / working baseline: `dev` / `de4282426d322da119316d81f3b5c82943e56998`.
 - Latest `origin/main` checked before edits: `2a5805c178d3671ad875d05c7d35cecccb929ae1`.
 - Prerequisites M05-09 and M28-05 were checked as closed in TODO.
-- Result SHA: `947fdff2bfb1c11fe985a2d546a21fe7722cadd9`; this is the task source/test commit. Exact-SHA CI is pending at this work session.
+- Result SHA: `947fdff2bfb1c11fe985a2d546a21fe7722cadd9`; this is the task source/test commit. Exact-SHA CI run `40498636963` at `d3a825b5337c29c9c7233ba04d727142fe012378` passed `pnpm verify` and promoted this SHA to `main`.
 
 ## Result
 
@@ -35,5 +35,5 @@ No locale affects authentication decisions, status codes, response envelope fiel
 ## Reviewer, rollback, next task
 
 - Independent reviewer: passed two read-only reviews; final review confirmed the visible Studio copy is localized, all locale behavior follows the shared `id`/`en` negotiator, and no auth/status/envelope/API-path regression was introduced.
-- Rollback: revert the M05-14 error handler, launchpad, Studio, test, and audit changes together. `packages/core` contracts and API routes are unchanged.
-- Next eligible task: M18-02 is independently eligible after M18-01; M18-03 is blocked pending the D08 release-authority and ownership decision.
+- Rollback: revert the M05-14 error handler, launchpad, Studio, root-handler locale hunk in `app.ts`, test, and audit changes together. Keep the separate M38 SKYLINK `app.ts` lines untouched. `packages/core` contracts and API routes are unchanged.
+- Next eligible task: M18-02 follows M18-01 but is blocked pending the D06/D08 storage owner and real license/consent evidence. M18-03 remains blocked pending the D08 release-authority and ownership decision.
