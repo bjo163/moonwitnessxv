@@ -6,7 +6,7 @@ import {
   type MatchPreview,
   type TermsPage,
 } from '@/data/queries/terms'
-import { MatchPreviewView, TermList } from '@/ui/components/terms'
+import { MatchPreviewView, TermIndexTable, TermList } from '@/ui/components/terms'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
@@ -181,6 +181,7 @@ export default async function TermsPageView({
 
       {termsPage ? (
         <>
+          <TermIndexTable page={termsPage} />
           <TermList page={termsPage} />
           <Pagination
             page={page}

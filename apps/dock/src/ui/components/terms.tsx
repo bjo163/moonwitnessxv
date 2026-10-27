@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Alert, Badge, Chevron, EmptyState, Panel, type BadgeTone } from '@moonwitness/moonui'
+import { Alert, Badge, Chevron, DataTable, EmptyState, Panel, type BadgeTone, type ColumnDef } from '@moonwitness/moonui'
 import type {
   IdentityReview,
   MatchPreview,
@@ -110,6 +110,47 @@ function IdentityReviewRow({ review }: { review: IdentityReview }): ReactNode {
       {review.reason ? <p>{review.reason}</p> : null}
       {review.reviewer ? <span className="dk-terms-meta">reviewer: {review.reviewer}</span> : null}
     </li>
+  )
+}
+
+export function TermIndexTable({ page }: { page: TermsPage }): ReactNode {
+  type Row = TermsPage['terms'][number]
+  const columns: ColumnDef<Row>[] = [
+    {
+      key: 'term',
+      label: 'Term',
+      render: (row) => (
+        <a className="dk-terms-link" href={`/terms/${row.stableId}`}>
+          {row.preferredEn}
+        </a>
+      ),
+    },
+    { key: 'stableId', label: 'Stable ID', render: (row) => <code>{row.stableId}</code> },
+    { key: 'preferredId', label: 'Indonesian', render: (row) => row.preferredId },
+    { key: 'lane', label: 'Lane', render: (row) => row.lane },
+    { key: 'status', label: 'Status', render: (row) => row.editorialStatus },
+    { key: 'senses', label: 'Senses', align: 'right', render: (row) => row.senses.length },
+    { key: 'sources', label: 'Sources', align: 'right', render: (row) => row.sources.length },
+    { key: 'relations', label: 'Relations', align: 'right', render: (row) => row.relations.length },
+  ]
+
+  return (
+    <details className="dk-term-index">
+      <summary>
+        Table index · {page.terms.length} of {page.total} terms on this page
+      </summary>
+      <DataTable
+        columns={columns}
+        rows={page.terms}
+        rowKey={(row) => row.stableId}
+        empty={
+          <EmptyState
+            title="No term matches that filter"
+            hint="Search matches stable IDs, labels, definitions and recorded forms."
+          />
+        }
+      />
+    </details>
   )
 }
 
