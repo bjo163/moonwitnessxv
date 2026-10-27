@@ -8,6 +8,8 @@ import { registerWebhookRoutes } from './modules/webhooks.js'
 import type { SkylinkDatabase } from '@moonwitness/skylink-store'
 import type { TelegramAdapter } from '@moonwitness/skylink-telegram'
 import { SkylinkEventBus, registerWebSocketRoute } from './ws.js'
+import { readFile, stat } from 'node:fs/promises'
+import { extname, resolve, sep } from 'node:path'
 
 export interface SkylinkServerOptions {
   store?: SkylinkDatabase
@@ -76,6 +78,35 @@ export function createSkylinkServer(config: SkylinkConfig, options: SkylinkServe
     app: 'skylink',
     port: config.port,
   }))
+
+  // M38-13 packet clarification: the packet listed client/config/gate paths but
+  // omitted the service entry point that must expose its built operator UI.
+  // Serve only the Vite entry document and allowlisted assets, with containment
+  // checks; API routes remain registered above and own their paths.
+  const clientRoot = resolve(import.meta.dirname, '../dist/client')
+  app.get('/', async (_request, reply) => {
+    try {
+      const html = await readFile(resolve(clientRoot, 'index.html'), 'utf8')
+      return reply.type('text/html; charset=utf-8').send(html)
+    } catch {
+      return reply.code(503).type('text/plain; charset=utf-8').send('SKYLINK operator UI is not built. Run the SKYLINK build command.')
+    }
+  })
+  app.get('/assets/*', async (request, reply) => {
+    const assetPath = (request.params as { '*': string })['*']
+    const assetRoot = resolve(clientRoot, 'assets')
+    const filePath = resolve(assetRoot, assetPath)
+    if (!filePath.startsWith(`${assetRoot}${sep}`)) return reply.code(404).send()
+    const types: Record<string, string> = { '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' }
+    const type = types[extname(filePath)]
+    if (!type) return reply.code(404).send()
+    try {
+      if (!(await stat(filePath)).isFile()) return reply.code(404).send()
+      return reply.type(type).header('cache-control', 'public, max-age=31536000, immutable').send(await readFile(filePath))
+    } catch {
+      return reply.code(404).send()
+    }
+  })
 
   return app
 }

@@ -108,6 +108,27 @@ export async function recordDeliveryAttempt(db: SkylinkDatabase, input: NewDeliv
   return row
 }
 
+export async function listDeliveryAttempts(
+  db: SkylinkDatabase,
+  conversationId: string,
+  limit = DEFAULT_PAGE_SIZE,
+): Promise<Array<Pick<DeliveryAttempt, 'id' | 'messageId' | 'attemptNumber' | 'status' | 'attemptedAt'>>> {
+  const rows = await db
+    .select({
+      id: deliveryAttempts.id,
+      messageId: deliveryAttempts.messageId,
+      attemptNumber: deliveryAttempts.attemptNumber,
+      status: deliveryAttempts.status,
+      attemptedAt: deliveryAttempts.attemptedAt,
+    })
+    .from(deliveryAttempts)
+    .innerJoin(messages, eq(deliveryAttempts.messageId, messages.id))
+    .where(eq(messages.conversationId, conversationId))
+    .orderBy(desc(deliveryAttempts.attemptedAt), desc(deliveryAttempts.id))
+    .limit(pageSize(limit))
+  return rows
+}
+
 export async function listConversations(
   db: SkylinkDatabase,
   channelAccountId: string,

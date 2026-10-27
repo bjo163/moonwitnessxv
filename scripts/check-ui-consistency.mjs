@@ -93,6 +93,7 @@ const MANDATORY_MOONUI_SURFACES = [
   'apps/headquarters/src/app/(admin)/world-monitor/page.tsx',
   'apps/cockpit/client/App.tsx',
   'apps/echolog/client/App.tsx',
+  'apps/skylink/client/App.tsx',
   'apps/orbit/src/app/page.tsx',
 ]
 
@@ -102,6 +103,7 @@ const APP_STYLESHEETS = [
   'apps/headquarters/src/app/globals.css',
   'apps/cockpit/client/cockpit-layout.css',
   'apps/echolog/client/echolog-layout.css',
+  'apps/skylink/client/skylink-layout.css',
   'apps/orbit/src/app/globals.css',
 ]
 
@@ -167,6 +169,7 @@ const filesToInspect = [
   ...scanFiles('apps/headquarters/src', ['.tsx', '.css']),
   ...scanFiles('apps/cockpit/client', ['.tsx', '.css']),
   ...scanFiles('apps/echolog/client', ['.tsx', '.css']),
+  ...scanFiles('apps/skylink/client', ['.tsx', '.css']),
   ...scanFiles('apps/orbit/src', ['.tsx', '.css']),
   'apps/arsy/src/lib/launchpad.ts',
 ]

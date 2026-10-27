@@ -11,6 +11,7 @@ import {
   listConversations,
   listMessages,
   migrateSkylinkStore,
+  recordDeliveryAttempt,
 } from '@moonwitness/skylink-store'
 import { TelegramAdapter } from '@moonwitness/skylink-telegram'
 import type { SkylinkChannel } from '../src/channels.js'
@@ -364,6 +365,16 @@ void test('SKYLINK REST and WS enforce service/ARSY auth and publish channel eve
   assert.ok(conversation)
   const outbound = await within(listMessages(store.db, conversation.id), 'persisted messages')
   assert.equal(outbound[0]?.body, 'synthetic outbound body')
+  const outboundMessage = outbound[0]
+  assert.ok(outboundMessage)
+  await within(recordDeliveryAttempt(store.db, {
+    messageId: outboundMessage.id,
+    attemptNumber: 2,
+    status: 'failed',
+    providerMessageId: 'sensitive-provider-reference',
+    errorCode: 'provider_error',
+    errorSummary: 'Sensitive provider response must not be projected.',
+  }), 'persisted retry attempt')
 
   const conversationRead = await app.inject().get('/api/v1/conversations').headers({ authorization: `Bearer ${validToken}` })
   assert.equal(conversationRead.statusCode, 200)
@@ -377,6 +388,14 @@ void test('SKYLINK REST and WS enforce service/ARSY auth and publish channel eve
   assert.deepEqual(Object.keys(projectedMessage).sort(), [
     'body', 'conversationId', 'createdAt', 'direction', 'externalMessageId', 'id', 'senderId', 'status',
   ])
+  const attemptRead = await app.inject().get(`/api/v1/conversations/${conversation.id}/delivery-attempts`).headers({ authorization: `Bearer ${validToken}` })
+  assert.equal(attemptRead.statusCode, 200)
+  const attempts = attemptRead.json().data as Array<Record<string, unknown>>
+  assert.equal(attempts.length, 2)
+  assert.equal(attempts[0]?.attemptNumber, 2, 'attempts are listed newest first')
+  assert.deepEqual(Object.keys(attempts[0] ?? {}).sort(), ['attemptNumber', 'attemptedAt', 'id', 'messageId', 'status'])
+  assert.equal(JSON.stringify(attempts).includes('sensitive-provider-reference'), false)
+  assert.equal(JSON.stringify(attempts).includes('Sensitive provider response'), false)
   const accountRead = await app.inject().get('/api/v1/channels/accounts').headers({ authorization: `Bearer ${validToken}` })
   assert.equal(accountRead.statusCode, 200)
   assert.equal('authRef' in (accountRead.json().data[0] as object), false)
@@ -390,10 +409,11 @@ void test('SKYLINK REST and WS enforce service/ARSY auth and publish channel eve
     app.inject().post('/api/v1/channels/telegram/logout').headers(viewerHeaders),
     app.inject().get('/api/v1/conversations').headers(viewerHeaders),
     app.inject().get(`/api/v1/conversations/${conversation.id}/messages`).headers(viewerHeaders),
+    app.inject().get(`/api/v1/conversations/${conversation.id}/delivery-attempts`).headers(viewerHeaders),
     app.inject().get('/api/v1/channels/accounts').headers(viewerHeaders),
   ]
   for (const request of forbiddenRequests) assert.equal((await request).statusCode, 403)
-  for (const path of ['/api/v1/conversations', `/api/v1/conversations/${conversation.id}/messages`, '/api/v1/channels/accounts']) {
+  for (const path of ['/api/v1/conversations', `/api/v1/conversations/${conversation.id}/messages`, `/api/v1/conversations/${conversation.id}/delivery-attempts`, '/api/v1/channels/accounts']) {
     assert.equal((await app.inject().get(path).headers({ 'x-skylink-key': SERVICE_KEY })).statusCode, 403)
   }
   assert.equal((await app.inject().post('/api/v1/broadcast').headers({ 'x-skylink-key': SERVICE_KEY }).payload({ to: 'chat-fixture', text: 'denied' })).statusCode, 403)

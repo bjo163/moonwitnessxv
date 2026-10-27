@@ -62,10 +62,13 @@ void test('health endpoint identifies SKYLINK without implying configured provid
 void test('SKYLINK declares its API, store and Telegram runtime dependencies', () => {
   assert.deepEqual(Object.keys(manifest.dependencies).sort(), [
     '@fastify/websocket',
+    '@moonwitness/moonui',
     '@moonwitness/skylink-core',
     '@moonwitness/skylink-store',
     '@moonwitness/skylink-telegram',
     'fastify',
+    'react',
+    'react-dom',
     'zod',
   ])
 })

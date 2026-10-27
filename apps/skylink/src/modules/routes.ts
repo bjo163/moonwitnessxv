@@ -5,6 +5,7 @@ import {
   findConversation,
   getChannelAccount,
   getConversation,
+  listDeliveryAttempts,
   listChannelAccounts,
   listMessages,
   listRecentConversations,
@@ -87,6 +88,15 @@ const messageSchema = {
     id: { type: 'string' }, conversationId: { type: 'string' },
     externalMessageId: { type: ['string', 'null'] }, direction: { type: 'string' },
     senderId: { type: ['string', 'null'] }, body: { type: 'string' }, status: { type: 'string' }, createdAt: { type: 'string' },
+  },
+}
+const deliveryAttemptSchema = {
+  type: 'object',
+  required: ['id', 'messageId', 'attemptNumber', 'status', 'attemptedAt'],
+  additionalProperties: false,
+  properties: {
+    id: { type: 'string' }, messageId: { type: 'string' }, attemptNumber: { type: 'integer' },
+    status: { type: 'string' }, attemptedAt: { type: 'string' },
   },
 }
 const sendResultSchema = {
@@ -224,6 +234,22 @@ export function registerSkylinkRoutes(app: FastifyInstance, options: SkylinkRout
     const query = request.query as { limit?: number }
     const messages = await listMessages(options.store, id, query.limit ?? 50)
     return ok(reply, messages.map(projectMessage))
+  })
+
+  app.get('/api/v1/conversations/:id/delivery-attempts', {
+    schema: {
+      params: idParams,
+      querystring: { type: 'object', additionalProperties: false, properties: { limit: { type: 'integer', minimum: 1, maximum: 100 } } },
+      response: { 200: arrayEnvelope(deliveryAttemptSchema), 401: errorSchema, 403: errorSchema, 404: errorSchema, 503: errorSchema },
+    },
+  }, async (request, reply) => {
+    if (!await authorizePolicy(request, reply, authenticate, 'admin')) return
+    if (!options.store) return fail(reply, 503, 'store_unavailable', 'D18 store is unavailable.')
+    const { id } = request.params as { id: string }
+    if (!await getConversation(options.store, id)) return fail(reply, 404, 'conversation_not_found', 'Conversation not found.')
+    const query = request.query as { limit?: number }
+    const attempts = await listDeliveryAttempts(options.store, id, query.limit ?? 50)
+    return ok(reply, attempts.map((attempt) => ({ ...attempt, attemptedAt: attempt.attemptedAt.toISOString() })))
   })
 
   app.get('/api/v1/channels/accounts', {
