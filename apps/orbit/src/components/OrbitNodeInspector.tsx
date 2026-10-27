@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { Badge, Card, CardHeader, CardBody } from '@moonwitness/moonui'
 import type { OrbitOperationalState } from '../fixtures/simulated-operations'
 import type { OrbitCopyKey } from '../lib/orbit-copy'
+import { buildApprovalHandoff } from '../lib/handoff/approval-handoff.ts'
 
 export interface OrbitNodeInspectorProps {
   data: OrbitOperationalState
@@ -43,6 +44,13 @@ export function OrbitNodeInspector({
   const agent = data.agents.find((ag) => ag.id === selectedNodeId)
   const currentTask = agent?.currentTaskId
     ? data.taskQueue.find((t) => t.id === agent.currentTaskId)
+    : null
+
+  const handoff = currentTask
+    ? buildApprovalHandoff(currentTask, {
+        connectionStatus: data.connectionStatus,
+        reviewSurface: data.reviewSurface,
+      })
     : null
 
   return (
@@ -171,25 +179,40 @@ export function OrbitNodeInspector({
                       </Badge>
                     </div>
 
-                    {/* Human Approval Handoff Banner */}
-                    {currentTask.approvalPayload && (
+                    {/* Human Approval Handoff — rendered only from the projected record */}
+                    {handoff && handoff.status !== 'NOT_REQUIRED' && (
                       <div className="orbit-approval-handoff-banner">
                         <div className="orbit-approval-handoff-title">
-                          ⚠️ {copy.approvalRequiredNotice}
+                          {copy.approvalRequiredNotice}
                         </div>
                         <div className="orbit-approval-handoff-meta">
-                          <div><strong>Action:</strong> {currentTask.approvalPayload.action}</div>
-                          <div><strong>Requested Role:</strong> {currentTask.approvalPayload.requestedRole}</div>
-                          <div><strong>Reason:</strong> {currentTask.approvalPayload.reason}</div>
+                          <div><strong>Action:</strong> {handoff.action}</div>
+                          <div><strong>Requested Role:</strong> {handoff.requestedRole}</div>
+                          <div><strong>Reason:</strong> {handoff.reason}</div>
                         </div>
-                        <a
-                          href="http://localhost:3000"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="orbit-handoff-link"
-                        >
-                          → {copy.hqLink}
-                        </a>
+                        <p className="orbit-handoff-boundary">{copy.handoffBoundaryNotice}</p>
+                        {handoff.status === 'AWAITING_HUMAN_REVIEW' ? (
+                          <>
+                            {handoff.simulated && (
+                              <p className="orbit-handoff-simulated" role="status">
+                                <Badge tone="night">{copy.provenanceSimulated}</Badge>{' '}
+                                {copy.handoffNoLiveQueue}
+                              </p>
+                            )}
+                            <a
+                              href={handoff.reviewUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="orbit-handoff-link"
+                            >
+                              {copy.handoffCta}
+                            </a>
+                          </>
+                        ) : (
+                          <p className="orbit-handoff-unavailable" role="status">
+                            {copy.handoffUnavailable}
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>

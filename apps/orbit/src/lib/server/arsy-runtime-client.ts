@@ -19,8 +19,9 @@ import {
   projectOperationalState,
   sanitizePayload,
 } from '../projections/operational-projection.ts'
-import type { OrbitStateProjection } from '../projections/types.ts'
+import type { OrbitStateProjection, ReviewSurface } from '../projections/types.ts'
 import { SIMULATED_OPERATIONS } from '../../fixtures/simulated-operations.ts'
+import { LOOPBACK_REVIEW_SURFACE, resolveReviewSurface } from '../handoff/approval-handoff.ts'
 
 export interface RuntimeClientOptions {
   env?: Record<string, string | undefined>
@@ -43,7 +44,12 @@ export function resolveHubEndpoint(env: Record<string, string | undefined> = pro
 /**
  * Build an honest offline state when the ARSY Hub is down or unreachable.
  */
-export function buildOfflineState(hubUrl: string, now: number, errorDetail?: string): OrbitStateProjection {
+export function buildOfflineState(
+  hubUrl: string,
+  now: number,
+  errorDetail?: string,
+  reviewSurface: ReviewSurface = LOOPBACK_REVIEW_SURFACE,
+): OrbitStateProjection {
   const timestamp = new Date(now).toISOString()
   return {
     connectionStatus: 'OFFLINE',
@@ -64,13 +70,19 @@ export function buildOfflineState(hubUrl: string, now: number, errorDetail?: str
       },
     ],
     errorMessage: errorDetail ?? 'ARSY Hub connection offline / unreachable',
+    reviewSurface,
   }
 }
 
 /**
  * Build an unauthorized state when ARSY returns HTTP 401 or 403.
  */
-export function buildUnauthorizedState(hubUrl: string, now: number, status: number): OrbitStateProjection {
+export function buildUnauthorizedState(
+  hubUrl: string,
+  now: number,
+  status: number,
+  reviewSurface: ReviewSurface = LOOPBACK_REVIEW_SURFACE,
+): OrbitStateProjection {
   const timestamp = new Date(now).toISOString()
   return {
     connectionStatus: 'UNAUTHORIZED',
@@ -91,6 +103,7 @@ export function buildUnauthorizedState(hubUrl: string, now: number, status: numb
       },
     ],
     errorMessage: `ARSY Hub unauthorized (HTTP ${status})`,
+    reviewSurface,
   }
 }
 
@@ -104,12 +117,16 @@ export async function fetchOrbitOperationalState(
   const env = options.env ?? process.env
   const fetchFn = options.fetchFn ?? globalThis.fetch
   const timeoutMs = options.timeoutMs ?? DEFAULT_PROBE_TIMEOUT_MS
+  // The review surface is resolved once, server-side, and carried into every
+  // branch: the browser never reads configuration and never chooses a target.
+  const reviewSurface = resolveReviewSurface(env)
 
   // 1. Explicit simulated mode (e.g. standalone test or developer flag)
   if (options.forceSimulated || env.ORBIT_SIMULATED === 'true') {
     const projected = projectOperationalState(SIMULATED_OPERATIONS, {
       now,
       defaultProvenance: 'SIMULATED',
+      reviewSurface,
     })
     return {
       ...projected,
@@ -122,7 +139,7 @@ export async function fetchOrbitOperationalState(
   try {
     hubUrl = resolveHubEndpoint(env)
   } catch (err) {
-    return buildOfflineState('UNKNOWN_HUB', now, err instanceof Error ? err.message : String(err))
+    return buildOfflineState('UNKNOWN_HUB', now, err instanceof Error ? err.message : String(err), reviewSurface)
   }
 
   // 3. Attempt connection to ARSY Hub health / operational endpoint
@@ -151,12 +168,12 @@ export async function fetchOrbitOperationalState(
 
     // Handle authentication/authorization failures
     if (response.status === 401 || response.status === 403) {
-      return buildUnauthorizedState(hubUrl, now, response.status)
+      return buildUnauthorizedState(hubUrl, now, response.status, reviewSurface)
     }
 
     // Handle server outage / 5xx
     if (!response.ok) {
-      return buildOfflineState(hubUrl, now, `HTTP ${response.status} from ARSY Hub probe`)
+      return buildOfflineState(hubUrl, now, `HTTP ${response.status} from ARSY Hub probe`, reviewSurface)
     }
 
     const rawData = await response.json().catch(() => ({}))
@@ -170,6 +187,7 @@ export async function fetchOrbitOperationalState(
         now,
         staleThresholdMs: options.staleThresholdMs,
         defaultProvenance: 'LIVE',
+        reviewSurface,
       })
       return {
         ...projected,
@@ -242,9 +260,10 @@ export async function fetchOrbitOperationalState(
           provenance: 'LIVE',
         },
       ],
+      reviewSurface,
     }
   } catch (fetchError) {
     const errorMsg = fetchError instanceof Error ? fetchError.message : String(fetchError)
-    return buildOfflineState(hubUrl, now, errorMsg)
+    return buildOfflineState(hubUrl, now, errorMsg, reviewSurface)
   }
 }

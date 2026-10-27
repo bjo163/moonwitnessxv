@@ -34,6 +34,7 @@ export default async function OrbitPage({ searchParams }: PageProps) {
         connectionStatus={state.connectionStatus}
         freshness={state.freshness}
         lastSyncTimestamp={state.lastSyncTimestamp}
+        reviewSurface={activeWorkspaceData.reviewSurface}
       />
 
       <OrbitNav copy={copy} />

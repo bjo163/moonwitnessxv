@@ -45,6 +45,25 @@ export type TaskStatus =
 
 export type TraceLevel = 'INFO' | 'WARN' | 'ERROR' | 'SECURITY'
 
+/** Why the 100CENTER review origin could not be used as a handoff target. */
+export type ReviewSurfaceDenial =
+  | 'ORIGIN_UNRESOLVED'
+  | 'ORIGIN_MALFORMED'
+  | 'ORIGIN_SCHEME_UNSUPPORTED'
+  | 'ORIGIN_CREDENTIALS_FORBIDDEN'
+
+/**
+ * Server-resolved 100CENTER review origin offered to the UI.
+ *
+ * The browser receives the outcome of validation, never the raw environment
+ * value and never a credential-bearing or non-http(s) location.
+ */
+export interface ReviewSurface {
+  available: boolean
+  origin?: string
+  denial?: ReviewSurfaceDenial
+}
+
 export interface WorkstationProjection {
   id: string
   name: string
@@ -105,6 +124,7 @@ export interface OrbitStateProjection {
   agents: AgentProjection[]
   taskQueue: TaskProjection[]
   recentTraces: TraceProjection[]
+  reviewSurface: ReviewSurface
   errorMessage?: string
 }
 
@@ -112,4 +132,5 @@ export interface ProjectionOptions {
   now?: number
   staleThresholdMs?: number
   defaultProvenance?: ProvenanceType
+  reviewSurface?: ReviewSurface
 }

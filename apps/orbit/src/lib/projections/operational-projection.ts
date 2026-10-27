@@ -23,6 +23,7 @@ import type {
   ProvenanceType,
   ProjectionOptions,
 } from './types.ts'
+import { LOOPBACK_REVIEW_SURFACE } from '../handoff/approval-handoff.ts'
 
 const DEFAULT_STALE_THRESHOLD_MS = 60_000 // 60 seconds
 
@@ -283,6 +284,7 @@ export function projectOperationalState(
         },
       ],
       errorMessage: 'UNAUTHORIZED',
+      reviewSurface: options.reviewSurface ?? LOOPBACK_REVIEW_SURFACE,
     }
   }
 
@@ -307,6 +309,7 @@ export function projectOperationalState(
         },
       ],
       errorMessage: 'SERVICE_UNAVAILABLE',
+      reviewSurface: options.reviewSurface ?? LOOPBACK_REVIEW_SURFACE,
     }
   }
 
@@ -374,5 +377,6 @@ export function projectOperationalState(
     agents,
     taskQueue,
     recentTraces,
+    reviewSurface: options.reviewSurface ?? LOOPBACK_REVIEW_SURFACE,
   }
 }

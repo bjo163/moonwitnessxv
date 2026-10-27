@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import type { OrbitOperationalState } from '../fixtures/simulated-operations'
 import type { Locale } from '@moonwitness/core'
 import type { OrbitCopyKey } from '../lib/orbit-copy'
@@ -14,10 +14,12 @@ import {
   resolveAgentTraces,
   resolveAgentTasks,
   resolveWorkstationTraces,
+  shouldDismissTaskInspectorOnKey,
   type TaskQueueFilters,
   type AgentQueueFilters,
   type WorkstationQueueFilters,
 } from '../lib/queues/operational-queues'
+import { buildApprovalHandoff } from '../lib/handoff/approval-handoff.ts'
 import { OrbitSpatialViewport } from './OrbitSpatialViewport'
 import { OrbitQueueFilterBar } from './OrbitQueueFilterBar'
 import { Badge } from '@moonwitness/moonui'
@@ -43,6 +45,13 @@ export function OrbitOperationsWorkspace({
   const [viewMode, setViewMode] = useState<'spatial' | 'accessible'>('spatial')
 
   const queues = useMemo(() => buildOperationalQueues(data), [data])
+
+  // Server-validated review surface + connection status: the only inputs the
+  // UI may use to decide whether an approval handoff exists.
+  const handoffContext = useMemo(
+    () => ({ connectionStatus: data.connectionStatus, reviewSurface: data.reviewSurface }),
+    [data.connectionStatus, data.reviewSurface]
+  )
 
   const [taskFilters, setTaskFilters] = useState<TaskQueueFilters>({})
   const [agentFilters, setAgentFilters] = useState<AgentQueueFilters>({})
@@ -91,6 +100,17 @@ export function OrbitOperationsWorkspace({
     setSelectedTaskId(id)
     setSelectedNodeId(null)
   }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (shouldDismissTaskInspectorOnKey(event.key, selectedTaskId)) {
+        event.preventDefault()
+        setSelectedTaskId(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedTaskId])
 
   return (
     <>
@@ -150,6 +170,11 @@ export function OrbitOperationsWorkspace({
         {isFailed && (
           <p className="orbit-state-notice failed" role="alert">
             {copy.queueFailedState}
+          </p>
+        )}
+        {queues.identityConflictCount > 0 && (
+          <p className="orbit-state-notice failed" role="alert">
+            {copy.queueIdentityConflictState}
           </p>
         )}
 
@@ -248,6 +273,7 @@ export function OrbitOperationsWorkspace({
             <ul className="orbit-list" aria-label={copy.taskQueuesHeading}>
               {filteredTasks.map((task) => {
                 const isSelected = selectedTaskId === task.id
+                const rowHandoff = buildApprovalHandoff(task, handoffContext)
                 return (
                 <li
                   key={task.id}
@@ -273,15 +299,13 @@ export function OrbitOperationsWorkspace({
                     <span>{copy.idLabel}: {task.id}</span>
                     <span>{copy.priorityLabel}: {task.priority}</span>
                   </div>
-                  {task.approvalPayload && (
+                  {rowHandoff.status !== 'NOT_REQUIRED' && (
                     <div
-                      style={{
-                        marginTop: '4px',
-                        fontSize: '0.75rem',
-                        color: 'var(--accent)',
-                      }}
+                      className={`orbit-handoff-inline ${rowHandoff.status === 'UNAVAILABLE' ? 'unavailable' : ''}`}
+                      role="status"
                     >
-                      {copy.handoffNotice}: {task.approvalPayload.action} ({task.approvalPayload.requestedRole})
+                      {copy.handoffNotice}: {rowHandoff.action} ({rowHandoff.requestedRole})
+                      {rowHandoff.status === 'UNAVAILABLE' && ` — ${copy.handoffUnavailable}`}
                     </div>
                   )}
                   {task.status === 'BLOCKED' && (
@@ -388,6 +412,7 @@ export function OrbitOperationsWorkspace({
             if (!selectedTask) return null
             const assignedAgent = agents.find((agent) => agent.id === selectedTask.assignedAgentId)
             const activeTask = assignedAgent ? resolveActiveTask(assignedAgent, queues.taskQueue) : null
+            const handoff = buildApprovalHandoff(selectedTask, handoffContext)
             return (
               <div className="orbit-panel" id="task-inspector">
                 <h3 className="orbit-panel-title">{copy.taskQueuesHeading}</h3>
@@ -397,10 +422,46 @@ export function OrbitOperationsWorkspace({
                 {activeTask?.id === selectedTask.id && assignedAgent && (
                   <p className="orbit-item-meta">{copy.queueSourceLabel}: {assignedAgent.name}</p>
                 )}
-                {selectedTask.approvalPayload && (
-                  <p className="orbit-item-meta">
-                    {copy.handoffNotice}: {selectedTask.approvalPayload.action} ({selectedTask.approvalPayload.requestedRole})
-                  </p>
+                {handoff.status !== 'NOT_REQUIRED' && (
+                  <div className="orbit-handoff-detail" role="group" aria-label={copy.handoffNotice}>
+                    <p className="orbit-handoff-boundary">{copy.handoffBoundaryNotice}</p>
+                    <dl className="orbit-handoff-meta">
+                      <div>
+                        <dt>{copy.queueApprovalAction}</dt>
+                        <dd>{handoff.action}</dd>
+                      </div>
+                      <div>
+                        <dt>{copy.handoffRoleLabel}</dt>
+                        <dd>{handoff.requestedRole}</dd>
+                      </div>
+                      <div>
+                        <dt>{copy.handoffReasonLabel}</dt>
+                        <dd>{handoff.reason}</dd>
+                      </div>
+                    </dl>
+                    {handoff.status === 'AWAITING_HUMAN_REVIEW' ? (
+                      <>
+                        {handoff.simulated && (
+                          <p className="orbit-handoff-simulated" role="status">
+                            <Badge tone="night">{copy.provenanceSimulated}</Badge>{' '}
+                            {copy.handoffNoLiveQueue}
+                          </p>
+                        )}
+                        <a
+                          className="orbit-handoff-link"
+                          href={handoff.reviewUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {copy.handoffCta}
+                        </a>
+                      </>
+                    ) : (
+                      <p className="orbit-handoff-unavailable" role="status">
+                        {copy.handoffUnavailable}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             )

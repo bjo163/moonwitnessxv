@@ -110,7 +110,10 @@ test('M40-03: Approval handoff contract for WAITING_APPROVAL agent', () => {
     inspectorContent.includes('approvalRequiredNotice'),
     'Inspector must render approval notice'
   )
-  assert.ok(inspectorContent.includes('hqLink'), 'Inspector must render HQ link')
+  assert.ok(
+    inspectorContent.includes('orbit-handoff-link'),
+    'Inspector must render the HQ review handoff link'
+  )
 })
 
 test('M40-03: Reduced motion compliance halts auto-rotation', () => {

@@ -1,7 +1,7 @@
 import type { Locale } from '@moonwitness/core'
 import { Badge, LiveDot } from '@moonwitness/moonui'
 import type { OrbitCopyKey } from '../lib/orbit-copy'
-import type { ConnectionStatus, FreshnessStatus } from '../lib/projections/types.ts'
+import type { ConnectionStatus, FreshnessStatus, ReviewSurface } from '../lib/projections/types.ts'
 
 export interface OrbitShellHeaderProps {
   locale: Locale
@@ -9,6 +9,7 @@ export interface OrbitShellHeaderProps {
   connectionStatus: ConnectionStatus | string
   freshness?: FreshnessStatus
   lastSyncTimestamp?: string
+  reviewSurface: ReviewSurface
 }
 
 export function OrbitShellHeader({
@@ -16,6 +17,7 @@ export function OrbitShellHeader({
   copy,
   connectionStatus,
   freshness,
+  reviewSurface,
 }: OrbitShellHeaderProps) {
   return (
     <header className="orbit-header" role="banner">
@@ -26,15 +28,21 @@ export function OrbitShellHeader({
 
       <div className="orbit-header-actions">
         {/* External Link to 100CENTER / Headquarters */}
-        <a
-          href="http://localhost:3002"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="orbit-nav-link"
-          style={{ fontSize: '0.8rem' }}
-        >
-          {copy.hqLink} ↗
-        </a>
+        {reviewSurface.available && reviewSurface.origin !== undefined ? (
+          <a
+            href={reviewSurface.origin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="orbit-nav-link"
+            style={{ fontSize: '0.8rem' }}
+          >
+            {copy.hqLink} ↗
+          </a>
+        ) : (
+          <span className="orbit-nav-link" style={{ fontSize: '0.8rem' }} role="status">
+            {copy.handoffUnavailable}
+          </span>
+        )}
 
         {/* Operational Status Badges */}
         <div className="orbit-status-bar" role="status" aria-label="Operational Mode">

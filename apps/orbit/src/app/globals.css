@@ -458,6 +458,65 @@ body {
   text-decoration: underline;
 }
 
+.orbit-handoff-link:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* M40-08 approval handoff — boundary statements are read, not styled away */
+.orbit-handoff-inline {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+.orbit-handoff-inline.unavailable {
+  color: var(--muted);
+}
+
+.orbit-handoff-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  background-color: var(--ink);
+  border-left: 3px solid var(--accent);
+  border-radius: 2px;
+}
+
+.orbit-handoff-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+}
+
+.orbit-handoff-meta dt {
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.orbit-handoff-meta dd {
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.orbit-handoff-boundary {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.orbit-handoff-simulated,
+.orbit-handoff-unavailable {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
 .orbit-inspector-footer {
   display: flex;
   justify-content: space-between;
