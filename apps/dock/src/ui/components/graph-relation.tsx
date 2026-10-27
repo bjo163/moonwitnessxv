@@ -7,8 +7,11 @@ import type {
   GraphRelation,
   RelationDetail,
   RelationEntity,
+  SamePairAlternative,
+  SamePairRelations,
 } from '@/data/queries/graph'
 import { SourceEvidence } from './provenance'
+import { getProvenanceCopy } from '@/lib/provenance-copy'
 import { dockHrefFor } from '@/lib/locale-context.mjs'
 
 const STATE_TONE: Record<string, BadgeTone> = {
@@ -74,7 +77,25 @@ function releaseLine(detail: RelationDetail): string {
 
 export function RelationDetailView({ detail, locale = 'en' }: { detail: RelationDetail; locale?: Locale }): ReactNode {
   const { relation, release, policy } = detail
+  const copy = getProvenanceCopy(locale)
   const isCandidate = relation.kind === 'CANDIDATE'
+  /**
+   * UI-P06d · what this projection does not know, derived only from fields the
+   * hub actually sent. An empty list is rendered as an explicit statement about
+   * the data, never as a claim that the relation holds.
+   */
+  const uncertainty: Array<{ text: string; code: string | null }> = []
+  if (relation.unknown) {
+    uncertainty.push({ text: copy.uncertaintyUnresolved, code: relation.epistemicStatus })
+  }
+  if (relation.reviewer === null) uncertainty.push({ text: copy.uncertaintyNoReviewer, code: null })
+  if (!relation.evidence.exactSha) uncertainty.push({ text: copy.uncertaintyNoExactSha, code: null })
+  if (!relation.inActiveRelease) uncertainty.push({ text: copy.uncertaintyNotReleased, code: null })
+  if (relation.source === null) uncertainty.push({ text: copy.uncertaintyNoSource, code: null })
+  if (relation.fromEntity === null || relation.toEntity === null) {
+    uncertainty.push({ text: copy.uncertaintyEntityUnresolved, code: null })
+  }
+  if (uncertainty.length === 0) uncertainty.push({ text: copy.uncertaintyNothingFlagged, code: null })
   return (
     <article
       className="dk-graph-detail"
@@ -117,12 +138,27 @@ export function RelationDetailView({ detail, locale = 'en' }: { detail: Relation
       </p>
 
       <dl className="dk-graph-detail-facts">
+        <dt>{copy.fieldRelationType}</dt>
+        <dd>
+          <code>{relation.relationType}</code> · {relation.perspective} · {relation.kind}
+        </dd>
+        <dt>{copy.fieldDirection}</dt>
+        <dd>
+          <code>{relation.from}</code> → <code>{relation.to}</code>{' '}
+          <span className="dk-graph-meta">({copy.directionAsRecorded})</span>
+        </dd>
+        <dt>{copy.fieldEndpointKinds}</dt>
+        <dd>
+          {relation.fromEntity?.kind ?? copy.unrecorded} → {relation.toEntity?.kind ?? copy.unrecorded}
+        </dd>
         <dt>Status</dt>
         <dd>{relation.statusLabel}</dd>
         <dt>Epistemic</dt>
         <dd>
           {relation.epistemicLabel} ({relation.epistemicStatus})
         </dd>
+        <dt>{copy.fieldAssertedBy}</dt>
+        <dd>{relation.assertedBy ?? copy.unrecorded}</dd>
         <dt>Release</dt>
         <dd>{releaseLine(detail)}</dd>
       </dl>
@@ -133,6 +169,26 @@ export function RelationDetailView({ detail, locale = 'en' }: { detail: Relation
           unresolved.
         </p>
       ) : null}
+
+      <section className="dk-graph-detail-review" data-section="uncertainty" aria-labelledby="graph-relation-uncertainty">
+        <h3 id="graph-relation-uncertainty">{copy.uncertaintyHeading}</h3>
+        <p className="dk-graph-notice" role="note">
+          {copy.uncertaintyIntro}
+        </p>
+        <ul className="dk-graph-rules">
+          {uncertainty.map((item) => (
+            <li key={item.text}>
+              {item.text}
+              {item.code ? (
+                <>
+                  {' '}
+                  <code>{item.code}</code>
+                </>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <div className="dk-graph-detail-entities">
         <EntityFacts role="From" stableId={relation.from} entity={relation.fromEntity} />
@@ -176,7 +232,7 @@ export function RelationDetailView({ detail, locale = 'en' }: { detail: Relation
       <section className="dk-graph-detail-review" aria-labelledby="graph-relation-review">
         <h3 id="graph-relation-review">Review trail</h3>
         <dl className="dk-graph-detail-facts">
-          <dt>Reviewer</dt>
+          <dt>{copy.fieldReviewer}</dt>
           <dd>{relation.reviewer ?? (isCandidate ? 'No reviewer yet' : 'Not recorded')}</dd>
           <dt>Claim reason</dt>
           <dd>{relation.reason ?? 'No reason recorded'}</dd>
@@ -217,6 +273,132 @@ export function RelationDetailView({ detail, locale = 'en' }: { detail: Relation
           : 'No graph release is active.'}
       </p>
     </article>
+  )
+}
+
+/**
+ * UI-P06d · one competing claim of the inspected pair, shown as itself: its own
+ * type, direction, status, reviewer and source evidence. Nothing here folds it
+ * into the inspected relation, and a row that is not a release member keeps its
+ * candidate status in words.
+ */
+function SamePairRow({ alternative, locale }: { alternative: SamePairAlternative; locale: Locale }): ReactNode {
+  const { claim, orientation, sameTypeAsInspected } = alternative
+  const copy = getProvenanceCopy(locale)
+  const localeHref = dockHrefFor(locale)
+  return (
+    <li
+      className="dk-graph-release-candidate"
+      data-status={claim.status}
+      data-in-release={claim.inActiveRelease ? 'true' : 'false'}
+      data-orientation={orientation}
+      data-same-type={sameTypeAsInspected ? 'true' : 'false'}
+    >
+      <div className="dk-graph-release-candidate-head">
+        <a className="dk-graph-candidate-link" href={localeHref(`/constellation/relations/${claim.candidateCode}`)}>
+          <code>{claim.candidateCode}</code>
+        </a>
+        <div className="m-row" style={{ gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <Badge tone={toneFor(claim.status)}>{claim.status}</Badge>
+          <Badge tone={toneFor(claim.epistemicStatus)}>{claim.epistemicStatus}</Badge>
+          <Badge tone={claim.inActiveRelease ? 'cyan' : 'night'}>
+            {claim.inActiveRelease ? 'RELEASE MEMBER' : 'NOT IN RELEASE'}
+          </Badge>
+        </div>
+      </div>
+      <span className="dk-graph-meta">
+        {claim.fromLabel} <code>{claim.from}</code> — <em>{claim.relationType}</em> → {claim.toLabel}{' '}
+        <code>{claim.to}</code>
+      </span>
+      <span className="dk-graph-meta">{claim.statusLabel}</span>
+      <dl className="dk-graph-detail-facts">
+        <dt>{copy.fieldRelationType}</dt>
+        <dd>
+          <code>{claim.relationType}</code> · {claim.perspective}
+        </dd>
+        <dt>{copy.alternativesTypeLabel}</dt>
+        <dd>{sameTypeAsInspected ? copy.alternativesTypeSame : copy.alternativesTypeDifferent}</dd>
+        <dt>{copy.fieldDirection}</dt>
+        <dd>
+          <code>{claim.from}</code> → <code>{claim.to}</code>
+        </dd>
+        <dt>{copy.alternativesOrientationLabel}</dt>
+        <dd>{orientation === 'FORWARD' ? copy.alternativesOrientationForward : copy.alternativesOrientationReverse}</dd>
+        <dt>{copy.fieldReviewer}</dt>
+        <dd>{claim.reviewer ?? copy.unrecorded}</dd>
+      </dl>
+      <SourceEvidence source={claim.source} locale={locale} classPrefix="dk-graph" />
+    </li>
+  )
+}
+
+/**
+ * UI-P06c/P06d · the relation inspector's alternative half: what else the public
+ * projection claims about exactly this pair, with the limits of that list stated
+ * rather than implied. An empty list is an answer in words, never a hidden
+ * section, and it is never read as agreement.
+ */
+export function RelationAlternativesView({
+  inspected,
+  samePair,
+  locale,
+}: {
+  inspected: GraphRelation
+  samePair: SamePairRelations
+  locale: Locale
+}): ReactNode {
+  const copy = getProvenanceCopy(locale)
+  const inspectedMissing = inspected.kind === 'CANDIDATE' && !samePair.inspectedIsCandidate
+  return (
+    <Panel title={copy.alternativesHeading} subtitle={copy.alternativesIntro}>
+      <div
+        className="dk-graph-release"
+        data-pair-resolved={samePair.pairResolved ? 'true' : 'false'}
+        data-release={samePair.releaseCode ?? 'none'}
+        data-alternative-count={samePair.alternatives.length}
+      >
+        {samePair.pairResolved ? null : (
+          <p className="dk-graph-detail-warning" role="note">
+            {copy.alternativesPairUnresolved}
+          </p>
+        )}
+        {inspectedMissing ? (
+          <p className="dk-graph-detail-warning" role="note">
+            {copy.uncertaintyNotInOverview}
+          </p>
+        ) : null}
+
+        <dl className="dk-graph-detail-facts">
+          <dt>{copy.alternativesCountLabel}</dt>
+          <dd>{samePair.alternatives.length}</dd>
+          <dt>{copy.alternativesQueueLabel}</dt>
+          <dd>{samePair.candidateTotal}</dd>
+          <dt>{copy.alternativesReleaseLabel}</dt>
+          <dd>{samePair.releaseCode ? <code>{samePair.releaseCode}</code> : copy.alternativesNoRelease}</dd>
+          <dt>{copy.alternativesLimitLabel}</dt>
+          <dd>{copy.alternativesLimitHint}</dd>
+        </dl>
+
+        {samePair.alternatives.length === 0 ? (
+          <p className="dk-graph-notice" role="note">
+            {copy.alternativesEmptyTitle}
+          </p>
+        ) : (
+          <ul className="dk-graph-release-candidates">
+            {samePair.alternatives.map((alternative) => (
+              <SamePairRow alternative={alternative} key={alternative.claim.candidateCode} locale={locale} />
+            ))}
+          </ul>
+        )}
+
+        <p className="dk-graph-notice" role="note">
+          {copy.alternativesCandidateNote}
+        </p>
+        <p className="dk-graph-detail-warning" role="note">
+          {copy.uncertaintyNoMerge}
+        </p>
+      </div>
+    </Panel>
   )
 }
 
