@@ -1,6 +1,6 @@
 # M38-13 — SKYLINK operator UI implementation audit
 
-**Task:** M38-13 · **Baseline:** `a60c590ce6ccf937fe6a84dd868b55aec238bb52` · **Status:** implementation and local browser evidence present; integrated exact-SHA CI and final review remain pending.
+**Task:** M38-13 · **Baseline:** `a60c590ce6ccf937fe6a84dd868b55aec238bb52` · **Verified result SHA:** `66ba5bb23ea7f680190b90f4ba64619cc6b2840e` · **Status:** closed and promoted to `main` after exact-SHA CI.
 
 ## Scope clarification
 
@@ -34,13 +34,14 @@ M38-13's packet requests delivery-attempt history, so a bounded read path was ad
 
 - `pnpm --filter @moonwitness/skylink build` — passed before and after the delivery-attempt API/UI addition; Vite built the client and TypeScript built the service.
 - `pnpm --filter @moonwitness/skylink typecheck` — passed, including client and tests.
-- `pnpm --filter @moonwitness/skylink test` — passed, 12/12. This includes checks for served UI, path traversal rejection, bearer-only auth with omitted cookies, and the existing API/auth behavior.
-- `pnpm --filter @moonwitness/skylink test` — passed after adding delivery-attempt projection: 12 passed, 0 failed, 0 skipped. The run used the local PostgreSQL-backed control-plane integration and verified admin success, viewer/service-key denial, newest-first results, and omission of provider IDs and free-text error summaries.
+- `pnpm --filter @moonwitness/skylink test` — passed at `66ba5bb`: 12 passed, 0 failed, 0 skipped. This includes served UI, path traversal rejection, bearer-only auth with omitted cookies, and local PostgreSQL-backed admin success, viewer/service-key denial, newest-first delivery-attempt results, and omission of provider IDs and free-text error summaries.
+- `pnpm --filter @moonwitness/arsy exec tsx --test test/workspace-topology.test.ts` — 7/7 passed after adding the MoonUI TypeScript project reference required by the topology gate.
 - `pnpm ui:check` — passed, 137 files scanned, 0 violations.
-- `pnpm exec eslint apps/skylink/client/App.tsx apps/skylink/client/lib/api.ts apps/skylink/client/main.tsx apps/skylink/src/server.ts apps/skylink/test/operator-ui.test.ts apps/skylink/test/skylink.test.ts scripts/check-ui-consistency.mjs packages/eslint-config/src/index.js` — passed.
+- `pnpm exec eslint apps/skylink/client/App.tsx apps/skylink/client/lib/api.ts apps/skylink/client/main.tsx apps/skylink/src/modules/routes.ts apps/skylink/src/server.ts apps/skylink/test/control-plane.test.ts apps/skylink/test/operator-ui.test.ts apps/skylink/test/skylink.test.ts packages/skylink-store/src/repositories.ts scripts/check-ui-consistency.mjs scripts/ui/skylink-operator-evidence.mjs packages/eslint-config/src/index.js` — passed.
 - The local service was started with empty optional credentials and a loopback-only ARSY URL: `$env:HOST='127.0.0.1'; $env:PORT='13005'; $env:DATABASE_URL=''; $env:SKYLINK_ARSY_URL='http://127.0.0.1:1'; $env:SKYLINK_SERVICE_KEY=''; $env:SKYLINK_TELEGRAM_BOT_TOKEN=''; $env:SKYLINK_TELEGRAM_WEBHOOK_SECRET=''; pnpm --filter @moonwitness/skylink exec node --import tsx src/index.ts` — service reported listening at `http://127.0.0.1:13005`.
 - `pnpm exec node scripts/ui/skylink-operator-evidence.mjs` — passed; synthetic fixture, 1440×1000 screenshot, delivery attempt visible, keyboard focus confirmed, Enter opened the confirmation, Escape cancelled it. Screenshot: [`m38-13-skylink-operator-ui.png`](screens/m38-13-skylink-operator-ui.png). The real WebSocket was disconnected because no ARSY session/provider was used; this is visual and interaction evidence, not end-to-end provider evidence.
-- Independent read-only review found no blocker in the bounded store query, admin-only route, redacted projection, UI, or screenshot; exact integrated-SHA CI remains pending.
+- Independent read-only review found no blocker in the bounded store query, admin-only route, redacted projection, UI, or screenshot.
+- The first full CI run `40519303140` exposed the missing MoonUI project reference; `apps/skylink/tsconfig.json` was corrected in the follow-up commit. Exact full CI run [40520212632](https://github.com/bjo163/moonwitnessxv/actions/runs/40520212632) passed build, lint, SDK check, tests and web build; its guarded promotion job advanced the exact verified SHA to `main`.
 
 ## Security, rights, and rollback
 
@@ -48,4 +49,4 @@ The UI accepts only an existing ARSY bearer session and holds it in React memory
 
 Rollback: remove `apps/skylink/client/**`, `apps/skylink/vite.config.mjs`, `apps/skylink/test/operator-ui.test.ts`; revert the manifest/lockfile and the focused test dependency assertion; remove the static-serving block in `src/server.ts`, the Skylink entries in both design gates, and this audit. Existing REST/WS service behavior remains independent.
 
-**Limitations:** browser fixtures are synthetic; there was no real ARSY session, provider connection, or live WebSocket event. Exact integrated result SHA and CI remain pending because changes are uncommitted.
+**Limitations:** browser fixtures are synthetic; there was no real ARSY session, provider connection, or live WebSocket event. The local and CI evidence proves the UI/API contract and safe states, not deployment or a real provider round trip; M38-14 owns the end-to-end and rollback gate.
