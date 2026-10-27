@@ -113,9 +113,10 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 
 **D19 — accepted storage owner (ADR-0007):** **D19 Object Storage & Attachments** is owned by **ECHOLOG** (`apps/echolog`). ECHOLOG is **stateless**: it owns no tables and imports no SQL driver, so the closed SQL-owner set stays exactly `{@moonwitness/moonql, @moonwitness/skylink-store}`. It owns bytes, digests, retention, legal hold and download grants only — never rights/consent (D08), identity (D00), media manifests (D07), artifact metadata (D01) or message rows (D18). Consumers store `{object_key, digest, size, content_type}`. This carve-out authorizes no second Hub, no second identity, no second database and no `bytea` payloads in Postgres.
 
-### 2A.2 Reusable App Factory — early engineering contract, NOT implemented
+### 2A.2 Reusable App Factory — bounded internal scaffold
 
-**Goal:** safely add applications to the current \`pnpm\` monorepo without re-inventing package/TypeScript/build/config/deployment/i18n conventions. Candidate entry point \`pnpm app:create\` is **not** an existing script. Inventory \`apps/*\`, \`packages/*\`, \`pnpm-workspace.yaml\`, Dockerfiles, \`@moonwitness/web-config\`, \`@moonwitness/moonui\` and CI first. Implement the smallest dry-run-capable scaffolder; reject name/path collisions and accidental overwrite; generate only runtime variants actually needed (public Next/privileged Next/local Vite/internal service/worker). Not every template receives a database, public port or Docker service. A successful sample app must install, build, pass tests including \`id/en\` locale coverage and relevant container routing **without manually repairing generated manifests**. Canonical executable subtasks are M05-17–M05-22.
+The App Factory is implemented at `scripts/app-create.mjs` and exposed as `pnpm app:create`. Current variants are `worker` (private internal package, no UI, public port, or database) and `frontend` (internal Vite/React UI using the shared `@moonwitness/core` locale contract and MoonUI). `pnpm app:create <slug> --dry-run` prints the rendered file list without writing; normal generation refuses invalid/reserved names, path traversal, existing app directories, and file collisions. The generated workspace stays under `apps/<slug>/`; it does not create a domain, data owner, Hub, identity system, runtime-supervisor entry, Docker/Compose route, public URL, or production certification.
+
 
 ### 2A.3 Mandatory global i18n / localization contract — accepted by ADR-0005; implementation not shipped
 

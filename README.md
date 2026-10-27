@@ -127,6 +127,14 @@ pnpm ports:free           # kill leftovers holding :3000/:3001/:3002
 > Dev tip: after editing `packages/*`, run `pnpm build` once (or
 > `pnpm --filter @moonwitness/whatsapp dev` in a second terminal).
 
+### App Factory (M05-17–M05-22)
+
+Create a private workspace scaffold with `pnpm app:create <slug> [--variant worker|frontend] [--dry-run] [--locale id|en]`. Run `pnpm app:create --help` for current options. Use `--dry-run` first to review the exact file list without writing. The default `worker` is an internal package with no UI, public port, or database; `frontend` is a Vite/React internal UI inheriting the shared locale catalog and MoonUI. A generated workspace is a scaffold, not a production app: the factory does not create a new domain or data owner, register a service with the runtime supervisor, add Docker/Compose routing, or claim a public domain. Add those integrations only through their owning app and approved architecture task; do not duplicate an existing app or domain.
+
+Reproduce the current disposable workspace validation from the repository root with `pnpm exec node scripts/diagnostics/app-factory-workspace-smoke.mjs`. It generates one frontend and one worker in a temporary fixture, checks workspace lock resolution and frozen install, runs generated-app typechecks/builds/tests/lint, and rejects a traversal slug without writing an app. The fixture is removed on exit. Focused contract tests are available with `pnpm exec node --test test/app-factory/app-create.test.mjs test/app-factory/container-mapping.test.mjs test/app-factory/registry-coverage.test.mjs`.
+
+Rollback a deliberately generated but uncommitted scaffold only after reviewing its diff and confirming that `apps/<slug>/` contains only that generated app and no follow-on work: remove that directory alone. The generator refuses an existing destination and does not rewrite the root lockfile, app registry, domain configuration, or shared packages. If other work has since been added under that directory, preserve it and resolve ownership before removing anything. Roll back committed integration by reverting only the reviewed task changes after checking dependents; do not use a broad workspace reset.
+
 ## REST endpoints (all in one app)
 
 ### Response contract — ONE envelope for everything
