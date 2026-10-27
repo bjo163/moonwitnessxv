@@ -138,8 +138,8 @@ test('M05-20: worker has in-process health, graceful signals and stable machine 
   const typecheck = frontendTypecheck(root, 'sample-worker');
   assert.equal(typecheck.status, 0, `generated worker typecheck failed:\n${typecheck.stdout}\n${typecheck.stderr}`);
   const plan = planFiles('sample-worker', 'worker');
-  const entry = plan.find((file) => file.relPath.endsWith('src\\index.ts')).content;
-  const runtime = plan.find((file) => file.relPath.endsWith('src\\worker-runtime.ts')).content;
+  const entry = plan.find((file) => file.relPath.replaceAll('\\', '/').endsWith('/src/index.ts')).content;
+  const runtime = plan.find((file) => file.relPath.replaceAll('\\', '/').endsWith('/src/worker-runtime.ts')).content;
   const manifest = JSON.parse(plan.find((file) => file.relPath.endsWith('package.json')).content);
 
   assert.match(entry, /SIGINT/);
