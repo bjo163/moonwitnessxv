@@ -3,7 +3,8 @@
 **Task:** M29-02 — Ratify one multi-agent task lease contract\
 **Baseline SHA:** `2a3aaf16a19a01264de6f1cab4079a1ea65f6cec`\
 **Worker:** Root integrator\
-**Status:** Owner ratified the proposal in this conversation on 2026-10-27. Artifacts remain worktree-only until exact-SHA integration review; TODO remains open pending that evidence.
+**Result SHA:** `8c2e2198a46f9b1c9c66b802241b3def9e8e0358`\
+**Status:** Owner ratified 2026-10-27; committed and independently reviewed. Focused tests passed after the commit. **Next eligible:** M29-03.
 
 ## Scope and artifacts
 
@@ -16,7 +17,8 @@
 - `node --test test/planning/task-lease-contract-check.test.mjs` — 3 passed, 0 failed.
 - `node --test test/planning/task-role-classification.test.mjs` — 2 passed, 0 failed; rechecked all 360 TODO IDs and umbrella/leaf claim rules.
 - `git diff --check -- docs/planning/MULTI_AGENT_TASK_LEASE_CONTRACT.md scripts/planning/task-lease-contract-check.mjs test/planning/task-lease-contract-check.test.mjs` — no whitespace errors.
-- `git rev-parse HEAD` — `2a3aaf16a19a01264de6f1cab4079a1ea65f6cec`; changes remain uncommitted, so this is the baseline SHA, not an integrated result SHA.
+- `git rev-parse HEAD` after commit — `8c2e2198a46f9b1c9c66b802241b3def9e8e0358`.
+- Post-commit reruns at the result SHA: `node --test test/planning/task-lease-contract-check.test.mjs` — 3 passed, 0 failed; `node --test test/planning/task-role-classification.test.mjs` — 2 passed, 0 failed; `git show --check --oneline HEAD` — no whitespace errors.
 
 ## Acceptance and security review
 
@@ -28,6 +30,6 @@ No secrets, private witness data, new domain owner, app API, task-status registe
 
 ## Review, rollback, and limits
 
-The integrator inspected the proposal, harness, and focused tests. Owner ratification is recorded above; exact-SHA integration review is still required and no TODO box was changed yet. Roll back only the three listed task artifacts from their diff after confirming no dependent task used them; preserve unrelated worktree changes. The harness is an executable acceptance fixture, not atomic cross-process locking and must not be presented as a production lock system.
+The integrator inspected the proposal, harness, and focused tests. An independent read-only reviewer inspected commit `8c2e219` and found no blocker; the owner ratified the contract in this conversation. Roll back only the four task files in commit `8c2e219` after confirming no dependent task used them; preserve unrelated worktree changes. The harness is an executable acceptance fixture, not atomic cross-process locking and must not be presented as a production lock system.
 
-**Next eligible task after M29-02 is ratified/integrated:** M29-03. It is not claimed or started here.
+**TODO status:** M29-02 may close at exact result SHA `8c2e2198a46f9b1c9c66b802241b3def9e8e0358`; M29-03 is now eligible and is handled separately.
