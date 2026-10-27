@@ -24,8 +24,16 @@ test('AI Gateway: health check returns ok, port, and provider states', async () 
   assert.ok(body.providers.some((p) => p.name === 'heuristic' && p.available === true))
 })
 
-test('AI Gateway: /v1/models exposes free-first models and provider mappings', async () => {
+test('AI Gateway: /v1/models exposes free-first models and provider mappings when explicitly enabled', async (t) => {
+  const originalAiEnabled = process.env.AI_ENABLED
+  process.env.AI_ENABLED = 'true'
+  t.after(() => {
+    if (originalAiEnabled === undefined) delete process.env.AI_ENABLED
+    else process.env.AI_ENABLED = originalAiEnabled
+  })
+
   const app = buildServer()
+  t.after(() => app.close())
   const res = await app.inject({
     method: 'GET',
     url: '/v1/models',
@@ -58,20 +66,35 @@ test('AI Gateway: validation rejects empty or missing messages with 400', async 
   assert.ok(body.error.message.includes('messages'))
 })
 
-test('AI Gateway: cascading router falls back to Heuristic when remote keys are absent', async () => {
+test('AI Gateway: cascading router falls back to Heuristic when remote keys are absent and AI is enabled', async (t) => {
   // Ensure no remote keys are active during this test
+  const originalAiEnabled = process.env.AI_ENABLED
   const originalGemini = process.env.GEMINI_API_KEY
   const originalGroq = process.env.GROQ_API_KEY
   const originalOpenRouter = process.env.OPENROUTER_API_KEY
   const originalOllama = process.env.OLLAMA_DISABLED
 
+  process.env.AI_ENABLED = 'true'
   delete process.env.GEMINI_API_KEY
   delete process.env.GROQ_API_KEY
   delete process.env.OPENROUTER_API_KEY
   process.env.OLLAMA_DISABLED = 'true'
 
+  t.after(() => {
+    if (originalAiEnabled === undefined) delete process.env.AI_ENABLED
+    else process.env.AI_ENABLED = originalAiEnabled
+    if (originalGemini === undefined) delete process.env.GEMINI_API_KEY
+    else process.env.GEMINI_API_KEY = originalGemini
+    if (originalGroq === undefined) delete process.env.GROQ_API_KEY
+    else process.env.GROQ_API_KEY = originalGroq
+    if (originalOpenRouter === undefined) delete process.env.OPENROUTER_API_KEY
+    else process.env.OPENROUTER_API_KEY = originalOpenRouter
+    if (originalOllama === undefined) delete process.env.OLLAMA_DISABLED
+    else process.env.OLLAMA_DISABLED = originalOllama
+  })
+
+  const app = buildServer()
   try {
-    const app = buildServer()
     const res = await app.inject({
       method: 'POST',
       url: '/v1/chat/completions',
@@ -99,11 +122,7 @@ test('AI Gateway: cascading router falls back to Heuristic when remote keys are 
     assert.ok(body.router_telemetry.attempts?.includes('gemini:skipped(not_configured)'))
     assert.ok(body.router_telemetry.attempts?.includes('heuristic:success'))
   } finally {
-    if (originalGemini) process.env.GEMINI_API_KEY = originalGemini
-    if (originalGroq) process.env.GROQ_API_KEY = originalGroq
-    if (originalOpenRouter) process.env.OPENROUTER_API_KEY = originalOpenRouter
-    if (originalOllama) process.env.OLLAMA_DISABLED = originalOllama
-    else delete process.env.OLLAMA_DISABLED
+    await app.close()
   }
 })
 
