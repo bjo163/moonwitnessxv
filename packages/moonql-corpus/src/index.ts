@@ -71,6 +71,90 @@ const absent = (citation: string): Record<string, unknown> => ({
   citationText: null,
 })
 
+/** UI-P05b browse rails: one collapsed language row — identity and rights, never wording. */
+type BrowseTranslation = {
+  languageCode: string
+  translatorName: string | null
+  licenseName: string | null
+  rightsStatus: string
+  editionCode: string | null
+  textAvailable: boolean
+}
+
+/** A rail lists addresses; it does not dump a corpus. */
+const WINDOW_ROWS = 15
+const WINDOW_HALF = 7
+const TRANSLATION_ROWS = 20
+const WINDOW_SCAN = 500
+const CATALOG_SCAN = 1000
+
+/** Names an interpretation/commentary lane would plausibly be registered under. */
+const INTERPRETATION_MODELS = ['corpus_commentary', 'corpus_interpretations', 'corpus_tafsir', 'corpus_reading_notes']
+const INTERPRETATION_NAME = /commentar|interpret|tafsir|exegesis/i
+
+const intOrNull = (value: unknown): number | null => (typeof value === 'number' && Number.isFinite(value) ? value : null)
+
+/** Codepoint order, so a rail's list cannot depend on the host's ICU data. */
+const byString = (left: string, right: string): number => (left < right ? -1 : left > right ? 1 : 0)
+
+/** The reader's veto, read straight off the edition row: a label like PUBLIC_DOMAIN is not clearance. */
+const isCleared = (edition: Row | null): boolean => nonEmpty(edition?.rightsStatus) === CLEARED
+
+/**
+ * Is there an interpretation lane at all? Asked of the live registry rather than
+ * asserted: `schema()` lists every advertised model, and `orm.model()` still resolves
+ * the ones that opted out of REST — so a hidden commentary table cannot slip past.
+ */
+function interpretationState(
+  orm: { model(name: string): unknown },
+  schema: () => { models: Record<string, unknown> },
+): { available: boolean; reason: string } {
+  const installed = new Set(Object.keys(schema().models))
+  for (const name of INTERPRETATION_MODELS) {
+    try {
+      orm.model(name)
+      installed.add(name)
+    } catch {
+      // no installed addon defines it — that is the answer, not a failure
+    }
+  }
+  const found = [...installed].filter((name) => INTERPRETATION_NAME.test(name)).sort(byString)
+  if (found.length) {
+    return {
+      available: true,
+      reason: `Interpretation is projected by ${found.join(', ')}; its wording still passes the same rights veto as any other source.`,
+    }
+  }
+  return {
+    available: false,
+    reason:
+      `INTERPRETATION: LABELED — no commentary/interpretation model is registered in the corpus addon. ` +
+      `It owns corpus_works/corpus_editions/corpus_passages/corpus_translations only, and none of ` +
+      `${INTERPRETATION_MODELS.join(', ')} exists among the ${installed.size} installed models, so this ` +
+      `row may be labelled "no interpretation layer is wired up" — never "none for this verse".`,
+  }
+}
+
+/** A refused browse address keeps every contract key present so a rail has nothing to invent. */
+const refusedBrowse = (message: string, interpretation: { available: boolean; reason: string }): Record<string, unknown> => ({
+  state: 'invalid',
+  message,
+  citation: '',
+  edition: null,
+  resolved: false,
+  work: null,
+  works: [],
+  editions: [],
+  passages: [],
+  translations: [],
+  interpretation,
+  export: {
+    citationAvailable: false,
+    textExportAllowed: false,
+    reason: `The address was refused (${message}), so there is nothing to cite or export.`,
+  },
+})
+
 export const corpus = defineAddon({
   name: 'corpus',
   version: '1.0.0',
@@ -337,6 +421,193 @@ export const corpus = defineAddon({
           candidates: [],
           citationText,
           blockedPlaceholder: editionCleared ? null : BLOCKED_PLACEHOLDER,
+        }
+      },
+    },
+
+    /**
+     * The inventory behind the CORPUS READER rails (UI-P05b): the source catalog,
+     * the editions, a passage-index window around one address, the translation
+     * languages an edition carries, and an honest statement of what may be exported.
+     *
+     * It is metadata-only by construction: this handler never reads `arabicText` or
+     * `translationText`, so it cannot become a second text exit around M07-04 —
+     * `/corpus/reader` stays the only projection that serializes source bytes. The
+     * `cleared` / `textAvailable` / `textExportAllowed` flags below are the reader's
+     * own `rightsStatus === CLEARED` invariant applied per row, so the rails and the
+     * reader can never disagree about what a reader is actually allowed to see.
+     */
+    browse: {
+      method: 'GET',
+      path: '/corpus/browse',
+      requires: 'public',
+      menu: { group: 'Corpus', icon: 'BR', order: 55 },
+      handler: async ({ query, orm, schema, status }) => {
+        const interpretation = interpretationState(orm, schema)
+        const raw = typeof query.citation === 'string' ? query.citation : ''
+        const citation = raw.trim().replace(/\s+/g, ' ')
+        if (!citation) {
+          status(400)
+          return refusedBrowse('citation is required', interpretation)
+        }
+        if (citation.length > 60) {
+          status(400)
+          return refusedBrowse('citation is longer than 60 characters', interpretation)
+        }
+
+        const editionFilter = typeof query.edition === 'string' ? query.edition.trim() : ''
+        const editionRows = (await orm.model('corpus_editions').list({ limit: CATALOG_SCAN })) as Row[]
+        const workRows = (await orm.model('corpus_works').list({ limit: 100 })) as Row[]
+        const editionsById = new Map(editionRows.map((row) => [String(row.id), row]))
+        const editionOf = (passage: Row): Row | null => editionsById.get(String(passage.editionRef)) ?? null
+
+        const exact = (await orm.model('corpus_passages').list({ where: { citationKey: citation }, limit: 50 })) as Row[]
+        // the reader's own address resolution, typo-tolerant second pass included:
+        // the rails and the reader must agree on what resolves
+        const matches = exact.length
+          ? exact
+          : ((await orm.model('corpus_passages').list({ limit: CATALOG_SCAN })) as Row[]).filter(
+              (row) => String(row.citationKey ?? '').toLowerCase() === citation.toLowerCase(),
+            )
+        const candidates = matches
+          .map((passage) => ({ passage, edition: editionOf(passage) }))
+          .filter((entry) => !editionFilter || String(entry.edition?.code ?? '') === editionFilter)
+        // one address living in several editions is a choice the reader must make
+        // explicitly; an inventory is not an editorial act, so the window comes from
+        // the lowest edition code and every row keeps naming its own edition
+        const head = candidates
+          .slice()
+          .sort((a, b) => byString(String(a.edition?.code ?? ''), String(b.edition?.code ?? '')))[0]
+        const resolvedPassage = head?.passage ?? null
+        const editionMatched = editionFilter ? (editionRows.find((row) => String(row.code ?? '') === editionFilter) ?? null) : null
+        const contextEdition = head?.edition ?? editionMatched ?? null
+        const resolved = resolvedPassage !== null
+
+        const windowRows = contextEdition
+          ? ((await orm.model('corpus_passages').list({
+              where: { editionRef: contextEdition.id },
+              limit: WINDOW_SCAN,
+              order: 'surahNumber,ayahNumber',
+            })) as Row[])
+          : []
+        // sorted twice on purpose: the engine order bounds the scan, this local
+        // tie-break keeps the identical window on the memory engine and on pg
+        const ordered = windowRows
+          .slice()
+          .sort(
+            (a, b) =>
+              (intOrNull(a.surahNumber) ?? 0) - (intOrNull(b.surahNumber) ?? 0) ||
+              (intOrNull(a.ayahNumber) ?? 0) - (intOrNull(b.ayahNumber) ?? 0) ||
+              byString(String(a.citationKey ?? ''), String(b.citationKey ?? '')),
+          )
+        const anchorIndex = resolvedPassage
+          ? ordered.findIndex((row) => String(row.id) === String(resolvedPassage.id))
+          : -1
+        const from = Math.max(0, (anchorIndex >= 0 ? anchorIndex : 0) - WINDOW_HALF)
+        const passages = ordered.slice(from, from + WINDOW_ROWS).map((row) => ({
+          citationKey: nonEmpty(row.citationKey) ?? '',
+          surahNumber: intOrNull(row.surahNumber),
+          ayahNumber: intOrNull(row.ayahNumber),
+          editionCode: nonEmpty(editionOf(row)?.code),
+          verifiedAt: nonEmpty(row.verifiedAt),
+          textAvailable: isCleared(editionOf(row)),
+        }))
+
+        // counts come from the engine, not from a capped scan: a rail that printed
+        // "500 passages" for a 6,236-row edition would be a fake operational claim
+        const editions = await Promise.all(
+          editionRows
+            .slice()
+            .sort((a, b) => byString(String(a.code ?? ''), String(b.code ?? '')))
+            .map(async (edition) => ({
+              code: nonEmpty(edition.code) ?? '',
+              name: nonEmpty(edition.name),
+              editorOrPublisher: nonEmpty(edition.editorOrPublisher),
+              rightsStatus: nonEmpty(edition.rightsStatus) ?? 'RIGHTS_UNKNOWN',
+              licenseName: nonEmpty(edition.licenseName),
+              sourceUri: nonEmpty(edition.sourceUri),
+              provenanceSha: nonEmpty(edition.provenanceSha),
+              passageCount: Number(await orm.model('corpus_passages').count({ editionRef: edition.id })),
+              cleared: isCleared(edition),
+            })),
+        )
+
+        const works = workRows
+          .slice()
+          .sort((a, b) => byString(String(a.code ?? ''), String(b.code ?? '')))
+          .map((work) => ({
+            code: nonEmpty(work.code) ?? '',
+            title: nonEmpty(work.title) ?? '',
+            tradition: nonEmpty(work.tradition),
+            originalLanguage: nonEmpty(work.originalLanguage),
+            editionCount: editionRows.filter((edition) => String(edition.workRef) === String(work.id)).length,
+          }))
+
+        const passageIds = new Set(ordered.map((row) => String(row.id)))
+        const translationRows = passageIds.size
+          ? ((await orm.model('corpus_translations').list({ limit: CATALOG_SCAN })) as Row[]).filter((row) =>
+              passageIds.has(String(row.passageRef)),
+            )
+          : []
+        const contextCleared = isCleared(contextEdition)
+        // the rail lists languages, not passages: rows collapse on
+        // (language, translator, licence, rights) and stop at TRANSLATION_ROWS
+        const grouped = new Map<string, BrowseTranslation>()
+        for (const row of translationRows) {
+          const rightsStatus = nonEmpty(row.rightsStatus) ?? 'RIGHTS_UNKNOWN'
+          const entry: BrowseTranslation = {
+            languageCode: nonEmpty(row.languageCode) ?? 'und',
+            translatorName: nonEmpty(row.translatorName),
+            licenseName: nonEmpty(row.licenseName),
+            rightsStatus,
+            editionCode: nonEmpty(contextEdition?.code),
+            textAvailable: contextCleared && rightsStatus === CLEARED,
+          }
+          const key = [entry.languageCode, entry.translatorName, entry.licenseName, entry.rightsStatus, entry.editionCode].join('|')
+          if (!grouped.has(key)) grouped.set(key, entry)
+        }
+        const translations = [...grouped.values()]
+          .sort(
+            (a, b) =>
+              byString(a.languageCode, b.languageCode) ||
+              byString(a.translatorName ?? '', b.translatorName ?? '') ||
+              byString(a.licenseName ?? '', b.licenseName ?? '') ||
+              byString(a.rightsStatus, b.rightsStatus),
+          )
+          .slice(0, TRANSLATION_ROWS)
+
+        const workRow = contextEdition
+          ? (workRows.find((work) => String(work.id) === String(contextEdition.workRef)) ?? null)
+          : null
+        const work = workRow
+          ? {
+              code: nonEmpty(workRow.code),
+              title: nonEmpty(workRow.title),
+              originalLanguage: nonEmpty(workRow.originalLanguage),
+            }
+          : null
+
+        const contextRights = nonEmpty(contextEdition?.rightsStatus) ?? 'RIGHTS_UNKNOWN'
+        const contextCode = nonEmpty(contextEdition?.code) ?? 'unknown'
+        return {
+          citation,
+          edition: editionFilter || null,
+          resolved,
+          work,
+          works,
+          editions,
+          passages,
+          translations,
+          interpretation,
+          export: {
+            citationAvailable: resolved,
+            textExportAllowed: contextRights === CLEARED,
+            reason: !contextEdition
+              ? 'EXPORT: GUARDED — no edition resolved for this request, so there is no cleared source to export; only the metadata lists above may be cited.'
+              : contextRights === CLEARED
+                ? `EXPORT: PERMITTED — edition ${contextCode} is ${contextRights}, so a text export is allowed. The bytes still never come from this endpoint: /corpus/reader re-applies the veto per address.`
+                : `EXPORT: GUARDED — text export withheld: edition ${contextCode} reports rights=${contextRights}, not ${CLEARED}. Only the metadata citation line may be exported.`,
+          },
         }
       },
     },
