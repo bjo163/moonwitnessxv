@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path'
 import { readdir } from 'node:fs/promises'
 import { type JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'
 import { bootMoonQl, moonqlRest } from '@moonwitness/moonql'
+import { preferredLocale } from '@moonwitness/core'
 import { loadPlugins, loadModules, loadChannels } from './lib/loader.js'
 import { installEgress } from './lib/egress.js'
 import { ChannelManager } from './lib/channels.js'
@@ -92,8 +93,8 @@ export async function buildApp(config: RadioConfig) {
     }
 
     if (isBrowser) {
-      reply.type('text/html; charset=utf-8')
-      return renderLaunchpadHtml(payload)
+      const locale = preferredLocale(req.headers['accept-language']) ?? 'en'
+      return reply.header('Vary', 'Accept-Language').type('text/html; charset=utf-8').send(renderLaunchpadHtml(payload, locale))
     }
 
     return payload

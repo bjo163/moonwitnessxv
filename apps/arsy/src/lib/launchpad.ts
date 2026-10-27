@@ -1,7 +1,7 @@
 // The advertised origins come from the shared contract: the launchpad is the page
 // that tells an operator where things live, so it must not be a second place that
 // gets to decide the ports.
-import { AI_GATEWAY_PUBLIC_URL, FRONTEND_URLS } from '@moonwitness/core'
+import { AI_GATEWAY_PUBLIC_URL, defineLocaleCatalog, FRONTEND_URLS, type Locale } from '@moonwitness/core'
 
 export interface LaunchpadData {
   name: string
@@ -16,13 +16,39 @@ export interface LaunchpadData {
   frontends?: { dock?: string; headquarters?: string }
 }
 
-export function renderLaunchpadHtml(data: LaunchpadData): string {
+const launchpadCopy = defineLocaleCatalog({
+  en: {
+    missionControl: 'Mission Control', subtitle: 'Central development portal and service navigator for broadcast, intelligence, and AI systems.',
+    active: 'MONOREPO ACTIVE', frontends: 'Frontends & Public Surfaces', publicBroadcast: 'Public Broadcast',
+    dockTitle: 'Public Radio Dock', dockDesc: 'Live audio stream, now-playing card, weekly schedule, and World Monitor live ticker.',
+    administration: 'Administration', hqTitle: 'Headquarters (HQ)', hqDesc: 'Mission control dashboard, database model inspection, CRUD station management, and ops view.',
+    osint: 'OSINT & Surveillance', worldTitle: 'World Monitor 3-Tier', worldDesc: 'Drilldown across radars, sources, and captured signals with AI triage.',
+    engines: 'Engines, APIs & Documentation', developer: 'Developer Contract', openApiTitle: 'OpenAPI Swagger Docs',
+    openApiDesc: 'Interactive API surface for testing generated endpoints, models, and schemas.',
+    router: 'Free-First Router', aiTitle: 'AI Gateway Router', aiDesc: 'OpenAI-compatible chat completions with Gemini, Groq, OpenRouter, Ollama, and heuristic fallback.',
+    telemetry: 'Telemetry', healthTitle: 'Health & Metrics', healthDesc: 'Service health, memory use, Prometheus metrics, and ORM bus metrics.',
+  },
+  id: {
+    missionControl: 'Pusat Kendali', subtitle: 'Portal pengembangan pusat dan penjelajah layanan untuk sistem siaran, intelijen, dan AI.',
+    active: 'MONOREPO AKTIF', frontends: 'Antarmuka & Layanan Publik', publicBroadcast: 'Siaran Publik',
+    dockTitle: 'Dock Radio Publik', dockDesc: 'Aliran audio langsung, kartu siaran saat ini, jadwal mingguan, dan ticker langsung World Monitor.',
+    administration: 'Administrasi', hqTitle: 'Headquarters (HQ)', hqDesc: 'Dasbor kendali, pemeriksaan model basis data, pengelolaan stasiun, dan tampilan operasi.',
+    osint: 'OSINT & Pemantauan', worldTitle: 'World Monitor 3-Tier', worldDesc: 'Penelusuran radar, sumber, dan sinyal yang direkam dengan triase AI.',
+    engines: 'Mesin, API & Dokumentasi', developer: 'Kontrak Pengembang', openApiTitle: 'Dokumentasi Swagger OpenAPI',
+    openApiDesc: 'Antarmuka interaktif untuk menguji endpoint, model, dan skema API.',
+    router: 'Router Prioritas Gratis', aiTitle: 'Router AI Gateway', aiDesc: 'Chat completion yang kompatibel dengan OpenAI, menggunakan Gemini, Groq, OpenRouter, Ollama, dan fallback heuristik.',
+    telemetry: 'Telemetri', healthTitle: 'Kesehatan & Metrik', healthDesc: 'Kesehatan layanan, penggunaan memori, metrik Prometheus, dan metrik bus ORM.',
+  },
+})
+
+export function renderLaunchpadHtml(data: LaunchpadData, locale: Locale = 'en'): string {
   const dockUrl = data.frontends?.dock ?? FRONTEND_URLS.dock
   const hqUrl = data.frontends?.headquarters ?? FRONTEND_URLS.headquarters
   const aiUrl = AI_GATEWAY_PUBLIC_URL
+  const copy = launchpadCopy[locale]
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${locale}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -221,10 +247,10 @@ export function renderLaunchpadHtml(data: LaunchpadData): string {
       <div class="brand">
         <span class="brand-badge">DEV HUB</span>
         <span class="dot"></span>
-        <span style="font-family: var(--font-mono); font-size: 12px; color: var(--green);">MONOREPO ACTIVE</span>
+        <span style="font-family: var(--font-mono); font-size: 12px; color: var(--green);">${copy.active}</span>
       </div>
-      <h1>${data.name} Mission Control</h1>
-      <p class="subtitle">Central dev portal & service navigator for broadcast, intelligence, and AI systems.</p>
+      <h1>${data.name} ${copy.missionControl}</h1>
+      <p class="subtitle">${copy.subtitle}</p>
     </header>
 
     <div class="status-bar">
@@ -236,31 +262,31 @@ export function renderLaunchpadHtml(data: LaunchpadData): string {
     </div>
 
     <div>
-      <div class="section-title">Frontends & Public Surfaces</div>
+      <div class="section-title">${copy.frontends}</div>
       <div class="grid">
         <a class="card" href="${dockUrl}" target="_blank">
           <div>
-            <span class="card-tag tag-pink">Public Broadcast</span>
-            <div class="card-title">Public Radio Dock</div>
-            <div class="card-desc">Live audio stream, now-playing card, weekly schedule grid, and World Monitor live ticker.</div>
+            <span class="card-tag tag-pink">${copy.publicBroadcast}</span>
+            <div class="card-title">${copy.dockTitle}</div>
+            <div class="card-desc">${copy.dockDesc}</div>
           </div>
           <div class="card-url">${dockUrl} &rarr;</div>
         </a>
 
         <a class="card" href="${hqUrl}" target="_blank">
           <div>
-            <span class="card-tag tag-purple">Administration</span>
-            <div class="card-title">Headquarters (HQ)</div>
-            <div class="card-desc">Mission control dashboard, database model inspection, CRUD station management, and ops view.</div>
+            <span class="card-tag tag-purple">${copy.administration}</span>
+            <div class="card-title">${copy.hqTitle}</div>
+            <div class="card-desc">${copy.hqDesc}</div>
           </div>
           <div class="card-url">${hqUrl} &rarr;</div>
         </a>
 
         <a class="card" href="${hqUrl}/world-monitor" target="_blank">
           <div>
-            <span class="card-tag tag-yellow">OSINT & Surveillance</span>
-            <div class="card-title">World Monitor 3-Tier</div>
-            <div class="card-desc">Drilldown UI across Radars, Sources (YouTube, X, RSS), and captured Signals with AI triage.</div>
+            <span class="card-tag tag-yellow">${copy.osint}</span>
+            <div class="card-title">${copy.worldTitle}</div>
+            <div class="card-desc">${copy.worldDesc}</div>
           </div>
           <div class="card-url">${hqUrl}/world-monitor &rarr;</div>
         </a>
@@ -268,31 +294,31 @@ export function renderLaunchpadHtml(data: LaunchpadData): string {
     </div>
 
     <div>
-      <div class="section-title">Engines, APIs & Documentation</div>
+      <div class="section-title">${copy.engines}</div>
       <div class="grid">
         <a class="card" href="/docs" target="_blank">
           <div>
-            <span class="card-tag tag-cyan">Developer Contract</span>
-            <div class="card-title">OpenAPI Swagger Docs</div>
-            <div class="card-desc">Interactive Swagger UI testing surface with auto-generated endpoints, models, and schemas.</div>
+            <span class="card-tag tag-cyan">${copy.developer}</span>
+            <div class="card-title">${copy.openApiTitle}</div>
+            <div class="card-desc">${copy.openApiDesc}</div>
           </div>
           <div class="card-url">/docs &rarr;</div>
         </a>
 
         <a class="card" href="${aiUrl}/v1/models" target="_blank">
           <div>
-            <span class="card-tag tag-yellow">Free-First Router</span>
-            <div class="card-title">AI Gateway Router</div>
-            <div class="card-desc">OpenAI-compatible chat completions with Gemini, Groq, OpenRouter, Ollama, & Heuristic fallback.</div>
+            <span class="card-tag tag-yellow">${copy.router}</span>
+            <div class="card-title">${copy.aiTitle}</div>
+            <div class="card-desc">${copy.aiDesc}</div>
           </div>
           <div class="card-url">${aiUrl}/v1/models &rarr;</div>
         </a>
 
         <a class="card" href="/api/v1/health" target="_blank">
           <div>
-            <span class="card-tag tag-green">Telemetry</span>
-            <div class="card-title">Health & Metrics</div>
-            <div class="card-desc">Service health status, memory usage, Prometheus telemetry, and ORM bus metrics.</div>
+            <span class="card-tag tag-green">${copy.telemetry}</span>
+            <div class="card-title">${copy.healthTitle}</div>
+            <div class="card-desc">${copy.healthDesc}</div>
           </div>
           <div class="card-url">/api/v1/health &rarr;</div>
         </a>

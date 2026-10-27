@@ -1,4 +1,4 @@
-import { FIELD_INPUT_SPEC, inputKindFor } from '@moonwitness/core'
+import { defineLocaleCatalog, FIELD_INPUT_SPEC, inputKindFor, preferredLocale, type Locale } from '@moonwitness/core'
 import type { TypedModule } from '../../lib/types.js'
 
 // Studio -> mounted at <apiPrefix>/studio
@@ -13,12 +13,20 @@ import type { TypedModule } from '../../lib/types.js'
 // that table and it is injected into the page below, so Studio and the React
 // frontends cannot disagree about what a field wants to be.
 
-const STUDIO_HTML = `<!doctype html>
-<html lang="en">
+const studioCopy = defineLocaleCatalog({
+  en: { title: 'Moonql Studio', tag: 'view-driven admin', summary: 'Rendered from GET /_schema — no privileged backend', notLoggedIn: 'Not logged in.', login: 'LOGIN', username: 'login', password: 'password', signIn: 'Sign in', pasteToken: '...or paste bearer token', models: 'Models', views: 'Views', endpoints: 'Endpoints', session: 'Session', logout: 'Log out', noRows: 'No rows.', create: 'CREATE', createButton: 'Create', viewOf: 'view of', from: 'from', actions: 'ops', aggregate: 'aggregate', edit: 'edit', remove: 'delete', schemaFailed: 'Schema request failed.', loginFailed: 'Login failed.', failed: 'Request failed.', deleteConfirm: 'Delete', patchPrompt: 'PATCH body as JSON:', welcome: 'Welcome' },
+  id: { title: 'Moonql Studio', tag: 'admin berbasis tampilan', summary: 'Dirender dari GET /_schema — tanpa backend istimewa', notLoggedIn: 'Belum masuk.', login: 'MASUK', username: 'nama pengguna', password: 'kata sandi', signIn: 'Masuk', pasteToken: '...atau tempel token bearer', models: 'Model', views: 'Tampilan', endpoints: 'Endpoint', session: 'Sesi', logout: 'Keluar', noRows: 'Tidak ada data.', create: 'BUAT', createButton: 'Buat', viewOf: 'dari', from: 'dari', actions: 'aksi', aggregate: 'agregasi', edit: 'ubah', remove: 'hapus', schemaFailed: 'Permintaan skema gagal.', loginFailed: 'Gagal masuk.', failed: 'Permintaan gagal.', deleteConfirm: 'Hapus', patchPrompt: 'Isi PATCH dalam format JSON:', welcome: 'Selamat datang' },
+})
+
+function renderStudioHtml(locale: Locale): string {
+  const copy = studioCopy[locale]
+  const scriptCopy = JSON.stringify(copy)
+  return `<!doctype html>
+<html lang="${locale}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Moonql Studio</title>
+<title>${copy.title}</title>
 <style>
   :root { --ink:#07060b; --paper:#0d0b14; --surface:#13101d; --fg:#f7f4ec; --accent:#ffd400; --pink:#ff007a; --hot:#ff1e56; }
   * { box-sizing: border-box; font-family: ui-monospace, "Cascadia Code", Menlo, monospace; }
@@ -50,23 +58,24 @@ const STUDIO_HTML = `<!doctype html>
 <body>
 <header>
   <h1>MOONQL STUDIO</h1>
-  <span class="tag">view-driven admin</span>
-  <span class="muted">rendered entirely from GET /_schema — no privileged backend</span>
+  <span class="tag">${copy.tag}</span>
+  <span class="muted">${copy.summary}</span>
 </header>
 <main>
-  <nav id="nav"><div class="row"><b>Not logged in.</b></div></nav>
+  <nav id="nav"><div class="row"><b>${copy.notLoggedIn}</b></div></nav>
   <section id="out"><div class="card" id="login">
-    <h2>LOGIN</h2>
-    <div class="row"><input id="user" placeholder="login" value="admin"></div>
-    <div class="row"><input id="pass" type="password" placeholder="password"></div>
-    <div class="row"><button class="btn" id="doLogin">Sign in</button>
-      <input id="token" placeholder="...or paste bearer token" style="flex:1"></div>
+    <h2>${copy.login}</h2>
+    <div class="row"><input id="user" placeholder="${copy.username}" value="admin"></div>
+    <div class="row"><input id="pass" type="password" placeholder="${copy.password}"></div>
+    <div class="row"><button class="btn" id="doLogin">${copy.signIn}</button>
+      <input id="token" placeholder="${copy.pasteToken}" style="flex:1"></div>
     <div id="msg"></div>
   </div></section>
 </main>
 <script>
 (function () {
   "use strict";
+  var COPY = ${scriptCopy};
   /* derive the API root from this page's own route: <prefix>/studio -> <prefix>
      kelas karakter, bukan backslash: sumber ini hidup di dalam template string, dan
      "\\/" di sana adalah escape string yang menghasilkan "/" — regex yang diterima
@@ -127,7 +136,7 @@ const STUDIO_HTML = `<!doctype html>
   function boot() {
     if (!token) return;
     api("/_schema").then(function (j) {
-      if (!j.ok) { msg(j.error ? j.error.message : "schema failed", true); return; }
+      if (!j.ok) { msg(j.error ? j.error.message : COPY.schemaFailed, true); return; }
       schema = j.data;
       renderNav();
       var first = Object.keys(schema.models)[0];
@@ -138,40 +147,40 @@ const STUDIO_HTML = `<!doctype html>
   function renderNav() {
     var nav = document.getElementById("nav");
     nav.innerHTML = "";
-    nav.appendChild(h("h2", null, "Models"));
+    nav.appendChild(h("h2", null, COPY.models));
     Object.keys(schema.models).forEach(function (name) {
       var m = schema.models[name];
       nav.appendChild(h("button", { onclick: function () { openModel(name); } },
         esc(m.label || name) + ' <em style="opacity:.5;font-size:10px">' + esc(m.dataTier || "none") + "</em>"));
     });
-    nav.appendChild(h("h2", null, "Views"));
+    nav.appendChild(h("h2", null, COPY.views));
     Object.keys(schema.views).forEach(function (key) {
       var v = schema.views[key];
-      nav.appendChild(h("button", { onclick: function () { openView(key); }, title: "from " + v.from }, esc(v.label || key)));
+      nav.appendChild(h("button", { onclick: function () { openView(key); }, title: COPY.from + " " + v.from }, esc(v.label || key)));
     });
-    nav.appendChild(h("h2", null, "Endpoints"));
+    nav.appendChild(h("h2", null, COPY.endpoints));
     schema.endpoints.forEach(function (e) {
       if (e.method === "GET") nav.appendChild(h("button", { onclick: function () { raw(e.path); } }, esc(e.path)));
       else nav.appendChild(h("div", { class: "muted" }, esc(e.method + " " + e.path)));
     });
-    nav.appendChild(h("h2", null, "Session"));
-    nav.appendChild(h("button", { onclick: function () { api("/auth/logout", { method: "POST" }).then(logout); } }, "Log out"));
+    nav.appendChild(h("h2", null, COPY.session));
+    nav.appendChild(h("button", { onclick: function () { api("/auth/logout", { method: "POST" }).then(logout); } }, COPY.logout));
   }
 
   function logout() { sessionStorage.removeItem("mw_token"); token = ""; location.reload(); }
 
   function table(rows, name, actions) {
-    if (!rows || !rows.length) return '<div class="card">No rows.</div>';
+    if (!rows || !rows.length) return '<div class="card">' + COPY.noRows + '</div>';
     var cols = Object.keys(rows[0]);
     var html = '<table><thead><tr>';
     cols.forEach(function (c) { html += "<th>" + esc(c) + "</th>"; });
-    if (actions) html += "<th>ops</th>";
+    if (actions) html += "<th>" + COPY.actions + "</th>";
     html += "</tr></thead><tbody>";
     rows.forEach(function (r) {
       html += "<tr>";
       cols.forEach(function (c) { html += "<td>" + esc(r[c]) + "</td>"; });
-      if (actions) html += '<td><button class="btn" data-act="edit" data-model="' + attr(name) + '" data-id="' + attr(r.id) + '">edit</button> ' +
-        '<button class="btn danger" data-act="del" data-model="' + attr(name) + '" data-id="' + attr(r.id) + '">del</button></td>';
+      if (actions) html += '<td><button class="btn" data-act="edit" data-model="' + attr(name) + '" data-id="' + attr(r.id) + '">' + COPY.edit + '</button> ' +
+        '<button class="btn danger" data-act="del" data-model="' + attr(name) + '" data-id="' + attr(r.id) + '">' + COPY.remove + '</button></td>';
       html += "</tr>";
     });
     return html + "</tbody></table>";
@@ -181,7 +190,7 @@ const STUDIO_HTML = `<!doctype html>
     var s = m.createSchema;
     if (!s) return "";
     var req = s.required || [];
-    var html = '<div class="card"><h2>CREATE ' + esc(m.label || modelName) + '</h2><form id="cf">';
+    var html = '<div class="card"><h2>' + COPY.create + ' ' + esc(m.label || modelName) + '</h2><form id="cf">';
     Object.keys(s.properties).forEach(function (key) {
       var p = s.properties[key];
       var label = "<label>" + esc(key) + (req.indexOf(key) >= 0 ? " *" : "") + "</label><br>";
@@ -202,7 +211,7 @@ const STUDIO_HTML = `<!doctype html>
           (p.maxLength ? " maxlength='" + p.maxLength + "'" : "") + "><br><br>";
       }
     });
-    return html + '<button class="btn" type="submit">Create</button></form></div>';
+    return html + '<button class="btn" type="submit">' + COPY.createButton + '</button></form></div>';
   }
 
   function openModel(name) {
@@ -225,7 +234,7 @@ const STUDIO_HTML = `<!doctype html>
           body[k] = (p && (p.type === "integer" || p.type === "number")) ? Number(v) : v;
         });
         api("/" + name, { method: "POST", body: JSON.stringify(body) }).then(function (r) {
-          if (r.ok) openModel(name); else alert(r.error ? r.error.message : "failed");
+          if (r.ok) openModel(name); else alert(r.error ? r.error.message : COPY.failed);
         });
       });
     });
@@ -235,8 +244,8 @@ const STUDIO_HTML = `<!doctype html>
     api("/" + key).then(function (j) {
       if (!j.ok) { show('<div class="card err">' + esc(j.error && j.error.message) + "</div>"); return; }
       var v = schema.views[key];
-      show('<h2>' + esc(v.label || key) + ' <span class="muted">view of ' + esc(v.from) +
-        (v.aggregate ? " (aggregate: " + esc(v.aggregate.metrics.join(", ")) + ")" : "") + "</span></h2>" + table(j.data, null, false));
+      show('<h2>' + esc(v.label || key) + ' <span class="muted">' + COPY.viewOf + ' ' + esc(v.from) +
+        (v.aggregate ? " (" + COPY.aggregate + ": " + esc(v.aggregate.metrics.join(", ")) + ")" : "") + "</span></h2>" + table(j.data, null, false));
     });
   }
 
@@ -247,14 +256,14 @@ const STUDIO_HTML = `<!doctype html>
   }
 
   window.__del = function (name, id) {
-    if (!confirm("Delete " + name + " " + id + "?")) return;
+    if (!confirm(COPY.deleteConfirm + " " + name + " " + id + "?")) return;
     api("/" + name + "/" + id, { method: "DELETE" }).then(function () { openModel(name); });
   };
   window.__edit = function (name, id) {
-    var patch = prompt("PATCH body as JSON:");
+    var patch = prompt(COPY.patchPrompt);
     if (!patch) return;
     api("/" + name + "/" + id, { method: "PATCH", body: patch }).then(function (r) {
-      if (!r.ok) alert(r.error ? r.error.message : "failed");
+      if (!r.ok) alert(r.error ? r.error.message : COPY.failed);
       openModel(name);
     });
   };
@@ -264,10 +273,10 @@ const STUDIO_HTML = `<!doctype html>
     var password = document.getElementById("pass").value;
     api("/auth/login", { method: "POST", body: JSON.stringify({ login: login, password: password }) })
       .then(function (j) {
-        if (!j.ok) { msg(j.error ? j.error.message : "login failed", true); return; }
+      if (!j.ok) { msg(j.error ? j.error.message : COPY.loginFailed, true); return; }
         token = j.data.token;
         sessionStorage.setItem("mw_token", token);
-        msg("welcome " + j.data.user.login);
+        msg(COPY.welcome + " " + j.data.user.login);
         boot();
       });
   });
@@ -283,6 +292,7 @@ const STUDIO_HTML = `<!doctype html>
 </body>
 </html>
 `
+}
 
 const studio: TypedModule = async (fastify) => {
   fastify.get(
@@ -290,7 +300,10 @@ const studio: TypedModule = async (fastify) => {
     {
       schema: { tags: ['studio'], summary: 'Moonql Studio — metadata-driven admin (single HTML page)' },
     },
-    async (_request, reply) => reply.type('text/html; charset=utf-8').send(STUDIO_HTML),
+    async (request, reply) => {
+      const locale = preferredLocale(request.headers['accept-language']) ?? 'en'
+      return reply.header('Vary', 'Accept-Language').type('text/html; charset=utf-8').send(renderStudioHtml(locale))
+    },
   )
 }
 
