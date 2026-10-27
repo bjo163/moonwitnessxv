@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { URL } from 'node:url';
 import test from 'node:test';
 import { z } from 'zod';
 
@@ -61,6 +62,7 @@ const valid = {
   output: { outputRef: 'output:hash-only', outputSha256: `sha256:${'c'.repeat(64)}` },
   toolCalls: [{ lumenRunId: 'run_001', lumenStepId: 'step_1_run_001', lumenEventId: 'event_001', toolId: 'draft-claim', toolVersion: '1', argumentSha256: `sha256:${'d'.repeat(64)}` }],
 };
+const clone = (value) => JSON.parse(JSON.stringify(value));
 
 test('published JSON Schema matches authoritative Zod contract', async () => {
   const published = JSON.parse(await readFile(new URL('../../docs/architecture/schemas/ai-candidate-evidence.v1.schema.json', import.meta.url), 'utf8'));
@@ -72,23 +74,23 @@ test('positive fixture records model, prompt, provenance, consent, output and LU
 });
 
 test('positive fixture permits provenance sources without an edition reference', () => {
-  const record = structuredClone(valid);
+  const record = clone(valid);
   delete record.provenance[0].editionRef;
   assert.equal(evidence.safeParse(record).success, true);
 });
 
 test('negative fixtures reject missing consent, malformed hashes, and raw prompt content', () => {
-  const noConsent = structuredClone(valid); delete noConsent.consent;
+  const noConsent = clone(valid); delete noConsent.consent;
   assert.equal(evidence.safeParse(noConsent).success, false);
-  const badHash = structuredClone(valid); badHash.prompt.sha256 = 'not-a-hash';
+  const badHash = clone(valid); badHash.prompt.sha256 = 'not-a-hash';
   assert.equal(evidence.safeParse(badHash).success, false);
-  const rawPrompt = structuredClone(valid); rawPrompt.prompt.text = 'private prompt bytes';
+  const rawPrompt = clone(valid); rawPrompt.prompt.text = 'private prompt bytes';
   assert.equal(evidence.safeParse(rawPrompt).success, false);
 });
 
 test('denied, withdrawn, and unknown consent remain evidence states, not approval', () => {
   for (const state of ['DENIED', 'WITHDRAWN', 'UNKNOWN']) {
-    const record = structuredClone(valid); record.consent.state = state;
+    const record = clone(valid); record.consent.state = state;
     assert.equal(evidence.safeParse(record).success, true);
   }
 });
