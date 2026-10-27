@@ -2,10 +2,10 @@
   "schema": "moonwitness-xv-ui-reference-v1",
   "created": "2026-10-27",
   "branch": "dev",
-  "type": "original-documentation-only-svg-screen-references",
+  "type": "moonui-xv-png-originals-with-svg-design-companions",
   "notDeployed": true,
   "licenseReviewRequired": true,
-  "rasterPNGImported": false,
+  "rasterPNGImported": true,
   "canonicalTodos": "../../../TODO.md",
   "microPlan": "../../../todo-ui.md",
   "screens": [
@@ -16,7 +16,9 @@
       "route": "/id, /en",
       "owner": "apps/dock",
       "milestone": "M19 / M31",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/01_dock_lighthouse.png",
+      "svg": "01_dock_lighthouse.svg"
     },
     {
       "number": 2,
@@ -25,7 +27,9 @@
       "route": "/projects (proposed)",
       "owner": "apps/dock + Headquarters",
       "milestone": "M17 / M19",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/02_project_universe.png",
+      "svg": "02_project_universe.svg"
     },
     {
       "number": 3,
@@ -34,7 +38,9 @@
       "route": "private draft route TBD",
       "owner": "HQ workspace, SHADOW proposed",
       "milestone": "M17 / M33",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/03_story_forge.png",
+      "svg": "03_story_forge.svg"
     },
     {
       "number": 4,
@@ -43,7 +49,9 @@
       "route": "private studio route TBD",
       "owner": "existing GeneratorStudio, scoped SHADOW",
       "milestone": "M18 / M33",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/04_poster_lab.png",
+      "svg": "04_poster_lab.svg"
     },
     {
       "number": 5,
@@ -52,7 +60,9 @@
       "route": "existing reader paths",
       "owner": "apps/dock",
       "milestone": "M08 / M19",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/05_corpus_reader.png",
+      "svg": "05_corpus_reader.svg"
     },
     {
       "number": 6,
@@ -61,7 +71,9 @@
       "route": "lexicon/ontology paths",
       "owner": "existing data owners + Dock projection",
       "milestone": "M10 / M12 / M19",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/06_unilex_explorer.png",
+      "svg": "06_unilex_explorer.svg"
     },
     {
       "number": 7,
@@ -70,7 +82,9 @@
       "route": "private research route TBD",
       "owner": "HQ research desk, MOONLAB proposed",
       "milestone": "M14 / M34",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/07_moonlab_research.png",
+      "svg": "07_moonlab_research.svg"
     },
     {
       "number": 8,
@@ -79,7 +93,9 @@
       "route": "world route TBD",
       "owner": "future WORLD projections",
       "milestone": "M24",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/08_world_monitor.png",
+      "svg": "08_world_monitor.svg"
     },
     {
       "number": 9,
@@ -88,7 +104,9 @@
       "route": "private publishing route TBD",
       "owner": "apps/headquarters",
       "milestone": "M18 / M20",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/09_publishing_hub.png",
+      "svg": "09_publishing_hub.svg"
     },
     {
       "number": 10,
@@ -97,7 +115,9 @@
       "route": "private community route TBD",
       "owner": "planned member app",
       "milestone": "M32 / M37",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/10_harbor_commons.png",
+      "svg": "10_harbor_commons.svg"
     },
     {
       "number": 11,
@@ -106,7 +126,9 @@
       "route": "private works route TBD",
       "owner": "planned commerce app",
       "milestone": "M35 / M37",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/11_works_economy.png",
+      "svg": "11_works_economy.svg"
     },
     {
       "number": 12,
@@ -115,7 +137,14 @@
       "route": "operator inbox proposed",
       "owner": "apps/skylink (service skeleton)",
       "milestone": "M38 / M19",
-      "status": "CONCEPT_ONLY"
+      "status": "CONCEPT_ONLY",
+      "png": "png/12_skylink_messaging.png",
+      "svg": "12_skylink_messaging.svg"
     }
-  ]
+  ],
+  "pngResolution": [
+    1920,
+    1080
+  ],
+  "pngUse": "reference-only; pending rights review before production assets"
 }
