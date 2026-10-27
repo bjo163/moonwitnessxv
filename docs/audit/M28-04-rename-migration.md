@@ -101,7 +101,7 @@
 
 ## reviewer
 
-Independent reviewer: final read-only review accepted the technical evidence for the M28-04 parent DoD, subject to exact-SHA integration and CI. The integrator retains responsibility for TODO status; no production deployment or CI Docker-image build is claimed.
+Independent reviewer: final read-only review accepted the technical evidence for the M28-04 parent DoD. The integrator retains responsibility for TODO status; no production deployment or CI Docker-image build is claimed.
 
 ## rollback
 
@@ -111,14 +111,14 @@ Independent reviewer: final read-only review accepted the technical evidence for
 
 ## result_sha
 
-**Pending integration.** This report and the `TODO.md` M28-04 checkbox have not been committed. The exact current source/review evidence above is available, but the audit itself still requires independent approval and an integrated commit/CI check.
+The audit was committed at `bd11cf243d7e5515357fa3eaf1f4731f690e9a10`. CI run [`40476362621`](https://github.com/bjo163/moonwitnessxv/actions/runs/40476362621) completed successfully for that exact SHA, including full verification and guarded promotion. A fresh `git ls-remote` confirmed both `dev` and `main` at `bd11cf243d7e5515357fa3eaf1f4731f690e9a10`. The integrator records M28-04 closure in the accompanying TODO update. No deployment or CI Docker-image build is claimed.
 
 ## limitations
 
-1. **Historical stale assertion is fixed.** The assigned-baseline suite was 27/28; after commit `5562f9b`, the exact same 28-test command passed 28/28 at local HEAD `97f1d6a` (the focused compose-contract portion passed 12/12). This supersedes the earlier failure. The current remote `dev`/`main` SHA `cbaec2db5af416e58b71b57a16127267d3c7007f` is later than `5562f9b`; CI run `40474864810` completed full verification and guarded promotion successfully at that exact SHA.
+1. **Historical stale assertion is fixed.** The assigned-baseline suite was 27/28; after commit `5562f9b`, the exact same 28-test command passed 28/28 at local HEAD `97f1d6a` (the focused compose-contract portion passed 12/12). This supersedes the earlier failure. The intermediate remote `dev`/`main` SHA `cbaec2db5af416e58b71b57a16127267d3c7007f` also passed CI run `40474864810`; the latest exact audit integration is recorded below.
 2. **CI cannot evidence images.** No workflow builds Docker images; the requested “CI run history for docker image builds” is structurally absent. Local builds at this tree are the only image proof.
 3. **No hub runtime boot at this exact SHA.** Image build and DNS alias resolution were proven; booting the hub against PostgreSQL was proven at earlier SHAs in the M28-13 matrix, not repeated here.
-4. **Concurrent tree drift and current lock.** Other owners committed `00b0064`, `9a1bf85` and `b24bedd` and have uncommitted `apps/arsy/src` SKYLINK wiring during this session. Commit `00b0064` adds Cockpit's `@moonwitness/moonql-client` workspace importer; the current lock has a small corresponding delta from the assigned baseline. CI at `cbaec2d` passed the frozen-lock install and full verification with that importer. The current local `dev` HEAD is `97f1d6a`; the worktree has unrelated uncommitted changes that are not included in HEAD or attributed to M28-04.
+4. **Concurrent tree drift and current lock.** Other owners committed `00b0064`, `9a1bf85` and `b24bedd` and have uncommitted `apps/arsy/src` SKYLINK wiring during this session. Commit `00b0064` adds Cockpit's `@moonwitness/moonql-client` workspace importer; CI at `cbaec2d` and the later exact audit SHA passed frozen-lock installation and full verification. The audit does not attribute unrelated working-tree changes to M28-04.
 5. **DNS proof is mechanism-level.** The alias was reproduced with an equivalent `--network-alias radio` container and confirmed by `docker compose config`; the full compose stack was not booted (avoids host ports and `.env` secrets).
 
 ## Integrator revalidation (2026-10-27)
@@ -126,5 +126,12 @@ Independent reviewer: final read-only review accepted the technical evidence for
 - **Test source:** local `dev` HEAD `97f1d6a854b657a41349013e078b71e2bde72282`; `apps/arsy/test/compose-contract.test.ts`, `scripts/apps.registry.mjs`, and the M28-04 Docker/Compose/runner files were clean. `git log` confirms the registry assertion fix is committed as `5562f9b` and is an ancestor of remote `dev` `cbaec2d`.
 - **Focused command:** `pnpm --filter @moonwitness/arsy exec tsx --test test/compose-contract.test.ts test/dockerfile-contract.test.ts test/env-contract.test.ts` → **28 tests, 28 passed, 0 failed, 0 skipped**. This replaces the baseline 27/28 result above.
 - **Runtime config check:** `docker compose config --quiet` → exit 0 at the local test tree; no rendered configuration or secret values were printed.
-- **Current remote integration:** GitHub Actions run [`40474864810`](https://github.com/bjo163/moonwitnessxv/actions/runs/40474864810) at exact `cbaec2db5af416e58b71b57a16127267d3c7007f` completed success for Monorepo Verification & Safety Gates and the guarded promotion job. The run includes current lockfile installation after the Cockpit workspace importer was added. Both remote `dev` and `main` now point to `cbaec2d`.
-- **Independent review:** final read-only review found the technical parent DoD supported by the combined child-task, test, build, and CI evidence; it required only the worktree wording clarification above. No TODO status change is claimed until this audit is integrated and CI passes on that exact SHA.
+- **Earlier remote integration:** GitHub Actions run [`40474864810`](https://github.com/bjo163/moonwitnessxv/actions/runs/40474864810) at exact `cbaec2db5af416e58b71b57a16127267d3c7007f` completed successfully for verification and guarded promotion.
+- **Independent review:** final read-only review found the technical parent DoD supported by the combined child-task, test, build, and CI evidence.
+
+## Exact audit integration (2026-10-27)
+
+- Audit source SHA: `bd11cf243d7e5515357fa3eaf1f4731f690e9a10`.
+- GitHub Actions run [`40476362621`](https://github.com/bjo163/moonwitnessxv/actions/runs/40476362621) has conclusion `success` for that exact `dev` SHA; workflow `CI Verify & Gate` includes the successful verification and guarded promotion.
+- A fresh `git ls-remote origin refs/heads/dev refs/heads/main` returned the same `bd11cf243d7e5515357fa3eaf1f4731f690e9a10` for both refs.
+- The local `dev` checkout was at that SHA before the TODO/audit status integration; unrelated dirty files were preserved and are not included in this evidence.
