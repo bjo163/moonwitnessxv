@@ -100,12 +100,17 @@ test('compose: the legacy radio DNS name aliases the one ARSY Hub service', () =
 test('root workflows and dev runner select ARSY and retain the radio transition alias', () => {
   const manifest = JSON.parse(readRepoText('package.json')) as { scripts: Record<string, string> }
   const runner = readRepoText('scripts/dev.mjs')
+  assert.match(runner, /import \{ ALIASES, APPS \} from '\.\/apps\.registry\.mjs'/, 'the runner consumes the registry, not a private app list')
   assert.match(manifest.scripts.build ?? '', /--filter @moonwitness\/arsy build/)
   assert.match(manifest.scripts.test ?? '', /--filter @moonwitness\/arsy test/)
   assert.match(manifest.scripts['gen:sdk:check'] ?? '', /--filter @moonwitness\/arsy/)
   assert.equal(manifest.scripts['dev:radio'], 'pnpm --filter @moonwitness/arsy dev')
-  assert.match(runner, /tag: 'arsy',[\s\S]*?pkg: '@moonwitness\/arsy'/)
-  assert.match(runner, /tag === 'radio' \? 'arsy' : tag/)
+  // The runner now spawns from one registry (scripts/apps.registry.mjs); the
+  // transition alias moved there with it, so the intent is asserted at the
+  // source of truth instead of against literal lines in scripts/dev.mjs.
+  const registry = readRepoText('scripts/apps.registry.mjs')
+  assert.match(registry, /tag: 'arsy',\s*pkg: '@moonwitness\/arsy'/)
+  assert.match(registry, /ALIASES = \{ radio: 'arsy' \}/)
 })
 
 test('compose: the backup runs the shared script, mounted read-only', () => {
