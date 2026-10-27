@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo, type ReactNode } from 'react'
 import Hls from 'hls.js'
-import { Tabs, type TabItem } from '@moonwitness/moonui'
+import { Tabs, type TabItem, type TerminalLine } from '@moonwitness/moonui'
 import { triggerHaptic } from '@moonwitness/moonui/client'
 import { CockpitTopBar } from './components/CockpitTopBar'
 import { CockpitSidebar } from './components/CockpitSidebar'
@@ -174,7 +174,7 @@ export function App(): ReactNode {
   const currentChannel = channels[activeChannelIndex] ?? DEFAULT_CHANNELS[0]
 
   // Data sync hook
-  const { config, serviceStates, setServiceStates, logs, setLogs, clock, uptime, progressPayload, progressLive } =
+  const { config, serviceStates, setServiceStates, logs, setLogs, clock, uptime, portStatus, progressPayload, progressLive } =
     useCockpitSync(setChannels)
   const progress = useTodoProgress({ progressPayload, progressLive })
 
@@ -489,13 +489,23 @@ export function App(): ReactNode {
     return `${h}h ${m % 60}m`
   }
 
-  const filteredLogs = useMemo(() => {
-    return logs.map((l) => `[${l.timestamp}] [${l.tag.toUpperCase()}] ${l.message}`).filter((msg) => {
-      if (filterTag !== 'all' && !msg.includes(`[${filterTag.toUpperCase()}]`)) return false
-      if (showErrorsOnly && !msg.toLowerCase().includes('error')) return false
-      if (searchTerm && !msg.toLowerCase().includes(searchTerm.toLowerCase())) return false
-      return true
-    })
+  const logLines = useMemo<TerminalLine[]>(() => {
+    return logs
+      .filter((l) => {
+        if (filterTag !== 'all' && l.tag !== filterTag) return false
+        if (showErrorsOnly && l.level !== 'error') return false
+        if (searchTerm && !l.message.toLowerCase().includes(searchTerm.toLowerCase())) return false
+        return true
+      })
+      // TerminalViewer needs TerminalLine objects, not pre-formatted strings;
+      // passing strings crashed the whole tree on the first streamed log line.
+      .map((l) => ({
+        id: l.id,
+        timestamp: l.timestamp,
+        tag: l.tag,
+        level: l.level === 'warn' || l.level === 'error' ? l.level : 'info',
+        message: l.message,
+      }))
   }, [logs, filterTag, showErrorsOnly, searchTerm])
 
   const filteredChannels = useMemo(() => {
@@ -596,7 +606,7 @@ export function App(): ReactNode {
               autoScroll={autoScroll}
               setAutoScroll={setAutoScroll}
               setLogs={setLogs}
-              filteredLogs={filteredLogs}
+              logLines={logLines}
               copy={copy}
             />
           ) : null}
@@ -661,6 +671,7 @@ export function App(): ReactNode {
             <CockpitPortsView
               config={config}
               serviceStates={serviceStates}
+              portStatus={portStatus}
               openPreview={openPreview}
               copy={copy}
             />

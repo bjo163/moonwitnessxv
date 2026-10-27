@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Button, Pill, PillGroup, TerminalViewer, TextInput } from '@moonwitness/moonui'
+import type { TerminalLine } from '@moonwitness/moonui'
 import type { AppConfig, LogEntry } from '../types'
 import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
@@ -14,7 +15,7 @@ export interface CockpitLogsViewProps {
   autoScroll: boolean
   setAutoScroll: (val: boolean) => void
   setLogs: (logs: LogEntry[]) => void
-  filteredLogs: string[]
+  logLines: TerminalLine[]
   copy: CockpitCopyCatalog
 }
 
@@ -29,7 +30,7 @@ export function CockpitLogsView({
   autoScroll,
   setAutoScroll,
   setLogs,
-  filteredLogs,
+  logLines,
   copy,
 }: CockpitLogsViewProps): ReactNode {
   return (
@@ -81,7 +82,7 @@ export function CockpitLogsView({
       </div>
 
       <TerminalViewer
-        lines={filteredLogs}
+        lines={logLines}
         autoScroll={autoScroll}
         className="flex-1"
       />

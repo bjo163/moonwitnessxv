@@ -107,6 +107,44 @@ void test('C1: client LogEntry uses the server tag field', () => {
   assert.equal(/l\.service\b/.test(app), false, 'App must not read a nonexistent l.service')
 })
 
+// C1b — the terminal viewer must be fed TerminalLine objects, never strings.
+// Passing strings crashed the whole React tree on the first streamed log line
+// ("blank screen after Start All"), and the client is outside the typecheck gate.
+void test('C1b: CockpitLogsView passes TerminalLine objects to TerminalViewer', () => {
+  const view = readFileSync(join(CLIENT_DIR, 'components', 'CockpitLogsView.tsx'), 'utf8')
+  assert.match(view, /import type \{ TerminalLine \} from '@moonwitness\/moonui'/, 'must import the viewer line type')
+  assert.equal(/filteredLogs:\s*string\[\]/.test(view), false, 'string[] log lines are exactly what crashed the app')
+  assert.match(view, /lines=\{logLines\}/, 'viewer receives the object array')
+
+  const app = readFileSync(join(CLIENT_DIR, 'App.tsx'), 'utf8')
+  assert.match(app, /const logLines = useMemo<TerminalLine\[\]>/, 'App builds TerminalLine objects')
+  assert.match(app, /id: l\.id/, 'object mapping carries the log id')
+})
+
+// Ports truth — /api/status must report real listeners, not only cockpit children.
+void test('Ports: /api/status reports portStatus for every configured service', async () => {
+  const { app, supervisor } = makeServer()
+  try {
+    const res = await app.inject({ method: 'GET', url: '/api/status' })
+    const body = JSON.parse(res.body) as { portStatus?: Record<string, boolean> }
+    assert.ok(body.portStatus, 'status must include the listener probe')
+    for (const svc of DEFAULT_CONFIG.services) {
+      assert.equal(
+        typeof body.portStatus[svc.tag],
+        'boolean',
+        `portStatus must answer for ${svc.tag}`,
+      )
+    }
+    // The map is keyed by supervised service tag only (the cockpit host row is
+    // rendered from config.port on the client, not probed as a supervised child).
+    assert.equal(Object.keys(body.portStatus).length, DEFAULT_CONFIG.services.length)
+    assert.equal('cockpit' in body.portStatus, false, 'the supervisor itself is not a supervised service')
+  } finally {
+    await app.close()
+    supervisor.stopAll()
+  }
+})
+
 // C2 — the Ports/Preview views derive from /api/config instead of a static port table.
 void test('C2: Ports & Preview views hardcode no ports and drop the static maps', () => {
   const ports = readFileSync(join(CLIENT_DIR, 'components', 'CockpitPortsView.tsx'), 'utf8')
@@ -117,4 +155,12 @@ void test('C2: Ports & Preview views hardcode no ports and drop the static maps'
   }
   assert.match(ports, /config\.services/, 'PortsView must render from config.services')
   assert.match(preview, /config\.services/, 'PreviewView must render from config.services')
+})
+
+// L1 — the legacy vanilla fallback stays a fallback, not a second source of truth.
+void test('L1: legacy public UI derives from /api/config and echoes the token', () => {
+  const legacy = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'cockpit.js'), 'utf8')
+  assert.match(legacy, /appConfig\.services/, 'legacy grid/shortcuts must derive from /api/config')
+  assert.match(legacy, /x-moondeck-token/, 'legacy mutating calls must echo the boot token')
+  assert.equal(/:\d{4}\b/.test(legacy), false, 'no hard-coded port may remain in the fallback UI')
 })

@@ -6,8 +6,15 @@ let activeTagFilter = 'all'
 let showErrorsOnly = false
 let searchTerm = ''
 let autoScroll = true
+let cockpitToken = ''
 
 const $ = (id) => document.getElementById(id)
+
+// Every mutating call must echo the per-boot token the server ships on
+// /api/config; a cross-site page cannot read that response (loopback-only CORS).
+function authHeaders(extra = {}) {
+  return { ...extra, 'x-moondeck-token': cockpitToken }
+}
 
 async function initCockpit() {
   updateClock()
@@ -16,6 +23,7 @@ async function initCockpit() {
   try {
     const res = await fetch('/api/config')
     appConfig = await res.json()
+    cockpitToken = appConfig.token || ''
     document.title = appConfig.title || 'Moondeck // Mission Cockpit'
     $('brandTitle').textContent = appConfig.title || 'MOONDECK'
 
@@ -115,7 +123,7 @@ function formatUptime(seconds) {
 
 async function controlService(tag, action) {
   try {
-    const res = await fetch(`/api/services/${tag}/${action}`, { method: 'POST' })
+    const res = await fetch(`/api/services/${tag}/${action}`, { method: 'POST', headers: authHeaders() })
     const data = await res.json()
     if (data.state) {
       serviceStates[tag] = data.state
@@ -128,12 +136,12 @@ async function controlService(tag, action) {
 }
 
 async function startAll() {
-  await fetch('/api/services/start-all', { method: 'POST' })
+  await fetch('/api/services/start-all', { method: 'POST', headers: authHeaders() })
   await refreshStatus()
 }
 
 async function stopAll() {
-  await fetch('/api/services/stop-all', { method: 'POST' })
+  await fetch('/api/services/stop-all', { method: 'POST', headers: authHeaders() })
   await refreshStatus()
 }
 
@@ -142,7 +150,7 @@ async function freePorts() {
   btn.textContent = 'Freeing...'
   btn.disabled = true
   try {
-    const res = await fetch('/api/ports/free', { method: 'POST' })
+    const res = await fetch('/api/ports/free', { method: 'POST', headers: authHeaders() })
     const data = await res.json()
     alert(data.message || 'Ports freed')
   } catch (err) {
@@ -331,14 +339,11 @@ function renderPreviewShortcuts() {
   if (!container || !appConfig) return
   container.innerHTML = ''
 
-  const shortcuts = [
-    { label: 'Dock (:3001)', url: 'http://127.0.0.1:3001' },
-    { label: 'Headquarters (:3002)', url: 'http://127.0.0.1:3002' },
-    { label: 'World Monitor (:3002/world-monitor)', url: 'http://127.0.0.1:3002/world-monitor' },
-    { label: 'Hub (:3000)', url: 'http://127.0.0.1:3000' },
-    { label: 'Swagger Docs (:3000/docs)', url: 'http://127.0.0.1:3000/docs' },
-    { label: 'AI Gateway (:3003)', url: 'http://127.0.0.1:3003/v1/models' },
-  ]
+  // Derived from /api/config so this fallback cannot drift from the registry
+  // (the previous hard-coded list mapped services to the wrong ports).
+  const shortcuts = (appConfig.services || [])
+    .filter((svc) => svc.type !== 'worker' && svc.port && svc.url)
+    .map((svc) => ({ label: `${svc.name} (:${svc.port})`, url: svc.url }))
 
   for (const s of shortcuts) {
     const btn = document.createElement('button')
@@ -409,7 +414,7 @@ async function loadErrorLedger() {
 async function clearErrorLedger() {
   if (!confirm('Clear all logged errors?')) return
   try {
-    await fetch('/api/errors', { method: 'DELETE' })
+    await fetch('/api/errors', { method: 'DELETE', headers: authHeaders() })
     await loadErrorLedger()
   } catch (err) {
     alert('Failed to clear: ' + err.message)
@@ -422,30 +427,35 @@ function renderPortsGrid() {
   if (!container || !appConfig) return
   container.innerHTML = ''
 
-  const portMap = [
-    { port: 3000, name: 'Radio Core Hub', tag: 'radio', desc: 'Fastify Hub & OpenAPI' },
-    { port: 3001, name: 'Public Radio Dock', tag: 'dock', desc: 'Next.js Station Player' },
-    { port: 3002, name: 'Headquarters', tag: 'hq', desc: 'Next.js Mission Control & World Monitor' },
-    { port: 3003, name: 'AI Gateway Router', tag: 'ai', desc: 'Cascading AI Gateway' },
-    { port: 3004, name: 'Moondeck Cockpit', tag: 'cockpit', desc: 'Desktop Process Supervisor & GUI' },
-  ]
+  // Rows come from /api/config (the single source of truth for port ownership),
+  // plus the supervisor's own bound port; no static port table lives here.
+  const rows = (appConfig.services || []).map((svc) => ({
+    port: svc.port,
+    name: svc.name,
+    tag: svc.tag,
+    desc: svc.description || '',
+    worker: svc.type === 'worker',
+  }))
+  rows.unshift({ port: appConfig.port, name: 'Moondeck Cockpit', tag: 'cockpit', desc: 'Desktop Process Supervisor & GUI', worker: false })
 
-  for (const item of portMap) {
+  for (const item of rows) {
     const state = serviceStates[item.tag]
     const isRunning = item.tag === 'cockpit' || (state && state.status === 'RUNNING')
 
     const card = document.createElement('div')
     card.className = 'port-card'
+    const portLabel = item.worker ? 'WORKER' : `:${item.port}`
+    const openLink = !item.worker && item.port
+      ? `<div><a href="http://127.0.0.1:${item.port}" target="_blank" class="btn btn-sm" style="text-decoration:none;">Open :${item.port}</a></div>`
+      : ''
     card.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <span class="port-number">:${item.port}</span>
+        <span class="port-number">${portLabel}</span>
         <span class="status-badge ${isRunning ? 'RUNNING' : 'STOPPED'}">${isRunning ? 'BOUND' : 'IDLE'}</span>
       </div>
       <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">${item.name}</div>
       <div style="color:var(--text-muted); font-size:12px; margin-bottom:12px;">${item.desc}</div>
-      <div>
-        <a href="http://127.0.0.1:${item.port}" target="_blank" class="btn btn-sm" style="text-decoration:none;">Open :${item.port}</a>
-      </div>
+      ${openLink}
     `
     container.appendChild(card)
   }

@@ -6,6 +6,8 @@ import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 export interface CockpitPortsViewProps {
   config: AppConfig | null
   serviceStates: Record<string, ServiceState>
+  /** Real listener probe per tag from /api/status; empty until the first load. */
+  portStatus: Record<string, boolean>
   openPreview: (url: string) => void
   copy: CockpitCopyCatalog
 }
@@ -23,15 +25,21 @@ interface PortRow {
  * Derived from /api/config, which is the single source of truth for port
  * ownership (packages/core PORTS mirrored into apps/cockpit/src/config.ts).
  * A static port table here once drifted from that truth; nothing may re-add one.
+ * "Bound" means an actual listener was probed on that port, so a service started
+ * by `pnpm dev` reads as bound even though the cockpit does not manage it.
  */
-function buildRows(config: AppConfig | null, serviceStates: Record<string, ServiceState>): PortRow[] {
+function buildRows(
+  config: AppConfig | null,
+  serviceStates: Record<string, ServiceState>,
+  portStatus: Record<string, boolean>,
+): PortRow[] {
   if (!config) return []
   const supervised: PortRow[] = config.services.map((svc) => ({
     tag: svc.tag,
     name: svc.name,
     port: svc.port,
     url: svc.url,
-    running: serviceStates[svc.tag]?.status === 'RUNNING',
+    running: portStatus[svc.tag] ?? serviceStates[svc.tag]?.status === 'RUNNING',
     worker: svc.type === 'worker',
   }))
   // The supervisor serves this page itself, so it is bound by definition.
@@ -49,10 +57,11 @@ function buildRows(config: AppConfig | null, serviceStates: Record<string, Servi
 export function CockpitPortsView({
   config,
   serviceStates,
+  portStatus,
   openPreview,
   copy,
 }: CockpitPortsViewProps): ReactNode {
-  const rows = buildRows(config, serviceStates)
+  const rows = buildRows(config, serviceStates, portStatus)
   return (
     <div className="ports-container">
       {rows.map((row) => (

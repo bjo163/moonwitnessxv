@@ -108,10 +108,17 @@ export function createCockpitServer(
   const repoRoot = findRepoRoot()
   const errorLogFile = join(repoRoot, 'dev-errors.log')
 
-  // Static assets
+  // Static assets — the built React bundle (dist/client) is the only UI. The
+  // former vanilla fallback (public/index.html + cockpit.js + cockpit.css) was a
+  // second, drifting copy of the same surface and has been removed.
   app.get('/', async (_req, reply) => {
     const htmlPath = join(publicDir, 'index.html')
-    if (!existsSync(htmlPath)) return reply.code(404).send('Cockpit UI not found')
+    if (!existsSync(htmlPath)) {
+      return reply
+        .code(404)
+        .type('text/plain; charset=utf-8')
+        .send('Cockpit UI not built. Run: pnpm --filter @moonwitness/cockpit build')
+    }
     reply.type('text/html; charset=utf-8').send(readFileSync(htmlPath, 'utf8'))
   })
 
@@ -146,6 +153,11 @@ export function createCockpitServer(
     return reply.send(readFileSync(assetPath))
   })
 
+  // Legacy vanilla UI (public/cockpit.css + public/cockpit.js). It is kept only
+  // as an unbuilt-source fallback; the built React bundle in dist/client always
+  // wins findPublicDir(). Its data (service cards, ports, preview shortcuts) is
+  // derived from /api/config inside cockpit.js, so it cannot drift from the
+  // registry, and it echoes the boot token on mutating calls like the React UI.
   app.get('/cockpit.css', async (_req, reply) => {
     const candidates = [
       join(publicDir, 'cockpit.css'),
@@ -323,8 +335,18 @@ export function createCockpitServer(
 
   // Status of all services
   app.get('/api/status', async () => {
+    // portStatus answers "is anything listening on this service's port" —
+    // including a listener the operator started outside the cockpit. Without it
+    // the Ports tab called an occupied port IDLE/FREE, since serviceStates only
+    // tracks children this supervisor spawned.
+    const portStatus = Object.fromEntries(
+      await Promise.all(
+        config.services.map(async (svc) => [svc.tag, svc.port === undefined ? false : await supervisor.isPortListening(svc)] as const),
+      ),
+    )
     return {
       services: supervisor.getStates().map(publicServiceState),
+      portStatus,
       system: {
         uptime: process.uptime(),
         node: process.version,

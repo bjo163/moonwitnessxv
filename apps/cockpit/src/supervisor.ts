@@ -199,6 +199,18 @@ export class ProcessSupervisor extends EventEmitter {
     return probePortBusy(port)
   }
 
+  /**
+   * Whether a service's resolved port currently has a listener. The status pages
+   * show only cockpit-managed children, but a port view must also reflect a
+   * listener the operator started elsewhere (`pnpm dev`); reusing the guard's
+   * probe keeps one definition of "is this port taken".
+   */
+  public async isPortListening(svc: ServiceDefinition): Promise<boolean> {
+    const port = this.resolvePort(svc)
+    if (!isValidPort(port)) return false
+    return probePortBusy(port)
+  }
+
   private resolvePort(svc: ServiceDefinition): number | undefined {
     return resolveServicePort(svc, process.env)
   }

@@ -12,6 +12,9 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
   // socket per page, one tracker listener per page, one per-host connection.
   const [progressPayload, setProgressPayload] = useState<ProgressPayload | null>(null)
   const [progressLive, setProgressLive] = useState(false)
+  // Live listener truth per tag from /api/status: a port occupied by `pnpm dev`
+  // must not be shown as free just because the cockpit did not spawn it.
+  const [portStatus, setPortStatus] = useState<Record<string, boolean>>({})
   // Wall-clock time at which the cockpit process started, derived once from the
   // first /api/status snapshot so the displayed uptime can tick locally without
   // re-polling the server every second.
@@ -42,8 +45,9 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
         ])
         const cfgData = (await cfgRes.json()) as AppConfig & { token?: string }
         if (cfgData.token) setCockpitToken(cfgData.token)
-        const statData = (await statRes.json()) as { services: ServiceState[]; system?: { uptime: number } }
+        const statData = (await statRes.json()) as { services: ServiceState[]; portStatus?: Record<string, boolean>; system?: { uptime: number } }
         setConfig(cfgData)
+        if (statData.portStatus) setPortStatus(statData.portStatus)
         if (statData.system?.uptime) {
           bootAtRef.current = Date.now() - statData.system.uptime * 1000
           setUptime(Math.floor(statData.system.uptime))
@@ -128,6 +132,7 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
     setLogs,
     clock,
     uptime,
+    portStatus,
     progressPayload,
     progressLive,
   }
