@@ -10,13 +10,16 @@ import envelope from '../src/plugins/envelope.js'
 
 const ADMIN_PASSWORD = 'ops-admin-pass'
 
-async function makeApp() {
+async function makeApp(options: { env?: Record<string, string | undefined>; onWarn?: (obj: unknown, msg: string) => void } = {}) {
   const app = Fastify({ logger: false })
   const moonql = await bootMoonQl({
     addons: [base, auth, stations, ops],
     seedPolicy: 'off',
-    env: { MOONQL_AUTH_ADMIN_PASSWORD: ADMIN_PASSWORD },
-    log: { info: () => {}, warn: () => {} },
+    env: { MOONQL_AUTH_ADMIN_PASSWORD: ADMIN_PASSWORD, ...options.env },
+    log: {
+      info: () => {},
+      warn: (obj, msg) => options.onWarn?.(obj, msg),
+    },
   })
   await app.register(envelope)
   await app.register(moonqlRest, { prefix: '/orm', instance: moonql })
@@ -59,6 +62,118 @@ test('ops: every write becomes an audit entry with the right action', async (t) 
   const create = rows.find((row) => row.action === 'create' && row.model === 'stations')!
   assert.equal(create.recordId, id)
   assert.match(String(create.summary), /name/)
+  assert.equal('actor' in create, false, 'the current audit contract does not capture an actor')
+})
+
+test('ops: async audit write failure does not fail the model write and is logged', async (t) => {
+  const warnings: Array<{ obj: unknown; msg: string }> = []
+  const { app, headers, moonql } = await makeApp({ onWarn: (obj, msg) => warnings.push({ obj, msg }) })
+  t.after(() => app.close())
+
+  const auditRepo = moonql.model('ops_audit')
+  auditRepo.create = async () => {
+    throw new Error('fixture audit store unavailable')
+  }
+
+  let stationEvent: Record<string, unknown> | undefined
+  moonql.bus.on('model.created', (payload) => {
+    if (payload.model === 'stations') stationEvent = payload
+  })
+
+  const created = await app
+    .inject()
+    .post('/orm/stations')
+    .headers(headers)
+    .body({ name: 'Best Effort FM', streamUrl: 'https://example.org/best-effort.mp3' })
+    .end()
+  assert.equal(created.statusCode, 201, 'audit storage failure must not fail the originating write')
+  const id = created.json().data.id as string
+  assert.equal((await app.inject().get(`/orm/stations/${id}`).headers(headers).end()).statusCode, 200)
+
+  await waitFor(
+    async () => warnings.some(({ msg }) => msg === 'moonql-ops: audit write failed'),
+    'audit write warning',
+  )
+  const warning = warnings.find(({ msg }) => msg === 'moonql-ops: audit write failed')!
+  assert.deepEqual(warning, {
+    obj: { err: 'fixture audit store unavailable' },
+    msg: 'moonql-ops: audit write failed',
+  })
+  assert.ok(stationEvent, 'model event is emitted without awaiting audit persistence')
+  assert.equal('actor' in stationEvent!, false, 'model events do not carry reviewer identity')
+
+  const schema = (await app.inject().get('/orm/_schema').headers(headers).end()).json().data
+  assert.equal('actor' in schema.models.ops_audit.fields, false, 'ops_audit has no actor field')
+})
+
+test('ops: audit retention uses its configured finite cutoff and reports residual rows', async (t) => {
+  const { app, moonql } = await makeApp({ env: { OPS_AUDIT_RETENTION_DAYS: '30' } })
+  t.after(() => app.close())
+
+  const engine = moonql.engines.get('ops_audit')!
+  const originalRemoveWhere = engine.removeWhere.bind(engine)
+  const originalCount = engine.count.bind(engine)
+  const removeCalls: Array<{ where: unknown; limit: number }> = []
+  let countWhere: unknown
+
+  engine.removeWhere = async (where, limit) => {
+    removeCalls.push({ where, limit })
+    return removeCalls.length === 1 ? 1000 : 4
+  }
+  engine.count = async (where) => {
+    countWhere = where
+    return 2
+  }
+
+  try {
+    const purgeAudit = ops.cron.find((cron) => cron.name === 'purge-audit')!
+    const result = await purgeAudit.run({
+      orm: moonql,
+      env: { OPS_AUDIT_RETENTION_DAYS: '30' },
+      log: { info: () => {}, warn: () => {} },
+      bus: moonql.bus,
+      budgetMs: 5000,
+    })
+
+    assert.deepEqual(result, { model: 'ops_audit', days: 30, removed: 1004, remaining: 2 })
+    assert.equal(removeCalls.length, 2, 'purging proceeds in bounded chunks until a short chunk')
+    assert.ok(removeCalls.every(({ limit }) => limit === 1000))
+    const cutoff = (removeCalls[0]!.where as { kind: 'leaf'; term: { field: string; op: string; value: string } }).term.value
+    const expectedCutoff = Date.now() - 30 * 86_400_000
+    assert.ok(Math.abs(Date.parse(cutoff) - expectedCutoff) < 1000, 'cutoff honors the configured 30-day retention')
+    assert.ok(
+      removeCalls.every(({ where }) => {
+        const term = (where as { kind: 'leaf'; term: { field: string; op: string; value: string } }).term
+        return term.field === 'createdAt' && term.op === 'lt' && term.value === cutoff
+      }),
+      'each bounded pass uses the same createdAt cutoff',
+    )
+    assert.deepEqual(
+      countWhere,
+      { kind: 'leaf', term: { field: 'createdAt', op: 'lt', value: cutoff } },
+      'the cron reports any rows left past the cutoff',
+    )
+
+    removeCalls.length = 0
+    engine.removeWhere = async (where, limit) => {
+      removeCalls.push({ where, limit })
+      return 0
+    }
+    const defaultResult = await purgeAudit.run({
+      orm: moonql,
+      env: {},
+      log: { info: () => {}, warn: () => {} },
+      bus: moonql.bus,
+      budgetMs: 5000,
+    })
+    assert.deepEqual(defaultResult, { model: 'ops_audit', days: 14, removed: 0, remaining: 2 })
+    const defaultCutoff = (removeCalls[0]!.where as { kind: 'leaf'; term: { field: string; op: string; value: string } }).term.value
+    const expectedDefaultCutoff = Date.now() - 14 * 86_400_000
+    assert.ok(Math.abs(Date.parse(defaultCutoff) - expectedDefaultCutoff) < 1000, 'default retention is finite at 14 days')
+  } finally {
+    engine.removeWhere = originalRemoveWhere
+    engine.count = originalCount
+  }
 })
 
 test('ops: the audit trail never audits itself (feedback guard)', async (t) => {
