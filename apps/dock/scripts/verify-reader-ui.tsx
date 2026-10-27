@@ -10,6 +10,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { ReaderView } from '../src/ui/components/reader'
+import { getStatesCopy } from '../src/lib/states-copy'
 import type { ReaderResult } from '../src/data/queries/reader'
 
 const ARABIC = 'وَٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ'
@@ -127,7 +128,8 @@ const ambiguous: ReaderResult = {
   citationText: null,
 }
 
-const render = (result: ReaderResult, citation = 'QS 2:82'): string => renderToStaticMarkup(<ReaderView result={result} citation={citation} />)
+const render = (result: ReaderResult, citation = 'QS 2:82'): string =>
+  renderToStaticMarkup(<ReaderView result={result} citation={citation} copy={getStatesCopy('en')} />)
 
 let checks = 0
 function must(condition: boolean, label: string): void {
