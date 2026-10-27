@@ -8,6 +8,7 @@ import { preferredLocale } from '@moonwitness/core'
 import { loadPlugins, loadModules, loadChannels } from './lib/loader.js'
 import { installEgress } from './lib/egress.js'
 import { ChannelManager } from './lib/channels.js'
+import { registerSkylinkChannels, SkylinkRuntime } from './lib/skylink.js'
 import { renderLaunchpadHtml } from './lib/launchpad.js'
 import { addons } from './addons.js'
 import type { RadioConfig } from './config.js'
@@ -29,6 +30,13 @@ export async function buildApp(config: RadioConfig) {
 
   app.decorate('config', config)
   app.decorate('channels', new ChannelManager())
+  // M38-12: channel identity has exactly one owner. With SKYLINK_ENABLED the
+  // registry comes from SKYLINK and no local factory is loaded; with it off the
+  // local factories below run and this process makes no SKYLINK call at all.
+  const skylink = config.skylink.enabled
+    ? new SkylinkRuntime({ baseUrl: config.skylink.url, serviceKey: config.skylink.serviceKey })
+    : null
+  app.decorate('skylink', skylink)
 
   // Outbound policy before anything can fetch: crons armed at boot (probe, now
   // playing) run through this gate.
@@ -69,7 +77,8 @@ export async function buildApp(config: RadioConfig) {
   // Auto-REST for addon models + declarative endpoints, before handwritten modules.
   await app.register(moonqlRest, { prefix: config.api.prefix, instance: moonql, apiVersion: config.api.version })
 
-  await loadChannels(app, app.channels, join(here, 'channels'), config)
+  if (skylink) await registerSkylinkChannels(app, skylink)
+  else await loadChannels(app, app.channels, join(here, 'channels'), config)
   await loadModules(app, join(here, 'modules'), config.api.prefix)
 
   // Service index: one place that answers "what runs where?" for operators and

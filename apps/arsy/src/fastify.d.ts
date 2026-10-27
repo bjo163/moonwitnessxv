@@ -7,6 +7,8 @@ declare module 'fastify' {
   interface FastifyInstance {
     config: RadioConfig
     channels: import('./lib/channels.js').ChannelManager
+    /** M38-12: present only when SKYLINK_ENABLED; null keeps the local factories. */
+    skylink: import('./lib/skylink.js').SkylinkRuntime | null
     /** The booted moonql ORM: registry, model repos, pg db when DATABASE_URL is set. */
     moonql: MoonQlInstance
     /** Route-pattern counters behind <apiPrefix>/metrics; cardinality is capped. */
