@@ -2,6 +2,7 @@ import Fastify, { LogController } from 'fastify'
 import type { EchologConfig } from './config.js'
 import type { EchologServerOptions } from './modules/objects/index.js'
 import { registerObjectRoutes } from './modules/objects/index.js'
+import { registerS3Routes } from './modules/s3/routes.js'
 
 export function createEchologServer(config: EchologConfig, options: EchologServerOptions = {}) {
   const app = Fastify({
@@ -25,7 +26,8 @@ export function createEchologServer(config: EchologConfig, options: EchologServe
     return reply.code(statusCode).send({ error: { code, message } })
   })
 
-  const ensureStorageReady = registerObjectRoutes(app, config, options)
+  const { ensureStorageReady, s3Keys } = registerObjectRoutes(app, config, options)
+  registerS3Routes(app, config, s3Keys, options.now)
 
   app.get('/health', {
     schema: {

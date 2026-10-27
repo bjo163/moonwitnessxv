@@ -10,13 +10,14 @@ Source rights/consent in accepted ADR-0003 and D08 override public UI. `ADMIN_WR
 
 ## Object storage and attachments (ECHOLOG, D19)
 
-**Status: accepted contract (ADR-0007).** The filesystem driver and REST/auth layer are implemented locally; S3 driver/MinIO profile validation is in progress. No production bucket or off-host backup has been verified. Review gates for storage work:
+**Status: accepted contract (ADR-0007 Amendment 1).** ECHOLOG is being changed to serve a bounded S3-compatible API over its own filesystem storage. The protocol/authentication implementation is not yet verified; no production endpoint or off-host backup has been verified. Review gates for storage work:
 
-- **Driver credentials never leave ECHOLOG.** The S3/MinIO keys live only in that service's environment. They must not appear in the database, in consumer apps, in logs, or in committed files. A consumer holds at most a short-lived download grant.
+- **S3 credentials never leave ECHOLOG.** S3 access and secret keys live only in ECHOLOG's environment and must not appear in the database, consumer apps, logs, or committed files. A consumer holds at most a short-lived download grant for the ECHOLOG REST surface.
+- **SigV4 is fail-closed.** The S3 endpoint accepts only the documented SigV4 header-auth subset, signed payloads, one configured path-style bucket, bounded request sizes and a narrow operation allow-list. Reject invalid signatures, unsupported streaming/query auth, stale dates, malformed canonical paths, and unknown credentials without storage writes. Never log Authorization headers, signatures, secrets, or object bytes. Use constant-time signature comparison and TLS at any non-loopback boundary.
 - **Grants are short.** Presigned download TTL ≤ 5 minutes, never logged, never returned to an unauthenticated caller, never used for upload.
 - **Inbound bytes are untrusted.** Enforce a size cap and a MIME allow-list *before* commit; internal keys are `sha256/<hex>` only; the original filename is sanitized before it reaches `Content-Disposition`; a partially written upload must never become a visible object.
 - **No bytes in Postgres.** No `bytea` column anywhere; ECHOLOG is stateless and holds no tables. This keeps database backups small and keeps the off-host backup gate meaningful.
 - **Retention is a safety property.** `legal_hold` and an unexpired `retention_until` make deletion fail closed with an explanation; only an explicit admin GC may remove expired objects.
 - **Scan status is reported honestly.** `scan: skipped` is not `clean`; the UI must say which one it is, and no `LIVE`/`NOMINAL` badge may imply a scan that never ran.
 - **Egress.** `echolog` belongs on the `@moonwitness/core` egress deny list so a provider URL cannot be pointed back at the storage service.
-- **Related gate:** the owner-deferred off-host backup task waits specifically on an S3-compatible bucket target; once ECHOLOG provides one, that gate can be re-opened rather than assumed satisfied.
+- **Related gate:** the owner-deferred off-host backup task waits for an S3-compatible target hosted off the backup machine and a demonstrated restore. ECHOLOG running on the same host does not satisfy “off-host.”

@@ -2,7 +2,7 @@ import type { ObjectMetadataInput } from '@moonwitness/echolog-core'
 import type { FsStorageDriver } from '@moonwitness/echolog-core'
 
 /** Application boundary for object operations; REST/auth policy is added by M39-09. */
-export function createObjectService(driver: FsStorageDriver) {
+export function createObjectService(driver: FsStorageDriver, referencedObjectKeys: () => Promise<Set<string>> = async () => new Set()) {
   return {
     ready() {
       return driver.ready()
@@ -17,7 +17,7 @@ export function createObjectService(driver: FsStorageDriver) {
       return driver.delete(objectKey)
     },
     collect(at?: Date) {
-      return driver.gc(at)
+      return referencedObjectKeys().then((references) => driver.gc(at, references))
     },
   }
 }

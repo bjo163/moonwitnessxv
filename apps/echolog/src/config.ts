@@ -23,6 +23,10 @@ const ConfigSchema = z.object({
   arsyUrl: z.string().url().default('http://127.0.0.1:3000'),
   serviceKey: z.string().default(''),
   grantSigningSecret: z.string().default(''),
+  s3Bucket: z.string().trim().default(''),
+  s3Region: z.string().trim().min(1).default('us-east-1'),
+  s3AccessKeyId: z.string().default(''),
+  s3SecretAccessKey: z.string().default(''),
   storageRoot: z.string().trim().min(1).default('./data/echolog'),
   storageQuotaBytes: z.coerce.number().int().positive().default(10 * 1024 * 1024 * 1024),
   maxUploadBytes: z.coerce.number().int().positive().default(50 * 1024 * 1024),
@@ -36,6 +40,10 @@ export interface EchologConfig {
   arsyUrl: string
   serviceKey: string
   grantSigningSecret: string
+  s3Bucket: string
+  s3Region: string
+  s3AccessKeyId: string
+  s3SecretAccessKey: string
   storageRoot: string
   storageQuotaBytes: number
   maxUploadBytes: number
@@ -75,6 +83,10 @@ export function parseConfig(
     arsyUrl: environment.ECHOLOG_ARSY_URL,
     serviceKey: environment.ECHOLOG_SERVICE_KEY,
     grantSigningSecret: environment.ECHOLOG_GRANT_SECRET,
+    s3Bucket: environment.ECHOLOG_S3_BUCKET,
+    s3Region: environment.ECHOLOG_S3_REGION,
+    s3AccessKeyId: environment.ECHOLOG_S3_ACCESS_KEY_ID,
+    s3SecretAccessKey: environment.ECHOLOG_S3_SECRET_ACCESS_KEY,
     storageRoot: environment.ECHOLOG_STORAGE_ROOT,
     storageQuotaBytes: environment.ECHOLOG_STORAGE_QUOTA_BYTES,
     maxUploadBytes: environment.ECHOLOG_MAX_UPLOAD_BYTES,
@@ -95,8 +107,25 @@ export function parseConfig(
   if (parsed.data.grantSigningSecret.length > 0 && parsed.data.grantSigningSecret.length < 32) {
     throw new Error('Invalid ECHOLOG configuration: grant secret must be at least 32 characters when configured.')
   }
-  if (parsed.data.nodeEnv === 'production' && (!parsed.data.serviceKey || !parsed.data.grantSigningSecret)) {
-    throw new Error('Invalid ECHOLOG production configuration: ECHOLOG_SERVICE_KEY and ECHOLOG_GRANT_SECRET are required.')
+  if (Boolean(parsed.data.s3AccessKeyId) !== Boolean(parsed.data.s3SecretAccessKey)) {
+    throw new Error('Invalid ECHOLOG configuration: S3 access key id and secret access key must be configured together.')
+  }
+  if (parsed.data.s3Bucket && (!parsed.data.s3AccessKeyId || !parsed.data.s3SecretAccessKey)) {
+    throw new Error('Invalid ECHOLOG configuration: S3 bucket requires S3 access key id and secret access key.')
+  }
+  if ((parsed.data.s3AccessKeyId || parsed.data.s3SecretAccessKey) && !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(parsed.data.s3Bucket)) {
+    throw new Error('Invalid ECHOLOG configuration: S3 credentials require a valid single bucket name.')
+  }
+  if ((parsed.data.s3AccessKeyId.length > 128) || (parsed.data.s3SecretAccessKey.length > 256)) {
+    throw new Error('Invalid ECHOLOG configuration: S3 credentials exceed the supported length.')
+  }
+  if (parsed.data.nodeEnv === 'production') {
+    if (!parsed.data.serviceKey || !parsed.data.grantSigningSecret) {
+      throw new Error('Invalid ECHOLOG production configuration: ECHOLOG_SERVICE_KEY and ECHOLOG_GRANT_SECRET are required.')
+    }
+    if (!parsed.data.s3Bucket) {
+      throw new Error('Invalid ECHOLOG production configuration: ECHOLOG_S3_BUCKET is required.')
+    }
   }
 
   return {

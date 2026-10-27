@@ -1,5 +1,11 @@
 # ADR-0007 — ECHOLOG: standalone object storage and attachments
-**Status: ACCEPTED — owner ratification, 27 October 2026.** The owner confirmed M39 and ADR-0007 in this Codex work session. Acceptance records a decision only; it does not prove implementation, and it authorizes no code, schema or deployment beyond the conditions below.
+**Status: ACCEPTED — owner ratification, 27 October 2026; amended by owner direction, 27 October 2026.** The original ratification records the initial decision. The amendment below supersedes only the original storage-protocol choice; it does not prove implementation or authorize deployment.
+
+### Amendment 1 — ECHOLOG-hosted S3-compatible endpoint
+
+The owner directs ECHOLOG to provide a bounded S3-compatible server endpoint backed by ECHOLOG's own storage, with no MinIO service. This supersedes the original choice of an outbound `s3` driver and the rejection of a hand-written S3 server. The implementation must use a vetted SigV4 primitive where available, define a deliberately limited API subset, reject unsupported operations explicitly, and pass protocol tests using an S3 client against ECHOLOG itself. It must not claim general AWS S3 compatibility.
+
+The initial subset is path-style requests to one configured bucket; SigV4 `AWS4-HMAC-SHA256` Authorization-header authentication with a signed payload; `HeadBucket`, single-request `PutObject`, `GetObject`, `HeadObject`, `DeleteObject`, and `ListObjectsV2`. Multipart uploads, browser POST policies, versioning, ACLs, object lock, query-signed requests, streaming/chunk signatures, and virtual-hosted buckets are unsupported. The S3 namespace is write-once: re-putting identical bytes is idempotent; replacing an existing key with different bytes returns a conflict. These limits must be documented and tested. S3 keys map to immutable content-addressed objects and filesystem sidecars; any key index remains filesystem metadata, not SQL.
 
 ## Decision
 
@@ -19,7 +25,7 @@ If SQL metadata ever becomes necessary, it requires a **new ADR that withdraws t
 ## Storage model
 
 - **Key scheme:** `sha256/<digest>` — content-addressed, **write-once**, immutable. Re-uploading identical bytes is a no-op that returns the same key (dedupe for free).
-- **Drivers:** `fs` (default; dev and small deployments) then `s3` (any S3-compatible endpoint: MinIO, R2, AWS S3). MinIO is an **optional profiled compose service**, not a requirement.
+- **Storage and protocol:** ECHOLOG stores immutable content-addressed objects on its configured filesystem volume. It exposes its bounded S3-compatible endpoint directly; it does not proxy to or depend on MinIO, R2, AWS S3, or another storage server.
 - **Uploads pass through the service:** stream to a temp key, hash while writing, enforce size/MIME allow-list, then commit atomically (rename on `fs`, copy on `s3`) and write the sidecar. Verification therefore happens **before** the object becomes permanent.
 - **Downloads use short-lived presigned grants** (TTL ≤5 min) or a streamed `fs` response. Presign is never used for upload in v1.
 - **Bytes never enter Postgres.** No `bytea`.
@@ -39,7 +45,7 @@ If SQL metadata ever becomes necessary, it requires a **new ADR that withdraws t
 
 ## Non-goals for v1
 
-Writing an S3 server from scratch · split/multipart uploads · CDN or edge caching · active antivirus (the `scan` slot records `skipped`) · image transforms or thumbnails · SQL metadata queries · home-made per-object encryption (rely on disk/bucket encryption).
+Multipart uploads · CDN or edge caching · active antivirus (the `scan` slot records `skipped`) · image transforms or thumbnails · SQL metadata queries · home-made per-object encryption. The bounded S3-compatible endpoint is accepted by Amendment 1; unsupported S3 features must fail closed.
 
 ## Documents that must change with this decision
 
@@ -47,10 +53,10 @@ Writing an S3 server from scratch · split/multipart uploads · CDN or edge cach
 
 ## Consequences
 
-- **Accepted cost:** one more process (port 3006) and, for real S3, one optional storage container. No new database.
+- **Accepted cost:** one more process (port 3006) and added protocol/security maintenance for the bounded S3-compatible endpoint. No MinIO container and no new database.
 - **Accepted cost:** metadata queries require listing objects or reading sidecars; acceptable while no consumer needs search.
 - **Accepted risk:** the `fs` driver ties durability to one volume — production must use `s3` or a backed-up volume.
-- **Rejected:** SQL metadata (withdraws ADR-0006's closed SQL-owner set for no current need); bytes in Postgres `bytea`; bytes on the ARSY disk (ARSY restart would fail uploads and mix domain owners); a hand-written S3 server (sigv4/multipart/conditional-write bug surface far exceeds the value); presigned uploads in v1 (digest verification becomes two-phase with more failure states); D07 as the byte owner (it owns manifests, not bytes); naming this service `RAINMAKERS` (W02/GOD-017 is food and basic-needs provisioning), `HAVEN`, `LEDGER PUNK` or `ASSETS` (sanctuary/audit/generic; `rocksoul-assets` already names a visual-source family).
+- **Rejected:** SQL metadata (withdraws ADR-0006's closed SQL-owner set for no current need); bytes in Postgres `bytea`; bytes on the ARSY disk (ARSY restart would fail uploads and mix domain owners); presigned uploads in v1 (digest verification becomes two-phase with more failure states); D07 as the byte owner (it owns manifests, not bytes); naming this service `RAINMAKERS` (W02/GOD-017 is food and basic-needs provisioning), `HAVEN`, `LEDGER PUNK` or `ASSETS` (sanctuary/audit/generic; `rocksoul-assets` already names a visual-source family).
 
 ## Acceptance conditions
 

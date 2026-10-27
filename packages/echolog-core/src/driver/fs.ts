@@ -184,13 +184,14 @@ export class FsStorageDriver implements StorageDriver {
     })
   }
 
-  async gc(at = this.now()): Promise<GcResult> {
+  async gc(at = this.now(), referencedObjectKeys: ReadonlySet<string> = new Set()): Promise<GcResult> {
     return this.serialized(async () => {
       await this.ensureDirectories()
       const result: GcResult = { deleted: [], held: [], bytes_freed: 0 }
       for (const entry of await readdir(join(this.root, 'objects'), { withFileTypes: true })) {
         if (!entry.isFile() || !/^[a-f0-9]{64}$/.test(entry.name)) continue
         const objectKey = `sha256/${entry.name}`
+        if (referencedObjectKeys.has(objectKey)) continue
         const object = await this.get(objectKey)
         if (!object) {
           try {

@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto'
+
 export type ScanStatus = 'pending' | 'clean' | 'infected' | 'skipped'
 
 /** Reference consumers may retain; object bytes remain in the storage owner. */
@@ -28,9 +30,6 @@ export interface StorageDriver {
 
 export { FsStorageDriver, ObjectHeldError, QuotaExceededError } from './driver/fs.js'
 export type { FsStorageDriverOptions, GcResult } from './driver/fs.js'
-export { createS3ClientFromEnvironment, S3StorageDriver } from './driver/s3.js'
-export type { S3ClientEnvironment, S3StorageDriverOptions } from './driver/s3.js'
-
 export interface ObjectMetadataInput {
   filename: string
   content_type: string
@@ -47,4 +46,21 @@ export async function sha256Hex(bytes: Uint8Array): Promise<string> {
   input.set(bytes)
   const digest = await globalThis.crypto.subtle.digest('SHA-256', input.buffer)
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+/**
+ * Synchronous SHA-256 for the storage side, where a digest is computed while a key or an
+ * index entry is written. Node built-ins stay inside this package: apps keep to Web Crypto.
+ */
+export function sha256HexSync(bytes: Uint8Array): string {
+  return createHash('sha256').update(bytes).digest('hex')
+}
+
+/**
+ * S3 ETag for a single-request upload is the MD5 hex of the payload. This is a protocol
+ * identifier required by the S3 subset ECHOLOG serves; it is never a security digest and
+ * must not replace the content-addressed SHA-256 key.
+ */
+export function md5Hex(bytes: Uint8Array): string {
+  return createHash('md5').update(bytes).digest('hex')
 }

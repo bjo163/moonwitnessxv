@@ -38,8 +38,11 @@ const FOREIGN_ENV_KEYS = [
   'ECHOLOG_STORAGE_QUOTA_BYTES',
   'ECHOLOG_MAX_UPLOAD_BYTES',
   'ECHOLOG_ALLOWED_MIME_TYPES',
-  'ECHOLOG_MINIO_ROOT_USER',
-  'ECHOLOG_MINIO_ROOT_PASSWORD',
+  // read by apps/echolog/src/config.ts for its own bounded S3-compatible endpoint
+  'ECHOLOG_S3_BUCKET',
+  'ECHOLOG_S3_REGION',
+  'ECHOLOG_S3_ACCESS_KEY_ID',
+  'ECHOLOG_S3_SECRET_ACCESS_KEY',
 ] as const
 
 const ALLOWED = new Set<string>([...RADIO_ENV_KEYS, ...ADDON_ENV_KEY_LIST, ...FOREIGN_ENV_KEYS])
@@ -81,7 +84,7 @@ test('the retired WHATSAPP_PREFIX does not come back', () => {
 test('.env.example ships placeholders, not credentials', () => {
   const path = join(process.cwd(), '..', '..', '.env.example')
   const text = readFileSync(path, 'utf8')
-  for (const key of ['POSTGRES_PASSWORD', 'MOONQL_AUTH_ADMIN_PASSWORD', 'DENPA_TOKEN', 'ECHOLOG_SERVICE_KEY', 'ECHOLOG_GRANT_SECRET', 'ECHOLOG_MINIO_ROOT_PASSWORD']) {
+  for (const key of ['POSTGRES_PASSWORD', 'MOONQL_AUTH_ADMIN_PASSWORD', 'DENPA_TOKEN', 'ECHOLOG_SERVICE_KEY', 'ECHOLOG_GRANT_SECRET', 'ECHOLOG_S3_SECRET_ACCESS_KEY']) {
     const value = new RegExp(`^${key}=(.*)$`, 'm').exec(text)?.[1] ?? null
     assert.ok(value !== null, `${key} must be documented`)
     assert.ok(value === '' || value === 'change-me', `${key} must stay a placeholder, found "${value}"`)

@@ -14,6 +14,7 @@ import {
   safeStoredFilename,
 } from '../../limits.js'
 import { createObjectService } from './service.js'
+import { FsS3KeyStore } from '../s3/store.js'
 
 const DOWNLOAD_GRANT_TTL_MS = 5 * 60 * 1000
 const digestPattern = '^[a-f0-9]{64}$'
@@ -34,11 +35,16 @@ export interface EchologServerOptions {
   now?: () => number
 }
 
+export interface RegisteredObjectRoutes {
+  ensureStorageReady: () => Promise<void>
+  s3Keys: FsS3KeyStore
+}
+
 export function registerObjectRoutes(
   app: FastifyInstance,
   config: EchologConfig,
   options: EchologServerOptions = {},
-): () => Promise<void> {
+): RegisteredObjectRoutes {
   for (const mimeType of config.allowedMimeTypes) {
     if (!app.hasContentTypeParser(mimeType)) {
       app.addContentTypeParser(mimeType, (_request, payload, done) => done(null, payload))
@@ -46,7 +52,8 @@ export function registerObjectRoutes(
   }
 
   const driver = new FsStorageDriver({ root: config.storageRoot, quotaBytes: config.storageQuotaBytes })
-  const objects = createObjectService(driver)
+  const s3Keys = new FsS3KeyStore({ root: config.storageRoot, driver })
+  const objects = createObjectService(driver, () => s3Keys.referencedObjectKeys())
   const authenticate = createEchologAuthenticator({
     arsyUrl: config.arsyUrl,
     serviceKey: config.serviceKey,
@@ -214,7 +221,13 @@ export function registerObjectRoutes(
     return reply.header('cache-control', 'no-store').send(await objects.collect())
   })
 
-  return () => objects.ready()
+  return {
+    ensureStorageReady: async () => {
+      await objects.ready()
+      await s3Keys.ready()
+    },
+    s3Keys,
+  }
 }
 
 export { DOWNLOAD_GRANT_TTL_MS }
