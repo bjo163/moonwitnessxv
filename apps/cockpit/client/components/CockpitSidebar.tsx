@@ -56,6 +56,18 @@ export function CockpitSidebar({
               ? copy.statusError
               : copy.statusOffline
 
+          // Localize the failure from the machine-readable code; never render the
+          // server's raw English sentence as operator copy.
+          const errorPort = String(state.lastErrorPort ?? state.port ?? '?')
+          const errorText =
+            state.status === 'ERROR' && state.lastErrorCode === 'PORT_BUSY'
+              ? copy.errPortBusy.replace('{port}', errorPort)
+              : state.status === 'ERROR' && state.lastErrorCode === 'PORT_NOT_RELEASED'
+              ? copy.errPortNotReleased.replace('{port}', errorPort)
+              : state.status === 'ERROR' && state.lastErrorCode === 'SPAWN_FAILED'
+                ? copy.errSpawnFailed.replace('{reason}', state.lastError ?? '')
+              : null
+
           return (
             <div key={svc.tag} className="service-card-wrapper">
               <Card
@@ -128,6 +140,20 @@ export function CockpitSidebar({
                   >
                     {svc.description}
                   </div>
+
+                  {errorText ? (
+                    <div
+                      role="alert"
+                      style={{
+                        fontSize: 11,
+                        color: 'var(--hot)',
+                        marginBottom: 8,
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      {errorText}
+                    </div>
+                  ) : null}
 
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                     {isRunning ? (

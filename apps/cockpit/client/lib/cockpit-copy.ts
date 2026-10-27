@@ -33,6 +33,12 @@ export interface CockpitCopyCatalog {
   port: string
   memory: string
 
+  // Operator failure copy (rendered from the machine-readable lastErrorCode)
+  errPortBusy: string
+  errPortNotReleased: string
+  errSpawnFailed: string
+  startAllRefused: string
+
   // Tabs
   tabLogs: string
   tabPreview: string
@@ -236,6 +242,11 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     port: 'PORT',
     memory: 'MEM',
 
+    errPortBusy: 'Port {port} is already in use — stop the other supervisor before starting this service.',
+    errPortNotReleased: 'Port {port} did not release after stop. Try FREE PORTS, then restart.',
+    errSpawnFailed: 'Failed to launch the process: {reason}',
+    startAllRefused: '{count} refused',
+
     // Tabs
     tabLogs: 'Terminal & Logs',
     tabPreview: 'In-App Web Preview',
@@ -437,6 +448,11 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     uptime: 'AKTIF',
     port: 'PORT',
     memory: 'MEMORI',
+
+    errPortBusy: 'Port {port} sudah digunakan — hentikan supervisor lain sebelum menjalankan servis ini.',
+    errPortNotReleased: 'Port {port} tidak released setelah dihentikan. Coba BEBASKAN PORT, lalu mulai ulang.',
+    errSpawnFailed: 'Gagal menjalankan proses: {reason}',
+    startAllRefused: '{count} ditolak',
 
     // Tabs
     tabLogs: 'Terminal & Log',

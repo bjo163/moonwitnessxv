@@ -311,15 +311,15 @@ export function createCockpitServer(
 
   // Bulk control
   app.post('/api/services/start-all', async () => {
-    // Await the batch: fire-and-forget answered before any port probe finished,
-    // so it reported success for eight refusals and a pre-probe snapshot.
-    const results = await Promise.all(
-      supervisor.getStates().map((state) => supervisor.start(state.tag)),
-    )
-    const refused = results.filter((started) => !started).length
+    // One batch implementation: the supervisor's ordered, awaited start-all.
+    // Per-tag outcomes ride the response so the UI can name what was refused
+    // instead of an all-or-nothing flag that hides which service failed.
+    const results = await supervisor.startAll()
+    const refused = results.filter((r) => !r.started).length
     return {
       success: refused === 0,
       refused,
+      results,
       services: supervisor.getStates(),
     }
   })

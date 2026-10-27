@@ -17,6 +17,10 @@ export const DEFAULT_CONFIG: MoondeckConfig = {
       name: 'Radio Core Hub',
       pkg: '@moonwitness/arsy',
       port: PORTS.hub,
+      // ARSY resolves its port through these aliases; pin the canonical one so
+      // the probed port is exactly the port the hub binds.
+      envPortKeys: ['ARSY_PORT', 'RADIO_PORT'],
+      portPinKey: 'ARSY_PORT',
       color: '#00e5ff',
       icon: 'RD',
       description: 'Fastify Hub, OpenAPI Swagger, SQLite/Postgres DB & Plugin Engine',
@@ -50,6 +54,8 @@ export const DEFAULT_CONFIG: MoondeckConfig = {
       name: 'AI Gateway Router',
       pkg: '@moonwitness/aigateway',
       port: PORTS.aigateway,
+      envPortKeys: ['AI_GATEWAY_PORT'],
+      portPinKey: 'AI_GATEWAY_PORT',
       color: '#f59e0b',
       icon: 'AI',
       description: 'Zero-failure cascading AI gateway (Gemini, Groq, OpenRouter, Ollama, Heuristic)',
@@ -61,6 +67,10 @@ export const DEFAULT_CONFIG: MoondeckConfig = {
       name: 'SKYLINK Communication',
       pkg: '@moonwitness/skylink',
       port: PORTS.skylink,
+      // SKYLINK reads the generic PORT, which `.env` pins to the hub's 3000 for
+      // ARSY only. Injecting the cockpit-resolved PORT per child keeps its bind
+      // port on 3005 and makes the probe honest for this service.
+      portPinKey: 'PORT',
       color: '#00e5ff',
       icon: 'SL',
       description: 'Bounded D18 control plane and provider adapters; operator UI still planned',
@@ -72,6 +82,8 @@ export const DEFAULT_CONFIG: MoondeckConfig = {
       name: 'ECHOLOG Storage',
       pkg: '@moonwitness/echolog',
       port: PORTS.echolog,
+      envPortKeys: ['ECHOLOG_PORT'],
+      portPinKey: 'ECHOLOG_PORT',
       color: '#10b981',
       icon: 'EL',
       description: 'Bounded D19 content-addressed storage; filesystem driver plus S3-compatible subset',

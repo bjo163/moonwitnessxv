@@ -4,7 +4,7 @@ import { createServer, type AddressInfo } from 'node:net'
 import { statSync } from 'node:fs'
 import { join } from 'node:path'
 import { loadMoondeckConfig, DEFAULT_CONFIG } from '../src/config.js'
-import { ProcessSupervisor } from '../src/supervisor.js'
+import { ProcessSupervisor, probePortBusy, resolveServicePort } from '../src/supervisor.js'
 import { ProgressTracker } from '../src/progressTracker.js'
 import { findRepoRoot, resolveRegisterPath } from '../src/paths.js'
 import type { ProgressPayload } from '../src/progressTracker.js'
@@ -88,6 +88,44 @@ void test('ProcessSupervisor: restart reports the real outcome instead of a fixe
     await holder.close()
     supervisor.stopAll()
   }
+})
+
+// Positive path: without this, deleting the probe's IPv6 half or inverting its
+// "is busy" rule keeps the refusal-only tests green while every real start is
+// refused. A free port must probe as free.
+void test('probePortBusy: a released ephemeral port is free, not busy', async () => {
+  const holder = await occupy('127.0.0.1')
+  const port = holder.port
+  await holder.close()
+  assert.equal(await probePortBusy(port), false, 'a port with no listener must not read as busy')
+})
+
+void test('probePortBusy: an IPv6-only listener is still detected', async (t) => {
+  let holder: { port: number; close: () => Promise<void> }
+  try {
+    holder = await occupy('::1')
+  } catch {
+    t.skip('IPv6 is unavailable on this host')
+    return
+  }
+  try {
+    assert.equal(await probePortBusy(holder.port), true, 'the ::1 probe must catch an IPv6-only listener')
+  } finally {
+    await holder.close()
+  }
+})
+
+void test('resolveServicePort: honors the hub alias override and pins the generic-PORT service', () => {
+  const radio = DEFAULT_CONFIG.services.find((s) => s.tag === 'radio')
+  const skylink = DEFAULT_CONFIG.services.find((s) => s.tag === 'skylink')
+  assert.ok(radio && skylink, 'radio and skylink must be seeded in DEFAULT_CONFIG')
+  // The hub resolves an operator override through ARSY_PORT.
+  assert.equal(resolveServicePort(radio, { ARSY_PORT: '3010' }), 3010)
+  assert.equal(resolveServicePort(radio, {}), radio.port)
+  // SKYLINK reads the generic PORT the hub also owns, so it deliberately does NOT
+  // resolve through env; the guard pins its own port instead of probing 3000.
+  assert.equal(resolveServicePort(skylink, { PORT: '3000' }), skylink.port)
+  assert.equal(skylink.portPinKey, 'PORT')
 })
 
 void test('Cockpit Fastify Server: serves API and static assets', async () => {

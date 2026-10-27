@@ -17,8 +17,12 @@ export interface ServiceState {
   pkg: string
   status: 'RUNNING' | 'STOPPED' | 'STARTING' | 'ERROR'
   pid?: number
+  port?: number
   uptimeSeconds: number
   restarts: number
+  /** Machine-readable reason rendered through the locale catalog. */
+  lastErrorCode?: 'PORT_BUSY' | 'PORT_NOT_RELEASED' | 'SPAWN_FAILED'
+  lastErrorPort?: number
   lastError?: string
 }
 
@@ -46,6 +50,13 @@ export interface LogEntry {
 }
 
 export type CockpitTab = 'logs' | 'preview' | 'media' | 'ledger' | 'ports' | 'progress'
+
+/** Response body of POST /api/services/start-all. */
+export interface StartAllResult {
+  success: boolean
+  refused: number
+  results: Array<{ tag: string; started: boolean }>
+}
 
 export type TodoTaskStatus = 'done' | 'open'
 

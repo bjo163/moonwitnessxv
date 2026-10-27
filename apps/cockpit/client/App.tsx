@@ -181,6 +181,8 @@ export function App(): ReactNode {
   // Actions hook
   const {
     isFreeingPorts,
+    isStartingAll,
+    startAllSummary,
     addCustomChannel,
     controlService,
     startAll,
@@ -534,6 +536,8 @@ export function App(): ReactNode {
         setVolume={setVolume}
         setActiveTab={setActiveTab}
         startAll={startAll}
+        isStartingAll={isStartingAll}
+        startAllSummary={startAllSummary}
         stopAll={async () => {
           requestStopAll()
         }}

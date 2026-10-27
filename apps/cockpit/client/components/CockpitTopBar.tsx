@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Badge, BrandLogo, Button, LiveDot, MoonAvatar, Tape } from '@moonwitness/moonui'
 import { MtsTelemetryClock, triggerHaptic } from '@moonwitness/moonui/client'
-import type { ChannelItem, CockpitTab } from '../types'
+import type { ChannelItem, CockpitTab, StartAllResult } from '../types'
 import type { CockpitLocale, CockpitCopyCatalog } from '../lib/cockpit-copy'
 
 export interface CockpitTopBarProps {
@@ -18,6 +18,8 @@ export interface CockpitTopBarProps {
   setVolume: (v: number) => void
   setActiveTab: (t: CockpitTab) => void
   startAll: () => Promise<void>
+  isStartingAll: boolean
+  startAllSummary: StartAllResult | null
   stopAll: () => Promise<void>
   freePorts: () => Promise<void>
   isFreeingPorts: boolean
@@ -44,6 +46,8 @@ export function CockpitTopBar({
   setVolume,
   setActiveTab,
   startAll,
+  isStartingAll,
+  startAllSummary,
   stopAll,
   freePorts,
   isFreeingPorts,
@@ -194,8 +198,13 @@ export function CockpitTopBar({
 
       {/* Global Dev Actions & Locale Switcher */}
       <div className="cockpit-actions" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <Button variant="primary" size="sm" onClick={() => void startAll()}>
-          {copy.startAll}
+        {startAllSummary && startAllSummary.refused > 0 ? (
+          <Badge tone="hot" title={copy.startAllRefused.replace('{count}', String(startAllSummary.refused))}>
+            {copy.startAllRefused.replace('{count}', String(startAllSummary.refused))}
+          </Badge>
+        ) : null}
+        <Button variant="primary" size="sm" disabled={isStartingAll} onClick={() => void startAll()}>
+          {isStartingAll ? '…' : copy.startAll}
         </Button>
         <Button variant="danger" size="sm" onClick={() => void stopAll()}>
           {copy.stopAll}

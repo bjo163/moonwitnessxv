@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import type { ChannelItem, ChannelMediaType, ServiceState } from '../types'
+import { useRef, useState } from 'react'
+import type { ChannelItem, ChannelMediaType, ServiceState, StartAllResult } from '../types'
 
 export interface CockpitActionsOptions {
   customName: string
@@ -31,6 +31,28 @@ export function useCockpitActions({
   setErrorLines,
 }: CockpitActionsOptions) {
   const [isFreeingPorts, setIsFreeingPorts] = useState(false)
+  const [isStartingAll, setIsStartingAll] = useState(false)
+  const [startAllSummary, setStartAllSummary] = useState<StartAllResult | null>(null)
+  // Start/restart is an await on a port probe; without a per-tag pending lock a
+  // double-click would fire two overlapping requests and defeat the server guard.
+  const pendingTags = useRef<Set<string>>(new Set())
+
+  const controlService = async (tag: string, action: 'start' | 'stop' | 'restart') => {
+    if (pendingTags.current.has(tag)) return
+    pendingTags.current.add(tag)
+    try {
+      const res = await fetch(`/api/services/${tag}/${action}`, { method: 'POST' })
+      const data = (await res.json()) as { state?: ServiceState }
+      if (data.state) {
+        const nextState = data.state
+        setServiceStates((prev) => ({ ...prev, [tag]: nextState }))
+      }
+    } catch (err) {
+      console.error(`Failed to ${action} ${tag}:`, err)
+    } finally {
+      pendingTags.current.delete(tag)
+    }
+  }
 
   const addCustomChannel = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -61,25 +83,31 @@ export function useCockpitActions({
     }
   }
 
-  const controlService = async (tag: string, action: 'start' | 'stop' | 'restart') => {
+  const startAll = async () => {
+    if (isStartingAll) return
+    setIsStartingAll(true)
+    setStartAllSummary(null)
     try {
-      const res = await fetch(`/api/services/${tag}/${action}`, { method: 'POST' })
-      const data = (await res.json()) as { state?: ServiceState }
-      if (data.state) {
-        const nextState = data.state
-        setServiceStates((prev) => ({ ...prev, [tag]: nextState }))
+      const res = await fetch('/api/services/start-all', { method: 'POST' })
+      const data = (await res.json()) as StartAllResult & { services?: ServiceState[] }
+      setStartAllSummary(data)
+      if (Array.isArray(data.services)) {
+        setServiceStates((prev) => {
+          const next = { ...prev }
+          for (const s of data.services ?? []) next[s.tag] = s
+          return next
+        })
       }
     } catch (err) {
-      console.error(`Failed to ${action} ${tag}:`, err)
+      console.error('Failed to start all:', err)
+    } finally {
+      setIsStartingAll(false)
     }
-  }
-
-  const startAll = async () => {
-    await fetch('/api/services/start-all', { method: 'POST' })
   }
 
   const stopAll = async () => {
     await fetch('/api/services/stop-all', { method: 'POST' })
+    setStartAllSummary(null)
   }
 
   const freePorts = async () => {
@@ -114,6 +142,8 @@ export function useCockpitActions({
 
   return {
     isFreeingPorts,
+    isStartingAll,
+    startAllSummary,
     addCustomChannel,
     controlService,
     startAll,
