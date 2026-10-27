@@ -13,6 +13,7 @@
     "build:web": "pnpm --filter @moonwitness/headquarters build && pnpm --filter @moonwitness/dock build",
     "clean": "node -e \"const{rmSync,readdirSync,statSync}=require('fs');const{join}=require('path');const walk=(d)=>{for(const e of readdirSync(d)){if(e==='node_modules'||e==='.git')continue;const p=join(d,e);const s=statSync(p);if(s.isDirectory()){if(e==='dist'||e==='.next'){rmSync(p,{recursive:true,force:true});continue}walk(p)}else if(e.endsWith('.tsbuildinfo'))rmSync(p,{force:true})}};walk('.')/* also wipe the root-level buildinfo files */\"",
     "dev": "pnpm build:libs && node scripts/dev.mjs",
+    "app:create": "node scripts/app-create.mjs",
     "gui": "pnpm --filter @moonwitness/cockpit gui",
     "moon": "node packages/cli/bin/moon.js",
     "dev:gui": "pnpm --filter @moonwitness/cockpit dev",
@@ -56,6 +57,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@moonwitness/eslint-config": "workspace:*",
+    "@playwright/test": "^1.64.1",
     "eslint": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
     "typescript-eslint": "catalog:",
