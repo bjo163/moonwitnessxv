@@ -202,9 +202,9 @@ Reference: [`12_skylink_messaging.svg`](docs/design/mockups-xv/12_skylink_messag
 
 ## 5. Acceptance matrix and release gates
 - [ ] **QA-01 · P0:** Source/license ledger for every production asset: original, author, SPDX/license/consent, hash, usage permitted; unresolved assets excluded.
-- [ ] **QA-02 · P0:** `pnpm ui:check` passes with no token drift; inspect **actual CSS custom-property names** rather than copying this reference.
-- [ ] **QA-03 · P1:** `pnpm --filter @moonwitness/moonui test` passes; no regression to Dialog/Tab/Field contracts.
-- [ ] **QA-04 · P1:** `pnpm lint`, focused app tests, app typecheck and app build pass on exact SHA.
+- [ ] **QA-02 · P0:** `pnpm ui:check` passes with no token drift; inspect **actual CSS custom-property names** rather than copying this reference. **[measured at `ddd58f4`](docs/audit/qa-02-04-tokens-ddd58f4.md)** — the custom-property half is clean (0 undeclared `var(--x)` across Dock/HQ/Cockpit/Orbit, all 38 tokens from `moon.css`), but "no token drift" is only true under the checker's 26-entry blocklist: 13 off-token colour literals remain in Dock and HQ stylesheets, so this row waits for an owner decision.
+- [x] **QA-03 · P1:** `pnpm --filter @moonwitness/moonui test` passes; no regression to Dialog/Tab/Field contracts. **[evidence](docs/audit/qa-02-04-tokens-ddd58f4.md)** — 26/26 across 4 suites at `ddd58f4`; Dialog/Tab/Field are asserted, not assumed (3/6/11 assertions counted in `packages/moonui/test/`).
+- [ ] **QA-04 · P1:** `pnpm lint`, focused app tests, app typecheck and app build pass on exact SHA. **[partially evidenced](docs/audit/qa-02-04-tokens-ddd58f4.md)** — lint 0, Dock 208/208 (excluding `home-offline.test.mjs`, which hardcodes the port the operator's own dev server holds), typecheck exit 0; the build half belongs to CI's `pnpm verify` at this SHA and closes only when that run is green.
 - [ ] **QA-05 · P1:** Browser screenshots: 390/768/1440/1920; id/en, long copy, empty/loading/offline, dark + reduced motion where applicable.
 - [ ] **QA-06 · P0:** 401/403 denied roles; publication & rights-negative tests; no private source, witness or channel leaked by public mock screen.
 - [ ] **QA-07 · P1:** Real user journeys: Dock → Reader → provenance; Dock → story with fiction label; HQ reviewer → publication decision; existing RADIO unaffected.
