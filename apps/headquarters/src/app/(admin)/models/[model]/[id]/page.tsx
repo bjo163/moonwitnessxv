@@ -9,17 +9,21 @@ import { guardModel } from '@/lib/authz'
 import type { SelectOption } from '@/data/types'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { RecordForm } from '@/ui/widgets/RecordForm'
+import { editorFailureMessage, editorStatusMessage, modelViewCopy } from '../../locale-copy'
+import { requestLocale } from '@/lib/request-locale'
 
 export default async function EditRecordPage({
   params,
   searchParams,
 }: {
   params: Promise<{ model: string; id: string }>
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; saved?: 'updated' }>
 }) {
   const { model, id } = await params
   if (!isModelName(model)) notFound()
-  const { error } = await searchParams
+  const { error, saved } = await searchParams
+  const locale = await requestLocale()
+  const copy = modelViewCopy(locale)
 
   const doc = await getSchema()
   const meta = doc.models[model]
@@ -46,10 +50,10 @@ export default async function EditRecordPage({
     <div className="m-stack">
       <PageHeader
         title={`${meta.label} · ${String(record.id).slice(0, 8)}`}
-        subtitle={`${model} · updated ${String(record.updatedAt ?? '').slice(0, 19)}`}
+        subtitle={`${model} · ${locale === 'id' ? 'diperbarui' : 'updated'} ${String(record.updatedAt ?? '').slice(0, 19)}`}
         breadcrumbs={[
-          { label: 'HQ', href: '/' },
-          { label: 'Models', href: '/models' },
+          { label: copy.hq, href: '/' },
+          { label: copy.models, href: '/models' },
           { label: model, href: `/models/${model}` },
           { label: String(record.id).slice(0, 8) },
         ]}
@@ -57,13 +61,14 @@ export default async function EditRecordPage({
           canDelete ? (
             <form action={deleteRecordAction.bind(null, model, id)}>
               <Button type="submit" variant="danger">
-                Delete
+                {locale === 'id' ? 'Hapus' : 'Delete'}
               </Button>
             </form>
           ) : null
         }
       />
-      {error ? <Alert tone="hot">{error}</Alert> : null}
+      {error ? (editorFailureMessage(locale, error) ? <Alert tone="hot">{editorFailureMessage(locale, error)}</Alert> : null) : null}
+      {saved ? (editorStatusMessage(locale, saved) ? <Alert tone="ok">{editorStatusMessage(locale, saved)}</Alert> : null) : null}
       {canUpdate ? (
         <RecordForm
           model={model}
@@ -72,11 +77,12 @@ export default async function EditRecordPage({
           values={record}
           relationOptions={relationOptions}
           action={updateRecordAction.bind(null, model, id)}
+          locale={locale}
         />
       ) : (
-        <Alert tone="accent">This account may read this record but not edit it; the form is not offered.</Alert>
+        <Alert tone="accent">{locale === 'id' ? 'Akun ini dapat membaca data, tetapi tidak dapat mengubahnya; formulir tidak ditampilkan.' : 'This account may read this record but not edit it; the form is not offered.'}</Alert>
       )}
-      <Panel title="Raw payload" subtitle="what the API actually stores (hydrated row)">
+      <Panel title={locale === 'id' ? 'Payload mentah' : 'Raw payload'} subtitle={locale === 'id' ? 'data yang disimpan API (baris lengkap)' : 'what the API actually stores (hydrated row)'}>
         <pre className="m-mono" style={{ margin: 0, fontSize: 12, overflow: 'auto' }}>
           {JSON.stringify(record, null, 2)}
         </pre>

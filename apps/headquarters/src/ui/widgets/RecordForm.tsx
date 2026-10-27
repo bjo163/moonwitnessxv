@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
+import type { Locale } from '@moonwitness/core'
 import type { ModelMeta } from '@moonwitness/moonql-client'
 import { Alert, Button, Panel } from '@moonwitness/moonui'
 import { formFields, type SelectOption } from '@/data/types'
+import { modelViewCopy } from '@/app/(admin)/models/locale-copy'
 import { FieldWidget } from '@/ui/fields/registry'
 
 /**
@@ -16,6 +18,7 @@ export function RecordForm({
   relationOptions = {},
   action,
   error,
+  locale,
 }: {
   model: string
   meta: ModelMeta
@@ -24,11 +27,13 @@ export function RecordForm({
   relationOptions?: Record<string, SelectOption[]>
   action: (formData: FormData) => void | Promise<void>
   error?: string
+  locale: Locale
 }): ReactNode {
+  const copy = modelViewCopy(locale)
   const fields = formFields(meta, mode, values)
 
   return (
-    <Panel title={`${mode === 'create' ? 'New' : 'Edit'} ${meta.label.toLowerCase()}`} subtitle={`${fields.length} fields from _schema`}>
+    <Panel title={`${mode === 'create' ? copy.create : copy.edit} ${meta.label.toLowerCase()}`} subtitle={copy.fieldsFromSchema.replace('{count}', String(fields.length))}>
       <div className="m-stack">
         {error ? <Alert tone="hot">{error}</Alert> : null}
         <form action={action} className="m-stack">
@@ -52,10 +57,10 @@ export function RecordForm({
           </div>
           <div className="m-actions">
             <Button type="submit" variant="primary">
-              {mode === 'create' ? 'Create' : 'Save changes'}
+              {mode === 'create' ? copy.create : copy.saveChanges}
             </Button>
             <a className="m-btn" href={`/models/${model}`}>
-              Cancel
+              {copy.cancel}
             </a>
           </div>
         </form>

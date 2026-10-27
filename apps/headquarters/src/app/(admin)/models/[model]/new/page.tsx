@@ -8,6 +8,8 @@ import { guardModel } from '@/lib/authz'
 import type { SelectOption } from '@/data/types'
 import { RecordForm } from '@/ui/widgets/RecordForm'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
+import { editorFailureMessage, interpolate, modelViewCopy } from '../../locale-copy'
+import { requestLocale } from '@/lib/request-locale'
 
 export default async function NewRecordPage({
   params,
@@ -19,6 +21,8 @@ export default async function NewRecordPage({
   const { model } = await params
   if (!isModelName(model)) notFound()
   const { error } = await searchParams
+  const locale = await requestLocale()
+  const copy = modelViewCopy(locale)
 
   const doc = await getSchema()
   const meta = doc.models[model]
@@ -36,22 +40,23 @@ export default async function NewRecordPage({
   return (
     <div className="m-stack">
       <PageHeader
-        title={`New ${meta.label.toLowerCase()}`}
-        subtitle={`${model} · ${Object.keys(meta.fields).length} fields from _schema`}
+        title={interpolate(copy.newRecord, { model: meta.label.toLowerCase() })}
+        subtitle={`${model} · ${copy.fieldsFromSchema.replace('{count}', String(Object.keys(meta.fields).length))}`}
         breadcrumbs={[
-          { label: 'HQ', href: '/' },
-          { label: 'Models', href: '/models' },
+          { label: copy.hq, href: '/' },
+          { label: copy.models, href: '/models' },
           { label: model, href: `/models/${model}` },
-          { label: 'new' },
+          { label: locale === 'id' ? 'baru' : 'new' },
         ]}
       />
-      {error ? <Alert tone="hot">{error}</Alert> : null}
+      {error ? (editorFailureMessage(locale, error) ? <Alert tone="hot">{editorFailureMessage(locale, error)}</Alert> : null) : null}
       <RecordForm
         model={model}
         meta={meta}
         mode="create"
         relationOptions={relationOptions}
         action={createRecordAction.bind(null, model)}
+        locale={locale}
       />
     </div>
   )

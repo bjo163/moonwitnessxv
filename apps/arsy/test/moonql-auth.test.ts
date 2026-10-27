@@ -13,7 +13,7 @@ const vaultAddon = defineAddon({
       label: 'Vault item',
       fields: { name: str({ maxLength: 50 }) },
       rest: true,
-      acl: { list: 'auth', create: ['admin'] },
+      acl: { list: 'auth', get: 'auth', create: ['admin'], update: ['admin'], remove: ['admin'] },
     }),
   },
 })
@@ -55,8 +55,19 @@ test('auth flow: seeded admin logs in, /me works, logout revokes', async (t) => 
   // acl on ANOTHER addon is now enforced by this identity
   const created = await app.inject().post('/api/v1/vault_items').body({ name: 'diamond' }).headers(bearer).end()
   assert.equal(created.statusCode, 201)
+  assert.ok(created.json().data.id)
+  const itemId = String(created.json().data.id)
+  const updated = await app.inject()
+    .patch(`/api/v1/vault_items/${itemId}`)
+    .body({ name: 'diamond-updated' })
+    .headers(bearer)
+    .end()
+  assert.equal(updated.statusCode, 200)
+  assert.equal(updated.json().data.name, 'diamond-updated')
   const listed = await app.inject().get('/api/v1/vault_items').headers(bearer).end()
   assert.equal(listed.statusCode, 200)
+  const removed = await app.inject().delete(`/api/v1/vault_items/${itemId}`).headers(bearer).end()
+  assert.equal(removed.statusCode, 204)
 
   const logout = await app.inject().post('/api/v1/auth/logout').headers(bearer).end()
   assert.equal(logout.statusCode, 200)
@@ -96,9 +107,36 @@ test('auth: anonymous and low-privilege callers are blocked by acl', async (t) =
   assert.equal(login.statusCode, 200)
   const bearer = { authorization: `Bearer ${login.json().data.token}` }
 
-  // role 'user' may LIST (auth) but not CREATE (admin-only) -> 403
+  // Seed a row as admin so viewer UPDATE and REMOVE exercise real existing data.
+  const adminLogin = await app.inject().post('/api/v1/auth/login').body({ login: 'admin', password: 's3cret-admin' }).end()
+  assert.equal(adminLogin.statusCode, 200)
+  const adminBearer = { authorization: `Bearer ${adminLogin.json().data.token}` }
+  const seeded = await app.inject().post('/api/v1/vault_items').body({ name: 'protected' }).headers(adminBearer).end()
+  assert.equal(seeded.statusCode, 201)
+  assert.ok(seeded.json().data.id)
+  const itemId = String(seeded.json().data.id)
+
+  // Anonymous callers cannot write; an authenticated 'user' may LIST but cannot
+  // CREATE, UPDATE or REMOVE operations whose published rule is admin-only.
+  const anonCreate = await app.inject().post('/api/v1/vault_items').body({ name: 'anonymous' }).end()
+  const anonUpdate = await app.inject().patch(`/api/v1/vault_items/${itemId}`).body({ name: 'anonymous' }).end()
+  const anonRemove = await app.inject().delete(`/api/v1/vault_items/${itemId}`).end()
+  assert.equal(anonCreate.statusCode, 401)
+  assert.equal(anonUpdate.statusCode, 401)
+  assert.equal(anonRemove.statusCode, 401)
+
   const listed = await app.inject().get('/api/v1/vault_items').headers(bearer).end()
   assert.equal(listed.statusCode, 200)
   const forbiddenCreate = await app.inject().post('/api/v1/vault_items').body({ name: 'nope' }).headers(bearer).end()
+  const forbiddenUpdate = await app.inject().patch(`/api/v1/vault_items/${itemId}`).body({ name: 'nope' }).headers(bearer).end()
+  const forbiddenRemove = await app.inject().delete(`/api/v1/vault_items/${itemId}`).headers(bearer).end()
   assert.equal(forbiddenCreate.statusCode, 403)
+  assert.equal(forbiddenUpdate.statusCode, 403)
+  assert.equal(forbiddenRemove.statusCode, 403)
+  const unchanged = await app.inject().get(`/api/v1/vault_items/${itemId}`).headers(adminBearer).end()
+  assert.equal(unchanged.statusCode, 200)
+  assert.equal(unchanged.json().data.name, 'protected', 'denied writes leave the row unchanged')
+  const afterDeniedWrites = await app.inject().get('/api/v1/vault_items').headers(adminBearer).end()
+  assert.equal(afterDeniedWrites.statusCode, 200)
+  assert.equal(afterDeniedWrites.json().data.length, 1, 'denied create attempts do not add rows')
 })

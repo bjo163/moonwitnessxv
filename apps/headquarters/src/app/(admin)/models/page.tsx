@@ -1,8 +1,12 @@
 import { Badge, DataTable, PageHeader, Panel } from '@moonwitness/moonui'
 import { getSchema } from '@/data/schema'
 import { TierBadge } from '@/ui/widgets/ModelTable'
+import { interpolate, modelViewCopy } from './locale-copy'
+import { requestLocale } from '@/lib/request-locale'
 
 export default async function ModelsIndexPage() {
+  const locale = await requestLocale()
+  const copy = modelViewCopy(locale)
   const doc = await getSchema()
   const rows = Object.entries(doc.models).map(([name, meta]) => ({
     name,
@@ -20,39 +24,39 @@ export default async function ModelsIndexPage() {
   return (
     <div className="m-stack">
       <PageHeader
-        title="Models"
-        subtitle={`${rows.length} REST-exposed models from ${doc.addons.length} addons`}
-        breadcrumbs={[{ label: 'HQ', href: '/' }, { label: 'Models' }]}
+        title={copy.models}
+        subtitle={interpolate(copy.modelsSummary, { models: rows.length, addons: doc.addons.length })}
+        breadcrumbs={[{ label: copy.hq, href: '/' }, { label: copy.models }]}
       />
-      <Panel title="Registry" subtitle="click a model to browse and edit its rows">
+      <Panel title={copy.registry} subtitle={copy.registrySubtitle}>
         <DataTable
           rows={rows}
           rowKey={(row) => row.name}
           columns={[
-            { key: 'name', label: 'model', render: (row) => <a className="m-mono" href={`/models/${row.name}`}>{row.name}</a> },
-            { key: 'label', label: 'label' },
-            { key: 'addon', label: 'addon' },
-            { key: 'tier', label: 'tier', render: (row) => <TierBadge tier={row.tier} /> },
-            { key: 'fields', label: 'fields', align: 'right' },
-            { key: 'delete', label: 'delete' },
-            { key: 'ops', label: 'operations', render: (row) => <span className="m-mono" style={{ fontSize: 11 }}>{row.ops}</span> },
+            { key: 'name', label: copy.model, render: (row) => <a className="m-mono" href={`/models/${row.name}`}>{row.name}</a> },
+            { key: 'label', label: copy.label },
+            { key: 'addon', label: copy.addon },
+            { key: 'tier', label: copy.tier, render: (row) => <TierBadge tier={row.tier} /> },
+            { key: 'fields', label: locale === 'id' ? 'Bidang' : 'Fields', align: 'right' },
+            { key: 'delete', label: copy.deleteRule },
+            { key: 'ops', label: copy.operations, render: (row) => <span className="m-mono" style={{ fontSize: 11 }}>{row.ops}</span> },
           ]}
         />
       </Panel>
-      <Panel title="Addons" subtitle="installed in dependency order">
+      <Panel title={copy.addonRegistry} subtitle={copy.installedOrder}>
         <DataTable
           rows={doc.addons}
           rowKey={(row) => row.name}
           columns={[
-            { key: 'name', label: 'addon' },
-            { key: 'version', label: 'version' },
-            { key: 'depends', label: 'depends', render: (row) => (row.depends.length ? row.depends.join(', ') : '—') },
+            { key: 'name', label: copy.addon },
+            { key: 'version', label: copy.version },
+            { key: 'depends', label: copy.depends, render: (row) => (row.depends.length ? row.depends.join(', ') : '—') },
           ]}
         />
       </Panel>
       <div className="m-row">
-        <Badge tone="moon">data-driven</Badge>
-        <span className="m-muted">every table, form and menu on this screen came from GET /_schema</span>
+        <Badge tone="moon">{copy.dataDriven}</Badge>
+        <span className="m-muted">{copy.schemaNote}</span>
       </div>
     </div>
   )

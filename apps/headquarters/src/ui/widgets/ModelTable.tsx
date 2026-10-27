@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
+import type { Locale } from '@moonwitness/core'
 import type { ModelMeta } from '@moonwitness/moonql-client'
 import { Badge, DataTable, type ColumnDef } from '@moonwitness/moonui'
 import { cellText } from '@moonwitness/moonui'
+import { modelViewCopy } from '@/app/(admin)/models/locale-copy'
 
 /** generic table: columns from field metadata, `*Record` values print their label */
 export function ModelTable({
@@ -10,13 +12,16 @@ export function ModelTable({
   rows,
   rowHref,
   actions,
+  locale,
 }: {
   model: string
   meta: ModelMeta
   rows: Record<string, unknown>[]
   rowHref?: (row: Record<string, unknown>) => string
   actions?: (row: Record<string, unknown>) => ReactNode
+  locale: Locale
 }): ReactNode {
+  const copy = modelViewCopy(locale)
   const columns: ColumnDef<Record<string, unknown>>[] = []
 
   if (rowHref) {
@@ -41,10 +46,10 @@ export function ModelTable({
     }
     columns.push({ key, label: key, render: (row) => <span className={field.kind === 'm2o' ? 'm-mono' : undefined}>{cellText(row[key])}</span> })
   }
-  columns.push({ key: 'createdAt', label: 'created', render: (row) => <span className="m-mono">{String(row.createdAt ?? '').slice(0, 19)}</span> })
-  if (actions) columns.push({ key: 'actions', label: 'actions', render: actions })
+  columns.push({ key: 'createdAt', label: copy.createdAt, render: (row) => <span className="m-mono">{String(row.createdAt ?? '').slice(0, 19)}</span> })
+  if (actions) columns.push({ key: 'actions', label: copy.actions, render: actions })
 
-  return <DataTable columns={columns} rows={rows} rowKey={(row, index) => String(row.id ?? index)} empty={`No ${model} rows yet.`} />
+  return <DataTable columns={columns} rows={rows} rowKey={(row, index) => String(row.id ?? index)} empty={copy.noRows.replace('{model}', model)} />
 }
 
 /** badge for the default-data tier (seed policy visibility) */

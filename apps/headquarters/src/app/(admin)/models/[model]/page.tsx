@@ -8,6 +8,8 @@ import { getSchema } from '@/data/schema'
 import { guardModel } from '@/lib/authz'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { ModelTable } from '@/ui/widgets/ModelTable'
+import { editorFailureMessage, editorStatusMessage, interpolate, modelViewCopy } from '../locale-copy'
+import { requestLocale } from '@/lib/request-locale'
 
 const hrefFor = (model: string, q: string | undefined, page: number): string => {
   const params = new URLSearchParams()
@@ -22,11 +24,13 @@ export default async function ModelRowsPage({
   searchParams,
 }: {
   params: Promise<{ model: string }>
-  searchParams: Promise<{ q?: string; page?: string; error?: string }>
+  searchParams: Promise<{ q?: string; page?: string; error?: string; saved?: 'created' | 'updated' | 'deleted' }>
 }) {
   const { model } = await params
   if (!isModelName(model)) notFound()
-  const { q, page, error } = await searchParams
+  const { q, page, error, saved } = await searchParams
+  const locale = await requestLocale()
+  const copy = modelViewCopy(locale)
 
   const doc = await getSchema()
   const meta = doc.models[model]
@@ -50,26 +54,27 @@ export default async function ModelRowsPage({
     <div className="m-stack">
       <PageHeader
         title={meta.label}
-        subtitle={`${result.total ?? result.rows.length} rows · ${meta.fields ? Object.keys(meta.fields).length : 0} fields · ${meta.addon}`}
-        breadcrumbs={[{ label: 'HQ', href: '/' }, { label: 'Models', href: '/models' }, { label: model }]}
+        subtitle={interpolate(copy.rowsFieldsAddon, { rows: result.total ?? result.rows.length, fields: meta.fields ? Object.keys(meta.fields).length : 0, addon: meta.addon })}
+        breadcrumbs={[{ label: copy.hq, href: '/' }, { label: copy.models, href: '/models' }, { label: model }]}
         actions={
           canCreate ? (
             <a className="m-btn" data-variant="primary" href={`/models/${model}/new`}>
-              New {meta.label.toLowerCase()}
+              {interpolate(copy.newRecord, { model: meta.label.toLowerCase() })}
             </a>
           ) : null
         }
       />
 
-      {error ? <Alert tone="hot">{error}</Alert> : null}
+      {error ? (editorFailureMessage(locale, error) ? <Alert tone="hot">{editorFailureMessage(locale, error)}</Alert> : null) : null}
+      {saved ? (editorStatusMessage(locale, saved) ? <Alert tone="ok">{editorStatusMessage(locale, saved)}</Alert> : null) : null}
 
       <Panel
-        title={`Table · ${model}`}
-        subtitle="columns, search and pagination are generated from _schema"
+        title={interpolate(copy.table, { model })}
+        subtitle={copy.tableSubtitle}
         actions={
           <form method="get" action={`/models/${model}`} className="m-row">
-            <TextInput name="q" defaultValue={q ?? ''} placeholder="search…" style={{ width: 200 }} />
-            <Button type="submit">Search</Button>
+            <TextInput name="q" defaultValue={q ?? ''} placeholder={copy.searchPlaceholder} style={{ width: 200 }} />
+            <Button type="submit">{copy.search}</Button>
           </form>
         }
       >
@@ -77,15 +82,14 @@ export default async function ModelRowsPage({
           <ModelTable
             model={model}
             meta={meta}
+            locale={locale}
             rows={result.rows}
             {...(canUpdate ? { rowHref: (row: Record<string, unknown>) => `/models/${model}/${String(row.id)}` } : {})}
             {...(canDelete
               ? {
                   actions: (row: Record<string, unknown>) => (
                     <form action={deleteRecordAction.bind(null, model, String(row.id))}>
-                      <Button type="submit" variant="danger">
-                        del
-                      </Button>
+                      <Button type="submit" variant="danger">{locale === 'id' ? 'Hapus' : 'Delete'}</Button>
                     </form>
                   ),
                 }

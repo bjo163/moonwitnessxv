@@ -5,6 +5,8 @@ import { getSchema } from '@/data/schema'
 import { serverClient } from '@/data/sdk'
 import { guardView } from '@/lib/authz'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
+import { interpolate, modelViewCopy } from '../../models/locale-copy'
+import { requestLocale } from '@/lib/request-locale'
 
 export default async function ViewRunPage({
   params,
@@ -15,6 +17,8 @@ export default async function ViewRunPage({
 }) {
   const { view } = await params
   const { limit, order } = await searchParams
+  const locale = await requestLocale()
+  const copy = modelViewCopy(locale)
 
   const doc = await getSchema()
   const meta = doc.views[view]
@@ -42,35 +46,35 @@ export default async function ViewRunPage({
     <div className="m-stack">
       <PageHeader
         title={meta.label}
-        subtitle={`${view} · from ${meta.from} · limit ${meta.limit}${meta.aggregate ? ' · aggregate' : ''}`}
+        subtitle={interpolate(copy.rows, { view, model: meta.from, limit: meta.limit, aggregate: meta.aggregate ? copy.aggregate : copy.projection })}
         breadcrumbs={[
-          { label: 'HQ', href: '/' },
-          { label: 'Views', href: '/views' },
+          { label: copy.hq, href: '/' },
+          { label: copy.views, href: '/views' },
           { label: view },
         ]}
         actions={
           <span className="m-row">
-            <Badge tone={meta.aggregate ? 'moon' : 'night'}>{meta.aggregate ? 'aggregate' : 'projection'}</Badge>
-            <Badge tone="accent">{page.rows.length} rows</Badge>
+            <Badge tone={meta.aggregate ? 'moon' : 'night'}>{meta.aggregate ? (locale === 'id' ? 'agregat' : 'aggregate') : (locale === 'id' ? 'proyeksi' : 'projection')}</Badge>
+            <Badge tone="accent">{interpolate(copy.rowCount, { count: page.rows.length })}</Badge>
           </span>
         }
       />
 
       <Panel
-        title="Run"
-        subtitle={'GET /<view> — the same route every client uses'}
+        title={copy.run}
+        subtitle={copy.runSubtitle}
         actions={
           <form method="get" action={`/views/${view}`} className="m-row">
-            <TextInput name="limit" defaultValue={limit ?? '25'} style={{ width: 90 }} />
-            <TextInput name="order" defaultValue={order ?? ''} placeholder="order" style={{ width: 140 }} />
-            <Button type="submit">Run</Button>
+            <TextInput name="limit" defaultValue={limit ?? '25'} aria-label={copy.limit} style={{ width: 90 }} />
+            <TextInput name="order" defaultValue={order ?? ''} placeholder={copy.order} aria-label={copy.order} style={{ width: 140 }} />
+            <Button type="submit">{copy.run}</Button>
           </form>
         }
       >
-        <DataTable rows={rows} columns={columns} empty="The view returned no rows." />
+        <DataTable rows={rows} columns={columns} empty={copy.noViewRows} />
       </Panel>
 
-      <Panel title="Declared shape" subtitle="output keys + declared joins (from _schema)">
+      <Panel title={copy.declaredShape} subtitle={copy.declaredShapeSubtitle}>
         <pre className="m-mono" style={{ margin: 0, fontSize: 12, overflow: 'auto' }}>
           {JSON.stringify({ output: meta.output, expand: meta.expand ?? [], acl: meta.acl }, null, 2)}
         </pre>
