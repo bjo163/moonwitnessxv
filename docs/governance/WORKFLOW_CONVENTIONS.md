@@ -33,7 +33,7 @@ Proposed message form: `<type>(<scope>): <imperative summary>`. For TODO work, u
 
 Accepted types are `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `build`, `ci`, `perf`, and `revert`. A commit must describe the change that actually happened, avoid unrelated outcomes, and never claim checks, deployment, or release success without evidence. Do not label implementation `chore` to avoid its true meaning.
 
-Breaking changes use `!` before the colon (`feat(api)!: ...`) and a `BREAKING CHANGE: ...` footer explaining impact. Both may be included. Proposed release interpretation is specified separately in the Phase 6 decision report; it is not active automation.
+Breaking changes use `!` before the colon (`feat(api)!: ...`) and a `BREAKING CHANGE: ...` footer explaining impact. Both may be included. The type drives the automatic SemVer bump in [`scripts/release.mjs`](../../scripts/release.mjs): `feat!` or `BREAKING CHANGE` is MAJOR, `feat` is MINOR, and `fix`, `perf`, or any other release-worthy commit is PATCH. The active release rules are in [`M01-05`](../audit/M01-05-release-lifecycle.md).
 
 ## Pull requests and review
 
@@ -50,8 +50,27 @@ The required path is `push to dev (direct or PR) → verified push to dev → au
 2. **Automatic Fast-Forward to `main` (Zero-Approval, Zero-Duplicate):**
    - After verification succeeds on `dev`, the `promote` job immediately fast-forwards `main` to that exact verified commit.
    - There are no duplicate verification checks on `main`, no secondary release PRs, and no human approval bottlenecks.
-   - Local environments use no pre-commit hooks (Husky is omitted) to preserve rapid local iteration; verification is owned by CI.
+   - After the fast-forward, the same job tags that exact commit and publishes a GitHub Release from its commit history. See [M01-05](../audit/M01-05-release-lifecycle.md).
+
+## Local fast gates
+
+`git config core.hooksPath .githooks` is set automatically by the root `prepare`
+script, so `pnpm install` activates these gates. They are speed-first, not the
+authority: CI still owns verification and promotion, and every gate is
+bypassable with `--no-verify`, which is discouraged rather than detected.
+
+| Hook | Checks | Typical cost |
+| --- | --- | --- |
+| `commit-msg` | Rejects a summary that is not `<type>(<scope>)!: <subject>`; merge, revert, and release commits pass | milliseconds |
+| `pre-commit` | Blocks staged `.env*` (except `.env.example`), `.pem`, `.key`, `id_rsa`, and secret files; runs `pnpm ui:check` | under a second |
+| `pre-push` | Blocks pushing from or to a branch outside `dev`/`main` and a proven non-fast-forward (force) push | milliseconds |
 
 ## Enforcement state
 
-There is no commit-message validator, branch-name validator, PR-title validator, or TODO-to-Issue synchronizer. These conventions remain guidance, while branch protection and automated promotion to `main` are enforced by repository rules and CI.
+The Conventional Commit form, the staged-secret block, `ui:check` purity, and the
+`dev`/`main` branch discipline are enforced locally by `.githooks/` as fast
+feedback. Release numbering, changelog sections, and tags are produced by
+`scripts/release.mjs`. There is no PR-title validator or TODO-to-Issue
+synchronizer, so those conventions remain guidance. Branch protection and
+automated promotion to `main` are enforced by repository rules and CI, which
+remain the authoritative gates.

@@ -3,6 +3,8 @@
 - **Updated:** 2026-10-27
 - **Baseline package version:** `1.0.0` (private root workspace)
 - **Implementation SHA:** `f8769f695a47408e2e11d7c293f74c4537dd85e1`.
+- **Gates and release-engine SHA:** recorded by the integrator when the change
+  described in §6 lands on `dev`.
 - **Changelog:** [`CHANGELOG.md`](../../CHANGELOG.md)
 - **Repository:** [bjo163/moonwitnessxv](https://github.com/bjo163/moonwitnessxv)
 
@@ -35,28 +37,52 @@ work as shipped. Schema contract
 changes must also follow the API/schema history policy in
 [`M01-04`](M01-04-sdk-drift-gate.md).
 
+[`scripts/release.mjs`](../../scripts/release.mjs) implements this numbering:
+the next version is derived from the most recent `vX.Y.Z` tag (the root
+`package.json` version is the baseline only while no tag exists) and the commit
+type decides the increment. `pnpm release` performs the reviewed local write:
+it prepends the release section under `Unreleased` and bumps the root manifest,
+and the resulting change is committed on `dev` like any other change. The CI
+mode never writes those files, so a workflow cannot publish a tag whose commit
+still declares the previous version; the root manifest therefore lags the newest
+tag until the next `pnpm release` commit reconciles it. Only the root manifest is
+rewritten: the 40 workspace manifests keep their own `1.0.0` because the root is
+the single version authority for this private monorepo.
+
 ---
 
 ## 2. Reviewed release procedure
 
 1. Land changes on `dev` (directly or by pull request) with the changelog entry
-   and recovery path. `dev` is the sole integration branch.
+   and recovery path. `dev` is the sole integration branch. `.githooks/` gives
+   fast local feedback (commit format, staged secrets, `ui:check`, branch
+   discipline); it is not the authority and CI does not repeat those narrow
+   checks as separate lanes.
 2. Require the successful **Monorepo Verification & Safety Gates** check on
    the exact `dev` commit. The `promote` job may fast-forward only that verified
    SHA to `main`; force pushes and deletion are blocked, and no actor bypasses
    the active `main` ruleset.
 3. Run `pnpm install --frozen-lockfile` and `pnpm verify` on the proposed
    release commit. Confirm that the changelog and root package version agree.
-4. After the verified commit reaches `main`, create an annotated `vX.Y.Z` tag
-   and publish a GitHub Release with notes matching the changelog. This is a
-   human release action; no workflow publishes packages or deploys production.
-5. Record the tag, source SHA, CI run, and any application deployment evidence
-   separately. Do not call a repository release a production deployment.
+4. After the verified commit reaches `main`, the same `promote` job runs
+   `node scripts/release.mjs --ci`, which creates the annotated `vX.Y.Z` tag at
+   that exact SHA, pushes only that tag, and publishes a GitHub Release whose
+   notes are generated from the commits since the previous tag. The step writes
+   no files. It publishes nothing while no baseline tag exists yet, and it skips
+   a commit that already carries a tag.
+5. Read back the tag, its target SHA, and the CI run. Regenerate or correct
+   release notes by editing the GitHub Release, never by moving the tag. Record
+   any application deployment evidence separately; a repository release tag is
+   not a production deployment.
 
 ## 3. Rollback
 
 For a repository release, publish a corrective patch release from a reviewed
-commit; do not rewrite or move a published tag. For a deployed application,
+commit; do not rewrite or move a published tag. If the CI release step pushes a
+tag and then fails before the GitHub Release appears, delete that unpublished tag
+on the remote and re-run the step; a tag that already has a published Release or
+that anyone has pulled is corrected forward by a new patch release instead.
+For a deployed application,
 follow its actual deployment platform's rollback process and verify the target
 deployment before claiming recovery. If database state is involved, use the
 verified snapshot and procedure in [`docs/runbook-restore.md`](../runbook-restore.md).
@@ -69,9 +95,11 @@ rollback: it may not restore database state or deployment configuration.
 The [`main-release-protection` ruleset (ID 25876549)](https://github.com/bjo163/moonwitnessxv/rules/25876549) is active and requires the `Monorepo Verification & Safety Gates` status check, prohibits force pushes and deletion, and has no bypass actor. A pull-request/approval rule is intentionally absent because the accepted integration flow fast-forwards the exact CI-verified `dev` commit to `main`; requiring a PR there would block that promotion. The authoritative state is the live GitHub ruleset; if it drifts, treat release acceptance as blocked until it is restored and rechecked.
 
 The GitHub workflow runs CI on pushes and pull requests targeting `dev`; its
-promotion job fast-forwards `main` only after verification. No release-specific
-tagging workflow, npm publishing, or production approval automation is
-configured by this task.
+promotion job fast-forwards `main` only after verification, then tags and
+publishes the GitHub Release for that same verified SHA with
+`contents: write`. No separate release workflow, npm publishing, container
+publishing, or production approval automation is configured by this task, and
+the release step cannot deploy anything.
 
 ## 5. Acceptance evidence
 
@@ -94,3 +122,46 @@ configured by this task.
 - Current live ruleset re-read 2026-10-27: `gh api repos/bjo163/moonwitnessxv/rulesets/25876549`; active rules include `non_fast_forward`, `deletion`, and required status context `Monorepo Verification & Safety Gates`; bypass list empty and bypass `never`.
 - Focused policy check: package version/privacy, changelog structure, relative
   links, and absence of a publish script passed; `git diff --check` passed.
+
+## 6. Gate and release-engine evidence (2026-10-27, baseline `6b439b3`)
+
+Local gates, exercised against the real `.githooks/` wiring in a throwaway
+sandbox repository (`core.hooksPath` set, LF-pinned shims, `ui:check` stubbed so
+the sandbox cannot inherit repository state):
+
+- Positive: a real `git commit` with `chore: seed sandbox` and one with
+  `chore: commit env template` (staging `.env.example`) were accepted.
+- Negative: `git commit -m "update stuff"` was rejected by `commit-msg` with exit
+  `1`; staging `.env.local` was rejected by `pre-commit` with exit `1`.
+- `commit-msg` matrix: 10 accepted forms (`feat`, `fix`, `docs`, `perf`, `chore`,
+  `revert`, `feat(scope)!:`, merge commit, `Release vX.Y.Z`, `vX.Y.Z`) and 6
+  rejected forms (`update stuff`, `fixed bug`, `Feat: capitalize`, `feat:no
+  space`, `wip`, empty) — 16/16 as expected.
+- `pre-push` matrix: fast-forward on `dev` accepted; older-onto-newer (force) push
+  blocked; push to a ref outside `dev`/`main` blocked; push from a `topic/x`
+  branch blocked; branch deletion and new-ref creation passed through for GitHub
+  to judge.
+
+Release engine (`scripts/release.mjs`), run in the sandbox against a seeded
+`v1.0.0` tag:
+
+- Bump arithmetic: `feat` → `1.1.0`, docs-only since the tag → `1.0.1`, `fix` →
+  PATCH, `feat!:` → `2.0.0`; the base version comes from the latest tag, not from
+  a stale manifest.
+- Local mode wrote the release section under `## [Unreleased]`, set the root
+  `package.json` version, and created the annotated tag with `--tag` without
+  pushing it.
+- `--ci` mode created and pushed only `refs/tags/v1.0.2` (verified in a bare
+  sandbox remote), left `CHANGELOG.md` and `package.json` untouched, printed the
+  version-lag note, exited `0` when no baseline tag exists, exited `0` when HEAD
+  already carries a tag, and exited `1` with an explicit message when the GitHub
+  Release call failed.
+- Dry-run (`pnpm release:dry`) printed the full preview and wrote nothing, so the
+  real repository still has zero tags and no release section.
+
+Unverified by this change: the `promote` job release step has not run on a GitHub
+hosted runner, and no tag or GitHub Release exists yet. Reporting them as shipped
+would require an observed CI run.
+
+`eslint` on `scripts/release.mjs`, `scripts/setup-git-hooks.mjs`, and
+`scripts/git-hooks/` passed with `--max-warnings=0`; `pnpm ui:check` passed.

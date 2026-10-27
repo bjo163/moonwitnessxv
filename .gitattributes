@@ -8,3 +8,9 @@ packages/moonql-client/src/schema-history.json text eol=lf
 # bind-mounted into postgres:17-alpine). A CRLF checkout makes /bin/sh see
 # $'\r' as a command and takes the backup sidecar down with it.
 *.sh text eol=lf
+
+# Git executes these POSIX shims directly, on Windows checkouts too (core.autocrlf
+# is true here). A CRLF shebang line makes every local gate fail before Node starts.
+.githooks/commit-msg text eol=lf
+.githooks/pre-commit text eol=lf
+.githooks/pre-push text eol=lf

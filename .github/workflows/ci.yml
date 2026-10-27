@@ -91,3 +91,8 @@ jobs:
         env:
           EXPECTED_SHA: ${{ github.sha }}
         run: git push origin "$EXPECTED_SHA:refs/heads/main"
+
+      - name: Tag and publish the promoted release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/release.mjs --ci

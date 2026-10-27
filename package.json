@@ -47,8 +47,11 @@
     "lint:fix": "eslint . --fix",
     "ui:check": "node scripts/check-ui-consistency.mjs",
     "verify": "pnpm build && pnpm ui:check && pnpm lint && pnpm gen:sdk:check && pnpm test && pnpm build:web",
+    "release": "node scripts/release.mjs",
+    "release:dry": "node scripts/release.mjs --dry-run",
     "docker:build": "docker build -t moonwitness .",
-    "docker:up": "docker compose up --build"
+    "docker:up": "docker compose up --build",
+    "prepare": "node scripts/setup-git-hooks.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
