@@ -19,6 +19,11 @@ WORKDIR /repo
 # COPY. A read-only bind mount of the context plus a find loop makes the set
 # self-maintaining: adding a package now costs zero Dockerfile edits.
 FROM base AS deps
+# The root package.json declares a `prepare` lifecycle that runs this script on
+# every install. The image build is not a Git work tree, so the script itself
+# exits 0 — but only if it exists: the deps stages copy manifests, not scripts/,
+# and a missing file failed `pnpm install` with MODULE_NOT_FOUND.
+COPY scripts/setup-git-hooks.mjs ./scripts/
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 RUN --mount=type=bind,source=.,target=/ctx,readonly \
     cd /ctx \
@@ -46,6 +51,7 @@ RUN pnpm --filter @moonwitness/cli build && pnpm --filter @moonwitness/arsy buil
 # ---- Production deps only ----
 # same derivation rule as `deps`: --prod still has to see every importer
 FROM base AS prod-deps
+COPY scripts/setup-git-hooks.mjs ./scripts/
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 RUN --mount=type=bind,source=.,target=/ctx,readonly \
     cd /ctx \

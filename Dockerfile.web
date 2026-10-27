@@ -25,6 +25,10 @@ WORKDIR /repo
 # per lockfile importer, and a hand-kept list drifts every time a package joins.
 FROM base AS deps
 ARG APP
+# root `prepare` lifecycle runs scripts/setup-git-hooks.mjs on every install; the
+# deps stages only ship manifests, so the script must exist or install dies on
+# MODULE_NOT_FOUND. Outside a Git work tree it exits 0 by design.
+COPY scripts/setup-git-hooks.mjs ./scripts/
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 RUN --mount=type=bind,source=.,target=/ctx,readonly \
     cd /ctx \
@@ -51,6 +55,7 @@ RUN pnpm build:libs && pnpm --filter @moonwitness/${APP} build
 # ---- Production deps only ----
 # same derivation rule as `deps`: --prod still has to see every importer
 FROM base AS prod-deps
+COPY scripts/setup-git-hooks.mjs ./scripts/
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 RUN --mount=type=bind,source=.,target=/ctx,readonly \
     cd /ctx \
