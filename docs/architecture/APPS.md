@@ -15,6 +15,7 @@
 | `apps/skylink` / `@moonwitness/skylink` | Accepted D18 Messages & Channels service | REST + WebSocket control plane and provider adapters exist; ARSY integration, operator UI, and end-to-end proof remain open (M38-12..14). |
 | `apps/echolog` / `@moonwitness/echolog` | Accepted D19 Object Storage & Attachments service | Filesystem-backed content-addressed objects and bounded S3-compatible subset exist; consumer/operator UI and final proof remain open (M39-11/12). Stateless: no tables. |
 | `apps/orbit` / `@moonwitness/orbit` | ORBIT spatial operations frontend (M40) | **Planned only; not created.** Independent frontend/build/deploy boundary; not a backend service and owns no domain/schema. |
+| `apps/lumen-runtime` / `@moonwitness/lumen-runtime` | Proposed internal LUMEN worker process (M41; ADR-0010 proposed) | **Proposed only; not created.** Executes runs through approved ARSY/M29 contracts; no public task API, database, identity, model routing or canonical state ownership. |
 
 ## ORBIT boundary
 
