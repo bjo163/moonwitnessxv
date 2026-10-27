@@ -29,12 +29,12 @@
 | [x] | UI-F03 | P0 | D2 | UI-F01 | Inspect rights, licences, consent and origin of PNG screenshots, textured images and fonts before import. **[ledger](docs/audit/ui-baseline-8737fe4.md#3-rights--licence-review-of-the-reference-assets-ui-f03)** |
 | [x] | UI-F04 | P0 | D1 | UI-F02 | Identify existing MoonUI primitives (Card, Panel, Nav, Tabs, DataTable, Tooltip, Modal, Skeleton). **[inventory](docs/audit/ui-baseline-8737fe4.md#4-moonui-primitive-inventory-ui-f04)** |
 | [ ] | UI-F05 | P1 | D2 | UI-F04 | Translate mockup hierarchy to responsive shell; reuse existing Dock public shell and HQ private shell. |
-| [ ] | UI-F06 | P1 | D2 | UI-F05 | Establish typography scale for display, titles, body, captions and monospaced status. |
-| [ ] | UI-F07 | P1 | D2 | UI-F05 | Define responsive 360/390/768/1024/1440/1920 width behavior and avoid horizontal page overflow. |
+| [x] | UI-F06 | P1 | D2 | UI-F05 | Establish typography scale for display, titles, body, captions and monospaced status. **[evidence](docs/audit/ui-screens-evidence-38560d3.md#what-each-screen-actually-gained)** |
+| [x] | UI-F07 | P1 | D2 | UI-F05 | Define responsive 360/390/768/1024/1440/1920 width behavior and avoid horizontal page overflow. **[geometry](docs/audit/ui-screens-evidence-38560d3.md#geometry-live-app-on-3001-en-and-id)** |
 | [ ] | UI-F08 | P1 | D2 | UI-F04 | Build/verify one common Crown/Logo/DistressedBorder pattern using semantic tokens and original SVG. |
-| [ ] | UI-F09 | P1 | D2 | UI-F08 | Implement reusable NavActive, AppTile, ProgressPanel, StatusLine and ContentCard where missing. |
+| [x] | UI-F09 | P1 | D2 | UI-F08 | Implement reusable NavActive, AppTile, ProgressPanel, StatusLine and ContentCard where missing. **[evidence](docs/audit/ui-screens-evidence-38560d3.md#what-each-screen-actually-gained)** |
 | [ ] | UI-F10 | P1 | D2 | UI-F09 | Add consistent 4-state data model: loading / empty / error / ready for every data-backed panel. |
-| [ ] | UI-F11 | P0 | D2 | UI-F10 | Add explicit DEMO/PLACEHOLDER/PLANNED labels; never use fake live counters or false delivery stats. |
+| [x] | UI-F11 | P0 | D2 | UI-F10 | Add explicit DEMO/PLACEHOLDER/PLANNED labels; never use fake live counters or false delivery stats. **[evidence](docs/audit/ui-screens-evidence-38560d3.md#what-each-screen-actually-gained)** |
 | [ ] | UI-F12 | P1 | D3 | UI-F05 | Ensure bilingual id/en UI keys and locale-preserving links; keep source-language direction independent. |
 | [ ] | UI-F13 | P0 | D2 | UI-F05 | Define server-side auth/role checks for HQ/private routes; preserve BFF/httpOnly and D00 rules. |
 | [ ] | UI-F14 | P1 | D3 | UI-F08 | Create icon vector pipeline: title/ARIA, no external scripts, license and content hash. |
@@ -69,10 +69,10 @@ Executable this cycle: **UI-P01**, **UI-P05**, **UI-P06**.
 Reference: [`01_dock_lighthouse.svg`](docs/design/mockups-xv/01_dock_lighthouse.svg) · Canonical task owner: **M19-09..19 / M31** · Code owner: `apps/dock` · route: `/id, /en`.
 
 - [ ] **UI-P01a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
-- [ ] **UI-P01b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
-- [ ] **UI-P01c · D3:** Public source-first hero with bilingual /id /en and unambiguous REAL vs PLANNED.
-- [ ] **UI-P01d · D3:** Card links to Reader, Stories and RADIO without broken routes.
-- [ ] **UI-P01e · D3:** Hub-offline honest fallback, metadata, keyboard and responsive smoke.
+- [x] **UI-P01b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims). **[evidence](docs/audit/ui-screens-evidence-38560d3.md#what-each-screen-actually-gained)**
+- [x] **UI-P01c · D3:** Public source-first hero with bilingual /id /en and unambiguous REAL vs PLANNED.
+- [x] **UI-P01d · D3:** Card links to Reader, Stories and RADIO without broken routes.
+- [x] **UI-P01e · D3:** Hub-offline honest fallback, metadata, keyboard and responsive smoke.
 - [ ] **UI-P01f · D2:** Save 390px/768px/1440px/1920px id/en screenshots and run keyboard/empty/error/reduced-motion checks.
 
 ### UI-P02 — PROJECT UNIVERSE (P1)
@@ -110,8 +110,8 @@ Reference: [`05_corpus_reader.svg`](docs/design/mockups-xv/05_corpus_reader.svg)
 
 - [ ] **UI-P05a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
 - [ ] **UI-P05b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
-- [ ] **UI-P05c · D3:** Exact edition, original passage, translated wording and direction metadata.
-- [ ] **UI-P05d · D3:** Provenance drawer, copy/share citation and term navigation.
+- [x] **UI-P05c · D3:** Exact edition, original passage, translated wording and direction metadata.
+- [x] **UI-P05d · D3:** Provenance drawer, copy/share citation and term navigation.
 - [ ] **UI-P05e · D3:** Unapproved D08 projection denied even when UI link guessed.
 - [ ] **UI-P05f · D2:** Save 390px/768px/1440px/1920px id/en screenshots and run keyboard/empty/error/reduced-motion checks.
 
@@ -122,7 +122,7 @@ Reference: [`06_unilex_explorer.svg`](docs/design/mockups-xv/06_unilex_explorer.
 - [ ] **UI-P06b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P06c · D3:** Typed alias, figure, event and source relation inspector.
 - [ ] **UI-P06d · D3:** Relation provenance, alternatives and uncertainty, not invented synonymy.
-- [ ] **UI-P06e · D3:** Accessible list alternative to graph for keyboard and mobile.
+- [x] **UI-P06e · D3:** Accessible list alternative to graph for keyboard and mobile.
 - [ ] **UI-P06f · D2:** Save 390px/768px/1440px/1920px id/en screenshots and run keyboard/empty/error/reduced-motion checks.
 
 ### UI-P07 — MOONLAB RESEARCH (P1)
