@@ -117,7 +117,7 @@ export function createMoonwitnessConfig(options = {}) {
 
     // 2. React Hooks (Dock, HQ, MoonUI, Cockpit and ECHOLOG operator clients)
     {
-      files: ['apps/dock/**/*.tsx', 'apps/headquarters/**/*.tsx', 'packages/moonui/**/*.tsx', 'apps/cockpit/client/**/*.tsx', 'apps/echolog/client/**/*.tsx'],
+      files: ['apps/dock/**/*.tsx', 'apps/headquarters/**/*.tsx', 'packages/moonui/**/*.tsx', 'apps/cockpit/client/**/*.tsx', 'apps/echolog/client/**/*.tsx', 'apps/orbit/**/*.tsx'],
       plugins: {
         'react-hooks': reactHooks,
         '@moonwitness': moonwitnessPlugin,

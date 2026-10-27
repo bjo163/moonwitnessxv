@@ -21,6 +21,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* The brand band and the utility cluster share one row; the nav owns the next
+     row (see .dk-nav order/flex-wrap). Without wrapping, the 16 single-word nav
+     labels (one line = 1296px measured at 1440) cannot shrink, so everything to
+     their right is pushed past the viewport edge. */
+  flex-wrap: wrap;
   gap: 16px;
   padding: 12px 28px;
   border-bottom: 3px solid var(--fg);
@@ -33,7 +38,13 @@ body {
 .dk-nav {
   display: flex;
   align-items: center;
-  gap: 26px;
+  /* Placed last on the header's own row so the brand and the cluster keep their
+     natural width; wraps internally as the safety net between 1041px and the
+     width where all 16 labels no longer share one line. */
+  order: 3;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 8px 26px;
   font-family: var(--font-display);
   font-size: 15px;
   letter-spacing: 0.1em;

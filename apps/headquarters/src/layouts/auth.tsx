@@ -64,7 +64,7 @@ export function AuthLayout({ children, locale }: { children: ReactNode; locale: 
           </div>
 
           <ZineNote tone="dark" tilt="none">
-            PEOPLE · PLACES · IDEAS · CULTURES · BEYOND BORDERS.
+            {copy.leftTagline}
           </ZineNote>
         </aside>
 

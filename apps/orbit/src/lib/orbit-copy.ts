@@ -1,0 +1,119 @@
+import {
+  DEFAULT_LOCALE,
+  defineLocaleCatalog,
+  resolveLocale,
+  type Locale,
+  type LocaleResolutionInput,
+} from '@moonwitness/core'
+
+/**
+ * M40-02 ORBIT Shell and Navigation Locale Catalog.
+ *
+ * Grounded in the shared i18n contract from @moonwitness/core.
+ * Enforces 100% key parity between English (`en`) and Indonesian (`id`).
+ */
+export const orbitCatalog = defineLocaleCatalog({
+  en: {
+    brandTitle: 'ORBIT',
+    brandSubtitle: 'Spatial Agent Operations',
+    brandMotto: 'SPATIAL OBSERVATION · AGENT INTELLIGENCE · PROVABLE INTEGRITY',
+    hqLink: 'Headquarters (100CENTER)',
+    provenanceSimulated: 'PROVENANCE: SIMULATED',
+    arsyOffline: 'ARSY: OFFLINE / ISOLATED',
+    arsyStandalone: 'ARSY: STANDALONE SIMULATION',
+    navOverview: 'Overview',
+    navWorkstations: 'Workstations',
+    navAgentLoops: 'Agent Loops',
+    navTaskQueues: 'Task Queues',
+    navAuditTraces: 'Audit Traces',
+    viewSpatial: 'Spatial 3D View',
+    viewAccessible2D: 'Accessible 2D Fallback',
+    spatialViewportNotice:
+      'Spatial Topology Projection: 3D scene loads client-side in M40-03. All operations are fully accessible via the 2D operational fallback grid below without requiring WebGL or GPU acceleration.',
+    simulatedStage: 'SIMULATED STAGE',
+    workstationsHeading: 'Workstations',
+    agentLoopsHeading: 'Agent Loops (LUMEN)',
+    taskQueuesHeading: 'Task Queues',
+    auditTracesHeading: 'Recent Audit Traces',
+    accessible2dHeading: 'Accessible 2D Operations Inspector',
+    roleLabel: 'Role',
+    cycleLabel: 'Cycle',
+    stepsLabel: 'Steps',
+    leaseLabel: 'Lease',
+    zoneLabel: 'Zone',
+    agentsLabel: 'Agents',
+    priorityLabel: 'Priority',
+    idLabel: 'ID',
+    handoffNotice: 'Handoff to HQ required',
+    dataSourceLabel: 'Data Source',
+    synchronizedLabel: 'Synchronized',
+    footerNotice: 'MoonWitness XV · ORBIT (Port 3007) · Pure Frontend Observation Boundary',
+    skipToContent: 'Skip to main content',
+    localeSelectorLabel: 'Language selection',
+    reducedMotionNotice: 'Reduced motion active',
+  },
+  id: {
+    brandTitle: 'ORBIT',
+    brandSubtitle: 'Operasi Agen Spasial',
+    brandMotto: 'OBSERVASI SPASIAL · KECERDASAN AGEN · INTEGRITAS TERBUKTI',
+    hqLink: 'Pusat Komando (100CENTER)',
+    provenanceSimulated: 'ASAL DATA: DISIMULASIKAN',
+    arsyOffline: 'ARSY: LURING / TERISOLASI',
+    arsyStandalone: 'ARSY: SIMULASI MANDIRI',
+    navOverview: 'Ringkasan',
+    navWorkstations: 'Stasiun Kerja',
+    navAgentLoops: 'Siklus Agen',
+    navTaskQueues: 'Antrean Tugas',
+    navAuditTraces: 'Jejak Audit',
+    viewSpatial: 'Tampilan 3D Spasial',
+    viewAccessible2D: 'Cadangan 2D Aksesibel',
+    spatialViewportNotice:
+      'Proyeksi Topologi Spasial: Adegan 3D dimuat di sisi klien pada M40-03. Seluruh operasi dapat diakses penuh melalui kisi cadangan operasional 2D di bawah tanpa memerlukan akselerasi WebGL atau GPU.',
+    simulatedStage: 'PANGGUNG SIMULASI',
+    workstationsHeading: 'Stasiun Kerja',
+    agentLoopsHeading: 'Siklus Agen (LUMEN)',
+    taskQueuesHeading: 'Antrean Tugas',
+    auditTracesHeading: 'Jejak Audit Terbaru',
+    accessible2dHeading: 'Inspektur Operasi 2D Aksesibel',
+    roleLabel: 'Peran',
+    cycleLabel: 'Siklus',
+    stepsLabel: 'Langkah',
+    leaseLabel: 'Sewa',
+    zoneLabel: 'Zona',
+    agentsLabel: 'Agen',
+    priorityLabel: 'Prioritas',
+    idLabel: 'ID',
+    handoffNotice: 'Dibutuhkan penyerahan ke HQ',
+    dataSourceLabel: 'Sumber Data',
+    synchronizedLabel: 'Disinkronkan',
+    footerNotice: 'MoonWitness XV · ORBIT (Port 3007) · Batas Observasi Murni Frontend',
+    skipToContent: 'Lompat ke konten utama',
+    localeSelectorLabel: 'Pilihan bahasa',
+    reducedMotionNotice: 'Pengurangan gerakan aktif',
+  },
+})
+
+export type OrbitCopyKey = keyof (typeof orbitCatalog)['en']
+
+export const ORBIT_NAV_ITEMS: readonly OrbitCopyKey[] = [
+  'navOverview',
+  'navWorkstations',
+  'navAgentLoops',
+  'navTaskQueues',
+  'navAuditTraces',
+] as const
+
+/**
+ * Look up the complete localized dictionary for ORBIT chrome.
+ */
+export function orbitCopy(locale: Locale): Readonly<Record<OrbitCopyKey, string>> {
+  return orbitCatalog[locale] ?? orbitCatalog[DEFAULT_LOCALE]
+}
+
+/**
+ * Deterministically resolve locale according to ADR-0005 precedence.
+ */
+export function resolveOrbitLocale(input: LocaleResolutionInput): Locale {
+  const result = resolveLocale(input)
+  return 'locale' in result ? result.locale : DEFAULT_LOCALE
+}

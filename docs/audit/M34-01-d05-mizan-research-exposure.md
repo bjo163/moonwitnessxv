@@ -45,4 +45,22 @@ Artifact exposes only repo file paths, route names, seed constants already in Gi
 
 ## Verdict
 
-**READY-TO-CLOSE** (one reviewed artifact at `docs/audit/M34-01-inventory-d05-mizan-research-exposure.md`, positive evidence = commands 4–6, negative evidence = N1–N5 with executed proof for N1; integrator checks the TODO leaf at result SHA after commit).
+**Historical READY-TO-CLOSE assessment applies only to the original `76ecdc5` snapshot.** The current TODO leaf remains open. The revalidation below refreshes the findings against the current repository baseline and records a current worktree containment change; no exact integrated result SHA has been produced by this task, and the integrator must decide closure after review.
+
+## Revalidation at current shared-worktree baseline
+
+- **current baseline SHA**: `bb751262d9ae215620acc634998fb63ab6e4b887` (`dev`, equal to `origin/dev` at inspection).
+- `git diff --name-only HEAD -- packages/moonql-research packages/moonql/src packages/moonql-client/src apps/arsy/src apps/arsy/test/research.test.ts apps/arsy/test/m15-historical-pilot.test.ts` → empty. The research addon, MoonQL ACL/REST implementation, ARSY routes and cited anonymous-read tests remain byte-for-byte at this baseline; the original route/exposure analysis is still applicable.
+- `pnpm --filter @moonwitness/arsy exec tsx --test test/research.test.ts` → 8 passed, 0 failed. Test M13-07 issues `/orm/research/hypotheses` without auth headers and asserts HTTP 200 with all three items `CANDIDATE`.
+- `pnpm --filter @moonwitness/arsy exec tsx --test test/m15-historical-pilot.test.ts` → 7 passed, 0 failed. Test M15-06 issues `/orm/research/comparative-case` without auth headers and asserts HTTP 200.
+- `pnpm --filter @moonwitness/dock exec node --experimental-strip-types --test test/research-public-withholding.test.mjs` → 3 passed, 0 failed. This runs against the current shared worktree: public `/research` and `/reader/compare` now render the localized D08 withholding notice. `apps/dock/src/app/reader/compare/page.tsx`, its locale copy, and its regression test are uncommitted worktree changes. This does not change the `bb751262` baseline's historical E7 exposure, and it is not deployment proof.
+- `M14-07` prerequisite is closed in TODO with evidence at implementation SHA `6ed2540` and CI run `40294309739`; its policy keeps `publicationAvailable` false.
+- **Current verdict**: research API exposures E1–E6 and raw REST E5 remain in the code baseline; Dock E7 is contained in the current worktree but not in `HEAD`. D08's approved projection remains absent. The M34-01 inventory remains a read-only artifact and does not authorize publishing or changing source rights.
+- **result_sha**: not available; no commit/integrated SHA was created. Do not check M34-01 complete until an independent reviewer accepts the refreshed artifact and exact-SHA evidence is attached to an integrated result.
+
+### Revalidation after branch advanced
+
+- Current branch HEAD and `origin/dev` are both `2a3aaf16a19a01264de6f1cab4079a1ea65f6cec`. The research addon, API routes and anonymous-read tests remain unchanged at this base; current worktree still withholds Dock Compare content.
+- `pnpm --filter @moonwitness/arsy exec tsx --test test/research.test.ts test/m15-historical-pilot.test.ts` — 15 passed, 0 failed; tests still assert anonymous candidate/comparative reads return success.
+- `pnpm --filter @moonwitness/dock exec node --experimental-strip-types --test test/research-public-withholding.test.mjs` — 3 passed, 0 failed against the withheld worktree Compare page.
+- These checks are current worktree evidence, not exact-SHA closure or a D08 publication approval.

@@ -1,0 +1,335 @@
+/* apps/orbit/src/app/globals.css
+ *
+ * ORBIT — Spatial Agent Operations layout styling.
+ * Grounded strictly in @moonwitness/moonui design tokens.
+ * Zero hardcoded hex colors; all colors flow from CSS variables.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  min-height: 100vh;
+  background-color: var(--ink);
+  color: var(--fg);
+  font-family: var(--font-mono, monospace);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Accessible focus rings */
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* Accessible skip to main content link */
+.orbit-skip-link {
+  position: absolute;
+  top: -9999px;
+  left: 16px;
+  background: var(--surface-2);
+  color: var(--cyan);
+  padding: 8px 16px;
+  border: 2px solid var(--cyan);
+  border-radius: 4px;
+  font-weight: 700;
+  z-index: 1000;
+  text-decoration: none;
+}
+
+.orbit-skip-link:focus {
+  top: 16px;
+}
+
+.orbit-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background: radial-gradient(circle at 50% 10%, var(--surface-2) 0%, var(--ink) 80%);
+}
+
+.orbit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 14px 24px;
+  background-color: var(--surface);
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.orbit-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.orbit-logo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.orbit-subtitle {
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.orbit-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.orbit-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.orbit-locale-switch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.orbit-locale-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.orbit-locale-btn.active {
+  background-color: var(--surface);
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+}
+
+.orbit-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background-color: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.orbit-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.orbit-nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
+.orbit-nav-link:hover,
+.orbit-nav-link.active {
+  color: var(--fg);
+  background-color: var(--surface);
+  border-color: var(--border);
+}
+
+.orbit-view-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orbit-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px 24px;
+  gap: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.orbit-spatial-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  min-height: 380px;
+}
+
+.orbit-spatial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background-color: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.orbit-spatial-viewport {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 32px;
+  text-align: center;
+  gap: 16px;
+  background:
+    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.orbit-spatial-callout {
+  max-width: 580px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.orbit-2d-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 20px;
+}
+
+.orbit-panel {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 4px;
+  padding: 16px;
+  gap: 14px;
+}
+
+.orbit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+}
+
+.orbit-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.orbit-item:hover,
+.orbit-item:focus-within {
+  border-color: var(--cyan);
+}
+
+.orbit-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.orbit-item-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.orbit-item-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+
+.orbit-trace-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  background-color: var(--ink);
+  border-left: 3px solid var(--border);
+  font-size: 0.8rem;
+}
+
+.orbit-trace-entry.info {
+  border-left-color: var(--cyan);
+}
+
+.orbit-trace-entry.warn {
+  border-left-color: var(--accent);
+}
+
+.orbit-trace-entry.error {
+  border-left-color: var(--pink);
+}
+
+.orbit-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 24px;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

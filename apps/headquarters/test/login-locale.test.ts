@@ -12,8 +12,18 @@ void test('HQ login copy provides the same complete key set in Indonesian and En
   assert.equal(indonesian.loginLabel, 'Email atau nama pengguna')
   assert.equal(english.passwordLabel, 'Password')
   assert.equal(indonesian.passwordLabel, 'Kata sandi')
+  assert.equal(english.leftTagline, 'PEOPLE · PLACES · IDEAS · CULTURES · BEYOND BORDERS.')
+  assert.equal(indonesian.leftTagline, 'ORANG · TEMPAT · GAGASAN · BUDAYA · MELAMPAUI BATAS.')
   assert.equal(loginErrorMessage('en', 'expired'), 'Your session has expired. Sign in again to continue.')
   assert.equal(loginErrorMessage('id', 'expired'), 'Sesi Anda telah berakhir. Masuk kembali untuk melanjutkan.')
+})
+
+void test('auth layout renders the localized tagline from the shared login catalog', async () => {
+  const source = await import('node:fs/promises').then(({ readFile }) =>
+    readFile(new URL('../src/layouts/auth.tsx', import.meta.url), 'utf8'),
+  )
+  assert.match(source, /\{copy\.leftTagline\}/)
+  assert.doesNotMatch(source, /PEOPLE · PLACES · IDEAS · CULTURES · BEYOND BORDERS\./)
 })
 
 void test('only stable known error codes select localized login notices', () => {

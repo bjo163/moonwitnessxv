@@ -1,0 +1,31 @@
+# M05-18 / M05-19 App Factory worktree evidence
+
+**State:** implementation evidence in shared worktree; neither task is closed. The repository requires an exact integrated SHA and CI evidence before TODO closure. Baseline HEAD observed: `bb751262d9ae215620acc634998fb63ab6e4b887` (`dev`, equal to `origin/dev` at inspection). No result SHA exists yet.
+
+**Revalidation:** branch HEAD and `origin/dev` later advanced together to `2a3aaf16a19a01264de6f1cab4079a1ea65f6cec` through unrelated UI/Dock integration commits. App Factory changes remain uncommitted. At this current worktree state, `pnpm exec node --test test/app-factory/app-create.test.mjs` passed 19/19 and scoped ESLint passed; the Vite + Chromium smoke is also rerun successfully. GitHub returned no status checks or workflow runs for `2a3aaf16…`.
+
+## M05-18 — collision-safe CLI
+
+- Changed `scripts/app-create.mjs` to create every planned file exclusively (`wx`) after creating a new destination directory. If any creation fails, the factory removes only that newly created app directory, avoiding partial output and avoiding overwriting a concurrent file.
+- Focused positive and negative evidence: `pnpm exec node --test test/app-factory/app-create.test.mjs` — 19 passed, 0 failed. Covers deterministic dry-run, a valid write, invalid/traversal/reserved/existing names, no-write behavior, worker behavior, and a simulated partial-write race. During the latter, the factory's own file was removed while a concurrently added `concurrent.txt` remained intact.
+- Scoped lint: `pnpm exec eslint scripts/app-create.mjs test/app-factory/app-create.test.mjs scripts/diagnostics/app-factory-frontend-smoke.mjs` — passed.
+- The failure path now records created file descriptors and only unlinks files whose filesystem identity still matches this factory run; it removes directories only when they are empty. This avoids recursive deletion of files another process adds to the new app tree.
+- Reviewer residual: Node's portable path-based `unlink` leaves a narrow lstat/unlink race if another process replaces a just-created file in that interval; the injected concurrent-add case passes, but this API does not provide atomic unlink-by-inode. No recursive removal is used.
+- Existing working changes include frontend-template implementation for dependent M05-19. The shared worktree is not a clean integrated M05-18-only result; therefore M05-18 remains open pending task-boundary review, exact result SHA and CI.
+- Rollback: revert the App Factory and its test changes as a reviewed set; no generated app was written into the repository.
+
+## M05-19 — frontend skeleton
+
+- Template inherits the shared `@moonwitness/core` locale contract and `@moonwitness/moonui`; emits id/en catalogs, selector, locale-prefixed route matching, navigation labels, accessibility state, and package scripts.
+- Generated frontend manifest includes `test` (`tsx --test test/**/*.test.ts`) and the matching `tsx` dev dependency so route fixtures are runnable in the generated app.
+- Corrected route buttons to update URL/history and respond to `popstate`; guarded persisted locale reads against storage exceptions; added a generated route test fixture outside `src`.
+- Focused factory fixture check above runs `tsc --noEmit` on generated app TypeScript/TSX. This is a repository harness using installed workspace declarations, not a standalone install or Vite production build.
+- `pnpm --filter @moonwitness/moonui build` — passed. `pnpm --filter @moonwitness/core build` — passed. `pnpm ui:check` — 112 files, 0 violations.
+- `pnpm exec node scripts/diagnostics/app-factory-frontend-smoke.mjs` — output: `Generated Vite build and browser navigation/locale checks passed.`
+- `scripts/diagnostics/app-factory-frontend-smoke.mjs` creates a temporary generated app, links already installed workspace/runtime packages, runs the real Vite production build, executes the generated route fixture, serves the output, and uses headless Chromium to exercise keyboard activation of `/en/about`, locale switch to `/id/about`, accessible navigation labels/`aria-current`, and browser back/forward. Back/forward assertions also confirm the selector, nav label, and current-page state resynchronize. Result: `Generated Vite build and browser navigation/locale checks passed.` The browser produced no page errors.
+- **Not yet proved:** frozen installation from a clean workspace/lockfile and exact-SHA CI. Keep M05-19 open until integrated evidence passes. (Frozen installation belongs to downstream M05-21.)
+- Rollback: remove only a generated temporary fixture; no app was generated into the repository.
+
+## Shared changes touched for this work
+
+`scripts/app-create.mjs`, `test/app-factory/app-create.test.mjs`, `scripts/diagnostics/app-factory-frontend-smoke.mjs`, and this evidence report. The worktree has unrelated changes from concurrent task work; no staging, commit, TODO closure, or destructive cleanup was performed.

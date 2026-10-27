@@ -1,6 +1,6 @@
 # LUMEN — Agent Framework and Runtime Boundary
 
-**Status:** PROPOSED architecture; pending ADR-0010 ratification.  
+**Status:** ACCEPTED architecture under ADR-0010 (ratified 27 October 2026); implementation remains planned under M41.  
 **Implementation:** not present. Proposed delivery plan: [M41](../milestones/M41.md); [canonical task status](../../TODO.md).  
 **Research basis:** [LUMEN deep research](../research/LUMEN-framework-deep-research.md).
 
@@ -14,7 +14,7 @@ LUMEN is proposed as a MoonWitness-owned TypeScript agent framework whose core o
 - Language/toolchain: repository TypeScript conventions, Node.js `>=24 <25`, pnpm workspace.
 - Repository boundary: the current MoonWitness XV monorepo. No new GitHub repository is proposed in M41.
 
-“Standalone” means the proposed worker can be built and deployed as a separate process. It does not mean a second public Hub, database, identity provider or canonical task ledger. However, the existing Master Vision wording says orchestration should extend ARSY rather than create another runtime. M41-01 must explicitly ratify the narrower interpretation that a worker-only process is permitted; otherwise defer `apps/lumen-runtime` and keep LUMEN as a package until a later decision. No code may assume this conflict is already resolved.
+“Standalone” means the internal worker can be built and deployed as a separate process. It does not mean a second public Hub, database, identity provider or canonical task ledger. The prior Master Vision tension regarding extending ARSY was explicitly resolved in M41-01 / ADR-0010 on 27 October 2026: a worker-only process is authorized under the strict condition that it owns no API/data authority, creates no database tables, and operates solely through canonical ARSY/M29 task contracts.
 
 ## Ownership boundaries
 
@@ -143,7 +143,7 @@ Trace/event IDs and timestamps must permit causal inspection; they do not replac
 ## Release gates
 
 M41 cannot declare a release until:
-1. ADR-0010 is accepted and M29 contracts are verified.
+1. ADR-0010 is ratified (accepted 27 October 2026) and M29 contracts are verified.
 2. Required ARSY compatibility gates for real claim/status/checkpoint integration have exact-SHA evidence.
 3. The package builds and runs isolated contract/unit tests; runtime has separate checks and safe shutdown.
 4. Positive and negative tests cover invalid transitions, denied tools, stale leases, duplicate delivery, timeouts, cancellation, retry classification, approval expiry and restart recovery.

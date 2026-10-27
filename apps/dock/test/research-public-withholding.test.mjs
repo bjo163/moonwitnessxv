@@ -7,11 +7,18 @@ import { getStatesCopy } from '../src/lib/states-copy.ts'
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const pageSource = readFileSync(resolve(appRoot, 'src/app/research/page.tsx'), 'utf8')
+const comparePageSource = readFileSync(resolve(appRoot, 'src/app/reader/compare/page.tsx'), 'utf8')
 
 test('M19-19 public Research page withholds raw records and renders the D08 notice', () => {
   assert.doesNotMatch(pageSource, /readResearchRegistry|ResearchExplorer|serverClient|\.model\(/)
   assert.doesNotMatch(pageSource, /research_(?:cases|frames|witnesses|hypotheses)/)
   assert.match(pageSource, /<Alert tone="hot">\{copy\.errorResearchUnavailable\}<\/Alert>/)
+})
+
+test('M19-19 comparative reader withholds unapproved inline text and self-asserted rights', () => {
+  assert.doesNotMatch(comparePageSource, /EDITIONS_QS_2_82|createPassageCitation|RIGHTS_CLEARED|textPayload/)
+  assert.doesNotMatch(comparePageSource, /وَٱلَّذِينَ|Adapun orang-orang yang beriman|Sahih International/)
+  assert.match(comparePageSource, /<Alert tone="hot">\{copy\.errorResearchUnavailable\}<\/Alert>/)
 })
 
 test('M19-19 withholding notice is explicit and localized in both supported languages', () => {

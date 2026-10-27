@@ -1,10 +1,10 @@
 # ADR-0010 — LUMEN Agent Framework and Worker Boundary
 
-- **Status:** PROPOSED — pending explicit owner ratification.
+- **Status:** ACCEPTED — owner ratification, 27 October 2026.
 - **Date:** 2026-10-27.
-- **Scope:** Proposed framework package and internal worker runtime inside MoonWitness XV.
+- **Scope:** Framework package and internal worker runtime inside MoonWitness XV.
 - **Research:** [LUMEN deep research](../research/LUMEN-framework-deep-research.md).
-- **Architecture draft:** [LUMEN contract](../architecture/LUMEN.md).
+- **Architecture specification:** [LUMEN contract](../architecture/LUMEN.md).
 - **Task plan:** [M41](../milestones/M41.md).
 
 ## 1. Context
@@ -13,14 +13,14 @@ MoonWitness XV needs a framework-owned execution layer if it is to support inspe
 
 The architectural challenge is to create a framework that can be tested and used independently without duplicating the XV Hub, identity, model routing, canonical task status or data ownership. Reliability and security are more important than maximizing the number of agent features in the first release.
 
-**Existing-vision tension that must be explicitly resolved:** the Master Vision Narrative previously says that future orchestration should extend ARSY rather than create another runtime. This proposal interprets that boundary as forbidding a second general-purpose/public Hub, while allowing a worker-only process that owns no API/data authority. That interpretation is not automatic and must be ratified in M41-01. If the owner intends to forbid any separate worker process, revise M41 to deliver the framework package only and defer `apps/lumen-runtime` until a later explicit decision.
+**Existing-vision tension resolved by owner ratification:** the Master Vision Narrative previously stated that future orchestration should extend ARSY rather than create another runtime. On 27 October 2026, the owner explicitly ratified the architectural boundary under M41-01: this tension is resolved by strictly interpreting the boundary as forbidding a second general-purpose or public Hub, while authorizing an internal worker-only process (`apps/lumen-runtime`) paired with the framework package (`packages/lumen`). The worker owns no API/data authority, exposes no public task API, creates no database tables, and claims/executes runs solely via canonical ARSY/M29 contracts.
 
-## 2. Proposed decision
+## 2. Decision
 
-Subject to owner ratification:
+Ratified by owner:
 
 1. Name the framework **LUMEN**, package **@moonwitness/lumen**, at **packages/lumen**.
-2. Conditionally add a separately runnable internal worker application **apps/lumen-runtime**, package **@moonwitness/lumen-runtime**, only if M41-01 explicitly ratifies the worker-process interpretation above. Both remain in the current monorepo initially.
+2. Add a separately runnable internal worker application **apps/lumen-runtime**, package **@moonwitness/lumen-runtime**, explicitly authorized under the worker-process interpretation above. Both remain in the current monorepo initially.
 3. Build the framework's agent loop, tool contracts/registry/policy hooks, bounded step runner, lifecycle and developer-facing API in TypeScript from scratch.
 4. Keep ARSY as the single API/identity/authorization and canonical run/task-state owner. The runtime only claims and executes authorized work through accepted ARSY/M29 contracts; LUMEN creates no database tables or direct PostgreSQL connection.
 5. Keep AI Gateway as the single model/provider routing authority. LUMEN must not bypass it or own provider credentials/catalog.
@@ -71,6 +71,6 @@ Subject to owner ratification:
 
 ## 6. Ratification and implementation conditions
 
-This ADR remains **PROPOSED** until explicitly accepted by the owner. M41-01 must explicitly resolve the prior Master Vision statement about extending ARSY rather than creating another runtime. The owner may accept the worker-only process boundary or amend the proposal to package-only; documents must agree with the recorded choice before M41 implementation continues. Before live runtime integration, complete the relevant M29 lease/handoff contracts and M28 ARSY compatibility gates. The M41 tasks must use isolated test adapters before those gates are met and must not claim production behavior early.
+**Status: ACCEPTED — owner ratification, 27 October 2026.** Under M41-01, the owner explicitly accepted the worker-only process boundary alongside the framework package, resolving the prior Master Vision statement. Acceptance records an architecture decision only; it does not prove implementation or deployment, and does not authorize code without satisfying the entry gates. Before live runtime integration, complete the relevant M29 lease/handoff contracts (M29-02, M29-05) and M28 ARSY compatibility gates (M28-13, M28-14). M41 implementation leaves must proceed in dependency order using isolated test adapters before live gates are met.
 
-This proposal does not create LUMEN code, a new service, a database migration or deployment. The sole task register remains [TODO.md](../../TODO.md).
+This ratification does not create LUMEN code, a new service, a database migration or deployment. The sole task register remains [TODO.md](../../TODO.md).

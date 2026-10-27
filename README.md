@@ -3,12 +3,12 @@
 
 ## MoonWitness XV — master program documents
 
-**Low-context AI docs:** [Master Design](MASTER_DESIGN.md) · [Architecture](docs/architecture/README.md) · [AI execution contract](docs/planning/AI_EXECUTION_CONTRACT.md). Several milestone scopes remain planning-only. SKYLINK and ECHOLOG have bounded implementations with integration/release gates still open; ORBIT is accepted but planned; LUMEN remains proposed under ADR-0010/M41. Do not equate a directory or passing unit tests with production certification.
+**Low-context AI docs:** [Master Design](MASTER_DESIGN.md) · [Architecture](docs/architecture/README.md) · [AI execution contract](docs/planning/AI_EXECUTION_CONTRACT.md). Several milestone scopes remain planning-only. SKYLINK and ECHOLOG have bounded implementations with integration/release gates still open; ORBIT is accepted but planned; LUMEN architecture is accepted under ADR-0010 (M41) while implementation remains planned. Do not equate a directory or passing unit tests with production certification.
 
 
 **Official XV planning flow:** [Master Vision Narrative](docs/vision/MASTER_VISION_NARRATIVE_XV.md) → [MASTER BLUEPRINT](BLUEPRINT.md) → [MASTER TODO / 42 milestones and 360 unique task IDs](TODO.md). **New unified MoonWitness work belongs in this repository only.** Earlier MoonWitness, Corpus, A-L-L-A-H, Empire and Rocksoul repositories remain historical/source references or individually reviewed import candidates.
 
-**LUMEN proposal (M41):** a TypeScript agent framework package plus an internal worker application is documented in [deep research](docs/research/LUMEN-framework-deep-research.md), [architecture](docs/architecture/LUMEN.md) and [proposed ADR-0010](docs/decisions/ADR-0010-lumen-agent-runtime.md). It is not yet accepted or implemented; ARSY remains the only Hub and canonical run-state owner.
+**LUMEN architecture (M41):** a TypeScript agent framework package plus an internal worker application is documented in [deep research](docs/research/LUMEN-framework-deep-research.md), [architecture](docs/architecture/LUMEN.md) and [accepted ADR-0010](docs/decisions/ADR-0010-lumen-agent-runtime.md). Architectural boundary accepted 27 October 2026; code/service creation remains planned under M41 gates. ARSY remains the only Hub and canonical run-state owner.
 
 **Accepted naming decision:** ARSY is the single existing Fastify + MoonQL Hub, and the in-place move to `apps/arsy` / `@moonwitness/arsy` is present on `dev`. M28-13/M28-14 regression, integration, Docker and release evidence remain open; the path move is not a production certification. Radio stations/schedule/listening remain the **SIGNAL/RADIO** domain in the same service. No duplicate Fastify Hub is allowed; keep port 3000 and `/api/v1` compatible. See [ADR-0001](docs/decisions/ADR-0001-arsy-is-xv-hub.md) and [M28](TODO.md#m28--arsy-hub-rename-and-compatibility-migration).
 
@@ -33,7 +33,7 @@ Current application surfaces and accepted planned targets:
 | **`@moonwitness/skylink`** (M38) | 3005 by default (local) | Bounded REST/WebSocket control plane and provider adapters; ARSY integration, operator UI and final e2e gates remain open; D18, not a second Hub |
 | **`@moonwitness/echolog`** (M39) | 3006 by default (local) | Filesystem content-addressed storage and bounded S3-compatible subset; consumer UI/final e2e gates remain open; D19, no tables |
 | **ORBIT** (M40; proposed app) | not reserved | Planned spatial frontend; 3D plus accessible 2D, no backend/domain owner |
-| **LUMEN Runtime** (M41; proposed app) | not reserved | Proposed internal worker paired with `@moonwitness/lumen`; no public task API, database, identity or model-routing owner; ADR-0010 pending |
+| **LUMEN Runtime** (M41; planned app) | not reserved | Planned internal worker paired with `@moonwitness/lumen`; no public task API, database, identity or model-routing owner; ADR-0010 accepted |
 
 The hub behind everything:
 

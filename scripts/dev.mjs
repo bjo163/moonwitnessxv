@@ -20,7 +20,7 @@ import { createInterface } from 'node:readline'
 import { appendFileSync, existsSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { waitForPortsFree } from './port-utils.mjs'
+import { resolveHubPort, waitForPortsFree } from './port-utils.mjs'
 
 const repoRoot = dirname(dirname(fileURLToPath(import.meta.url)))
 const LOG_FILE = join(repoRoot, 'dev-errors.log')
@@ -52,7 +52,9 @@ const APPS = [
   {
     tag: 'arsy',
     pkg: '@moonwitness/arsy',
-    port: Number(process.env.RADIO_PORT ?? 3000),
+    // same documented alias rule the hub uses (ARSY_PORT -> RADIO_PORT -> PORT);
+    // otherwise the runner would pre-flight a port the hub never binds
+    port: resolveHubPort(process.env, 3000),
     color: ANSI.boldCyan,
     name: 'ARSY Hub · Radio/SIGNAL Core & ORM',
     url: 'http://localhost:3000',
@@ -112,6 +114,16 @@ const APPS = [
     name: 'ECHOLOG Storage Service',
     url: 'http://localhost:3006/health',
     desc: 'Health-only D19 service skeleton; storage driver remains unconfigured',
+  },
+  {
+    tag: 'orbit',
+    pkg: '@moonwitness/orbit',
+    port: 3007,
+    env: { ORBIT_PORT: '3007' },
+    color: ANSI.boldCyan,
+    name: 'ORBIT · Spatial Agent Operations',
+    url: 'http://localhost:3007',
+    desc: 'Spatial 3D/2D agent operations frontend (simulated fixtures, ARSY read-only)',
   },
 ]
 
