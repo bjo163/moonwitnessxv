@@ -22,9 +22,15 @@ body {
   align-items: center;
   justify-content: space-between;
   /* The brand band and the utility cluster share one row; the nav owns the next
-     row (see .dk-nav order/flex-wrap). Without wrapping, the 16 single-word nav
+     row (see .dk-nav order/flex-wrap). Without wrapping, the 15 single-word nav
      labels (one line = 1296px measured at 1440) cannot shrink, so everything to
-     their right is pushed past the viewport edge. */
+     their right is pushed past the viewport edge.
+     UI2-G05 no-clipping contract, measured on the running app in both locales:
+     the widest focusable header element sits at 1004px of a 1041px viewport,
+     1138px of 1200px, 1378px of 1440px and 1858px of 1920px, so no control is
+     ever cut between the desktop breakpoint (1040px, see below) and 1920px.
+     The header owns no `overflow-x` rule: a row of focusable controls must stay
+     visible, never be clipped by its own container. */
   flex-wrap: wrap;
   gap: 16px;
   padding: 12px 28px;
@@ -40,7 +46,10 @@ body {
   align-items: center;
   /* Placed last on the header's own row so the brand and the cluster keep their
      natural width; wraps internally as the safety net between 1041px and the
-     width where all 16 labels no longer share one line. */
+     width where all 15 labels no longer share one line. Measured: the band is
+     1296px wide (28 → 1324 at 1366px and above), so it resolves to two rows from
+     1041px up to 1280px and to one row from 1366px; either way its right edge
+     stays inside the viewport, so nothing is clipped. */
   order: 3;
   flex-wrap: wrap;
   min-width: 0;
@@ -694,6 +703,16 @@ body {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
+
+/* The drawer trigger. This rule and the one inside @media (max-width: 1040px)
+   below are the ONLY place the shell breakpoint is declared — the header
+   component used to repeat it in an inline <style> with `!important`, which gave
+   two owners for one breakpoint. Declared after `.dk-icon-btn` (which also sets
+   `display: grid`), so source order alone decides: hidden on the desktop row,
+   shown once the desktop `.dk-nav` is collapsed. */
+.dk-mobile-menu-toggle {
+  display: none;
+}
 .dk-mobile-drawer {
   position: fixed;
   top: 0;
@@ -752,6 +771,13 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+  }
+
+  /* One breakpoint, one owner: the drawer trigger appears exactly where the
+     desktop `.dk-nav` row stops fitting. Measured at 1024px the header is a
+     single 57px row and its widest focusable element ends at 1008px. */
+  .dk-mobile-menu-toggle {
+    display: grid;
   }
 
   .dk-mobile-drawer .dk-nav,

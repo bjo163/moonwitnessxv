@@ -314,20 +314,10 @@ export function SiteHeader({
           </LinkButton>
         </div>
       </div>
-
-      <style>{`
-        .dk-mobile-menu-toggle {
-          display: none;
-        }
-        @media (max-width: 1040px) {
-          .dk-header .dk-nav {
-            display: none !important;
-          }
-          .dk-mobile-menu-toggle {
-            display: grid !important;
-          }
-        }
-      `}</style>
+      {/* No breakpoint lives here. `globals.css` is the single owner of the
+          desktop/drawer switch (`.dk-nav` and `.dk-mobile-menu-toggle` inside the
+          1040px shell block) and of the header's no-clipping row wrapping; see
+          docs/audit/ui2-g05-shell-contract-47b89f4.md. */}
     </header>
   )
 }
