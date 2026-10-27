@@ -60,3 +60,11 @@ At the original worktree snapshot, the tests proved copy selection/error sanitiz
 - Independent read-only review at `35b26e8` found no blocker. M05-10 is checked.
 - No CI run exists for `35b26e8`. The latest observed run, `40467618850` at predecessor `2559b42`, failed repository-wide lint in unrelated Orbit and UI-harness files; it does not certify this task or the full branch. No live-Hub browser submission was run.
 - **Task decision:** localized login copy, safe known-code mapping, and anonymous/expired-session coverage satisfy the stated TODO acceptance. The missing packet and absent browser/CI evidence remain explicit limitations; neither is stated as an M19-20 blocking acceptance condition in the TODO row.
+
+## Integrated revalidation and closure
+
+- **Implementation SHA:** `39a7e2733509d88f5e9e56b13d85c4277d72edf9`. The M19-20 implementation paths are unchanged through integrated SHA `664cb082bafcfc52bf9e333911449af240a7813c` (`dev` and `main`).
+- At the integrated SHA, `pnpm --filter @moonwitness/arsy exec tsx --test ../../apps/headquarters/test/login-locale.test.ts ../../apps/headquarters/test/session-auth.test.ts` passed 10/10; the anonymous authz redirect test passed 1/1; HQ typecheck and scoped ESLint passed.
+- Exact-SHA full CI [40500018547](https://github.com/bjo163/moonwitnessxv/actions/runs/40500018547) passed and promoted `664cb08` to `main`. The prior failed CI noted above is superseded by this successful run.
+- Independent review at `664cb08` found no blocker. It confirmed the login-language subtree, safe error-code handling, and native form behavior satisfy the TODO acceptance. No live credentials or Hub login were used; that is not required by the TODO row.
+- **Closure:** M19-20 is verified at integrated SHA `664cb082bafcfc52bf9e333911449af240a7813c`. The outer HQ document's English `lang` remains a separately scoped shell concern.
