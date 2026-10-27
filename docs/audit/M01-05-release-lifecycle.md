@@ -3,8 +3,8 @@
 - **Updated:** 2026-10-27
 - **Baseline package version:** `1.0.0` (private root workspace)
 - **Implementation SHA:** `f8769f695a47408e2e11d7c293f74c4537dd85e1`.
-- **Gates and release-engine SHA:** recorded by the integrator when the change
-  described in §6 lands on `dev`.
+- **Gates and release-engine SHA:** `7c29877` on `dev`, with the hook-mode
+  follow-up `e8efe21` that also carries the `v1.0.0` baseline tag.
 - **Changelog:** [`CHANGELOG.md`](../../CHANGELOG.md)
 - **Repository:** [bjo163/moonwitnessxv](https://github.com/bjo163/moonwitnessxv)
 
@@ -123,7 +123,7 @@ the release step cannot deploy anything.
 - Focused policy check: package version/privacy, changelog structure, relative
   links, and absence of a publish script passed; `git diff --check` passed.
 
-## 6. Gate and release-engine evidence (2026-10-27, baseline `6b439b3`)
+## 6. Gate and release-engine evidence (2026-10-27, baseline `3639fb3`)
 
 Local gates, exercised against the real `.githooks/` wiring in a throwaway
 sandbox repository (`core.hooksPath` set, LF-pinned shims, `ui:check` stubbed so
@@ -160,8 +160,14 @@ Release engine (`scripts/release.mjs`), run in the sandbox against a seeded
   real repository still has zero tags and no release section.
 
 Unverified by this change: the `promote` job release step has not run on a GitHub
-hosted runner, and no tag or GitHub Release exists yet. Reporting them as shipped
-would require an observed CI run.
+hosted runner. The baseline tag `v1.0.0` was created at `e8efe21` and pushed to
+the remote, so the CI mode is armed for the next verified push; no automatic tag
+or GitHub Release has been published yet. The first push carrying these changes
+(`40427385056`) failed in `pnpm verify` on pre-existing lint errors in
+`apps/aigateway/test`, `packages/moonui/test`, and
+`packages/skylink-whatsapp/test`, so `promote` was skipped and `main` stayed
+where it was — the required-status gate did its job. Reporting a published
+release would need an observed green run.
 
 `eslint` on `scripts/release.mjs`, `scripts/setup-git-hooks.mjs`, and
 `scripts/git-hooks/` passed with `--max-warnings=0`; `pnpm ui:check` passed.
