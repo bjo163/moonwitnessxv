@@ -32,4 +32,16 @@ No secrets, private witness data, new domain owner, app API, task-status registe
 
 The integrator inspected the proposal, harness, and focused tests. An independent read-only reviewer inspected commit `8c2e219` and found no blocker; the owner ratified the contract in this conversation. Roll back only the four task files in commit `8c2e219` after confirming no dependent task used them; preserve unrelated worktree changes. The harness is an executable acceptance fixture, not atomic cross-process locking and must not be presented as a production lock system.
 
-**TODO status:** Reopened pending M29-01's integrated-SHA evidence. Historical artifact and owner ratification remain valid; rerun the harness after M29-01 closes before marking this task complete.
+**TODO status:** Evidence verified at source SHA `ab4409393dba448b5678bdb0f1ecb457a70c1672`; M29-02 closure is recorded in the current TODO update. M29-03 is eligible after this status update is integrated.
+
+## Integrated exact-SHA revalidation
+
+At `ab4409393dba448b5678bdb0f1ecb457a70c1672`, with M29-01 checked in the authoritative TODO:
+
+- `node --test test/planning/task-lease-contract-check.test.mjs test/planning/task-role-classification.test.mjs` — 6 passed, 0 failed, 0 skipped.
+- `pnpm exec eslint scripts/planning/task-lease-contract-check.mjs test/planning/task-lease-contract-check.test.mjs` — exit 0.
+- Scoped `git diff --check` — no whitespace errors.
+- The path table now names the actual M29-02 harness/spec/test/audit, M29-03 spec/validator/test/audit, and M29-04 fixture test/directory/audit. Tests assert exact path lists, verify M29-03 and M29-04 scopes do not overlap, and retain negative checks for duplicate claims, missing dependencies, and out-of-scope writes.
+- Independent reviewer confirmed path accuracy and lease lifecycle semantics at the committed change; reviewer did not run tests.
+
+No distributed lock service, network behavior, secret, deployment, or new status register was added. Roll back only the M29-02 contract harness and focused test change in commit `f32da87484ac78a92735121823a1b7b21cad47d0`; preserve all unrelated edits.

@@ -27,6 +27,6 @@ At `944f08d7f6fdf585448975617e673bda9995e62a`:
 
 The validator has no write, network, Git mutation, or publication behavior. It consumes an explicit repository-relative file inventory; incomplete inventories cannot prove links safe. It is not yet wired into a root/CI command; M29-04 owns invalid-fixture proof and workflow integration. Roll back only the validator spec, module, and test added by commits `142e56f` and `944f08d`; preserve all unrelated worktree changes.
 
-**Status:** Reopened pending M29-02 revalidation after M29-01 integration. The earlier exact-SHA test remains historical evidence; repeat it only after the predecessor is closed in TODO.
+**Status:** OPEN and eligible after M29-02 closure is recorded in TODO at source SHA `ab4409393dba448b5678bdb0f1ecb457a70c1672`. M29-03 itself remains unverified on that predecessor-integrated baseline; rerun its positive/negative validator evidence and obtain review before closure.
 
 **Next eligible task:** M29-04 after M29-03 is revalidated and closed.
