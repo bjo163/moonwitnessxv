@@ -9,8 +9,10 @@ import { SignatureV4 } from '@smithy/signature-v4'
 import type { HttpRequest } from '@smithy/types'
 import { test, type TestContext } from 'node:test'
 import { sha256Hex } from '@moonwitness/echolog-core'
+import { FsStorageDriver } from '@moonwitness/echolog-core'
 import { parseConfig } from '../src/config.js'
 import { createEchologServer } from '../src/server.js'
+import { FsS3KeyStore } from '../src/modules/s3/store.js'
 
 const BUCKET = 'echolog-test-bucket'
 const ACCESS_KEY = 'echolog-test-access-key'
@@ -40,7 +42,6 @@ async function setup(t: TestContext) {
     ECHOLOG_S3_ACCESS_KEY_ID: ACCESS_KEY,
     ECHOLOG_S3_SECRET_ACCESS_KEY: SECRET_KEY,
     ECHOLOG_MAX_UPLOAD_BYTES: '1048576',
-    ECHOLOG_ALLOWED_MIME_TYPES: 'application/octet-stream,text/plain',
   }, ['--port', String(port)])
   const app = createEchologServer(config)
   const endpoint = await app.listen({ host: '127.0.0.1', port })
@@ -91,6 +92,61 @@ void test('ECHOLOG serves path-style single-bucket S3 operations through the AWS
   await client.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }))
   const empty = await client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: 'backups/' }))
   assert.equal(empty.KeyCount, 0)
+})
+
+void test('ListObjectsV2 delimiter pages advance beyond a returned common prefix', async (t) => {
+  const { client } = await setup(t)
+  for (const key of ['pages/a/one.txt', 'pages/a/two.txt', 'pages/b/one.txt']) {
+    await client.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: Buffer.from(key), ContentType: 'application/octet-stream' }))
+  }
+  const first = await client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: 'pages/', Delimiter: '/', MaxKeys: 1 }))
+  assert.deepEqual(first.CommonPrefixes?.map(({ Prefix }) => Prefix), ['pages/a/'])
+  assert.equal(first.IsTruncated, true)
+  assert.ok(first.NextContinuationToken)
+  const second = await client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: 'pages/', Delimiter: '/', MaxKeys: 1, ContinuationToken: first.NextContinuationToken }))
+  assert.deepEqual(second.CommonPrefixes?.map(({ Prefix }) => Prefix), ['pages/b/'])
+  assert.notEqual(second.NextContinuationToken, first.NextContinuationToken)
+})
+
+void test('S3 namespace publication and GC serialize so concurrent uploads remain readable', async (t) => {
+  const root = await mkdtemp(join(tmpdir(), 'echolog-s3-gc-'))
+  t.after(async () => rm(root, { recursive: true, force: true }))
+  const driver = new FsStorageDriver({ root, quotaBytes: 1024 * 1024 })
+  const keys = new FsS3KeyStore({ root, driver })
+  await Promise.all([keys.ready(), driver.ready()])
+  const payloads = Array.from({ length: 12 }, (_, index) => Buffer.from(`published during collection ${index}`))
+  await Promise.all(payloads.flatMap((payload, index) => [
+    keys.put(`gc/concurrent-${index}.bin`, payload, 'application/octet-stream'),
+    keys.collect(new Date(Date.now() + 1000)),
+  ]))
+  for (const [index, payload] of payloads.entries()) {
+    const result = await keys.get(`gc/concurrent-${index}.bin`)
+    assert.ok(result)
+    assert.deepEqual(Buffer.from(result.bytes), payload)
+  }
+})
+
+void test('S3 rejects unsupported operations and untrusted or oversized bodies before persistence', async (t) => {
+  const { endpoint, root } = await setup(t)
+  for (const suffix of ['?acl', '?versionId=abc', '?delete']) {
+    const response = await signedPut(endpoint, `/${BUCKET}/query-rejected${suffix}`, Buffer.from('must not persist'))
+    assert.equal(response.status, 501)
+    assert.match(response.text, /NotImplemented/)
+  }
+  const tampered = await signedPut(endpoint, `/${BUCKET}/query-rejected-tampered`, Buffer.from('signed bytes'), Buffer.from('changed bytes'))
+  assert.equal(tampered.status, 403)
+  assert.match(tampered.text, /SignatureDoesNotMatch/)
+  const postPayload = Buffer.from('POST body must not be stored')
+  const post = await signedPut(endpoint, `/${BUCKET}/unsupported-post`, postPayload, postPayload, 'POST')
+  assert.equal(post.status, 501)
+  assert.match(post.text, /NotImplemented/)
+  const oversizedPayload = Buffer.alloc(1024 * 1024 + 1, 0x7a)
+  const oversized = await signedPut(endpoint, `/${BUCKET}/oversized`, oversizedPayload)
+  assert.equal(oversized.status, 413)
+  assert.match(oversized.text, /EntityTooLarge/)
+  assert.deepEqual(await findMarker(root, 'must not persist'), [])
+  assert.deepEqual(await findMarker(root, 'POST body must not be stored'), [])
+  assert.deepEqual(await findMarker(root, 'z'.repeat(32)), [])
 })
 
 void test('ECHOLOG rejects bad signatures, stale dates, traversal paths and unsupported multipart without writing', async (t) => {
@@ -162,8 +218,17 @@ void test('ECHOLOG rejects bad signatures, stale dates, traversal paths and unsu
  * PUT a payload to an exact raw request target (no URL normalisation) with a valid SigV4
  * header signature, so server-side path validation is what decides the outcome.
  */
-async function signedPut(endpoint: string, rawPath: string, body: Buffer): Promise<{ status: number; text: string }> {
+async function signedPut(endpoint: string, rawPath: string, body: Buffer, transmittedBody = body, method = 'PUT'): Promise<{ status: number; text: string }> {
   const url = new URL(endpoint)
+  const target = new URL(rawPath, endpoint)
+  const rawTargetPath = rawPath.split('?', 1)[0] ?? rawPath
+  const query: Record<string, string | string[]> = {}
+  for (const [name, value] of target.searchParams) {
+    const current = query[name]
+    if (current === undefined) query[name] = value
+    else if (Array.isArray(current)) current.push(value)
+    else query[name] = [current, value]
+  }
   const signer = new SignatureV4({
     credentials: { accessKeyId: ACCESS_KEY, secretAccessKey: SECRET_KEY },
     region: REGION,
@@ -175,9 +240,9 @@ async function signedPut(endpoint: string, rawPath: string, body: Buffer): Promi
     protocol: url.protocol,
     hostname: url.hostname,
     port: Number(url.port),
-    method: 'PUT',
-    path: rawPath,
-    query: {},
+    method,
+    path: rawTargetPath,
+    query,
     headers: {
       host: url.host,
       'content-type': 'application/octet-stream',
@@ -188,7 +253,7 @@ async function signedPut(endpoint: string, rawPath: string, body: Buffer): Promi
   const signed = await signer.sign(request, { signingDate: new Date() })
   return await new Promise((resolve, reject) => {
     const outbound = httpRequest(
-      { host: url.hostname, port: Number(url.port), method: 'PUT', path: rawPath, headers: signed.headers },
+      { host: url.hostname, port: Number(url.port), method, path: rawPath, headers: signed.headers },
       (response) => {
         const chunks: Buffer[] = []
         response.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
@@ -196,7 +261,7 @@ async function signedPut(endpoint: string, rawPath: string, body: Buffer): Promi
       },
     )
     outbound.on('error', reject)
-    outbound.end(body)
+    outbound.end(transmittedBody)
   })
 }
 

@@ -53,7 +53,7 @@ export function registerObjectRoutes(
 
   const driver = new FsStorageDriver({ root: config.storageRoot, quotaBytes: config.storageQuotaBytes })
   const s3Keys = new FsS3KeyStore({ root: config.storageRoot, driver })
-  const objects = createObjectService(driver, () => s3Keys.referencedObjectKeys())
+  const objects = createObjectService(driver, (at) => s3Keys.collect(at))
   const authenticate = createEchologAuthenticator({
     arsyUrl: config.arsyUrl,
     serviceKey: config.serviceKey,

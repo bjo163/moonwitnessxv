@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { resolve } from 'node:path'
 
 const DEFAULT_MIME_TYPES = [
+  'application/octet-stream',
   'application/pdf',
   'application/zip',
   'audio/flac',

@@ -1,9 +1,13 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import { sha256Hex } from '@moonwitness/echolog-core'
 import type { EchologConfig } from '../../config.js'
 import { S3KeyConflictError, S3ObjectNotFoundError, validateObjectKey, type FsS3KeyStore } from './store.js'
 import { isSafeRawPath, verifyS3Request } from './sigv4.js'
+import { createUploadLimiter } from './upload-limiter.js'
 
 const DEFAULT_MAX_KEYS = 1000
+const MAX_BUFFERED_UPLOADS = 4
+const withUploadSlot = createUploadLimiter(MAX_BUFFERED_UPLOADS)
 
 export function registerS3Routes(app: FastifyInstance, config: EchologConfig, store: FsS3KeyStore, now = () => Date.now()): void {
   if (!config.s3Bucket || !config.s3AccessKeyId || !config.s3SecretAccessKey) return
@@ -11,12 +15,16 @@ export function registerS3Routes(app: FastifyInstance, config: EchologConfig, st
   app.route({
     method: ['GET', 'HEAD', 'PUT', 'POST', 'DELETE'],
     url: bucket,
-    handler: async (request, reply) => handleS3Request(request, reply, config, store, now, null),
+    handler: async (request, reply) => request.method === 'PUT'
+      ? withUploadSlot(() => handleS3Request(request, reply, config, store, now, null))
+      : handleS3Request(request, reply, config, store, now, null),
   })
   app.route({
     method: ['GET', 'HEAD', 'PUT', 'POST', 'DELETE'],
     url: `${bucket}/*`,
-    handler: async (request, reply) => handleS3Request(request, reply, config, store, now, getRawObjectKey(request, config.s3Bucket)),
+    handler: async (request, reply) => request.method === 'PUT'
+      ? withUploadSlot(() => handleS3Request(request, reply, config, store, now, getRawObjectKey(request, config.s3Bucket)))
+      : handleS3Request(request, reply, config, store, now, getRawObjectKey(request, config.s3Bucket)),
   })
 }
 
@@ -35,15 +43,17 @@ async function handleS3Request(
     return sendError(reply, 400, 'InvalidObjectName', 'The object key is invalid.', resource)
   }
 
-  let payload: Uint8Array
-  try {
-    payload = await readPayload(request.body, config.maxUploadBytes)
-  } catch (error) {
-    const message = error instanceof Error ? error.message : ''
-    return sendError(reply, 413, 'EntityTooLarge', message || 'Object exceeds the configured size limit.', resource)
+  const query = new URL(resource, 'http://echolog.invalid').searchParams
+  const listQuery = key === null && request.method === 'GET'
+  const allowedQuery = listQuery
+    ? new Set(['list-type', 'prefix', 'delimiter', 'max-keys', 'continuation-token', 'start-after', 'x-id'])
+    : new Set(request.method === 'PUT' ? ['x-id'] : request.method === 'GET' ? ['x-id'] : request.method === 'HEAD' ? ['x-id'] : request.method === 'DELETE' ? ['x-id'] : [])
+  const expectedOperation = listQuery ? 'ListObjectsV2' : request.method === 'PUT' ? 'PutObject' : request.method === 'GET' ? 'GetObject' : request.method === 'HEAD' ? (key === null ? 'HeadBucket' : 'HeadObject') : request.method === 'DELETE' ? 'DeleteObject' : null
+  if ([...query.keys()].some((name) => !allowedQuery.has(name)) || (query.has('x-id') && query.getAll('x-id').some((value) => value !== expectedOperation))) {
+    return sendError(reply, 501, 'NotImplemented', 'This S3 query operation is not supported.', resource)
   }
 
-  const authFailure = await verifyS3Request(request, payload, {
+  const authFailure = await verifyS3Request(request, {
     accessKeyId: config.s3AccessKeyId,
     secretAccessKey: config.s3SecretAccessKey,
     region: config.s3Region,
@@ -53,6 +63,26 @@ async function handleS3Request(
     if (authFailure === 'stale') return sendError(reply, 403, 'RequestTimeTooSkewed', 'The request date is outside the accepted window.', resource)
     if (authFailure === 'unsafe-path') return sendError(reply, 400, 'InvalidObjectName', 'The object key is invalid.', resource)
     if (authFailure === 'unsupported') return sendError(reply, 501, 'NotImplemented', 'This S3 authentication mode is not supported.', resource)
+    return sendError(reply, 403, 'SignatureDoesNotMatch', 'The request signature is invalid.', resource)
+  }
+
+  if (request.method === 'POST') {
+    return sendError(reply, 501, 'NotImplemented', 'Browser POST uploads and this operation are not supported.', resource)
+  }
+
+  let payload: Uint8Array
+  try {
+    // Each active S3 request can retain chunk buffers and one contiguous copy. Four slots
+    // bound that transient body memory to at most 8 * maxUploadBytes across handlers.
+    payload = request.method === 'PUT' || request.method === 'POST'
+      ? await readPayload(request.body, config.maxUploadBytes)
+      : new Uint8Array()
+  } catch (error) {
+    const message = error instanceof Error ? error.message : ''
+    return sendError(reply, 413, 'EntityTooLarge', message || 'Object exceeds the configured size limit.', resource)
+  }
+
+  if (await sha256Hex(payload) !== oneHeader(request.headers['x-amz-content-sha256'])) {
     return sendError(reply, 403, 'SignatureDoesNotMatch', 'The request signature is invalid.', resource)
   }
 
@@ -127,17 +157,6 @@ async function handleS3Request(
     }
   }
 
-  if (request.method === 'POST') {
-    const query = new URL(resource, 'http://echolog.invalid').searchParams
-    if (query.has('uploads') || query.has('uploadId') || query.has('partNumber')) {
-      return sendError(reply, 501, 'NotImplemented', 'Multipart uploads are not supported by ECHOLOG.', resource)
-    }
-    if (query.has('delete')) {
-      return sendError(reply, 501, 'NotImplemented', 'Batch delete is not supported by ECHOLOG.', resource)
-    }
-    return sendError(reply, 501, 'NotImplemented', 'Browser POST uploads and this operation are not supported.', resource)
-  }
-
   return sendError(reply, 501, 'NotImplemented', 'This S3 operation is not supported.', resource)
 }
 
@@ -188,7 +207,9 @@ async function listObjects(
   ].sort((left, right) => left.key.localeCompare(right.key, 'en'))
   const page = merged.slice(0, maxKeys)
   const truncated = merged.length > page.length
-  const nextToken = truncated && page.length > 0 ? Buffer.from(page[page.length - 1]?.key ?? '').toString('base64url') : null
+  const lastPageKey = page[page.length - 1]?.key
+  const nextAfter = lastPageKey && commonPrefixes.has(lastPageKey) ? `${lastPageKey}\uffff` : lastPageKey
+  const nextToken = truncated && nextAfter ? Buffer.from(nextAfter).toString('base64url') : null
   const xml = `<?xml version="1.0" encoding="UTF-8"?><ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>${xmlEscape(bucket)}</Name><Prefix>${xmlEscape(prefix)}</Prefix><KeyCount>${page.length}</KeyCount><MaxKeys>${maxKeys}</MaxKeys><IsTruncated>${truncated}</IsTruncated>${page.map(({ record }) => record ? `<Contents><Key>${xmlEscape(record.key)}</Key><LastModified>${xmlEscape(new Date(record.last_modified).toISOString())}</LastModified><ETag>&quot;${xmlEscape(record.etag)}&quot;</ETag><Size>${record.size}</Size><StorageClass>STANDARD</StorageClass></Contents>` : '').join('')}${[...commonPrefixes].filter((value) => page.some((item) => item.key === value)).map((value) => `<CommonPrefixes><Prefix>${xmlEscape(value)}</Prefix></CommonPrefixes>`).join('')}${nextToken ? `<NextContinuationToken>${nextToken}</NextContinuationToken>` : ''}</ListBucketResult>`
   return reply.code(200).type('application/xml').header('x-amz-bucket-region', region).send(xml)
 }

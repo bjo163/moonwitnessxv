@@ -141,6 +141,10 @@ export class FsS3KeyStore {
     return new Set((await this.list()).map((record) => record.object_key))
   }
 
+  async collect(at?: Date) {
+    return this.serialized(async () => this.driver.gc(at, await this.referencedObjectKeys()))
+  }
+
   private async readRecord(key: string): Promise<S3KeyRecord | null> {
     const path = this.recordPath(key)
     try {

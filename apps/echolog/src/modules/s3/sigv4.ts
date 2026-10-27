@@ -1,7 +1,6 @@
 import { SignatureV4 } from '@smithy/signature-v4'
 import type { HttpRequest } from '@smithy/types'
 import type { FastifyRequest } from 'fastify'
-import { sha256Hex } from '@moonwitness/echolog-core'
 
 type HashInput = string | ArrayBuffer | ArrayBufferView
 
@@ -41,7 +40,6 @@ export type S3AuthFailure = 'missing' | 'invalid' | 'stale' | 'unsupported' | 'u
 /** Verify the supported SigV4 header-auth subset by re-signing with Smithy's implementation. */
 export async function verifyS3Request(
   request: FastifyRequest,
-  payload: Uint8Array,
   config: S3CredentialConfig,
   now = Date.now(),
 ): Promise<S3AuthFailure | null> {
@@ -60,7 +58,8 @@ export async function verifyS3Request(
   if (parsed.credentialDate !== dateHeader.slice(0, 8)) return 'invalid'
 
   // Only a signed payload is accepted: UNSIGNED-PAYLOAD and chunked modes fail the hex test.
-  if ((await sha256Hex(payload)) !== payloadHeader) return 'invalid'
+  // SigV4 authenticates the declared payload hash before the body is consumed. The route
+  // compares this value with the actual bytes after bounded buffering.
 
   const rawUrl = request.raw.url
   const host = oneHeader(request.headers.host)
@@ -111,7 +110,6 @@ export async function verifyS3Request(
     path: rawPath,
     query,
     headers: signedHeaders,
-    body: payload,
   }
   const signer = new SignatureV4({
     credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey },
