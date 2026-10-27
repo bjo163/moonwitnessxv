@@ -14,8 +14,10 @@
 | `apps/sentinel` | Worker/collector | Source collection is not publication authority. |
 | `apps/skylink` / `@moonwitness/skylink` | Accepted D18 Messages & Channels service | REST + WebSocket control plane and provider adapters exist; ARSY integration, operator UI, and end-to-end proof remain open (M38-12..14). |
 | `apps/echolog` / `@moonwitness/echolog` | Accepted D19 Object Storage & Attachments service | Filesystem-backed content-addressed objects and bounded S3-compatible subset exist; consumer/operator UI and final proof remain open (M39-11/12). Stateless: no tables. |
-| `apps/orbit` / `@moonwitness/orbit` | ORBIT spatial operations frontend (M40) | **Planned only; not created.** Independent frontend/build/deploy boundary; not a backend service and owns no domain/schema. |
-| `apps/lumen-runtime` / `@moonwitness/lumen-runtime` | Planned internal LUMEN worker process (M41; ADR-0010 accepted) | **Planned only; not created.** Executes runs through approved ARSY/M29 contracts; no public task API, database, identity, model routing or canonical state ownership. |
+| `apps/orbit` / `@moonwitness/orbit` | ORBIT spatial operations frontend (M40) | Frontend shell exists and runs on **simulated fixtures** at local port 3007; independent frontend/build/deploy boundary; not a backend service and owns no domain/schema. M40 implementation gates remain open. |
+| `apps/lumen-runtime` / `@moonwitness/lumen-runtime` | Internal LUMEN worker process (M41; ADR-0010 accepted) | Scaffold only: tests exist, **no dev server and no HTTP surface**; registered in `scripts/apps.registry.mjs` with `dev:false` so its absence is stated, not silent. No public task API, database, identity, model routing or canonical state ownership. |
+
+Runnability (dev server / worker / scaffold) and port assignment live in one place: [`scripts/apps.registry.mjs`](../../scripts/apps.registry.mjs). `pnpm apps` prints it, `scripts/dev.mjs` spawns it, `scripts/free-ports.mjs` frees it, and the Cockpit supervises the subset marked `supervised: true`. See [Dev processes](DEV_PROCESSES.md).
 
 ## ORBIT boundary
 
