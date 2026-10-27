@@ -69,6 +69,16 @@ Observed on a dirty working tree based on `0518f31d510c3fa7b12922eac4f33e6a8f3d1
 - `pnpm app:create --help` — exit 0 and printed the current variants/options. `pnpm app:create factory-docs-check --variant frontend --dry-run` — exit 0, listed the generated files under `apps/factory-docs-check/`; `Test-Path apps/factory-docs-check` returned `False`.
 - `git diff --check -- README.md BLUEPRINT.md docs/audit/M05-21-app-factory-workspace-worktree.md` — no whitespace errors in leased paths (Git emitted only the existing line-ending normalization notice for this audit file).
 
-The generator's file plan is confined to `apps/<slug>/`; current negative tests reject existing/reserved app names and check that scaffold templates do not add a Hub, database, public port, Docker/Compose, or supervisor wiring. The registry tests check that existing runnable apps have unique ports. This is not public-domain uniqueness or deployment evidence: the factory creates no domain/DNS records and no production route. Exact integrated-SHA revalidation and CI evidence are still required before M05-22 can be marked complete.
+The generator's file plan is confined to `apps/<slug>/`; current negative tests reject existing/reserved app names and check that scaffold templates do not add a Hub, database, public port, Docker/Compose, or supervisor wiring. The registry tests check that existing runnable apps have unique ports. This is not public-domain uniqueness or deployment evidence: the factory creates no domain/DNS records and no production route.
 
-These are documented commands and boundaries. Their results must be recorded from an actual run at the exact integrated SHA before M05-22 closes; documentation alone is not validation evidence.
+## M05-22 integrated exact-SHA verification
+
+Implementation/documentation SHA: `feb5d224ef3e2ce1b93d02a52f7424b761231fe9` on `dev`. The implementation commit changed only `README.md`, `BLUEPRINT.md`, and this audit. At that exact SHA:
+
+- The focused App Factory test command passed 28/28, including positive generation/dry-run and negative traversal, collision, reserved-name, and unsupported container mapping cases.
+- `pnpm exec node scripts/diagnostics/app-factory-workspace-smoke.mjs` exited 0; generated frontend and worker passed frozen install, typecheck/build/tests/lint, traversal was refused, and the unique temporary fixture was removed.
+- `pnpm app:create --help` exited 0; `pnpm app:create factory-docs-check --variant frontend --dry-run` exited 0 and listed the plan without creating `apps/factory-docs-check/`.
+- `git diff --check HEAD^ HEAD` reported no whitespace errors.
+- GitHub Actions run [40540433419](https://github.com/bjo163/moonwitnessxv/actions/runs/40540433419) completed successfully for this exact SHA; monorepo verification and guarded promotion passed. Remote `dev` and `main` both resolve to `feb5d224ef3e2ce1b93d02a52f7424b761231fe9`.
+
+The evidence establishes App Factory workspace ownership and a safe removal procedure; it does not claim public-domain/DNS uniqueness or a production deployment. No generated workspace was retained.
