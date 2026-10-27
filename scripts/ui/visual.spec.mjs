@@ -430,9 +430,18 @@ test('preflight · the spawned server answers and locale routing is middleware-d
   const bare = await request.get('/', { maxRedirects: 0, headers: { 'accept-language': 'id-ID,en;q=0.8' } })
   expect(bare.status(), 'GET / negotiates a locale instead of rendering a route segment').toBe(307)
   expect(new URL(bare.headers()['location'], BASE_URL).pathname).toBe('/id')
-  expect(await home.text(), 'the hub is the closed port the harness chose, so home must state the outage').toContain(
-    'Live station and schedule data is temporarily unavailable',
-  )
+  const homeText = await home.text()
+  const outageStated = homeText.includes('Live station and schedule data is temporarily unavailable')
+  if (HUB_MODE === 'offline-forced') {
+    expect(outageStated, 'the hub is the closed port the harness chose, so home must state the outage').toBe(true)
+  } else {
+    // In live mode the same sentence would mean the hub never answered, which
+    // invalidates every screenshot below — fail loudly instead of capturing it.
+    expect(
+      outageStated,
+      `home fell back to the outage notice although UI_HUB_URL points at a reachable hub (${OFFLINE_HUB_URL}); the live branch is not being measured`,
+    ).toBe(false)
+  }
 })
 
 test.describe('screens at every breakpoint, both locales', () => {
