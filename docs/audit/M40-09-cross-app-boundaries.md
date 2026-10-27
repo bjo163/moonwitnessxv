@@ -12,9 +12,9 @@ The shared worktree carried 78 paths of other sessions' uncommitted work at base
 `apps/orbit/src/lib/queues/operational-queues.ts`, `apps/orbit/test/orbit-queues-inspectors.test.mjs`
 (their reopened M40-07 fix), `apps/arsy/src/app.ts`, `apps/arsy/src/fastify.d.ts`,
 `apps/arsy/src/modules/channels/index.ts`, six `apps/dock` files, `apps/skylink/src/modules/routes.ts`
-and `docs/audit/screens/*`. None of them was staged, edited or committed here. §3 was therefore
-re-run in a clean checkout of the resulting commit (§6) so that the numbers below are attributable
-to this change alone rather than to the mixed tree.
+and `docs/audit/screens/*`. None of them was staged, edited or committed here. The §3 numbers were
+taken in that shared tree, so §3.8 re-runs the suite in a clean checkout of the resulting commit;
+that re-run is where a line-ending defect in the source-contract assertions surfaced and was fixed.
 
 ## 2. Claimed vs actual files
 
@@ -155,6 +155,30 @@ present in the shared worktree and breaks the combined artifact, so a failure th
 attributable to ORBIT. ORBIT's independent buildability — which is the actual M40-09 requirement — is
 proven in §3.4 by the standalone `pnpm --filter @moonwitness/orbit build`.
 
+## 3.8 Clean-checkout re-run, and the CRLF defect it found
+
+`git worktree add --detach <temp> 93985d5` with `node_modules` junctioned from the primary
+worktree, then `node --test test/*.test.mjs` inside `<temp>/apps/orbit`:
+
+```
+first run : ℹ tests 83  ℹ pass 81  ℹ fail 2
+              ✖ M40-08: every projected state carries the server-validated review surface
+                AssertionError: missing handoff surface wiring: reviewSurface,
+fixed run : ℹ tests 83  ℹ pass 83  ℹ fail 0
+```
+
+The failure was real and not environmental noise. Git stores these files with LF and a Windows
+checkout materialises CRLF — `file` reported `JavaScript source, ASCII text, with CRLF line
+terminators`, 282 CRLF pairs in `arsy-runtime-client.ts` — while the M40-08 wiring assertion
+searched for the literal `'reviewSurface,\n      })'`. So the suite proved nothing about a fresh
+clone or CI until the reads were normalized. Fix: `read()` in
+`test/orbit-approval-handoff.test.mjs` and `test/orbit-cross-app-boundaries.test.mjs` normalizes
+`\r\n`, and `parseEnvFile` splits on normalized text so a CRLF `.env` cannot silently shorten a
+value. No source file changed. The second failure in the first run was the bundle scan, which
+self-skips without `ORBIT_SCAN_BUNDLE=1` and an artifact (§6).
+
+`git worktree remove --force` after the run; no other worktree was touched.
+
 ## 4. DoD matrix
 
 | Definition of done | Evidence | Claim status |
@@ -188,12 +212,17 @@ is involved; ORBIT keeps rendering because `reviewSurface` was already threaded 
 re-exposes the redirect-following probe and the in-bundle origin constant, so it should not be taken to
 ship a release.
 
-Verification re-run in a clean worktree of the resulting commit:
+Verification of the resulting commit, run in a clean worktree of it (§3.8):
 
 ```
-$ git worktree add <temp> <commit> && cd <temp>/apps/orbit
-$ pnpm --filter @moonwitness/orbit build && ORBIT_SCAN_BUNDLE=1 node --test test/*.test.mjs
+$ git worktree add --detach <temp> <commit> && cd <temp>/apps/orbit
+$ node --test test/*.test.mjs        → 83 tests, 83 pass, 0 fail
 ```
+
+A hermetic `next build` was not reproducible inside that worktree: Turbopack refuses to compile
+files outside the worktree root, and the `@moonwitness/*` workspace links resolve into the primary
+checkout. The standalone build and the bundle scan in §3.4 therefore remain primary-worktree
+evidence.
 
 ## 7. Next eligible task
 

@@ -27,7 +27,10 @@ import { SIMULATED_OPERATIONS } from '../src/fixtures/simulated-operations.ts'
 import { orbitCopy } from '../src/lib/orbit-copy.ts'
 
 const appRoot = resolve(fileURLToPath(new URL('.', import.meta.url)), '..')
-const read = (relative) => readFileSync(join(appRoot, relative), 'utf8')
+// Source-contract assertions span multiple lines, and a Windows checkout turns
+// every one of them into CRLF. Normalize on read so the same tree passes in the
+// working copy, a fresh clone and CI.
+const read = (relative) => readFileSync(join(appRoot, relative), 'utf8').replace(/\r\n/g, '\n')
 
 const SURFACE = { available: true, origin: 'https://hq.example.test' }
 const approvalTask = (overrides = {}) => ({

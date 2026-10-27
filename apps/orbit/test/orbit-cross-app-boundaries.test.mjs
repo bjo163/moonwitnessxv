@@ -22,12 +22,16 @@ import { resolveReviewSurface } from '../src/lib/server/review-surface.ts'
 
 const appRoot = resolve(fileURLToPath(new URL('.', import.meta.url)), '..')
 const repoRoot = resolve(appRoot, '../..')
-const read = (relative, root = appRoot) => readFileSync(join(root, relative), 'utf8')
+// A Windows checkout stores every source file with CRLF, so a multi-line
+// contract assertion would pass in the working copy and fail on a fresh clone.
+// All reads normalize; assertions below can then be written in LF.
+const normalize = (text) => text.replace(/\r\n/g, '\n')
+const read = (relative, root = appRoot) => normalize(readFileSync(join(root, relative), 'utf8'))
 
 /** KEY=value lines of a real env file; used to prove no value reaches a chunk. */
 function parseEnvFile(path) {
   const parsed = {}
-  for (const line of readFileSync(path, 'utf8').split('\n')) {
+  for (const line of normalize(readFileSync(path, 'utf8')).split('\n')) {
     const pair = /^([A-Z][A-Z0-9_]*)=(.*)$/.exec(line)
     if (pair) parsed[pair[1]] = pair[2]
   }
