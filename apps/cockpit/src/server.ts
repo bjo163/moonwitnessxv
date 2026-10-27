@@ -1,6 +1,6 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
-import { HUB_API_DEFAULT } from '@moonwitness/core'
+import { apiBaseUrl } from '@moonwitness/moonql-client'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -33,6 +33,7 @@ export function createCockpitServer(
   supervisor: ProcessSupervisor,
   progress: ProgressTracker,
 ) {
+  const hubApiBaseUrl = apiBaseUrl(process.env)
   const app = Fastify({
     logger: false,
   })
@@ -137,7 +138,7 @@ export function createCockpitServer(
       }, 600)
       // the hub's address is the shared contract; a port change must not leave
       // the cockpit silently merging nothing
-      const res = await fetch(`${HUB_API_DEFAULT}/stations?limit=50`, { signal: controller.signal })
+      const res = await fetch(`${hubApiBaseUrl}/stations?limit=50`, { signal: controller.signal })
       clearTimeout(timer)
       if (res.ok) {
         const body = (await res.json()) as { data?: Array<{ id: string; name: string; streamUrl: string; genre?: string }> }
@@ -296,7 +297,7 @@ export function createCockpitServer(
     }
 
     let success = false
-    if (action === 'start') success = supervisor.start(tag)
+    if (action === 'start') success = await supervisor.start(tag)
     else if (action === 'stop') success = supervisor.stop(tag)
     else if (action === 'restart') success = supervisor.restart(tag)
 

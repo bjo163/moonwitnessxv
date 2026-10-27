@@ -1,5 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { createServer } from 'node:net'
 import { statSync } from 'node:fs'
 import { join } from 'node:path'
 import { loadMoondeckConfig, DEFAULT_CONFIG } from '../src/config.js'
@@ -9,24 +10,45 @@ import { findRepoRoot, resolveRegisterPath } from '../src/paths.js'
 import type { ProgressPayload } from '../src/progressTracker.js'
 import { createCockpitServer } from '../src/server.js'
 
-void test('Moondeck Config: loads configuration with 5 services and port 3004', async () => {
+void test('Moondeck Config: loads configuration with 8 supervised services and port 3004', async () => {
   const config = await loadMoondeckConfig()
   assert.equal(config.port, 3004)
   assert.ok(Array.isArray(config.services))
-  assert.equal(config.services.length, 5)
+  assert.equal(config.services.length, 8)
 
   const tags = config.services.map((s) => s.tag)
-  assert.deepEqual(tags, ['radio', 'dock', 'hq', 'ai', 'sentinel'])
+  assert.deepEqual(tags, ['radio', 'dock', 'hq', 'ai', 'skylink', 'echolog', 'orbit', 'sentinel'])
+  // Every new app must be reachable by its real package, not a copied string.
+  assert.equal(config.services.find((s) => s.tag === 'orbit')?.pkg, '@moonwitness/orbit')
+  assert.equal(config.services.find((s) => s.tag === 'skylink')?.port, 3005)
+  assert.equal(config.services.find((s) => s.tag === 'echolog')?.port, 3006)
 })
 
 void test('ProcessSupervisor: initializes states for all services', () => {
   const supervisor = new ProcessSupervisor(DEFAULT_CONFIG)
   const states = supervisor.getStates()
-  assert.equal(states.length, 5)
+  assert.equal(states.length, 8)
   for (const s of states) {
     assert.equal(s.status, 'STOPPED')
     assert.equal(s.uptimeSeconds, 0)
     assert.equal(s.restarts, 0)
+  }
+})
+
+void test('ProcessSupervisor: refuses to double-spawn a service whose port is taken', async () => {
+  const supervisor = new ProcessSupervisor(DEFAULT_CONFIG)
+  const probe = createServer()
+  await new Promise<void>((resolve) => probe.listen(3005, '127.0.0.1', () => resolve()))
+  try {
+    const started = await supervisor.start('skylink')
+    assert.equal(started, false, 'a bound port must not be spawned twice')
+    const state = supervisor.getState('skylink')
+    assert.equal(state?.status, 'ERROR')
+    assert.match(state?.lastError ?? '', /already in use/)
+    assert.match(state?.lastError ?? '', /pnpm dev/, 'the message must name the likely cause')
+  } finally {
+    await new Promise<void>((resolve) => probe.close(() => resolve()))
+    supervisor.stopAll()
   }
 })
 
@@ -58,7 +80,7 @@ void test('Cockpit Fastify Server: serves API and static assets', async () => {
   const statusRes = await app.inject({ method: 'GET', url: '/api/status' })
   assert.equal(statusRes.statusCode, 200)
   const statusBody = JSON.parse(statusRes.body)
-  assert.equal(statusBody.services.length, 5)
+  assert.equal(statusBody.services.length, 8)
 
   // /api/errors
   const errorsRes = await app.inject({ method: 'GET', url: '/api/errors' })

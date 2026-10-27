@@ -64,7 +64,7 @@ export const GROUP_DEFS: ReadonlyArray<{ id: string; label: string; milestones: 
   { id: 'G4', label: 'Operations', milestones: ['M20', 'M21', 'M22', 'M23', 'M38', 'M39'] },
   { id: 'G5', label: 'Optional Research', milestones: ['M24', 'M25', 'M26'] },
   { id: 'G6', label: 'Release', milestones: ['M27'] },
-  { id: 'G7', label: 'Ecosystem', milestones: ['M29', 'M30', 'M31', 'M32', 'M33', 'M34', 'M35', 'M36', 'M37'] },
+  { id: 'G7', label: 'Ecosystem', milestones: ['M29', 'M30', 'M31', 'M32', 'M33', 'M34', 'M35', 'M36', 'M37', 'M40', 'M41'] },
 ]
 
 const UNMAPPED = { id: 'G?', label: 'Unmapped' }

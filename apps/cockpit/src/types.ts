@@ -1,4 +1,4 @@
-export type ServiceType = 'service' | 'worker'
+export type ServiceType = 'service' | 'worker' | 'web'
 
 export interface ServiceDefinition {
   tag: string

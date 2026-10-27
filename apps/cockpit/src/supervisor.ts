@@ -1,4 +1,5 @@
 import { spawn, type ChildProcess, execFileSync } from 'node:child_process'
+import { createServer } from 'node:net'
 import { createInterface } from 'node:readline'
 import { appendFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -68,7 +69,7 @@ export class ProcessSupervisor extends EventEmitter {
 
   public startAll(): void {
     for (const svc of this.config.services) {
-      this.start(svc.tag)
+      void this.start(svc.tag)
     }
   }
 
@@ -78,7 +79,24 @@ export class ProcessSupervisor extends EventEmitter {
     }
   }
 
-  public start(tag: string): boolean {
+  /**
+   * A second supervisor on the same port is the most common local failure:
+   * `pnpm dev` is already running and the operator presses Start here. Refuse
+   * with a message that names the cause instead of a raw EADDRINUSE later.
+   */
+  private async portIsBusy(port?: number): Promise<boolean> {
+    if (typeof port !== 'number') return false
+    return new Promise((resolve) => {
+      const probe = createServer()
+      probe.once('error', () => resolve(true))
+      probe.once('listening', () => {
+        probe.close(() => resolve(false))
+      })
+      probe.listen(port, '127.0.0.1')
+    })
+  }
+
+  public async start(tag: string): Promise<boolean> {
     const svc = this.config.services.find((s) => s.tag === tag)
     const state = this.states.get(tag)
     if (!svc || !state) return false
@@ -89,6 +107,14 @@ export class ProcessSupervisor extends EventEmitter {
 
     state.status = 'STARTING'
     this.emit('state', state)
+
+    if (await this.portIsBusy(svc.port)) {
+      state.status = 'ERROR'
+      state.lastError = `port ${svc.port} is already in use — likely started by \`pnpm dev\`; stop it before starting ${tag} here`
+      this.emit('state', state)
+      this.recordLog(tag, 'error', state.lastError)
+      return false
+    }
 
     try {
       const pnpmCmd = isWindows ? 'pnpm.cmd' : 'pnpm'
@@ -183,7 +209,7 @@ export class ProcessSupervisor extends EventEmitter {
     if (state) state.restarts++
     this.stop(tag)
     setTimeout(() => {
-      this.start(tag)
+      void this.start(tag)
     }, 400).unref()
     return true
   }
