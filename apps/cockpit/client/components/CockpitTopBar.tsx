@@ -87,6 +87,7 @@ export function CockpitTopBar({
 
       {/* Global Media & Station Controller Pill */}
       <div
+        className="cockpit-rack"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -192,7 +193,7 @@ export function CockpitTopBar({
       </div>
 
       {/* Global Dev Actions & Locale Switcher */}
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div className="cockpit-actions" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
         <Button variant="primary" size="sm" onClick={() => void startAll()}>
           {copy.startAll}
         </Button>

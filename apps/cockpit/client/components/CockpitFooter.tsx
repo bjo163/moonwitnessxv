@@ -16,14 +16,15 @@ export function CockpitFooter({
   return (
     <>
       <footer
+        className="cockpit-footer"
         style={{
-          height: 28,
+          minHeight: 28,
           background: 'var(--ink)',
           borderTop: '1px solid var(--border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 14px',
+          padding: '2px 14px',
           fontFamily: 'var(--font-mono)',
           fontSize: 11,
           color: 'var(--muted)',
