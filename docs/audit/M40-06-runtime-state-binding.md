@@ -17,7 +17,7 @@ Key architectural invariants verified:
 1. **Frontend-Only Boundary:** `@moonwitness/orbit` owns zero database tables, SQL drivers, or backend mutations. It consumes the canonical single Fastify/MoonQL Hub on port 3000 through the shared `apiBaseUrl(env)` helper from `@moonwitness/moonql-client`.
 2. **Truthful Provenance & Freshness:**
    - Active `LIVE` badge with animated `LiveDot` is rendered **only** when `connectionStatus === 'LIVE_CONNECTED'` AND `freshness === 'FRESH'`.
-   - Data older than the stale threshold (60s) is rendered with an explicit caution badge: `⚠ STALE ({lastSyncTimestamp})`.
+   - Data older than the stale threshold (60s) is rendered with an explicit caution badge, `⚠ STALE`; the page footer shows the exact `lastSyncTimestamp` beside the freshness state.
    - When ARSY Hub is down, unreachable, or timed out, connection status evaluates strictly to `OFFLINE`, and an honest warning banner is rendered without pretending execution.
    - When ARSY Hub rejects credentials (HTTP 401/403), connection status evaluates strictly to `UNAUTHORIZED`.
    - Explicit simulation mode (`mode=simulated` or `ORBIT_SIMULATED=true`) produces `SIMULATED_LOCAL` with all fixtures labelled `[SIMULATED]`.
@@ -89,6 +89,18 @@ Command executed:
 pnpm --filter @moonwitness/arsy exec tsx --test test/arsy-env-compat.test.ts test/moonql-web-kit.test.ts test/compose-contract.test.ts
 ```
 Result: **28 passed, 0 failed** (duration: 1292ms).
+
+### Exact-SHA lint follow-up
+
+CI run `40470482706` at `6e9fa878a0fd3735d91ddec9786b137631047293` exposed three M40-06 ESLint diagnostics: an unused `lastSyncTimestamp` destructuring in `OrbitShellHeader.tsx` and four `Response` globals in the M40-06 runtime test. The timestamp already renders in the page footer; the header no longer destructures the unused prop, and the test now asserts the exact footer timestamp contract. The test file declares only its Node `Response` global for ESLint.
+
+At follow-up source SHA `3e8980570c421b804a659af0aa967b8c884bfa5a`:
+
+- `pnpm --filter @moonwitness/orbit test` — 43 passed, 0 failed, 0 skipped.
+- `pnpm exec eslint apps/orbit/src/components/OrbitShellHeader.tsx apps/orbit/test/orbit-runtime-binding.test.mjs` — passed with no output.
+- `pnpm --filter @moonwitness/orbit typecheck` — passed with no errors.
+- Independent read-only review confirmed the timestamp remains visible in the page footer and the `Response` declaration is scoped to the test file.
+- The follow-up source SHA has no CI run yet; the root CI failure at `6e9fa87` remains the last observed remote run, and no promotion is claimed for this follow-up.
 
 ---
 
