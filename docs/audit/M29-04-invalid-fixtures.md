@@ -29,6 +29,18 @@ At `d61f8a8077422b26607008bb5eaf348e89f3728a`:
 
 No production source, command wiring, TODO status, network, or real witness data was changed. This is fixture proof only; it does not wire the validator into root verification/CI. Roll back only the seven files listed above from commit `d61f8a8`; preserve all unrelated worktree changes.
 
-**Status:** OPEN and eligible after M29-03 closure is recorded in TODO at source SHA `4fec23973ab3e28ad289035402bf3e89590ddd91`. M29-04 itself remains unverified on that predecessor-integrated baseline; rerun its fixture suite and obtain review before closure.
+**Status:** Evidence verified at source SHA `278f26ad88bd7df350fb37da24291f1f793841c5`; M29-04 closure is recorded in the current TODO update. M29-03 was checked in this baseline.
 
-**Next eligible task:** M29-05 after M29-04 is revalidated and closed.
+## Integrated exact-SHA revalidation
+
+At `278f26ad88bd7df350fb37da24291f1f793841c5`, using a clean detached checkout:
+
+- `node --test test/planning/task-register-invalid-fixtures.test.mjs` — 4 passed, 0 failed, 0 skipped.
+- `pnpm exec eslint test/planning/task-register-invalid-fixtures.test.mjs` — exit 0; scoped `git diff --check` — no whitespace errors.
+- Positive fixtures accept valid IDs, task/milestone/range dependencies, local links, and directory README resolution. Negative fixtures reject malformed/duplicate IDs, self/cyclic/unresolved/malformed/reversed dependencies, missing paths/fragments, invalid encoding, root escape, and unsafe schemes with stable codes/lines.
+- Fixture bytes and inputs remain unchanged after validation.
+- Independent read-only reviewer found no fixture blocker; reviewer did not run tests.
+
+No production behavior, task-status side effect, network access, or root/CI wiring was added. M29-04 remains fixture proof only.
+
+**Next eligible task:** M29-05 becomes eligible after this status update is integrated.
