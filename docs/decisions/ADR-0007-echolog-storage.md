@@ -9,16 +9,16 @@ The initial subset is path-style requests to one configured bucket; SigV4 `AWS4-
 
 ## Decision
 
-**ECHOLOG is a standalone, stateless storage service for objects and attachments.** It owns domain **D19 Object Storage & Attachments**, runs on port **3006**, and is a bounded service — **not** a second Hub.
+**ECHOLOG is a standalone, stateless storage service for objects and attachments.** It owns domain **D19 Object Storage & Attachments**, runs on port **3006**, and is a bounded service — **not** a second Hub. Under Amendment 1, ECHOLOG itself serves the bounded S3-compatible endpoint and persists to its own filesystem volume; it does not select or proxy to an external S3 storage driver.
 
 - **Name:** `ECHOLOG` — matches W07 in the sibling Empire repository's `data/organization/wings10.json`: `W07 | ECHOLOG | team: FIELD RECORDERS | area: Observation & Documentation | primaryPillar: TRUTH_GUIDANCE | proposedLeadPersonaSlot: GOD-050`, with lead persona `GOD-050 | FIELD WITNESS | "Mencatat temuan lapangan secara akurat" | dept D02 SIGNAL RUNNERS`. Registry status stays `PROPOSED_NOT_ASSIGNED`, `unitType: HUMAN_OPERATIONS_WING`, and `authorityLimit: NO_SUPERNATURAL_OR_DIVINE_AUTHORITY`; this is a source-name reference only. ECHOLOG is a software service and never an office, an angelic identity or an access authority.
 - **Existing slot:** [BLUEPRINT.md](../../BLUEPRINT.md) already states *"Approved asset storage owns one immutable version of consented media/source bytes; XV stores metadata/digests. No public private-archive dumps."* This ADR gives that slot a name and an owner.
 - **Workspace identity:** `apps/echolog` / `@moonwitness/echolog`, plus `@moonwitness/echolog-core` for contracts, drivers and digest verification.
-- **Dependency direction:** `other apps → API → ECHOLOG → storage driver`. ECHOLOG never calls ARSY to persist bytes, and no consumer ever holds driver credentials.
+- **Dependency direction:** `other apps → API → ECHOLOG → ECHOLOG-owned filesystem`. ECHOLOG never calls ARSY to persist bytes, and no consumer ever holds ECHOLOG credentials.
 
 ## Statelessness is mandatory, not stylistic
 
-ADR-0006 states *"No third SQL owner is authorized"* and its guard test pins the `drizzle-orm`/`postgres` importers to exactly `{packages/moonql, packages/skylink-store}`. **ECHOLOG therefore owns no tables and imports no SQL driver.** Object metadata lives in a JSON sidecar beside each object (and in S3 object metadata/tags on the `s3` driver): `filename`, `content_type`, `size`, `digest`, `uploader`, `created_at`, `retention_until`, `legal_hold`, `scan{pending|clean|infected|skipped}`, `tags`.
+ADR-0006 states *"No third SQL owner is authorized"* and its guard test pins the `drizzle-orm`/`postgres` importers to exactly `{packages/moonql, packages/skylink-store}`. **ECHOLOG therefore owns no tables and imports no SQL driver.** Object metadata lives in a JSON sidecar beside each object and in the ECHOLOG filesystem key index: `filename`, `content_type`, `size`, `digest`, `uploader`, `created_at`, `retention_until`, `legal_hold`, `scan{pending|clean|infected|skipped}`, `tags`.
 
 If SQL metadata ever becomes necessary, it requires a **new ADR that withdraws this clause** — never a silent schema.
 
@@ -26,7 +26,7 @@ If SQL metadata ever becomes necessary, it requires a **new ADR that withdraws t
 
 - **Key scheme:** `sha256/<digest>` — content-addressed, **write-once**, immutable. Re-uploading identical bytes is a no-op that returns the same key (dedupe for free).
 - **Storage and protocol:** ECHOLOG stores immutable content-addressed objects on its configured filesystem volume. It exposes its bounded S3-compatible endpoint directly; it does not proxy to or depend on MinIO, R2, AWS S3, or another storage server.
-- **Uploads pass through the service:** stream to a temp key, hash while writing, enforce size/MIME allow-list, then commit atomically (rename on `fs`, copy on `s3`) and write the sidecar. Verification therefore happens **before** the object becomes permanent.
+- **Uploads pass through the service:** stream to a temp key, hash while writing, enforce size/MIME allow-list, then commit atomically to the filesystem and write the sidecar. Verification therefore happens **before** the object becomes permanent.
 - **Downloads use short-lived presigned grants** (TTL ≤5 min) or a streamed `fs` response. Presign is never used for upload in v1.
 - **Bytes never enter Postgres.** No `bytea`.
 - **Retention/legal hold:** `DELETE` is refused with `409` while `legal_hold` is set or retention has not elapsed; a separate admin GC pass removes expired objects and reports those it held back.
@@ -39,7 +39,7 @@ If SQL metadata ever becomes necessary, it requires a **new ADR that withdraws t
 
 1. **Identity stays D00/ARSY.** ECHOLOG issues no sessions. Operator UI uses `Authorization: Bearer <ARSY session>` validated upstream with a short cache; services use a scoped `x-echolog-key`.
 2. **Consumers store references only** — `{object_key, digest, size, content_type}`. Attachment-to-message links stay in D18 (`messages.media[]`).
-3. **No credentials in the database or in consumers.** Driver credentials live only in ECHOLOG's environment.
+3. **No credentials in the database or in consumers.** ECHOLOG service, grant, and S3 credentials live only in ECHOLOG's environment.
 4. **All inbound bytes are untrusted:** internal keys are `sha256/<hex>` only, original filenames are sanitized before `Content-Disposition`, and outbound fetches use the `@moonwitness/core` egress guard with `echolog` on the deny list.
 5. **No public archive dumps:** private by default, access only through a grant.
 
@@ -55,7 +55,7 @@ Multipart uploads · CDN or edge caching · active antivirus (the `scan` slot re
 
 - **Accepted cost:** one more process (port 3006) and added protocol/security maintenance for the bounded S3-compatible endpoint. No MinIO container and no new database.
 - **Accepted cost:** metadata queries require listing objects or reading sidecars; acceptable while no consumer needs search.
-- **Accepted risk:** the `fs` driver ties durability to one volume — production must use `s3` or a backed-up volume.
+- **Accepted risk:** the filesystem volume ties durability to the ECHOLOG host — production must use a backed-up volume and an off-host recovery plan. Running ECHOLOG's S3 endpoint on the backup source host does not make that backup off-host.
 - **Rejected:** SQL metadata (withdraws ADR-0006's closed SQL-owner set for no current need); bytes in Postgres `bytea`; bytes on the ARSY disk (ARSY restart would fail uploads and mix domain owners); presigned uploads in v1 (digest verification becomes two-phase with more failure states); D07 as the byte owner (it owns manifests, not bytes); naming this service `RAINMAKERS` (W02/GOD-017 is food and basic-needs provisioning), `HAVEN`, `LEDGER PUNK` or `ASSETS` (sanctuary/audit/generic; `rocksoul-assets` already names a visual-source family).
 
 ## Acceptance conditions

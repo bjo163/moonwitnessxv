@@ -96,7 +96,7 @@ void test('ECHOLOG serves path-style single-bucket S3 operations through the AWS
 
 void test('ListObjectsV2 delimiter pages advance beyond a returned common prefix', async (t) => {
   const { client } = await setup(t)
-  for (const key of ['pages/a/one.txt', 'pages/a/two.txt', 'pages/b/one.txt']) {
+  for (const key of ['pages/a/one.txt', 'pages/a/two.txt', 'pages/b/one.txt', 'pages/😀/one.txt']) {
     await client.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: Buffer.from(key), ContentType: 'application/octet-stream' }))
   }
   const first = await client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: 'pages/', Delimiter: '/', MaxKeys: 1 }))
@@ -106,6 +106,32 @@ void test('ListObjectsV2 delimiter pages advance beyond a returned common prefix
   const second = await client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: 'pages/', Delimiter: '/', MaxKeys: 1, ContinuationToken: first.NextContinuationToken }))
   assert.deepEqual(second.CommonPrefixes?.map(({ Prefix }) => Prefix), ['pages/b/'])
   assert.notEqual(second.NextContinuationToken, first.NextContinuationToken)
+  const third = await client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: 'pages/', Delimiter: '/', MaxKeys: 1, ContinuationToken: second.NextContinuationToken }))
+  assert.deepEqual(third.CommonPrefixes?.map(({ Prefix }) => Prefix), ['pages/😀/'])
+})
+
+void test('ListObjectsV2 continuation orders mixed-case and punctuation keys without skipping', async (t) => {
+  const { client } = await setup(t)
+  const keys = ['ordered/A', 'ordered/a', 'ordered/!', 'ordered/_', 'ordered/-']
+  for (const key of keys) {
+    await client.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: Buffer.from(key), ContentType: 'application/octet-stream' }))
+  }
+
+  const actual: string[] = []
+  let continuationToken: string | undefined
+  do {
+    const page = await client.send(new ListObjectsV2Command({
+      Bucket: BUCKET,
+      Prefix: 'ordered/',
+      MaxKeys: 1,
+      ...(continuationToken ? { ContinuationToken: continuationToken } : {}),
+    }))
+    actual.push(...(page.Contents ?? []).map(({ Key }) => Key ?? ''))
+    continuationToken = page.NextContinuationToken
+  } while (continuationToken)
+
+  const expected = [...keys].sort((left, right) => Buffer.compare(Buffer.from(left, 'utf8'), Buffer.from(right, 'utf8')))
+  assert.deepEqual(actual, expected)
 })
 
 void test('S3 namespace publication and GC serialize so concurrent uploads remain readable', async (t) => {

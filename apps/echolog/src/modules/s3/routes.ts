@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { sha256Hex } from '@moonwitness/echolog-core'
 import type { EchologConfig } from '../../config.js'
-import { S3KeyConflictError, S3ObjectNotFoundError, validateObjectKey, type FsS3KeyStore } from './store.js'
+import { compareS3Keys, S3KeyConflictError, S3ObjectNotFoundError, validateObjectKey, type FsS3KeyStore } from './store.js'
 import { isSafeRawPath, verifyS3Request } from './sigv4.js'
 import { createUploadLimiter } from './upload-limiter.js'
 
@@ -183,16 +183,25 @@ async function listObjects(
   }
   const token = params.get('continuation-token')
   let after = params.get('start-after') ?? ''
+  let skippedPrefix: string | null = null
   if (token) {
     try {
-      after = Buffer.from(token, 'base64url').toString('utf8')
+      const cursor = JSON.parse(Buffer.from(token, 'base64url').toString('utf8')) as { after?: unknown; skippedPrefix?: unknown }
+      if (typeof cursor.after !== 'string' || (cursor.skippedPrefix !== undefined && typeof cursor.skippedPrefix !== 'string')) {
+        throw new Error('Invalid continuation cursor')
+      }
+      after = cursor.after
+      skippedPrefix = typeof cursor.skippedPrefix === 'string' ? cursor.skippedPrefix : null
       validateObjectKey(after)
+      if (skippedPrefix !== null) validateObjectKey(skippedPrefix)
     } catch {
       return sendError(reply, 400, 'InvalidToken', 'The continuation token is invalid.', resource)
     }
   }
 
-  const all = (await store.list()).filter((entry) => entry.key.startsWith(prefix) && entry.key > after)
+  const all = (await store.list()).filter((entry) => entry.key.startsWith(prefix)
+    && compareS3Keys(entry.key, after) > 0
+    && (skippedPrefix === null || !entry.key.startsWith(skippedPrefix)))
   const contents: typeof all = []
   const commonPrefixes = new Set<string>()
   for (const entry of all) {
@@ -204,12 +213,13 @@ async function listObjects(
   const merged = [
     ...contents.map((entry) => ({ key: entry.key, record: entry })),
     ...[...commonPrefixes].map((key) => ({ key, record: null as (typeof all)[number] | null })),
-  ].sort((left, right) => left.key.localeCompare(right.key, 'en'))
+  ].sort((left, right) => compareS3Keys(left.key, right.key))
   const page = merged.slice(0, maxKeys)
   const truncated = merged.length > page.length
   const lastPageKey = page[page.length - 1]?.key
-  const nextAfter = lastPageKey && commonPrefixes.has(lastPageKey) ? `${lastPageKey}\uffff` : lastPageKey
-  const nextToken = truncated && nextAfter ? Buffer.from(nextAfter).toString('base64url') : null
+  const nextToken = truncated && lastPageKey
+    ? Buffer.from(JSON.stringify({ after: lastPageKey, ...(commonPrefixes.has(lastPageKey) ? { skippedPrefix: lastPageKey } : {}) })).toString('base64url')
+    : null
   const xml = `<?xml version="1.0" encoding="UTF-8"?><ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>${xmlEscape(bucket)}</Name><Prefix>${xmlEscape(prefix)}</Prefix><KeyCount>${page.length}</KeyCount><MaxKeys>${maxKeys}</MaxKeys><IsTruncated>${truncated}</IsTruncated>${page.map(({ record }) => record ? `<Contents><Key>${xmlEscape(record.key)}</Key><LastModified>${xmlEscape(new Date(record.last_modified).toISOString())}</LastModified><ETag>&quot;${xmlEscape(record.etag)}&quot;</ETag><Size>${record.size}</Size><StorageClass>STANDARD</StorageClass></Contents>` : '').join('')}${[...commonPrefixes].filter((value) => page.some((item) => item.key === value)).map((value) => `<CommonPrefixes><Prefix>${xmlEscape(value)}</Prefix></CommonPrefixes>`).join('')}${nextToken ? `<NextContinuationToken>${nextToken}</NextContinuationToken>` : ''}</ListBucketResult>`
   return reply.code(200).type('application/xml').header('x-amz-bucket-region', region).send(xml)
 }

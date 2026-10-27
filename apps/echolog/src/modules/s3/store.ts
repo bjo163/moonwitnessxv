@@ -134,7 +134,7 @@ export class FsS3KeyStore {
       if (recordPathHash(record.key) !== entry.name.slice(0, -5)) throw new Error('S3 key index entry is corrupt')
       records.push(record)
     }
-    return records.sort((left, right) => left.key.localeCompare(right.key, 'en'))
+    return records.sort((left, right) => compareS3Keys(left.key, right.key))
   }
 
   async referencedObjectKeys(): Promise<Set<string>> {
@@ -216,6 +216,11 @@ export function validateObjectKey(key: string): void {
 
 function basenameForKey(key: string): string {
   return key.slice(key.lastIndexOf('/') + 1) || 'object'
+}
+
+/** S3 keys are ordered by their UTF-8 byte sequence, independent of host locale. */
+export function compareS3Keys(left: string, right: string): number {
+  return Buffer.compare(Buffer.from(left, 'utf8'), Buffer.from(right, 'utf8'))
 }
 
 function recordPathHash(key: string): string {
