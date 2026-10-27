@@ -787,3 +787,53 @@ test('M14-07: release criteria stay fail-closed while publication is unavailable
   assert.equal(trailRelease.publicationAvailable, false)
   assert.ok(trailRelease.blockers.includes('REVIEW_STATE_NOT_REVIEWED'))
 })
+
+test('M34-05: named reviewer separation denies guest and generic CRUD bypass', async () => {
+  const registered = await registerReview('RV-M34-05-ROLE', AR_CASE, AR_CLAIM)
+  assert.equal(registered.statusCode, 201, registered.body)
+  const submitted = await post('research/reviews/RV-M34-05-ROLE/submit', { expectedVersion: 1 })
+  assert.equal(submitted.statusCode, 200, submitted.body)
+
+  const sameActor = await post('research/reviews/RV-M34-05-ROLE/decide', {
+    decision: 'REJECTED',
+    note: 'The submitter attempts to review their own submission.',
+    expectedVersion: 2,
+  })
+  assert.equal(sameActor.statusCode, 403, sameActor.body)
+  assert.match(errorOf(sameActor), /four eyes/i)
+
+  const wrongRole = await post(
+    'research/reviews/RV-M34-05-ROLE/decide',
+    { decision: 'REJECTED', note: 'A guest attempts to review.', expectedVersion: 2 },
+    guest,
+  )
+  assert.equal(wrongRole.statusCode, 403, wrongRole.body)
+  assert.match(errorOf(wrongRole), /guest or anonymous/i)
+
+  const rawList = await get('research_reviews')
+  assert.equal(rawList.statusCode, 404, 'review records have no generic REST list surface')
+  const rawMutation = await app
+    .inject()
+    .patch('/orm/research_reviews/RV-M34-05-ROLE')
+    .headers(admin)
+    .body({ state: 'REVIEWED', decision: 'APPROVED', reviewerRef: 'admin' })
+    .end()
+  assert.equal(rawMutation.statusCode, 404, 'generic REST cannot bypass the named review endpoint')
+
+  const unchanged = await detail('RV-M34-05-ROLE')
+  assert.equal(unchanged.state, 'SUBMITTED')
+  assert.equal(unchanged.decision, null)
+  assert.equal(unchanged.reviewer, null)
+  assert.deepEqual(unchanged.events.map((entry) => entry.action), ['SUBMIT'])
+
+  const independentReviewer = await post(
+    'research/reviews/RV-M34-05-ROLE/decide',
+    { decision: 'REJECTED', note: 'An independent named user reviewed the submission.', expectedVersion: 2 },
+    alice,
+  )
+  assert.equal(independentReviewer.statusCode, 200, independentReviewer.body)
+  const reviewed = await detail('RV-M34-05-ROLE')
+  assert.equal(reviewed.state, 'REJECTED')
+  assert.equal(reviewed.reviewer?.name, 'Alice Reviewer')
+  assert.deepEqual(reviewed.events.map((entry) => entry.action), ['SUBMIT', 'REJECT'])
+})
