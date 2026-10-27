@@ -2,7 +2,7 @@
 ## One universe · one active repository · explicit evidence · bounded domains
 
 > **Status: XV planning baseline v1.0 — 26 October 2026.**
-> This file specifies a TARGET, not proof proposed modules have shipped. **Single forward development home:** [bjo163/moonwitnessxv](https://github.com/bjo163/moonwitnessxv), existing `main` branch only. No new branch, repo or issue is required to document this blueprint.
+> This file specifies a TARGET, not proof proposed modules have shipped. **Single development home:** [bjo163/moonwitnessxv](https://github.com/bjo163/moonwitnessxv). Owner policy: work directly on existing `dev`, create no topic branches, promote verified changes to `main` only after required gates. This supersedes older `main`-only wording in historical snapshots.
 
 **Document hierarchy:** [Master Vision Narrative XV](docs/vision/MASTER_VISION_NARRATIVE_XV.md) = why/what/history/99 chapters; **BLUEPRINT.md** = owner boundaries, desired behavior and architecture; [TODO.md](TODO.md) = unique execution task IDs, gates, priorities, dependencies, status. Code + actual SHA-specific test results = what works. An approved future XV ADR supersedes design proposals. Historical repository ADRs do not automatically become XV ADRs.
 
@@ -81,7 +81,7 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 
 ## 2A — Global ecosystem surfaces and implementation reality (proposal, 26 October 2026)
 
-**Observed at source SHA \`bb3aed0\`:** six existing runnable application workspaces: \`apps/dock\` (Next.js public), \`apps/headquarters\` (Next.js private/admin), \`apps/radio\` (the accepted ARSY Fastify Hub identity, filesystem migration **pending**), \`apps/cockpit\` (local developer GUI/Vite + supervisor service), \`apps/aigateway\` (bounded internal model adapter), \`apps/sentinel\` (worker/collector). The latest observed GitHub Actions \`pnpm verify\` succeeded at \`bb3aed0\`, which does not prove Docker builds, actual internationalization, DB migrations, or production deployment.
+**Historical inventory at source SHA `bb3aed0`:** six app workspaces were present then. Current `dev` has eight app directories: `apps/arsy`, `apps/dock`, `apps/headquarters`, `apps/cockpit`, `apps/aigateway`, `apps/sentinel`, `apps/skylink`, and `apps/echolog`. Directory presence is not production certification; check current SHA-specific evidence for integration, deployment, localization, and restore.
 
 ### 2A.1 Branding and proposed future apps (not shipped)
 
@@ -97,9 +97,10 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 | HEADQUARTERS / 100CENTER | \`apps/headquarters\` | Review, publication veto, rights, finance oversight and audit | Existing UI, new governance flows not certified |
 | COCKPIT | \`apps/cockpit\` | Developer process/log/preview supervisor | Existing local application, not public admin or production energy controller |
 | AI Gateway / Sentinel | \`apps/aigateway\`, \`apps/sentinel\` | Internal bounded model routing / source collection | Existing workers/services, not public AI/monitoring authority |
-| ARSY / SIGNAL | \`apps/radio\` now, \`apps/arsy\` after M28 | ONE Fastify/MoonQL API, data authority and existing Radio domain | Accepted name; rename pending, preserve legacy paths |
-| **SKYLINK** | \`apps/skylink\` (M38-07 health-only skeleton) | Health route only; provider messaging, D18 store and operator UI remain planned | **Accepted (ADR-0006)**; bounded service, **not** a second Hub; owns D18 only |
-| **ECHOLOG** | planned \`apps/echolog\` (not yet implemented; M39) | Object storage and attachments: verified upload, `sha256` digests, retention, legal hold, presigned download | **Accepted (ADR-0007)**; bounded planned service, **stateless** (no tables), **not** a second Hub; will own D19 only |
+| ARSY / SIGNAL | `apps/arsy` / `@moonwitness/arsy` | ONE Fastify/MoonQL API, data authority and existing Radio domain | Runtime/package move present in `dev`; M28-13/M28-14 integration and release evidence remain open |
+| **SKYLINK** | `apps/skylink` (M38) | REST + WebSocket control plane and provider adapters are present; ARSY integration, operator UI and e2e release proof remain open (M38-12..14) | Accepted ADR-0006; bounded service, not a second Hub; owns D18 only |
+| **ECHOLOG** | `apps/echolog` (M39) | Filesystem-backed content-addressed storage and bounded S3-compatible subset are present; UI and final e2e proof remain open (M39-11/12) | Accepted ADR-0007; stateless, no tables; not a second Hub; owns D19 only |
+| **ORBIT** | Planned `apps/orbit` (M40) | Standalone 3D-first spatial frontend with accessible 2D fallback | Accepted by ADR-0004; not implemented; shares D00/ARSY; no backend/domain/DB of its own |
 
 **Proposed D14–D17 (not accepted domain contracts):** D14 Community/Membership; D15 Commerce & Work; D16 Financial Operations/treasury oversight; D17 physical Energy & Assets. Design governance by separate ADR before creating schemas. Each model has precisely one ARSY/MoonQL owner; frontend boundaries do not confer database ownership. WORKS initially sells actual existing products/services via appropriately licensed payment providers; multi-seller wallets, banking, speculative tokens and automated payouts are out of initial scope. HELIOGRID pilot must start with verified read-only meters, units, calibration and technician permission; simulations never masquerade as measured generation/savings. No second REST hub, login system, editor, approval engine or graph database.
 
@@ -147,7 +148,7 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 
 ## 2B — Modular contracts and project decomposition
 
-[Master Design](MASTER_DESIGN.md) owns shared UI semantics; [architecture contracts](docs/architecture/README.md) detail app/data boundaries, [ADRs](docs/decisions/README.md) record accepted versus proposed decisions, [AI execution](docs/planning/AI_EXECUTION_CONTRACT.md) governs small-agent handoff. Existing M00–M28 are preserved; M29–M37 define independent design and product discovery/adoption boundaries, **not already created applications**. Lighthouse reuses Dock until a reviewed decision; Harbor, SHADOW, MoonLab, WORKS and HELIOGRID cannot acquire independent data or IAM owners by default.
+[Master Design](MASTER_DESIGN.md) owns shared UI semantics; [architecture contracts](docs/architecture/README.md) detail app/data boundaries, [ADRs](docs/decisions/README.md) record accepted versus proposed decisions, [AI execution](docs/planning/AI_EXECUTION_CONTRACT.md) governs small-agent handoff. Existing M00–M39 are preserved; M29–M37 define ecosystem discovery/adoption boundaries, and M40 defines the accepted ORBIT frontend boundary (planned, not shipped). Lighthouse reuses Dock until a reviewed decision; Harbor, SHADOW, MoonLab, WORKS and HELIOGRID cannot acquire independent data or IAM owners by default.
 
 ## 3 — Target architecture (logical, not already deployed)
 

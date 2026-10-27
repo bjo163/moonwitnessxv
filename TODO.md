@@ -1,6 +1,6 @@
 # MOONWITNESS XV — MASTER TODO & MILESTONE EXECUTION REGISTER
 
-> **Planning baseline · 26 October 2026 · active repo: [bjo163/moonwitnessxv](https://github.com/bjo163/moonwitnessxv), existing `main`.**
+> **Planning baseline · 27 October 2026 · active repo: [bjo163/moonwitnessxv](https://github.com/bjo163/moonwitnessxv). Owner branch policy: work directly on existing `dev`; promote to `main` only after required verification.**
 > This is a detailed, dependency-gated backlog, **not** evidence tasks have been completed. No new branch or GitHub issue is created. Before execution recheck the current HEAD, source rights and runtime status.
 
 **Read:** [BLUEPRINT.md](BLUEPRINT.md) for the sole XV architecture and ownership contract; [Master Vision Narrative XV](docs/vision/MASTER_VISION_NARRATIVE_XV.md) for history, narrative and interpretive boundaries. **This TODO is the sole planning task/status index**. Avoid copying task progress into vision or independent lists. Real build logs, test results and specific commit SHAs establish completion; an existing file or CI configuration alone does not.
@@ -19,13 +19,13 @@
 
 Each task ID `M00-01` is unique here; `M00` in a dependency denotes its entire exit gate. **No corresponding GitHub issues currently exist in XV; do not duplicate past XIV/Corpus issues in XV by ID.**
 
-For each task: recheck `main` HEAD → inspect the named owner and dependencies → prepare scope (prefer ≤3 starting files; justify larger) and tests → implement only the stated behavior → run focused positive/negative tests and relevant `pnpm verify` checks → record SHA, exact commands/results, changed paths, rights source where relevant and reviewer → only then check the box. Never force-push/reset or invent a new branch to make a task run. If a required gate is blocked, report it and preserve `UNKNOWN`.
+For each task: recheck `dev` HEAD → inspect the named owner and dependencies → prepare scope (prefer ≤3 starting files; justify larger) and tests → implement only the stated behavior → run focused positive/negative tests and relevant `pnpm verify` checks → record SHA, exact commands/results, changed paths, rights source where relevant and reviewer → only then check the box. Never force-push/reset or invent a new branch to make a task run. If a required gate is blocked, report it and preserve `UNKNOWN`.
 
 New unchecked rows represent **unverified planned deliverables**. Historical checked rows retain their pinned evidence and are never reset by planning-only changes; each checkbox means a tested *scoped deliverable*, not an entire production release. A milestone is complete only after its exit gate is demonstrated at a specific SHA.
 
 ## IMMEDIATE EXECUTION — FOUNDATION + GLOBAL i18n + FIRST BILINGUAL PUBLIC RELEASE
 
-**Evidence anchor:** \`main\` \`bb3aed0c7c5c7c99a5ed53851370b2376e915672\` (CI \`40304933576\` green); 29 established milestones, 203 historic IDs, **106 historic checkmarks and 97 open at that SHA**. This documentation update does NOT execute implementation. Recheck \`main\` before starting and never use a stale baseline to change a checkbox.
+**Historical evidence anchor:** `main` `bb3aed0c7c5c7c99a5ed53851370b2376e915672` (CI `40304933576` green); 29 established milestones, 203 historic IDs, 106 checkmarks and 97 open at that SHA. It is not the active work target. Recheck `dev` before starting; this documentation change does not execute implementation or close tasks.
 
 **Single execution register:** The rows below are crosslinks to the *canonical task rows inside their existing milestones*, NOT a second TODO/checklist. Tasks labelled new have a unique \`Mxx-yy\` ID appended in the proper parent milestone. Keep prior IDs, checked history and evidence. Existing task/exit gate dependencies still apply unless their prerequisite is explicitly shown as a scoped preview exception; previews NEVER bypass ACL, source rights or privacy.
 
@@ -62,7 +62,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 | **G4 — OPERATIONS** | M20–M23 plus **M38 SKYLINK** plus **M39 ECHOLOG** | 100CENTER, optional AI, existing Radio/WA/DENPA, Journey; SKYLINK = standalone multi-channel communication surface (D18); ECHOLOG = standalone object storage & attachments, stateless (D19) |
 | **G5 — OPTIONAL RESEARCH** | M24–M26 | World monitoring, Science/Time, legacy registries and source recovery |
 | **G6 — RELEASE** | M27 | Real full-stack tests, privacy, rights and approved launch |
-| **G7 — ECOSYSTEM** | M29–M37 | AI handoffs, Master Design, Lighthouse, Harbor, SHADOW, MoonLab, WORKS, HELIOGRID, cross-app identity |
+| **G7 — ECOSYSTEM** | M29–M37 plus **M40 ORBIT** | AI handoffs, Master Design, optional Empire surfaces, cross-app identity, and standalone ORBIT spatial frontend (no new backend) |
 
 **Scope gate:** The first Reader release does not require Story/SHADOW or AI. Publishing a Story does additionally require M17 source/consent approval; using AI does additionally require M21 security and candidate approval. Do not conflate optional feature gating with first-release gating.
 
@@ -854,6 +854,27 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 **Progress evidence to capture when work begins:** `task-id`, `source-SHA`, `files`, `tests and logs`, `source/rights` where applicable, `reviewer/decision`, `blocked/risks`, `new-SHA`, `date/timezone`. A future agent must not tick unchecked boxes simply because similar files or issues exist in XII/XIV/Corpus.
 
-**Target register:** 40 milestones (29 preserved M00–M28 plus M29–M37 plus the appended **M38** and **M39**), 267 preserved unique task IDs from M00–M28 plus 45 newly scoped leaf IDs from M29–M37 plus 14 SKYLINK leaf IDs plus 12 ECHOLOG leaf IDs = **338 unique tasks**. Prior checkmarks keep scoped historical evidence. This file is the **only** active task register, not a GitHub-issue count, implementation claim or promise of elapsed time.
+## M40 — ORBIT spatial agent operations frontend
 
-**End of XV Master TODO — modular planning v2, 26 October 2026.**
+**Group:** G7 · **Priority:** P1 · **Prerequisites:** ADR-0004 accepted; relevant M01/M19 foundation gates. M28 and M37 are mandatory before live-runtime/auth integration but do not block a clearly labelled simulated shell/scene. **Status:** PLANNED; architecture documented, app code not created.
+
+**Exit gate:** independent frontend build/deploy; shared D00/ARSY and MoonUI; truthful SIMULATED versus verified-live state; accessible 2D fallback; no approval bypass; cross-app auth, performance, rollback, and exact-SHA evidence.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M40-01** — Scaffold standalone ORBIT workspace and build boundary | P1 | D3 | M01-02, M19-01 | Frozen install, package/root checks pass, app shell works with ARSY offline, no new backend/data owner, no existing app regression. See [M40 specification](docs/milestones/M40.md). |
+| - [ ] | **M40-02** — MoonUI shell, navigation, and id/en locale parity | P1 | D3 | M40-01, M05-09, M05-10, M30-02, M30-03 | Locale parity/missing-key, keyboard/focus/labels/error/reduced-motion checks pass; no arbitrary hex or private HQ imports; works without WebGL. See [M40 specification](docs/milestones/M40.md). |
+| - [ ] | **M40-03** — Spatial scene with clearly labelled simulated fixtures | P1 | D3 | M40-01, M40-02 | Client-only loading, deterministic selection, accessible 2D inspector, visibly simulated fixtures, performance/provenance evidence, no unlicensed art. See [M40 specification](docs/milestones/M40.md). |
+| - [ ] | **M40-04** — 2D accessibility fallback and 3D performance gates | P1 | D3 | M40-03, M30-04, M30-05 | Core actions work without WebGL/hover/color/sound; reduced motion halts nonessential animation; measured performance evidence recorded. See [M40 specification](docs/milestones/M40.md). |
+| - [ ] | **M40-05** — Typed read-only agent/task/event projection contract | P1 | D3 | M05-09, M29-02, M29-04, M37-04 | Positive/negative tests cover malformed, missing, stale, unauthorized, unavailable data; unknown fails to UNKNOWN; no new API/database/owner/browser credentials. See [M40 specification](docs/milestones/M40.md). |
+| - [ ] | **M40-06** — Bind the UI to verified ARSY runtime state | P1 | D4 | M40-05, M28-13, M28-14, M29-05 | LIVE requires verified source/freshness; animation never masquerades as runtime state; outage/staleness tests pass; Radio/SIGNAL regression green. See [M40 specification](docs/milestones/M40.md). |
+| - [ ] | **M40-07** — Task queue, workstation and agent inspectors | P1 | D3 | M40-02, M40-04, M40-06 | Scene and 2D list select same records; no fabricated activity/progress/tool calls; restricted/empty/failed states are safe; keyboard stable. See [M40 specification](docs/milestones/M40.md). |
+| - [ ] | **M40-08** — Human-approval handoff to Headquarters / 100CENTER | P1 | D3 | M20-02, M20-06, M20-07, M37-02, M37-03, M37-05, M40-02 | No approval bypass/self-approval/auto-publication; invalid redirects/stale sessions/insufficient roles denied server-side; no ORBIT-owned review engine. See [M40 specification](docs/milestones/M40.md). |
+| - [ ] | **M40-09** — Cross-app auth, deployment, and extraction boundaries | P1 | D4 | M37-01..05, M40-01, M40-05, M40-08 | Unauthorized/expired calls denied; no service key in browser bundle/config/logs; independent frontend build; no DB/identity owners or private HQ imports. See [M40 specification](docs/milestones/M40.md). |
+| - [ ] | **M40-10** — Exact-SHA release acceptance, rollback, and extraction review | P1 | D4 | M40-01..09 | All claims tied to output; auth/locale/3D/2D/offline/stale/approval flows verified; rollback does not change ARSY/HQ/Dock data; extraction separate. See [M40 specification](docs/milestones/M40.md). |
+
+**Execution order:** M40-01 first; M40-03 and M40-05 can proceed in parallel after the workspace exists. M40-06 waits for verified M28/M29 evidence. M40-08 waits for M20/M37. Keep every task unchecked until scoped test evidence and exact SHA exist. ORBIT is a frontend, not a service/domain; do not create D20, another database/login, AI executor, second Hub, or cloned HQ approval engine.
+
+**Target register:** **41 milestones** (29 preserved M00–M28 + M29–M37 + appended M38, M39, M40), 267 preserved IDs from M00–M28 + 45 IDs from M29–M37 + 14 SKYLINK IDs + 12 ECHOLOG IDs + 10 ORBIT IDs = **348 unique task IDs**. Prior checkmarks and evidence remain unchanged. TODO is the only active task/status register.
+
+**End of XV Master TODO — modular planning v3, 27 October 2026.**
