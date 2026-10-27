@@ -173,10 +173,19 @@ Every screen row below denotes one **existing screen**, not a new application. O
 | U2-Q12 | Release decision | `main` promotion only after verified CI and canonical gates; no auto-close from mockup |
 
 ## Suggested ready-to-execute packets
-1. **Now:** UI2-G01 (CI lint errors), with independent read-only G02/G03/G08/G11. Keep application writes isolated until contracts settled.
+1. **Now:** UI2-G01 (CI lint errors), with independent read-only G02/G03/G08/G11. Keep application writes isolated until contracts settled. G08 is *not* independent of G05 — the intake plan it produces is evidence, but the gate closes only after the token/no-clipping contract lands.
 2. **After gate:** G05/G07/G10 and P13a/P14a/P15a/P16a/P17a, P18a/P19a/P20a, P21a/P22a in parallel read-only, each app owner controlling shared files.
 3. **Implementation:** Dock P13/P14, graph+patch P15/P16, rights-gated Reader P17; Cockpit P18 and P20; HQ P21. P19 requires security policy signoff; P22 requires freshness model/no fictional map.
 4. **Integration:** file ownership reconciled → focused tests → UI2-G12/G13 → screenshots → canonical review. If full CI remains red, do not claim release.
+
+### Packet 1 outcome at `49ec20e`
+
+| Gate | Closed? | Blocking evidence |
+| --- | --- | --- |
+| UI2-G02 | **NO — BLOCKED** | [rights-gate audit](docs/audit/ui2-g02-rights-gate-49ec20e.md). The `/reader/compare` `RIGHTS_CLEARED` hardcoding is refuted at HEAD (the page now renders only the localized D08 withholding alert; the literals were removed in `724fb15`), and `/corpus/reader` is a sound single text exit. But D08 has no implementation at all, its denial test is `test.skip`, and "six editions cleared" for QS 2:82 has no data owner — one cleared edition and one cleared translation. M19-19 therefore stays open, and the gate's own DoD says so. The audit also confirms a live licensed-text leak through `/orm/research/case` and `/trace` while those endpoints self-report `rawTextExposed: false`. |
+| UI2-G03 | **NO** | [preview-security audit](docs/audit/ui2-g03-cockpit-preview-49ec20e.md). Neither DoD clause holds: one never-validated free-text URL reaches five navigation sinks (four imperative `.src`, `window.open` without `noopener`, a declarative `src`) with no scheme/host/port check and no `sandbox`/`referrerPolicy`; there are zero negative URL or confirmation tests. `freePortsDesc` promises "ports 3000-3004" while `scripts/free-ports.mjs` sweeps the whole `PORTED` registry, the Cockpit's own 3004 included. |
+| UI2-G08 | **NO — dependency open** | [asset-origin audit](docs/audit/ui2-g08-asset-origin-49ec20e.md). Batch 2 (images 13–22) does not exist yet; all 24 gallery assets carry UNKNOWN rights under ADR-0009 §1; no mockup raster enters a served directory. But `node scripts/check-ui-assets.mjs` reports 32 production violations (30 `RIGHTS_UNKNOWN` served assets, 4 byte-identical duplicates) and that script has no alias, hook or CI lane, so "only licensed original vector/CSS enters apps" is unenforced. G05 stays open with live counter-evidence (1440 px header clipping, defect A). |
+| UI2-G11 | yes | [superseding snapshot](docs/audit/ui2-g11-m38-m39-status.md) |
 
 ## Definition of Done for UI-II
 Not “all ten screenshots look similar.” Rather: each scoped, permitted existing screen improves real user tasks while respecting truth, source identity, rights, auth, keyboard/mobile, id/en and the distinct Dock/Cockpit/HQ roles, with evidence pinned to a specific SHA. A plan commit only establishes documentation and cannot itself mark any leaf complete.
