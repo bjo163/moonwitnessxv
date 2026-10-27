@@ -109,7 +109,7 @@ Reference: [`04_poster_lab.svg`](docs/design/mockups-xv/04_poster_lab.svg) · Ca
 Reference: [`05_corpus_reader.svg`](docs/design/mockups-xv/05_corpus_reader.svg) · Canonical task owner: **M08 / M19-19 / M19-31** · Code owner: `apps/dock` · route: `existing reader paths`.
 
 - [ ] **UI-P05a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
-- [ ] **UI-P05b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
+- [x] **UI-P05b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims). **[evidence](docs/audit/ui-reader-rail-ab44093.md)**
 - [x] **UI-P05c · D3:** Exact edition, original passage, translated wording and direction metadata.
 - [x] **UI-P05d · D3:** Provenance drawer, copy/share citation and term navigation.
 - [ ] **UI-P05e · D3:** Unapproved D08 projection denied even when UI link guessed.
