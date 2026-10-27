@@ -16,7 +16,6 @@ export function OrbitShellHeader({
   copy,
   connectionStatus,
   freshness,
-  lastSyncTimestamp,
 }: OrbitShellHeaderProps) {
   return (
     <header className="orbit-header" role="banner">

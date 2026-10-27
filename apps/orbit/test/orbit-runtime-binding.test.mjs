@@ -15,6 +15,8 @@
  * 9. ARSY Radio/SIGNAL invariance.
  */
 
+/* global Response */
+
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, existsSync } from 'node:fs'
@@ -226,6 +228,7 @@ test('M40-06: OrbitShellHeader component enforces truthful status badges across 
   assert.ok(existsSync(headerPath), 'OrbitShellHeader.tsx must exist')
 
   const headerSrc = readFileSync(headerPath, 'utf8')
+  const pageSrc = readFileSync(resolve(appRoot, 'src/app/page.tsx'), 'utf8')
 
   // 1. LIVE + FRESH badge rule
   assert.ok(
@@ -242,6 +245,11 @@ test('M40-06: OrbitShellHeader component enforces truthful status badges across 
   )
   assert.ok(headerSrc.includes('copy.freshnessStale'), 'references freshnessStale copy')
   assert.ok(headerSrc.includes('tone="accent"'), 'uses accent tone for stale caution')
+  assert.match(
+    pageSrc,
+    /copy\.freshnessLabel}:[\s\S]*?\{state\.freshness\}[\s\S]*?copy\.synchronizedLabel}: \{state\.lastSyncTimestamp\}/,
+    'shows the freshness state and exact last-known timestamp together in the page footer',
+  )
 
   // 3. OFFLINE badge rule
   assert.ok(headerSrc.includes("connectionStatus === 'OFFLINE'"), 'handles OFFLINE status')
