@@ -14,7 +14,7 @@ LUMEN is proposed as a MoonWitness-owned TypeScript agent framework whose core o
 - Language/toolchain: repository TypeScript conventions, Node.js `>=24 <25`, pnpm workspace.
 - Repository boundary: the current MoonWitness XV monorepo. No new GitHub repository is proposed in M41.
 
-“Standalone” means the worker can be built and deployed as a separate process. It does not mean a second public Hub, database, identity provider or canonical task ledger.
+“Standalone” means the proposed worker can be built and deployed as a separate process. It does not mean a second public Hub, database, identity provider or canonical task ledger. However, the existing Master Vision wording says orchestration should extend ARSY rather than create another runtime. M41-01 must explicitly ratify the narrower interpretation that a worker-only process is permitted; otherwise defer `apps/lumen-runtime` and keep LUMEN as a package until a later decision. No code may assume this conflict is already resolved.
 
 ## Ownership boundaries
 
