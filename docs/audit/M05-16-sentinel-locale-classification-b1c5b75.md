@@ -27,3 +27,10 @@
 - **Observed repository baseline:** `dev` and `origin/dev` both resolve to `2a3aaf16a19a01264de6f1cab4079a1ea65f6cec`; the artifacts below remain uncommitted in a shared worktree.
 - **Commands/results:** `pnpm --filter @moonwitness/sentinel test` — 7/7 pass; `pnpm --filter @moonwitness/sentinel typecheck` — exit 0 for source and test project; `pnpm exec eslint apps/sentinel/test/worker-log-contract.test.ts` — exit 0; scoped `git diff --check` — no whitespace errors.
 - **Limit remains:** worker warning still forwards the raw Hub error text; only locale-byte stability and the existing output shape are proven. No integration SHA or CI run was observed, therefore the TODO checkbox stays open.
+
+## Integrated exact-SHA closure
+
+- **Integrated source SHA:** `ff7394d6e6d95e3469a0367bfec80f09da985087` (`dev`, promoted to `main`).
+- **Exact-SHA CI:** [run 40499204784](https://github.com/bjo163/moonwitnessxv/actions/runs/40499204784) completed successfully with full monorepo verification and guarded promotion.
+- **Independent review:** read-only review at the integrated SHA found the Sentinel worker-log harness, package test/typecheck wiring, and root test chain in scope with no blocker. Review did not run tests.
+- **Closure:** the existing 7/7 focused worker-log contract, typecheck, scoped ESLint, integrated review, and exact-SHA CI jointly satisfy M05-16. The raw Hub error-message limitation remains explicit; no production log behavior was changed.

@@ -30,6 +30,13 @@
 - **Not yet proved:** frozen installation from a clean workspace/lockfile and exact-SHA CI. Keep M05-19 open until integrated evidence passes. (Frozen installation belongs to downstream M05-21.)
 - Rollback: remove only a generated temporary fixture; no app was generated into the repository.
 
+### Integrated exact-SHA closure
+
+- **Integrated SHA:** `ff7394d6e6d95e3469a0367bfec80f09da985087` on `dev`; exact-SHA CI [40499204784](https://github.com/bjo163/moonwitnessxv/actions/runs/40499204784) passed full monorepo verification and guarded promotion to `main`.
+- On this exact source, the App Factory suite passed 19/19; the generated frontend type fixture and Vite production/browser smoke passed, including `id`/`en` navigation, keyboard activation, accessible labels, and back/forward synchronization. MoonUI/core builds passed and `pnpm ui:check` reported 132 files with 0 violations.
+- Independent integrated review found no blocker and confirmed the implementation uses the shared `@moonwitness/core` locale contract and `@moonwitness/moonui` components. The smoke uses already-installed workspace dependencies; a clean frozen install remains assigned to M05-21.
+- **Status:** M05-19 is closed at this integrated SHA. This does not close M05-21 or claim standalone workspace install/container integration.
+
 ## Shared changes touched for this work
 
 `scripts/app-create.mjs`, `test/app-factory/app-create.test.mjs`, `scripts/diagnostics/app-factory-frontend-smoke.mjs`, and this evidence report. The worktree has unrelated changes from concurrent task work; no staging, commit, TODO closure, or destructive cleanup was performed.
