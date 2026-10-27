@@ -34,7 +34,7 @@ const EnvSchema = z.object({
   ARSY_TITLE: z.string().optional(),
   RADIO_TITLE: z.string().optional(),
   API_TITLE: z.string().default(`${SITE_NAME} Hub API`),
-  API_VERSION: z.string().default('1.0.0'),
+  API_VERSION: z.string().default('2.0.0'),
 
   DATABASE_URL: z.string().default(''),
   MOONQL_AUTOSYNC: bool(true),

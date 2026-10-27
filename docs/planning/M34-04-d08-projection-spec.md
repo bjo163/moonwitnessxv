@@ -1,6 +1,6 @@
 # M34-04 — D08 released-research projection boundary
 **Status:** Containment contract specified; no public D08 projection is approved or implemented.
-**Baseline:** `2a5805c178d3671ad875d05c7d35cecccb929ae1` (`dev`).
+**Baseline:** `2a5805c178d3671ad875d05c7d35cecccb929ae1` (`dev`). The anonymous-to-admin contract change is a SemVer breaking change: API major `2.0.0` is required and generated clients/snapshot/history were updated.
 **Authority:** [M34-02 §6–8, §11](../decisions/M34-02-moonlab-hq-desk-decision.md), ADR-0003, and the M34-04 task packet.
 ## Purpose and safe contract
 M34-04 records the boundary a future D08 released-research projection must satisfy and closes the current anonymous Research reads at the owning ARSY/MoonQL API. This does not create a released projection. Until D08 supplies an accepted release authority and the unresolved rights and review decisions are resolved, every Research response containing D05 rows, derived metrics, traces, or comparative research remains private.
@@ -27,5 +27,5 @@ The only current positive access case in this contract is an authenticated `admi
 1. Positive: an authenticated admin can still read each private endpoint/model needed by the existing Research tests; private workflow behavior remains available.
 2. Negative: anonymous requests to E1–E6 and the E5 raw list/get surfaces return denial, not rows or narrative bytes. Byte-level controls cover the licensed translation phrase and synthetic rights-unknown markers.
 3. Boundary: E7/E9 remain withholding-only, E8 has no importer, and E10 is unchanged. No Dock UI, public projection, role, schema, database owner, or D08 authority is added.
-4. Rollback: revert only the M34-04 source/test/spec/audit changes as one reviewed unit. A rollback that reopens anonymous access is unsafe; restore only alongside an accepted D08 projection or an owner-approved rights exception, with denial tests deliberately replaced.
+4. Rollback: revert the M34-04 source/test/spec/audit, API major, and generated contract artifacts as one reviewed unit. A rollback that reopens anonymous access is unsafe; restore only alongside an accepted D08 projection or an owner-approved rights exception, with denial tests deliberately replaced. Coordinate API 2.0 consumers before any rollback.
 This is an API containment and projection-boundary specification, not a rights clearance, human review, publication decision, or production deployment record.
