@@ -349,12 +349,22 @@ body {
   position: absolute;
   pointer-events: auto;
   text-decoration: none;
+  /* A pin sizes itself to its station badge and is placed by percentage, so on a
+     narrow map `left: 66%` plus a ~150px badge runs past the map box and off the
+     viewport. Cap the badge to the room a pin has left of the map edge. */
+  max-width: 62%;
+  overflow: hidden;
+}
+.dk-map-pin .m-badge {
+  max-width: 100%;
 }
 .dk-map-pin-1 { top: 22%; left: 12%; }
 .dk-map-pin-2 { top: 16%; left: 38%; }
 .dk-map-pin-3 { top: 58%; left: 32%; }
-.dk-map-pin-4 { top: 28%; left: 66%; }
-.dk-map-pin-5 { top: 64%; left: 74%; }
+/* The two right-hand pins are anchored by their right edge instead of their
+   left, so the marker grows leftwards and stays inside the map at 390/768. */
+.dk-map-pin-4 { top: 28%; left: auto; right: 20%; }
+.dk-map-pin-5 { top: 64%; left: auto; right: 14%; }
 .dk-constellation-stats {
   display: flex;
   align-items: center;
@@ -414,9 +424,13 @@ body {
 }
 .dk-archive-track {
   display: grid;
-  grid-template-columns: repeat(7, minmax(110px, 1fr));
+  /* auto-fit rather than a fixed 7-track rail: the rail measured 830px
+     (7 x 110px + gaps) regardless of its container, so at 390px and 768px the
+     trailing nodes sat outside the viewport. The rail now reflows into rows and
+     still resolves to 7 columns wherever 7 x 110px fits. */
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 10px;
-  overflow-x: auto;
+  min-width: 0;
 }
 .dk-archive-node {
   display: flex;
