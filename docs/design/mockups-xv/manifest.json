@@ -1,0 +1,121 @@
+{
+  "schema": "moonwitness-xv-ui-reference-v1",
+  "created": "2026-10-27",
+  "branch": "dev",
+  "type": "original-documentation-only-svg-screen-references",
+  "notDeployed": true,
+  "licenseReviewRequired": true,
+  "rasterPNGImported": false,
+  "canonicalTodos": "../../../TODO.md",
+  "microPlan": "../../../todo-ui.md",
+  "screens": [
+    {
+      "number": 1,
+      "file": "01_dock_lighthouse.svg",
+      "title": "LIGHTHOUSE / DOCK",
+      "route": "/id, /en",
+      "owner": "apps/dock",
+      "milestone": "M19 / M31",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 2,
+      "file": "02_project_universe.svg",
+      "title": "PROJECT UNIVERSE",
+      "route": "/projects (proposed)",
+      "owner": "apps/dock + Headquarters",
+      "milestone": "M17 / M19",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 3,
+      "file": "03_story_forge.svg",
+      "title": "STORY FORGE",
+      "route": "private draft route TBD",
+      "owner": "HQ workspace, SHADOW proposed",
+      "milestone": "M17 / M33",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 4,
+      "file": "04_poster_lab.svg",
+      "title": "POSTER LAB",
+      "route": "private studio route TBD",
+      "owner": "existing GeneratorStudio, scoped SHADOW",
+      "milestone": "M18 / M33",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 5,
+      "file": "05_corpus_reader.svg",
+      "title": "CORPUS READER",
+      "route": "existing reader paths",
+      "owner": "apps/dock",
+      "milestone": "M08 / M19",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 6,
+      "file": "06_unilex_explorer.svg",
+      "title": "UNILEX EXPLORER",
+      "route": "lexicon/ontology paths",
+      "owner": "existing data owners + Dock projection",
+      "milestone": "M10 / M12 / M19",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 7,
+      "file": "07_moonlab_research.svg",
+      "title": "MOONLAB RESEARCH",
+      "route": "private research route TBD",
+      "owner": "HQ research desk, MOONLAB proposed",
+      "milestone": "M14 / M34",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 8,
+      "file": "08_world_monitor.svg",
+      "title": "WORLD MONITOR",
+      "route": "world route TBD",
+      "owner": "future WORLD projections",
+      "milestone": "M24",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 9,
+      "file": "09_publishing_hub.svg",
+      "title": "PUBLISHING HUB",
+      "route": "private publishing route TBD",
+      "owner": "apps/headquarters",
+      "milestone": "M18 / M20",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 10,
+      "file": "10_harbor_commons.svg",
+      "title": "HARBOR COMMONS",
+      "route": "private community route TBD",
+      "owner": "planned member app",
+      "milestone": "M32 / M37",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 11,
+      "file": "11_works_economy.svg",
+      "title": "WORKS / ECONOMY",
+      "route": "private works route TBD",
+      "owner": "planned commerce app",
+      "milestone": "M35 / M37",
+      "status": "CONCEPT_ONLY"
+    },
+    {
+      "number": 12,
+      "file": "12_skylink_messaging.svg",
+      "title": "SKYLINK MESSAGING",
+      "route": "operator inbox proposed",
+      "owner": "apps/skylink (service skeleton)",
+      "milestone": "M38 / M19",
+      "status": "CONCEPT_ONLY"
+    }
+  ]
+}
