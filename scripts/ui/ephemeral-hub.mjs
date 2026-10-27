@@ -39,7 +39,7 @@ const port = Number(process.env.EVIDENCE_HUB_PORT ?? 3102)
 await app.listen({ host: '127.0.0.1', port })
 console.log(`EVIDENCE_HUB_READY http://127.0.0.1:${port}/api/v1 (in-memory, seeded, ephemeral)`)
 
-for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+for (const signal of ['SIGINT', 'SIGTERM']) {
   process.on(signal, () => {
     app.close().then(
       () => process.exit(0),
