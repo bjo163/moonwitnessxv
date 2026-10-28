@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "baseline": {
+    "design": "d54ad43",
+    "runHead": "8103e35f9af1a046370df899301881d6e5cd87fb"
+  },
+  "server": {
+    "baseUrl": "http://127.0.0.1:3120",
+    "port": 3120,
+    "hubMode": "offline-forced",
+    "hubUrl": "http://127.0.0.1:65535/api/v1",
+    "note": "The harness spawns and stops its own Dock dev server. Ports 3000/3001 belong to another local project and are never bound, probed or killed. The probe of http://127.0.0.1:65535/api/v1 measured \"offline-forced\", so every data-backed screen below was captured on the hub-offline branch — the live branch is NOT covered by these numbers."
+  },
+  "breakpoints": [
+    390,
+    768,
+    1440,
+    1920
+  ],
+  "locales": [
+    "en",
+    "id"
+  ],
+  "statusVocabulary": {
+    "en": [
+      "REAL",
+      "PLANNED",
+      "DEMO"
+    ],
+    "id": [
+      "NYATA",
+      "RENCANA",
+      "DEMO"
+    ]
+  },
+  "screenshotMode": "viewport",
+  "totals": {
+    "matrixRecords": 0,
+    "reducedMotionRecords": 0,
+    "skips": 0,
+    "recordsWithFailures": 0,
+    "maxHorizontalOverflowPx": 0,
+    "maxInteractiveElementsOutsideViewport": 0,
+    "maxElementsOutsideViewport": 0
+  },
+  "results": [],
+  "reducedMotion": [],
+  "keyboard": {
+    "kind": "keyboard",
+    "route": "/en",
+    "drawerViewport": "390x844",
+    "desktopViewport": "1440x900",
+    "settleMs": 1067,
+    "stateBranch": "offline",
+    "tabStopsToTrigger": 6,
+    "enterActivationAttempts": 1,
+    "enterOpensDrawer": true,
+    "drawerRole": "dialog",
+    "drawerAriaModal": "true",
+    "focusMovedIntoDrawer": true,
+    "escapeClosesDrawer": true,
+    "focusRestoredToTrigger": true,
+    "spaceOpensDrawer": true,
+    "activeLinkInsideDrawer": null,
+    "drawerScreenshot": "docs/audit/M19-03-keyboard-evidence/drawer-en-390-open.png",
+    "activeReaderLinkInsideDrawer": {
+      "text": "READ · REAL",
+      "href": "/en/reader"
+    },
+    "consoleErrors": [],
+    "activeLinkOnDesktopNav": null,
+    "desktopActiveLinkCount": 0,
+    "desktopReadHref": "/en/reader",
+    "firstIndexHref": "/en/figures",
+    "activeLinkOnReader": {
+      "text": "READ · REAL",
+      "href": "/en/reader",
+      "visible": true
+    }
+  },
+  "termDetailDiscovery": null,
+  "skips": []
+}
