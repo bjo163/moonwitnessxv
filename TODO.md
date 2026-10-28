@@ -709,7 +709,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M32-01** — Validate first-member need and opt-in journey | P1 | D2 | M03-06 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M32/M32-01.md) |
+| - [ ] | **M32-01** — Validate first-member need and opt-in journey | P1 | D2 | M03-06 | **BLOCKED (packet §8):** the acceptance is about a *real* first member's need and opt-in, and this repository contains no member, interview, consent record or pilot evidence. Nothing can be measured or invented here, so no artifact is produced and no fake validation is recorded; it needs a real candidate member and a privacy-approved interview/opt-in session. ; [packet](docs/tasks/M32/M32-01.md) |
 | - [ ] | **M32-02** — Decide D14 ownership and D00 session reuse | P1 | D2 | M32-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M32/M32-02.md) |
 | - [ ] | **M32-03** — Specify private library and consented contributions | P1 | D3 | M32-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M32/M32-03.md) |
 | - [ ] | **M32-04** — Specify moderation reporting and appeals | P1 | D3 | M32-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M32/M32-04.md) |
@@ -751,7 +751,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M35-01** — Validate one real service and potential buyer | P1 | D2 | M02-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M35/M35-01.md) |
+| - [ ] | **M35-01** — Validate one real service and potential buyer | P1 | D2 | M02-02 | **BLOCKED (packet §8):** the task asks for one real service and a real potential buyer; the repository holds no service offer, buyer, price, merchant or market evidence, and inventing any of it would be fabricated validation. Requires a real service owner, an identified buyer and a legally responsible party before it can be evidenced. ; [packet](docs/tasks/M35/M35-01.md) |
 | - [ ] | **M35-02** — Decide merchant legal/payment and D15/D16 owners | P1 | D2 | M35-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M35/M35-02.md) |
 | - [ ] | **M35-03** — Specify quote order delivery invoice and refund | P1 | D3 | M35-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M35/M35-03.md) |
 | - [ ] | **M35-04** — Specify Treasury roles and payment idempotency | P1 | D3 | M35-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M35/M35-04.md) |
@@ -765,7 +765,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M36-01** — Identify approved physical meter site and technician | P3 | D2 | M25-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M36/M36-01.md) |
+| - [ ] | **M36-01** — Identify approved physical meter site and technician | P3 | D2 | M25-03 | **BLOCKED (packet §8):** no approved meter site, technician, hardware, calibration authority or installation consent exists; M25-03 established that HELIOGRID has no device, meter or kWh field, so there is nothing to site or service. Needs a real site owner, a qualified technician and a safety review before any evidence can exist. ; [packet](docs/tasks/M36/M36-01.md) |
 | - [ ] | **M36-02** — Specify calibration units and timestamp provenance | P3 | D2 | M36-01 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M36/M36-02.md) |
 | - [ ] | **M36-03** — Decide D17 owner and read-only data boundary | P3 | D3 | M36-02 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M36/M36-03.md) |
 | - [ ] | **M36-04** — Specify telemetry cost dashboard and failure states | P3 | D3 | M36-03 | **LEAF**; deliver one reviewed artifact and positive/negative acceptance evidence at exact SHA; parent milestone not separately implemented ; [packet](docs/tasks/M36/M36-04.md) |
