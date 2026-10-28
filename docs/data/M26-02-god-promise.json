@@ -1,0 +1,780 @@
+{
+  "schema": "m26-02-god-promise/1",
+  "task_id": "M26-02",
+  "title": "Recover 00-MAIN GOD PROMISE distinct from ROCKSOUL/paper",
+  "baseline_sha": "659da2855f56c61ae9d21e2995be9649c77fc470",
+  "acceptance": {
+    "text": "Different originals not automatically merged",
+    "locator": "TODO.md:598",
+    "quote": "Different originals not automatically merged",
+    "verified_by": "scripts/check-m26-02-god-promise.mjs"
+  },
+  "claim_state_enum": [
+    "EVIDENCED",
+    "LABEL_ONLY",
+    "NEEDS_SOURCE"
+  ],
+  "claim_state_definitions": {
+    "EVIDENCED": "A primary manuscript, original lines or original paper text is registered in primary_artifacts, its locator quote resolves, and the row is recovered.",
+    "LABEL_ONLY": "Only a title, index label or name entry is present in the repository; no manuscript or original text is located.",
+    "NEEDS_SOURCE": "The repository names the artifact and states, demonstrates or records that the primary is missing, unimported, unreviewed, private or represented only by a non-manuscript reference."
+  },
+  "locator_kind_enum": [
+    "PRIMARY_ARTIFACT",
+    "LABEL_INDEX",
+    "GAP_NOTE",
+    "SECONDARY_REPORT",
+    "PIN_RECORD",
+    "EDITORIAL_DESCRIPTION"
+  ],
+  "recovery_state_enum": [
+    "RECOVERED",
+    "NOT_RECOVERED"
+  ],
+  "rights_enum": [
+    "RIGHTS_EXACT_VERSION_CLEARED",
+    "RIGHTS_UNKNOWN",
+    "PRIVATE_WITNESS",
+    "MISSING_MEDIA"
+  ],
+  "origin_enum": [
+    "ORIGIN_00_MAIN",
+    "ORIGIN_ROCKSOUL",
+    "ORIGIN_PAPER_163"
+  ],
+  "inventory_class_enum": [
+    "ORIGINAL_EVIDENCE",
+    "SECONDARY_ANALYSIS",
+    "FAMILY_CONTEXT",
+    "ARCHITECTURE_CONSTRAINT",
+    "TASK_SPECIFICATION",
+    "MOCKUP_LABEL",
+    "INCIDENTAL_NAME"
+  ],
+  "status_vocabulary_note": "EVIDENCED is reserved for registered primary artifacts; none exist. A label in the 99-chapter index is LABEL_ONLY. A sentence that says the original is missing, private, unimported or unreviewed is NEEDS_SOURCE. A pin record or editorial description is NEEDS_SOURCE when it supplies no manuscript text. recovery_state is RECOVERED only for EVIDENCED rows.",
+  "origins": [
+    {
+      "id": "ORIGIN_00_MAIN",
+      "canonical_name": "00-MAIN GOD PROMISE",
+      "kind": "original_manuscript_family",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "manuscript_recovered": false,
+      "label_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:118",
+      "label_quote": "`00-MAIN GOD PROMISE` **distinct from**",
+      "description": "The MAIN original named in the vision's name-constitution section; also called GOD-PROMISE MAIN in the recovery-gap list."
+    },
+    {
+      "id": "ORIGIN_ROCKSOUL",
+      "canonical_name": "GOD PROMISE: THE ROCKSOUL",
+      "kind": "original_manuscript_family",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "manuscript_recovered": false,
+      "label_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:118",
+      "label_quote": "`GOD PROMISE: THE ROCKSOUL` and from the academic",
+      "description": "The ROCKSOUL-family original, kept distinct from the historical Rocksoul ecosystem of tools and assets."
+    },
+    {
+      "id": "ORIGIN_PAPER_163",
+      "canonical_name": "GOD-PROMISE MOONWITNESS — Monocentric 1·6·3",
+      "kind": "academic_research_paper",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "manuscript_recovered": false,
+      "label_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:189",
+      "label_quote": "**GOD-PROMISE MOONWITNESS** proposes a conceptual **Monocentric 1·6·3**",
+      "description": "The academic 1·6·3 paper, described as a prior private research handoff whose original bytes are not in this repository."
+    }
+  ],
+  "rows": [
+    {
+      "id": "gp-00-main-label-vision-118",
+      "origin_id": "ORIGIN_00_MAIN",
+      "distinct_from": [
+        "ORIGIN_ROCKSOUL",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "LABEL_ONLY",
+      "locator_kind": "LABEL_INDEX",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:118",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:118",
+          "quote": "`00-MAIN GOD PROMISE` **distinct from**"
+        }
+      ],
+      "finding": "The name-constitution section names 00-MAIN GOD PROMISE and immediately separates it from GOD PROMISE: THE ROCKSOUL and the academic 1·6·3 paper."
+    },
+    {
+      "id": "gp-00-main-label-vision-715",
+      "origin_id": "ORIGIN_00_MAIN",
+      "distinct_from": [
+        "ORIGIN_ROCKSOUL",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "LABEL_ONLY",
+      "locator_kind": "LABEL_INDEX",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+          "quote": "19 The Original GOD-PROMISE"
+        }
+      ],
+      "finding": "The 99-chapter archival index contains one slot label, '19 The Original GOD-PROMISE'; it names no manuscript, edition, version or page."
+    },
+    {
+      "id": "gp-00-main-gap-vision-972",
+      "origin_id": "ORIGIN_00_MAIN",
+      "distinct_from": [
+        "ORIGIN_ROCKSOUL",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "NEEDS_SOURCE",
+      "locator_kind": "GAP_NOTE",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+          "quote": "`00-MAIN GOD PROMISE` and `GOD PROMISE: THE ROCKSOUL` original lines"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+          "quote": "require independent identity and revision review"
+        }
+      ],
+      "finding": "The recovery-gap list says the original lines require independent identity and revision review, which presupposes separate originals and says none has been reviewed in this repository."
+    },
+    {
+      "id": "gp-00-main-gap-vision-981",
+      "origin_id": "ORIGIN_00_MAIN",
+      "distinct_from": [
+        "ORIGIN_ROCKSOUL",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "NEEDS_SOURCE",
+      "locator_kind": "GAP_NOTE",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:981",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:981",
+          "quote": "GOD-PROMISE MAIN, MOONDANCE, Mercy × 3, AL-HAKIM and Signal Collection"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:981",
+          "quote": "missing primary work that must be located before any original-copy publication"
+        }
+      ],
+      "finding": "GOD-PROMISE MAIN is listed among works with missing primary work that must be located before any original-copy publication."
+    },
+    {
+      "id": "gp-00-main-gap-crosswalk-356",
+      "origin_id": "ORIGIN_00_MAIN",
+      "distinct_from": [
+        "ORIGIN_ROCKSOUL",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "NEEDS_SOURCE",
+      "locator_kind": "GAP_NOTE",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/data/M26-01-chapter-crosswalk.json:356",
+      "evidence": [
+        {
+          "locator": "docs/data/M26-01-chapter-crosswalk.json:356",
+          "quote": "00-MAIN GOD PROMISE original lines require independent identity and revision review."
+        }
+      ],
+      "finding": "M26-01's crosswalk carries the same gap note on slot 19 and leaves manuscript_or_edition and source_locator null."
+    },
+    {
+      "id": "gp-00-main-map-audit-60",
+      "origin_id": "ORIGIN_00_MAIN",
+      "distinct_from": [
+        "ORIGIN_ROCKSOUL",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "LABEL_ONLY",
+      "locator_kind": "SECONDARY_REPORT",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/audit/M26-01-chapter-crosswalk.md:60",
+      "evidence": [
+        {
+          "locator": "docs/audit/M26-01-chapter-crosswalk.md:60",
+          "quote": "`00-MAIN GOD PROMISE` → slot 19"
+        },
+        {
+          "locator": "docs/audit/M26-01-chapter-crosswalk.md:144",
+          "quote": "Family-to-slot mapping is editorial."
+        }
+      ],
+      "finding": "M26-01 records that mapping 00-MAIN GOD PROMISE to slot 19 is an editorial judgement, not an attested identity."
+    },
+    {
+      "id": "gp-rocksoul-label-vision-118",
+      "origin_id": "ORIGIN_ROCKSOUL",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "LABEL_ONLY",
+      "locator_kind": "LABEL_INDEX",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:118",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:118",
+          "quote": "`GOD PROMISE: THE ROCKSOUL` and from the academic"
+        }
+      ],
+      "finding": "The name-constitution section treats GOD PROMISE: THE ROCKSOUL as an original distinct from 00-MAIN and from the academic paper."
+    },
+    {
+      "id": "gp-rocksoul-label-vision-718",
+      "origin_id": "ORIGIN_ROCKSOUL",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "LABEL_ONLY",
+      "locator_kind": "LABEL_INDEX",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:718",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:718",
+          "quote": "27 GOD PROMISE: THE ROCKSOUL"
+        }
+      ],
+      "finding": "The 99-chapter index places the label at slot 27 under the ROCKSOUL band; the index supplies no manuscript."
+    },
+    {
+      "id": "gp-rocksoul-gap-vision-972",
+      "origin_id": "ORIGIN_ROCKSOUL",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "NEEDS_SOURCE",
+      "locator_kind": "GAP_NOTE",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+          "quote": "`GOD PROMISE: THE ROCKSOUL` original lines"
+        }
+      ],
+      "finding": "The repository states that the ROCKSOUL original lines require independent identity and revision review; no reviewed text is present."
+    },
+    {
+      "id": "gp-rocksoul-gap-crosswalk-478",
+      "origin_id": "ORIGIN_ROCKSOUL",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "NEEDS_SOURCE",
+      "locator_kind": "GAP_NOTE",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/data/M26-01-chapter-crosswalk.json:478",
+      "evidence": [
+        {
+          "locator": "docs/data/M26-01-chapter-crosswalk.json:478",
+          "quote": "GOD PROMISE: THE ROCKSOUL original lines require independent identity and revision review."
+        }
+      ],
+      "finding": "M26-01 repeats the gap note on slot 27 and records no manuscript, edition or source version."
+    },
+    {
+      "id": "gp-rocksoul-pin-m12-8",
+      "origin_id": "ORIGIN_ROCKSOUL",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_PAPER_163"
+      ],
+      "claim_state": "NEEDS_SOURCE",
+      "locator_kind": "PIN_RECORD",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/decisions/M12-01-rocksoul-boundaries.md:8",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M12-01-rocksoul-boundaries.md:8",
+          "quote": "Pinned legacy source"
+        },
+        {
+          "locator": "docs/decisions/M12-01-rocksoul-boundaries.md:8",
+          "quote": "(MFTL manifest)"
+        },
+        {
+          "locator": "docs/audit/M06-01-source-repo-pins.md:22",
+          "quote": "Rocksoul MFTL"
+        }
+      ],
+      "finding": "The only pinned Rocksoul legacy source is rocksoul-platform's MFTL manifest; the pin identifies no GOD PROMISE: THE ROCKSOUL manuscript."
+    },
+    {
+      "id": "gp-paper-label-vision-118",
+      "origin_id": "ORIGIN_PAPER_163",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_ROCKSOUL"
+      ],
+      "claim_state": "LABEL_ONLY",
+      "locator_kind": "LABEL_INDEX",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:118",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:118",
+          "quote": "academic `GOD-PROMISE MOONWITNESS` 1·6·3 paper."
+        }
+      ],
+      "finding": "The name-constitution section names the academic GOD-PROMISE MOONWITNESS 1·6·3 paper as a third distinct original."
+    },
+    {
+      "id": "gp-paper-label-vision-189",
+      "origin_id": "ORIGIN_PAPER_163",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_ROCKSOUL"
+      ],
+      "claim_state": "LABEL_ONLY",
+      "locator_kind": "LABEL_INDEX",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:189",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:189",
+          "quote": "**GOD-PROMISE MOONWITNESS** proposes a conceptual **Monocentric 1·6·3**"
+        }
+      ],
+      "finding": "The paper is described by its thesis and section number only; no title page, edition, DOI, file or manuscript is cited."
+    },
+    {
+      "id": "gp-paper-gap-vision-972",
+      "origin_id": "ORIGIN_PAPER_163",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_ROCKSOUL"
+      ],
+      "claim_state": "NEEDS_SOURCE",
+      "locator_kind": "GAP_NOTE",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+          "quote": "academic 1·6·3 draft require independent identity and revision review"
+        }
+      ],
+      "finding": "The academic 1·6·3 draft is explicitly listed with the two other originals as requiring independent identity and revision review."
+    },
+    {
+      "id": "gp-paper-private-vision-1237",
+      "origin_id": "ORIGIN_PAPER_163",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_ROCKSOUL"
+      ],
+      "claim_state": "NEEDS_SOURCE",
+      "locator_kind": "GAP_NOTE",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1237",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1237",
+          "quote": "GOD-PROMISE MOONWITNESS — Monocentric 1·6·3"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1237",
+          "quote": "their original private bytes are not copied here"
+        }
+      ],
+      "finding": "The vision records the paper as a prior private research handoff read in conversation context and states that its original private bytes were not copied into the repository."
+    },
+    {
+      "id": "gp-paper-description-vision-1017",
+      "origin_id": "ORIGIN_PAPER_163",
+      "distinct_from": [
+        "ORIGIN_00_MAIN",
+        "ORIGIN_ROCKSOUL"
+      ],
+      "claim_state": "NEEDS_SOURCE",
+      "locator_kind": "EDITORIAL_DESCRIPTION",
+      "recovery_state": "NOT_RECOVERED",
+      "manuscript_recovered": false,
+      "primary_artifact_id": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1017",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1017",
+          "quote": "The original GOD-PROMISE paper replaces crude"
+        }
+      ],
+      "finding": "The vision paraphrases one argument of the original paper but supplies no text, quotation, file or edition of that paper."
+    }
+  ],
+  "separation_assertions": [
+    {
+      "id": "sep-00-main-vs-rocksoul",
+      "left": "ORIGIN_00_MAIN",
+      "right": "ORIGIN_ROCKSOUL",
+      "relation": "distinctFrom",
+      "merge_permitted": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:684",
+          "quote": "`00-MAIN GOD PROMISE` | `distinctFrom` | `GOD PROMISE: THE ROCKSOUL`"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:684",
+          "quote": "Competing original manuscripts"
+        }
+      ],
+      "note": "The vision's candidate-edge matrix states the distinction directly and calls the two 'Competing original manuscripts'."
+    },
+    {
+      "id": "sep-00-main-vs-paper",
+      "left": "ORIGIN_00_MAIN",
+      "right": "ORIGIN_PAPER_163",
+      "relation": "distinctFrom",
+      "merge_permitted": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:118",
+          "quote": "`00-MAIN GOD PROMISE` **distinct from** `GOD PROMISE: THE ROCKSOUL` and from the academic `GOD-PROMISE MOONWITNESS` 1·6·3 paper"
+        }
+      ],
+      "note": "The same sentence that separates 00-MAIN from ROCKSOUL also separates it from the academic paper."
+    },
+    {
+      "id": "sep-rocksoul-vs-paper",
+      "left": "ORIGIN_ROCKSOUL",
+      "right": "ORIGIN_PAPER_163",
+      "relation": "distinctFrom",
+      "merge_permitted": false,
+      "evidence": [
+        {
+          "locator": "BLUEPRINT.md:228",
+          "quote": "`00-MAIN GOD PROMISE`, `GOD PROMISE: THE ROCKSOUL` and 1·6·3 research paper"
+        }
+      ],
+      "note": "Inference, stated as such: no single sentence says 'ROCKSOUL is distinct from the paper'. BLUEPRINT.md:228 lists all three under 'Keep different', and MASTER_VISION_NARRATIVE_XV.md:118 separates each of the other two from 00-MAIN; the pairwise separation follows from those two repository statements."
+    }
+  ],
+  "merge_prohibition": {
+    "policy": "DISTINCT_ORIGINALS_MUST_NOT_BE_AUTOMATICALLY_MERGED",
+    "automatic_merge_allowed": false,
+    "same_as_claims": [],
+    "forbidden_merges": [
+      {
+        "left": "ORIGIN_00_MAIN",
+        "right": "ORIGIN_ROCKSOUL",
+        "allowed": false
+      },
+      {
+        "left": "ORIGIN_00_MAIN",
+        "right": "ORIGIN_PAPER_163",
+        "allowed": false
+      },
+      {
+        "left": "ORIGIN_ROCKSOUL",
+        "right": "ORIGIN_PAPER_163",
+        "allowed": false
+      }
+    ],
+    "required_before_any_merge": [
+      "A registered primary artifact for each original with a resolving file:line locator.",
+      "Independent identity review of each original by a human reviewer.",
+      "Rights clearance for any text that would be joined or reproduced.",
+      "A reviewer decision recorded outside this ledger."
+    ],
+    "note": "Name similarity, thematic overlap, shared numeric framework and ROCKSOUL family membership are not identity. BLUEPRINT.md:232 forbids automatic sameAs. This ledger records no merge and approves no sameAs claim."
+  },
+  "primary_artifacts": [],
+  "absence_checks": [
+    {
+      "id": "ABS_NO_MANUSCRIPT_FILENAME",
+      "probe": "git ls-files | rg -i \"god|promise|rocksoul|00-main\"",
+      "observed": "2 paths: apps/arsy/test/ecosystem-god-tier.test.ts and docs/decisions/M12-01-rocksoul-boundaries.md; neither is a God-Promise manuscript.",
+      "statement": "No tracked filename identifies a 00-MAIN GOD PROMISE, GOD PROMISE: THE ROCKSOUL or GOD-PROMISE 1·6·3 manuscript.",
+      "evidence": []
+    },
+    {
+      "id": "ABS_NO_HISTORY_MANUSCRIPT",
+      "probe": "git log --all --pretty=format: --name-only --diff-filter=A | sort -u | rg -i \"god|promise|rocksoul|00-main\"",
+      "observed": "2 paths: apps/radio/test/ecosystem-god-tier.test.ts (pre-rename path) and docs/decisions/M12-01-rocksoul-boundaries.md; no manuscript path was ever added and deleted.",
+      "statement": "Repository history contains no added-then-deleted God-Promise manuscript.",
+      "evidence": []
+    },
+    {
+      "id": "ABS_NO_CODE_REFERENCE",
+      "probe": "rg -ni \"god[ -]?promise|rocksoul|00-main\" apps packages scripts -g '*.{ts,tsx,js,mjs,json,yml,yaml,css}'",
+      "observed": "0 matching files.",
+      "statement": "No application, package, fixture or script embeds a God-Promise original; the names appear only in documentation, data ledgers and one concept mockup SVG.",
+      "evidence": [
+        {
+          "locator": "docs/audit/M19-01-asset-ownership.md:25",
+          "quote": "Zero code references"
+        },
+        {
+          "locator": "docs/audit/M19-01-asset-ownership.md:25",
+          "quote": "0 matches"
+        }
+      ]
+    },
+    {
+      "id": "ABS_NO_GOD_PROMISE_SOURCE_PIN",
+      "probe": "Inspect docs/audit/M06-01-source-repo-pins.md and docs/decisions/M12-01-rocksoul-boundaries.md for a pinned God-Promise source path.",
+      "observed": "No GOD PROMISE or 00-MAIN row exists. The only Rocksoul pin is rocksoul-platform@5d820b17fa11c039 at packages/mftl/manifest.json.",
+      "statement": "No pinned repository path supplies a God-Promise manuscript; the Rocksoul pin is an MFTL manifest, not the ROCKSOUL original.",
+      "evidence": [
+        {
+          "locator": "docs/audit/M06-01-source-repo-pins.md:22",
+          "quote": "Rocksoul MFTL"
+        },
+        {
+          "locator": "docs/decisions/M12-01-rocksoul-boundaries.md:8",
+          "quote": "(MFTL manifest)"
+        }
+      ]
+    },
+    {
+      "id": "ABS_NO_PRIMARY_ARTIFACT_REGISTERED",
+      "probe": "Inspect primary_artifacts in this ledger.",
+      "observed": "0 entries registered, so no EVIDENCED row is possible.",
+      "statement": "No primary manuscript, original-lines file or paper draft is registered in this ledger.",
+      "evidence": []
+    },
+    {
+      "id": "ABS_PRIVATE_BYTES_NOT_IN_REPO",
+      "probe": "Inspect the paper handoff note at MASTER_VISION_NARRATIVE_XV.md:1237.",
+      "observed": "The vision says the private handoff bytes were not copied.",
+      "statement": "The paper's original private bytes are explicitly outside the repository.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1237",
+          "quote": "their original private bytes are not copied here"
+        }
+      ]
+    }
+  ],
+  "mention_inventory": {
+    "method": "Case-insensitive count of matching lines in every pre-existing text file found by a repository-wide search. Counts are matching lines, not total occurrences.",
+    "regex": "god[ -]?promise|rocksoul|00[ -]main",
+    "scope_note": "Files created by M26-02 are excluded because they did not exist when the survey ran. The inventory covers tracked and untracked working-tree files outside node_modules and .git.",
+    "files": [
+      {
+        "path": "BLUEPRINT.md",
+        "matching_lines": 4,
+        "class": "ARCHITECTURE_CONSTRAINT"
+      },
+      {
+        "path": "README.md",
+        "matching_lines": 1,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "TODO.md",
+        "matching_lines": 5,
+        "class": "TASK_SPECIFICATION"
+      },
+      {
+        "path": "docs/audit/M06-01-source-repo-pins.md",
+        "matching_lines": 1,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/audit/M06-07-source-crosswalk-queue.md",
+        "matching_lines": 1,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/audit/M12-typed-correlation-graph.md",
+        "matching_lines": 1,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/audit/M16-01-witness-object-spec.md",
+        "matching_lines": 1,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/audit/M19-01-asset-ownership.md",
+        "matching_lines": 17,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/audit/M26-01-chapter-crosswalk.md",
+        "matching_lines": 5,
+        "class": "SECONDARY_ANALYSIS"
+      },
+      {
+        "path": "docs/audit/M26-07-zenix-age-code-audit.md",
+        "matching_lines": 1,
+        "class": "INCIDENTAL_NAME"
+      },
+      {
+        "path": "docs/audit/ui-p02-p12-audits-fe8e84c.md",
+        "matching_lines": 1,
+        "class": "INCIDENTAL_NAME"
+      },
+      {
+        "path": "docs/data/M26-01-chapter-crosswalk.json",
+        "matching_lines": 18,
+        "class": "SECONDARY_ANALYSIS"
+      },
+      {
+        "path": "docs/data/M26-04-zill-aliases.json",
+        "matching_lines": 1,
+        "class": "SECONDARY_ANALYSIS"
+      },
+      {
+        "path": "docs/decisions/ADR-0003-source-rights-and-consent.md",
+        "matching_lines": 1,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/decisions/ADR-0007-echolog-storage.md",
+        "matching_lines": 1,
+        "class": "INCIDENTAL_NAME"
+      },
+      {
+        "path": "docs/decisions/M02-05-stable-ids-and-legacy-refs.md",
+        "matching_lines": 2,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/decisions/M02-07-historical-decisions-matrix.md",
+        "matching_lines": 3,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/decisions/M06-05-historical-interfaces-map.md",
+        "matching_lines": 2,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/decisions/M12-01-rocksoul-boundaries.md",
+        "matching_lines": 11,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/decisions/M16-01-private-witness-object-spec.md",
+        "matching_lines": 1,
+        "class": "FAMILY_CONTEXT"
+      },
+      {
+        "path": "docs/design/mockups-xv/02_project_universe.svg",
+        "matching_lines": 1,
+        "class": "MOCKUP_LABEL"
+      },
+      {
+        "path": "docs/tasks/M26/M26-02.md",
+        "matching_lines": 2,
+        "class": "TASK_SPECIFICATION"
+      },
+      {
+        "path": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "matching_lines": 60,
+        "class": "ORIGINAL_EVIDENCE"
+      }
+    ],
+    "total_matching_lines": 141
+  },
+  "assertions": {
+    "different_originals_not_automatically_merged": true,
+    "no_same_as_claim": true,
+    "no_manuscript_recovered": true,
+    "labels_are_not_manuscripts": true
+  },
+  "declared_counts": {
+    "total": 16,
+    "origins": 3,
+    "separation_pairs": 3,
+    "primary_artifacts": 0,
+    "manuscripts_recovered": 0,
+    "absence_checks": 6,
+    "mention_inventory_files": 23,
+    "mention_inventory_matching_lines": 141,
+    "verified_locators": 35,
+    "by_claim_state": {
+      "EVIDENCED": 0,
+      "LABEL_ONLY": 7,
+      "NEEDS_SOURCE": 9
+    },
+    "by_origin": {
+      "ORIGIN_00_MAIN": 6,
+      "ORIGIN_ROCKSOUL": 5,
+      "ORIGIN_PAPER_163": 5
+    },
+    "by_locator_kind": {
+      "PRIMARY_ARTIFACT": 0,
+      "LABEL_INDEX": 6,
+      "GAP_NOTE": 7,
+      "SECONDARY_REPORT": 1,
+      "PIN_RECORD": 1,
+      "EDITORIAL_DESCRIPTION": 1
+    },
+    "by_recovery_state": {
+      "RECOVERED": 0,
+      "NOT_RECOVERED": 16
+    }
+  },
+  "non_claims": [
+    "No manuscript, original lines, paper draft or primary artifact of any of the three originals was recovered.",
+    "A label in the 99-chapter index is not a chapter, edition or manuscript.",
+    "The ROCKSOUL ecosystem, ROCKSOUL family name and Rocksoul MFTL manifest are not the GOD PROMISE: THE ROCKSOUL original.",
+    "Shared themes, shared 1·6·3 numbering and ROCKSOUL family membership do not establish identity between the three originals.",
+    "This ledger does not decide authorship, ownership, rights or legal status.",
+    "The pairwise separation of ROCKSOUL from the paper is inferred from two repository statements; it is not a single quoted sentence."
+  ],
+  "limitations": [
+    "No external archive or private handoff was opened or fetched; the survey is repository-only.",
+    "The 00-MAIN, ROCKSOUL and paper titles come from repository prose, not from title pages or catalogue records.",
+    "No page count, date, edition, language or revision history can be stated for any original.",
+    "The mention inventory counts matching lines and excludes the three files this task creates; it is a survey snapshot at the declared baseline SHA.",
+    "The repository does not name a separate ROCKSOUL-versus-paper relation sentence; that pair is an inference recorded in sep-rocksoul-vs-paper.",
+    "All three originals remain RIGHTS_UNKNOWN; this ledger makes no rights determination."
+  ],
+  "rollback": {
+    "method": "DELETE_CREATED_FILES_ONLY",
+    "files": [
+      "docs/data/M26-02-god-promise.json",
+      "scripts/check-m26-02-god-promise.mjs",
+      "docs/audit/M26-02-god-promise.md"
+    ]
+  }
+}
