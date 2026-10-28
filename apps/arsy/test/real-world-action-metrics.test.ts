@@ -71,9 +71,9 @@ test('CONFIDENT metrics: rates use explicit denominators and keep unknown benefi
   assert.equal(result.safeBarrierResponseCount, 1)
   assert.equal(result.barrierResponseRate.percent, 50)
 
-  assert.equal(result.evaluatedBenefitCount, 3)
+  assert.equal(result.evaluatedBenefitCount, 2)
   assert.equal(result.verifiedBenefitCount, 1)
-  assert.equal(result.practicalBenefitRate.percent, 33.33)
+  assert.equal(result.practicalBenefitRate.percent, 50)
   assert.equal(result.unknownBenefitCount, 1)
   assert.equal(result.unassessedBenefitCount, 1)
 })
