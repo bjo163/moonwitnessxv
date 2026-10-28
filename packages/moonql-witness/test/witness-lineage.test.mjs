@@ -26,7 +26,7 @@ async function withWitness(run) {
 const inputRecord = (overrides = {}) => ({
   stableId: 'wt_illustrative_0001',
   ownerPrincipalRef: 'principal_synthetic_owner',
-  originalObjectKey: `sha256/${originalDigest}`,
+  originalObjectKey: 'attachments/opaque-original-0001',
   originalDigest,
   originalSize: 42,
   originalContentType: 'application/octet-stream',
@@ -95,7 +95,7 @@ test('M16-03: date corrections append without changing the private original or E
     assert.equal(second.appended, true)
 
     const storedOriginal = await originalEngine.find(String(record.id))
-    assert.equal(storedOriginal?.originalObjectKey, `sha256/${originalDigest}`)
+    assert.equal(storedOriginal?.originalObjectKey, 'attachments/opaque-original-0001')
     assert.equal(storedOriginal?.originalDigest, originalDigest)
     assert.equal(storedOriginal?.visibility, 'PRIVATE')
     assert.equal(storedOriginal?.revision, 1)
@@ -156,7 +156,7 @@ test('M16-03: reject original overwrite/removal, correction mutation/removal, an
     }), /positive integer/)
 
     const stored = await originalEngine.find(String(record.id))
-    assert.equal(stored?.originalObjectKey, `sha256/${originalDigest}`)
+    assert.equal(stored?.originalObjectKey, 'attachments/opaque-original-0001')
     assert.equal(stored?.originalDigest, originalDigest)
   })
 })
