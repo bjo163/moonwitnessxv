@@ -19,6 +19,10 @@ export function useCockpitLocale() {
   })
 
   useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = locale
+    }
+
     if (typeof window !== 'undefined') {
       try {
         const saved = window.localStorage.getItem(STORAGE_KEY)

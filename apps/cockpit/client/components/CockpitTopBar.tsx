@@ -233,6 +233,10 @@ export function CockpitTopBar({
         <div
           role="group"
           aria-label={copy.selectLanguage}
+          onKeyDown={(event) => {
+            // Preserve the native Space activation of buttons from the App-level media shortcut.
+            if (event.code === 'Space') event.stopPropagation()
+          }}
           style={{
             display: 'inline-flex',
             borderRadius: 4,
