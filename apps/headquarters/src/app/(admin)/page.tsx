@@ -17,17 +17,139 @@ import {
 } from '@moonwitness/moonui'
 import { dashboard } from '@/data/queries/ops'
 import { getMonitorOverview } from '@/data/queries/monitor'
+import { listRecords, type ListResult } from '@/data/queries/records'
 import { getSchema } from '@/data/schema'
-import { guardEndpoint } from '@/lib/authz'
+import { guardEndpoint, guardModel } from '@/lib/authz'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { EventStream } from '@/ui/client/EventStream'
 import { AuditFeed, JobTable } from '@/ui/widgets/Feeds'
 import { TierBadge } from '@/ui/widgets/ModelTable'
+import { requestLocale } from '@/lib/request-locale'
+import type { Locale } from '@moonwitness/core'
+import type { ModelMeta } from '@moonwitness/moonql-client'
 
 const uptime = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m ${seconds % 60}s`
+}
+
+export const sourceRightsLabel = (status: unknown, locale: Locale): { label: string; tone: 'ok' | 'hot' | 'night' } => {
+  if (status === 'RIGHTS_EXACT_VERSION_CLEARED') {
+    return locale === 'id'
+      ? { label: 'Hak versi persis jelas · layak ditinjau untuk rilis', tone: 'ok' }
+      : { label: 'Exact-version rights cleared · release eligible', tone: 'ok' }
+  }
+  if (status === 'METADATA_ONLY') {
+    return locale === 'id'
+      ? { label: 'Metadata saja · teks ditahan', tone: 'hot' }
+      : { label: 'Metadata only · text withheld', tone: 'hot' }
+  }
+  if (status === 'RIGHTS_UNKNOWN') {
+    return locale === 'id'
+      ? { label: 'Hak belum diketahui · teks ditahan', tone: 'hot' }
+      : { label: 'Rights unknown · text withheld', tone: 'hot' }
+  }
+  if (status === 'RESTRICTED') {
+    return locale === 'id'
+      ? { label: 'Dibatasi · teks ditahan', tone: 'hot' }
+      : { label: 'Restricted · text withheld', tone: 'hot' }
+  }
+  // Unknown and legacy classifications fail closed. In particular, PUBLIC_DOMAIN
+  // alone is not the corpus gate's exact-version clearance value.
+  return locale === 'id'
+    ? { label: 'Status hak belum diverifikasi · teks ditahan', tone: 'night' }
+    : { label: 'Rights status not verified · text withheld', tone: 'night' }
+}
+
+export const sourceReviewLabel = (provenanceSha: unknown, locale: Locale): string => {
+  const hasDigest = typeof provenanceSha === 'string' && /^[a-f0-9]{64}$/i.test(provenanceSha)
+  if (locale === 'id') {
+    return hasDigest
+      ? 'Digest provenance tersedia; keputusan review/rilis tidak dicatat di model D01.'
+      : 'Digest provenance tidak tersedia; keputusan review/rilis tidak dicatat di model D01.'
+  }
+  return hasDigest
+    ? 'Provenance digest present; D01 does not record a review or publication decision.'
+    : 'No provenance digest; D01 does not record a review or publication decision.'
+}
+
+function SourceRightsPanel({
+  locale,
+  model,
+  accessAllowed,
+  sources,
+}: {
+  locale: Locale
+  model: ModelMeta | undefined
+  accessAllowed: boolean
+  sources: ListResult | null
+}) {
+  return (
+    <Panel
+      title={locale === 'id' ? 'Status hak dan sumber D01' : 'D01 rights and source status'}
+      subtitle={locale === 'id'
+        ? 'Status berasal dari metadata edisi yang tersimpan. Hak versi jelas bukan bukti bahwa edisi telah dipublikasikan.'
+        : 'Status comes from stored edition metadata. Cleared rights do not prove that an edition has been published.'}
+      actions={
+        <LinkButton href="/models/corpus_editions" variant="ghost" size="sm">
+          {locale === 'id' ? 'Semua edisi' : 'All editions'}
+        </LinkButton>
+      }
+    >
+      {!model || !model.operations.list ? (
+        <p className="m-muted">
+          {locale === 'id'
+            ? 'Model metadata edisi tidak tersedia; status sumber tidak disimpulkan.'
+            : 'The edition metadata model is unavailable; no source status is inferred.'}
+        </p>
+      ) : !accessAllowed ? (
+        <p className="m-muted">
+          {locale === 'id'
+            ? 'Akses inventaris edisi tidak tersedia; data tidak dimuat.'
+            : 'Edition inventory access is unavailable; no data was loaded.'}
+        </p>
+      ) : !sources ? (
+        <p className="m-muted">
+          {locale === 'id'
+            ? 'Inventaris edisi gagal dimuat; status tidak dianggap kosong atau disetujui.'
+            : 'The edition inventory could not be loaded; status is not treated as empty or approved.'}
+        </p>
+      ) : (
+        <div className="m-stack">
+          <p className="m-muted">
+            {locale === 'id'
+              ? `${sources.total ?? sources.rows.length} edisi tercatat. Status review/rilis belum disimpan pada model D01.`
+              : `${sources.total ?? sources.rows.length} editions recorded. D01 does not store a review or publication status.`}
+          </p>
+          <DataTable
+            rows={sources.rows}
+            rowKey={(row, index) => String(row.id ?? index)}
+            empty={locale === 'id' ? 'Belum ada edisi tercatat.' : 'No editions recorded.'}
+            columns={[
+              { key: 'code', label: locale === 'id' ? 'Kode edisi' : 'Edition code', render: (row) => <span className="m-mono">{String(row.code ?? '—')}</span> },
+              { key: 'name', label: locale === 'id' ? 'Edisi' : 'Edition', render: (row) => String(row.name ?? '—') },
+              {
+                key: 'rightsStatus',
+                label: locale === 'id' ? 'Hak / akses teks' : 'Rights / text access',
+                render: (row) => {
+                  const state = sourceRightsLabel(row.rightsStatus, locale)
+                  return <Badge tone={state.tone}>{state.label}</Badge>
+                },
+              },
+              { key: 'licenseName', label: locale === 'id' ? 'Lisensi tercatat' : 'Recorded license', render: (row) => String(row.licenseName ?? (locale === 'id' ? 'Tidak dicatat' : 'Not recorded')) },
+              { key: 'reviewStatus', label: locale === 'id' ? 'Bukti review' : 'Review evidence', render: (row) => sourceReviewLabel(row.provenanceSha, locale) },
+            ]}
+          />
+          <p className="m-muted">
+            {locale === 'id'
+              ? 'Teks hanya dapat diakses untuk RIGHTS_EXACT_VERSION_CLEARED. Status lain, nilai hilang, dan nilai tak dikenal tetap ditahan.'
+              : 'Text is available only for RIGHTS_EXACT_VERSION_CLEARED. Other, missing, and unknown values remain withheld.'}
+          </p>
+        </div>
+      )}
+    </Panel>
+  )
 }
 
 const PROJECTS: ReadonlyArray<{
@@ -112,6 +234,7 @@ const EMPIRE_14_SYSTEMS = [
 ] as const
 
 export default async function DashboardPage() {
+  const locale = await requestLocale()
   const doc = await getSchema()
   // the telemetry blocks (engine, crons, job runs, audit trail, live bus) all
   // come from `/ops/dashboard` + `/ops/stream`, whose published ACL is admin-only:
@@ -119,6 +242,11 @@ export default async function DashboardPage() {
   const guard = await guardEndpoint(doc, 'GET', '/ops/dashboard')
   if (!guard.allowed) return <AccessDenied code={guard.code} />
 
+  const sourceModel = doc.models.corpus_editions
+  const sourceGuard = sourceModel ? await guardModel(sourceModel, 'list') : null
+  const sources = sourceModel?.operations.list && sourceGuard?.allowed
+    ? await listRecords('corpus_editions', { pageSize: 25, order: 'code' }).catch(() => null)
+    : null
   const [ops, monitor] = await Promise.all([dashboard(), getMonitorOverview()])
   const totalRows = ops.models.reduce((sum, model) => sum + model.count, 0)
   const crons = ops.crons
@@ -345,6 +473,8 @@ export default async function DashboardPage() {
           ))}
         </div>
       </Panel>
+
+      <SourceRightsPanel locale={locale} model={sourceModel} accessAllowed={sourceGuard?.allowed ?? false} sources={sources} />
 
       {/* 3. BOTTOM 3-PANEL ROW: PROJECT UNIVERSE + ACTIVE WORKFLOWS + COMMAND FEED / ALERTS */}
       <section className="hq-mc-bottom-grid" id="project-universe">
