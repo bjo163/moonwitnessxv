@@ -28,6 +28,15 @@ const FOREIGN_ENV_KEYS = [
   // read by the compose backup sidecar's shell loop, never by the hub
   'BACKUP_INTERVAL_SECONDS',
   'BACKUP_KEEP',
+  // read by scripts/db-backup.sh for the optional ECHOLOG S3 destination
+  'BACKUP_S3_ENDPOINT',
+  'BACKUP_S3_BUCKET',
+  'BACKUP_S3_REGION',
+  'BACKUP_S3_ACCESS_KEY_ID',
+  'BACKUP_S3_SECRET_ACCESS_KEY',
+  'BACKUP_S3_PREFIX',
+  'BACKUP_S3_MAX_OBJECT_BYTES',
+  'BACKUP_S3_KEEP',
   // read by apps/echolog/src/config.ts; never aliases the hub PORT
   'ECHOLOG_HOST',
   'ECHOLOG_PORT',
