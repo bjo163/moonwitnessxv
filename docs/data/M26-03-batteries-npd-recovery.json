@@ -1,0 +1,697 @@
+{
+  "task": "M26-03",
+  "title": "Recover four THE BATTERIES books, NPD scenes, 15 synopsis sources",
+  "generated_utc": "2026-10-28T09:24:09Z",
+  "baseline_sha": "a5f9b6422c77f12f0ce8dd7d89de7e0b0d0363a7",
+  "observed_head_sha": "3b44d28d0abb0aa37fd5bde9a59a588ce3db2139",
+  "baseline_note": "The task states baseline dev HEAD a5f9b64. The observed worktree HEAD is 3b44d28, two commits later; a5f9b64 is an ancestor. Another session's uncommitted changes were present and were left untouched.",
+  "acceptance": "Missing pages, chronology and rights explicitly recorded",
+  "scope_note": "This ledger records absence. It does not recover, quote or authenticate any THE BATTERIES book, NPD scene or XII synopsis.",
+  "claim_state_enum": [
+    "EVIDENCED",
+    "REPORTED_ONLY",
+    "NEEDS_SOURCE"
+  ],
+  "claim_state_definitions": {
+    "EVIDENCED": "A repository locator records evidence of the artifact itself (its own page, scene text, transcript or primary-source record). No row qualifies at this baseline: no artifact bytes exist in the repository.",
+    "REPORTED_ONLY": "The artifact label is named only in a derived XV report that itself states the original archive or page order is missing. A locator exists, but it points at the report, not at the artifact.",
+    "NEEDS_SOURCE": "No repository locator names this individual artifact. The only evidence is a count or a generic gap statement, so the row has no source_locator."
+  },
+  "kind_enum": [
+    "book",
+    "scene",
+    "synopsis",
+    "variant"
+  ],
+  "title_status_enum": [
+    "EVIDENCED_IN_REPOSITORY",
+    "NOT_NAMED_IN_REPOSITORY"
+  ],
+  "locator_kind_enum": [
+    "PRIMARY_ARTIFACT",
+    "SECONDARY_REPORT"
+  ],
+  "rights_enum": [
+    "RIGHTS_EXACT_VERSION_CLEARED",
+    "RIGHTS_UNKNOWN",
+    "PRIVATE_WITNESS",
+    "MISSING_MEDIA"
+  ],
+  "page_status_enum": [
+    "NOT_RECOVERED",
+    "METADATA_ONLY",
+    "FRAGMENT_LOCATED",
+    "FULL_TEXT_LOCATED"
+  ],
+  "chronology_status_enum": [
+    "UNRECORDED",
+    "LABEL_ONLY",
+    "PARTIAL",
+    "RECORDED"
+  ],
+  "recovery_state_enum": [
+    "NOT_RECOVERED",
+    "FRAGMENT_LOCATED",
+    "RECOVERED"
+  ],
+  "rights_note": "M06-06 vocabulary is used as instructed. ADR-0003 §2.1 uses a different rightsStatus enum; M06-06 and M07-04 govern this ledger. M06-06 maps RIGHTS_UNKNOWN to METADATA_ONLY and flags text NEEDS_SOURCE.",
+  "declared_targets": {
+    "books": 4,
+    "named_npd_works": 3,
+    "synopses": 15,
+    "named_variants": 0,
+    "note": "4 and 15 are the counts in MASTER_VISION_NARRATIVE_XV.md:973 and :974 and in TODO.md:419. 3 is the number of NPD works named at :370 and :973; it is not an exhaustive scene inventory. 0 variants is recorded because :973 says the three named works are different works; M17-04 leaves NPD variants as an unnamed gap."
+  },
+  "declared_counts": {
+    "total": 22,
+    "by_claim_state": {
+      "EVIDENCED": 0,
+      "REPORTED_ONLY": 3,
+      "NEEDS_SOURCE": 19
+    },
+    "by_kind": {
+      "book": 4,
+      "scene": 3,
+      "synopsis": 15,
+      "variant": 0
+    },
+    "by_rights": {
+      "RIGHTS_EXACT_VERSION_CLEARED": 0,
+      "RIGHTS_UNKNOWN": 22,
+      "PRIVATE_WITNESS": 0,
+      "MISSING_MEDIA": 0
+    },
+    "by_page_status": {
+      "NOT_RECOVERED": 22,
+      "METADATA_ONLY": 0,
+      "FRAGMENT_LOCATED": 0,
+      "FULL_TEXT_LOCATED": 0
+    },
+    "by_chronology_status": {
+      "UNRECORDED": 19,
+      "LABEL_ONLY": 3,
+      "PARTIAL": 0,
+      "RECORDED": 0
+    },
+    "by_recovery_state": {
+      "NOT_RECOVERED": 22,
+      "FRAGMENT_LOCATED": 0,
+      "RECOVERED": 0
+    }
+  },
+  "assertions": [
+    "No THE BATTERIES book title, NPD scene text or XII synopsis text exists in this repository at the baseline; zero rows are recovered.",
+    "The four-book and fifteen-entry counts are reports about missing originals, not inventories of recovered artifacts.",
+    "The three NPD labels are timestamp-like episode/token labels; MASTER_VISION_NARRATIVE_XV.md:973 says they are different works and that exact page, scene and media order remain incompletely recovered.",
+    "All rows are RIGHTS_UNKNOWN: no version-level licence or provenance can be confirmed, so M06-06 restricts them to metadata-only.",
+    "Ledger-local ids such as batteries-book-01 and xii-synopsis-01 are row identifiers, not source titles, catalogue numbers or edition ids.",
+    "No external archive was fetched; the moonwitness-II and XII repositories cited by the vision were not opened."
+  ],
+  "external_sources_not_fetched": [
+    {
+      "repository": "github.com/bjo163/moonwitness-II",
+      "in_repo_reference": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:635",
+      "opened": false,
+      "note": "Described as the original Story/Witness cycle with story archive routes and graph structures. No pin, path or per-artifact locator is recorded for THE BATTERIES books."
+    },
+    {
+      "repository": "github.com/bjo163/moonwitness-xii-season-global-championships",
+      "in_repo_reference": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:775",
+      "pin_recorded": "dff42ba0e0abce6e37b2c1e94e3e428bb588a8ec",
+      "opened": false,
+      "note": "Cited as the 33-patch registry and editorial story archive. No synopsis file path, title list or per-entry locator is recorded in XV."
+    }
+  ],
+  "rows": [
+    {
+      "id": "batteries-book-01",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "book",
+      "series_index": 1,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "quote": "THE BATTERIES four-book narrative structure"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1127",
+          "quote": "Missing originals of four-book BATTERIES/NPD"
+        },
+        {
+          "locator": "TODO.md:419",
+          "quote": "Record four-book THE BATTERIES and separate NPD variants gaps"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "One of four reported books. The repository records that a four-book structure exists but no title, page, date, sequence or edition for this book; the id is ledger-local."
+    },
+    {
+      "id": "batteries-book-02",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "book",
+      "series_index": 2,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "quote": "THE BATTERIES four-book narrative structure"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1127",
+          "quote": "Missing originals of four-book BATTERIES/NPD"
+        },
+        {
+          "locator": "TODO.md:419",
+          "quote": "Record four-book THE BATTERIES and separate NPD variants gaps"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Second reported book. Unnamed and unsequenced in the repository; no book two is identified anywhere, only the count of four."
+    },
+    {
+      "id": "batteries-book-03",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "book",
+      "series_index": 3,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "quote": "THE BATTERIES four-book narrative structure"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1127",
+          "quote": "Missing originals of four-book BATTERIES/NPD"
+        },
+        {
+          "locator": "TODO.md:419",
+          "quote": "Record four-book THE BATTERIES and separate NPD variants gaps"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Third reported book. Unnamed and unsequenced in the repository; no book three is identified anywhere, only the count of four."
+    },
+    {
+      "id": "batteries-book-04",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "book",
+      "series_index": 4,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "quote": "THE BATTERIES four-book narrative structure"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:1127",
+          "quote": "Missing originals of four-book BATTERIES/NPD"
+        },
+        {
+          "locator": "TODO.md:419",
+          "quote": "Record four-book THE BATTERIES and separate NPD variants gaps"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Fourth reported book. Unnamed and unsequenced in the repository; no book four is identified anywhere, only the count of four."
+    },
+    {
+      "id": "npd-24-27",
+      "title": "NPD TEAM 24:27",
+      "title_status": "EVIDENCED_IN_REPOSITORY",
+      "kind": "scene",
+      "series_index": null,
+      "claim_state": "REPORTED_ONLY",
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:370",
+      "locator_kind": "SECONDARY_REPORT",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:370",
+          "quote": "NPD TEAM 24:27"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "quote": "NPD 24:27, 24:37 and 25:50 are different works"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "LABEL_ONLY",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Timestamp-like episode/token label only. No page, scene text, media manifest or release date is present; :973 says exact page/scene/media order is incompletely recovered and that this label is a different work from 24:37 and 25:50."
+    },
+    {
+      "id": "npd-24-37",
+      "title": "24:37 — TARIAN KIDS",
+      "title_status": "EVIDENCED_IN_REPOSITORY",
+      "kind": "scene",
+      "series_index": null,
+      "claim_state": "REPORTED_ONLY",
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:370",
+      "locator_kind": "SECONDARY_REPORT",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:370",
+          "quote": "24:37 — TARIAN KIDS"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "quote": "NPD 24:27, 24:37 and 25:50 are different works"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:681",
+          "quote": "verify scene"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "LABEL_ONLY",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Timestamp-like episode/token label only. :681 records the THE BATTERIES to NPD TEAM 24:37 relation as a creative-brief source that still needs scene verification; no page or scene text is present."
+    },
+    {
+      "id": "npd-25-50",
+      "title": "25:50 — TARIAN HUJAN",
+      "title_status": "EVIDENCED_IN_REPOSITORY",
+      "kind": "scene",
+      "series_index": null,
+      "claim_state": "REPORTED_ONLY",
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:370",
+      "locator_kind": "SECONDARY_REPORT",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:370",
+          "quote": "25:50 — TARIAN HUJAN"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "quote": "NPD 24:27, 24:37 and 25:50 are different works"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "LABEL_ONLY",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Timestamp-like episode/token label only. No page, scene text, media manifest or release date is present; :973 says exact page/scene/media order is incompletely recovered and that this label is a different work from 24:27 and 24:37."
+    },
+    {
+      "id": "xii-synopsis-01",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 1,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "One of the 15 XII story-archive synopsis entries recorded only as a count. The line says these are not 15 guaranteed original transcripts; no per-entry title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-02",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 2,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Second of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-03",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 3,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Third of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-04",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 4,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Fourth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-05",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 5,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Fifth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-06",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 6,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Sixth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-07",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 7,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Seventh of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-08",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 8,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Eighth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-09",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 9,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Ninth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-10",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 10,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Tenth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-11",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 11,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Eleventh of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-12",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 12,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Twelfth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-13",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 13,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Thirteenth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-14",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 14,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Fourteenth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    },
+    {
+      "id": "xii-synopsis-15",
+      "title": null,
+      "title_status": "NOT_NAMED_IN_REPOSITORY",
+      "kind": "synopsis",
+      "series_index": 15,
+      "claim_state": "NEEDS_SOURCE",
+      "source_locator": null,
+      "locator_kind": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 story archive synopsis entries"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "15 guaranteed original transcripts"
+        }
+      ],
+      "page_status": "NOT_RECOVERED",
+      "chronology_status": "UNRECORDED",
+      "rights_status": "RIGHTS_UNKNOWN",
+      "recovery_state": "NOT_RECOVERED",
+      "notes": "Fifteenth of 15 XII synopsis entries; count only. No title, text, sequence, date or locator exists."
+    }
+  ]
+}

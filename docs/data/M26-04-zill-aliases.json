@@ -1,0 +1,502 @@
+{
+  "task": "M26-04",
+  "title": "Reconcile ZILL origins, Honey/Queen R, and story alias variants",
+  "generated_utc": "2026-10-28T09:26:49Z",
+  "baseline_sha": "a5f9b642c77f12f0ce8dd7d89de7e0b0d0363a7",
+  "observed_head_sha": "3b44d28d0abb0aa37fd5bde9a59a588ce3db2139",
+  "baseline_note": "The task states baseline dev HEAD a5f9b64. The observed worktree HEAD is 3b44d28, two commits later; a5f9b64 is an ancestor. Another session's uncommitted changes were present and were left untouched.",
+  "acceptance": "Ambiguous identities stay disputed",
+  "scope_note": "This ledger records how each term is currently treated in the repository. It does not mint identities, rename source spellings, or decide rights. A label is not a manuscript and a shared sound is not a referent.",
+  "status_enum": [
+    "CANONICAL",
+    "ALIAS",
+    "DISPUTED",
+    "FALSE_ALIAS_REJECTED",
+    "NEEDS_SOURCE"
+  ],
+  "status_definitions": {
+    "CANONICAL": "A distinct term carried by a registry entity or term ID with the cited evidence. The label may be canonical while its identityStatus stays CONTESTED; the dispute is recorded, not resolved away.",
+    "ALIAS": "A surface variant attached to one canonical term. An alias is a language/script-scoped claim, never proof that two referents are identical, and it must point at its canonical row.",
+    "DISPUTED": "The repository preserves at least two readings or an open claim. The row must state the open question; nothing may silently merge or rename it.",
+    "FALSE_ALIAS_REJECTED": "A proposed identity between two distinct rows was reviewed and refused. The refusal is evidence, not a resolution of every neighbouring question.",
+    "NEEDS_SOURCE": "The label appears in a document but no registry term, alias, reviewer decision or source locator exists. Absence is recorded, not filled by invention."
+  },
+  "kind_enum": ["term", "identity_claim"],
+  "assertions": {
+    "thematic_similarity_is_not_identity": true,
+    "disputed_identities_not_merged_or_renamed": true,
+    "no_approved_same_as": true
+  },
+  "same_as_claims": [],
+  "declared_counts": {
+    "total": 13,
+    "by_status": {
+      "CANONICAL": 2,
+      "ALIAS": 1,
+      "DISPUTED": 2,
+      "FALSE_ALIAS_REJECTED": 1,
+      "NEEDS_SOURCE": 7
+    },
+    "by_kind": {
+      "term": 10,
+      "identity_claim": 3
+    }
+  },
+  "limitations": [
+    "No external source, network fetch or private witness material was consulted.",
+    "The UNILEX registry is an Empire seed marked PROPOSED_NOT_ADOPTED; registry vocabulary is not a rights or canon decision.",
+    "HONEY, QUEEN R, MYLUFT, MA'LUF, Al-Wadud and HONEY & MOON have no code registry row; their absence is recorded as NEEDS_SOURCE.",
+    "ZILL and ZIIL are separated in code, but the referent of ZIIL remains disputed between 'historic spelling/typo' and 'historic Empire safety/rights term'."
+  ],
+  "rows": [
+    {
+      "id": "ZILL-01",
+      "kind": "term",
+      "term": "ZILL — Shadow Witness",
+      "spelling_variants": ["ZILL", "ZILL — Saksi Bayangan", "ZILL — The Shadow Witness"],
+      "origin": "xv-creative-fiction",
+      "status": "CANONICAL",
+      "identity_status": "CONTESTED",
+      "registry_ref": {
+        "ontology": "O003",
+        "unilex": "P031"
+      },
+      "distinct_from": ["ZIIL", "ZILL — Ahluz Zikir / Tasawuf"],
+      "merged_origins": [],
+      "treatment": "One creative character with its own ontology entity and UNILEX term. identityStatus CONTESTED is stored on purpose: same-label claims stay visible rather than being resolved into a single identity.",
+      "review_evidence": [
+        {
+          "pair": "O003:O004",
+          "decision": "REJECTED",
+          "locator": "packages/moonql-ontology/src/seed.ts:482",
+          "quote": "ZILL and ZIIL differ by spelling and domain; resemblance is not identity."
+        }
+      ],
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:117",
+          "quote": "older `ZIIL` occurrences are historical spellings/typos needing source-aware alias decisions"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:683",
+          "quote": "Never auto `sameAs`"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:183",
+          "quote": "labelEn: 'ZILL — Shadow Witness',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:188",
+          "quote": "identityStatus: 'CONTESTED',"
+        },
+        {
+          "locator": "packages/moonql-unilex/src/index.ts:118",
+          "quote": "preferredLabel: { en: 'ZILL — Shadow Witness', id: 'ZILL — Saksi Bayangan' },"
+        },
+        {
+          "locator": "apps/arsy/test/ontology.test.ts:306",
+          "quote": "review.pairCode === 'O003:O004'"
+        }
+      ]
+    },
+    {
+      "id": "ZILL-02",
+      "kind": "term",
+      "term": "ZILL — Ahluz Zikir / Tasawuf",
+      "spelling_variants": ["ZILL Study Track", "Track Kajian ZILL", "ZILL — Tasawuf"],
+      "origin": "sufi-study",
+      "status": "CANONICAL",
+      "identity_status": "REVIEWED",
+      "registry_ref": {
+        "ontology": "O005",
+        "unilex": "P030"
+      },
+      "distinct_from": ["ZILL — Shadow Witness"],
+      "merged_origins": [],
+      "treatment": "A separate study-track entity with a verified distinctFrom edge to the creative character. The shared word ZILL does not make the two referents one.",
+      "review_evidence": [
+        {
+          "pair": "O003:O005",
+          "decision": "DISTINCT_FROM_VERIFIED",
+          "locator": "packages/moonql-ontology/src/seed.ts:386",
+          "quote": "edgeCode: 'EDG-O003-O005-distinctFrom',"
+        }
+      ],
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:282",
+          "quote": "`ZILL — Shadow Witness` remains a separate creative/original concept."
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:207",
+          "quote": "labelEn: 'ZILL Study Track',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:395",
+          "quote": "'The creative character and the Sufi study track share a name but not a referent.',"
+        },
+        {
+          "locator": "packages/moonql-unilex/src/index.ts:105",
+          "quote": "preferredLabel: { en: 'ZILL Study Track', id: 'Track Kajian ZILL' },"
+        }
+      ]
+    },
+    {
+      "id": "ZILL-03",
+      "kind": "term",
+      "term": "ZIIL",
+      "spelling_variants": ["Ziil", "zill (transliteration)"],
+      "origin": "historic-empire-source",
+      "status": "DISPUTED",
+      "identity_status": "REVIEWED",
+      "registry_ref": {
+        "ontology": "O004",
+        "unilex": "P004"
+      },
+      "distinct_from": ["ZILL — Shadow Witness"],
+      "merged_origins": [],
+      "open_question": "Two repository readings survive: ZIIL as a historical spelling/typo of ZILL, and ZIIL as an independent historic Empire safety/rights term. UNILEX P004 defines ZIIL as an operational protection role, while ontology O004 calls it a textual spelling and still links O004 to P004. Until a source decides which referent P004 names, the identity stays disputed; neither reading is renamed or deleted.",
+      "treatment": "Kept as a separate entity and term, separated from ZILL — Shadow Witness. The O004 to P004 crosswalk is a label-level link, not an approved sameAs, and its definitional tension is recorded here rather than resolved by editing data.",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:24",
+          "quote": "Bentuk historis `ZIIL` dipertahankan sebagai varian teks arkais"
+        },
+        {
+          "locator": "BLUEPRINT.md:226",
+          "quote": "ZILL Shadow Witness vs ZILL Tasawuf; historical ZIIL occurrence retained as source form."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:431",
+          "quote": "designated safety/rights vocabulary"
+        },
+        {
+          "locator": "packages/moonql-unilex/src/data/registry.ts:879",
+          "quote": "Peran dan prinsip perlindungan operasional Journey, tanpa mengklaim status spiritual."
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:198",
+          "quote": "'A historical lexical variant kept in the legacy repository. It is a textual spelling, not a second ZILL character.',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:201",
+          "quote": "unilexStableId: 'P004',"
+        },
+        {
+          "locator": "packages/moonql-graph/src/seed.ts:170",
+          "quote": "The review compared ZIIL and ZILL as NEAR and rejected identity."
+        }
+      ]
+    },
+    {
+      "id": "ZILL-04",
+      "kind": "identity_claim",
+      "term": "ZILL — Shadow Witness is ZIIL",
+      "left_ref": "ZILL-01",
+      "right_ref": "ZILL-03",
+      "relation_considered": "sameAs",
+      "status": "FALSE_ALIAS_REJECTED",
+      "identity_status": null,
+      "merged_origins": [],
+      "treatment": "Rejected in both engines: ontology IR-002 REJECTED and UNILEX P004:P031 REJECTED/NEAR. A relatedTo chronology candidate stays open, which is not an identity claim.",
+      "review_evidence": [
+        {
+          "pair": "O003:O004",
+          "decision": "REJECTED",
+          "locator": "packages/moonql-ontology/src/seed.ts:482",
+          "quote": "ZILL and ZIIL differ by spelling and domain; resemblance is not identity."
+        },
+        {
+          "pair": "P004:P031",
+          "decision": "REJECTED",
+          "locator": "packages/moonql-unilex/src/index.ts:351",
+          "quote": "Phonetic resemblance only. ZIIL and ZILL — Shadow Witness are distinct project concepts."
+        }
+      ],
+      "evidence": [
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:523",
+          "quote": "Phonetic resemblance only; ZILL and ZIIL remain separate."
+        },
+        {
+          "locator": "apps/arsy/test/unilex.test.ts:299",
+          "quote": "assert.equal(zillReview.decision, 'REJECTED')"
+        },
+        {
+          "locator": "packages/moonql-graph/src/seed.ts:170",
+          "quote": "Whether a chronological lexical lineage exists is still open."
+        }
+      ]
+    },
+    {
+      "id": "ZILL-05",
+      "kind": "identity_claim",
+      "term": "ZILL — Shadow Witness is ZILL — Ahluz Zikir / Tasawuf",
+      "left_ref": "ZILL-01",
+      "right_ref": "ZILL-02",
+      "relation_considered": "sameAs",
+      "status": "DISPUTED",
+      "identity_status": null,
+      "merged_origins": [],
+      "open_question": "The ontology and UNILEX both carry a verified/approved distinctFrom edge, yet the graph seed keeps a sameAs candidate GC-O003-O005-sameAs-SUFI_STUDY in PENDING. The candidate remains visible and unapproved; graph policy forbids approving sameAs outside the identity review. The pair therefore stays disputed, not canonically merged.",
+      "treatment": "The typed source relation is thematicallyRelatedTo (never auto sameAs), the separation edges are approved, and the contradictory sameAs candidate stays PENDING. No automatic merge occurs.",
+      "review_evidence": [
+        {
+          "pair": "O003:O005",
+          "decision": "PENDING",
+          "locator": "packages/moonql-graph/src/seed.ts:126",
+          "quote": "status: 'PENDING',"
+        }
+      ],
+      "evidence": [
+        {
+          "locator": "packages/moonql-graph/src/seed.ts:120",
+          "quote": "candidateCode: 'GC-O003-O005-sameAs-SUFI_STUDY',"
+        },
+        {
+          "locator": "packages/moonql-graph/src/seed.ts:123",
+          "quote": "relationType: 'sameAs',"
+        },
+        {
+          "locator": "packages/moonql-graph/src/seed.ts:133",
+          "quote": "'A name resemblance suggests a link, but the source explicitly refuses an automatic sameAs. Review stays open.',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:386",
+          "quote": "edgeCode: 'EDG-O003-O005-distinctFrom',"
+        },
+        {
+          "locator": "packages/moonql-unilex/src/index.ts:280",
+          "quote": "ZILL study track and ZILL — Shadow Witness are separate project referents; the shared name is not identity."
+        },
+        {
+          "locator": "packages/moonql-graph/src/index.ts:177",
+          "quote": "sameAs can never be approved here; use the ontology identity review"
+        }
+      ]
+    },
+    {
+      "id": "ZILL-06",
+      "kind": "term",
+      "term": "Ziil",
+      "spelling_variants": ["Ziil"],
+      "origin": "historic-empire-source",
+      "status": "ALIAS",
+      "identity_status": null,
+      "registry_ref": {
+        "ontology_alias": "AL004"
+      },
+      "anchor_ref": "ZILL-03",
+      "alias_of": "ZIIL",
+      "merged_origins": [],
+      "treatment": "A CANDIDATE surface alias scoped to Latn/English and TEXTUAL_WITNESS, anchored to the disputed ZIIL term. It is a spelling claim on one entity, not an approved identity, not a resolution of which ZIIL referent is meant, and not a licence to rename source bytes.",
+      "evidence": [
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:300",
+          "quote": "aliasCode: 'AL004',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:302",
+          "quote": "alias: 'Ziil',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:306",
+          "quote": "perspective: 'TEXTUAL_WITNESS',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:308",
+          "quote": "status: 'CANDIDATE',"
+        }
+      ]
+    },
+    {
+      "id": "HONEY-01",
+      "kind": "term",
+      "term": "HONEY",
+      "spelling_variants": ["HONEY", "Honey"],
+      "origin": "heart-and-name-chapter",
+      "status": "NEEDS_SOURCE",
+      "identity_status": null,
+      "registry_ref": null,
+      "merged_origins": [],
+      "missing": "No ontology entity, UNILEX term, alias, reviewer decision or source locator exists. The vision warns that honey metaphors are literary, not automatic romantic identity matches.",
+      "treatment": "Recorded as an editorial label only. Not attached to QUEEN R, HONEYBEE, HONEY & MOON or any person; thematic sweetness is not identity.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:121",
+          "quote": "have different origins; thematic relation is not identity."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:358",
+          "quote": "Honey metaphors are literary, not chemical proofs or automatic romantic identity matches."
+        },
+        {
+          "locator": "docs/data/M26-01-chapter-crosswalk.json:615",
+          "quote": "\"note\": \"HONEY has lexical, devotional and character distinctions not resolved to one source.\""
+        }
+      ]
+    },
+    {
+      "id": "HONEY-02",
+      "kind": "term",
+      "term": "QUEEN R / HONEYBEE",
+      "spelling_variants": ["QUEEN R", "HONEYBEE", "Great Princess of Bee"],
+      "origin": "heart-and-name-chapter",
+      "status": "NEEDS_SOURCE",
+      "identity_status": null,
+      "registry_ref": null,
+      "merged_origins": [],
+      "missing": "Named only in the vision archive list and the chapter index. No registry term or source locator distinguishes a lexical, devotional or character referent.",
+      "treatment": "Kept as an unresolved label. Not merged with HONEY, HONEY & MOON or any HONEYBEE reference; the row states no referent.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:121",
+          "quote": "`HONEY`, `QUEEN R`, `MYLUFT`, `MA'LŪF` and the name **Al-Wadūd** have different origins"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:356",
+          "quote": "**HONEYBEE**, **QUEEN R**"
+        },
+        {
+          "locator": "docs/data/M26-01-chapter-crosswalk.json:539",
+          "quote": "\"note\": \"QUEEN R has lexical, devotional and character distinctions not resolved to one source.\""
+        }
+      ]
+    },
+    {
+      "id": "HONEY-03",
+      "kind": "term",
+      "term": "MYLUFT / MYLOVE",
+      "spelling_variants": ["MYLUFT", "MYLOVE"],
+      "origin": "heart-and-name-chapter",
+      "status": "NEEDS_SOURCE",
+      "identity_status": null,
+      "registry_ref": null,
+      "merged_origins": [],
+      "missing": "The two spellings appear together in the vision and chapter index, but no registry term, source locator or reviewer decision establishes that MYLUFT and MYLOVE are one referent.",
+      "treatment": "Recorded as one row only because the vision prints the pair as one series title; the spelling equivalence itself is not decided. Not merged with MA'LUF.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:362",
+          "quote": "Historical series include **MYLUFT/MYLOVE**"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:979",
+          "quote": "MYLUFT, MA'LŪF, HONEY, QUEEN R, Al-Wadūd have lexical, devotional and character distinctions."
+        },
+        {
+          "locator": "docs/data/M26-01-chapter-crosswalk.json:558",
+          "quote": "\"note\": \"MYLUFT has lexical, devotional and character distinctions not resolved to one source.\""
+        }
+      ]
+    },
+    {
+      "id": "HONEY-04",
+      "kind": "term",
+      "term": "MA'LŪF",
+      "spelling_variants": ["MA'LŪF", "MA'LUF", "Ma'luf"],
+      "origin": "heart-and-name-chapter",
+      "status": "NEEDS_SOURCE",
+      "identity_status": null,
+      "registry_ref": null,
+      "merged_origins": [],
+      "missing": "No registry term or source locator. The vision proposes a distinctFrom relation to Al-Wadūd, but no reviewer decision or edge exists in ontology or UNILEX.",
+      "treatment": "Recorded as a poetic nickname label with a proposed, unregistered separation from Al-Wadūd. Not renamed, not merged and not treated as the divine name.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:685",
+          "quote": "| `MA'LŪF` poetic nickname | `distinctFrom` | `Al-Wadūd` sourced divine-name reference |"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:979",
+          "quote": "have lexical, devotional and character distinctions."
+        },
+        {
+          "locator": "docs/data/M26-01-chapter-crosswalk.json:577",
+          "quote": "\"note\": \"MA'LUF has lexical, devotional and character distinctions not resolved to one source.\""
+        }
+      ]
+    },
+    {
+      "id": "HONEY-05",
+      "kind": "term",
+      "term": "Al-Wadūd",
+      "spelling_variants": ["Al-Wadūd", "Al-Wadud"],
+      "origin": "divine-name-reference",
+      "status": "NEEDS_SOURCE",
+      "identity_status": null,
+      "registry_ref": null,
+      "merged_origins": [],
+      "missing": "No registry term or source locator. The Asma list itself is absent from the repository (M26-05); the vision only records nickname discussions around the name.",
+      "treatment": "Kept distinct from MA'LŪF and from any personal nickname. The vision's distinctFrom row is recorded, not promoted into a claim of equivalence or of authority.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:121",
+          "quote": "and the name **Al-Wadūd** have different origins"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:685",
+          "quote": "Different linguistic status"
+        },
+        {
+          "locator": "docs/data/M26-01-chapter-crosswalk.json:596",
+          "quote": "\"note\": \"Al-Wadud has lexical, devotional and character distinctions not resolved to one source.\""
+        }
+      ]
+    },
+    {
+      "id": "HONEY-06",
+      "kind": "term",
+      "term": "HONEY & MOON",
+      "spelling_variants": ["HONEY & MOON"],
+      "origin": "heart-and-name-chapter",
+      "status": "NEEDS_SOURCE",
+      "identity_status": null,
+      "registry_ref": null,
+      "merged_origins": [],
+      "missing": "A chapter/series label with no registry term or source locator. Nothing in the repository shows that it is the same referent as HONEY.",
+      "treatment": "Separate row on purpose. The shared word HONEY is not treated as an identity link, and the ampersand label is neither renamed nor merged.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:344",
+          "quote": "HEART & PROMISE | GOD-PROMISE; ROCKSOUL soul; MYLUFT; MA'LŪF; HONEY & MOON"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:362",
+          "quote": "**HONEY & MOON**"
+        },
+        {
+          "locator": "docs/data/M26-01-chapter-crosswalk.json:602",
+          "quote": "\"label\": \"HONEY & MOON\","
+        }
+      ]
+    },
+    {
+      "id": "HONEY-07",
+      "kind": "identity_claim",
+      "term": "MA'LŪF is Al-Wadūd",
+      "left_ref": "HONEY-04",
+      "right_ref": "HONEY-05",
+      "relation_considered": "sameAs",
+      "status": "NEEDS_SOURCE",
+      "identity_status": null,
+      "merged_origins": [],
+      "missing": "The vision asserts distinctFrom and different linguistic status, but no ontology entity, UNILEX term, edge, reviewer or evidence reference records the decision. The claim cannot be closed from repository data.",
+      "treatment": "Recorded as an unregistered proposed separation. No merge is performed and no identity is asserted; linguistic similarity is not identity.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:685",
+          "quote": "Different linguistic status"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:121",
+          "quote": "thematic relation is not identity."
+        },
+        {
+          "locator": "docs/audit/M26-01-chapter-crosswalk.md:177",
+          "quote": "M26-04 (ZILL/alias reconciliation) are unblocked by this index but each needs its own source evidence."
+        }
+      ]
+    }
+  ]
+}
