@@ -4,7 +4,7 @@
 **Baseline SHA:** `891bf5e19edbbea3d5e5ada36a7b126f35fabf94` (`dev`, M16-04 marked in progress)
 **Concurrent integration:** other non-overlapping commits advanced `dev` to `8016bb5ba9a7101992474d3bd58e335dedd0ea6e` during this task. `git log <baseline>..HEAD -- <M16-04 paths>` returned no commits touching the files listed below.
 **Worker:** `/root` (integrator) · independent read-only security reviewer: `/root/m16_final_security_review`
-**Result SHA:** pending the scoped implementation commit; the TODO checkbox must remain open until that SHA is recorded here and in `TODO.md`.
+**Implementation SHA:** `ef415f3518637a3d3a65103b3973bd7019a9ba90` (`dev`); referenced by the canonical TODO status.
 
 ## Implementation
 
