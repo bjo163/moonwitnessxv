@@ -6,6 +6,7 @@
 - Tested source: `dev` SHA `189aba80cce4f07d4bc98c112b5ed7d0fe7aec65`; remote `origin/dev` matched. `origin/main` was last observed at `32060943102120428bff26849601c2c760f851ca`.
 - Runtime: Node `v24.22.1`, pnpm `10.33.4`.
 - Checkout: isolated `C:\Users\bjo16\.codex\worktrees\m19-34-clean-run`. The harness used its own Dock server on port `3139` and wrote to `docs/audit/M30-05-hydration-fix/`; it did not overwrite the shared `docs/audit/screens/` captures.
+- The source HEAD stayed at the recorded SHA. During the run Next rewrote generated `apps/dock/next-env.d.ts` references to `.next/dev/types`; that generated file was restored after capture. No product source changed during the run, but the checkout was not pristine while Playwright was running. Evidence is source-SHA-pinned, not clean-tree-pinned.
 - Hub was explicitly forced offline at `http://127.0.0.1:65535/api/v1`. Only the synthetic offline/error UI branches were exercised. No credentials, private source content, or live data were used.
 
 ## Change and checks
@@ -34,6 +35,6 @@ The negative regression check is explicit: any React hydration mismatch on a cov
 - Security/rights/privacy: offline synthetic UI only; no rights-bearing source was accessed or copied.
 - Rollback: revert commit `189aba80cce4f07d4bc98c112b5ed7d0fe7aec65` to restore the previous clock behavior and remove its hydration guard/test. Keep this audit as a historical record if rolling back.
 - Result SHA: `189aba80cce4f07d4bc98c112b5ed7d0fe7aec65`.
-- Reviewer: pending; no self-review is represented as independent approval.
+- Independent reviewer: read-only reviewer `/root/m19_34_review_result` approved the hydration fix and covered-route evidence, and confirmed M30-05 must remain open for the term-detail skip. The human review required by the M30 milestone exit gate is not yet recorded.
 
 [Task packet](../tasks/M30/M30-05.md) · [Machine-readable results and screenshots](M30-05-hydration-fix/geometry.json) · [Initial exact-SHA baseline](M30-05-exact-sha-8137b09.md)
