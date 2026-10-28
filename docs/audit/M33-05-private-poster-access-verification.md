@@ -149,7 +149,7 @@ real-media/access verification: BLOCKED (no approved source, operational D08, or
 exit 0
 ```
 
-Not run: root `pnpm verify`, full `pnpm test`, `pnpm typecheck`, Docker, browser, database, S3, D08, deployment. The suite was not mutation-tested, and it is not wired into a root script (`package.json` is outside this task's write scope); run it directly with the commands above.
+Not run: root `pnpm verify`, full `pnpm test`, `pnpm typecheck`, Docker, browser, database, S3, D08, deployment. The suite was not mutation-tested. After the original task run, the integrator added this planning suite to the root `test` script alongside the M21-02 planning test; that combined root invocation and exact-SHA CI remain pending. The ARSY runtime test is already included by the existing `test/**/*.test.ts` glob.
 
 ## Security, rights and privacy
 

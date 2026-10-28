@@ -139,9 +139,9 @@ Delete the four new code/test files (and this audit). There is no migration, sch
 - **`admin` is not implicitly admitted.** The workspace allow-list is `editor`/`reviewer`, so an administrative account sees the localized `forbidden` denial rather than a widened role. Widening it would be a role decision (M03-04) for the owner, not a leaf inference.
 - **Grant rows carry no role snapshot.** Grantee eligibility is evaluated from the caller's current ARSY role at access time; a later role change is therefore honoured, and a stale grant cannot widen access on its own.
 - **Draft ids are treated as opaque handles.** Refusals distinguish `draft_not_found` from `not_owner_or_grantee`, so a party who already holds an unguessable draft id can learn whether it exists. Issuing unguessable ids and never publishing draft ids remains a requirement for the future D07 implementation.
-- **Root test list not edited.** To include this suite in `pnpm verify`, the integrator must append `../../apps/headquarters/test/shadow-editor.test.ts` to the `tsx --test` list inside the root `test` script in `package.json`. That shared file was intentionally left untouched in this parallel-session worktree.
+- **Root test list integrated after independent review.** The integrator added `../../apps/headquarters/test/shadow-editor.test.ts` to the root `test` script in `package.json`; the full root test chain and exact-SHA CI still need to run before claiming integrated verification.
 - **No navigation entry.** `shell-copy.ts` was not edited; `/shadow` is reachable directly and through the existing session middleware. "Story Forge" still points at `/models`.
-- **Reviewer:** unassigned. A human reviewer must inspect the diff; a green focused suite is not a human review.
+- **Independent reviewer at `a364555`:** confirmed the slice is bounded and fail-closed, and recommended keeping M17-05 open. The page always supplies `EMPTY_SHADOW_STORE`; no D07 API/persistence enforces ACL; current D00 roles (`admin`/`user`/`guest`) do not match the contract's `editor`/`reviewer` allow-list, so current identities cannot create drafts. The reviewer made no edits and ran no tests. This code review does not replace required D07/owner and role decisions.
 
 ## Next eligible task
 
