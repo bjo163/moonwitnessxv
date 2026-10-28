@@ -105,7 +105,12 @@ test(
 
     assert.equal(moonql.engine, 'pg', 'this drill must not silently fall back to memory')
 
-    const listRes = await app.inject().get('/orm/unilex/terms').query({ limit: '100' }).end()
+    const listRes = await app
+      .inject()
+      .get('/orm/unilex/terms')
+      .headers(await adminHeaders(app, '/orm'))
+      .query({ limit: '100' })
+      .end()
     assert.equal(listRes.statusCode, 200)
     const list = dataOf<TermsBody>(listRes)
     assert.equal(list.state, 'ok')

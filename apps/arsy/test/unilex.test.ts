@@ -192,6 +192,11 @@ async function getTermDetail(app: FastifyInstance, stableId: string) {
     .end()
 }
 
+async function getTerms(app: FastifyInstance, query: Record<string, string> = {}) {
+  const headers = await adminHeaders(app, '/orm')
+  return app.inject().get('/orm/unilex/terms').headers(headers).query(query).end()
+}
+
 async function makeTerm(moonql: Mq, stableId: string, extra: Record<string, unknown> = {}) {
   const source = await registrySource(moonql)
   return moonql.model('unilex_terms').create({
@@ -216,7 +221,7 @@ test('M09-01/02: 71 pinned concepts keep source, context and editorial status', 
     await moonql.close()
   })
 
-  const res = await app.inject().get('/orm/unilex/terms').query({ limit: '100' }).end()
+  const res = await getTerms(app, { limit: '100' })
   assert.equal(res.statusCode, 200)
   const body = dataOf<TermsBody>(res)
 
@@ -469,7 +474,7 @@ test('M09-04: only a reviewer with evidence can record identity, and contradicti
   assert.equal(revocation.relation?.status, 'REJECTED', 'the prior identity relation is revoked, not left approved')
 })
 
-test('M09-05: Terms Table is a projection filtered by approved source and scope', async (t) => {
+test('M09-05: operator Terms Table is a projection filtered by approved source and scope', async (t) => {
   const { app, moonql } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -477,42 +482,42 @@ test('M09-05: Terms Table is a projection filtered by approved source and scope'
   })
 
   const registry = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ source: 'empire-unilex-v0.1', limit: '100' }).end(),
+    await getTerms(app, { source: 'empire-unilex-v0.1', limit: '100' }),
   )
   assert.equal(registry.total, 71)
   assert.ok(!registry.terms.some((term) => term.stableId === 'P030' || term.stableId === 'P031'))
 
   const vision = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ source: 'xv-master-vision' }).end(),
+    await getTerms(app, { source: 'xv-master-vision' }),
   )
   assert.equal(vision.total, 2)
   assert.deepEqual(vision.terms.map((term) => term.stableId).sort(), ['P030', 'P031'])
 
   const sufi = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ scope: 'SUFI_STUDY' }).end(),
+    await getTerms(app, { scope: 'SUFI_STUDY' }),
   )
   assert.equal(sufi.total, 1)
   assert.equal(sufi.terms[0]?.stableId, 'P030')
 
   const fiction = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ scope: 'CREATIVE_FICTION' }).end(),
+    await getTerms(app, { scope: 'CREATIVE_FICTION' }),
   )
   assert.equal(fiction.total, 1)
   assert.equal(fiction.terms[0]?.stableId, 'P031')
 
   const scripture = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ lane: 'SCRIPTURE', limit: '100' }).end(),
+    await getTerms(app, { lane: 'SCRIPTURE', limit: '100' }),
   )
   assert.ok(scripture.total > 0)
   assert.ok(scripture.terms.every((term) => term.lane === 'SCRIPTURE'))
 
   const mismatched = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ lane: 'SCRIPTURE', scope: 'GENERAL' }).end(),
+    await getTerms(app, { lane: 'SCRIPTURE', scope: 'GENERAL' }),
   )
   assert.equal(mismatched.total, 0, 'scope is applied to senses, not just labels')
 
   const page = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ limit: '2', offset: '1' }).end(),
+    await getTerms(app, { limit: '2', offset: '1' }),
   )
   assert.equal(page.total, 73)
   assert.equal(page.terms.length, 2)
@@ -520,7 +525,7 @@ test('M09-05: Terms Table is a projection filtered by approved source and scope'
   assert.equal(page.offset, 1)
 
   const searched = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ q: 'Truth' }).end(),
+    await getTerms(app, { q: 'Truth' }),
   )
   assert.ok(searched.total > 0)
   assert.equal(searched.terms[0]?.stableId, 'U001')
@@ -537,25 +542,27 @@ test('M09-05: Terms Table is a projection filtered by approved source and scope'
     sourceRef: String(draft.id),
   })
 
+  const headers = await adminHeaders(app, '/orm')
   const rejectedSource = await app
     .inject()
     .get('/orm/unilex/terms')
+    .headers(headers)
     .query({ source: 'draft-source' })
     .end()
   assert.equal(rejectedSource.statusCode, 400)
   assert.match(rejectedSource.json().error.message, /not approved for citation/)
 
   const hidden = dataOf<TermsBody>(
-    await app.inject().get('/orm/unilex/terms').query({ q: 'Projection Draft Only' }).end(),
+    await getTerms(app, { q: 'Projection Draft Only' }),
   )
   assert.equal(hidden.total, 0, 'a term backed only by an unapproved source is not projected')
 
-  const afterDraft = dataOf<TermsBody>(await app.inject().get('/orm/unilex/terms').query({ limit: '100' }).end())
-  assert.equal(afterDraft.total, 73, 'the draft term stays out of the public projection')
+  const afterDraft = dataOf<TermsBody>(await getTerms(app, { limit: '100' }))
+  assert.equal(afterDraft.total, 73, 'the draft term stays out of the operator projection')
 
-  const badLane = await app.inject().get('/orm/unilex/terms').query({ lane: 'NOPE' }).end()
+  const badLane = await getTerms(app, { lane: 'NOPE' })
   assert.equal(badLane.statusCode, 400)
-  const unknownSource = await app.inject().get('/orm/unilex/terms').query({ source: 'nope' }).end()
+  const unknownSource = await getTerms(app, { source: 'nope' })
   assert.equal(unknownSource.statusCode, 400)
 
   const anon = await app.inject().get('/orm/unilex_match_reviews').end()

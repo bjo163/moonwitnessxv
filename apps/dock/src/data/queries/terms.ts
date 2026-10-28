@@ -1,5 +1,6 @@
 import { MoonApiError } from '@moonwitness/moonql-client'
 import { serverClient } from '@/data/sdk'
+import { panelErrorMessage } from '@/data/queries/error'
 
 /**
  * The UNILEX Terms Table is a read-only projection of the hub's term, form,
@@ -178,6 +179,11 @@ const clean = (filters: TermFilters): Record<string, string | number | undefined
 
 export async function readTerms(filters: TermFilters = {}): Promise<TermsPage> {
   return serverClient().call<TermsPage>('/unilex/terms', { query: clean(filters) })
+}
+
+export function termsPanelErrorMessage(err: unknown, fallback: string): string {
+  if (err instanceof MoonApiError && err.statusCode === 401) return fallback
+  return panelErrorMessage(err, fallback)
 }
 
 export async function readTerm(stableId: string): Promise<TermDetail | null> {

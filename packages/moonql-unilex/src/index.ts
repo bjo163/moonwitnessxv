@@ -1,7 +1,6 @@
 import {
   ADMIN_FULL,
   ADMIN_ONLY,
-  ADMIN_WRITE,
   computed,
   defineAddon,
   defineModel,
@@ -447,7 +446,7 @@ export const unilex = defineAddon({
     unilex_sources: defineModel({
       label: 'UNILEX Source',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'UNILEX', icon: 'SO', order: 10 },
       fields: {
         code: str({ maxLength: 60, unique: true }),
@@ -503,7 +502,7 @@ export const unilex = defineAddon({
     unilex_terms: defineModel({
       label: 'UNILEX Term',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'UNILEX', icon: 'TM', order: 20 },
       fields: {
         stableId: str({ maxLength: 8, unique: true, validate: (value: unknown) => stableIdError(String(value)) }),
@@ -526,7 +525,7 @@ export const unilex = defineAddon({
     unilex_forms: defineModel({
       label: 'UNILEX Form',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'UNILEX', icon: 'FM', order: 30 },
       fields: {
         formCode: str({ maxLength: 80, unique: true }),
@@ -551,7 +550,7 @@ export const unilex = defineAddon({
     unilex_senses: defineModel({
       label: 'UNILEX Sense',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'UNILEX', icon: 'SN', order: 40 },
       fields: {
         senseKey: str({ maxLength: 60 }),
@@ -572,7 +571,7 @@ export const unilex = defineAddon({
     unilex_relations: defineModel({
       label: 'UNILEX Relation',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'UNILEX', icon: 'RL', order: 50 },
       fields: {
         sourceTermRef: m2o('unilex_terms', { index: true }),
@@ -724,7 +723,9 @@ export const unilex = defineAddon({
     terms: {
       method: 'GET',
       path: '/unilex/terms',
-      requires: 'public',
+      // The projection contains editorial drafts and reviewer context. Keep it
+      // operator-only until D08 supplies a reviewed public-release projection.
+      requires: ['admin'],
       menu: { group: 'UNILEX', icon: 'RV', order: 80 },
       handler: async ({ query, orm, status }) => {
         const q = asText(query.q)

@@ -2,6 +2,7 @@ import { Badge, Button, Field, PageHeader, Pagination, Panel, SelectInput, Table
 import {
   readMatchPreview,
   readTerms,
+  termsPanelErrorMessage,
   type MatchPreview,
   type TermsPage,
 } from '@/data/queries/terms'
@@ -84,7 +85,7 @@ export default async function TermsPageView({
     () => readTerms({ ...filters, limit: PAGE_SIZE, offset }),
     listCopy,
     (termsPage) => termsPage.terms.length === 0,
-    (err) => panelErrorMessage(err, copy.errorTermsUnavailable),
+    (err) => termsPanelErrorMessage(err, copy.errorTermsUnavailable),
   )
   const registryReady = outcome.state === 'ready'
   const options = registryReady ? outcome.value.options : { lanes: [], scopes: [], statuses: [], sources: [] }

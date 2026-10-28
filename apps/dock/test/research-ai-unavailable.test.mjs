@@ -242,7 +242,7 @@ process.env.RADIO_API_URL = hubBase
 // Imported only after the environment is pinned; `src/lib/env.ts` reads
 // RADIO_API_URL at module evaluation.
 const { readPassage, readBrowse } = await import('../src/data/queries/reader.ts')
-const { readTerms, readTerm } = await import('../src/data/queries/terms.ts')
+const { readTerms, readTerm, termsPanelErrorMessage } = await import('../src/data/queries/terms.ts')
 
 const within = async (promise, ms, label) => {
   let timer
@@ -423,5 +423,14 @@ test('M21-06: no source/research route or view reads an AI field or names the AI
   assert.match(readerPage, /panelErrorMessage\(err, copy\.errorReaderUnavailable\)/)
   const termsPage = sourceOf('app', 'terms', 'page.tsx')
   assert.match(termsPage, /readPanel<TermsPage>/)
-  assert.match(termsPage, /panelErrorMessage\(err, copy\.errorTermsUnavailable\)/)
+  assert.match(termsPage, /termsPanelErrorMessage\(err, copy\.errorTermsUnavailable\)/)
+})
+
+test('M19-19: public UNILEX withholding copy names the missing D08 projection in both locales', () => {
+  assert.match(getStatesCopy('en').errorTermsUnavailable, /withheld until an approved D08 public projection/)
+  assert.match(getStatesCopy('id').errorTermsUnavailable, /ditahan sampai proyeksi publik D08 yang disetujui/)
+  assert.equal(
+    termsPanelErrorMessage(new MoonApiError(401, 'Unauthorized'), getStatesCopy('en').errorTermsUnavailable),
+    getStatesCopy('en').errorTermsUnavailable,
+  )
 })

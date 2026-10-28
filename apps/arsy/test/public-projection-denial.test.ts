@@ -418,7 +418,7 @@ test('UI-P05e: guessing an edition identifier, a stable id or a passage id does 
 })
 
 // --------------------------------------------------------------------------- 5
-test('UI-P05e: the Terms Table projection really does enforce APPROVED_FOR_CITATION', async (t) => {
+test('UI-P05e: anonymous Terms Table reads stay denied until a reviewed public projection exists', async (t) => {
   const { app, moonql } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -426,16 +426,11 @@ test('UI-P05e: the Terms Table projection really does enforce APPROVED_FOR_CITAT
   })
   const { stableId } = await seedUnapprovedTerm(moonql)
 
-  const listed = dataOf<{ total: number; terms: Array<{ stableId: string }> }>(
-    await get(app, '/orm/unilex/terms', { limit: '200' }),
-  )
-  assert.ok(
-    !listed.terms.some((term) => term.stableId === stableId),
-    'a term backed only by an unapproved source must not be projected',
-  )
-
-  // every guessable entry point of the list projection must miss it
+  // Every anonymous list/search/filter entry point stays private. This includes
+  // drafts backed by an otherwise citation-approved source: source clearance is
+  // not a D08 publication decision.
   const searches: Array<Record<string, string>> = [
+    { limit: '200' },
     { q: 'Synthetic Hidden Concept' },
     { q: stableId },
     { q: stableId.toLowerCase() },
@@ -446,18 +441,7 @@ test('UI-P05e: the Terms Table projection really does enforce APPROVED_FOR_CITAT
   ]
   for (const query of searches) {
     const res = await get(app, '/orm/unilex/terms', query)
-    if (res.statusCode === 400) {
-      assert.match(messageOf(res), /not approved for citation|unknown source|unknown /)
-      assertNoBytesIn(`terms ${JSON.stringify(query)}`, res.body, [
-        SYNTH.unapprovedDefinition,
-        SYNTH.unapprovedHeadword,
-        SYNTH.unapprovedCitation,
-      ])
-      continue
-    }
-    assert.equal(res.statusCode, 200)
-    const page = dataOf<{ total: number; terms: Array<{ stableId: string }> }>(res)
-    assert.ok(!page.terms.some((term) => term.stableId === stableId), `${JSON.stringify(query)} must not project ${stableId}`)
+    assert.equal(res.statusCode, 401, `${JSON.stringify(query)} must not read the private projection`)
     assertNoBytesIn(`terms ${JSON.stringify(query)}`, res.body, [
       SYNTH.unapprovedDefinition,
       SYNTH.unapprovedHeadword,
@@ -465,27 +449,23 @@ test('UI-P05e: the Terms Table projection really does enforce APPROVED_FOR_CITAT
     ])
   }
 
-  // A form or sense alone cannot be used to smuggle the term in either: the filter is
-  // "any approved source among term+senses+forms", so revoke it from all three at once.
+  // Attaching an approved citation source still does not grant anonymous publication.
   const approved = (await moonql.model('unilex_sources').list({ where: { code: 'empire-unilex-v0.1' } }))[0] as Row
   const term = (await moonql.model('unilex_terms').list({ where: { stableId } }))[0] as Row
   await moonql.model('unilex_terms').update(String(term.id), { sourceRef: String(approved.id) })
-  const nowVisible = dataOf<{ terms: Array<{ stableId: string; sources: Array<{ code: string | null }> }> }>(
-    await get(app, '/orm/unilex/terms', { q: stableId }),
-  )
-  assert.ok(
-    nowVisible.terms.some((row) => row.stableId === stableId),
-    'one approved source among term/senses/forms makes the term projectable (documented behaviour)',
-  )
-  const projected = nowVisible.terms.find((row) => row.stableId === stableId)!
-  assert.ok(
-    projected.sources.some((source) => source.code === 'synth-unapproved-source'),
-    'the unapproved source stays visible so the UI can label it, but reviewStatus distinguishes it',
-  )
-  const statusOfUnapproved = projected.sources.find((source) => source.code === 'synth-unapproved-source') as unknown as {
-    reviewStatus?: string
-  }
-  assert.notEqual(statusOfUnapproved.reviewStatus, 'APPROVED_FOR_CITATION')
+  const stillDenied = await get(app, '/orm/unilex/terms', { q: stableId })
+  assert.equal(stillDenied.statusCode, 401, 'an approved source cannot bypass the missing D08 release gate')
+  assertNoBytesIn('approved-source draft denial', stillDenied.body, allSynthMarkers)
+
+  const headers = await adminHeaders(app, '/orm')
+  const operatorView = await app
+    .inject()
+    .get('/orm/unilex/terms')
+    .headers(headers)
+    .query({ q: stableId })
+    .end()
+  assert.equal(operatorView.statusCode, 200, 'the existing admin role retains private review access')
+  assert.match(operatorView.body, new RegExp(SYNTH.unapprovedDefinition))
 })
 
 // --------------------------------------------------------------------------- 6
@@ -497,9 +477,10 @@ test('UI-P05e: /unilex/term denies anonymous access until a reviewed public proj
   })
   const { stableId } = await seedUnapprovedTerm(moonql)
 
-  // The list projection already withholds terms whose only source is unapproved.
-  const hidden = dataOf<{ total: number }>(await get(app, '/orm/unilex/terms', { q: stableId }))
-  assert.equal(hidden.total, 0, 'the list projection hides it')
+  // The list is private as well as detail; guessed list filters cannot expose drafts.
+  const hidden = await get(app, '/orm/unilex/terms', { q: stableId })
+  assert.equal(hidden.statusCode, 401)
+  assertNoBytesIn('anonymous UNILEX list denial', hidden.body, allSynthMarkers)
 
   const detail = await get(app, '/orm/unilex/term', { stableId })
   assert.equal(detail.statusCode, 401, 'a guessed detail link cannot bypass the public list filter')
@@ -519,6 +500,48 @@ test('UI-P05e: /unilex/term denies anonymous access until a reviewed public proj
   assert.equal((await get(app, '/orm/unilex/term', { stableId: stableId.toLowerCase() })).statusCode, 401)
   assert.equal((await get(app, '/orm/unilex/term', { stableId: 'P999' })).statusCode, 401)
   assert.equal((await get(app, '/orm/unilex/term', { stableId: "P' OR 1=1" })).statusCode, 401)
+})
+
+test('UI-P05e: raw UNILEX models deny anonymous list/get; admin retains review access', async (t) => {
+  const { app, moonql } = await makeApp()
+  t.after(async () => {
+    await app.close()
+    await moonql.close()
+  })
+  await seedUnapprovedTerm(moonql)
+
+  const models = [
+    '/orm/unilex_sources',
+    '/orm/unilex_terms',
+    '/orm/unilex_forms',
+    '/orm/unilex_senses',
+    '/orm/unilex_relations',
+  ]
+  const admin = await adminHeaders(app, '/orm')
+  for (const path of models) {
+    const modelName = path.slice('/orm/'.length)
+    const acl = moonql.registry.models.get(modelName)?.acl
+    assert.deepEqual(acl?.create, ['admin'], `${modelName} create stays admin-only`)
+    assert.deepEqual(acl?.update, ['admin'], `${modelName} update stays admin-only`)
+    assert.deepEqual(acl?.remove, ['admin'], `${modelName} remove stays admin-only`)
+
+    const anonymousList = await get(app, path)
+    assert.equal(anonymousList.statusCode, 401, `${path} must deny anonymous list access`)
+    assertNoBytesIn(`anonymous ${path} list`, anonymousList.body, allSynthMarkers)
+
+    const operatorList = await app.inject().get(path).headers(admin).end()
+    assert.equal(operatorList.statusCode, 200, `${path} must retain admin review access`)
+    const rows = operatorList.json().data as Row[]
+    assert.ok(rows.length > 0, `${path} has seeded rows for the admin positive control`)
+    const id = String(rows[0]?.id ?? '')
+    assert.ok(id, `${path} admin list includes a row id`)
+
+    const operatorDetail = await app.inject().get(`${path}/${encodeURIComponent(id)}`).headers(admin).end()
+    assert.equal(operatorDetail.statusCode, 200, `${path}/:id remains available to admins`)
+    const anonymousDetail = await app.inject().get(`${path}/${encodeURIComponent(id)}`).end()
+    assert.equal(anonymousDetail.statusCode, 401, `${path}/:id must deny anonymous access`)
+    assertNoBytesIn(`anonymous ${path}/:id`, anonymousDetail.body, allSynthMarkers)
+  }
 })
 
 // --------------------------------------------------------------------------- 7
@@ -902,8 +925,6 @@ test('M34-04: raw Research REST requires an admin; unrelated projection-source A
     await moonql.close()
   })
   await seedBlockedEditions(moonql)
-  const { stableId } = await seedUnapprovedTerm(moonql)
-
   const researchReads: Array<{ path: string; why: string }> = [
     { path: '/orm/research_cases', why: 'case codes, citation keys and rights snapshots' },
     { path: '/orm/research_frames', why: 'unreviewed frame claims' },
@@ -917,10 +938,6 @@ test('M34-04: raw Research REST requires an admin; unrelated projection-source A
     { path: '/orm/onto_entities', why: 'CONTESTED entities' },
     { path: '/orm/onto_aliases', why: 'CANDIDATE aliases' },
     { path: '/orm/onto_relations', why: 'UNKNOWN/DISPUTED edges' },
-    { path: '/orm/unilex_terms', why: 'terms withheld from the Terms Table projection' },
-    { path: '/orm/unilex_forms', why: 'forms withheld from the projection' },
-    { path: '/orm/unilex_senses', why: 'senses withheld from the projection' },
-    { path: '/orm/unilex_relations', why: 'SEED_PROPOSED / REJECTED relations' },
     { path: '/orm/graph_candidates', why: 'PENDING candidates' },
     { path: '/orm/graph_releases', why: 'full release manifests' },
     { path: '/orm/graph_adjacency', why: 'derived adjacency' },
@@ -932,10 +949,6 @@ test('M34-04: raw Research REST requires an admin; unrelated projection-source A
     '/orm/onto_entities',
     '/orm/onto_relations',
     '/orm/onto_aliases',
-    '/orm/unilex_terms',
-    '/orm/unilex_forms',
-    '/orm/unilex_senses',
-    '/orm/unilex_relations',
     '/orm/graph_candidates',
     '/orm/graph_releases',
     '/orm/graph_adjacency',
@@ -971,9 +984,6 @@ test('M34-04: raw Research REST requires an admin; unrelated projection-source A
   }
 
   // Concrete proof that the raw routes reach material the projections withheld.
-  const termsRaw = await get(app, '/orm/unilex_terms')
-  assert.ok(termsRaw.body.includes(stableId), 'raw REST lists the term the projection hides')
-  assert.match(termsRaw.body, new RegExp(SYNTH.unapprovedDefinition), 'raw REST returns its withheld definition')
   const candidatesRaw = await get(app, '/orm/graph_candidates')
   assert.ok(
     (candidatesRaw.body as string).includes('"PENDING"'),
@@ -1280,18 +1290,16 @@ test.skip('UI-P05e NOT SATISFIED: guessing a public link must be denied for ever
   //   D08 (Publication & Governance) is planned-only — no @moonwitness/governance addon and
   //   none of release_manifests / rights_approvals / editorial_signoffs / takedown_logs exist
   //   (proved above from moonql.registry.models). Until that gate exists there is no
-  //   "approved public projection" concept for the hub to deny against, and four surfaces are
+  //   "approved public projection" concept for the hub to deny against, and three surfaces are
   //   demonstrably permissive today:
-  //     1. GET /orm/unilex/term?stableId=<guessed> ignores the APPROVED_FOR_CITATION filter that
-  //        packages/moonql-unilex/src/index.ts:179-180,759-767 applies to /orm/unilex/terms.
-  //     2. GET /orm/ontology/constellation returns the same conflicts array as the ADMIN_ONLY
+  //     1. GET /orm/ontology/constellation returns the same conflicts array as the ADMIN_ONLY
   //        /orm/ontology/conflicts (packages/moonql-ontology/src/index.ts:457-470).
-  //     3. GET /orm/graph/relation?code=<candidateCode> serves PENDING candidates anonymously
+  //     2. GET /orm/graph/relation?code=<candidateCode> serves PENDING candidates anonymously
   //        (packages/moonql-graph/src/projection.ts:480-500).
-  //     4. GET /orm/research/case + /orm/research/trace publish licensed translation text whose
+  //     3. GET /orm/research/case + /orm/research/trace publish licensed translation text whose
   //        own table (corpus_translations) is ADMIN_FULL, i.e. denied (test 13 above).
   //   Plus the documented ADMIN_WRITE hole: raw REST list/get on research_cases, onto_entities,
-  //   onto_aliases, unilex_terms and graph_* are public-by-model (packages/moonql/src/model.ts:30-42,
+  //   onto_aliases and graph_* are public-by-model (packages/moonql/src/model.ts:30-42,
   //   docs/architecture/SECURITY.md). Enabling this test requires a D08 approval model plus read
   //   gating on those routes; M27-08 stays BLOCKED until then.
 })
