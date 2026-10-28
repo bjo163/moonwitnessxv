@@ -5,14 +5,14 @@
 - **Acceptance audited:** `Historical fixtures not mislabeled live production` ([TODO:563](../../TODO.md))
 - **Prerequisite:** M06-05 — closed; A-L-L-A-H mapped to D00 as "Disambiguated acronym taxonomy only" ([docs/decisions/M06-05-historical-interfaces-map.md:18](../decisions/M06-05-historical-interfaces-map.md))
 - **baseline_sha:** `659da2855f56c61ae9d21e2995be9649c77fc470` (`dev`; task baseline stated as `659da28`)
-- **observed_head_sha:** `ac5010815418ac1a2355a678f7d52704be4590d2` — several unrelated commits (M31, M16, M23, M26, HQ editor, witness lineage) landed during the audit; `659da28` is an ancestor. Over every cited path the only change is `.env.example`'s `API_VERSION`; the cited `EGRESS_ENABLED=false` line 150 is unchanged and was rechecked (§9 P2)
+- **observed_head_sha:** `91a5ff7f2d9f94fa764115e4c875b6fb443bc453` — `dev` advanced 32 commits during the audit (unrelated M16/M21/M23/M25/M26/M31, HQ editor, witness lineage, AIGateway work, plus external commit `f86bede` that recorded these three audit files); `659da28` is an ancestor and HEAD kept moving while the concurrent session worked. Across every cited path the only changes are `.env.example` `API_VERSION` (`2.0.0` → `2.1.0`) and `apps/dock/src/lib/landing-copy.ts` `heroEyebrow` in both locales; the cited `EGRESS_ENABLED=false` line 150 and landing-copy lines 70/72 are unchanged, and all 73 ledger quotes were re-resolved (§9 P2)
 - **worker:** read-only audit agent
 - **Audit date:** 2026-10-28
-- **Worktree:** 72 files were already modified by another session at audit start; the count rose to 92 while the audit ran (foreign edits plus the three files created here). Nothing foreign was reverted, staged, edited or committed. The only files this audit created are this report, its JSON ledger and its validator.
+- **Worktree:** 72 files were already modified by another session at audit start; the count was 76 at last check and fluctuated while that session edited and committed. Nothing foreign was reverted, staged, edited or committed by this audit. The only files this audit created are this report, its JSON ledger and its validator; the concurrent session subsequently included those three files in its external commit `f86bede`, which this audit did not create.
 - **Packet:** `docs/tasks/M24/M24-01.md` **does not exist**. Scope was taken from `TODO.md:563` and `docs/milestones/M24.md`.
 - **Reviewer:** pending (integrator + human reviewer)
 - **Rollback:** delete the three new files listed in §8. No other state was touched.
-- **result_sha:** none — nothing committed.
+- **result_sha:** `f86bede` — external commit by the concurrent session that contains the three deliverables. This audit created no commit, staged nothing and amended nothing; the working tree may hold later edits to these three files.
 
 ---
 
@@ -153,8 +153,9 @@ The repository's own rules are violated or unsupported:
 - No provider URL exists: the URL sweep at `659da28` returned `NO_PROVIDER_URL_MATCHES` for `api.usgs`, `earthquake.usgs`, `gdacs.org`, `noaa.gov`, `swpc.noaa`, `open-meteo` and `openmeteo`.
 - No terms, licence, attribution, quota, rate-limit or user-agent text exists in the three files that mention USGS/GDACS: `NO_TERMS_IN_PROVIDER_FILES`.
 - The monitor addon performs no `fetch` (`grep -n "fetch(" packages/moonql-monitor/src/index.ts` → no matches), so there is no request path that could carry a user agent or attribution.
-- `EGRESS_ENABLED=false` (`.env.example:150`) and `EGRESS_DENY_HOSTS` are global outbound controls, not provider quotas or provider-specific flags.
-- `RATE_LIMIT_MAX` / `RATE_LIMIT_WINDOW_MS` (`.env.example:73-74`) limit inbound entry points to this repository's own API; they are not provider rate limits.
+- `EGRESS_ENABLED=false` (`.env.example:152`) and `EGRESS_DENY_HOSTS` are global outbound controls, not provider quotas or provider-specific flags.
+- `RATE_LIMIT_MAX` / `RATE_LIMIT_WINDOW_MS` (`.env.example:75-76`) limit inbound entry points to this repository's own API; they are not provider rate limits.
+- Line-number drift: `.env.example` carries another session's uncommitted two-line `ECHOLOG_URL` insertion above these entries, so the same lines sit at 150 and 73-74 at `659da28` and at 152 and 75-76 in this worktree. The quotes were re-resolved at the current tree; re-locate by key name if the file shifts again.
 
 **Non-claims.** `NOT_IN_REPO` means only that no provider terms text is present in this repository. It is **not** a statement that a provider permits or forbids reuse, that a quota exists or does not exist, or that attribution is unnecessary. No external terms page was fetched. Any future adapter (M24-04) must obtain and record the provider's actual terms before use.
 
@@ -175,7 +176,7 @@ The repository's own rules are violated or unsupported:
 - **L1 — Static only.** No hub, worker, Docker stack, browser or test run. "Anonymous sees X" is a code-path plus committed-query conclusion.
 - **L2 — External terms not fetched.** USGS, GDACS, NOAA, Open-Meteo, A-L-L-A-H and HELIOGRID terms, quotas and licences are `NOT_IN_REPO`, not "verified absent from the world".
 - **L3 — External A-L-L-A-H repository not cloned.** The vision's ingestion/`WorldMonitorView` claim and its SHA are unverified. The conflicting pins are recorded as a documentation defect, not resolved.
-- **L4 — Foreign worktree.** Another session continued editing during the audit (72 → 92 changed paths). The only cited file with working-tree drift is `apps/headquarters/src/app/(admin)/page.tsx` (+131 lines above the status array); both the worktree (`:230`, `:231`, `:445`, `:446`) and committed (`:108`, `:109`, `:317`, `:318`) locations are recorded. Across cited paths, only `.env.example` changed between `659da28` and `ac50108`, and only at `API_VERSION`; the cited `EGRESS_ENABLED` line was rechecked (§9 P2).
+- **L4 — Foreign worktree.** Another session continued editing and committing during the audit (72 changed paths at start, 76 at last check; the count fluctuated). The only cited file with working-tree drift is `apps/headquarters/src/app/(admin)/page.tsx` (+131 lines above the status array); both the worktree (`:230`, `:231`, `:445`, `:446`) and committed (`:108`, `:109`, `:317`, `:318`) locations are recorded. Across cited paths, only `.env.example` (`API_VERSION`) and `apps/dock/src/lib/landing-copy.ts` (`heroEyebrow`, uncited lines) changed between `659da28` and `91a5ff7`; the cited `EGRESS_ENABLED` and landing-copy lines were rechecked (§9 P2). The concurrent session committed the three deliverables in `f86bede`; this audit did not stage or commit them.
 - **L5 — Binary false positives.** The provider-name sweep matches raw bytes in `docs/audit/screens/home-en-reduce-390.png` and `docs/design/mockups-xv/png/02_project_universe.png`; they contain no readable provider claim.
 - **L6 — Missing packet.** `docs/tasks/M24/M24-01.md` does not exist; scope is from `TODO.md:563` and `docs/milestones/M24.md`.
 - **L7 — Generated output.** `packages/*/dist` and `apps/*/.next` mirror source strings and are git-ignored; they were not treated as independent evidence.
@@ -192,7 +193,7 @@ scripts/check-m24-01-provider-audit.mjs
 docs/audit/M24-01-provider-audit.md
 ```
 
-No existing file, `TODO.md`, source, test, schema, manifest, lockfile, environment file or git index was changed. No `git add`, `commit`, `stash`, `checkout` or `reset` was run.
+No existing file, `TODO.md`, source, test, schema, manifest, lockfile, environment file or git index was changed by this audit, and no `git add`, `commit`, `stash`, `checkout` or `reset` was run by it. The concurrent session has already committed the three files in `f86bede`, so a plain delete now leaves the repository dirty; rollback therefore needs the delete plus a reviewed commit (or a reviewed revert of `f86bede`) under normal branch discipline.
 
 ---
 
@@ -208,11 +209,11 @@ dev
 659da2855f56c61ae9d21e2995be9649c77fc470          # task baseline
 
 $ git rev-parse HEAD
-ac5010815418ac1a2355a678f7d52704be4590d2          # last observed; several unrelated commits landed
+91a5ff7f2d9f94fa764115e4c875b6fb443bc453          # last observed; dev advanced 32 commits
 
 $ git status --porcelain | wc -l
 72                                                 # foreign changes at audit start
-92                                                 # later, foreign edits + the three new files
+76                                                 # at last check; count fluctuated
 ```
 
 **P2 — cited paths between baseline and observed HEAD**
@@ -226,16 +227,24 @@ $ git diff --name-only 659da28..HEAD -- packages/types/src/sentinel packages/tes
     docs/decisions/M02-07-historical-decisions-matrix.md \
     docs/decisions/M06-05-historical-interfaces-map.md .env.example
 .env.example
+apps/dock/src/lib/landing-copy.ts
 
 $ git diff 659da28..HEAD -- .env.example
 -API_VERSION=2.0.0
 +API_VERSION=2.1.0
 
+$ git diff 659da28..HEAD -- apps/dock/src/lib/landing-copy.ts
+-heroEyebrow: 'PEOPLE. PLACES. STORIES. ANOTHER SIDE OF REALITY.'
++heroEyebrow: 'LIGHTHOUSE · PUBLIC GATEWAY OF MOONWITNESS XV'
+...
+-heroEyebrow: 'ORANG. TEMPAT. KISAH. SISI LAIN DARI REALITAS.'
++heroEyebrow: 'LIGHTHOUSE · GERBANG PUBLIK MOONWITNESS XV'
+
 $ grep -n "EGRESS_ENABLED" .env.example
 150:EGRESS_ENABLED=false
 ```
 
-The only cited-path change is an unrelated `API_VERSION` bump; the cited `EGRESS_ENABLED` line is unchanged. Every other cited path is byte-identical.
+The only cited-path changes are an unrelated `API_VERSION` bump and the uncited `heroEyebrow` copy in both locales; the cited `EGRESS_ENABLED` line 150 and landing-copy lines 70/72 are unchanged. Every other cited path is byte-identical, and all ledger quotes re-resolved.
 
 **P3 — provider tokens in source**
 

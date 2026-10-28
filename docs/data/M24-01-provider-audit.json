@@ -2,8 +2,8 @@
   "task": "M24-01",
   "title": "Audit A-L-L-A-H USGS/GDACS/NOAA/Open-Meteo historical code and terms",
   "baseline_sha": "659da2855f56c61ae9d21e2995be9649c77fc470",
-  "observed_head_sha": "ac5010815418ac1a2355a678f7d52704be4590d2",
-  "baseline_note": "The task states baseline dev HEAD 659da28. Several unrelated commits (M31, M16, M23, M26, HQ editor, witness lineage) advanced dev while this audit ran; 659da28 is an ancestor and the last observed HEAD was ac50108. Over every cited path the only change from 659da28 is .env.example API_VERSION; the cited EGRESS_ENABLED=false line 150 is unchanged and was rechecked. The worktree also contains another session's uncommitted changes, including a 131-line insertion above the Headquarters status literals; both the worktree and committed locations are recorded.",
+  "observed_head_sha": "91a5ff7f2d9f94fa764115e4c875b6fb443bc453",
+  "baseline_note": "The task states baseline dev HEAD 659da28. Thirty-two unrelated commits (M31, M16, M21, M23, M25, M26, HQ editor, witness lineage, AIGateway, plus external commit f86bede that recorded these three audit files) advanced dev while this audit ran; 659da28 is an ancestor and the last observed HEAD was 91a5ff7. Across every cited path the only changes from 659da28 are .env.example API_VERSION (2.0.0 to 2.1.0) and apps/dock/src/lib/landing-copy.ts heroEyebrow in both locales; the cited EGRESS_ENABLED=false line 150 and the cited landing-copy lines 70 and 72 are unchanged, and every ledger quote was re-resolved against the working tree. The worktree also contains another session's uncommitted changes, including a 131-line insertion above the Headquarters status literals; both the worktree and committed locations are recorded. This audit did not stage or commit anything.",
   "acceptance": "Historical fixtures not mislabeled live production",
   "scope_note": "Read-only static audit. Four named environmental providers plus A-L-L-A-H and HELIOGRID. No provider client, provider URL, provider-specific feature flag or provider terms text exists in the repository. NOAA and Open-Meteo are absent from code; USGS and GDACS are tokens, one test-only fixture and static prose. External provider terms and quotas were not fetched and are recorded NOT_IN_REPO.",
   "evidence_class_enum": [
@@ -471,11 +471,11 @@
       "provider": "ALLAH",
       "artifact_kind": "feature_flag",
       "evidence_class": "REPO_EVIDENCE",
-      "locator": ".env.example:150",
+      "locator": ".env.example:152",
       "quote": "EGRESS_ENABLED=false",
       "evidence": [
         {
-          "locator": ".env.example:150",
+          "locator": ".env.example:152",
           "quote": "EGRESS_ENABLED=false"
         }
       ],
@@ -801,7 +801,7 @@
       "scope": "global outbound fetch gate",
       "default": "false",
       "provider_specific": false,
-      "locator": ".env.example:150",
+      "locator": ".env.example:152",
       "quote": "EGRESS_ENABLED=false"
     }
   ],
