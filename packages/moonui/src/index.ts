@@ -154,5 +154,7 @@ export {
   MOON_SHADOWS,
   MOON_BORDERS,
   MOON_GLOWS,
+  MOON_EXPERIENCES,
   type MoonColorName,
+  type MoonExperienceName,
 } from './tokens.js'

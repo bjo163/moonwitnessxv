@@ -68,3 +68,143 @@ export const MOON_GLOWS = {
   ok: 'rgba(0, 230, 118, 0.45)',
 } as const
 
+/**
+ * Experience layout/typography tokens (M19-02).
+ *
+ * Four reading contexts share ONE semantic key set — `measure`, `maxWidth`,
+ * `density`, `lineHeight`, `fonts.{heading,body,code}`,
+ * `typeScale.{display,heading,body,caption,code}` and
+ * `space.{gutter,section,inline}` — and differ only in values. Meaning must
+ * never drift between modes: a key always names the same decision, and font
+ * and spacing values are references into MOON_FONTS / MOON_SPACING, never new
+ * families or magic numbers. No palette value lives here; color stays owned by
+ * MOON_COLORS so a mode can never fork the palette.
+ *
+ * - `reader`  — long-form reading (Dock `/reader`): comfortable measure and prose leading.
+ * - `research`— dense reference scanning (terms/hypotheses): wider measure, compact leading, sans headings.
+ * - `story`   — narrative zine (studio/story): airy leading, narrow measure, zine display face.
+ * - `operator`— technician console (Cockpit): no measure cap, dense leading/scale, mono data.
+ */
+export type MoonExperienceName = 'reader' | 'research' | 'story' | 'operator'
+
+type MoonExperienceDensity = 'airy' | 'comfortable' | 'compact' | 'dense'
+
+type MoonExperience = {
+  readonly measure: string
+  readonly maxWidth: string
+  readonly density: MoonExperienceDensity
+  readonly lineHeight: number
+  readonly fonts: {
+    readonly heading: string
+    readonly body: string
+    readonly code: string
+  }
+  readonly typeScale: {
+    readonly display: string
+    readonly heading: string
+    readonly body: string
+    readonly caption: string
+    readonly code: string
+  }
+  readonly space: {
+    readonly gutter: string
+    readonly section: string
+    readonly inline: string
+  }
+}
+
+export const MOON_EXPERIENCES = {
+  reader: {
+    measure: '68ch',
+    maxWidth: '72rem',
+    density: 'comfortable',
+    lineHeight: 1.75,
+    fonts: {
+      heading: MOON_FONTS.display,
+      body: MOON_FONTS.sans,
+      code: MOON_FONTS.mono,
+    },
+    typeScale: {
+      display: '48px',
+      heading: '28px',
+      body: '17px',
+      caption: '12px',
+      code: '13px',
+    },
+    space: {
+      gutter: MOON_SPACING.s5,
+      section: MOON_SPACING.s5,
+      inline: MOON_SPACING.s3,
+    },
+  },
+  research: {
+    measure: '84ch',
+    maxWidth: '88rem',
+    density: 'compact',
+    lineHeight: 1.55,
+    fonts: {
+      heading: MOON_FONTS.sans,
+      body: MOON_FONTS.sans,
+      code: MOON_FONTS.mono,
+    },
+    typeScale: {
+      display: '34px',
+      heading: '22px',
+      body: '14px',
+      caption: '11px',
+      code: '12px',
+    },
+    space: {
+      gutter: MOON_SPACING.s4,
+      section: MOON_SPACING.s3,
+      inline: MOON_SPACING.s2,
+    },
+  },
+  story: {
+    measure: '62ch',
+    maxWidth: '66rem',
+    density: 'airy',
+    lineHeight: 1.8,
+    fonts: {
+      heading: MOON_FONTS.zine,
+      body: MOON_FONTS.sans,
+      code: MOON_FONTS.mono,
+    },
+    typeScale: {
+      display: '56px',
+      heading: '30px',
+      body: '18px',
+      caption: '12px',
+      code: '13px',
+    },
+    space: {
+      gutter: MOON_SPACING.s5,
+      section: MOON_SPACING.s5,
+      inline: MOON_SPACING.s3,
+    },
+  },
+  operator: {
+    measure: 'none',
+    maxWidth: '100%',
+    density: 'dense',
+    lineHeight: 1.3,
+    fonts: {
+      heading: MOON_FONTS.display,
+      body: MOON_FONTS.sans,
+      code: MOON_FONTS.mono,
+    },
+    typeScale: {
+      display: '20px',
+      heading: '14px',
+      body: '12px',
+      caption: '10px',
+      code: '12px',
+    },
+    space: {
+      gutter: MOON_SPACING.s3,
+      section: MOON_SPACING.s2,
+      inline: MOON_SPACING.s1,
+    },
+  },
+} as const satisfies Record<MoonExperienceName, MoonExperience>
+

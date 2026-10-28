@@ -1293,6 +1293,20 @@ export default unilex
 export { classifyMatch, normalizeHeadword } from './match.js'
 export type { MatchClass, MatchPreview } from './match.js'
 export { UNILEX_SEED } from './data/registry.js'
+export {
+  EMPIRE_TAXONOMY_INDEX,
+  EMPIRE_TAXONOMY_KINDS,
+  EMPIRE_TAXONOMY_AUTHORITY,
+  EMPIRE_TAXONOMY_EVIDENCED_COUNTS,
+  EMPIRE_TAXONOMY_EXPECTED_COUNTS,
+  validateEmpireTaxonomyIndex,
+  type EmpireTaxonomyAuthority,
+  type EmpireTaxonomyEntry,
+  type EmpireTaxonomyGap,
+  type EmpireTaxonomyIndex,
+  type EmpireTaxonomyKind,
+  type EmpireTaxonomySourceLocator,
+} from './data/empire-taxonomy.js'
 export { triangulateTerm, type TriangulatedConcept, type CognateEntry } from './triangulate.js'
 export {
   hybridUnilexSearch,
