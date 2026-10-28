@@ -191,7 +191,7 @@ test('UI-F10 a migrated page never renders a bare error Alert as its panel error
     if (panel.file.endsWith('components/reader.tsx')) {
       // The Reader's Alert is a rights denial, not a panel error, so it must
       // stay tied to the rights_blocked domain state.
-      assert.match(source, /result\.state === 'rights_blocked' \? \(\s*<Alert tone="hot">/)
+      assert.match(source, /result\.state === 'rights_blocked' \? \(\s*<div role="alert">\s*<Alert tone="hot">/)
       assert.doesNotMatch(source, /catch\s*\(/, `${panel.file} must not catch a read locally`)
       continue
     }
