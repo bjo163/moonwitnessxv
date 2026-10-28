@@ -28,6 +28,11 @@ void test('the server action validates authorization and confirmation before mut
   const actions = await readFile(new URL('../src/data/actions.ts', import.meta.url), 'utf8')
   const editPage = await readFile(new URL('../src/app/(admin)/models/[model]/[id]/page.tsx', import.meta.url), 'utf8')
   const listPage = await readFile(new URL('../src/app/(admin)/models/[model]/page.tsx', import.meta.url), 'utf8')
+  const createStart = actions.indexOf('export async function createRecordAction')
+  const updateStart = actions.indexOf('export async function updateRecordAction')
+  const deleteStart = actions.indexOf('export async function deleteRecordAction')
+  const createAction = actions.slice(createStart, updateStart)
+  const updateAction = actions.slice(updateStart, deleteStart)
 
   assert.doesNotMatch(actions, /export\s+(?:const|let|var|class)\b/, 'Next server-action modules export only async actions')
   assert.match(actions, /export\s+async\s+function\s+deleteRecordAction\([^)]*formData:\s*FormData/)
@@ -39,8 +44,8 @@ void test('the server action validates authorization and confirmation before mut
   assert.match(actions, /failNew\(segment, editorErrorCode\(error\)\)/)
   assert.match(actions, /\/models\/\$\{segment\}\/new\?error=\$\{code\}/)
   assert.doesNotMatch(actions, /error\.message|errorMessage\(/)
-  assert.match(actions, /catch\s*\(error\)\s*\{\s*failNew\(segment,\s*editorErrorCode\(error\)\)/)
-  assert.match(actions, /catch\s*\(error\)\s*\{\s*fail\(segment,\s*row,\s*editorErrorCode\(error\)\)/)
+  assert.ok(createAction.indexOf('catch (error)') < createAction.indexOf('failNew(segment, editorErrorCode(error))'))
+  assert.ok(updateAction.indexOf('catch (error)') < updateAction.indexOf('fail(segment, row, editorErrorCode(error))'))
 
   for (const page of [editPage, listPage]) {
     assert.match(page, /DELETE_CONFIRM_VALUE/)
