@@ -1,0 +1,1620 @@
+{
+  "task": "M26-01",
+  "title": "Crosswalk 99 chapter labels to actual source versions",
+  "generated_utc": "2026-10-28",
+  "baseline_sha": "a54198bd04705ba191c79e0bd1b36584a885622a",
+  "label_source_document": {
+    "path": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+    "section": "# 21 — The 99-chapter archival master index (V10 preserved)",
+    "section_lines": "701-756",
+    "nature": "editorial coverage index"
+  },
+  "status_enum": [
+    "VERIFIED_SOURCE",
+    "LABEL_ONLY",
+    "NEEDS_SOURCE"
+  ],
+  "status_definitions": {
+    "VERIFIED_SOURCE": "A manuscript, edition or source version is named in this repository together with a per-slot locator. No row qualifies at this baseline.",
+    "LABEL_ONLY": "The label exists only as an entry in the editorial coverage index; no manuscript, edition or source version is named for the slot.",
+    "NEEDS_SOURCE": "The label exists, and a repository document explicitly records the slot subject or its source family as unrecovered, ambiguous, disputed or rights-unresolved."
+  },
+  "assertions": [
+    "A chapter label is an editorial index entry. It is not a manuscript, an edition, a transcript or an original source version.",
+    "The count of 99 labels is a count of editorial slots. It is not a count of 99 manuscripts, 99 originals, 99 recovered chapters or 99 sources.",
+    "Zero rows in this crosswalk claim VERIFIED_SOURCE. No per-chapter manuscript or edition is named anywhere in this repository at the baseline SHA.",
+    "Slot numbers 1-99 reproduce the editorial coverage index. They are not source identifiers, catalogue numbers or manuscript numbers."
+  ],
+  "source_families": [
+    {
+      "id": "xiv-v10-chapters",
+      "repository": "github.com/bjo163/moonwitness-xiv",
+      "pinned_ref": "99e1a4f028b37dc1",
+      "path": "docs/narrative/v10/",
+      "recorded_at": "docs/audit/M06-01-source-repo-pins.md:17",
+      "per_slot_locator": false,
+      "caveats": [
+        "The pinned ref is recorded as a 16-hex prefix, not a full 40-character commit SHA, and cannot be resolved from this repository.",
+        "The pinned path conflicts with docs/vision/MASTER_VISION_NARRATIVE_XV.md:779 and :853, which cite docs/knowledge/narratives/MASTER_NARRATIVE_V10_1_EXPANDED.md at fff3b0dbc452e998f221e2ca15fd1d41e0ffc599.",
+        "docs/vision/MASTER_VISION_NARRATIVE_XV.md:971 states V10.1 is a public-safe expansion, not verbatim original; therefore the family pin does not establish a per-chapter source version.",
+        "docs/audit/M06-07-source-crosswalk-queue.md:15 classifies the 99-chapter family as Editorial Only."
+      ]
+    }
+  ],
+  "counts": {
+    "total": 99,
+    "by_status": {
+      "VERIFIED_SOURCE": 0,
+      "LABEL_ONLY": 65,
+      "NEEDS_SOURCE": 34
+    }
+  },
+  "limitations": [
+    "No V1-V10 original or V10.1 source file is present in this repository; only the editorial index in MASTER_VISION_NARRATIVE_XV.md section 21.",
+    "The external source family is pinned to a truncated ref and a path that disagrees with another in-repo citation, so it was not opened or verified by this task.",
+    "NEEDS_SOURCE mappings from an explicit gap note to a slot are editorial (for example 00-MAIN GOD PROMISE to slot 19); the note itself is quoted in gap_evidence.",
+    "Adjacent gap evidence not assigned to a slot: XII 15 synopses / 63 reconstructed pages (MASTER_VISION:974), patch #014 numbering (M06-04), and Mahsyar-related slot 86 which is not the separately named MAHSYAR COVENANT slot 84."
+  ],
+  "rows": [
+    {
+      "slot": 1,
+      "label": "The Unrecorded Beginning",
+      "band_id": "I",
+      "band_title": "Three-year legacy",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:706",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 2,
+      "label": "The ZENIX Years",
+      "band_id": "I",
+      "band_title": "Three-year legacy",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:706",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:983",
+          "note": "Early ZENIX/2023-2025 origins remain historical leads without comprehensive signed-off source timelines."
+        }
+      ]
+    },
+    {
+      "slot": 3,
+      "label": "The Universe Years",
+      "band_id": "I",
+      "band_title": "Three-year legacy",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:706",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 4,
+      "label": "The Great Convergence",
+      "band_id": "I",
+      "band_title": "Three-year legacy",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:706",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 5,
+      "label": "When The Moon Witnesses",
+      "band_id": "II",
+      "band_title": "Original MoonWitness",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:709",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 6,
+      "label": "The Original Story Loop",
+      "band_id": "II",
+      "band_title": "Original MoonWitness",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:709",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 7,
+      "label": "The Eight Eras",
+      "band_id": "II",
+      "band_title": "Original MoonWitness",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:709",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 8,
+      "label": "The First Signal",
+      "band_id": "II",
+      "band_title": "Original MoonWitness",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:709",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 9,
+      "label": "Past Presence",
+      "band_id": "II",
+      "band_title": "Original MoonWitness",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:709",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 10,
+      "label": "Promoting — What Deserves to Continue?",
+      "band_id": "II",
+      "band_title": "Original MoonWitness",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:709",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 11,
+      "label": "THE SHADOW",
+      "band_id": "III",
+      "band_title": "Me and My Crew",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "note": "THE SHADOW alias/generation requires typed candidate identity review."
+        }
+      ]
+    },
+    {
+      "slot": 12,
+      "label": "THE RUNAWAY TRACE",
+      "band_id": "III",
+      "band_title": "Me and My Crew",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 13,
+      "label": "A LAH / THE BOSS",
+      "band_id": "III",
+      "band_title": "Me and My Crew",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "note": "A LAH / 4-LAH alias and generation require typed candidate identity review."
+        }
+      ]
+    },
+    {
+      "slot": 14,
+      "label": "DOGS FROM UNIVERSE",
+      "band_id": "III",
+      "band_title": "Me and My Crew",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "note": "DOGS FROM UNIVERSE alias/generation requires typed candidate identity review."
+        }
+      ]
+    },
+    {
+      "slot": 15,
+      "label": "BLUE WITCH & DJ DAVID",
+      "band_id": "III",
+      "band_title": "Me and My Crew",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "note": "BLUE WITCH alias/generation requires typed candidate identity review."
+        }
+      ]
+    },
+    {
+      "slot": 16,
+      "label": "WALTER WHITE / WHITER / WHITE",
+      "band_id": "III",
+      "band_title": "Me and My Crew",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "note": "WALTER alias and generations require typed candidate identity review."
+        }
+      ]
+    },
+    {
+      "slot": 17,
+      "label": "ELECTRIC FOREST, INDESTRUCTIBLE & JHNNY DEPP",
+      "band_id": "III",
+      "band_title": "Me and My Crew",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 18,
+      "label": "The Second Crew Generation",
+      "band_id": "III",
+      "band_title": "Me and My Crew",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 19,
+      "label": "The Original GOD-PROMISE",
+      "band_id": "IV",
+      "band_title": "GOD-PROMISE Core Research",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+          "note": "00-MAIN GOD PROMISE original lines require independent identity and revision review."
+        }
+      ]
+    },
+    {
+      "slot": 20,
+      "label": "Monocentric 1·6·3",
+      "band_id": "IV",
+      "band_title": "GOD-PROMISE Core Research",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+          "note": "Academic 1-6-3 draft requires independent identity and revision review."
+        }
+      ]
+    },
+    {
+      "slot": 21,
+      "label": "Revelation and Reception",
+      "band_id": "IV",
+      "band_title": "GOD-PROMISE Core Research",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 22,
+      "label": "Four Scripture Families",
+      "band_id": "IV",
+      "band_title": "GOD-PROMISE Core Research",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 23,
+      "label": "Comparative Traditions",
+      "band_id": "IV",
+      "band_title": "GOD-PROMISE Core Research",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 24,
+      "label": "WITNESS — Swing Swing Key",
+      "band_id": "IV",
+      "band_title": "GOD-PROMISE Core Research",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 25,
+      "label": "The Middle Point",
+      "band_id": "IV",
+      "band_title": "GOD-PROMISE Core Research",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 26,
+      "label": "Written in Reverse",
+      "band_id": "IV",
+      "band_title": "GOD-PROMISE Core Research",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:715",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 27,
+      "label": "GOD PROMISE: THE ROCKSOUL",
+      "band_id": "V",
+      "band_title": "ROCKSOUL",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:718",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:972",
+          "note": "GOD PROMISE: THE ROCKSOUL original lines require independent identity and revision review."
+        }
+      ]
+    },
+    {
+      "slot": 28,
+      "label": "Four Pillars of the Soul",
+      "band_id": "V",
+      "band_title": "ROCKSOUL",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:718",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 29,
+      "label": "Lost the Signal",
+      "band_id": "V",
+      "band_title": "ROCKSOUL",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:718",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 30,
+      "label": "Great Princess of Bee",
+      "band_id": "V",
+      "band_title": "ROCKSOUL",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:718",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 31,
+      "label": "QUEEN R, HONEYBEE & Sweetness",
+      "band_id": "V",
+      "band_title": "ROCKSOUL",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:718",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:979",
+          "note": "QUEEN R has lexical, devotional and character distinctions not resolved to one source."
+        }
+      ]
+    },
+    {
+      "slot": 32,
+      "label": "MYLUFT / MYLOVE",
+      "band_id": "VI",
+      "band_title": "The Heart and the Name",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:721",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:979",
+          "note": "MYLUFT has lexical, devotional and character distinctions not resolved to one source."
+        }
+      ]
+    },
+    {
+      "slot": 33,
+      "label": "MA'LŪF",
+      "band_id": "VI",
+      "band_title": "The Heart and the Name",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:721",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:979",
+          "note": "MA'LUF has lexical, devotional and character distinctions not resolved to one source."
+        }
+      ]
+    },
+    {
+      "slot": 34,
+      "label": "Al-Wadūd & the Personal Nickname",
+      "band_id": "VI",
+      "band_title": "The Heart and the Name",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:721",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:979",
+          "note": "Al-Wadud has lexical, devotional and character distinctions not resolved to one source."
+        }
+      ]
+    },
+    {
+      "slot": 35,
+      "label": "HONEY & MOON",
+      "band_id": "VI",
+      "band_title": "The Heart and the Name",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:721",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:979",
+          "note": "HONEY has lexical, devotional and character distinctions not resolved to one source."
+        }
+      ]
+    },
+    {
+      "slot": 36,
+      "label": "Make Mama Smile",
+      "band_id": "VI",
+      "band_title": "The Heart and the Name",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:721",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 37,
+      "label": "Jonny the Sugar Genie",
+      "band_id": "VI",
+      "band_title": "The Heart and the Name",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:721",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 38,
+      "label": "KADO",
+      "band_id": "VI",
+      "band_title": "The Heart and the Name",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:721",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:982",
+          "note": "KADO needs a primary-source check."
+        }
+      ]
+    },
+    {
+      "slot": 39,
+      "label": "THE BATTERIES",
+      "band_id": "VII",
+      "band_title": "THE BATTERIES — Chaos Medic",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:724",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "note": "The BATTERIES four-book narrative structure remains incompletely recovered."
+        }
+      ]
+    },
+    {
+      "slot": 40,
+      "label": "The Three Chaos Figures",
+      "band_id": "VII",
+      "band_title": "THE BATTERIES — Chaos Medic",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:724",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "note": "Part of the BATTERIES band (39-45) whose four-book structure remains incompletely recovered."
+        }
+      ]
+    },
+    {
+      "slot": 41,
+      "label": "NPD TEAM",
+      "band_id": "VII",
+      "band_title": "THE BATTERIES — Chaos Medic",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:724",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "note": "NPD page/scene/media order remains incompletely recovered; NPD 24:27, 24:37 and 25:50 are different works."
+        }
+      ]
+    },
+    {
+      "slot": 42,
+      "label": "The Real Feast of Trumpets",
+      "band_id": "VII",
+      "band_title": "THE BATTERIES — Chaos Medic",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:724",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "note": "Part of the BATTERIES band (39-45) whose four-book structure remains incompletely recovered."
+        }
+      ]
+    },
+    {
+      "slot": 43,
+      "label": "BABY-DOLL: The Plot Twist",
+      "band_id": "VII",
+      "band_title": "THE BATTERIES — Chaos Medic",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:724",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "note": "Part of the BATTERIES band (39-45) whose four-book structure remains incompletely recovered."
+        }
+      ]
+    },
+    {
+      "slot": 44,
+      "label": "Penunggang Angsa",
+      "band_id": "VII",
+      "band_title": "THE BATTERIES — Chaos Medic",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:724",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "note": "Part of the BATTERIES band (39-45) whose four-book structure remains incompletely recovered."
+        }
+      ]
+    },
+    {
+      "slot": 45,
+      "label": "Kingslayer: The Unity Agreement",
+      "band_id": "VII",
+      "band_title": "THE BATTERIES — Chaos Medic",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:724",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:973",
+          "note": "Part of the BATTERIES band (39-45) whose four-book structure remains incompletely recovered."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:975",
+          "note": "Kingslayer's five poster source descriptors are not five cleared original binary images."
+        }
+      ]
+    },
+    {
+      "slot": 46,
+      "label": "Tick-Tock on the Clock",
+      "band_id": "VIII",
+      "band_title": "Personal Witness Stories",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:727",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:980",
+          "note": "Tick-Tock's occurred vs recorded vs replacement times must remain separate; no single verified time source."
+        }
+      ]
+    },
+    {
+      "slot": 47,
+      "label": "Menggigil",
+      "band_id": "VIII",
+      "band_title": "Personal Witness Stories",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:727",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 48,
+      "label": "Thunderstruck",
+      "band_id": "VIII",
+      "band_title": "Personal Witness Stories",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:727",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 49,
+      "label": "MOONRIDLEY",
+      "band_id": "VIII",
+      "band_title": "Personal Witness Stories",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:727",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:980",
+          "note": "MOONRIDLEY morning storytelling vs nocturnal referenced lyric must remain separate; no single verified source."
+        }
+      ]
+    },
+    {
+      "slot": 50,
+      "label": "KALAUTIDAKSALAH — The Breath",
+      "band_id": "VIII",
+      "band_title": "Personal Witness Stories",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:727",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 51,
+      "label": "The Other Daily Witnesses",
+      "band_id": "VIII",
+      "band_title": "Personal Witness Stories",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:727",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 52,
+      "label": "PENDETA-ONLINE",
+      "band_id": "IX",
+      "band_title": "Comparative and Spiritual Arcs",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:730",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 53,
+      "label": "ALLAH-PROMISE HIGH HOPES",
+      "band_id": "IX",
+      "band_title": "Comparative and Spiritual Arcs",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:730",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 54,
+      "label": "RE–ZA / RA–SOUL / RASUL",
+      "band_id": "IX",
+      "band_title": "Comparative and Spiritual Arcs",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:730",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 55,
+      "label": "ASSAFAAT-30",
+      "band_id": "IX",
+      "band_title": "Comparative and Spiritual Arcs",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:730",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 56,
+      "label": "NYANGKUT (MI'RAJ) & POHON NATAL",
+      "band_id": "IX",
+      "band_title": "Comparative and Spiritual Arcs",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:730",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 57,
+      "label": "ZILL — The Shadow Witness",
+      "band_id": "IX",
+      "band_title": "Comparative and Spiritual Arcs",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:730",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:978",
+          "note": "ZILL Shadow-optics origin is separate; user-preferred spelling does not overwrite historical source bytes."
+        }
+      ]
+    },
+    {
+      "slot": 58,
+      "label": "ZILL — Ahluz Zikir / Tasawuf",
+      "band_id": "IX",
+      "band_title": "Comparative and Spiritual Arcs",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:730",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:978",
+          "note": "ZILL Tasawuf origin is separate; user-preferred spelling does not overwrite historical source bytes."
+        }
+      ]
+    },
+    {
+      "slot": 59,
+      "label": "The Forgotten Cartel",
+      "band_id": "X",
+      "band_title": "The Forgotten",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:733",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 60,
+      "label": "King Umar / Al-Faruq",
+      "band_id": "X",
+      "band_title": "The Forgotten",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:733",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 61,
+      "label": "The Basecamp",
+      "band_id": "X",
+      "band_title": "The Forgotten",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:733",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 62,
+      "label": "Forgotten × ZILL × HAVEN",
+      "band_id": "X",
+      "band_title": "The Forgotten",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:733",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 63,
+      "label": "Earth Command Center",
+      "band_id": "XI",
+      "band_title": "Science and Time",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:736",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 64,
+      "label": "Atmosphere OS",
+      "band_id": "XI",
+      "band_title": "Science and Time",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:736",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 65,
+      "label": "Cosmic Atlas",
+      "band_id": "XI",
+      "band_title": "Science and Time",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:736",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 66,
+      "label": "Life Beyond Earth",
+      "band_id": "XI",
+      "band_title": "Science and Time",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:736",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 67,
+      "label": "M-TIME & Antikythera",
+      "band_id": "XI",
+      "band_title": "Science and Time",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:736",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 68,
+      "label": "HELIOGRID",
+      "band_id": "XI",
+      "band_title": "Science and Time",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:736",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 69,
+      "label": "Photon, Proton, Quantum & Material Forge",
+      "band_id": "XI",
+      "band_title": "Science and Time",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:736",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 70,
+      "label": "The Prime Code",
+      "band_id": "XII",
+      "band_title": "Empire Organization",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:739",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 71,
+      "label": "The Four Operational Pillars",
+      "band_id": "XII",
+      "band_title": "Empire Organization",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:739",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 72,
+      "label": "G.O.D. 99",
+      "band_id": "XII",
+      "band_title": "Empire Organization",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:739",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 73,
+      "label": "WINGS 10",
+      "band_id": "XII",
+      "band_title": "Empire Organization",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:739",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 74,
+      "label": "The 99 Asma Registry",
+      "band_id": "XII",
+      "band_title": "Empire Organization",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:739",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/audit/M26-05-empire-taxonomy-audit.md:60",
+          "note": "No 99-name Asma list or data file exists in this repository; recorded as a missing-source gap."
+        }
+      ]
+    },
+    {
+      "slot": 75,
+      "label": "ARSY, 100CENTER, AMANAH & SHURA",
+      "band_id": "XII",
+      "band_title": "Empire Organization",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:739",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 76,
+      "label": "Self, Community & Global",
+      "band_id": "XIII",
+      "band_title": "Human Journey and Patches",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:742",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 77,
+      "label": "AGE CODE",
+      "band_id": "XIII",
+      "band_title": "Human Journey and Patches",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:742",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 78,
+      "label": "33 World Patches",
+      "band_id": "XIII",
+      "band_title": "Human Journey and Patches",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:742",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:976",
+          "note": "Referenced 33-patch registry has an open World Patch #014 numbering dispute."
+        }
+      ]
+    },
+    {
+      "slot": 79,
+      "label": "The Complete 33 Register",
+      "band_id": "XIII",
+      "band_title": "Human Journey and Patches",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:742",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:976",
+          "note": "Referenced 33-patch registry has an open World Patch #014 numbering dispute."
+        }
+      ]
+    },
+    {
+      "slot": 80,
+      "label": "FAITH TO ACTION",
+      "band_id": "XIII",
+      "band_title": "Human Journey and Patches",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:742",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:961",
+          "note": "Referenced XII patch #033 (FAITH TO ACTION) is recorded as user-submitted-in-chat only."
+        }
+      ]
+    },
+    {
+      "slot": 81,
+      "label": "99 Human States",
+      "band_id": "XIII",
+      "band_title": "Human Journey and Patches",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:742",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 82,
+      "label": "AETHERION — Ten Realms",
+      "band_id": "XIII",
+      "band_title": "Human Journey and Patches",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:742",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 83,
+      "label": "Paradise Atlas",
+      "band_id": "XIII",
+      "band_title": "Human Journey and Patches",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:742",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 84,
+      "label": "Mahsyar Covenant",
+      "band_id": "XIV",
+      "band_title": "Remaining Archives",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:745",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:982",
+          "note": "MAHSYAR COVENANT needs a primary-source check."
+        }
+      ]
+    },
+    {
+      "slot": 85,
+      "label": "Ad-Deen Four Belief Orbits",
+      "band_id": "XIV",
+      "band_title": "Remaining Archives",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:745",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:982",
+          "note": "AD-DEEN needs a primary-source check."
+        }
+      ]
+    },
+    {
+      "slot": 86,
+      "label": "Syafaat, Mahsyar & Yaumul Hisab",
+      "band_id": "XIV",
+      "band_title": "Remaining Archives",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:745",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 87,
+      "label": "Divine Command Center — Catatan Suara Qalbu",
+      "band_id": "XIV",
+      "band_title": "Remaining Archives",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:745",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 88,
+      "label": "BEG8-50256 Ghost in the Machine",
+      "band_id": "XIV",
+      "band_title": "Remaining Archives",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:745",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:982",
+          "note": "Ghost in Machine needs a primary-source check."
+        }
+      ]
+    },
+    {
+      "slot": 89,
+      "label": "The Forgotten Signal Collection",
+      "band_id": "XIV",
+      "band_title": "Remaining Archives",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:745",
+      "source_status": "NEEDS_SOURCE",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:981",
+          "note": "Signal Collection includes missing primary work that must be located before any original-copy publication."
+        }
+      ]
+    },
+    {
+      "slot": 90,
+      "label": "The Creator's Cut",
+      "band_id": "XIV",
+      "band_title": "Remaining Archives",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:745",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 91,
+      "label": "Source vs Interpretation",
+      "band_id": "XV",
+      "band_title": "Integrity Constitution",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:748",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 92,
+      "label": "Character vs History",
+      "band_id": "XV",
+      "band_title": "Integrity Constitution",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:748",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 93,
+      "label": "Three Timelines",
+      "band_id": "XV",
+      "band_title": "Integrity Constitution",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:748",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 94,
+      "label": "Five Canon Evidence States",
+      "band_id": "XV",
+      "band_title": "Integrity Constitution",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:748",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 95,
+      "label": "The Ten Rules of the Universe",
+      "band_id": "XV",
+      "band_title": "Integrity Constitution",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:748",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 96,
+      "label": "Four Great Universes",
+      "band_id": "XV",
+      "band_title": "Integrity Constitution",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:748",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 97,
+      "label": "Story vs Command Center",
+      "band_id": "XV",
+      "band_title": "Integrity Constitution",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:748",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 98,
+      "label": "What Must Remain Unknown",
+      "band_id": "XV",
+      "band_title": "Integrity Constitution",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:748",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    },
+    {
+      "slot": 99,
+      "label": "One Universe",
+      "band_id": "XVI",
+      "band_title": "Epilogue",
+      "label_source": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:751",
+      "source_status": "LABEL_ONLY",
+      "manuscript_or_edition": null,
+      "source_version": null,
+      "source_locator": null,
+      "source_family_id": "xiv-v10-chapters",
+      "family_resolution": "FAMILY_ONLY",
+      "gap_evidence": []
+    }
+  ]
+}
