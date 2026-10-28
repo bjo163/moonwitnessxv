@@ -38,5 +38,10 @@
     "apiVersion": "2.1.0",
     "schemaHash": "e609bbc7984759d0",
     "date": "2026-10-28T11:08:32.264Z"
+  },
+  {
+    "apiVersion": "3.0.0",
+    "schemaHash": "b8052ae8e3ce61df",
+    "date": "2026-10-28T11:34:45.706Z"
   }
 ]

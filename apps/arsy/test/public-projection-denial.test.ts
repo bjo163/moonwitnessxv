@@ -489,7 +489,7 @@ test('UI-P05e: the Terms Table projection really does enforce APPROVED_FOR_CITAT
 })
 
 // --------------------------------------------------------------------------- 6
-test('UI-P05e GAP (PERMISSIVE-TODAY): /unilex/term is a public projection that skips the citation filter', async (t) => {
+test('UI-P05e: /unilex/term denies anonymous access until a reviewed public projection exists', async (t) => {
   const { app, moonql } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -497,39 +497,32 @@ test('UI-P05e GAP (PERMISSIVE-TODAY): /unilex/term is a public projection that s
   })
   const { stableId } = await seedUnapprovedTerm(moonql)
 
-  // Ground truth, asserted as it is — not as UI-P05e wants it.
+  // The list projection already withholds terms whose only source is unapproved.
   const hidden = dataOf<{ total: number }>(await get(app, '/orm/unilex/terms', { q: stableId }))
   assert.equal(hidden.total, 0, 'the list projection hides it')
 
   const detail = await get(app, '/orm/unilex/term', { stableId })
-  assert.equal(detail.statusCode, 200, 'PERMISSIVE-TODAY: the detail projection answers anyway')
-  const body = dataOf<{
-    term: { stableId: string; definition: string; editorialStatus: string }
-    forms: Array<{ headword: string; sourceCode: string | null }>
-    senses: Array<{ definition: string; sourceCode: string | null }>
-    sources: Array<{ code: string | null; citation?: string | null; reviewStatus: string | null }>
-  }>(detail)
-  assert.equal(body.term.stableId, stableId)
-  assert.equal(body.term.editorialStatus, 'DRAFT_REVIEW')
+  assert.equal(detail.statusCode, 401, 'a guessed detail link cannot bypass the public list filter')
+  assertNoBytesIn('anonymous UNILEX detail denial', detail.body, allSynthMarkers)
 
-  // A guessed link therefore reaches material the Terms Table deliberately withheld.
-  assert.match(detail.body, new RegExp(SYNTH.unapprovedDefinition), 'LEAK: withheld definition is public')
-  assert.match(detail.body, new RegExp(SYNTH.unapprovedHeadword), 'LEAK: withheld form headword is public')
-  assert.match(detail.body, new RegExp(SYNTH.unapprovedCitation), 'LEAK: unapproved source citation is public')
-  assert.ok(
-    body.sources.some((source) => source.reviewStatus === 'PROPOSED'),
-    'the payload does expose the unapproved reviewStatus (mitigation, not a gate)',
-  )
+  const headers = await adminHeaders(app, '/orm')
+  const adminDetail = await app
+    .inject()
+    .get('/orm/unilex/term')
+    .headers(headers)
+    .query({ stableId })
+    .end()
+  assert.equal(adminDetail.statusCode, 200, 'authorized reviewers retain access to private detail')
+  assert.match(adminDetail.body, new RegExp(SYNTH.unapprovedDefinition))
 
-  // Case-insensitive id guessing reaches it too; unknown ids are refused properly.
-  assert.equal((await get(app, '/orm/unilex/term', { stableId: stableId.toLowerCase() })).statusCode, 200)
-  assert.equal((await get(app, '/orm/unilex/term', { stableId: 'P999' })).statusCode, 404)
-  assert.equal((await get(app, '/orm/unilex/term', { stableId: "P' OR 1=1" })).statusCode, 400)
-  assert.match(messageOf(await get(app, '/orm/unilex/term', { stableId: 'nope' })), /\^\[USTP\]\[0-9\]\{3\}\$/)
+  // Query validation is hidden behind auth so anonymous callers cannot distinguish stored IDs.
+  assert.equal((await get(app, '/orm/unilex/term', { stableId: stableId.toLowerCase() })).statusCode, 401)
+  assert.equal((await get(app, '/orm/unilex/term', { stableId: 'P999' })).statusCode, 401)
+  assert.equal((await get(app, '/orm/unilex/term', { stableId: "P' OR 1=1" })).statusCode, 401)
 })
 
 // --------------------------------------------------------------------------- 7
-test('UI-P05e GAP (PERMISSIVE-TODAY): admin-only UNILEX audit rows are readable through the public term projection', async (t) => {
+test('UI-P05e: UNILEX detail keeps admin-only audit rows private', async (t) => {
   const { app, moonql } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -542,19 +535,30 @@ test('UI-P05e GAP (PERMISSIVE-TODAY): admin-only UNILEX audit rows are readable 
     assert.equal(res.statusCode, 401, `${path} requires an admin session`)
   }
 
-  // The same rows come back to an anonymous caller through the projection.
+  // The private projection is closed before it can serialize the same rows.
   const detail = await get(app, '/orm/unilex/term', { stableId: 'P031' })
-  assert.equal(detail.statusCode, 200)
+  assert.equal(detail.statusCode, 401)
+  assertNoBytesIn('anonymous UNILEX review denial', detail.body, allSynthMarkers)
+
+  // Authorized reviewers still need the detail projection for private workflows.
+  const headers = await adminHeaders(app, '/orm')
+  const adminDetail = await app
+    .inject()
+    .get('/orm/unilex/term')
+    .headers(headers)
+    .query({ stableId: 'P031' })
+    .end()
+  assert.equal(adminDetail.statusCode, 200)
   const body = dataOf<{
     identityReviews: Array<{ pairCode: string; decision: string; reviewer: string | null; reason: string | null }>
     reviewLog: Array<{ action: string; reviewer: string; reason: string }>
     relations: Array<{ relationType: string; status: string; reviewer: string | null; evidenceRef: string | null }>
-  }>(detail)
-  assert.ok(body.identityReviews.length > 0, 'PERMISSIVE-TODAY: match-review rows reach an anonymous caller')
-  assert.ok(body.reviewLog.length > 0, 'PERMISSIVE-TODAY: review-log rows reach an anonymous caller')
+  }>(adminDetail)
+  assert.ok(body.identityReviews.length > 0, 'admin reviewers can inspect match-review rows')
+  assert.ok(body.reviewLog.length > 0, 'admin reviewers can inspect review-log rows')
   assert.ok(
     body.identityReviews.some((review) => review.reviewer && review.reason),
-    'reviewer attribution and reasons are in the public payload',
+    'authorized detail includes reviewer attribution and reasons',
   )
 
   // Positive control on the other side: the write path really is gated.
@@ -584,7 +588,7 @@ type RelationRow = {
 }
 
 // --------------------------------------------------------------------------- 8
-test('UI-P05e: UNILEX relations stay labelled in public; GAP (PERMISSIVE-TODAY) on the create-to-APPROVED path', async (t) => {
+test('UI-P05e: UNILEX relations stay labelled in admin detail; GAP (PERMISSIVE-TODAY) on the create-to-APPROVED path', async (t) => {
   const { app, moonql } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -603,7 +607,14 @@ test('UI-P05e: UNILEX relations stay labelled in public; GAP (PERMISSIVE-TODAY) 
     reason: 'synthetic unapproved relation for the negative matrix',
   })
 
-  const detail = dataOf<{ relations: RelationRow[] }>(await get(app, '/orm/unilex/term', { stableId: 'S001' }))
+  const headers = await adminHeaders(app, '/orm')
+  const detailResponse = await app
+    .inject()
+    .get('/orm/unilex/term')
+    .headers(headers)
+    .query({ stableId: 'S001' })
+    .end()
+  const detail = dataOf<{ relations: RelationRow[] }>(detailResponse)
   const synthetic = detail.relations.filter((relation) => relation.targetStableId === stableId)
   assert.equal(synthetic.length, 1, detail.relations.length + ' relations on S001; none pointed at ' + stableId)
   for (const relation of synthetic) {
@@ -611,7 +622,13 @@ test('UI-P05e: UNILEX relations stay labelled in public; GAP (PERMISSIVE-TODAY) 
     assert.notEqual(relation.status, 'APPROVED')
   }
   // An unapproved relation does not become an approved one by guessing a different term id.
-  const other = dataOf<{ relations: RelationRow[] }>(await get(app, '/orm/unilex/term', { stableId: 'P030' }))
+  const otherResponse = await app
+    .inject()
+    .get('/orm/unilex/term')
+    .headers(headers)
+    .query({ stableId: 'P030' })
+    .end()
+  const other = dataOf<{ relations: RelationRow[] }>(otherResponse)
   assert.ok(other.relations.every((relation) => relation.status !== undefined))
 
   // DENIED, for real: the two identity relation types cannot be created as APPROVED without
@@ -655,8 +672,7 @@ test('UI-P05e: UNILEX relations stay labelled in public; GAP (PERMISSIVE-TODAY) 
   // GAP (PERMISSIVE-TODAY): beforeCreate calls assertReviewedIdentity, which returns early for
   // anything that is not exactMatch/closeMatch (index.ts:397). A NON-identity relation can
   // therefore be CREATED straight into APPROVED with no reviewer and no evidence — the create
-  // path is looser than the update path, and the public projection then tells an anonymous
-  // reader the link is approved.
+  // path is looser than the update path. Admin detail still exposes the inconsistency for review.
   const selfApproved = await moonql.model('unilex_relations').create({
     sourceTermRef: String(s001.id),
     targetTermRef: String(term.id),
@@ -667,9 +683,15 @@ test('UI-P05e: UNILEX relations stay labelled in public; GAP (PERMISSIVE-TODAY) 
   })
   assert.equal(String(selfApproved.status), 'APPROVED', 'PERMISSIVE-TODAY: an unreviewed create reached APPROVED')
 
-  const after = dataOf<{ relations: RelationRow[] }>(await get(app, '/orm/unilex/term', { stableId: 'S001' }))
+  const afterResponse = await app
+    .inject()
+    .get('/orm/unilex/term')
+    .headers(headers)
+    .query({ stableId: 'S001' })
+    .end()
+  const after = dataOf<{ relations: RelationRow[] }>(afterResponse)
   const unreviewedApproval = after.relations.find((relation) => relation.relationType === 'narrowerThan')
-  assert.ok(unreviewedApproval, 'the relation is visible to an anonymous caller')
+  assert.ok(unreviewedApproval, 'the relation is visible to an authorized reviewer')
   assert.equal(unreviewedApproval.status, 'APPROVED')
   assert.equal(unreviewedApproval.reviewer, null, 'LEAK: presented as APPROVED with no reviewer recorded')
   assert.equal(unreviewedApproval.evidenceRef, null, 'LEAK: presented as APPROVED with no evidence recorded')

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import Fastify from 'fastify'
+import Fastify, { type FastifyInstance } from 'fastify'
 import { bootMoonQl, moonqlRest } from '@moonwitness/moonql'
 import base from '@moonwitness/moonql-base'
 import auth from '@moonwitness/moonql-auth'
@@ -53,6 +53,16 @@ interface ReviewBody {
 }
 
 const dataOf = <T>(res: { json(): unknown }): T => (res.json() as { data: T }).data
+
+async function getTermDetail(app: FastifyInstance, stableId: string) {
+  const headers = await adminHeaders(app, '/orm')
+  return app
+    .inject()
+    .get('/orm/unilex/term')
+    .headers(headers)
+    .query({ stableId })
+    .end()
+}
 
 test(
   'M09: UNILEX seed and reviewer decisions survive PostgreSQL',
@@ -116,14 +126,14 @@ test(
     assert.equal(sources.length, 3)
 
     const p004 = dataOf<TermBody>(
-      await app.inject().get('/orm/unilex/term').query({ stableId: 'P004' }).end(),
+      await getTermDetail(app, 'P004'),
     )
     const indonesian = p004.forms.find((form) => form.languageCode === 'id')
     assert.ok(indonesian, 'the Indonesian form survives the SQL round-trip')
     assert.equal(indonesian.direction, 'ltr')
 
     const p031 = dataOf<TermBody>(
-      await app.inject().get('/orm/unilex/term').query({ stableId: 'P031' }).end(),
+      await getTermDetail(app, 'P031'),
     )
     const distinct = p031.relations.find(
       (relation) => relation.targetStableId === 'P004' && relation.relationType === 'distinctFrom',
@@ -174,7 +184,7 @@ test(
       sourceRef: String(source.id),
     })
     const arabicDetail = dataOf<TermBody>(
-      await app.inject().get('/orm/unilex/term').query({ stableId: 'P090' }).end(),
+      await getTermDetail(app, 'P090'),
     )
     const arabicForm = arabicDetail.forms.find((form) => form.scriptCode === 'Arab')
     assert.ok(arabicForm, 'the Arabic form survives the SQL round-trip')

@@ -213,6 +213,9 @@ const hub = createServer((req, res) => {
   if (url.pathname === '/api/v1/corpus/browse') return json(res, 200, { ok: true, data: BROWSE_PAYLOAD })
   if (url.pathname === '/api/v1/unilex/terms') return json(res, 200, { ok: true, data: TERMS_PAYLOAD })
   if (url.pathname === '/api/v1/unilex/term') {
+    if (url.searchParams.get('stableId') === 'TERM-PRIVATE') {
+      return json(res, 401, { ok: false, error: { message: 'private reviewer detail must not reach Dock' } })
+    }
     if (url.searchParams.get('stableId') === 'TERM-MISSING') {
       return json(res, 404, { ok: false, error: { message: 'Term not found.' } })
     }
@@ -310,6 +313,9 @@ test('M21-06 positive: UNILEX Terms and a term detail render from the registry w
 
   // A missing term is a null for the route (notFound), never a fabricated record.
   assert.equal(await within(readTerm('TERM-MISSING'), 3000, 'readTerm missing'), null)
+
+  // The newly private detail projection is withheld through the same non-enumerating notFound path.
+  assert.equal(await within(readTerm('TERM-PRIVATE'), 3000, 'readTerm private'), null)
 })
 
 test('M21-06 positive: every request the source/research path made went to the hub owner, none to AI', () => {

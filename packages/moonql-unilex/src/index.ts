@@ -914,7 +914,10 @@ export const unilex = defineAddon({
     term: {
       method: 'GET',
       path: '/unilex/term',
-      requires: 'public',
+      // Detail rows include editorial decisions and can contain terms backed by
+      // sources that have not been approved for public citation. Keep this
+      // projection private until a reviewed public-release projection exists.
+      requires: ['admin'],
       handler: async ({ query, orm, status }) => {
         const stableId = asText(query.stableId).toUpperCase()
         if (!stableId) {

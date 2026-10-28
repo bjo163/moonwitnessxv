@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import Fastify from 'fastify'
+import Fastify, { type FastifyInstance } from 'fastify'
 import { bootMoonQl, moonqlRest } from '@moonwitness/moonql'
 import base from '@moonwitness/moonql-base'
 import auth from '@moonwitness/moonql-auth'
@@ -182,6 +182,16 @@ async function registrySource(moonql: Mq): Promise<Record<string, unknown>> {
   return source
 }
 
+async function getTermDetail(app: FastifyInstance, stableId: string) {
+  const headers = await adminHeaders(app, '/orm')
+  return app
+    .inject()
+    .get('/orm/unilex/term')
+    .headers(headers)
+    .query({ stableId })
+    .end()
+}
+
 async function makeTerm(moonql: Mq, stableId: string, extra: Record<string, unknown> = {}) {
   const source = await registrySource(moonql)
   return moonql.model('unilex_terms').create({
@@ -251,7 +261,7 @@ test('M09-01/02: 71 pinned concepts keep source, context and editorial status', 
   assert.notEqual(sufi.definition, fiction.definition)
 
   const s001 = dataOf<TermBody>(
-    await app.inject().get('/orm/unilex/term').query({ stableId: 's001' }).end(),
+    await getTermDetail(app, 's001'),
   )
   assert.equal(s001.term.lane, 'SCRIPTURE')
   assert.equal(s001.senses[0]?.scope, 'ISLAMIC_SCRIPTURE')
@@ -270,7 +280,7 @@ test('M09-03/04: ALLAH/ARSY/ZILL confusions stay separate and never auto-match',
   })
 
   const s009 = dataOf<TermBody>(
-    await app.inject().get('/orm/unilex/term').query({ stableId: 'S009' }).end(),
+    await getTermDetail(app, 'S009'),
   )
   const arsy = s009.relations.find(
     (relation) => relation.targetStableId === 'P002' && relation.relationType === 'distinctFrom',
@@ -281,7 +291,7 @@ test('M09-03/04: ALLAH/ARSY/ZILL confusions stay separate and never auto-match',
   assert.ok(arsy.reason && arsy.evidenceRef)
 
   const p001 = dataOf<TermBody>(
-    await app.inject().get('/orm/unilex/term').query({ stableId: 'P001' }).end(),
+    await getTermDetail(app, 'P001'),
   )
   const allah = p001.relations.find(
     (relation) => relation.targetStableId === 'S001' && relation.relationType === 'distinctFrom',
@@ -292,7 +302,7 @@ test('M09-03/04: ALLAH/ARSY/ZILL confusions stay separate and never auto-match',
   assert.equal(p001.senses[0]?.scope, 'PROJECT_INTERNAL')
 
   const zill = dataOf<TermBody>(
-    await app.inject().get('/orm/unilex/term').query({ stableId: 'P031' }).end(),
+    await getTermDetail(app, 'P031'),
   )
   const zillReview = zill.identityReviews.find((review) => review.pairCode === 'P004:P031')
   assert.ok(zillReview)
@@ -620,7 +630,7 @@ test('M09-06: Arabic, Hebrew and Greek forms keep diacritics, script and directi
   )
 
   const detail = dataOf<TermBody>(
-    await app.inject().get('/orm/unilex/term').query({ stableId: 'P094' }).end(),
+    await getTermDetail(app, 'P094'),
   )
   const arabicView = detail.forms.find((form) => form.scriptCode === 'Arab')
   assert.ok(arabicView)
@@ -630,14 +640,14 @@ test('M09-06: Arabic, Hebrew and Greek forms keep diacritics, script and directi
   assert.equal(arabicView.normalized, 'زل')
 
   const hebrewView = dataOf<TermBody>(
-    await app.inject().get('/orm/unilex/term').query({ stableId: 'P095' }).end(),
+    await getTermDetail(app, 'P095'),
   ).forms.find((form) => form.scriptCode === 'Hebr')
   assert.ok(hebrewView)
   assert.equal(hebrewView.direction, 'rtl')
   assert.equal(hebrewView.headword, 'צֵל')
 
   const greekView = dataOf<TermBody>(
-    await app.inject().get('/orm/unilex/term').query({ stableId: 'P096' }).end(),
+    await getTermDetail(app, 'P096'),
   ).forms.find((form) => form.scriptCode === 'Grek')
   assert.ok(greekView)
   assert.equal(greekView.direction, 'ltr')
@@ -753,7 +763,7 @@ test('M09-07: stable IDs are immutable and deprecation preserves old senses with
   })
 
   const detail = dataOf<TermBody>(
-    await app.inject().get('/orm/unilex/term').query({ stableId: 'P097' }).end(),
+    await getTermDetail(app, 'P097'),
   )
   assert.equal(detail.term.editorialStatus, 'DEPRECATED')
   assert.equal(detail.term.supersededBy?.stableId, 'P098')

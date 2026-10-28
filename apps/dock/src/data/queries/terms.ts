@@ -184,7 +184,7 @@ export async function readTerm(stableId: string): Promise<TermDetail | null> {
   try {
     return await serverClient().call<TermDetail>('/unilex/term', { query: { stableId } })
   } catch (err) {
-    if (err instanceof MoonApiError && (err.statusCode === 400 || err.statusCode === 404)) return null
+    if (err instanceof MoonApiError && (err.statusCode === 400 || err.statusCode === 401 || err.statusCode === 404)) return null
     throw err
   }
 }
