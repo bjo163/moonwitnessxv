@@ -141,6 +141,9 @@ importers:
       '@moonwitness/skylink-whatsapp':
         specifier: workspace:*
         version: link:../../packages/skylink-whatsapp
+      '@moonwitness/witness':
+        specifier: workspace:*
+        version: link:../../packages/moonql-witness
       fastify:
         specifier: ^5.2.1
         version: 5.12.7
@@ -859,6 +862,28 @@ importers:
       '@moonwitness/moonql':
         specifier: workspace:*
         version: link:../moonql
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  packages/moonql-witness:
+    dependencies:
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../core
+      '@moonwitness/moonql':
+        specifier: workspace:*
+        version: link:../moonql
+      '@moonwitness/moonql-auth':
+        specifier: workspace:*
+        version: link:../moonql-auth
+      '@moonwitness/moonql-base':
+        specifier: workspace:*
+        version: link:../moonql-base
     devDependencies:
       '@types/node':
         specifier: ^22.10.5

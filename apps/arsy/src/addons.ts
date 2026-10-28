@@ -14,6 +14,7 @@ import actors from '@moonwitness/moonql-actors'
 import graph from '@moonwitness/moonql-graph'
 import research from '@moonwitness/moonql-research'
 import journey from '@moonwitness/moonql-journey'
+import witness from '@moonwitness/witness'
 import type { AnyAddon } from '@moonwitness/moonql'
 
 /**
@@ -38,4 +39,5 @@ export const addons: AnyAddon[] = [
   graph,
   research,
   journey,
+  witness,
 ]

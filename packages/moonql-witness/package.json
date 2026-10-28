@@ -1,0 +1,30 @@
+{
+  "name": "@moonwitness/witness",
+  "version": "1.0.0",
+  "description": "Private D06 testimony references and append-only correction metadata",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsc -b --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@moonwitness/core": "workspace:*",
+    "@moonwitness/moonql": "workspace:*",
+    "@moonwitness/moonql-auth": "workspace:*",
+    "@moonwitness/moonql-base": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
+  }
+}

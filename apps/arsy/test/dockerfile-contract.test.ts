@@ -112,16 +112,25 @@ test('docker: the hub image ships the dist of every dependency it declares', () 
   const runtime = stages(dockerfile).get('runtime')
   assert.ok(runtime, 'Dockerfile has a runtime stage')
 
+  const packageDirectory = (packageName: string): string => {
+    const matches = membersOnDisk()
+      .filter((member) => member.startsWith('packages/'))
+      .filter((member) => JSON.parse(readRepoText(`${member}/package.json`)).name === packageName)
+    assert.equal(matches.length, 1, `${packageName} must resolve to exactly one packages/* workspace directory`)
+    return matches[0]!.slice('packages/'.length)
+  }
   const workspaceDeps = Object.entries(radioManifest.dependencies)
     .filter(([, spec]) => spec === 'workspace:*')
-    .map(([name]) => name.replace('@moonwitness/', ''))
+    .map(([name]) => ({ name, directory: packageDirectory(name) }))
   assert.ok(workspaceDeps.length >= 15, `only found ${workspaceDeps.length} workspace deps — manifest read wrong?`)
 
-  const missing = workspaceDeps.filter((dir) => !runtime!.includes(`COPY --from=build /repo/packages/${dir}/dist packages/${dir}/dist`))
+  const missing = workspaceDeps.filter(({ directory }) =>
+    !runtime!.includes(`COPY --from=build /repo/packages/${directory}/dist packages/${directory}/dist`),
+  )
   assert.deepEqual(
     missing,
     [],
-    `apps/arsy declares these as runtime dependencies but their dist is never copied:\n  ${missing.join('\n  ')}`,
+    `apps/arsy declares these as runtime dependencies but their dist is never copied:\n  ${missing.map(({ name, directory }) => `${name} (${directory})`).join('\n  ')}`,
   )
   assert.ok(runtime!.includes('COPY --from=build /repo/apps/arsy/dist apps/arsy/dist'), 'the ARSY hub itself is copied')
   // migrations are read off disk at boot (packages/moonql/src/client.ts)

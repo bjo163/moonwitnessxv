@@ -12,7 +12,7 @@
     "start:clean": "node dist/server.js",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
     "test": "pnpm test:regression",
-    "test:regression": "tsx --test --test-concurrency=2 test/**/*.test.ts"
+    "test:regression": "tsx --test --test-concurrency=2 test/**/*.test.ts ../../packages/moonql-witness/test/witness-lineage.test.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",
@@ -39,6 +39,7 @@
     "@moonwitness/moonql-settings": "workspace:*",
     "@moonwitness/moonql-stations": "workspace:*",
     "@moonwitness/moonql-unilex": "workspace:*",
+    "@moonwitness/witness": "workspace:*",
     "@moonwitness/skylink-whatsapp": "workspace:*",
     "fastify": "^5.2.1",
     "fastify-plugin": "^5.0.1",
