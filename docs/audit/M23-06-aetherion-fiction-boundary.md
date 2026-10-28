@@ -4,9 +4,9 @@
 - **Acceptance audited:** XP never equated with human age, holiness or heaven
 - **Milestone:** M23 — Voluntary Journey, Missions, 33 Patches and Empire vocabulary
 - **Branch / declared baseline:** `dev`, `659da28` (`659da2855f56c61ae9d21e2995be9649c77fc470`)
-- **Observed HEAD at first read:** `659da28`; **observed HEAD at final read:** `dfc6556` (`dfc65564760eda4ced596f661bda3f84c2d755e5`)
-- **Worktree:** another session's uncommitted work was present throughout (86 `git status --porcelain` entries at final read, predominantly `apps/`, `docs/audit/screens/` and generated files). None was modified. This task created three new files only.
-- **Status:** evidence and validator complete; **not closed by this task**. Only the integrator checks the TODO leaf after independent review.
+- **Observed HEAD at first read:** `659da28`; **at the final verification run of this audit:** `91a5ff7` (`91a5ff7f2d9f94fa764115e4c875b6fb443bc453`). Other sessions continued to commit throughout; all 32 locators were re-resolved by the validator at `91a5ff7`, the last verified SHA.
+- **Worktree:** another session's uncommitted work was present throughout (91 `git status --porcelain` entries at final read, including this task's audit file after it was committed and then edited here; predominantly `apps/`, `docs/audit/screens/` and generated files). No unrelated file was modified.
+- **Status:** evidence and validator complete. **This task did not close the leaf.** During the audit another session committed these three artifacts at `087f36f` and checked `TODO.md:551` at `7ea0367`; that external closure is recorded here as provenance, not claimed as this task's result.
 
 ---
 
@@ -37,7 +37,7 @@ Literal case-insensitive search over the whole tree, excluding generated output 
 | `\bheaven\b` | **1** | 1 | Only `TODO.md:551` |
 | `\btingkat\b`, `\balam\b`, `\bsepuluh\b`, `\bseratus\b` | 2 / 0 / 0 / 0 | — | Indonesian synonyms add no AETHERION reference; the two `tingkat` lines are SRGBL analysis levels and a vulnerability severity |
 
-**Consequence:** the repository contains **no definition of XP at all**. The acceptance sentence is the single occurrence of the token. The boundary can therefore only be verified as an absence (no equation exists) and enforced prospectively by a ledger and validator, not by testing an existing game implementation.
+**Consequence:** at baseline the repository contained **no definition of XP at all**. The acceptance sentence was the single occurrence of the token. At the final verified HEAD (`91a5ff7`) the token still appears only in the rewritten closure row at `TODO.md:551`; the original acceptance wording no longer exists in TODO. The boundary can therefore only be verified as an absence (no equation exists) and enforced prospectively by a ledger and validator, not by testing an existing game implementation.
 
 ### 1.4 Evidence tags
 
@@ -69,7 +69,7 @@ The text scan is a guard against careless future edits, not a semantic proof; se
 |---|---:|---:|---|
 | Named realms | 10 | **0** | ABSENT — only the counts “10 realms” / “Ten Realms” are referenced |
 | Named levels | 100 | **0** | ABSENT — only “100 levels” / “one hundred RPG levels” are referenced |
-| XP term or formula | 1 definition | **0 definitions; 1 occurrence** (`TODO.md:551`) | ABSENT |
+| XP term or formula | Any definition | **0 definitions; 1 occurrence** (`TODO.md:551`) | ABSENT |
 | Progression rules | Any | **0** | ABSENT |
 | Realm/level data model, route, UI or test | Any | **0** | ABSENT |
 | Originating design document | Any | **0**; only the external label “Empire Journey” | ABSENT |
@@ -86,7 +86,7 @@ The counts are repeated across the corpus. The definition-bearing locations are:
 
 `docs/data/M26-01-chapter-crosswalk.json:1349` supplies the chapter label “AETHERION — Ten Realms” with `source_status: LABEL_ONLY`; `docs/vision/MASTER_VISION_NARRATIVE_XV.md:742` is the corresponding prose chapter index. Neither names a realm.
 
-The nearest implementation surface, `packages/moonql-journey/src/index.ts:33` and `:54`, defines only `journey_patches` and `journey_mandates`. It has no realm, level, XP or progression model. The repo-wide `AETHERION` search returned **no** path under `packages/`, `apps/`, `test/` or `scripts/`; all 22 references are in `BLUEPRINT.md`, `TODO.md` and `docs/`.
+The nearest implementation surface, `packages/moonql-journey/src/index.ts:33` and `:54`, defines only `journey_patches` and `journey_mandates`. It has no realm, level, XP or progression model. Before this task's artifacts existed, the repo-wide `AETHERION` search returned **no** path under `packages/`, `apps/`, `test/` or `scripts/`; all 22 references were in `BLUEPRINT.md`, `TODO.md` and `docs/`.
 
 **Conclusion:** the 10/100 structure is **referenced, repeated and classified**, but **not present as data or implementation**. Zero of ten realms and zero of one hundred levels are evidenced.
 
@@ -120,7 +120,7 @@ IDs match `docs/data/M23-06-aetherion-boundaries.json`. “Nature” uses the le
 | A20 | `docs/vision/MASTER_VISION_NARRATIVE_XV.md:1147` | AETHERION vs eras vs AGE CODE: “Separate native IDs and units” | REPO_EVIDENCE | POLICY |
 | A21 | `docs/vision/MASTER_VISION_NARRATIVE_XV.md:1177` | P10 expansion may include AETHERION modules “if warranted”, under separate review | REPO_EVIDENCE | PLAN |
 | A22 | `docs/vision/MASTER_VISION_NARRATIVE_XV.md:1215` | Document self-check: “AETHERION, 100 levels distinct” | REPO_EVIDENCE | OBSERVATION |
-| A23 | `TODO.md:551` | Task acceptance: “XP never equated with human age, holiness or heaven” | REPO_EVIDENCE | ACCEPTANCE |
+| A23 | `TODO.md:551` | Closure row: “no row equates XP, level or realm with human age, holiness, heaven”. At baseline this line held the acceptance sentence “XP never equated with human age, holiness or heaven”. | REPO_EVIDENCE | ACCEPTANCE |
 | A24 | `TODO.md:853` | Narrative boundary: “10 WINGS is not 10 AETHERION realms” | REPO_EVIDENCE | POLICY |
 | A25 | `TODO.md:855` | AETHERION “cannot be marketed as live implementations” | REPO_EVIDENCE | POLICY |
 
@@ -176,9 +176,9 @@ These are **readability risks, not violations**. None asserts an equivalence.
 | **R-2 EDITORIAL_LABEL_AS_EVIDENCE** | `docs/data/M26-01-chapter-crosswalk.json:1349`; `docs/vision/MASTER_VISION_NARRATIVE_XV.md:742` | The chapter title “AETHERION — Ten Realms” looks like a sourced chapter or a realm roster, and sits next to “83 Paradise Atlas”, which could suggest an afterlife geography. | Crosswalk marks slot 82 `LABEL_ONLY` with no manuscript; `MASTER_VISION_NARRATIVE_XV.md:701` titles the section an “archival master index”. |
 | **R-3 NUMERIC_REGISTER_GROUPING** | `docs/decisions/M02-01-disambiguation-registry.md:39` | “33 World Patches & AETHERION 100 Levels” in one numeric-disambiguation item could be read as 33 of 100 levels. | The item only says both are fictional game/world design in `D11 Journey`; no arithmetic is stated. |
 | **R-4 UNQUALIFIED_REALM_COUNT** | `docs/decisions/M02-07-historical-decisions-matrix.md:35` | “AETHERION 10 Realms / Journey Quest” does not repeat “fiction” on this line; it relies on the matrix context. | The row is `OPEN`, attributed to “Empire Journey”, and deferred to M23; no realm is described. |
-| **R-5 NO XP DEFINITION** | Whole tree | The acceptance criterion is the only place “XP” appears, so there is no code-level object to test and no published definition of what XP counts. Future UI copy could invent a spiritual meaning without contradicting an existing model. | A19/A14/B01 forbid spiritual scoring; the new ledger fixes the predicates prospectively. |
+| **R-5 NO XP DEFINITION** | Whole tree | At baseline the acceptance criterion was the only place “XP” appeared; no definition exists at final HEAD either, so there is no code-level object to test and no published meaning of what XP counts. Future UI copy could invent a spiritual meaning without contradicting an existing model. | A19/A14/B01 forbid spiritual scoring; the new ledger fixes the predicates prospectively. |
 
-**Direct answer to the task question:** the three places where a fictional rank could be read as a real spiritual or age ranking are A13/R-1 (levels beside ages), A06/A17/R-2 (an editorial “Ten Realms” title beside Paradise Atlas), and A05/R-4 (a realm count without the fiction qualifier). No repository line converts any of them into an age, holiness, heaven or authority ranking.
+**Direct answer to the task question:** the three places where a fictional rank could be read as a real spiritual or age ranking are A13/R-1 (levels beside ages), A06/A17/R-2 (an editorial “Ten Realms” title beside Paradise Atlas), and A05/R-4 (a realm count without the fiction qualifier). R-3 is a related count-conflation risk (33 patches vs 100 levels), not a spiritual or age ranking. No repository line converts any of them into an age, holiness, heaven or authority ranking.
 
 ### 5.3 Human agency and metaphoric boundaries
 
@@ -209,7 +209,7 @@ These are **readability risks, not violations**. None asserts an equivalence.
 | `docs/data/M23-06-aetherion-boundaries.json` | 32-row boundary ledger (24 AETHERION references + 8 guardrails), 8 forbidden equivalences, 16 boundary predicates |
 | `scripts/check-m23-06-aetherion-boundaries.mjs` | Dependency-free validator and 24-fixture self-test |
 
-No existing file, TODO row, migration, database row, seed, route, UI or environment value was changed.
+No existing file, TODO row, migration, database row, seed, route, UI or environment value was changed by this task. Another session committed these three artifacts at `087f36f` before the audit was finalized; the audit file was edited afterward to follow the rewritten `TODO.md:551`. That commit is not this task's claim.
 
 ---
 
@@ -233,7 +233,7 @@ No runtime, schema, migration, seed, permission or TODO reversal is needed. Pres
 2. **No implementation to test.** This is a documentation and reference audit. The validator proves ledger consistency and boundary predicates, not that an application blocks a spiritual or age interpretation at runtime.
 3. **Zero realm/level detail.** Because no realm or level is named, the audit cannot verify the internal consistency, ordering or names of the 10/100 structure.
 4. **XP is undefined.** The acceptance cannot be positively exercised against an XP model; only the absence of an equation is evidenced.
-5. **HEAD moved during the audit.** HEAD advanced from `659da28` to `dfc6556` (M31-03 status commit). The commit changes one TODO.md line at `:700`; the cited TODO lines `551`, `853` and `855` were re-read at `dfc6556` and still resolve. The declared baseline remains `659da28`.
+5. **HEAD moved repeatedly during the audit.** HEAD advanced from `659da28` to `dfc6556` (M31-03 status), then another session committed these artifacts at `087f36f`, checked the TODO row at `7ea0367`, and continued through `3ac738b`, `6d1e436` (M25 proposal) and `91a5ff7` by the final verification run. `7ea0367` replaced the acceptance sentence at `TODO.md:551` with a closure summary; A23 therefore quotes the boundary sentence that remains there, and the original wording survives only in this audit, the ledger metadata and the validator comment. The declared baseline remains `659da28`. This task did not check the TODO leaf.
 6. **Line numbers are baseline-specific.** Re-locate by section heading after documentation edits.
 7. **The text scan is heuristic.** It detects affirmative copula/equivalence patterns with a negation guard. It is not a semantic parser; passive or highly indirect prose could evade it, and a negation can mask an affirmative clause. The structured fields (`asserted_equivalences`, `supernatural_authority_claim`, predicates) are the primary guard.
 8. **Literal search only.** Indonesian synonyms were checked (`tingkat`, `alam`, `sepuluh`, `seratus`) and added no AETHERION reference, but no stemming, translation or embedding search was performed.
@@ -253,10 +253,13 @@ $ git rev-parse --abbrev-ref HEAD
 dev
 
 $ git status --porcelain | wc -l
-86          # unrelated session work; none modified by this task
+86          # first read; unrelated session work
+
+$ git status --porcelain | wc -l
+91          # final read, including this audit after its external commit and edit
 ```
 
-During the audit HEAD advanced. Re-read:
+During the audit HEAD advanced. At the intermediate read:
 
 ```text
 $ git rev-parse HEAD
@@ -277,7 +280,58 @@ $ git diff --stat 659da28..HEAD
  5 files changed, 329 insertions(+), 3 deletions(-)
 ```
 
-`git diff 659da28..HEAD -- TODO.md` changes only the M31-03 row at line 700; the cited M23-06 lines are unchanged.
+Another session then committed this task's artifacts and closed the row. Read at `19467a4`:
+
+```text
+$ git log -9 --format="%H %h %s"
+19467a4dfa20d0dcf3a2b934e7c156dd8c527d98 19467a4 docs(todo): close M31-04 and record the M24-01 false-live blocker
+f86bede7b49d2ff22f5e56100166b50d94f595ff f86bede docs(m24): audit provider sources and recorded false-live labels
+882862e64f42b3f4e0e7c818ac300f14023ab9e2 882862e feat(dock): state the LIGHTHOUSE gateway purpose in both locales
+32060943102120428bff26849601c2c760f851ca 3206094 docs(todo): close M16-03 with verified evidence
+a4408d965f11b9c35d35aec8efa505e93326d714 a4408d9 docs(m26): record 25 unverified Bidang Amanah slots
+992b8cdb6a072af2353b0c6093f73df75b64e6c8 992b8cd fix(witness): preserve opaque S3 object keys
+ac5010815418ac1a2355a678f7d52704be4590d2 ac50108 feat(witness): add private correction lineage
+7ea03670de9369252d615a80b66d71e37b8fa1d5 7ea0367 docs(todo): close M16-02 and M23-06 at accepted evidence
+087f36f11ff52b3e85aa75c6cba9e17a188fd9fc 087f36f docs(m23): audit the AETHERION fiction boundary
+
+$ git merge-base --is-ancestor 659da28 HEAD; echo $?
+0
+
+$ git show --stat --oneline 087f36f
+087f36f docs(m23): audit the AETHERION fiction boundary
+ docs/audit/M23-06-aetherion-fiction-boundary.md | 353 ++++++++++++
+ docs/data/M23-06-aetherion-boundaries.json      | 687 ++++++++++++++++++++++++
+ scripts/check-m23-06-aetherion-boundaries.mjs   | 678 ++++++++++++++++++++++++
+ 3 files changed, 1718 insertions(+)
+
+$ git show --stat --oneline 7ea0367
+7ea0367 docs(todo): close M16-02 and M23-06 at accepted evidence
+ TODO.md | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+```
+
+`7ea0367` changed the M23-06 row in `TODO.md`; after that change the original acceptance wording was no longer present, which is why the ledger's A23 locator quote is the closure sentence. The declared baseline remains `659da28`.
+
+Final verification run, after the metadata refresh (the two audit artifacts above are the only M23-06 paths modified in the worktree; `scripts/check-m23-06-aetherion-boundaries.mjs` is unmodified since `087f36f`, and `TODO.md` is clean):
+
+```text
+$ git rev-parse HEAD
+91a5ff7f2d9f94fa764115e4c875b6fb443bc453
+
+$ git status --porcelain | wc -l
+76
+
+$ node scripts/check-m23-06-aetherion-boundaries.mjs; echo "validator_exit=$?"
+... PASS lines identical to §10.3 ...
+validator_exit=0
+
+$ node scripts/check-m23-06-aetherion-boundaries.mjs --self-test; echo "selftest_exit=$?"
+SELF-TEST PASS: all 24 invalid datasets rejected
+selftest_exit=0
+
+$ git status --porcelain -- TODO.md
+(empty)
+```
 
 ### 10.2 Search counts
 

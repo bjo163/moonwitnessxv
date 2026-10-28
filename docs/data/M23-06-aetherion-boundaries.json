@@ -4,7 +4,9 @@
   "generated_utc": "2026-10-28T09:32:48Z",
   "baseline_sha": "659da28",
   "observed_head_sha": "dfc65564760eda4ced596f661bda3f84c2d755e5",
-  "baseline_note": "The task declares baseline dev HEAD 659da28. During this read-only audit HEAD advanced to dfc6556 (one commit: docs(todo): close M31-03); 659da28 is an ancestor. The only cited-file change in that commit is a two-line TODO.md M31-03 status edit; line numbers cited here were re-verified at dfc6556. Another session's uncommitted changes were present and were not touched.",
+  "observed_head_sha_at_final_read": "91a5ff7f2d9f94fa764115e4c875b6fb443bc453",
+  "baseline_note": "The task declares baseline dev HEAD 659da28. During this read-only audit HEAD advanced to dfc6556, then another session committed this task's three artifacts at 087f36f, closed the TODO row at 7ea0367 (rewriting TODO.md:551), and HEAD continued to advance through 3ac738b and 6d1e436 to 91a5ff7. 659da28 is an ancestor. The cited lines and all 32 locator quotes were last re-verified at 91a5ff7. Another session's uncommitted changes were present and were not touched.",
+  "post_audit_note": "At 7ea0367 another session replaced the TODO acceptance sentence 'XP never equated with human age, holiness or heaven' with a closure summary. Row A23 now quotes the boundary sentence that remains at TODO.md:551. The original wording survives only in this audit, the ledger metadata, and the validator comment. This task did not perform or claim that closure.",
   "acceptance": "XP never equated with human age, holiness or heaven",
   "scope_note": "This ledger records repository references and boundary predicates. It does not define, import, expand or implement AETHERION lore. Zero realm names and zero level names are evidenced in this repository, and no XP term is defined. Counts of 10 and 100 are references, not enumerations.",
   "evidence_status_enum": [
@@ -501,12 +503,13 @@
       "implementation_status": "ABSENT",
       "registers": "both",
       "locator": "TODO.md:551",
-      "quote": "XP never equated with human age, holiness or heaven",
+      "quote": "no row equates XP, level or realm with human age, holiness, heaven",
       "realm_ordinal": null,
       "level_ordinal": null,
       "asserted_equivalences": [],
       "supernatural_authority_claim": false,
-      "risk": null
+      "risk": null,
+      "note": "At baseline this row held the acceptance sentence 'XP never equated with human age, holiness or heaven'. Another session replaced it when closing M23-06 at 7ea0367; the quoted closure sentence retains the boundary. This task did not close the leaf."
     },
     {
       "id": "A24",
