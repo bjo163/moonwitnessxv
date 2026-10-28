@@ -1,0 +1,5 @@
+FROM postgres:17-alpine
+
+# The backup sidecar needs the Postgres client plus AWS CLI for signed S3 API
+# requests. It deliberately uses `s3api`, never `aws s3 cp/rm` (multipart/batch).
+RUN apk add --no-cache aws-cli jq

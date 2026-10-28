@@ -110,3 +110,38 @@ Karena itu:
 Volume `moonwitness_db_backups` hidup di host Docker yang sama dengan database.
 Salin dump keluar (langkah di atas) sebelum host itu sendiri menjadi titik tunggal
 kegagalan.
+
+### ECHOLOG sebagai tujuan S3-compatible
+
+Sidecar `backup` dapat mengirim setiap dump ke ECHOLOG melalui API S3-compatible
+ECHOLOG. Atur `BACKUP_S3_ENDPOINT`, `BACKUP_S3_BUCKET`, `BACKUP_S3_ACCESS_KEY_ID`,
+dan `BACKUP_S3_SECRET_ACCESS_KEY` melalui secret store host (atau `.env` lokal
+yang diabaikan Git). Nilai kosong mempertahankan mode lokal. Konfigurasi parsial
+gagal tertutup. Jangan menaruh kredensial di command line, log, atau Git.
+
+Set `BACKUP_S3_MAX_OBJECT_BYTES` tidak lebih besar dari
+`ECHOLOG_MAX_UPLOAD_BYTES`; dump yang melebihi batas akan gagal sebelum unggah,
+tetap tersimpan di volume lokal, dan membuat healthcheck backup remote kedaluwarsa.
+ECHOLOG melakukan buffering objek penuh; mulai dengan batas konservatif sesuai
+memori host dan kuota ECHOLOG. `BACKUP_S3_KEEP` mempertahankan sejumlah dump
+terbaru di prefix `BACKUP_S3_PREFIX` (default `moonwitness-backups`), dipisah
+lagi ke sub-prefix untuk setiap database PostgreSQL. Retensi hanya menghitung
+dan menghapus key dump berstempel waktu yang dihasilkan sidecar. Sinkronisasi memakai
+satu `PutObject`, `ListObjectsV2`, lalu `DeleteObject` satu per satu; tidak
+menggunakan multipart ataupun batch delete.
+
+Setelah konfigurasi rahasia diberikan oleh operator, verifikasi tanpa mencetak
+rahasia:
+
+```powershell
+docker compose up -d --build backup
+docker compose exec backup sh -c 'ls -l /backups/.remote-success'
+docker compose ps backup
+```
+
+Tanda `.remote-success` hanya diperbarui setelah unggah dan pemangkasan selesai.
+Ia membuktikan jalur tulis saat itu, bukan pemulihan. Untuk membuktikan off-host,
+ambil objek dari ECHOLOG pada host pemulihan terpisah, jalankan prosedur
+[`Memulihkan`](#memulihkan), lalu catat tanggal, objek, SHA-256, hasil, dan host
+di tabel latihan di atas. Sampai latihan itu dilakukan, backup off-host belum
+terverifikasi dan task M04-05 tetap terbuka.

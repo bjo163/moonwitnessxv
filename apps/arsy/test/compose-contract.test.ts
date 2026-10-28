@@ -24,6 +24,7 @@ const ROOT = fileURLToPath(new URL('../../..', import.meta.url))
 const readRepoText = (rel: string): string => readFileSync(`${ROOT}/${rel}`, 'utf8').replace(/\r\n/g, '\n')
 const compose = readRepoText('docker-compose.yml')
 const runbook = readRepoText('docs/runbook-restore.md')
+const backupDockerfile = readRepoText('Dockerfile.backup')
 // The dump algorithm moved out of the compose `command:` block into a script, so
 // the service the stack runs and the on-demand snapshot the recovery docs call
 // share one copy of it. The invariants below now guard that file — read RAW,
@@ -121,8 +122,26 @@ test('compose: the backup runs the shared script, mounted read-only', () => {
   assert.match(backup, /command: \["sh", "\/backup\.sh", "loop"\]/, 'the service runs scripts/db-backup.sh')
   assert.doesNotMatch(backup, /pg_dump -Fc/, 'and does not inline its own dump command')
   assert.match(backup, /\.\/scripts\/db-backup\.sh:\/backup\.sh:ro/, 'the script is mounted, not baked into an image')
+  assert.match(backup, /Dockerfile\.backup/, 'the backup image includes AWS CLI without changing the database image')
+  assert.match(backup, /BACKUP_S3_SECRET_ACCESS_KEY:/, 'remote credentials are passed at runtime from environment')
   // freshness is judged on committed dumps only, in the container that writes them
   assert.match(backup, /healthcheck:[\s\S]*ls -1t \/backups\/\*\.dump/, 'freshness is judged on committed dumps only')
+})
+
+test('backup script: ECHOLOG uses only bounded single-object S3 API operations', () => {
+  assert.match(backupScript, /s3api put-object/, 'one PutObject uploads each committed dump')
+  assert.match(backupScript, /s3api list-objects-v2/, 'retention enumerates objects')
+  assert.match(backupScript, /s3api delete-object/, 'retention deletes one object per request')
+  assert.match(backupScript, /stream_prefix="\$prefix\/\$PGDATABASE\/"/, 'retention is scoped to one database stream')
+  assert.match(backupScript, /--output json/, 'AWS CLI combines paginated results before sorting')
+  assert.match(backupScript, /sort_by\(\.LastModified\) \| reverse \| \.\[\]\.Key \| @base64/, 'retention globally orders and safely encodes keys')
+  assert.match(backupScript, /case "\$old_key" in[\s\S]*\[0-9\]\[0-9\]\[0-9\]\[0-9\]\[0-9\]\[0-9\]\[0-9\]\[0-9\]T/, 'retention only counts generated timestamped dump keys')
+  assert.match(backupDockerfile, /apk add --no-cache aws-cli jq/, 'backup image contains the S3 client and safe JSON key parser')
+  assert.doesNotMatch(backupScript, /aws\s+s3\s+(cp|rm)\b/, 'high-level transfer commands may use unsupported multipart/batch APIs')
+  assert.match(backupScript, /-gt "\$BACKUP_S3_MAX_OBJECT_BYTES"/, 'oversized dumps fail before upload')
+  assert.match(backupScript, /S3 backup configuration is incomplete/, 'partial credential/configuration fails closed')
+  assert.match(backupScript, /local dump retained/, 'remote failures leave the committed local dump available')
+  assert.match(backupScript, /\.remote-success/, 'remote freshness is recorded only after upload and retention succeed')
 })
 
 test('backup script: writes through a .part file and renames on success', () => {
