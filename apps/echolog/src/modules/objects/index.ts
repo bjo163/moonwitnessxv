@@ -52,7 +52,7 @@ export function registerObjectRoutes(
   }
 
   const driver = new FsStorageDriver({ root: config.storageRoot, quotaBytes: config.storageQuotaBytes })
-  const s3Keys = new FsS3KeyStore({ root: config.storageRoot, driver })
+  const s3Keys = new FsS3KeyStore({ root: config.storageRoot, driver, now: options.now })
   const objects = createObjectService(driver, (at) => s3Keys.collect(at))
   const authenticate = createEchologAuthenticator({
     arsyUrl: config.arsyUrl,
@@ -69,6 +69,7 @@ export function registerObjectRoutes(
         400: errorSchema,
         401: errorSchema,
         403: errorSchema,
+        404: errorSchema,
         413: errorSchema,
         415: errorSchema,
         500: errorSchema,
@@ -91,6 +92,7 @@ export function registerObjectRoutes(
     const filename = safeStoredFilename(singleHeader(request.headers['x-filename']))
     const retentionUntil = parseRetention(singleHeader(request.headers['x-echolog-retention-until']))
     const legalHold = headerFlag(singleHeader(request.headers['x-echolog-legal-hold']), 'x-echolog-legal-hold')
+    const privateWitness = headerFlag(singleHeader(request.headers['x-echolog-private-witness']), 'x-echolog-private-witness')
     if (legalHold && auth.principal.kind !== 'service' && auth.principal.role !== 'admin') {
       throw new HttpProblem(403, 'forbidden', 'Only a service or administrator may set legal hold.')
     }
@@ -107,7 +109,14 @@ export function registerObjectRoutes(
       throw new HttpProblem(413, 'too_large', 'Upload exceeds the configured size limit.')
     }
     try {
-      const sidecar = await objects.upload(enforceSizeLimit(body, config.maxUploadBytes), metadata)
+      const sidecar = await objects.upload(
+        enforceSizeLimit(body, config.maxUploadBytes),
+        metadata,
+        privateWitness ? async (object) => s3Keys.markPrivateWitness(object.digest) : undefined,
+      )
+      if (!privateWitness && await s3Keys.isPrivateWitness(sidecar.digest)) {
+        return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
+      }
       return reply.code(201).header('cache-control', 'no-store').send(sidecar)
     } catch (error) {
       if (error instanceof QuotaExceededError) throw new HttpProblem(507, 'quota_exceeded', 'ECHOLOG storage quota is full.')
@@ -126,7 +135,54 @@ export function registerObjectRoutes(
     const { digest } = request.params as { digest: string }
     const object = await objects.get(`sha256/${digest}`)
     if (!object) return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
+    if (await s3Keys.isPrivateWitness(digest) && !await authorizePrivateWitness(request, config, digest, options.fetcher)) {
+      return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
+    }
     return reply.header('cache-control', 'no-store').send(object.sidecar)
+  })
+
+  app.post('/api/v1/objects/sha256/:digest/private-witness', {
+    schema: {
+      params: { type: 'object', required: ['digest'], properties: { digest: { type: 'string', pattern: digestPattern } } },
+      body: {
+        type: 'object',
+        required: ['objectKey'],
+        properties: {
+          objectKey: { type: 'string', minLength: 1, maxLength: 1024 },
+          requireAlreadyMarked: { type: 'boolean' },
+        },
+        additionalProperties: false,
+      },
+      response: { 200: sidecarSchema, 400: errorSchema, 401: errorSchema, 404: errorSchema, 503: errorSchema },
+    },
+  }, async (request, reply) => {
+    const auth = await authenticate(request)
+    if (!auth.ok) return reply.code(auth.status).send(authFailureBody(auth.code))
+    const { digest } = request.params as { digest: string }
+    const { objectKey, requireAlreadyMarked } = request.body as { objectKey: string; requireAlreadyMarked?: boolean }
+    const object = await objects.get(`sha256/${digest}`)
+    let keyMatches = objectKey === `sha256/${digest}`
+    if (!keyMatches) {
+      try {
+        const indexed = await s3Keys.resolveForPrivateMarker(objectKey)
+        keyMatches = indexed?.digest === digest
+      } catch {
+        keyMatches = false
+      }
+    }
+    if (!object || !keyMatches || (auth.principal.kind !== 'service' && auth.principal.role !== 'admin'
+      && object.sidecar.uploader !== auth.principal.uploader)) {
+      return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
+    }
+    if (requireAlreadyMarked && !await s3Keys.isPrivateWitness(digest)) {
+      return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
+    }
+    try {
+      await s3Keys.markPrivateWitness(digest)
+    } catch {
+      return reply.code(503).send({ error: { code: 'storage_unavailable', message: 'ECHOLOG is temporarily unavailable.' } })
+    }
+    return reply.code(200).header('cache-control', 'private, no-store').send(object.sidecar)
   })
 
   app.get('/api/v1/objects/sha256/:digest', {
@@ -141,6 +197,11 @@ export function registerObjectRoutes(
     if (grantToken) {
       const valid = await verifyDownloadGrant(grantSecret, grantToken, objectKey, options.now?.() ?? Date.now())
       if (!valid) return reply.code(401).send({ error: { code: 'unauthorized', message: 'A valid download grant is required.' } })
+      const marker = await s3Keys.privateWitnessMarker(digest)
+      const issuedAt = grantIssuedAt(grantToken)
+      if (marker && (issuedAt === null || issuedAt <= Date.parse(marker.marked_at))) {
+        return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
+      }
       const object = await objects.get(objectKey)
       if (!object) return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
       return reply
@@ -152,6 +213,9 @@ export function registerObjectRoutes(
 
     const auth = await authenticate(request)
     if (!auth.ok) return reply.code(auth.status).send(authFailureBody(auth.code))
+    if (await s3Keys.isPrivateWitness(digest) && !await authorizePrivateWitness(request, config, digest, options.fetcher)) {
+      return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
+    }
     const object = await objects.get(objectKey)
     if (!object) return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
     const now = options.now?.() ?? Date.now()
@@ -173,6 +237,9 @@ export function registerObjectRoutes(
     const auth = await authenticate(request)
     if (!auth.ok) return reply.code(auth.status).send(authFailureBody(auth.code))
     const { digest } = request.params as { digest: string }
+    if (await s3Keys.isPrivateWitness(digest)) {
+      return reply.code(404).send({ error: { code: 'not_found', message: 'Object not found.' } })
+    }
     try {
       await objects.delete(`sha256/${digest}`)
     } catch (error) {
@@ -260,4 +327,44 @@ function singleHeader(value: string | string[] | undefined): string | undefined 
 function generateEphemeralGrantSecret(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(32))
   return Buffer.from(bytes).toString('base64url')
+}
+
+async function authorizePrivateWitness(
+  request: import('fastify').FastifyRequest,
+  config: EchologConfig,
+  digest: string,
+  fetcher: typeof fetch = fetch,
+): Promise<boolean> {
+  const authorization = request.headers.authorization
+  if (typeof authorization !== 'string' || !authorization.startsWith('Bearer ')) return false
+  let response: Response
+  try {
+    response = await fetcher(new URL('/api/v1/witness/private-media-authorize', config.arsyUrl), {
+      method: 'POST',
+      headers: { authorization, accept: 'application/json', 'content-type': 'application/json' },
+      body: JSON.stringify({ digest }),
+      redirect: 'error',
+      signal: AbortSignal.timeout(3_000),
+    })
+  } catch {
+    throw new HttpProblem(503, 'auth_unavailable', 'ARSY authorization is temporarily unavailable.')
+  }
+  if (response.status === 204) return true
+  if (response.status === 401 || response.status === 403 || response.status === 404) return false
+  if (!response.ok) throw new HttpProblem(503, 'auth_unavailable', 'ARSY authorization is temporarily unavailable.')
+  return false
+}
+
+function grantIssuedAt(token: string): number | null {
+  const [payload] = token.split('.')
+  if (!payload) return null
+  try {
+    const decoded = Buffer.from(payload, 'base64url').toString('utf8')
+    const parts = decoded.split('\n')
+    if (parts.length !== 3 || !/^sha256\/[a-f0-9]{64}$/.test(parts[0] ?? '')) return null
+    const issuedAt = Number(parts[1])
+    return Number.isSafeInteger(issuedAt) && issuedAt >= 0 ? issuedAt : null
+  } catch {
+    return null
+  }
 }

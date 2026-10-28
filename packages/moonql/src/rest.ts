@@ -429,7 +429,12 @@ export const moonqlRest: FastifyPluginAsync<MoonqlRestOptions> = async (fastify,
       },
       preHandler: guard(ep.def.requires),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      handler: async (request: any, reply: FastifyReply) => handler(await makeCtx(request as FastifyRequest, reply)),
+      handler: async (request: any, reply: FastifyReply) => {
+        // Addon endpoints may return user-specific data or short-lived bearer grants.
+        // Never let a browser or intermediary cache their responses.
+        reply.header('cache-control', 'private, no-store')
+        return handler(await makeCtx(request as FastifyRequest, reply))
+      },
     }
     ;(fastify as FastifyInstance).route(routeOpts as never)
   }

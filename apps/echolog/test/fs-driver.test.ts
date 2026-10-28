@@ -57,6 +57,24 @@ void test('interrupted stream leaves no visible object and removes its temporary
   })
 })
 
+void test('before-publish policy failure leaves a new object invisible', async () => {
+  await withStore(100, async (driver, root) => {
+    const bytes = new TextEncoder().encode('private before publish')
+    let observedKey = ''
+    await assert.rejects(driver.putStream(stream(bytes), metadata, async (sidecar, existing) => {
+      observedKey = sidecar.object_key
+      assert.equal(existing, false)
+      assert.equal(await driver.get(sidecar.object_key), null, 'readers cannot observe bytes before the policy callback completes')
+      throw new Error('private marker unavailable')
+    }), /private marker unavailable/)
+    assert.ok(observedKey)
+    assert.equal(await driver.get(observedKey), null)
+    assert.deepEqual(await readdir(join(root, 'objects')), [])
+    assert.deepEqual(await readdir(join(root, 'metadata')), [])
+    assert.deepEqual(await readdir(join(root, 'tmp')), [])
+  })
+})
+
 void test('legal hold and active retention prevent deletion and GC reports held objects', async () => {
   await withStore(100, async (driver) => {
     const held = await driver.putStream(stream(new TextEncoder().encode('held')), { ...metadata, legal_hold: true })

@@ -1,4 +1,4 @@
-import { badRequest, conflict, notFound } from '@moonwitness/core'
+import { badRequest, conflict, ECHOLOG_URL_DEFAULT, notFound, serviceUnavailable, unauthorized } from '@moonwitness/core'
 import {
   bool,
   defineAddon,
@@ -8,8 +8,10 @@ import {
   sel,
   str,
   text,
+  ts,
   type ModelRepo,
   type Row,
+  type User,
 } from '@moonwitness/moonql'
 
 export const WITNESS_VISIBILITY = ['PRIVATE'] as const
@@ -30,7 +32,7 @@ export interface WitnessCorrectionInput {
 }
 
 type WitnessOrm = {
-  model(name: 'witness_testimonies' | 'witness_corrections'): ModelRepo
+  model(name: 'witness_testimonies' | 'witness_corrections' | 'witness_consent_records'): ModelRepo
 }
 
 type ExactDateValue = { utc: string; timezone: string; originalOffset: string; local: string }
@@ -109,6 +111,8 @@ const witnessTestimonies = defineModel({
     originalDigest: str({ maxLength: 64, private: true, validate: (value: unknown) => SHA256_RE.test(String(value)) ? null : 'original object digest must be a SHA-256 hex value' }),
     originalSize: int({ validate: (value: unknown) => Number.isInteger(Number(value)) && Number(value) >= 0 ? null : 'original object size must be a non-negative integer' }),
     originalContentType: str({ maxLength: 127, private: true }),
+    minorProtectedFlag: bool({ default: true, private: true }),
+    viewAclPrincipalRefs: str({ maxLength: 2048, private: true, validate: (value: unknown) => isViewAcl(value) ? null : 'view ACL must be a JSON array of unique principal references' }),
     occurredAt: dateValueField(),
     observedAt: dateValueField(),
     recordedAt: dateValueField(),
@@ -136,6 +140,177 @@ const witnessCorrections = defineModel({
   unique: [['witnessRef', 'sequence'], ['witnessRef', 'revisionNumber']],
 })
 
+const witnessConsentRecords = defineModel({
+  label: 'Private Witness Consent Record',
+  rest: false,
+  seedless: true,
+  fields: {
+    stableId: str({ maxLength: 80, unique: true, private: true }),
+    subjectPrincipalRef: str({ maxLength: 160, private: true }),
+    consentType: sel(['FULL_ANONYMITY', 'VERIFIED_PSEUDONYM', 'PUBLIC_NAME_WITH_WRITTEN_PERMISSION'], { private: true }),
+    scope: sel(['PRIVATE_ARCHIVE', 'INTERNAL', 'PUBLIC_ANONYMOUS', 'PUBLIC_ATTRIBUTED'], { private: true }),
+    status: sel(['UNKNOWN', 'GRANTED', 'WITHDRAWN'], { default: 'UNKNOWN', private: true }),
+    evidenceRef: str({ maxLength: 256, private: true }),
+    minorProtected: bool({ default: true, private: true }),
+    guardianPrincipalRef: str({ maxLength: 160, null: true, private: true }),
+    guardianVerified: bool({ default: false, private: true }),
+    recordedByPrincipalRef: str({ maxLength: 160, private: true }),
+    recordedAt: ts({ private: true }),
+    validUntil: ts({ null: true, private: true }),
+  },
+})
+
+const PRIVATE_WITNESS_SCOPES = new Set(['PRIVATE_ARCHIVE', 'INTERNAL'])
+const MAX_GRANT_TTL_MS = 5 * 60 * 1000
+const ECHOLOG_DIGEST_RE = /^[a-f0-9]{64}$/i
+const CONTENT_TYPE_RE = /^[a-z0-9!#$&^_.+-]+\/[a-z0-9!#$&^_.+-]+$/i
+
+function isConsentActive(consent: Row, now = Date.now()): boolean {
+  if (consent.status !== 'GRANTED' || !PRIVATE_WITNESS_SCOPES.has(String(consent.scope))) return false
+  if (consent.validUntil === null || consent.validUntil === undefined || consent.validUntil === '') return true
+  const validUntil = Date.parse(String(consent.validUntil))
+  return Number.isFinite(validUntil) && validUntil > now
+}
+
+async function rawRow(repo: ModelRepo, id: string): Promise<Row | null> {
+  const found = await repo.search({ limit: 1, where: { id }, raw: true })
+  return found.rows[0] ?? null
+}
+
+async function consentForRecord(orm: WitnessOrm, consentRef: unknown): Promise<Row | null> {
+  if (typeof consentRef !== 'string' || !consentRef.trim()) return null
+  return rawRow(orm.model('witness_consent_records'), consentRef)
+}
+
+function isViewAcl(value: unknown): boolean {
+  if (typeof value !== 'string') return false
+  try {
+    const parsed: unknown = JSON.parse(value)
+    return Array.isArray(parsed) && parsed.length > 0 && parsed.every((principal) => typeof principal === 'string' && principal.trim().length > 0)
+      && new Set(parsed).size === parsed.length
+  } catch {
+    return false
+  }
+}
+
+function viewAclContains(witness: Row, principalRef: string): boolean {
+  if (typeof witness.viewAclPrincipalRefs !== 'string' || !isViewAcl(witness.viewAclPrincipalRefs)) return false
+  const principals = JSON.parse(witness.viewAclPrincipalRefs) as string[]
+  return principals.includes(principalRef)
+}
+
+function authorizeWitnessRead(witness: Row, consent: Row | null, user: User | null): Row {
+  if (!user) throw unauthorized()
+  if (!consent || !isConsentActive(consent)) throw notFound('private witness record not found')
+  if (witness.consentRecordRef !== consent.id || witness.witnessSubjectRef !== consent.subjectPrincipalRef) {
+    throw notFound('private witness record not found')
+  }
+
+  if (!viewAclContains(witness, user.id)) throw notFound('private witness record not found')
+  if (consent.minorProtected === true && (
+    consent.guardianVerified !== true || consent.guardianPrincipalRef !== user.id
+  )) throw notFound('private witness record not found')
+  return consent
+}
+
+function echologBaseUrl(configuredUrl: string | undefined): URL {
+  try {
+    const url = new URL(configuredUrl?.trim() || ECHOLOG_URL_DEFAULT)
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.pathname !== '/' || url.search || url.hash) {
+      throw new Error('invalid ECHOLOG origin')
+    }
+    return url
+  } catch {
+    throw serviceUnavailable('ECHOLOG is not configured for private witness access')
+  }
+}
+
+function sessionToken(user: User | null): string {
+  const token = user?.meta?.token
+  if (typeof token !== 'string' || token.length === 0) throw unauthorized()
+  return token
+}
+
+async function echologJson(url: URL, token: string): Promise<Record<string, unknown>> {
+  let response: Response
+  try {
+    response = await fetch(url, {
+      method: 'GET',
+      headers: { authorization: `Bearer ${token}`, accept: 'application/json' },
+      redirect: 'error',
+      signal: AbortSignal.timeout(3_000),
+    })
+  } catch {
+    throw serviceUnavailable('ECHOLOG is temporarily unavailable')
+  }
+  if (response.status === 401 || response.status === 403) throw unauthorized()
+  if (!response.ok) throw serviceUnavailable('ECHOLOG is temporarily unavailable')
+  let payload: unknown
+  try {
+    payload = await response.json()
+  } catch {
+    throw serviceUnavailable('ECHOLOG returned an invalid response')
+  }
+  if (!isRecord(payload)) throw serviceUnavailable('ECHOLOG returned an invalid response')
+  return payload
+}
+
+async function markEchologPrivateWitness(
+  baseUrl: URL,
+  token: string,
+  digest: string,
+  objectKey: string,
+): Promise<Record<string, unknown>> {
+  let response: Response
+  try {
+    response = await fetch(new URL(`/api/v1/objects/sha256/${digest}/private-witness`, baseUrl), {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ objectKey, requireAlreadyMarked: true }),
+      redirect: 'error',
+      signal: AbortSignal.timeout(3_000),
+    })
+  } catch {
+    throw serviceUnavailable('ECHOLOG is temporarily unavailable')
+  }
+  if (response.status === 401 || response.status === 403 || response.status === 404) throw notFound('eligible ECHOLOG object not found')
+  if (!response.ok) throw serviceUnavailable('ECHOLOG could not protect the private witness object')
+  let payload: unknown
+  try {
+    payload = await response.json()
+  } catch {
+    throw serviceUnavailable('ECHOLOG returned invalid protected-object metadata')
+  }
+  if (!isRecord(payload)) throw serviceUnavailable('ECHOLOG returned invalid protected-object metadata')
+  return payload
+}
+
+async function issueEchologGrant(baseUrl: URL, token: string, digest: string): Promise<{ url: string; expires_at: string }> {
+  const path = `/api/v1/objects/sha256/${digest}`
+  const payload = await echologJson(new URL(path, baseUrl), token)
+  if (typeof payload.url !== 'string' || typeof payload.expires_at !== 'string') {
+    throw serviceUnavailable('ECHOLOG returned an invalid download grant')
+  }
+  let downloadUrl: URL
+  try {
+    downloadUrl = new URL(payload.url, baseUrl)
+  } catch {
+    throw serviceUnavailable('ECHOLOG returned an invalid download grant')
+  }
+  const expiresAt = Date.parse(payload.expires_at)
+  const now = Date.now()
+  const grantTokens = downloadUrl.searchParams.getAll('grant')
+  if (
+    downloadUrl.origin !== baseUrl.origin || downloadUrl.pathname !== path || downloadUrl.hash ||
+    grantTokens.length !== 1 || !grantTokens[0] || grantTokens[0].length > 2048 ||
+    [...downloadUrl.searchParams.keys()].some((key) => key !== 'grant') ||
+    !Number.isFinite(expiresAt) || expiresAt <= now || expiresAt > now + MAX_GRANT_TTL_MS
+  ) {
+    throw serviceUnavailable('ECHOLOG returned an invalid download grant')
+  }
+  return { url: downloadUrl.toString(), expires_at: new Date(expiresAt).toISOString() }
+}
+
 function requireText(row: Record<string, unknown>, fields: string[], label: string): void {
   for (const field of fields) {
     if (typeof row[field] !== 'string' || row[field].trim().length === 0) {
@@ -158,14 +333,149 @@ function appendOnlyCorrection(): never {
 export const witnessAddon = defineAddon({
   name: 'witness',
   depends: ['base', 'auth'],
+  env: ['ECHOLOG_URL'],
   models: {
     witness_testimonies: witnessTestimonies,
     witness_corrections: witnessCorrections,
+    witness_consent_records: witnessConsentRecords,
+  },
+  endpoints: {
+    '/witness/consents': {
+      method: 'POST',
+      requires: ['admin'],
+      body: {
+        stableId: str({ maxLength: 80 }),
+        subjectPrincipalRef: str({ maxLength: 160 }),
+        consentType: sel(['FULL_ANONYMITY', 'VERIFIED_PSEUDONYM', 'PUBLIC_NAME_WITH_WRITTEN_PERMISSION']),
+        scope: sel(['PRIVATE_ARCHIVE', 'INTERNAL', 'PUBLIC_ANONYMOUS', 'PUBLIC_ATTRIBUTED']),
+        evidenceRef: str({ maxLength: 256 }),
+        minorProtected: bool({ default: true }),
+        guardianPrincipalRef: str({ maxLength: 160, null: true }),
+        guardianVerified: bool({ default: false }),
+        validUntil: ts({ null: true }),
+      },
+      handler: async ({ body, orm, user, status }) => {
+        if (!user) throw unauthorized()
+        const consent = await orm.model('witness_consent_records').create({
+          stableId: body.stableId,
+          subjectPrincipalRef: body.subjectPrincipalRef,
+          consentType: body.consentType,
+          scope: body.scope,
+          evidenceRef: body.evidenceRef,
+          status: 'GRANTED',
+          minorProtected: body.minorProtected,
+          guardianPrincipalRef: body.guardianPrincipalRef,
+          guardianVerified: body.guardianVerified,
+          recordedByPrincipalRef: user.id,
+          recordedAt: new Date().toISOString(),
+          validUntil: body.validUntil,
+        })
+        status(201)
+        return { id: consent.id, status: 'GRANTED' }
+      },
+    },
+    '/witness/testimonies': {
+      method: 'POST',
+      requires: 'auth',
+      body: {
+        stableId: str({ maxLength: 80 }),
+        consentRecordRef: str({ maxLength: 160 }),
+        originalObjectKey: str({ maxLength: 512 }),
+        originalDigest: str({ maxLength: 64 }),
+        originalSize: int(),
+        originalContentType: str({ maxLength: 127 }),
+      },
+      handler: async ({ body, env, orm: rawOrm, user, status }) => {
+        if (!user) throw unauthorized()
+        const orm = rawOrm as WitnessOrm
+        const consent = await consentForRecord(orm, body.consentRecordRef)
+        const guardianMayIntake = consent?.minorProtected === true && consent.guardianVerified === true && consent.guardianPrincipalRef === user.id
+        const subjectMayIntake = consent?.minorProtected !== true && consent?.subjectPrincipalRef === user.id
+        if (
+          !consent || !isConsentActive(consent) || (!subjectMayIntake && !guardianMayIntake)
+        ) {
+          throw notFound('eligible witness consent not found')
+        }
+        const digest = String(body.originalDigest)
+        const contentType = String(body.originalContentType).trim()
+        if (!ECHOLOG_DIGEST_RE.test(digest) || !CONTENT_TYPE_RE.test(contentType)) {
+          throw badRequest('valid ECHOLOG digest and content type are required')
+        }
+        // ECHOLOG's irreversible marker closes direct REST/S3 paths before a
+        // D06 reference is created. If database creation later fails, the
+        // object remains protected (a safe orphan that needs operator review).
+        const objectKey = String(body.originalObjectKey)
+        const protectedMetadata = await markEchologPrivateWitness(
+          echologBaseUrl(env.ECHOLOG_URL),
+          sessionToken(user),
+          digest,
+          objectKey,
+        )
+        if (
+          protectedMetadata.digest !== digest || protectedMetadata.size !== Number(body.originalSize) ||
+          String(protectedMetadata.content_type).toLowerCase() !== contentType.toLowerCase()
+        ) throw badRequest('ECHOLOG object metadata does not match the supplied reference')
+        const record = await orm.model('witness_testimonies').create({
+          stableId: body.stableId,
+          ownerPrincipalRef: user.id,
+          witnessSubjectRef: consent.subjectPrincipalRef,
+          consentRecordRef: String(consent.id),
+          visibility: 'PRIVATE',
+          revision: 1,
+          originalObjectKey: objectKey,
+          originalDigest: digest,
+          originalSize: Number(body.originalSize),
+          originalContentType: contentType,
+          minorProtectedFlag: consent.minorProtected === true,
+          viewAclPrincipalRefs: JSON.stringify([...new Set([user.id, consent.subjectPrincipalRef, ...(guardianMayIntake ? [user.id] : [])])]),
+        })
+        status(201)
+        return { id: record.id, visibility: 'PRIVATE' }
+      },
+    },
+    '/witness/private-media-authorize': {
+      method: 'POST',
+      requires: 'auth',
+      body: { digest: str({ maxLength: 64 }) },
+      handler: async ({ body, orm: rawOrm, user, status }) => {
+        if (!user) throw unauthorized()
+        const digest = String(body.digest ?? '')
+        if (!ECHOLOG_DIGEST_RE.test(digest)) throw notFound('private witness media not found')
+        const orm = rawOrm as WitnessOrm
+        const found = await orm.model('witness_testimonies').search({ limit: 1000, where: { originalDigest: digest }, raw: true })
+        for (const witness of found.rows) {
+          const consent = await consentForRecord(orm, witness.consentRecordRef)
+          try {
+            authorizeWitnessRead(witness, consent, user)
+            status(204)
+            return null
+          } catch {
+            // Do not reveal whether a digest maps to another witness record.
+          }
+        }
+        throw notFound('private witness media not found')
+      },
+    },
+    '/witness/testimonies/:id/media-grant': {
+      method: 'POST',
+      requires: 'auth',
+      handler: async ({ env, params, orm: rawOrm, user }) => {
+        if (!user) throw unauthorized()
+        const orm = rawOrm as WitnessOrm
+        const witness = await rawRow(orm.model('witness_testimonies'), params.id ?? '')
+        if (!witness) throw notFound('private witness record not found')
+        const consent = await consentForRecord(orm, witness.consentRecordRef)
+        authorizeWitnessRead(witness, consent, user)
+        const digest = String(witness.originalDigest ?? '')
+        if (!ECHOLOG_DIGEST_RE.test(digest)) throw notFound('private witness record not found')
+        return issueEchologGrant(echologBaseUrl(env.ECHOLOG_URL), sessionToken(user), digest)
+      },
+    },
   },
   hooks: {
     witness_testimonies: {
       beforeCreate: (row) => {
-        requireText(row, ['stableId', 'ownerPrincipalRef', 'originalObjectKey', 'originalDigest', 'originalContentType'], 'private witness record')
+        requireText(row, ['stableId', 'ownerPrincipalRef', 'originalObjectKey', 'originalDigest', 'originalContentType', 'viewAclPrincipalRefs'], 'private witness record')
         if (!row.stableId.startsWith('wt_')) throw badRequest('private witness stableId must use the wt_ prefix')
         if (row.visibility !== undefined && row.visibility !== 'PRIVATE') throw badRequest('new witness records must remain PRIVATE')
         if (row.revision !== undefined && row.revision !== 1) throw badRequest('new witness records must start at revision 1')
@@ -188,6 +498,26 @@ export const witnessAddon = defineAddon({
       },
       beforeUpdate: appendOnlyCorrection,
       beforeDelete: appendOnlyCorrection,
+    },
+    witness_consent_records: {
+      beforeCreate: (row) => {
+        requireText(row, ['stableId', 'subjectPrincipalRef', 'consentType', 'scope', 'evidenceRef', 'recordedByPrincipalRef', 'recordedAt'], 'private witness consent record')
+        if (row.status !== 'UNKNOWN' && row.status !== 'GRANTED' && row.status !== 'WITHDRAWN') {
+          throw badRequest('witness consent status is invalid')
+        }
+        if (row.minorProtected === true && (typeof row.guardianPrincipalRef !== 'string' || !row.guardianPrincipalRef.trim() || row.guardianVerified !== true)) {
+          throw badRequest('minor witness consent requires a verified guardian')
+        }
+        if (row.guardianVerified === true && (typeof row.guardianPrincipalRef !== 'string' || !row.guardianPrincipalRef.trim())) {
+          throw badRequest('guardian verification requires a guardian principal')
+        }
+        return row
+      },
+      beforeUpdate: (patch) => {
+        if (Object.keys(patch).length === 1 && patch.status === 'WITHDRAWN') return patch
+        throw badRequest('witness consent records are immutable except for withdrawal')
+      },
+      beforeDelete: () => { throw badRequest('witness consent records cannot be deleted') },
     },
   },
 })

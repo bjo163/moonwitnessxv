@@ -14,6 +14,11 @@ export interface S3KeyRecord {
   legal_hold: boolean
 }
 
+export interface PrivateWitnessMarker {
+  digest: string
+  marked_at: string
+}
+
 export class S3KeyConflictError extends Error {
   constructor() {
     super('An immutable object already exists at this key.')
@@ -31,24 +36,73 @@ export class S3ObjectNotFoundError extends Error {
 /** Filesystem namespace mapping S3 keys to ECHOLOG's immutable digest objects. */
 export class FsS3KeyStore {
   private readonly root: string
+  private readonly privateWitnessRoot: string
   private readonly driver: FsStorageDriver
+  private readonly now: () => number
   private operation = Promise.resolve()
 
-  constructor(options: { root: string; driver: FsStorageDriver }) {
+  constructor(options: { root: string; driver: FsStorageDriver; now?: () => number }) {
     this.root = resolve(options.root, 's3-keys')
+    this.privateWitnessRoot = resolve(options.root, 'private-witness')
     this.driver = options.driver
+    this.now = options.now ?? Date.now
   }
 
   async ready(): Promise<void> {
     await mkdir(this.root, { recursive: true })
     await this.assertDirectory(this.root)
+    await mkdir(this.privateWitnessRoot, { recursive: true })
+    await this.assertDirectory(this.privateWitnessRoot)
+  }
+
+  /** Irreversibly restrict a content-addressed object to D06 authorization. */
+  async markPrivateWitness(digest: string): Promise<void> {
+    validateDigest(digest)
+    await this.ready()
+    const path = this.privateWitnessPath(digest)
+    const temporaryPath = `${path}.${crypto.randomUUID()}.tmp`
+    const handle = await open(temporaryPath, 'wx')
+    try {
+      await handle.writeFile(JSON.stringify({ digest, marked_at: new Date(this.now()).toISOString() }), 'utf8')
+      await handle.sync()
+    } finally {
+      await handle.close()
+    }
+    try {
+      await link(temporaryPath, path)
+    } catch (error) {
+      if (!isAlreadyExists(error)) throw error
+      if (!await this.privateWitnessMarker(digest)) throw new Error('Private witness marker is corrupt')
+    } finally {
+      await rm(temporaryPath, { force: true })
+    }
+  }
+
+  async isPrivateWitness(digest: string): Promise<boolean> {
+    return (await this.privateWitnessMarker(digest)) !== null
+  }
+
+  async privateWitnessMarker(digest: string): Promise<PrivateWitnessMarker | null> {
+    validateDigest(digest)
+    const path = this.privateWitnessPath(digest)
+    try {
+      await this.assertRegularFile(path)
+      const value = JSON.parse(await readFile(path, 'utf8')) as { digest?: unknown; marked_at?: unknown }
+      if (value.digest !== digest || typeof value.marked_at !== 'string' || !Number.isFinite(Date.parse(value.marked_at))) {
+        throw new Error('Private witness marker is corrupt')
+      }
+      return { digest, marked_at: value.marked_at }
+    } catch (error) {
+      if (isMissing(error)) return null
+      throw error
+    }
   }
 
   async put(
     key: string,
     bytes: Uint8Array,
     contentType: string,
-    metadata: { retentionUntil?: string | null; legalHold?: boolean } = {},
+    metadata: { retentionUntil?: string | null; legalHold?: boolean; privateWitness?: boolean } = {},
   ): Promise<S3KeyRecord> {
     validateObjectKey(key)
     if (!contentType) throw new TypeError('contentType is required')
@@ -62,6 +116,7 @@ export class FsS3KeyStore {
         if (existing.digest !== digest || existing.size !== copy.byteLength) throw new S3KeyConflictError()
         const stored = await this.driver.get(existing.object_key)
         if (!stored || stored.sidecar.digest !== digest) throw new Error('Indexed object is missing or corrupt')
+        if (metadata.privateWitness) await this.markPrivateWitness(digest)
         return existing
       }
 
@@ -72,7 +127,7 @@ export class FsS3KeyStore {
         retention_until: metadata.retentionUntil ?? null,
         legal_hold: metadata.legalHold ?? false,
         scan: 'skipped',
-      })
+      }, metadata.privateWitness ? async (object) => this.markPrivateWitness(object.digest) : undefined)
       const record: S3KeyRecord = {
         key,
         object_key: objectKey,
@@ -93,6 +148,7 @@ export class FsS3KeyStore {
     validateObjectKey(key)
     const record = await this.readRecord(key)
     if (!record) return null
+    if (await this.isPrivateWitness(record.digest)) return null
     const object = await this.driver.get(record.object_key)
     if (!object || object.bytes.byteLength !== record.size || object.sidecar.digest !== record.digest) {
       throw new Error('Indexed object is missing or corrupt')
@@ -102,6 +158,13 @@ export class FsS3KeyStore {
 
   async head(key: string): Promise<S3KeyRecord | null> {
     validateObjectKey(key)
+    const record = await this.readRecord(key)
+    return record && !await this.isPrivateWitness(record.digest) ? record : null
+  }
+
+  /** Resolve an exact namespace key only for the authenticated privacy-marker route. */
+  async resolveForPrivateMarker(key: string): Promise<S3KeyRecord | null> {
+    validateObjectKey(key)
     return this.readRecord(key)
   }
 
@@ -110,6 +173,7 @@ export class FsS3KeyStore {
     await this.serialized(async () => {
       const record = await this.readRecord(key)
       if (!record) return
+      if (await this.isPrivateWitness(record.digest)) throw new Error('Private witness object is protected')
       const object = await this.driver.get(record.object_key)
       if (record.legal_hold || object?.sidecar.legal_hold) throw new Error('Object is protected by legal hold')
       if (
@@ -142,7 +206,20 @@ export class FsS3KeyStore {
   }
 
   async collect(at?: Date) {
-    return this.serialized(async () => this.driver.gc(at, await this.referencedObjectKeys()))
+    return this.serialized(async () => {
+      const referenced = await this.referencedObjectKeys()
+      for (const entry of await readdir(this.privateWitnessRoot, { withFileTypes: true })) {
+        if (!entry.isFile() || !/^[a-f0-9]{64}\.json$/.test(entry.name)) continue
+        const path = join(this.privateWitnessRoot, entry.name)
+        await this.assertRegularFile(path)
+        const marker = JSON.parse(await readFile(path, 'utf8')) as { digest?: unknown; marked_at?: unknown }
+        if (typeof marker.digest !== 'string' || !/^[a-f0-9]{64}$/.test(marker.digest)
+          || `${marker.digest}.json` !== entry.name || typeof marker.marked_at !== 'string'
+          || !Number.isFinite(Date.parse(marker.marked_at))) throw new Error('Private witness marker is corrupt')
+        referenced.add(`sha256/${marker.digest}`)
+      }
+      return this.driver.gc(at, referenced)
+    })
   }
 
   private async readRecord(key: string): Promise<S3KeyRecord | null> {
@@ -184,6 +261,10 @@ export class FsS3KeyStore {
     return join(this.root, `${recordPathHash(key)}.json`)
   }
 
+  private privateWitnessPath(digest: string): string {
+    return join(this.privateWitnessRoot, `${digest}.json`)
+  }
+
   private async assertDirectory(path: string): Promise<void> {
     const entry = await lstat(path)
     if (entry.isSymbolicLink() || !entry.isDirectory()) throw new Error('Unsafe S3 key index directory')
@@ -212,6 +293,10 @@ export function validateObjectKey(key: string): void {
     throw new TypeError('Invalid S3 object key')
   }
   if (key.split('/').some((part) => part === '.' || part === '..')) throw new TypeError('Invalid S3 object key')
+}
+
+function validateDigest(digest: string): void {
+  if (!/^[a-f0-9]{64}$/.test(digest)) throw new TypeError('Invalid object digest')
 }
 
 function basenameForKey(key: string): string {

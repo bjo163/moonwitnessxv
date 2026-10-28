@@ -101,29 +101,7 @@ async function handleS3Request(
   }
 
   if (request.method === 'PUT') {
-    const contentType = oneHeader(request.headers['content-type'])?.split(';', 1)[0]?.trim().toLowerCase() || 'application/octet-stream'
-    if (!config.allowedMimeTypes.includes(contentType)) {
-      return sendError(reply, 415, 'InvalidContentType', 'The object content type is not allowed.', resource)
-    }
-    const retention = oneHeader(request.headers['x-amz-meta-echolog-retention-until']) ?? null
-    if (retention !== null && !Number.isFinite(Date.parse(retention))) {
-      return sendError(reply, 400, 'InvalidArgument', 'The ECHOLOG retention date is invalid.', resource)
-    }
-    const legalHoldHeader = oneHeader(request.headers['x-amz-meta-echolog-legal-hold'])
-    if (legalHoldHeader !== undefined && legalHoldHeader !== 'true' && legalHoldHeader !== 'false') {
-      return sendError(reply, 400, 'InvalidArgument', 'The ECHOLOG legal-hold value is invalid.', resource)
-    }
-    try {
-      const record = await store.put(objectKey, payload, contentType, {
-        retentionUntil: retention,
-        legalHold: legalHoldHeader === 'true',
-      })
-      return reply.code(200).header('etag', `"${record.etag}"`).header('x-amz-version-id', 'null').send()
-    } catch (error) {
-      if (error instanceof S3KeyConflictError) return sendError(reply, 409, 'PreconditionFailed', error.message, resource)
-      if (error instanceof TypeError) return sendError(reply, 400, 'InvalidObjectName', 'The object key is invalid.', resource)
-      return sendError(reply, 500, 'InternalError', 'The object could not be stored.', resource)
-    }
+    return putS3Object(request, reply, config, store, objectKey, payload, resource)
   }
 
   if (request.method === 'GET' || request.method === 'HEAD') {
@@ -150,6 +128,9 @@ async function handleS3Request(
       return reply.code(204).header('x-amz-version-id', 'null').send()
     } catch (error) {
       if (error instanceof S3ObjectNotFoundError) return reply.code(204).send()
+      if (error instanceof Error && error.message === 'Private witness object is protected') {
+        return sendError(reply, 404, 'NoSuchKey', 'The specified key does not exist.', resource)
+      }
       if (error instanceof Error && /legal hold|retention period/.test(error.message)) {
         return sendError(reply, 409, 'ObjectLocked', 'Object is protected by ECHOLOG retention policy.', resource)
       }
@@ -158,6 +139,45 @@ async function handleS3Request(
   }
 
   return sendError(reply, 501, 'NotImplemented', 'This S3 operation is not supported.', resource)
+}
+
+async function putS3Object(
+  request: FastifyRequest,
+  reply: FastifyReply,
+  config: EchologConfig,
+  store: FsS3KeyStore,
+  objectKey: string,
+  payload: Uint8Array,
+  resource: string,
+): Promise<unknown> {
+  const contentType = oneHeader(request.headers['content-type'])?.split(';', 1)[0]?.trim().toLowerCase() || 'application/octet-stream'
+  if (!config.allowedMimeTypes.includes(contentType)) {
+    return sendError(reply, 415, 'InvalidContentType', 'The object content type is not allowed.', resource)
+  }
+  const retention = oneHeader(request.headers['x-amz-meta-echolog-retention-until']) ?? null
+  if (retention !== null && !Number.isFinite(Date.parse(retention))) {
+    return sendError(reply, 400, 'InvalidArgument', 'The ECHOLOG retention date is invalid.', resource)
+  }
+  const legalHoldHeader = oneHeader(request.headers['x-amz-meta-echolog-legal-hold'])
+  if (legalHoldHeader !== undefined && legalHoldHeader !== 'true' && legalHoldHeader !== 'false') {
+    return sendError(reply, 400, 'InvalidArgument', 'The ECHOLOG legal-hold value is invalid.', resource)
+  }
+  const privateWitnessHeader = oneHeader(request.headers['x-amz-meta-echolog-private-witness'])
+  if (privateWitnessHeader !== undefined && privateWitnessHeader !== 'true' && privateWitnessHeader !== 'false') {
+    return sendError(reply, 400, 'InvalidArgument', 'The ECHOLOG private-witness value is invalid.', resource)
+  }
+  try {
+    const record = await store.put(objectKey, payload, contentType, {
+      retentionUntil: retention,
+      legalHold: legalHoldHeader === 'true',
+      privateWitness: privateWitnessHeader === 'true',
+    })
+    return reply.code(200).header('etag', `"${record.etag}"`).header('x-amz-version-id', 'null').send()
+  } catch (error) {
+    if (error instanceof S3KeyConflictError) return sendError(reply, 409, 'PreconditionFailed', error.message, resource)
+    if (error instanceof TypeError) return sendError(reply, 400, 'InvalidObjectName', 'The object key is invalid.', resource)
+    return sendError(reply, 500, 'InternalError', 'The object could not be stored.', resource)
+  }
 }
 
 async function listObjects(
@@ -199,7 +219,12 @@ async function listObjects(
     }
   }
 
-  const all = (await store.list()).filter((entry) => entry.key.startsWith(prefix)
+  const listed = await store.list()
+  const visible: Awaited<ReturnType<typeof store.list>> = []
+  for (const entry of listed) {
+    if (!await store.isPrivateWitness(entry.digest)) visible.push(entry)
+  }
+  const all = visible.filter((entry) => entry.key.startsWith(prefix)
     && compareS3Keys(entry.key, after) > 0
     && (skippedPrefix === null || !entry.key.startsWith(skippedPrefix)))
   const contents: typeof all = []

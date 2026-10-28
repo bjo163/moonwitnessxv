@@ -23,8 +23,15 @@ async function createArsyVerifier() {
   })
   app.addHook('onClose', async () => moonql.close())
   await app.register(moonqlRest, { prefix: '/api/v1', instance: moonql })
+  const authorizedDigests = new Set<string>()
+  app.post('/api/v1/witness/private-media-authorize', async (request, reply) => {
+    const authCheck = await app.inject({ url: '/api/v1/auth/me', headers: { authorization: request.headers.authorization ?? '' } })
+    const digest = (request.body as { digest?: unknown } | undefined)?.digest
+    if (authCheck.statusCode === 200 && typeof digest === 'string' && authorizedDigests.has(digest)) return reply.code(204).send()
+    return reply.code(404).send()
+  })
   const address = await app.listen({ host: '127.0.0.1', port: 0 })
-  return { app, moonql, url: address }
+  return { app, moonql, url: address, authorizePrivateDigest: (digest: string) => authorizedDigests.add(digest) }
 }
 
 function createConfig(storageRoot: string, arsyUrl: string) {
@@ -63,8 +70,10 @@ void test('ECHOLOG objects enforce two auth modes, bounds, and private download 
       callback()
     },
   })
+  let fixedNow = Date.now()
   const app = createEchologServer(createConfig(root, arsy.url), {
     logger: { level: 'trace', stream: logStream },
+    now: () => fixedNow,
   })
   t.after(async () => {
     await app.close()
@@ -131,12 +140,93 @@ void test('ECHOLOG objects enforce two auth modes, bounds, and private download 
   assert.ok(ttlMs > 0 && ttlMs <= 5 * 60 * 1000)
   assert.equal(safeStoredFilename('../unsafe\r\nname.png'), 'unsafe__name.png')
 
+  const unmarkedObjectMarker = await app.inject({
+    method: 'POST',
+    url: `/api/v1/objects/sha256/${sidecar.digest}/private-witness`,
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    payload: { objectKey: `sha256/${sidecar.digest}`, requireAlreadyMarked: true },
+  })
+  assert.equal(unmarkedObjectMarker.statusCode, 404, 'D06 cannot turn an already-published generic upload into a private witness object')
+
+  const legacyMarker = await app.inject({
+    method: 'POST',
+    url: `/api/v1/objects/sha256/${sidecar.digest}/private-witness`,
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    payload: { objectKey: `sha256/${sidecar.digest}` },
+  })
+  assert.equal(legacyMarker.statusCode, 200, 'an authorized uploader may irreversibly restrict their own existing object')
+
+  const privateUpload = await app.inject({
+    method: 'POST',
+    url: '/api/v1/objects',
+    headers: {
+      authorization: `Bearer ${token}`,
+      'content-type': 'image/png',
+      'x-echolog-private-witness': 'true',
+    },
+    payload: Buffer.from('private'),
+  })
+  assert.equal(privateUpload.statusCode, 201)
+  const privateSidecar = privateUpload.json() as { object_key: string; digest: string; size: number; content_type: string }
+  const markedObjectConfirmation = await app.inject({
+    method: 'POST',
+    url: `/api/v1/objects/sha256/${privateSidecar.digest}/private-witness`,
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    payload: { objectKey: privateSidecar.object_key, requireAlreadyMarked: true },
+  })
+  assert.equal(markedObjectConfirmation.statusCode, 200)
+  assert.equal(markedObjectConfirmation.json().digest, privateSidecar.digest)
+  assert.equal(markedObjectConfirmation.json().size, privateSidecar.size)
+  const privateMetadataRead = await app.inject({
+    method: 'GET',
+    url: `/api/v1/objects/sha256/${privateSidecar.digest}/meta`,
+    headers: { authorization: `Bearer ${token}` },
+  })
+  assert.equal(privateMetadataRead.statusCode, 404, 'upload is marked before it becomes readable through REST')
+  const anonymousMarker = await app.inject({
+    method: 'POST',
+    url: `/api/v1/objects/sha256/${sidecar.digest}/private-witness`,
+    headers: { 'content-type': 'application/json' },
+    payload: { objectKey: `sha256/${sidecar.digest}` },
+  })
+  assert.equal(anonymousMarker.statusCode, 401)
+  const preMarkerGrantDownload = await app.inject({ method: 'GET', url: grant.url })
+  assert.equal(preMarkerGrantDownload.statusCode, 404)
+  const unauthorizedMetadata = await app.inject({
+    method: 'GET',
+    url: `/api/v1/objects/sha256/${sidecar.digest}/meta`,
+    headers: { authorization: `Bearer ${token}` },
+  })
+  assert.equal(unauthorizedMetadata.statusCode, 404)
+  arsy.authorizePrivateDigest(sidecar.digest)
+  const authorizedMetadata = await app.inject({
+    method: 'GET',
+    url: `/api/v1/objects/sha256/${sidecar.digest}/meta`,
+    headers: { authorization: `Bearer ${token}` },
+  })
+  assert.equal(authorizedMetadata.statusCode, 200)
+
+  fixedNow += 1
+  const postMarkerGrantResponse = await app.inject({
+    method: 'GET',
+    url: `/api/v1/objects/sha256/${sidecar.digest}`,
+    headers: { authorization: `Bearer ${token}` },
+  })
+  assert.equal(postMarkerGrantResponse.statusCode, 200)
+  const postMarkerGrant = postMarkerGrantResponse.json() as { url: string }
+  const postMarkerDownload = await app.inject({ method: 'GET', url: postMarkerGrant.url })
+  assert.equal(postMarkerDownload.statusCode, 200)
+  assert.equal(postMarkerDownload.body, body.toString())
+  const duplicatePrivateUpload = await app.inject({
+    method: 'POST',
+    url: '/api/v1/objects',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'image/png' },
+    payload: body,
+  })
+  assert.equal(duplicatePrivateUpload.statusCode, 404)
+
   const downloaded = await app.inject({ method: 'GET', url: grant.url })
-  assert.equal(downloaded.statusCode, 200)
-  assert.equal(downloaded.body, body.toString())
-  assert.match(downloaded.headers['content-disposition'] as string, /^attachment;/)
-  assert.doesNotMatch(downloaded.headers['content-disposition'] as string, /[\r\n/]/)
-  assert.equal(downloaded.headers['content-type'], 'image/png')
+  assert.equal(downloaded.statusCode, 404)
 
   const tamperedGrant = await app.inject({ method: 'GET', url: `${grant.url}x` })
   assert.equal(tamperedGrant.statusCode, 401)

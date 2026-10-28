@@ -11,7 +11,7 @@ export async function createDownloadGrant(
   now = Date.now(),
 ): Promise<DownloadGrant> {
   const expiresAt = Math.floor(now / 1000) + GRANT_TTL_SECONDS
-  const payload = encodeBase64Url(`${objectKey}\n${expiresAt}`)
+  const payload = encodeBase64Url(`${objectKey}\n${now}\n${expiresAt}`)
   const signature = await sign(secret, payload)
   return { token: `${payload}.${signature}`, expiresAt }
 }
@@ -33,11 +33,13 @@ export async function verifyDownloadGrant(
   } catch {
     return false
   }
-  const separator = decoded.lastIndexOf('\n')
-  if (separator < 0 || decoded.slice(0, separator) !== expectedObjectKey) return false
-  const expiry = Number(decoded.slice(separator + 1))
+  const parts = decoded.split('\n')
+  if (parts[0] !== expectedObjectKey || (parts.length !== 2 && parts.length !== 3)) return false
+  const issuedAt = parts.length === 3 ? Number(parts[1]) : null
+  const expiry = Number(parts[parts.length - 1])
   const nowSeconds = Math.floor(now / 1000)
   return Number.isSafeInteger(expiry) && expiry > nowSeconds && expiry <= nowSeconds + GRANT_TTL_SECONDS
+    && (issuedAt === null || Number.isSafeInteger(issuedAt) && issuedAt <= now && expiry <= Math.floor(issuedAt / 1000) + GRANT_TTL_SECONDS)
 }
 
 async function sign(secret: string, value: string): Promise<string> {

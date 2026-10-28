@@ -76,7 +76,11 @@ export class FsStorageDriver implements StorageDriver {
     if (stored.object_key !== objectKey) throw new Error('Object key and sidecar must match the uploaded bytes')
   }
 
-  async putStream(chunks: AsyncIterable<Uint8Array>, metadata: ObjectMetadataInput): Promise<ObjectSidecar> {
+  async putStream(
+    chunks: AsyncIterable<Uint8Array>,
+    metadata: ObjectMetadataInput,
+    beforePublish?: (sidecar: ObjectSidecar, existing: boolean) => Promise<void>,
+  ): Promise<ObjectSidecar> {
     await this.ensureDirectories()
     const tempPath = join(this.root, 'tmp', randomUUID())
     const handle = await open(tempPath, 'wx')
@@ -107,6 +111,7 @@ export class FsStorageDriver implements StorageDriver {
           if (existing.bytes.byteLength !== size || createHash('sha256').update(existing.bytes).digest('hex') !== digest) {
             throw new Error('Content-addressed object is corrupt')
           }
+          await beforePublish?.(existing.sidecar, true)
           await rm(tempPath, { force: true })
           return existing.sidecar
         }
@@ -122,6 +127,10 @@ export class FsStorageDriver implements StorageDriver {
           if (!isMissing(error)) throw error
         }
         if (!objectAlreadyExists && used + size > this.quotaBytes) throw new QuotaExceededError()
+
+        // A policy callback can durably reserve/restrict the digest before
+        // bytes and metadata become visible to readers.
+        await beforePublish?.(sidecar, objectAlreadyExists)
 
         // Both temporary files are siblings of their destinations, so rename stays on-volume.
         if (!objectAlreadyExists) await rename(tempPath, objectPath)

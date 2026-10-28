@@ -94,7 +94,11 @@ export async function verifyS3Request(
   if (signedHeaderList.some((name) => name === 'authorization' || name === 'date')) return 'unsupported'
   const requiredHeaders = ['host', 'x-amz-date', 'x-amz-content-sha256']
   if (request.method === 'PUT' && headers['content-type']) requiredHeaders.push('content-type')
-  for (const name of ['x-amz-meta-echolog-retention-until', 'x-amz-meta-echolog-legal-hold']) {
+  for (const name of [
+    'x-amz-meta-echolog-retention-until',
+    'x-amz-meta-echolog-legal-hold',
+    'x-amz-meta-echolog-private-witness',
+  ]) {
     if (headers[name]) requiredHeaders.push(name)
   }
   if (requiredHeaders.some((name) => !signedHeaderList.includes(name))) return 'unsupported'

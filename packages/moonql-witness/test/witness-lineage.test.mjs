@@ -30,6 +30,7 @@ const inputRecord = (overrides = {}) => ({
   originalDigest,
   originalSize: 42,
   originalContentType: 'application/octet-stream',
+  viewAclPrincipalRefs: JSON.stringify(['principal_synthetic_owner']),
   occurredAt: JSON.stringify({
     precision: 'EXACT',
     utc: '2026-10-28T02:00:00.000Z',
@@ -73,6 +74,7 @@ test('M16-03: date corrections append without changing the private original or E
       assert.ok(slot in witnessAddon.models.witness_testimonies.fields, `${slot} is stored independently`)
       assert.equal(witnessAddon.models.witness_testimonies.fields[slot].private, true)
     }
+    assert.equal(witnessAddon.models.witness_testimonies.fields.viewAclPrincipalRefs.private, true)
 
     const originalEngine = moonql.engines.get('witness_testimonies')
     assert.ok(originalEngine)
@@ -109,6 +111,7 @@ test('M16-03: date corrections append without changing the private original or E
     assert.deepEqual(storedCorrections.map((row) => row.revisionNumber), [2, 3])
     const safeRead = await moonql.model('witness_testimonies').list()
     assert.equal(safeRead[0]?.stableId, undefined)
+    assert.equal(safeRead[0]?.viewAclPrincipalRefs, undefined)
     assert.equal(safeRead[0]?.occurredAt, undefined)
   })
 })

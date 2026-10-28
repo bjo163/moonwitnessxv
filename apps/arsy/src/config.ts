@@ -105,6 +105,8 @@ const ADDON_ENV_KEYS = [
   'PLAYLOG_PSEUDONYM_SALT',
   // opt-in door for the hub's outbound fetches (station probe, now-playing)
   'EGRESS_ENABLED',
+  // Non-secret API origin used by D06 to validate object references and request grants.
+  'ECHOLOG_URL',
   'WHATSAPP_AUTH_DIR',
   'DENPA_TOKEN',
 ] as const

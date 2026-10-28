@@ -41,6 +41,7 @@ async function setup(t: TestContext) {
     ECHOLOG_S3_REGION: REGION,
     ECHOLOG_S3_ACCESS_KEY_ID: ACCESS_KEY,
     ECHOLOG_S3_SECRET_ACCESS_KEY: SECRET_KEY,
+    ECHOLOG_SERVICE_KEY: 'echolog-test-service-key-00000000000000000001',
     ECHOLOG_MAX_UPLOAD_BYTES: '1048576',
   }, ['--port', String(port)])
   const app = createEchologServer(config)
@@ -92,6 +93,62 @@ void test('ECHOLOG serves path-style single-bucket S3 operations through the AWS
   await client.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key }))
   const empty = await client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: 'backups/' }))
   assert.equal(empty.KeyCount, 0)
+})
+
+void test('private witness markers hide every S3 alias and keep the object through GC', async (t) => {
+  const { app, client, root } = await setup(t)
+  const key = `private/${globalThis.crypto.randomUUID()}.bin`
+  const payload = Buffer.from('synthetic private witness bytes')
+  await client.send(new PutObjectCommand({
+    Bucket: BUCKET,
+    Key: key,
+    Body: payload,
+    ContentType: 'application/octet-stream',
+    Metadata: { 'echolog-private-witness': 'true' },
+  }))
+  const digest = await sha256Hex(new Uint8Array(payload))
+  const markerMatch = await app.inject({
+    method: 'POST',
+    url: `/api/v1/objects/sha256/${digest}/private-witness`,
+    headers: { 'x-echolog-key': 'echolog-test-service-key-00000000000000000001', 'content-type': 'application/json' },
+    payload: { objectKey: key, requireAlreadyMarked: true },
+  })
+  assert.equal(markerMatch.statusCode, 200, 'the marker resolves a matching opaque S3 index key for the digest')
+  const markerMismatch = await app.inject({
+    method: 'POST',
+    url: `/api/v1/objects/sha256/${digest}/private-witness`,
+    headers: { 'x-echolog-key': 'echolog-test-service-key-00000000000000000001', 'content-type': 'application/json' },
+    payload: { objectKey: 'private/not-the-indexed-key.bin', requireAlreadyMarked: true },
+  })
+  assert.equal(markerMismatch.statusCode, 404, 'the marker rejects a namespace key that does not resolve to this digest')
+  const lateAlias = `private-late-alias/${globalThis.crypto.randomUUID()}.bin`
+  await client.send(new PutObjectCommand({ Bucket: BUCKET, Key: lateAlias, Body: payload, ContentType: 'application/octet-stream' }))
+
+  const driver = new FsStorageDriver({ root, quotaBytes: 10 * 1024 * 1024 })
+  const store = new FsS3KeyStore({ root, driver })
+  assert.equal(await store.isPrivateWitness(digest), true, 'the signed S3 upload header marks the digest before publication')
+  assert.equal(await store.get(key), null)
+  assert.equal(await store.head(key), null)
+  const listing = await client.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: 'private/' }))
+  assert.equal(listing.KeyCount, 0)
+  await assert.rejects(client.send(new GetObjectCommand({ Bucket: BUCKET, Key: lateAlias })), (error: unknown) =>
+    Boolean(error && typeof error === 'object' && '$metadata' in error && error.$metadata
+      && typeof error.$metadata === 'object' && 'httpStatusCode' in error.$metadata && error.$metadata.httpStatusCode === 404))
+  await assert.rejects(client.send(new HeadObjectCommand({ Bucket: BUCKET, Key: key })), (error: unknown) =>
+    Boolean(error && typeof error === 'object' && '$metadata' in error && error.$metadata
+      && typeof error.$metadata === 'object' && 'httpStatusCode' in error.$metadata && error.$metadata.httpStatusCode === 404))
+  await assert.rejects(client.send(new GetObjectCommand({ Bucket: BUCKET, Key: key })), (error: unknown) =>
+    Boolean(error && typeof error === 'object' && '$metadata' in error && error.$metadata
+      && typeof error.$metadata === 'object' && 'httpStatusCode' in error.$metadata && error.$metadata.httpStatusCode === 404))
+  await assert.rejects(client.send(new DeleteObjectCommand({ Bucket: BUCKET, Key: key })), (error: unknown) =>
+    Boolean(error && typeof error === 'object' && '$metadata' in error && error.$metadata
+      && typeof error.$metadata === 'object' && 'httpStatusCode' in error.$metadata && error.$metadata.httpStatusCode === 404))
+
+  const collected = await store.collect(new Date(Date.now() + 60_000))
+  assert.equal(collected.deleted.includes(`sha256/${digest}`), false)
+  assert.ok(await driver.get(`sha256/${digest}`))
+  const restartedStore = new FsS3KeyStore({ root, driver })
+  assert.equal(await restartedStore.isPrivateWitness(digest), true)
 })
 
 void test('ListObjectsV2 delimiter pages advance beyond a returned common prefix', async (t) => {
@@ -181,6 +238,16 @@ void test('S3 rejects unsupported operations and untrusted or oversized bodies b
   const tampered = await signedPut(endpoint, `/${BUCKET}/query-rejected-tampered`, Buffer.from('signed bytes'), Buffer.from('changed bytes'))
   assert.equal(tampered.status, 403)
   assert.match(tampered.text, /SignatureDoesNotMatch/)
+  const unsignedPrivatePayload = Buffer.from('unsigned private policy')
+  const unsignedPrivateFlag = await signedPut(
+    endpoint,
+    `/${BUCKET}/unsigned-private-flag`,
+    unsignedPrivatePayload,
+    unsignedPrivatePayload,
+    'PUT',
+    { 'x-amz-meta-echolog-private-witness': 'true' },
+  )
+  assert.equal(unsignedPrivateFlag.status, 501, 'privacy-affecting metadata must be included in SigV4 SignedHeaders')
   const postPayload = Buffer.from('POST body must not be stored')
   const post = await signedPut(endpoint, `/${BUCKET}/unsupported-post`, postPayload, postPayload, 'POST')
   assert.equal(post.status, 501)
@@ -190,6 +257,7 @@ void test('S3 rejects unsupported operations and untrusted or oversized bodies b
   assert.equal(oversized.status, 413)
   assert.match(oversized.text, /EntityTooLarge/)
   assert.deepEqual(await findMarker(root, 'must not persist'), [])
+  assert.deepEqual(await findMarker(root, 'unsigned private policy'), [])
   assert.deepEqual(await findMarker(root, 'POST body must not be stored'), [])
   assert.deepEqual(await findMarker(root, 'z'.repeat(32)), [])
 })
@@ -263,7 +331,14 @@ void test('ECHOLOG rejects bad signatures, stale dates, traversal paths and unsu
  * PUT a payload to an exact raw request target (no URL normalisation) with a valid SigV4
  * header signature, so server-side path validation is what decides the outcome.
  */
-async function signedPut(endpoint: string, rawPath: string, body: Buffer, transmittedBody = body, method = 'PUT'): Promise<{ status: number; text: string }> {
+async function signedPut(
+  endpoint: string,
+  rawPath: string,
+  body: Buffer,
+  transmittedBody = body,
+  method = 'PUT',
+  unsignedHeaders: Record<string, string> = {},
+): Promise<{ status: number; text: string }> {
   const url = new URL(endpoint)
   const target = new URL(rawPath, endpoint)
   const rawTargetPath = rawPath.split('?', 1)[0] ?? rawPath
@@ -298,7 +373,7 @@ async function signedPut(endpoint: string, rawPath: string, body: Buffer, transm
   const signed = await signer.sign(request, { signingDate: new Date() })
   return await new Promise((resolve, reject) => {
     const outbound = httpRequest(
-      { host: url.hostname, port: Number(url.port), method, path: rawPath, headers: signed.headers },
+      { host: url.hostname, port: Number(url.port), method, path: rawPath, headers: { ...signed.headers, ...unsignedHeaders } },
       (response) => {
         const chunks: Buffer[] = []
         response.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
