@@ -1,0 +1,509 @@
+{
+  "schema": "moonwitness-m33-01-generator-inventory-v1",
+  "task": "M33-01",
+  "title": "Inventory existing generator and HQ Story plans",
+  "baseline_sha": "891bf5e19edbbea3d5e5ada36a7b126f35fabf94",
+  "branch": "dev",
+  "method": "Read-only repository inspection. Every quote below resolves verbatim as a substring of the cited file:line at the baseline SHA. IMPLEMENTED rows cite executable source; PLANNED and ABSENT rows cite planning or audit documents.",
+  "tallies": {
+    "IMPLEMENTED": 12,
+    "PLANNED": 16,
+    "ABSENT": 10,
+    "NEEDS_SOURCE": 3,
+    "total": 41
+  },
+  "rows": [
+    {
+      "id": "M33-01-GEN-01",
+      "surface": "Dock route /studio",
+      "claim": "The public Dock route /studio renders the GeneratorStudio client component.",
+      "source": {
+        "file": "apps/dock/src/app/studio/page.tsx",
+        "line": 12,
+        "quote": "return <GeneratorStudio />"
+      },
+      "status": "IMPLEMENTED",
+      "notes": "Route page imports GeneratorStudio at line 3. The page is public Dock, not an authenticated HQ workspace."
+    },
+    {
+      "id": "M33-01-GEN-02",
+      "surface": "GeneratorStudio component",
+      "claim": "GeneratorStudio is a real exported client component with avatar, seal and glyph tabs.",
+      "source": {
+        "file": "apps/dock/src/ui/client/GeneratorStudio.tsx",
+        "line": 616,
+        "quote": "export function GeneratorStudio(): ReactNode {"
+      },
+      "status": "IMPLEMENTED",
+      "notes": "Tab ids avatar, seal and icons are declared at lines 718-722. The component has no server API call and no persistence."
+    },
+    {
+      "id": "M33-01-GEN-03",
+      "surface": "Avatar generator",
+      "claim": "MoonAvatar procedurally generates deterministic SVG avatars from a seed string.",
+      "source": {
+        "file": "packages/moonui/src/avatar/generator.tsx",
+        "line": 24,
+        "quote": "export function MoonAvatar({"
+      },
+      "status": "IMPLEMENTED",
+      "notes": "Variants hoodie, crown, matrix and emblem are selected from the seed-driven PRNG. Output is inline SVG, not raster."
+    },
+    {
+      "id": "M33-01-GEN-04",
+      "surface": "Deterministic PRNG",
+      "claim": "createPrng provides a deterministic pseudo-random stream from an input seed.",
+      "source": {
+        "file": "packages/moonui/src/avatar/prng.ts",
+        "line": 18,
+        "quote": "export function createPrng(seed: string): () => number {"
+      },
+      "status": "IMPLEMENTED",
+      "notes": "The module header documents an FNV-style hash and Mulberry32 stream. Same seed yields the same vector output."
+    },
+    {
+      "id": "M33-01-GEN-05",
+      "surface": "Heraldic seal generator",
+      "claim": "StationSeal generates a procedural SVG station seal from station metadata.",
+      "source": {
+        "file": "packages/moonui/src/seal.tsx",
+        "line": 21,
+        "quote": "export function StationSeal({"
+      },
+      "status": "IMPLEMENTED",
+      "notes": "Seed is composed from stationId, name and genre. Used by GeneratorStudio's HERALDIC SEAL FORGE tab."
+    },
+    {
+      "id": "M33-01-GEN-06",
+      "surface": "Vector glyph catalog",
+      "claim": "GeneratorStudio exposes a fixed catalog of canonical glyphs for its glyph forge.",
+      "source": {
+        "file": "apps/dock/src/ui/client/GeneratorStudio.tsx",
+        "line": 69,
+        "quote": "const ICON_CATALOG = ["
+      },
+      "status": "IMPLEMENTED",
+      "notes": "The catalog lists 20 icon entries ending at line 90. Glyph color, size and stroke width are adjustable in the client."
+    },
+    {
+      "id": "M33-01-GEN-07",
+      "surface": "SVG download export",
+      "claim": "The studio serializes the preview SVG and downloads it as a .svg file.",
+      "source": {
+        "file": "apps/dock/src/ui/client/GeneratorStudio.tsx",
+        "line": 672,
+        "quote": "link.download = `${filename}.svg`"
+      },
+      "status": "IMPLEMENTED",
+      "notes": "Browser-only XMLSerializer/Blob path. Filename derives from avatar seed, station id or glyph name."
+    },
+    {
+      "id": "M33-01-GEN-08",
+      "surface": "PNG raster export",
+      "claim": "The studio rasterizes the preview SVG to a PNG at a default dimension of 1024.",
+      "source": {
+        "file": "apps/dock/src/ui/client/GeneratorStudio.tsx",
+        "line": 680,
+        "quote": "const handleDownloadPng = (exportDimension = 1024) => {"
+      },
+      "status": "IMPLEMENTED",
+      "notes": "The canvas draw and PNG data URL are created client-side at lines 699-708. No server renderer or media store is involved."
+    },
+    {
+      "id": "M33-01-GEN-09",
+      "surface": "Clipboard SVG export",
+      "claim": "The studio copies serialized SVG markup to the clipboard.",
+      "source": {
+        "file": "apps/dock/src/ui/client/GeneratorStudio.tsx",
+        "line": 649,
+        "quote": "void navigator.clipboard.writeText(svgStr)"
+      },
+      "status": "IMPLEMENTED",
+      "notes": "Feedback text is shown for 2.5 seconds. This export path has no rights or consent check."
+    },
+    {
+      "id": "M33-01-HQ-01",
+      "surface": "HQ dashboard Story Forge card",
+      "claim": "Headquarters renders a Story Forge module card that links to the generic model registry.",
+      "source": {
+        "file": "apps/headquarters/src/app/(admin)/page.tsx",
+        "line": 309,
+        "quote": "title=\"Story Forge\""
+      },
+      "status": "IMPLEMENTED",
+      "notes": "The card href is /models at line 306 and its description names stories, characters, worlds and narratives. It is navigation, not a story editor."
+    },
+    {
+      "id": "M33-01-HQ-02",
+      "surface": "HQ dashboard Poster Lab card",
+      "claim": "Headquarters renders a Poster Lab module card that links to the generic views registry.",
+      "source": {
+        "file": "apps/headquarters/src/app/(admin)/page.tsx",
+        "line": 322,
+        "quote": "title=\"Poster Lab\""
+      },
+      "status": "IMPLEMENTED",
+      "notes": "The card href is /views at line 319. No poster canvas, layer stack or export gate is rendered by this card."
+    },
+    {
+      "id": "M33-01-MEDIA-01",
+      "surface": "Asset pipeline gate script",
+      "claim": "A dependency-free asset gate script exists and scans served assets against a rights ledger.",
+      "source": {
+        "file": "scripts/check-ui-assets.mjs",
+        "line": 5,
+        "quote": "UI-F14 icon/vector pipeline gate + QA-01 source/license ledger enforcer."
+      },
+      "status": "IMPLEMENTED",
+      "notes": "Observed run at this baseline reported 32 violations and exit code 1. The gate is executable, but the tree is red, so it does not certify served media."
+    },
+    {
+      "id": "M33-01-PLAN-01",
+      "surface": "Story Forge UI plan",
+      "claim": "A Story Forge screen plan exists with build and test leaves still unchecked; it is not built.",
+      "source": {
+        "file": "todo-ui.md",
+        "line": 88,
+        "quote": "### UI-P03 — STORY FORGE (P1)"
+      },
+      "status": "PLANNED",
+      "notes": "Only UI-P03a (audit) is checked at line 91. Leaves b through f remain open."
+    },
+    {
+      "id": "M33-01-PLAN-02",
+      "surface": "Story scene/version editing plan",
+      "claim": "The Story Forge plan requires scene outline, character references and version save with real authorization, but the leaf is unchecked.",
+      "source": {
+        "file": "todo-ui.md",
+        "line": 93,
+        "quote": "- [ ] **UI-P03c · D3:** Scene outline, character references, version save with real authorization."
+      },
+      "status": "PLANNED",
+      "notes": "No scene editor or version store is present in code; see the ABSENT rows for scene storage."
+    },
+    {
+      "id": "M33-01-PLAN-03",
+      "surface": "Poster Lab UI plan",
+      "claim": "A Poster Lab screen plan exists and assigns the existing GeneratorStudio as code owner before any new renderer.",
+      "source": {
+        "file": "todo-ui.md",
+        "line": 98,
+        "quote": "### UI-P04 — POSTER LAB (P1)"
+      },
+      "status": "PLANNED",
+      "notes": "The route is still 'private studio route TBD' at line 100. Only UI-P04a (audit) is checked."
+    },
+    {
+      "id": "M33-01-PLAN-04",
+      "surface": "Poster canvas plan",
+      "claim": "The Poster Lab plan requires a canvas, layers, selected object and keyboard editing baseline, none of which is checked.",
+      "source": {
+        "file": "todo-ui.md",
+        "line": 103,
+        "quote": "- [ ] **UI-P04c · D3:** Canvas, layers, selected object and keyboard editing baseline."
+      },
+      "status": "PLANNED",
+      "notes": "The current studio has no canvas or layer model; it renders one flat SVG preview."
+    },
+    {
+      "id": "M33-01-PLAN-05",
+      "surface": "Poster export approval plan",
+      "claim": "The Poster Lab plan requires an export preview, publish approval gate and negative-role test, still unchecked.",
+      "source": {
+        "file": "todo-ui.md",
+        "line": 105,
+        "quote": "- [ ] **UI-P04e · D3:** Export preview, publish approval gate and negative-role test."
+      },
+      "status": "PLANNED",
+      "notes": "Current exports download immediately with no approval step."
+    },
+    {
+      "id": "M33-01-PLAN-06",
+      "surface": "M17-03 story graph task",
+      "claim": "The canonical task for a story world, arc, episode, scene and version graph is open and unchecked.",
+      "source": {
+        "file": "TODO.md",
+        "line": 418,
+        "quote": "**M17-03** — Define story world, arc, episode, scene and version graph"
+      },
+      "status": "PLANNED",
+      "notes": "Its acceptance condition is '99 chapter headings not treated as 99 originals'. M33-01 depends on it, so no story graph is claimed here."
+    },
+    {
+      "id": "M33-01-PLAN-07",
+      "surface": "M17-05 SHADOW editor task",
+      "claim": "The task to build a SHADOW editor as an HQ workspace on shared auth is open.",
+      "source": {
+        "file": "TODO.md",
+        "line": 420,
+        "quote": "**M17-05** — Build SHADOW editor as HQ workspace on shared auth"
+      },
+      "status": "PLANNED",
+      "notes": "Acceptance requires private drafts and revision permissions controlled. No editor code exists."
+    },
+    {
+      "id": "M33-01-PLAN-08",
+      "surface": "M17-06 poster/media license task",
+      "claim": "Tracking original poster, music and derived media licenses and manifests is planned but unchecked.",
+      "source": {
+        "file": "TODO.md",
+        "line": 421,
+        "quote": "**M17-06** — Track original poster/music/derived media license and manifests"
+      },
+      "status": "PLANNED",
+      "notes": "Its acceptance forbids unlicensed lyrics or external artwork. The mockup manifest separately flags license review."
+    },
+    {
+      "id": "M33-01-PLAN-09",
+      "surface": "M33-03 scene version/media rights task",
+      "claim": "The D07 scene version and media rights specification is open.",
+      "source": {
+        "file": "TODO.md",
+        "line": 728,
+        "quote": "**M33-03** — Specify D07 scene version and media rights"
+      },
+      "status": "PLANNED",
+      "notes": "Depends on M33-02. No rights store or version store is claimed."
+    },
+    {
+      "id": "M33-01-PLAN-10",
+      "surface": "M33-04 single renderer task",
+      "claim": "The single-renderer and HQ review handoff specification is open.",
+      "source": {
+        "file": "TODO.md",
+        "line": 729,
+        "quote": "**M33-04** — Specify single renderer and HQ review handoff"
+      },
+      "status": "PLANNED",
+      "notes": "Depends on M33-03. Current studio is one client-side renderer, but no accepted single-renderer decision exists yet."
+    },
+    {
+      "id": "M33-01-PLAN-11",
+      "surface": "M33-05 private poster access task",
+      "claim": "Private poster access and attribution verification is open.",
+      "source": {
+        "file": "TODO.md",
+        "line": 730,
+        "quote": "**M33-05** — Verify private poster access and attribution"
+      },
+      "status": "PLANNED",
+      "notes": "Depends on M33-04. No private poster access path is claimed."
+    },
+    {
+      "id": "M33-01-PLAN-12",
+      "surface": "D07 Story & Media boundary",
+      "claim": "BLUEPRINT assigns world, arc, character, episode, scene and poster/media manifest to D07, consumed by a SHADOW workspace.",
+      "source": {
+        "file": "BLUEPRINT.md",
+        "line": 206,
+        "quote": "| D07 | Story & Media | World, arc, character, episode, scene, poster/media manifest, editorial variants | SHADOW workspace consumes it |"
+      },
+      "status": "PLANNED",
+      "notes": "This is an ownership boundary, not proof of models or UI. No D07 addon is present."
+    },
+    {
+      "id": "M33-01-PLAN-13",
+      "surface": "Proposed SHADOW app",
+      "claim": "SHADOW is proposed for story, poster and media editing as an extraction of the HQ workspace.",
+      "source": {
+        "file": "BLUEPRINT.md",
+        "line": 98,
+        "quote": "Story/poster/media editing and source-aware creative drafts"
+      },
+      "status": "PLANNED",
+      "notes": "The same line says 'Proposed extraction of HQ workspace; D07 records, no parallel publisher'. No apps/shadow code exists."
+    },
+    {
+      "id": "M33-01-PLAN-14",
+      "surface": "Story Forge reference mockup",
+      "claim": "The Story Forge reference exists only as a concept mockup marked CONCEPT_ONLY.",
+      "source": {
+        "file": "docs/design/mockups-xv/manifest.json",
+        "line": 41,
+        "quote": "\"status\": \"CONCEPT_ONLY\","
+      },
+      "status": "PLANNED",
+      "notes": "Screen 3 is titled STORY FORGE at line 37 and owned by 'HQ workspace, SHADOW proposed'. The manifest also declares notDeployed true."
+    },
+    {
+      "id": "M33-01-PLAN-15",
+      "surface": "Poster Lab reference mockup",
+      "claim": "The Poster Lab reference exists only as a concept mockup marked CONCEPT_ONLY.",
+      "source": {
+        "file": "docs/design/mockups-xv/manifest.json",
+        "line": 52,
+        "quote": "\"status\": \"CONCEPT_ONLY\","
+      },
+      "status": "PLANNED",
+      "notes": "Screen 4 is titled POSTER LAB at line 48 with owner 'existing GeneratorStudio, scoped SHADOW'."
+    },
+    {
+      "id": "M33-01-PLAN-16",
+      "surface": "M33 milestone gate",
+      "claim": "The M33 milestone row declares the creative authoring surface planned with no implementation implied.",
+      "source": {
+        "file": "TODO.md",
+        "line": 722,
+        "quote": "**Status:** PLANNED, no implementation implied."
+      },
+      "status": "PLANNED",
+      "notes": "All five M33 leaves are unchecked at lines 726-730. M33-01 itself is the inventory leaf, not an implementation."
+    },
+    {
+      "id": "M33-01-ABS-01",
+      "surface": "Scene version store",
+      "claim": "No scene version store exists in the inspected tree.",
+      "source": {
+        "file": "docs/audit/ui-p02-p12-audits-fe8e84c.md",
+        "line": 143,
+        "quote": "there is no `scene_versions`, no rights store, and no review queue"
+      },
+      "status": "ABSENT",
+      "notes": "The audit states this from the live registry and model inventory. No migration or model named scene_versions was found."
+    },
+    {
+      "id": "M33-01-ABS-02",
+      "surface": "D07 story addon",
+      "claim": "No D07 story package or addon is implemented.",
+      "source": {
+        "file": "docs/audit/ui-p02-p12-audits-fe8e84c.md",
+        "line": 135,
+        "quote": "D07 has no implemented addon: no `packages/moonql-story*` exists"
+      },
+      "status": "ABSENT",
+      "notes": "The cited audit enumerates the existing moonql packages and none is story-related. This inventory did not find a story package either."
+    },
+    {
+      "id": "M33-01-ABS-03",
+      "surface": "Poster/media manifest model",
+      "claim": "No poster, asset or media_manifest model exists.",
+      "source": {
+        "file": "docs/audit/ui-p02-p12-audits-fe8e84c.md",
+        "line": 178,
+        "quote": "Neither has a model: no `poster*`, `asset*` or `media_manifest*` name in `MODEL_NAMES`"
+      },
+      "status": "ABSENT",
+      "notes": "Confirmed against the cited MODEL_NAMES inventory. No SQL migration in the repository names a poster or media manifest table."
+    },
+    {
+      "id": "M33-01-ABS-04",
+      "surface": "Poster pipeline and canvas",
+      "claim": "No poster compositing pipeline exists: the studio has no canvas, layer stack or selected-object model.",
+      "source": {
+        "file": "docs/audit/ui-p02-p12-audits-fe8e84c.md",
+        "line": 165,
+        "quote": "there is no canvas, no layer stack, no selected-object model"
+      },
+      "status": "ABSENT",
+      "notes": "The existing studio renders one flat preview SVG per tab and exports it; there is no layered poster composition or project file."
+    },
+    {
+      "id": "M33-01-ABS-05",
+      "surface": "Export rights and approval gate",
+      "claim": "No rights, consent or approval gate exists on the current SVG/PNG export path.",
+      "source": {
+        "file": "docs/audit/ui-p02-p12-audits-fe8e84c.md",
+        "line": 170,
+        "quote": "**There is no rights check, no consent check, no approval step anywhere on that path.**"
+      },
+      "status": "ABSENT",
+      "notes": "Download and clipboard handlers in GeneratorStudio call browser APIs directly. This is a rights/privacy constraint for any future poster export."
+    },
+    {
+      "id": "M33-01-ABS-06",
+      "surface": "SHADOW application code",
+      "claim": "No SHADOW application code exists at this baseline.",
+      "source": {
+        "file": "BLUEPRINT.md",
+        "line": 142,
+        "quote": "PLANNED, no current code"
+      },
+      "status": "ABSENT",
+      "notes": "The blueprint row groups SHADOW with Harbor, MoonLab, WORKS and HELIOGRID as future interfaces. apps/ contains no shadow directory."
+    },
+    {
+      "id": "M33-01-ABS-07",
+      "surface": "Private studio boundary",
+      "claim": "The current /studio route has no authentication boundary; it is a public Dock demo.",
+      "source": {
+        "file": "docs/audit/ui-p02-p12-audits-fe8e84c.md",
+        "line": 163,
+        "quote": "**there is no auth boundary on `/studio`, because Dock has no auth at all**"
+      },
+      "status": "ABSENT",
+      "notes": "The public IA table corroborates 'Public generator, **DEMO**' at docs/design/M19-03-public-ia.md:35. Any private poster flow must move or wrap this host."
+    },
+    {
+      "id": "M33-01-ABS-08",
+      "surface": "HQ story editor route",
+      "claim": "No story editor route exists in Dock or Headquarters.",
+      "source": {
+        "file": "docs/audit/ui-p02-p12-audits-fe8e84c.md",
+        "line": 114,
+        "quote": "No `/projects`-style story route in Dock (§0.1) and no story route in HQ (§0.2)."
+      },
+      "status": "ABSENT",
+      "notes": "The HQ Story Forge card links to /models, which is the generic model registry rather than a story workspace."
+    },
+    {
+      "id": "M33-01-ABS-09",
+      "surface": "Story data model",
+      "claim": "No story, scene, draft, arc or episode models exist, so there is no story data to edit.",
+      "source": {
+        "file": "docs/audit/ui-p02-p12-audits-fe8e84c.md",
+        "line": 116,
+        "quote": "there is **nothing to forge**"
+      },
+      "status": "ABSENT",
+      "notes": "The cited line lists the missing story_*, scene_*, draft_*, arc_* and episode_* model names. This inventory did not find them in code or migrations."
+    },
+    {
+      "id": "M33-01-ABS-10",
+      "surface": "Documented pnpm asset-gate entry point",
+      "claim": "The documented `pnpm ui:assets` entry point is not present in any package manifest; only the underlying Node script exists.",
+      "source": {
+        "file": "docs/design/ASSETS.md",
+        "line": 6,
+        "quote": "`pnpm ui:assets` (`node scripts/check-ui-assets.mjs`, no dependencies)"
+      },
+      "status": "ABSENT",
+      "notes": "Observed: scripts/check-ui-assets.mjs exists and runs directly, but grep over all package.json files found no ui:assets script. The asset gate is therefore documented but not wired as a package script."
+    },
+    {
+      "id": "M33-01-NS-01",
+      "surface": "Story Forge dashboard counts",
+      "claim": "The HQ Story Forge card renders literal counts '12 active projects' and '4 in review' with no query backing those values in the inspected component.",
+      "source": {
+        "file": "apps/headquarters/src/app/(admin)/page.tsx",
+        "line": 313,
+        "quote": "<Badge tone=\"ok\">12 active projects</Badge>"
+      },
+      "status": "NEEDS_SOURCE",
+      "notes": "The badges are static JSX literals. Other cards on the page use monitor.counts, but these two do not. Treat the counts as unverified presentation, not inventory data."
+    },
+    {
+      "id": "M33-01-NS-02",
+      "surface": "Poster Lab dashboard counts",
+      "claim": "The HQ Poster Lab card renders literal counts '8 in progress' and '3 queued' with no query backing those values in the inspected component.",
+      "source": {
+        "file": "apps/headquarters/src/app/(admin)/page.tsx",
+        "line": 326,
+        "quote": "<Badge tone=\"ok\">8 in progress</Badge>"
+      },
+      "status": "NEEDS_SOURCE",
+      "notes": "Same pattern as the Story Forge card. The values are static and should not be read as live project counts."
+    },
+    {
+      "id": "M33-01-NS-03",
+      "surface": "Mockup license review",
+      "claim": "The reference mockup set requires a license review that is not evidenced as completed in this inventory.",
+      "source": {
+        "file": "docs/design/mockups-xv/manifest.json",
+        "line": 7,
+        "quote": "\"licenseReviewRequired\": true,"
+      },
+      "status": "NEEDS_SOURCE",
+      "notes": "The manifest also marks the PNGs reference-only and notDeployed. No completed rights review was located; production use would need M17-06 and M33-05 evidence."
+    }
+  ]
+}
