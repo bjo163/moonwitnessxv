@@ -1,4 +1,4 @@
-import { Badge, Card, CardBody, LinkButton, Tape, type BadgeTone, Chevron } from '@moonwitness/moonui'
+import { Card, CardBody, LinkButton, Tape, Chevron } from '@moonwitness/moonui'
 import { formatLocaleNumber } from '@moonwitness/core'
 import { headers } from 'next/headers'
 import { homePayload } from '@/data/queries/program'
@@ -70,72 +70,17 @@ export default async function HomePage() {
 
       <ZineSkaPosterSection />
 
-      {payload.signals?.length ? (
-        <Card id="world-monitor">
-          <CardBody className="m-stack" style={{ gap: 16 }}>
-            <div className="dk-deck-header">
-              <div>
-                <Tape tone="accent">{copy.worldMonitor}</Tape>
-                <h2 className="dk-section-heading">{copy.globalPulse}</h2>
-              </div>
-              <span className="m-muted" style={{ fontSize: 13 }}>
-                {copy.liveFeedAiTriaged}
-              </span>
+      <Card id="world-monitor">
+        <CardBody className="m-stack" style={{ gap: 16 }}>
+          <div className="dk-deck-header">
+            <div>
+              <Tape tone="accent">{copy.worldMonitor}</Tape>
+              <h2 className="dk-section-heading">{copy.globalPulse}</h2>
             </div>
-
-            <div className="m-grid m-grid-3" style={{ gap: 14 }}>
-              {payload.signals.slice(0, 6).map((sig) => {
-                const badgeTone: BadgeTone =
-                  sig.sentiment === 'alert' || sig.sentiment === 'critical'
-                    ? 'hot'
-                    : sig.sentiment === 'positive'
-                    ? 'accent'
-                    : 'night'
-                return (
-                  <div
-                    key={sig.id}
-                    className="m-stack"
-                    style={{
-                      border: '1px solid var(--m-border)',
-                      padding: 14,
-                      background: 'rgba(255,255,255,0.02)',
-                      gap: 8,
-                    }}
-                  >
-                    <div className="m-row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span className="m-muted" style={{ fontSize: 11, textTransform: 'uppercase' }}>
-                        {sig.platform} · {sig.radarRefRecord?.name ?? copy.radar}
-                      </span>
-                      <Badge tone={badgeTone}>{sig.sentiment.toUpperCase()}</Badge>
-                    </div>
-                    <div style={{ fontWeight: 600, fontSize: 14, lineHeight: 1.3 }}>
-                      <a
-                        href={sig.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: 'inherit', textDecoration: 'none' }}
-                      >
-                        {sig.title}
-                      </a>
-                    </div>
-                    {sig.aiSummary ? (
-                      <p className="m-muted" style={{ fontSize: 12, margin: 0, lineHeight: 1.4 }}>
-                        {sig.aiSummary}
-                      </p>
-                    ) : null}
-                    <div className="m-row" style={{ justifyContent: 'space-between', fontSize: 11, marginTop: 'auto' }}>
-                      <span className="m-muted">{copy.urgency}: {formatLocaleNumber(sig.urgencyScore, locale)}%</span>
-                      {sig.viewsCount ? (
-                        <span className="m-muted">{formatLocaleNumber(sig.viewsCount / 1000, locale)}k {copy.views}</span>
-                      ) : null}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </CardBody>
-        </Card>
-      ) : null}
+          </div>
+          <p className="m-muted" role="status">{copy.worldMonitorNotice}</p>
+        </CardBody>
+      </Card>
 
       <Card id="signals">
         <CardBody className="m-stack" style={{ gap: 18 }}>

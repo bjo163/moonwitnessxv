@@ -16,7 +16,6 @@ import {
   Glyph,
 } from '@moonwitness/moonui'
 import { dashboard } from '@/data/queries/ops'
-import { getMonitorOverview } from '@/data/queries/monitor'
 import { listRecords, type ListResult } from '@/data/queries/records'
 import { getSchema } from '@/data/schema'
 import { guardEndpoint, guardModel } from '@/lib/authz'
@@ -218,20 +217,20 @@ const MISSION_ALERTS = [
 ] as const
 
 const EMPIRE_14_SYSTEMS = [
-  { code: 'SYS-01', name: 'MoonWitness OS', domain: 'Umbrella runtime/experience contracts', status: 'ACTIVE', tone: 'cyan' as const },
-  { code: 'SYS-02', name: 'Semantic Engine', domain: 'UNILEX senses & trilateral root triangulation', status: 'ACTIVE', tone: 'cyan' as const },
-  { code: 'SYS-03', name: 'FURQAN Gate', domain: 'Source, evidence & claim classifier', status: 'OPERATIONAL', tone: 'accent' as const },
-  { code: 'SYS-04', name: 'MIZAN Review', domain: 'Bounded evaluation of evidence & quality', status: 'NOMINAL', tone: 'ok' as const },
-  { code: 'SYS-05', name: 'AMANAH Access', domain: 'Human permissions, mandate, and consent', status: 'GUARDED', tone: 'pink' as const },
-  { code: 'SYS-06', name: 'SHURA Deliberation', domain: 'Consultation, peer review & appeal desk', status: 'IN_SESSION', tone: 'accent' as const },
-  { code: 'SYS-07', name: '100CENTER', domain: 'Governed operator command workspace', status: 'ACTIVE', tone: 'ok' as const },
-  { code: 'SYS-08', name: 'KITAB Ledger', domain: 'Verified, versioned knowledge & review ledger', status: 'SYNCED', tone: 'cyan' as const },
-  { code: 'SYS-09', name: 'SIDRA TREE Graph', domain: 'Typed relation exploration & evidence graph', status: 'ONLINE', tone: 'ok' as const },
-  { code: 'SYS-10', name: 'Command Hub', domain: 'Multi-service process supervisor & telemetry', status: 'NOMINAL', tone: 'cyan' as const },
-  { code: 'SYS-11', name: 'Atmosphere OS', domain: 'Environmental sensor & space weather grid', status: 'STREAMING', tone: 'accent' as const },
-  { code: 'SYS-12', name: 'HELIOGRID', domain: 'Solar energy & physics telemetry tracker', status: 'NOMINAL', tone: 'ok' as const },
-  { code: 'SYS-13', name: 'ARSY Compute', domain: 'Approved orchestrator for bounded AI tools', status: 'BOUNDED', tone: 'pink' as const },
-  { code: 'SYS-14', name: 'Material Forge', domain: 'Materials science & physical artifact ledger', status: 'STANDBY', tone: 'night' as const },
+  { code: 'SYS-01', name: 'MoonWitness OS', domain: 'Umbrella runtime/experience contracts' },
+  { code: 'SYS-02', name: 'Semantic Engine', domain: 'UNILEX senses & trilateral root triangulation' },
+  { code: 'SYS-03', name: 'FURQAN Gate', domain: 'Source, evidence & claim classifier' },
+  { code: 'SYS-04', name: 'MIZAN Review', domain: 'Bounded evaluation of evidence & quality' },
+  { code: 'SYS-05', name: 'AMANAH Access', domain: 'Human permissions, mandate, and consent' },
+  { code: 'SYS-06', name: 'SHURA Deliberation', domain: 'Consultation, peer review & appeal desk' },
+  { code: 'SYS-07', name: '100CENTER', domain: 'Governed operator command workspace' },
+  { code: 'SYS-08', name: 'KITAB Ledger', domain: 'Verified, versioned knowledge & review ledger' },
+  { code: 'SYS-09', name: 'SIDRA TREE Graph', domain: 'Typed relation exploration & evidence graph' },
+  { code: 'SYS-10', name: 'Command Hub', domain: 'Concept: multi-service process supervision and telemetry' },
+  { code: 'SYS-11', name: 'Atmosphere OS', domain: 'Concept: environmental sensor and space weather observations' },
+  { code: 'SYS-12', name: 'HELIOGRID', domain: 'Concept: solar energy and physics telemetry; no measured feed is configured' },
+  { code: 'SYS-13', name: 'ARSY Compute', domain: 'Approved orchestrator for bounded AI tools' },
+  { code: 'SYS-14', name: 'Material Forge', domain: 'Materials science & physical artifact ledger' },
 ] as const
 
 export default async function DashboardPage() {
@@ -249,7 +248,7 @@ export default async function DashboardPage() {
     async (model) => (await guardModel(model, 'list')).allowed,
     () => listRecords('corpus_editions', { pageSize: 25, order: 'code' }),
   )
-  const [ops, monitor] = await Promise.all([dashboard(), getMonitorOverview()])
+  const ops = await dashboard()
   const totalRows = ops.models.reduce((sum, model) => sum + model.count, 0)
   const crons = ops.crons
 
@@ -338,8 +337,8 @@ export default async function DashboardPage() {
             description="Explore cultures, ideas, people and real world context."
             metrics={
               <>
-                <Badge tone="ok">{monitor.counts.signals || 46} active signals</Badge>
-                <Badge tone="cyan">{monitor.counts.activeRadars || 10} radars</Badge>
+                <Badge tone="night">{locale === 'id' ? 'Status sinyal belum diverifikasi' : 'Signal status not verified'}</Badge>
+                <Badge tone="night">{locale === 'id' ? 'Feed provider belum terhubung' : 'Provider feed not connected'}</Badge>
               </>
             }
           />
@@ -387,12 +386,12 @@ export default async function DashboardPage() {
             icon="WM"
             tone="yellow"
             title="World Monitor"
-            description="Track global signals, trends and stories in motion."
+            description={locale === 'id' ? 'Observasi berbasis provider belum tersedia.' : 'Provider-backed observations are not yet available.'}
             compact
             metrics={
               <>
-                <Badge tone="ok">{monitor.counts.activeSources || 12} live sources</Badge>
-                <Badge tone="pink">{monitor.counts.criticalSignals || 3} alerts</Badge>
+                <Badge tone="night">{locale === 'id' ? 'Tidak ada feed live terverifikasi' : 'No verified live feed'}</Badge>
+                <Badge tone="night">{locale === 'id' ? 'Status observasi tidak tersedia' : 'Observation status unavailable'}</Badge>
               </>
             }
           />
@@ -444,8 +443,10 @@ export default async function DashboardPage() {
       {/* 2.5 100CENTER: THE 14 SYSTEMS OF EMPIRE OF THE LIGHT (Section 21A.6) */}
       <Panel
         title="100CENTER · The 14 Systems of the Empire"
-        subtitle="Bounded logical systems restored from Section 21A.6 — telemetry, evidence, and research compute."
-        actions={<Badge tone="ok">14 / 14 SYNCHRONIZED</Badge>}
+        subtitle={locale === 'id'
+          ? 'Katalog referensi 14 konsep sistem logis. Tidak ada telemetri live, sinkronisasi, atau pengukuran fisik yang dilaporkan.'
+          : 'Reference catalogue of 14 logical system concepts. No live telemetry, synchronization, or physical measurements are reported.'}
+        actions={<Badge tone="night">{locale === 'id' ? 'Konsep referensi' : 'Reference concepts'}</Badge>}
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 10 }}>
           {EMPIRE_14_SYSTEMS.map((sys) => (
@@ -465,7 +466,7 @@ export default async function DashboardPage() {
                 <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
                   {sys.code}
                 </span>
-                <Badge tone={sys.tone}>{sys.status}</Badge>
+                <Badge tone="night">{locale === 'id' ? 'Status belum diverifikasi' : 'Status not verified'}</Badge>
               </div>
               <strong style={{ fontSize: 13, color: 'var(--fg)' }}>{sys.name}</strong>
               <span style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.4 }}>

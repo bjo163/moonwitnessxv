@@ -29,8 +29,8 @@ test('M19-11 English home copy avoids invented metrics, dates, and live AI claim
   assert.doesNotMatch(copy, /1324|6912|03:24|2024\.09|2025\.08/)
   assert.match(landingCopy.en.stationMapDescription, /markers are illustrative/)
   assert.match(landingCopy.en.archiveDescription, /concepts are planned/)
-  assert.match(landingCopy.en.liveFeedAiTriaged, /^OSINT MONITORING$/)
-  assert.doesNotMatch(landingCopy.en.liveFeedAiTriaged, /\bLIVE\b|\bAI\b/i)
+  assert.match(landingCopy.en.worldMonitor, /PROVIDER FEED NOT CONNECTED/)
+  assert.match(landingCopy.en.worldMonitorNotice, /seeded sample signals are withheld/i)
 })
 
 test('M19-11 an English catalog missing approved mission copy fails with its key identified', () => {

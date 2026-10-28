@@ -71,10 +71,10 @@ test('unverified fabricated counters and dated archive claims are absent from co
   assert.match(landingCopy.id.stationMapDescription, /hanya ilustrasi/)
   assert.equal(landingCopy.en.exploreStories, 'BROWSE RADIO STATIONS')
   assert.equal(landingCopy.id.exploreStories, 'LIHAT STASIUN RADIO')
-  assert.equal(landingCopy.en.liveFeedAiTriaged, 'OSINT MONITORING')
-  assert.equal(landingCopy.id.liveFeedAiTriaged, 'PEMANTAUAN OSINT')
-  assert.doesNotMatch(landingCopy.en.liveFeedAiTriaged, /\bLIVE\b|\bAI\b/i)
-  assert.doesNotMatch(landingCopy.id.liveFeedAiTriaged, /\bumpan langsung\b|\bAI\b/i)
+  assert.match(landingCopy.en.worldMonitor, /PROVIDER FEED NOT CONNECTED/)
+  assert.match(landingCopy.en.worldMonitorNotice, /seeded sample signals are withheld/i)
+  assert.match(landingCopy.id.worldMonitor, /FEED PROVIDER BELUM TERHUBUNG/)
+  assert.match(landingCopy.id.worldMonitorNotice, /sinyal contoh tersimpan disembunyikan/i)
 })
 
 test('locale context accepts middleware values and defaults safely to English', () => {

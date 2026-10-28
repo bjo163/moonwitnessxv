@@ -43,7 +43,7 @@ export const REQUIRED_LANDING_UI_KEYS = [
   'weekdaySun',
   'worldMonitor',
   'globalPulse',
-  'liveFeedAiTriaged',
+  'worldMonitorNotice',
   'liveRadioTelemetry',
   'signalsInDock',
   'allStations',

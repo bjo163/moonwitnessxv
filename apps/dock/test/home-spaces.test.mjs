@@ -27,6 +27,12 @@ test('home ships no mockup index counter and no decorative global search', () =>
   assert.doesNotMatch(header, /<input/i, 'a search field without a real endpoint is a false affordance')
 })
 
+test('World Monitor withholds seeded rows until source and freshness metadata can be shown', () => {
+  assert.match(homeSource, /<Card id="world-monitor">[\s\S]*?<p className="m-muted" role="status">\{copy\.worldMonitorNotice\}<\/p>/)
+  assert.doesNotMatch(homeSource, /payload\.signals(?:\?\.length|\.slice)/)
+  assert.match(homeSource, /copy\.globalPulse/)
+})
+
 test('hero keeps the real schedule badge and adds the source CTA', () => {
   assert.match(shellSource, /<LiveDot on=\{Boolean\(nowTitle\)\} \/>/)
   assert.match(shellSource, /localizedDockHref\('\/reader', '', '', locale\)/)
