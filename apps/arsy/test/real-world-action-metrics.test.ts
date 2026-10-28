@@ -49,22 +49,31 @@ test('CONFIDENT metrics: rates use explicit denominators and keep unknown benefi
       benefitEvidence: 'NO_VERIFIED_BENEFIT',
     }),
     action({ id: 'not-started', benefitEvidence: 'UNKNOWN' }),
-    action({ id: 'not-assessed', validSafePlan: false, voluntary: true }),
+    action({ id: 'not-assessed', benefitEvidence: 'NOT_ASSESSED' }),
+    action({
+      id: 'unsafe-evidence-must-not-count',
+      validSafePlan: false,
+      started: true,
+      completed: true,
+      barrierObserved: true,
+      barrierResponse: 'ADAPTED_SAFELY',
+      benefitEvidence: 'VERIFIED_BENEFIT',
+    }),
   ])
 
-  assert.equal(result.eligibleActionCount, 3)
+  assert.equal(result.eligibleActionCount, 4)
   assert.equal(result.startedActionCount, 2)
   assert.equal(result.completedActionCount, 1)
-  assert.equal(result.initiationRate.percent, 66.67)
-  assert.equal(result.completionRate.percent, 33.33)
+  assert.equal(result.initiationRate.percent, 50)
+  assert.equal(result.completionRate.percent, 25)
 
   assert.equal(result.observedBarrierCount, 2)
   assert.equal(result.safeBarrierResponseCount, 1)
   assert.equal(result.barrierResponseRate.percent, 50)
 
-  assert.equal(result.evaluatedBenefitCount, 2)
+  assert.equal(result.evaluatedBenefitCount, 3)
   assert.equal(result.verifiedBenefitCount, 1)
-  assert.equal(result.practicalBenefitRate.percent, 50)
+  assert.equal(result.practicalBenefitRate.percent, 33.33)
   assert.equal(result.unknownBenefitCount, 1)
   assert.equal(result.unassessedBenefitCount, 1)
 })
