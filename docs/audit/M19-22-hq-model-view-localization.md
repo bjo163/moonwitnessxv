@@ -67,3 +67,17 @@ At dirty worktree based on `feb5d224ef3e2ce1b93d02a52f7424b761231fe9`, before th
 ## Integrated exact-SHA revalidation
 
 Implementation SHA: `20fbeea8c0802b221321e512a177a845d3fbac80`; integrated verification SHA: `db838646f40c93d364c574ac2e9e05186e74cc6e` (`dev`; descendant adds the audit's exact-SHA results). At HEAD `db83864`, the integrator reran the focused Hub ACL suite (3/3), HQ localization/auth guard tests (27/27), Headquarters typecheck (exit 0), and scoped ESLint (exit 0, three `no-non-null-assertion` warnings). `git diff --check HEAD^ HEAD` on the implementation commit was clean. These local runs used the shared working tree, which still contained unrelated uncommitted files including `apps/headquarters/src/data/actions.ts`; that file is excluded from M19-22. The implementation commit contains only the twelve leased paths listed in its diff. GitHub Actions run [40542420815](https://github.com/bjo163/moonwitnessxv/actions/runs/40542420815) passed monorepo verification and guarded promotion for exact SHA `db83864`; remote `dev` and `main` both resolve to it. No browser E2E, live PostgreSQL operation, or deployment is claimed.
+
+## Owner-authorized editor-action follow-up
+
+After the original close, the owner explicitly authorized including the existing HQ editor-action diff in the M19-22 lease. The change is present at implementation commit `4a501d6b66ca9439bb68a4608c2d80b49be3f881` and adds server-side published-schema CRUD authorization for create/update/remove, mandatory single-value delete confirmation, validated model/id redirect segments, and stable localized error codes that never expose upstream messages. It keeps ARSY/Hub as the only ACL authority and does not change schema identifiers or routes. Changed paths: `apps/headquarters/src/data/actions.ts`, `apps/headquarters/src/lib/editor-copy.ts`, the two model page files, `apps/headquarters/test/editor-actions.test.ts`, and root `package.json` (test registration).
+
+The follow-up was verified in the shared worktree at exact baseline/result SHA `b77c2cb1d432b215194b1832e86b1ec16d25708a`:
+
+| Command | Observed result |
+|---|---|
+| `pnpm --filter @moonwitness/arsy exec tsx --test ../../apps/headquarters/test/editor-actions.test.ts` | 3 passed, 0 failed, 0 skipped; covers exact delete confirmation and adversarial duplicates, status-only/non-leaking localized errors, and server action ordering for authorization/confirmation before mutations |
+| `pnpm --filter @moonwitness/headquarters typecheck` | exit 0 |
+| `pnpm exec eslint "apps/headquarters/src/app/(admin)/models/[model]/[id]/page.tsx" "apps/headquarters/src/app/(admin)/models/[model]/page.tsx" apps/headquarters/src/data/actions.ts apps/headquarters/src/lib/editor-copy.ts apps/headquarters/test/editor-actions.test.ts` | exit 0; 1 existing non-null assertion warning in the edit page |
+
+This owner-authorized follow-up supplements the earlier M19-22 evidence; the follow-up has no separate GitHub Actions result, browser CRUD run, live Hub/database test, or deployment evidence. No unrelated working-tree changes are included in its path claim.
