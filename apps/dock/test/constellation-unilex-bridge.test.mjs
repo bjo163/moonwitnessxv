@@ -25,6 +25,7 @@ const read = (...segments) => fs.readFileSync(path.resolve(appRoot, ...segments)
 
 const viewSource = read('src', 'ui', 'components', 'constellation.tsx')
 const querySource = read('src', 'data', 'queries', 'constellation.ts')
+const projectionSource = read('src', 'data', 'queries', 'graph-projection.ts')
 const css = read('src', 'app', 'globals.css')
 
 function nodeCard(source, signature) {
@@ -57,7 +58,7 @@ test('UI-P06c the UNILEX key on a constellation node is a link, not printed text
 test('UI-P06c the bridge appears only when the projection actually carries a mapping', () => {
   assert.match(nodeCardSource, /\{node\.unilexStableId \? \(/)
   assert.match(nodeCardSource, /no term mapping/, 'an unmapped node says so instead of rendering a dead link')
-  assert.match(querySource, /unilexStableId: string \| null/, 'the null branch is the projected shape, not a local guess')
+  assert.match(projectionSource, /unilexStableId: string \| null/, 'the null branch is the projected shape, not a local guess')
   assert.doesNotMatch(nodeCardSource, /href=\{localeHref\(`\/terms\/`\)\}/, 'an empty stable id must never build a bare /terms href')
 })
 

@@ -202,7 +202,7 @@ test('UI2-G10 every attributed source span takes both lang and dir from the proj
       file: 'src/ui/components/constellation.tsx',
       what: 'an ontology alias keeps its own script',
       span: /<span className="dk-terms-alias|<span className="dk-graph-alias-surface" lang=\{alias\.languageCode\} dir=\{alias\.direction\}>/,
-      projection: 'src/data/queries/constellation.ts',
+      projection: 'src/data/queries/graph-projection.ts',
       fields: [/export interface GraphAlias \{[\s\S]*?direction: 'ltr' \| 'rtl'/],
     },
     {
