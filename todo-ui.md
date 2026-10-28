@@ -29,17 +29,17 @@
 | [x] | UI-F03 | P0 | D2 | UI-F01 | Inspect rights, licences, consent and origin of PNG screenshots, textured images and fonts before import. **[ledger](docs/audit/ui-baseline-8737fe4.md#3-rights--licence-review-of-the-reference-assets-ui-f03)** |
 | [x] | UI-F04 | P0 | D1 | UI-F02 | Identify existing MoonUI primitives (Card, Panel, Nav, Tabs, DataTable, Tooltip, Modal, Skeleton). **[inventory](docs/audit/ui-baseline-8737fe4.md#4-moonui-primitive-inventory-ui-f04)** |
 | [ ] | UI-F05 | P1 | D2 | UI-F04 | Translate mockup hierarchy to responsive shell; reuse existing Dock public shell and HQ private shell. |
-| [x] | UI-F06 | P1 | D2 | UI-F05 | Establish typography scale for display, titles, body, captions and monospaced status. **[evidence](docs/audit/ui-screens-evidence-38560d3.md#what-each-screen-actually-gained)** |
-| [x] | UI-F07 | P1 | D2 | UI-F05 | Define responsive 360/390/768/1024/1440/1920 width behavior and avoid horizontal page overflow. **[geometry](docs/audit/ui-screens-evidence-38560d3.md#geometry-live-app-on-3001-en-and-id)** |
+| [x] | UI-F06 | P1 | D2 | UI-F05 | Establish typography scale for display, titles, body, captions and monospaced status. **[evidence](docs/audit/ui-screens-evidence-38560d3.md#what-each-screen-actually-gained)** — **scope note at `fe8e84c`:** what is single-sourced is the four *families* (`packages/moonui/moon.css:42-45`); no size ramp exists, Dock sizes are per-rule `clamp()` values (`globals.css:188,199,275,507,664,842,890`). The row stays ticked for the family contract it actually delivered; the scale itself is reopened under UI2-G05. |
+| [x] | UI-F07 | P1 | D2 | UI-F05 | Define responsive 360/390/768/1024/1440/1920 width behavior and avoid horizontal page overflow. **[geometry](docs/audit/ui-screens-evidence-38560d3.md#geometry-live-app-on-3001-en-and-id)** — **scope note at `fe8e84c`:** the cited geometry covers four widths (390/768/1440/1920) on the home route only, on the hub-offline branch; 360 and 1024 were never measured and the other screens are not covered by that number. Overflow-free behavior for the rest of the matrix is UI2-G07's job, not evidence this row already had. |
 | [ ] | UI-F08 | P1 | D2 | UI-F04 | Build/verify one common Crown/Logo/DistressedBorder pattern using semantic tokens and original SVG. |
-| [x] | UI-F09 | P1 | D2 | UI-F08 | Implement reusable NavActive, AppTile, ProgressPanel, StatusLine and ContentCard where missing. **[evidence](docs/audit/ui-screens-evidence-38560d3.md#what-each-screen-actually-gained)** |
+| [x] | UI-F09 | P1 | D2 | UI-F08 | Implement reusable NavActive, AppTile, ProgressPanel, StatusLine and ContentCard where missing. **[evidence](docs/audit/ui-screens-evidence-38560d3.md#what-each-screen-actually-gained)** — **wording correction at `fe8e84c`:** those five names do not exist repo-wide (`grep` → 0 matches); the row is satisfied by the capabilities under their real owners — active-route marking in `dock/src/ui/components/shell.tsx:199-207` (`aria-current="page"`), the tile in `sections.tsx:436,470` and `spaces.tsx:70`, the status line in `client/LiveTicker.tsx`. The tick stands on capability, not on the five labels; see [G04 §2.5/§4.2](docs/audit/ui2-g04-predecessor-reconciliation-fe8e84c.md). |
 | [ ] | UI-F10 | P1 | D2 | UI-F09 | Add consistent 4-state data model: loading / empty / error / ready for every data-backed panel. |
 | [x] | UI-F11 | P0 | D2 | UI-F10 | Add explicit DEMO/PLACEHOLDER/PLANNED labels; never use fake live counters or false delivery stats. **[evidence](docs/audit/ui-screens-evidence-38560d3.md#what-each-screen-actually-gained)** |
 | [ ] | UI-F12 | P1 | D3 | UI-F05 | Ensure bilingual id/en UI keys and locale-preserving links; keep source-language direction independent. |
 | [ ] | UI-F13 | P0 | D2 | UI-F05 | Define server-side auth/role checks for HQ/private routes; preserve BFF/httpOnly and D00 rules. |
 | [ ] | UI-F14 | P1 | D3 | UI-F08 | Create icon vector pipeline: title/ARIA, no external scripts, license and content hash. |
 | [ ] | UI-F15 | P1 | D3 | UI-F11 | Protect provenance, cited passage, editions, rights and review labels in every public view. |
-| [ ] | UI-F16 | P1 | D2 | UI-F09 | Implement mobile drawer with Escape/focus restoration and route-active navigation. |
+| [x] | UI-F16 | P1 | D2 | UI-F09 | Implement mobile drawer with Escape/focus restoration and route-active navigation. **[verified at `1927e8e`](docs/audit/ui2-g04-predecessor-reconciliation-fe8e84c.md)** — `shell.tsx:124-177` (Escape closes, focus trapped, previous element restored), route-active `aria-current` at `:199-207`, `aria-modal` dialog `:257`; `node --experimental-strip-types --test test/mobile-drawer-contract.test.mjs` → **14/14 pass, 0 fail** run at `1927e8e`. No CI E2E yet: the keyboard pass lives in the manual Playwright harness, so UI2-G12 keeps its own row open. |
 | [ ] | UI-F17 | P1 | D2 | UI-F09 | Keep forms Field labels/error/help/focus; tabs roving arrow/Home/End; confirmation dialogs guarded. |
 | [ ] | UI-F18 | P1 | D3 | UI-F10 | Build visual test harness with screenshots at agreed breakpoints, id/en, reduced-motion. |
 | [ ] | UI-F19 | P0 | D3 | UI-F12,UI-F18 | Run ui:check, lint, relevant test/typecheck/build; record exact command, output and SHA. |
@@ -78,7 +78,7 @@ Reference: [`01_dock_lighthouse.svg`](docs/design/mockups-xv/01_dock_lighthouse.
 ### UI-P02 — PROJECT UNIVERSE (P1)
 Reference: [`02_project_universe.svg`](docs/design/mockups-xv/02_project_universe.svg) · Canonical task owner: **M17 / M19** · Code owner: `Dock projection + HQ editor` · route: `/projects (proposed)`.
 
-- [ ] **UI-P02a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
+- [x] **UI-P02a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference. **[audit](docs/audit/ui-p02-p12-audits-fe8e84c.md)** — route, permissions, reusable components and data owner recorded for this screen, plus the difference list against the reference; the screen-level verdict and its unblock condition are in the audit's final route-status table.
 - [ ] **UI-P02b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P02c · D3:** List only approved public projects and label original fiction.
 - [ ] **UI-P02d · D3:** Filters, search, empty/no-rights states and image alt.
@@ -88,7 +88,7 @@ Reference: [`02_project_universe.svg`](docs/design/mockups-xv/02_project_univers
 ### UI-P03 — STORY FORGE (P1)
 Reference: [`03_story_forge.svg`](docs/design/mockups-xv/03_story_forge.svg) · Canonical task owner: **M17 / M33** · Code owner: `HQ initially; separate SHADOW only if approved` · route: `private draft route TBD`.
 
-- [ ] **UI-P03a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
+- [x] **UI-P03a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference. **[audit](docs/audit/ui-p02-p12-audits-fe8e84c.md)** — route, permissions, reusable components and data owner recorded for this screen, plus the difference list against the reference; the screen-level verdict and its unblock condition are in the audit's final route-status table.
 - [ ] **UI-P03b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P03c · D3:** Scene outline, character references, version save with real authorization.
 - [ ] **UI-P03d · D3:** Narrative fiction vs witness vs citation visibly separated.
@@ -98,7 +98,7 @@ Reference: [`03_story_forge.svg`](docs/design/mockups-xv/03_story_forge.svg) · 
 ### UI-P04 — POSTER LAB (P1)
 Reference: [`04_poster_lab.svg`](docs/design/mockups-xv/04_poster_lab.svg) · Canonical task owner: **M18 / M33** · Code owner: `Existing GeneratorStudio before new renderer` · route: `private studio route TBD`.
 
-- [ ] **UI-P04a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
+- [x] **UI-P04a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference. **[audit](docs/audit/ui-p02-p12-audits-fe8e84c.md)** — route, permissions, reusable components and data owner recorded for this screen, plus the difference list against the reference; the screen-level verdict and its unblock condition are in the audit's final route-status table.
 - [ ] **UI-P04b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P04c · D3:** Canvas, layers, selected object and keyboard editing baseline.
 - [ ] **UI-P04d · D3:** Asset attribution, consent and license checks before export.
@@ -128,7 +128,7 @@ Reference: [`06_unilex_explorer.svg`](docs/design/mockups-xv/06_unilex_explorer.
 ### UI-P07 — MOONLAB RESEARCH (P1)
 Reference: [`07_moonlab_research.svg`](docs/design/mockups-xv/07_moonlab_research.svg) · Canonical task owner: **M14 / M34** · Code owner: `HQ research desk until scope approved` · route: `private research route TBD`.
 
-- [ ] **UI-P07a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
+- [x] **UI-P07a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference. **[audit](docs/audit/ui-p02-p12-audits-fe8e84c.md)** — route, permissions, reusable components and data owner recorded for this screen, plus the difference list against the reference; the screen-level verdict and its unblock condition are in the audit's final route-status table.
 - [ ] **UI-P07b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P07c · D3:** Case workspace evidence / counterevidence / hypothesis views.
 - [ ] **UI-P07d · D3:** Reviewer separation, decisions, correction or retraction controls.
@@ -138,7 +138,7 @@ Reference: [`07_moonlab_research.svg`](docs/design/mockups-xv/07_moonlab_researc
 ### UI-P08 — WORLD MONITOR (P2)
 Reference: [`08_world_monitor.svg`](docs/design/mockups-xv/08_world_monitor.svg) · Canonical task owner: **M24** · Code owner: `Proposed source-backed WORLD projection` · route: `world route TBD`.
 
-- [ ] **UI-P08a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
+- [x] **UI-P08a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference. **[audit](docs/audit/ui-p02-p12-audits-fe8e84c.md)** — route, permissions, reusable components and data owner recorded for this screen, plus the difference list against the reference; the screen-level verdict and its unblock condition are in the audit's final route-status table.
 - [ ] **UI-P08b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P08c · D3:** Grounded source/time/region filters, no invented live-map feed.
 - [ ] **UI-P08d · D3:** Observation details include freshness and uncertainties.
@@ -148,7 +148,7 @@ Reference: [`08_world_monitor.svg`](docs/design/mockups-xv/08_world_monitor.svg)
 ### UI-P09 — PUBLISHING HUB (P1)
 Reference: [`09_publishing_hub.svg`](docs/design/mockups-xv/09_publishing_hub.svg) · Canonical task owner: **M18 / M20** · Code owner: `apps/headquarters` · route: `private publishing route TBD`.
 
-- [ ] **UI-P09a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
+- [x] **UI-P09a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference. **[audit](docs/audit/ui-p02-p12-audits-fe8e84c.md)** — route, permissions, reusable components and data owner recorded for this screen, plus the difference list against the reference; the screen-level verdict and its unblock condition are in the audit's final route-status table.
 - [ ] **UI-P09b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P09c · D3:** Draft → rights check → reviewer → released state mapping.
 - [ ] **UI-P09d · D3:** Human approval/attribution/withdrawal audit trail.
@@ -158,7 +158,7 @@ Reference: [`09_publishing_hub.svg`](docs/design/mockups-xv/09_publishing_hub.sv
 ### UI-P10 — HARBOR COMMONS (P2)
 Reference: [`10_harbor_commons.svg`](docs/design/mockups-xv/10_harbor_commons.svg) · Canonical task owner: **M32 / M37** · Code owner: `Proposed app, no independent auth` · route: `private community route TBD`.
 
-- [ ] **UI-P10a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
+- [x] **UI-P10a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference. **[audit](docs/audit/ui-p02-p12-audits-fe8e84c.md)** — route, permissions, reusable components and data owner recorded for this screen, plus the difference list against the reference; the screen-level verdict and its unblock condition are in the audit's final route-status table.
 - [ ] **UI-P10b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P10c · D3:** Voluntary member library, visibility and privacy controls.
 - [ ] **UI-P10d · D3:** Consent/report/appeal and user deletion/export journeys.
@@ -168,7 +168,7 @@ Reference: [`10_harbor_commons.svg`](docs/design/mockups-xv/10_harbor_commons.sv
 ### UI-P11 — WORKS ECONOMY (P2)
 Reference: [`11_works_economy.svg`](docs/design/mockups-xv/11_works_economy.svg) · Canonical task owner: **M35 / M37** · Code owner: `Proposed app, D15/D16 source-of-truth reviewed` · route: `private works route TBD`.
 
-- [ ] **UI-P11a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
+- [x] **UI-P11a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference. **[audit](docs/audit/ui-p02-p12-audits-fe8e84c.md)** — route, permissions, reusable components and data owner recorded for this screen, plus the difference list against the reference; the screen-level verdict and its unblock condition are in the audit's final route-status table.
 - [ ] **UI-P11b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P11c · D3:** Actual offers / quotes / orders / invoices and current owner.
 - [ ] **UI-P11d · D3:** No fake sales or payment provider before integration approval.
@@ -178,7 +178,7 @@ Reference: [`11_works_economy.svg`](docs/design/mockups-xv/11_works_economy.svg)
 ### UI-P12 — SKYLINK MESSAGING (P1)
 Reference: [`12_skylink_messaging.svg`](docs/design/mockups-xv/12_skylink_messaging.svg) · Canonical task owner: **M38 / M19** · Code owner: `apps/skylink, bounded D18 owner` · route: `operator inbox proposed`.
 
-- [ ] **UI-P12a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference.
+- [x] **UI-P12a · D1:** Audit actual route, permissions, reusable components and data owner; list differences from reference. **[audit](docs/audit/ui-p02-p12-audits-fe8e84c.md)** — route, permissions, reusable components and data owner recorded for this screen, plus the difference list against the reference; the screen-level verdict and its unblock condition are in the audit's final route-status table.
 - [ ] **UI-P12b · D2:** Build accessible static structure using existing MoonUI shell/tokens (no fake operational claims).
 - [ ] **UI-P12c · D3:** Three panes, statuses disconnected/connecting/open/logged-out.
 - [ ] **UI-P12d · D3:** Pairing QR only during pairing, no logs or leaked credential.

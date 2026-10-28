@@ -19,7 +19,7 @@ import fs from 'node:fs'
 import process from 'node:process'
 import { expect, test } from '@playwright/test'
 
-import { BASE_URL, OFFLINE_HUB_URL, UI_PORT } from './global-setup.mjs'
+import { BASE_URL, OFFLINE_HUB_URL, UI_PORT, expectsOfflineBranch, hubRun } from './global-setup.mjs'
 import {
   DESIGN_BASELINE,
   GEOMETRY_PATH,
@@ -32,15 +32,15 @@ import {
 } from './paths.mjs'
 
 /**
- * Which hub the spawned Dock server was told to talk to. The default is a closed
- * loopback port, so every data-backed screen renders its offline branch and the
- * harness asserts that branch. Supplying UI_HUB_URL for a reachable hub flips the
- * expectation: rendering "offline" against a live hub is then a defect, and the
- * live branch is what the screenshots evidence. The mode is recorded in
+ * The hub condition, as measured by global-setup before the first test ran —
+ * never inferred from the shape of the URL. `offline-forced` and
+ * `hub-unreachable` both render the outage branch; only a `live-hub` probe lets
+ * a data-backed screenshot evidence the ready branch. The mode is recorded in
  * geometry.json either way, because a number is only evidence with its condition.
  */
-const HUB_MODE = OFFLINE_HUB_URL.includes(':65535') ? 'offline-forced' : 'live-hub'
-const EXPECTED_HOME_BRANCH = HUB_MODE === 'offline-forced' ? 'offline' : 'ready'
+const RUN = hubRun()
+const HUB_MODE = RUN.mode
+const EXPECTED_HOME_BRANCH = expectsOfflineBranch(HUB_MODE) ? 'offline' : 'ready'
 
 const WIDTHS = [
   { width: 390, height: 844 },  { width: 768, height: 1024 },
@@ -432,8 +432,8 @@ test('preflight · the spawned server answers and locale routing is middleware-d
   expect(new URL(bare.headers()['location'], BASE_URL).pathname).toBe('/id')
   const homeText = await home.text()
   const outageStated = homeText.includes('Live station and schedule data is temporarily unavailable')
-  if (HUB_MODE === 'offline-forced') {
-    expect(outageStated, 'the hub is the closed port the harness chose, so home must state the outage').toBe(true)
+  if (expectsOfflineBranch(HUB_MODE)) {
+    expect(outageStated, `the hub was measured as "${HUB_MODE}" at ${OFFLINE_HUB_URL}, so home must state the outage`).toBe(true)
   } else {
     // In live mode the same sentence would mean the hub never answered, which
     // invalidates every screenshot below — fail loudly instead of capturing it.
@@ -649,9 +649,9 @@ test.afterAll(() => {
       hubUrl: OFFLINE_HUB_URL,
       note:
         'The harness spawns and stops its own Dock dev server. Ports 3000/3001 belong to another local project and are never bound, probed or killed. ' +
-        (HUB_MODE === 'offline-forced'
-          ? 'Because the hub URL points at a closed port, every data-backed screen below was measured on the hub-offline branch — the live branch is NOT covered by these numbers.'
-          : `The hub URL points at a reachable hub in ${HUB_MODE} mode, so data-backed screens are measured on their live branch. This run's hub is an ephemeral in-process instance, not the deployed one.`),
+        (expectsOfflineBranch(HUB_MODE)
+          ? `The probe of ${OFFLINE_HUB_URL} measured "${HUB_MODE}", so every data-backed screen below was captured on the hub-offline branch — the live branch is NOT covered by these numbers.`
+          : `The probe of ${OFFLINE_HUB_URL} answered, so data-backed screens are measured on their live branch. This run's hub is whatever ${HUB_MODE} reached — not necessarily the deployed one.`),
     },
     breakpoints: WIDTHS.map((w) => w.width),
     locales: LOCALES,

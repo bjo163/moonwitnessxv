@@ -14,7 +14,12 @@ const port = Number(process.env.UI_PORT ?? 3101)
 
 export default defineConfig({
   testDir: here,
-  testMatch: /visual\.spec\.mjs/,
+  // Both specs share one server and one scratch ledger. `visual.spec.mjs` writes
+  // the PNG + geometry evidence set; `qa-matrix.spec.mjs` (UI2-G12) proves
+  // keyboard, focus, overflow, state-branch and negative-route behaviour and
+  // writes no image, so a positional filter selects either half:
+  //   playwright test --config scripts/ui/playwright.config.mjs qa-matrix
+  testMatch: /\.spec\.mjs$/,
   globalSetup: path.join(here, 'global-setup.mjs'),
   // Playwright's scratch space (traces, failure snapshots) stays out of the
   // repository; the only repo artifacts are the deterministic files in

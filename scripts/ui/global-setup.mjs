@@ -31,12 +31,69 @@ export const UI_PORT = PORT
 export const BASE_URL = `http://127.0.0.1:${PORT}`
 
 /**
- * The hub URL the spawned server is given. It points at a closed loopback port
- * on purpose: the repository .env otherwise sends Dock straight to 127.0.0.1:3000,
- * which on this machine is an unrelated project. A closed port keeps the harness
- * on the honest hub-offline branch and never touches another stack.
+ * The hub URL the spawned server is given. The default points at a closed
+ * loopback port on purpose: the repository .env otherwise sends Dock straight to
+ * 127.0.0.1:3000, which on this machine is an unrelated project. A closed port
+ * keeps the harness on the honest hub-offline branch and never touches another
+ * stack.
  */
-export const OFFLINE_HUB_URL = process.env.UI_HUB_URL ?? 'http://127.0.0.1:65535/api/v1'
+const DEFAULT_HUB_URL = 'http://127.0.0.1:65535/api/v1'
+export const HUB_URL = process.env.UI_HUB_URL ?? DEFAULT_HUB_URL
+
+/** Kept as the original name: nothing else in the harness re-derives the mode. */
+export const OFFLINE_HUB_URL = HUB_URL
+
+/**
+ * Did anything actually answer on the hub URL? The mode is a measured fact, not
+ * an inference from a sentinel port.
+ *
+ * This exists because the committed `docs/audit/screens/geometry.json` records
+ * `hubMode: "offline-forced"` beside `hubUrl: "http://127.0.0.1:3102/api/v1"`,
+ * a pair the port-string heuristic could not have produced. Inferring the mode
+ * from the shape of a URL let evidence claim a condition nobody verified; a
+ * reachability probe cannot be contradicted by its own input.
+ */
+function probeHub(url) {
+  return new Promise((resolvePromise) => {
+    let host
+    let port
+    try {
+      const parsed = new URL(url)
+      host = parsed.hostname
+      port = Number(parsed.port || (parsed.protocol === 'https:' ? 443 : 80))
+    } catch {
+      resolvePromise(false)
+      return
+    }
+    const socket = connect({ host, port, timeout: 900 })
+    const finish = (value) => {
+      socket.destroy()
+      resolvePromise(value)
+    }
+    socket.once('connect', () => finish(true))
+    socket.once('timeout', () => finish(false))
+    socket.once('error', () => finish(false))
+  })
+}
+
+/**
+ * The run condition every spec must agree on. Test workers are separate
+ * processes, so the resolved values travel through the inherited environment
+ * rather than module state.
+ */
+export function hubRun() {
+  return {
+    hubUrl: process.env.UI_HUB_URL ?? DEFAULT_HUB_URL,
+    mode: process.env.UI_HUB_MODE_RESOLVED ?? 'unresolved',
+    runHead: process.env.UI_RUN_HEAD ?? 'unknown',
+  }
+}
+
+/** Offline is offline, whatever named the port: both branches render the outage state. */
+export function expectsOfflineBranch(mode) {
+  return mode !== 'live-hub'
+}
+
 
 function isPortFree(port) {
   return new Promise((resolvePromise) => {
@@ -112,6 +169,28 @@ export default async function globalSetup() {
   // so the spec can stamp the HEAD it actually ran against.
   process.env.UI_RUN_HEAD = currentHead()
 
+  // Measure the hub condition instead of guessing it from the URL's shape, and
+  // refuse to run when the operator declared a mode the probe contradicts.
+  const reachable = await probeHub(HUB_URL)
+  const measuredMode = process.env.UI_HUB_URL
+    ? reachable ? 'live-hub' : 'hub-unreachable'
+    : reachable ? 'sentinel-port-occupied' : 'offline-forced'
+  const declared = process.env.UI_HUB_MODE
+  if (declared && declared !== measuredMode) {
+    throw new Error(
+      `UI_HUB_MODE says "${declared}" but the probe of ${HUB_URL} measured "${measuredMode}". ` +
+        'The harness will not record a condition it did not observe — fix the URL or drop UI_HUB_MODE.',
+    )
+  }
+  if (measuredMode === 'sentinel-port-occupied') {
+    throw new Error(
+      `No UI_HUB_URL was given, so the harness expected ${HUB_URL} to be closed, but something answered. ` +
+        'Pass UI_HUB_URL explicitly rather than measuring a live hub under an offline label.',
+    )
+  }
+  process.env.UI_HUB_MODE_RESOLVED = measuredMode
+  console.log(`[ui-visual-harness] hub condition measured: ${measuredMode} at ${HUB_URL}`)
+
   const child = spawn(
     process.execPath,
     [nextBin, 'dev', '--hostname', '127.0.0.1', '--port', String(PORT)],
@@ -184,7 +263,7 @@ export default async function globalSetup() {
     stopHandlers.push([event, handler])
   }
 
-  console.log(`[ui-visual-harness] dock dev ready on ${BASE_URL} (pid ${child.pid}), hub forced offline at ${OFFLINE_HUB_URL}`)
+  console.log(`[ui-visual-harness] dock dev ready on ${BASE_URL} (pid ${child.pid}), hub condition ${process.env.UI_HUB_MODE_RESOLVED} at ${OFFLINE_HUB_URL}`)
 
   return async () => {
     for (const [event, handler] of stopHandlers) process.off(event, handler)
