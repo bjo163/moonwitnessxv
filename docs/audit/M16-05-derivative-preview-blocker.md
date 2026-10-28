@@ -1,10 +1,14 @@
 # M16-05 — Redacted derivative preview readiness blocker
 
-**Status:** OPEN / BLOCKED on owner-approved redaction rules and independent privacy review. No preview implementation or public output is claimed.
+**Status:** OPEN / BLOCKED pending a verifiable reference to the owner-approved redaction rules and independent privacy review. No preview implementation or public output is claimed.
 
 **Baseline:** `dev` at `9fa9b373fcbed977cc033c376476435692ee4692`.
 **Latest observed `origin/main`:** `32060943102120428bff26849601c2c760f851ca`.
 **Prerequisite:** M16-04 is checked at implementation SHA `ef415f3518637a3d3a65103b3973bd7019a9ba90`.
+
+## Owner clarification — 2026-10-28
+
+The owner reports that approved redaction rules and a reviewer exist. The response did not include the policy document path or reviewer role, so the contents, approval scope, independence, and review evidence cannot yet be verified. A read-only search of repository Markdown and the M16 decision/audit/task folders found no identified general redaction procedure or M16-05 review record; the existing M03-06 minor-protection rule is not a complete redaction method for arbitrary testimony. No witness content, consent document, or private evidence was accessed. M16-05 remains open pending the exact policy reference and reviewer role/evidence.
 
 ## Evidence and boundary
 
@@ -22,8 +26,8 @@ A synthetic private mock could test rendering mechanics, but it cannot prove a v
 
 ## Required inputs to resume
 
-1. Owner-approved rules for producing and checking a redacted derivative, including how publication scope in consent constrains the preview.
-2. A named independent privacy reviewer and review evidence for the preview workflow; do not place witness content or private evidence in Git.
+1. The path to the owner-approved rules for producing and checking a redacted derivative, including how publication scope in consent constrains the preview.
+2. The independent privacy reviewer's role and where review evidence for the preview workflow is recorded; do not place witness content or private evidence in Git.
 3. For any public rendering, an accepted D08 release authority and projection. A private preview must remain behind the existing D06 consent and per-record ACL checks.
 
 ## Commands and limits
