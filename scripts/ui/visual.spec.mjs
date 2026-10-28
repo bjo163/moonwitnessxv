@@ -585,7 +585,9 @@ test('keyboard pass · drawer at 390px and primary/index semantics at 1440px', a
       return link ? { text: link.textContent.trim().slice(0, 30), href: link.getAttribute('href') } : null
     })
     mkdirScreens()
-    await page.screenshot({ path: `${SCREENS_DIR}/drawer-en-390-open.png`, fullPage: false })
+    const drawerScreenshot = `${SCREENS_DIR}/drawer-en-390-open.png`
+    await page.screenshot({ path: drawerScreenshot, fullPage: false })
+    report.drawerScreenshot = path.relative(process.cwd(), drawerScreenshot).replaceAll('\\', '/')
     await page.keyboard.press('Escape')
     await expect(drawer).toBeHidden()
 
