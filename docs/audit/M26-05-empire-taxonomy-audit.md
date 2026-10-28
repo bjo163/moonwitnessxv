@@ -9,7 +9,7 @@
 
 ## Verdict
 
-**NOT-CLOSABLE.** Code-level taxonomy separation and permission-kind separation both pass, and no Empire token grants authority. The acceptance is blocked by one ratified documentation conflict: `docs/decisions/M02-01-disambiguation-registry.md:36` defines `G.O.D.99` as the “arsitektur 99 bab/skenario” (99-chapter/scenario architecture), while `docs/vision/MASTER_VISION_NARRATIVE_XV.md:122` requires `G.O.D. 99` to be **distinct from any 99 editorial chapter count**, and `:435` defines it as 99 fictional organizational duty/persona slots. That is a doc-level merged identity, not a runtime permission grant. Correcting that line is the only blocker to closure; see §7.
+**CLOSABLE after owner decision (2026-10-28).** Code-level taxonomy separation and permission-kind separation both pass, and no Empire token grants authority. The only blocker was a ratified documentation conflict: `docs/decisions/M02-01-disambiguation-registry.md:36` defined `G.O.D.99` as the “arsitektur 99 bab/skenario” (99-chapter/scenario architecture), while `docs/vision/MASTER_VISION_NARRATIVE_XV.md:122` requires `G.O.D. 99` to be **distinct from any 99 editorial chapter count**, and `:435` defines it as 99 fictional organizational duty/persona slots. The owner chose the vision definition on 2026-10-28 and the registry line was corrected to 99 fictional duty/persona slots, explicitly separate from the 99 editorial chapters and from Asmaul Husna. Runtime permission kinds were never affected. Asma has no repository registry; that absence is recorded, not invented.
 
 ## 1. Scope and method
 

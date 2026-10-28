@@ -33,7 +33,7 @@ Menegakkan batasan ontologis yang tegas dalam seluruh model data, pencarian, dan
 Untuk mencegah misinterpretasi terhadap angka-angka simbolis di dalam catatan sejarah repositori:
 
 1. **Asmaul Husna (99)**: 99 Nama/Sifat Allah dalam teologi Islam (Domain Sakral).
-2. **G.O.D.99**: Kode naratif simbolis arsitektur 99 bab/skenario semesta kreatif MoonWitness (Domain Fiksi `D07`).
+2. **G.O.D.99**: Kode naratif simbolis untuk 99 slot tugas/persona organisasi fiktif (Domain Fiksi `D07`/`D11`), **terpisah dari 99 bab editorial** dan dari Asmaul Husna. Bukan 99 dewa, bukan 99 Asma, dan bukan 99 agen otonom. Diratifikasi pemilik 2026-10-28 untuk menyelaraskan baris ini dengan `MASTER_VISION_NARRATIVE_XV.md` §12.3.
 3. **99 Human States**: Taksonomi psikologis/kondisi eksistensial manusia dalam modul riset (Domain `D05`).
 4. **9 Prime Codes & 10 WINGS**: Taksonomi operasional semesta Empire (Domain `D11 Journey` / `D07 Story`).
 5. **33 World Patches & AETHERION 100 Levels**: Desain lingkungan game/dunia fiksi (Domain `D11 Journey`).

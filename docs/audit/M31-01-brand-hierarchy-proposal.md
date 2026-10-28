@@ -1,6 +1,6 @@
 # M31-01 — Brand hierarchy and public domain purpose proposal
 
-**Status: PROPOSED — not owner-ratified.** This artifact records a recommendation for review. It does not approve a domain, brand change, public route, deployment, rights status, or production claim.
+**Status: RATIFIED 2026-10-28 — owner selected option A.** The owner confirmed the hierarchy below. This ratifies names and purpose only; it does not approve a domain purchase, DNS/TLS change, public route, deployment, rights status, or production claim.
 
 ## Evidence reviewed
 
@@ -34,3 +34,11 @@ Choose whether to:
 - **B — Revise it:** provide the desired hierarchy and public purpose for the domain.
 
 Until that decision is recorded, keep M31-01 open and treat all names/domain purpose above as proposed.
+
+## Owner ratification record
+
+- **Decision:** option **A — confirm the recommendation**.
+- **Date:** 2026-10-28.
+- **Confirmed hierarchy:** MoonWitness XV is the program/repository name; A-L-L-A-H / Empire of the Light is the narrative vision label; LIGHTHOUSE is the public gateway experience implemented inside the existing Dock application; `a-l-l-a-h.com` is the intended public entry point **after** domain ownership, DNS/TLS, rights/release gates and deployment are separately verified.
+- **Explicitly not granted by this ratification:** any separate LIGHTHOUSE app/backend/identity/database, any public exposure of HQ, ARSY, private witness or unreviewed research, any claim that the domain is owned or deployed, and any religious authority or canon approval.
+- **Downstream:** M31-02 designs the gateway journeys and available/planned states under this hierarchy; M31-03 records the Dock-reuse runtime decision; no code or deployment is implied by this record.
