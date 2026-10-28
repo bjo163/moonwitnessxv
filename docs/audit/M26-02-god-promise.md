@@ -2,14 +2,16 @@
 
 - **Task**: M26-02 (LEAF) · **Milestone**: [M26](../milestones/M26.md) · **Prerequisite**: M06-06
 - **Declared baseline SHA**: `659da2855f56c61ae9d21e2995be9649c77fc470` (`dev`)
-- **Observed worktree HEAD**: `dfc65564760eda4ced596f661bda3f84c2d755e5` (`dev`; `659da28` is an ancestor)
+- **Observed worktree HEAD**: `e76df8b0931f7553615e7eb693084c2d36d39e55` (`dev`; `659da28` is an ancestor; three commits after baseline)
 - **Worker**: repository-evidence leaf (AI agent), read-only outside the claimed files
-- **Claimed files**: `docs/data/M26-02-god-promise.json` (new), `scripts/check-m26-02-god-promise.mjs` (new), this audit (new)
+- **Claimed files**: `docs/data/M26-02-god-promise.json`, `scripts/check-m26-02-god-promise.mjs`, this audit (all created by this task; committed concurrently by an integrator session at `f841db5`)
 - **Acceptance tested**: "Different originals not automatically merged"
 
 ## 1. Result
 
 **The recorded acceptance is evidenced; closure is the integrator's decision.** The ledger holds three explicit originals — `00-MAIN GOD PROMISE`, `GOD PROMISE: THE ROCKSOUL` and the academic `GOD-PROMISE MOONWITNESS — Monocentric 1·6·3` paper — as 16 single-origin evidence rows. Every row names the other two origins in `distinct_from`, all three separation pairs are `distinctFrom` with `merge_permitted: false`, and all three forbidden merges are `allowed: false`. The validator rejects any row that tries to hold two origins.
+
+After the ledger and audit were produced, a concurrent integrator session committed the three files at `f841db5` and rewrote the TODO M26-02 row at `e76df8b`. This worker ran no `git add`, `git commit` or TODO edit; the closure is not claimed here. Because that rewrite removed the acceptance sentence from `TODO.md:598`, the ledger now pins the acceptance quote to the stable task packet, `docs/tasks/M26/M26-02.md:12`.
 
 **No manuscript was recovered.** Zero rows are `EVIDENCED`, zero primary artifacts are registered, and zero rows are `RECOVERED`. Nine rows are `NEEDS_SOURCE` because the repository itself says the originals are missing, private, unimported or unreviewed; seven are `LABEL_ONLY` because only an index label or name entry exists. The task title says "Recover", but the repository contains no text to recover, and the audit does not pretend otherwise. The acceptance sentence — different originals are not automatically merged — is met and machine-checked.
 
@@ -101,7 +103,7 @@ The case-insensitive survey found **23 pre-existing files / 141 matching lines**
 |---|---:|---:|
 | `ORIGINAL_EVIDENCE` | 1 (`MASTER_VISION_NARRATIVE_XV.md`) | 60 |
 | `SECONDARY_ANALYSIS` | 3 (M26-01 JSON and audit, M26-04 JSON) | 24 |
-| `FAMILY_CONTEXT` | 12 (README, M06-01, M06-07, M12 typed graph, M16-01, M19-01, ADR-0003, M02-05, M02-07, M06-05, M12-01, M16-01 spec) | 43 |
+| `FAMILY_CONTEXT` | 12 (README, M06-01, M06-07, M12 typed graph, M16-01, M19-01, ADR-0003, M02-05, M02-07, M06-05, M12-01, M16-01 spec) | 42 |
 | `ARCHITECTURE_CONSTRAINT` | 1 (`BLUEPRINT.md`) | 4 |
 | `TASK_SPECIFICATION` | 2 (`TODO.md`, `docs/tasks/M26/M26-02.md`) | 7 |
 | `MOCKUP_LABEL` | 1 (`02_project_universe.svg`) | 1 |
@@ -114,25 +116,33 @@ The mockup hit is the word `ROCKSOUL` inside a card labelled "CONCEPT · NO INVE
 
 ### Baseline, drift and worktree
 
-At task start the worktree was on `dev` at `659da28`. A concurrent session then committed M31-03 work. The claimed files were not touched by those commits.
+At task start the worktree was on `dev` at `659da28`. A concurrent session then committed M31-03 work; an integrator session subsequently committed this task's three files at `f841db5` and closed the TODO row at `e76df8b`. This worker ran no Git write command.
 
 ```
 $ git rev-parse --abbrev-ref HEAD ; git rev-parse HEAD
 dev
-dfc65564760eda4ced596f661bda3f84c2d755e5
+e76df8b0931f7553615e7eb693084c2d36d39e55
 $ git merge-base --is-ancestor 659da2855f56c61ae9d21e2995be9649c77fc470 HEAD && echo "659da28 IS ancestor of HEAD"
 659da28 IS ancestor of HEAD
 $ git log --oneline 659da28..HEAD
+e76df8b docs(todo): close M26-02 at the separation ledger
+f841db5 docs(m26): record GOD PROMISE separation evidence
 dfc6556 docs(todo): close M31-03 at the accepted Dock runtime decision
 f4c18ca docs(m31): accept Dock as the LIGHTHOUSE gateway runtime
 $ git diff --stat 659da28..HEAD -- <cited evidence files>
- TODO.md | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ TODO.md | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 $ git status --porcelain | wc -l
-78        # pre-existing other-session entries plus this task's new files
+78        # at this task's first count: pre-existing other-session entries plus 2 new files
+99        # final recount: other sessions added further entries; this task now has 2 modified tracked files
+$ git status --porcelain -- docs/data/M26-02-god-promise.json scripts/check-m26-02-god-promise.mjs docs/audit/M26-02-god-promise.md
+ M docs/audit/M26-02-god-promise.md
+ M docs/data/M26-02-god-promise.json
 ```
 
-The single `TODO.md` change is the M31-03 row at line 700; the M26-02 row at line 598 is unchanged, and the validator confirms the acceptance quote still resolves there. No other cited evidence file differs between `659da28` and the observed HEAD.
+The two `TODO.md` changes are M31-03 at line 700 and M26-02 at line 598. The M26-02 closure rewrote the acceptance cell, so the acceptance quote is now pinned to `docs/tasks/M26/M26-02.md:12` instead of `TODO.md:598`. That packet line is unchanged at both SHAs. No other cited evidence file differs between `659da28` and the observed HEAD, and the validator resolves all quotes at the final worktree.
+
+The ledger and audit edits shown as modified are post-commit accuracy fixes made by this worker (the acceptance re-pin and the observed-output corrections); the validator ran clean after them. The `scripts/` file is unchanged since `f841db5`.
 
 ### Discovery
 
@@ -213,7 +223,7 @@ PASS  negative: mention-inventory count that does not match the file is rejected
 PASS  negative: missing mention-inventory file is rejected
       first error: mention_inventory.files[23] file docs/data/does-not-exist-god-promise.json does not exist
 PASS  negative: acceptance quote absent from the cited line is rejected
-      first error: acceptance quote "All three originals recovered" not found at TODO.md:598
+      first error: acceptance quote "All three originals recovered" not found at docs/tasks/M26/M26-02.md:12
 PASS  negative: redefined claim_state_enum is rejected
       first error: claim_state_enum does not match the ledger vocabulary
 PASS  negative: LABEL_ONLY row carrying a primary artifact id is rejected
@@ -238,7 +248,7 @@ JSON parse OK
 $ pnpm exec eslint scripts/check-m26-02-god-promise.mjs
 exit=0
 $ git diff --stat -- docs/data/M26-02-god-promise.json scripts/check-m26-02-god-promise.mjs docs/audit/M26-02-god-promise.md
-(no output: all three files are new and untracked)
+(no output at the pre-commit run: all three files were new and untracked)
 ```
 
 `pnpm verify`, `pnpm typecheck` and application test suites were **not** run: the change is two documentation/data artifacts plus one dependency-free Node script, with no TypeScript, runtime or application code change.
@@ -261,12 +271,14 @@ $ git diff --stat -- docs/data/M26-02-god-promise.json scripts/check-m26-02-god-
 - **The mention inventory is a snapshot.** It counts matching lines in pre-existing text files at the observed HEAD and excludes the three files this task creates. It will drift if those files change.
 - **One pair is inferred.** No repository sentence says "ROCKSOUL is distinct from the paper" as a standalone claim; see §3.1.
 - **Rights are evidentiary, not legal.** All three originals remain `RIGHTS_UNKNOWN`.
-- **HEAD drift.** Evidence was read at `dfc6556`, two commits after the declared `659da28`. `659da28` is an ancestor; the only cited-file change is the unrelated M31-03 TODO row at line 700, and the validator confirms every M26-02 quote still resolves.
+- **HEAD drift and concurrent closure.** The survey was read at `dfc6556`, two commits after the declared `659da28`; an integrator then committed the three files at `f841db5` and closed the TODO row at `e76df8b`. `659da28` is an ancestor. The only cited-file changes are the M31-03 and M26-02 TODO rows; the acceptance quote is pinned to the unchanged task packet, and the validator confirms every quote resolves at the final worktree.
+- **The closure was not performed here.** This worker made no `git add`, `git commit`, `git stash`, checkout or reset, and did not edit `TODO.md`. The ledger and this audit carry uncommitted post-commit accuracy edits.
+- **The committed ledger still has the old acceptance locator.** `git show HEAD:docs/data/M26-02-god-promise.json` at `e76df8b` still pins acceptance to `TODO.md:598`, whose text the closure rewrote. The re-pin to `docs/tasks/M26/M26-02.md:12` exists only in the worktree because this task may not commit. The integrator must commit the two modified files before treating HEAD as validator-clean.
 - **Concurrent worktree.** Other-session changes under `apps/cockpit`, `apps/dock`, `apps/headquarters` and `docs/audit/screens` were present and untouched; none contains a God-Promise reference.
 
 ## 10. Rollback
 
-Additive only. Delete the three new files; no tracked file, migration, schema or TODO entry is involved:
+Additive only. Delete the three files; no other tracked file, migration, schema or TODO entry is involved. The three were untracked when created and were committed concurrently at `f841db5`, so a rollback after that commit is a normal deletion commit:
 
 ```
 rm docs/data/M26-02-god-promise.json
@@ -279,15 +291,15 @@ Do not remove `docs/data/`: it also holds the M26-01, M26-03 and M26-04 ledgers.
 ## 11. Required report fields
 
 - `task_id`: M26-02
-- `baseline_sha`: `659da2855f56c61ae9d21e2995be9649c77fc470` (declared); observed HEAD `dfc65564760eda4ced596f661bda3f84c2d755e5`
+- `baseline_sha`: `659da2855f56c61ae9d21e2995be9649c77fc470` (declared); observed HEAD `e76df8b0931f7553615e7eb693084c2d36d39e55`
 - `worker`: repository-evidence leaf (AI agent)
 - `claimed_files`: the three files above
-- `actual_changed_files`: the three files above (all new); pre-existing other-session changes untouched
+- `actual_changed_files`: the three files above (created by this task; committed concurrently at `f841db5`); pre-existing other-session changes untouched
 - `positive_test_and_output`: §7, 9 PASS + 1 NOTE, 35 locators verified, exit 0
 - `negative_test_and_output`: §7, 25/25 invalid datasets rejected, exit 0
 - `security_rights_privacy`: no manuscript text, private bytes, media or secrets copied; only short public-document quotes; no network fetch; all origins remain `RIGHTS_UNKNOWN`
-- `reviewer`: pending (integrator)
+- `reviewer`: integrator session closed the TODO row at `e76df8b`; no independent reviewer identity was observed by this worker
 - `rollback`: §10
-- `result_sha`: n/a (not committed)
+- `result_sha`: `f841db5` (commit containing the three files, made by the integrator session); worktree HEAD `e76df8b` also carries this worker's uncommitted accuracy edits to the ledger and audit
 - `limitations`: §9
 - `next_eligible_task`: M26-06 (independent); archive retrieval would need separate authorization and a pinned source

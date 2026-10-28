@@ -5,7 +5,7 @@
   "baseline_sha": "659da2855f56c61ae9d21e2995be9649c77fc470",
   "acceptance": {
     "text": "Different originals not automatically merged",
-    "locator": "TODO.md:598",
+    "locator": "docs/tasks/M26/M26-02.md:12",
     "quote": "Different originals not automatically merged",
     "verified_by": "scripts/check-m26-02-god-promise.mjs"
   },
