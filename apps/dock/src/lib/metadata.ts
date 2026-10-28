@@ -21,13 +21,13 @@ export function getDockBaseUrl(): string {
 export const dockMetadataCopy = {
   id: {
     title: `${SITE_NAME} — radio larut malam`,
-    description: 'Radio larut malam, dikatalogkan langsung oleh hub.',
+    description: 'LIGHTHOUSE adalah gerbang publik MoonWitness XV: radio, bacaan, dan riset dalam katalog.',
     ogLocale: 'id_ID',
     ogAlternateLocale: ['en_US'],
   },
   en: {
     title: `${SITE_NAME} — late-night radio`,
-    description: SITE_TAGLINE,
+    description: 'LIGHTHOUSE is the public gateway of MoonWitness XV: catalogued radio, reading and research.',
     ogLocale: 'en_US',
     ogAlternateLocale: ['id_ID'],
   },

@@ -3,7 +3,7 @@ import { defineLocaleCatalog, type Locale } from '@moonwitness/core'
 /** Only human-authored Dock home UI copy belongs here; source and runtime data stay verbatim. */
 export const landingCopy = defineLocaleCatalog({
   en: {
-    heroEyebrow: 'PEOPLE. PLACES. STORIES. ANOTHER SIDE OF REALITY.',
+    heroEyebrow: 'LIGHTHOUSE · PUBLIC GATEWAY OF MOONWITNESS XV',
     heroNetwork: 'A GLOBAL STORY NETWORK',
     heroAudience: 'FOR CURIOUS HUMANS.',
     heroMoon: 'DIFFERENT PEOPLE. SAME MOON.',
@@ -113,7 +113,7 @@ export const landingCopy = defineLocaleCatalog({
     archiveOrbitNote: 'STORIES\nKEEP\nORBITING.',
   },
   id: {
-    heroEyebrow: 'ORANG. TEMPAT. KISAH. SISI LAIN DARI REALITAS.',
+    heroEyebrow: 'LIGHTHOUSE · GERBANG PUBLIK MOONWITNESS XV',
     heroNetwork: 'JARINGAN KISAH GLOBAL',
     heroAudience: 'UNTUK MEREKA YANG INGIN TAHU.',
     heroMoon: 'ORANG BERBEDA. BULAN YANG SAMA.',

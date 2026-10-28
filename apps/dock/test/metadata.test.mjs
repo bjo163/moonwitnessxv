@@ -12,7 +12,7 @@ test('metadata helper resolves Indonesian locale title, description, and canonic
 
   assert.equal(meta.title?.default, 'Moonwitness — radio larut malam')
   assert.equal(meta.title?.template, '%s — Moonwitness')
-  assert.equal(meta.description, 'Radio larut malam, dikatalogkan langsung oleh hub.')
+  assert.equal(meta.description, 'LIGHTHOUSE adalah gerbang publik MoonWitness XV: radio, bacaan, dan riset dalam katalog.')
 
   assert.equal(meta.alternates?.canonical, `${defaultBase}/id`)
   assert.equal(meta.alternates?.languages?.id, `${defaultBase}/id`)
@@ -22,7 +22,7 @@ test('metadata helper resolves Indonesian locale title, description, and canonic
   assert.equal(meta.openGraph?.locale, 'id_ID')
   assert.deepEqual(meta.openGraph?.alternateLocale, ['en_US'])
   assert.equal(meta.openGraph?.title, 'Moonwitness — radio larut malam')
-  assert.equal(meta.openGraph?.description, 'Radio larut malam, dikatalogkan langsung oleh hub.')
+  assert.equal(meta.openGraph?.description, 'LIGHTHOUSE adalah gerbang publik MoonWitness XV: radio, bacaan, dan riset dalam katalog.')
   assert.equal(meta.openGraph?.url, `${defaultBase}/id`)
   assert.equal(meta.openGraph?.siteName, 'Moonwitness')
   assert.equal(meta.openGraph?.type, 'website')
@@ -34,7 +34,7 @@ test('metadata helper resolves English locale title, description, and canonical 
 
   assert.equal(meta.title?.default, 'Moonwitness — late-night radio')
   assert.equal(meta.title?.template, '%s — Moonwitness')
-  assert.equal(meta.description, 'Late-night radio, catalogued by the hub itself.')
+  assert.equal(meta.description, 'LIGHTHOUSE is the public gateway of MoonWitness XV: catalogued radio, reading and research.')
 
   assert.equal(meta.alternates?.canonical, `${defaultBase}/en`)
   assert.equal(meta.alternates?.languages?.id, `${defaultBase}/id`)
@@ -44,10 +44,31 @@ test('metadata helper resolves English locale title, description, and canonical 
   assert.equal(meta.openGraph?.locale, 'en_US')
   assert.deepEqual(meta.openGraph?.alternateLocale, ['id_ID'])
   assert.equal(meta.openGraph?.title, 'Moonwitness — late-night radio')
-  assert.equal(meta.openGraph?.description, 'Late-night radio, catalogued by the hub itself.')
+  assert.equal(meta.openGraph?.description, 'LIGHTHOUSE is the public gateway of MoonWitness XV: catalogued radio, reading and research.')
   assert.equal(meta.openGraph?.url, `${defaultBase}/en`)
   assert.equal(meta.openGraph?.siteName, 'Moonwitness')
   assert.equal(meta.openGraph?.type, 'website')
+})
+
+test('M31-04 metadata description states the LIGHTHOUSE gateway purpose in both locales', () => {
+  const idDescription = getDockMetadata('id', '/id').description
+  const enDescription = getDockMetadata('en', '/en').description
+
+  assert.equal(typeof idDescription, 'string')
+  assert.equal(typeof enDescription, 'string')
+  assert.ok(idDescription.trim().length > 0)
+  assert.ok(enDescription.trim().length > 0)
+
+  assert.match(enDescription, /^LIGHTHOUSE is the public gateway of MoonWitness XV\.?/)
+  assert.match(idDescription, /^LIGHTHOUSE adalah gerbang publik MoonWitness XV\.?/)
+
+  for (const description of [enDescription, idDescription]) {
+    assert.doesNotMatch(description, /a-l-l-a-h\.com/i)
+    assert.doesNotMatch(description, /\bLIVE\b/)
+    assert.doesNotMatch(description, /\bdeployed\b|\bproduction\b/i)
+    assert.doesNotMatch(description, /religious authority|divine authority|canon(?:ical)? approval|rights clear/i)
+    assert.doesNotMatch(description, /otoritas agama|kewenangan ilahi|persetujuan kanon/i)
+  }
 })
 
 test('metadata preserves subroutes and query parameters across canonical and alternates', () => {
