@@ -10,6 +10,7 @@ import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { ModelTable } from '@/ui/widgets/ModelTable'
 import { editorFailureMessage, editorStatusMessage, interpolate, modelViewCopy } from '../locale-copy'
 import { requestLocale } from '@/lib/request-locale'
+import { DELETE_CONFIRM_VALUE, editorCopy, fill } from '@/lib/editor-copy'
 
 const hrefFor = (model: string, q: string | undefined, page: number): string => {
   const params = new URLSearchParams()
@@ -31,6 +32,7 @@ export default async function ModelRowsPage({
   const { q, page, error, saved } = await searchParams
   const locale = await requestLocale()
   const copy = modelViewCopy(locale)
+  const editorText = editorCopy(locale)
 
   const doc = await getSchema()
   const meta = doc.models[model]
@@ -88,8 +90,12 @@ export default async function ModelRowsPage({
             {...(canDelete
               ? {
                   actions: (row: Record<string, unknown>) => (
-                    <form action={deleteRecordAction.bind(null, model, String(row.id))}>
-                      <Button type="submit" variant="danger">{locale === 'id' ? 'Hapus' : 'Delete'}</Button>
+                    <form action={deleteRecordAction.bind(null, model, String(row.id))} className="m-stack">
+                      <label className="m-row" style={{ gap: 8 }}>
+                        <input type="checkbox" name="$confirm" value={DELETE_CONFIRM_VALUE} required />
+                        <span>{fill(editorText.deleteConfirmLabel, { recordId: String(row.id).slice(0, 8) })}</span>
+                      </label>
+                      <Button type="submit" variant="danger">{editorText.deleteSubmit}</Button>
                     </form>
                   ),
                 }

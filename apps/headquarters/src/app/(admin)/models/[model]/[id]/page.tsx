@@ -11,6 +11,7 @@ import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { RecordForm } from '@/ui/widgets/RecordForm'
 import { editorFailureMessage, editorStatusMessage, modelViewCopy } from '../../locale-copy'
 import { requestLocale } from '@/lib/request-locale'
+import { DELETE_CONFIRM_VALUE, editorCopy, fill } from '@/lib/editor-copy'
 
 export default async function EditRecordPage({
   params,
@@ -24,6 +25,7 @@ export default async function EditRecordPage({
   const { error, saved } = await searchParams
   const locale = await requestLocale()
   const copy = modelViewCopy(locale)
+  const editorText = editorCopy(locale)
 
   const doc = await getSchema()
   const meta = doc.models[model]
@@ -59,10 +61,12 @@ export default async function EditRecordPage({
         ]}
         actions={
           canDelete ? (
-            <form action={deleteRecordAction.bind(null, model, id)}>
-              <Button type="submit" variant="danger">
-                {locale === 'id' ? 'Hapus' : 'Delete'}
-              </Button>
+            <form action={deleteRecordAction.bind(null, model, id)} className="m-stack">
+              <label className="m-row" style={{ gap: 8 }}>
+                <input type="checkbox" name="$confirm" value={DELETE_CONFIRM_VALUE} required />
+                <span>{fill(editorText.deleteConfirmLabel, { recordId: String(record.id).slice(0, 8) })}</span>
+              </label>
+              <Button type="submit" variant="danger">{editorText.deleteSubmit}</Button>
             </form>
           ) : null
         }
