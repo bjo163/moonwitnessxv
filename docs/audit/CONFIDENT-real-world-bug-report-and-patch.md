@@ -66,7 +66,7 @@ The pure TypeScript utility `calculateRealWorldActionMetrics` reports:
 - **Practical-benefit rate:** outcomes meeting the evidence criterion / outcomes actually evaluated.
 - **Unknown/unassessed counts** and invalid/duplicate record counts.
 
-Every ratio exposes its numerator and denominator. A zero denominator is `N/A` (represented by `null`), never 0%. Unknown outcomes are not successes. Completion or activity XP is not evidence of practical benefit or causality.
+Every ratio exposes its numerator and denominator. Outcome rates use only voluntary, safe plans; unsafe or non-voluntary records remain visible in record-integrity counts but cannot improve or worsen efficacy rates. A zero denominator is `N/A` (represented by `null`), never 0%. Unknown outcomes are not successes. Completion or activity XP is not evidence of practical benefit or causality.
 
 ## 4. Acceptance criteria
 
