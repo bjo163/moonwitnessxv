@@ -2,9 +2,9 @@
   "task": "M17-02",
   "title": "False-alias prevention for Shadow/Batteries/Honey/ZILL and adjacent numeric labels",
   "baseline_sha": "ee608f7",
-  "observed_head_sha": "4a9cb46f760f8d6595c0677c309c21d779d44f72",
+  "observed_head_sha": "656012ba2b31e862bfcf0d946ec1eec4ae0f99cf",
   "generated_utc": "2026-10-28T10:54:33Z",
-  "baseline_note": "The ledger was written when HEAD was ee608f7a12448a497d3295bf1649616693ffc5be. The session first observed 91a5ff7f2d9f94fa764115e4c875b6fb443bc453 and final verification observed 4a9cb46f760f8d6595c0677c309c21d779d44f72 after other sessions committed. git diff --stat 91a5ff7 4a9cb46 shows only TODO.md, one new dock test and five unrelated audit/data files; every file cited here is identical at all three SHAs.",
+  "baseline_note": "The ledger was written when HEAD was ee608f7a12448a497d3295bf1649616693ffc5be. The session observed HEAD at 91a5ff7f2d9f94fa764115e4c875b6fb443bc453 at start and at e599b46b1c80929bb498d7079ad226566b5cabf0 before integration. Another session then committed these three M17-02 files at ffd148b342ff33c0a11682446a483dd992b8abd3 (parent e599b46) and closed the task at 656012ba2b31e862bfcf0d946ec1eec4ae0f99cf. git diff --stat 91a5ff7 656012b shows only TODO.md, unrelated app/test files and unrelated audit/data files; every file cited here is identical across the range.",
   "acceptance": "No phonetic or mystical sameAs",
   "method": "Enumerate only alias and near-alias pairs whose two referents and whose non-identity decision already exist in this repository. Every row resolves at least one file:line quote and records the rule that would be violated by an automatic sameAs. No referent, alias, translation, transliteration or lore item is invented. A label is not a referent, a shared sound is not a spelling, and an unrecorded question stays NEEDS_SOURCE.",
   "decision_enum": [

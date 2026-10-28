@@ -2,8 +2,8 @@
 
 - **Task**: M17-02 (LEAF) · **Milestone**: [M17](../../docs/milestones/M17.md) · **Prerequisites**: M17-01 (closed at `89cfd7c`), M10-04 (closed)
 - **Declared baseline SHA**: `ee608f7` (`dev`) — "docs(todo): record the external blockers on M32-01, M35-01 and M36-01"
-- **Observed worktree HEAD at final verification**: `4a9cb46f760f8d6595c0677c309c21d779d44f72` (`dev`)
-- **Baseline drift note**: the session first observed HEAD `91a5ff7f2d9f94fa764115e4c875b6fb443bc453`; the ledger and validator were written when HEAD was `ee608f7a12448a497d3295bf1649616693ffc5be`; final verification observed `4a9cb46f760f8d6595c0677c309c21d779d44f72` after other sessions committed. `git diff --stat 91a5ff7 4a9cb46` shows changes only in `TODO.md`, one new Dock test and five unrelated audit/data files. Every file cited by this ledger is identical at all three SHAs.
+- **Observed worktree HEAD at final check**: `656012ba2b31e862bfcf0d946ec1eec4ae0f99cf` (`dev`)
+- **Baseline drift and integration note**: the session observed HEAD at `91a5ff7f2d9f94fa764115e4c875b6fb443bc453` at start, wrote the artifacts at `ee608f7a12448a497d3295bf1649616693ffc5be`, and observed `4a9cb46f760f8d6595c0677c309c21d779d44f72` and then `e599b46b1c80929bb498d7079ad226566b5cabf0` as other sessions kept committing. Another session then committed exactly these three files at `ffd148b342ff33c0a11682446a483dd992b8abd3` ("feat(research): keep phonetic and mystical aliases from merging") and closed the TODO row at `656012ba2b31e862bfcf0d946ec1eec4ae0f99cf` ("docs(todo): close M17-02 at ffd148b"). This leaf did not stage, commit, push or edit `TODO.md`. `git diff --stat 91a5ff7 656012b` shows changes only in `TODO.md`, unrelated app/test files and unrelated audit/data files; every file cited by this ledger is identical across the range.
 - **Worker**: repository-evidence leaf (AI agent), read-only outside the claimed files
 - **Claimed files**: `docs/data/M17-02-false-alias-decisions.json` (new), `scripts/check-m17-02-false-aliases.mjs` (new), this audit (new)
 - **Acceptance tested**: "No phonetic or mystical sameAs"
@@ -18,6 +18,8 @@ The two `DISPUTED` rows are the important negative finding:
 - `ZILL — Shadow Witness` vs `ZILL — Tasawuf` carries a verified `distinctFrom` edge **and** an unapproved graph `sameAs` candidate in `PENDING`.
 
 Neither state is converted into an approval or a resolution.
+
+**Integration observed.** While this leaf was finishing, another session committed exactly the three claimed files at `ffd148b` and closed the TODO row at `656012b`. The decision rows and test outputs below are unchanged by that integration; this leaf did not stage, commit or push. Two metadata-only HEAD-drift edits made after the commit remain unstaged in the working tree.
 
 **Nothing is recovered, renamed or invented.** No `NEEDS_SOURCE` row is guessed into an alias; no HONEY/QUEEN R referent is typed; no ZIIL referent is chosen; no performer or real person is identified. Policy-only rows are explicit non-identity statements, not typed pair decisions, and the ledger says so.
 
@@ -239,7 +241,7 @@ ESLint processed the file: `--format json` reported `"errorCount":0,"warningCoun
 - **No secrets or environment values** were read, written or required.
 - **No rights determination** is made. The ledger decides identity questions, not publication rights.
 - **Other sessions' uncommitted work was not touched.** `apps/cockpit`, `apps/dock` (including `globals.css`, `patches/page.tsx`, `PatchesExplorer.tsx`, `responsive-accessibility.test.mjs`), `apps/headquarters` and `docs/audit/screens` were not edited or staged. `TODO.md` was not edited.
-- **No commit, stage, push, rebase or delete** was performed.
+- **No commit, stage, push, rebase or delete was performed by this leaf.** Another session committed `ffd148b` and `656012b` while this leaf was running; that integration was not initiated, staged or pushed here. Two post-commit metadata-only HEAD notes remain unstaged.
 
 ## 7. Limitations
 
@@ -251,7 +253,7 @@ ESLint processed the file: `--format json` reported `"errorCount":0,"warningCoun
 - **HONEY and QUEEN R have no registry row.** Their rows rely on the vision's policy statements and M26-04's absence record, not on a term entity.
 - **WINGS/AETHERION and 99/100 separations are documentary.** No game, org or runtime schema enforces them.
 - **No runtime consumer.** No API, UI, search index or alias store reads this ledger; the task is evidence and prevention policy, not an implemented resolver.
-- **HEAD drift.** Evidence was read across `91a5ff7`, `ee608f7` and `4a9cb46`; the cited files are byte-identical at all three SHAs, but later commits could invalidate locators.
+- **HEAD drift.** Evidence was read across `91a5ff7`, `ee608f7`, `4a9cb46`, `e599b46` and the integration commits `ffd148b`/`656012b`; the cited files are identical across the range, but later commits could invalidate locators.
 - **No external verification.** ZIIL and Honey source questions could only be closed with an authorized source, which was not available or fetched.
 
 ## 8. Rollback
@@ -269,15 +271,15 @@ Do not remove `docs/data/`, `docs/audit/` or `scripts/`; all hold other tasks' a
 ## 9. Required report fields
 
 - `task_id`: M17-02
-- `baseline_sha`: `ee608f7` (ledger creation); final observed worktree HEAD `4a9cb46f760f8d6595c0677c309c21d779d44f72`; session start observed `91a5ff7f2d9f94fa764115e4c875b6fb443bc453`, and all cited files are identical at all three SHAs
+- `baseline_sha`: `ee608f7` (ledger creation); last observed worktree HEAD `656012ba2b31e862bfcf0d946ec1eec4ae0f99cf`; session start observed `91a5ff7f2d9f94fa764115e4c875b6fb443bc453`, and all cited files are identical across the range
 - `worker`: repository-evidence leaf (AI agent)
 - `claimed_files`: `docs/data/M17-02-false-alias-decisions.json` (new), `scripts/check-m17-02-false-aliases.mjs` (new), `docs/audit/M17-02-false-aliases.md` (new)
-- `actual_changed_files`: the same three, all new; no existing file was modified, staged or committed (see §6; verified with `git status --short -- <three paths>`)
+- `actual_changed_files`: the same three, all new; no pre-existing repository file was modified by this leaf. Another session committed the three at `ffd148b` and closed the row at `656012b`; two post-commit metadata-only HEAD notes in the ledger and this audit remain unstaged
 - `positive_test_and_output`: §5 — 8 PASS + 1 NOTE, 49 locators, exit 0
 - `negative_test_and_output`: §5 — 38/38 invalid datasets rejected, exit 0
-- `security_rights_privacy`: §6 — no external fetch, no real person, no source/media bytes, no secrets, no rights grant, no TODO edit
-- `reviewer`: pending (integrator); not self-approved
+- `security_rights_privacy`: §6 — no external fetch, no real person, no source/media bytes, no secrets, no rights grant, no TODO edit by this leaf
+- `reviewer`: pending (integrator); not self-approved by this leaf
 - `rollback`: §8
-- `result_sha`: n/a (not committed; the three files are uncommitted additions)
+- `result_sha`: `ffd148b342ff33c0a11682446a483dd992b8abd3` (integration commit created by another session; the later `656012b` commit closed the TODO row). The working tree has two metadata-only unstaged edits on top of `ffd148b`
 - `limitations`: §7
 - `next_eligible_task`: **M17-03** (story world/arc/episode/scene/version graph), gated on integrator acceptance of this leaf and on M17-02 evidence passing. Do not treat this audit as closing M17-02.
