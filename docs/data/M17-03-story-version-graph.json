@@ -1,0 +1,2578 @@
+{
+  "task": "M17-03",
+  "title": "Story world, arc, episode, scene and manuscript-version graph: ontology and evidence ledger",
+  "baseline_sha": "891bf5e19edbbea3d5e5ada36a7b126f35fabf94",
+  "generated_utc": "2026-10-31",
+  "acceptance": "99 chapter headings not treated as 99 originals",
+  "method": "Define only the node kinds, label classes, edges and cardinalities that in-repository D07 and vision documents already name, then enumerate what the repository actually contains. Every empirical row and every document claim carries a file:line locator with a verbatim quote. Counts are rows, not artifacts; labels are not nodes; absent sources stay ABSENT.",
+  "status_enum": [
+    "EVIDENCED",
+    "LABEL_ONLY",
+    "NEEDS_SOURCE",
+    "ABSENT"
+  ],
+  "status_definitions": {
+    "EVIDENCED": "A typed repository record exists at a resolving locator. No row in this ledger reaches EVIDENCED for a story node or manuscript.",
+    "LABEL_ONLY": "The exact label or title is printed in a repository document, but no typed record, artifact or node exists.",
+    "NEEDS_SOURCE": "The repository names the family or slot and explicitly records the source, artifact or numbering as missing, pin-only or disputed.",
+    "ABSENT": "The repository explicitly states the artifact was not imported or does not exist. Absence is recorded, never filled."
+  },
+  "node_kinds": [
+    {
+      "id": "world",
+      "is_node": true,
+      "layer": "structural",
+      "domain_owner": "D07 Story & Media",
+      "parent_kinds": [],
+      "parent_rule": "root",
+      "definition": "A fictional story world: the outermost D07 container. It is not the D10 World/Science domain and carries no observation, simulation or measurement.",
+      "evidence_refs": [
+        "E01",
+        "E03",
+        "E04",
+        "E07",
+        "E08"
+      ]
+    },
+    {
+      "id": "arc",
+      "is_node": true,
+      "layer": "structural",
+      "domain_owner": "D07 Story & Media",
+      "parent_kinds": [
+        "world"
+      ],
+      "parent_rule": "exactly_one",
+      "definition": "A narrative arc inside exactly one world. The ratified D07 id prefix sa_ covers Story Arcs & Episodes; this ledger mints no arc id.",
+      "evidence_refs": [
+        "E01",
+        "E04",
+        "E05",
+        "E08"
+      ]
+    },
+    {
+      "id": "episode",
+      "is_node": true,
+      "layer": "structural",
+      "domain_owner": "D07 Story & Media",
+      "parent_kinds": [
+        "arc"
+      ],
+      "parent_rule": "exactly_one",
+      "definition": "An episode inside exactly one arc. An episode label (for example an NPD token) is not an episode node.",
+      "evidence_refs": [
+        "E01",
+        "E04",
+        "E07",
+        "E22"
+      ]
+    },
+    {
+      "id": "scene",
+      "is_node": true,
+      "layer": "structural",
+      "domain_owner": "D07 Story & Media",
+      "parent_kinds": [
+        "episode"
+      ],
+      "parent_rule": "exactly_one",
+      "definition": "A scene inside exactly one episode: the finest structural node that may carry text. It is not the ORBIT 3D scene and not an NPD page.",
+      "evidence_refs": [
+        "E01",
+        "E04",
+        "E20",
+        "E27",
+        "E32"
+      ]
+    },
+    {
+      "id": "manuscript_version",
+      "is_node": true,
+      "layer": "version",
+      "domain_owner": "D07 Story & Media",
+      "parent_kinds": [],
+      "parent_rule": "exactly_one_version_of_target",
+      "version_target_kinds": [
+        "scene",
+        "episode",
+        "arc",
+        "world"
+      ],
+      "definition": "One editorial variant of exactly one structural node, with optional derived_from lineage to an earlier variant of the same target. It is not an original, not a D01 edition, and not evidence that any text exists.",
+      "evidence_refs": [
+        "E01",
+        "E02",
+        "E06",
+        "E09",
+        "E19"
+      ]
+    }
+  ],
+  "label_classes": [
+    {
+      "id": "heading_label",
+      "is_node": false,
+      "definition": "A numbered editorial index entry. It labels a slot, not a manuscript, edition, version, episode or original. It has no node id and may not be an edge endpoint.",
+      "evidence_refs": [
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E15",
+        "E16",
+        "E17"
+      ]
+    },
+    {
+      "id": "patch_title_label",
+      "is_node": false,
+      "definition": "A historical editorial title in the 33-slot XII register. The title existing never means the patch was completed, approved or supernaturally endorsed.",
+      "evidence_refs": [
+        "E14",
+        "E24",
+        "E25",
+        "E26"
+      ]
+    },
+    {
+      "id": "episode_label",
+      "is_node": false,
+      "definition": "A token printed under \"Episodes/tokens\" in the vision. It names a lead, not a recovered episode node, page or media manifest.",
+      "evidence_refs": [
+        "E20",
+        "E22"
+      ]
+    },
+    {
+      "id": "version_family_ref",
+      "is_node": false,
+      "definition": "A cited source family or version reference (XII/XIV). A pin, link or count is a reference, not a manuscript version node.",
+      "evidence_refs": [
+        "E18",
+        "E19",
+        "E21",
+        "E33",
+        "E34",
+        "E35",
+        "E36"
+      ]
+    }
+  ],
+  "edge_types": [
+    {
+      "id": "world_contains_arc",
+      "from": "world",
+      "to": "arc",
+      "cardinality": "1 world : 0..* arcs; each arc has exactly 1 world",
+      "evidence_refs": [
+        "E01",
+        "E04"
+      ]
+    },
+    {
+      "id": "arc_contains_episode",
+      "from": "arc",
+      "to": "episode",
+      "cardinality": "1 arc : 0..* episodes; each episode has exactly 1 arc",
+      "evidence_refs": [
+        "E01",
+        "E04"
+      ]
+    },
+    {
+      "id": "episode_contains_scene",
+      "from": "episode",
+      "to": "scene",
+      "cardinality": "1 episode : 0..* scenes; each scene has exactly 1 episode",
+      "evidence_refs": [
+        "E01",
+        "E04"
+      ]
+    },
+    {
+      "id": "version_of",
+      "from": "manuscript_version",
+      "to": [
+        "scene",
+        "episode",
+        "arc",
+        "world"
+      ],
+      "cardinality": "1 manuscript_version : exactly 1 target; a target may have 0..* versions",
+      "evidence_refs": [
+        "E01",
+        "E02",
+        "E09"
+      ]
+    },
+    {
+      "id": "version_derived_from",
+      "from": "manuscript_version",
+      "to": "manuscript_version",
+      "cardinality": "0..1 earlier version of the same version_of target; acyclic",
+      "evidence_refs": [
+        "E06",
+        "E35"
+      ]
+    }
+  ],
+  "cardinality_rules": [
+    {
+      "id": "CR-01",
+      "statement": "A world is a root node and has no structural parent.",
+      "kind": "world",
+      "parent_count": 0
+    },
+    {
+      "id": "CR-02",
+      "statement": "Every arc has exactly one incoming world_contains_arc edge.",
+      "kind": "arc",
+      "incoming": "world_contains_arc",
+      "count": 1
+    },
+    {
+      "id": "CR-03",
+      "statement": "Every episode has exactly one incoming arc_contains_episode edge.",
+      "kind": "episode",
+      "incoming": "arc_contains_episode",
+      "count": 1
+    },
+    {
+      "id": "CR-04",
+      "statement": "Every scene has exactly one incoming episode_contains_scene edge; a scene without an episode is not a node.",
+      "kind": "scene",
+      "incoming": "episode_contains_scene",
+      "count": 1
+    },
+    {
+      "id": "CR-05",
+      "statement": "Every manuscript_version has exactly one outgoing version_of edge.",
+      "kind": "manuscript_version",
+      "outgoing": "version_of",
+      "count": 1
+    },
+    {
+      "id": "CR-06",
+      "statement": "version_derived_from is acyclic and never crosses version_of targets.",
+      "kind": "manuscript_version",
+      "edge": "version_derived_from"
+    },
+    {
+      "id": "CR-07",
+      "statement": "Label classes are not node kinds: no edge may start or end at a label class.",
+      "kind": "label_classes",
+      "edge_endpoints": 0
+    },
+    {
+      "id": "CR-08",
+      "statement": "Every edge endpoint resolves to an existing node id of the declared kind; dangling edges are rejected.",
+      "kind": "all"
+    },
+    {
+      "id": "CR-09",
+      "statement": "A heading_label count never determines a manuscript_version, original, episode or arc count.",
+      "kind": "heading_label",
+      "derived_counts": 0
+    }
+  ],
+  "invariants": [
+    {
+      "id": "INV-HEADING-NOT-ORIGINAL",
+      "statement": "A chapter heading is a label. N headings never imply N originals, manuscripts, versions, episodes or arcs; the only permitted derived original count is zero.",
+      "enforced": true,
+      "evidence_refs": [
+        "E10",
+        "E11",
+        "E12",
+        "E13"
+      ]
+    },
+    {
+      "id": "INV-LABEL-NOT-NODE",
+      "statement": "heading_label, patch_title_label, episode_label and version_family_ref are label classes, not node kinds, and can never be an edge endpoint.",
+      "enforced": true,
+      "evidence_refs": [
+        "E11",
+        "E25"
+      ]
+    },
+    {
+      "id": "INV-VERSION-PARENT",
+      "statement": "Every node except a root world has exactly one structural or version parent, and every scene therefore has an episode parent; a parentless scene or version is rejected.",
+      "enforced": true,
+      "evidence_refs": [
+        "E01",
+        "E09"
+      ]
+    },
+    {
+      "id": "INV-NO-PHANTOM-REFERENT",
+      "statement": "Every node, edge and label row has a resolving repository locator; no world, arc, episode, scene or version is invented, and every edge endpoint exists.",
+      "enforced": true,
+      "evidence_refs": [
+        "E17",
+        "E18",
+        "E31"
+      ]
+    },
+    {
+      "id": "INV-TALLY-MATCH",
+      "statement": "Every declared tally equals the enumerated rows; declared and derived counts cannot drift.",
+      "enforced": true,
+      "evidence_refs": []
+    },
+    {
+      "id": "INV-QUOTE-RESOLVES",
+      "statement": "Every quote is a verbatim substring of its cited file at the cited line; quote drift is rejected.",
+      "enforced": true,
+      "evidence_refs": []
+    },
+    {
+      "id": "INV-DERIVATION-FORBIDDEN",
+      "statement": "Deriving a manuscript_version or an original from a heading slot, patch slot, book count or synopsis count is forbidden and rejected.",
+      "enforced": true,
+      "evidence_refs": [
+        "E12",
+        "E14",
+        "E21"
+      ]
+    },
+    {
+      "id": "INV-ABSENT-NOT-FILLED",
+      "statement": "Absent artifacts stay ABSENT or NEEDS_SOURCE with zero instantiated nodes; silence is not filled with invented lore.",
+      "enforced": true,
+      "evidence_refs": [
+        "E19",
+        "E20",
+        "E31"
+      ]
+    }
+  ],
+  "forbidden_inferences": [
+    {
+      "id": "FI-01",
+      "statement": "heading_count == original_count",
+      "forbidden": true,
+      "evidence_refs": [
+        "E10",
+        "E11",
+        "E12"
+      ]
+    },
+    {
+      "id": "FI-02",
+      "statement": "heading_label is a manuscript, edition or manuscript_version",
+      "forbidden": true,
+      "evidence_refs": [
+        "E15",
+        "E16",
+        "E18"
+      ]
+    },
+    {
+      "id": "FI-03",
+      "statement": "chapter sequence == episode or arc sequence",
+      "forbidden": true,
+      "evidence_refs": [
+        "E17",
+        "E22"
+      ]
+    },
+    {
+      "id": "FI-04",
+      "statement": "patch title == completed patch or divine completion",
+      "forbidden": true,
+      "evidence_refs": [
+        "E14",
+        "E24"
+      ]
+    },
+    {
+      "id": "FI-05",
+      "statement": "book or synopsis count == recovered book, scene or transcript",
+      "forbidden": true,
+      "evidence_refs": [
+        "E20",
+        "E21",
+        "E31"
+      ]
+    },
+    {
+      "id": "FI-06",
+      "statement": "D07 story world == D10 World/Science domain",
+      "forbidden": true,
+      "evidence_refs": [
+        "E03",
+        "E01"
+      ]
+    },
+    {
+      "id": "FI-07",
+      "statement": "D07 editorial variant == D01 source edition or source version",
+      "forbidden": true,
+      "evidence_refs": [
+        "E01",
+        "E02"
+      ]
+    },
+    {
+      "id": "FI-08",
+      "statement": "repeated label == same story node or identity",
+      "forbidden": true,
+      "evidence_refs": [
+        "E22",
+        "E28"
+      ]
+    }
+  ],
+  "derivation_rules": {
+    "heading_label_to_node": "FORBIDDEN",
+    "heading_label_to_manuscript_version": "FORBIDDEN",
+    "heading_count_to_original_count": "FORBIDDEN",
+    "patch_title_to_completed_patch": "FORBIDDEN",
+    "book_count_to_recovered_book": "FORBIDDEN",
+    "synopsis_count_to_transcript_count": "FORBIDDEN",
+    "label_repetition_to_identity": "FORBIDDEN"
+  },
+  "id_policy": {
+    "ratified_story_prefix": "sa_",
+    "ratified_prefix_evidence_refs": [
+      "E05"
+    ],
+    "local_ledger_prefixes": {
+      "heading_label": "hd_",
+      "patch_title_label": "pt_",
+      "episode_label": "el_",
+      "version_family_ref": "vr_"
+    },
+    "note": "Only sa_ is a ratified D07 prefix (arcs & episodes). No arc or episode node is minted here, so no sa_ id exists. hd_/pt_/el_/vr_ are ledger-local row ids, not canonical keys. No prefix is invented for world, scene or manuscript_version; those kinds have zero nodes and therefore need no id."
+  },
+  "doc_evidence": [
+    {
+      "id": "E01",
+      "file": "BLUEPRINT.md",
+      "line": 206,
+      "quote": "| D07 | Story & Media | World, arc, character, episode, scene, poster/media manifest, editorial variants | SHADOW workspace consumes it |"
+    },
+    {
+      "id": "E02",
+      "file": "BLUEPRINT.md",
+      "line": 200,
+      "quote": "| D01 | Source / Corpus | Work, expression, edition, artifact, passage, translation, text rights, source version |"
+    },
+    {
+      "id": "E03",
+      "file": "BLUEPRINT.md",
+      "line": 209,
+      "quote": "| D10 | World/Science optional | Real observations, provider runs, controlled simulation/experiment metadata |"
+    },
+    {
+      "id": "E04",
+      "file": "docs/decisions/M02-02-domain-assignments.md",
+      "line": 26,
+      "quote": "`stories`, `arcs`, `characters`, `episodes`, `scenes`, `posters`, `media_manifests`"
+    },
+    {
+      "id": "E05",
+      "file": "docs/decisions/M02-05-stable-ids-and-legacy-refs.md",
+      "line": 24,
+      "quote": "`sa_<id>` — Story Arcs & Episodes (`D07 Story`)"
+    },
+    {
+      "id": "E06",
+      "file": "docs/decisions/M02-05-stable-ids-and-legacy-refs.md",
+      "line": 61,
+      "quote": "sourceSha: string"
+    },
+    {
+      "id": "E07",
+      "file": "docs/decisions/M12-01-rocksoul-boundaries.md",
+      "line": 27,
+      "quote": "The graph never becomes a second story world or episode store"
+    },
+    {
+      "id": "E08",
+      "file": "docs/decisions/M16-01-private-witness-object-spec.md",
+      "line": 41,
+      "quote": "**D07 is Story & Media** (worlds, arcs, characters, episodes, scenes, `media_manifests`) — it owns fiction, not testimony."
+    },
+    {
+      "id": "E09",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 855,
+      "quote": "episode/version ownership"
+    },
+    {
+      "id": "E10",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 703,
+      "quote": "which is an **editorial convention** and must not be mislabeled as independently reconstructed original transcript"
+    },
+    {
+      "id": "E11",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 753,
+      "quote": "**99 ≠ completion:** this is a *coverage index*, not evidence that all 99 primary manuscripts, images or chronology matches have been recovered."
+    },
+    {
+      "id": "E12",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 969,
+      "quote": "**but a count of editorial chapters is not the number of verified original chapters**"
+    },
+    {
+      "id": "E13",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 1119,
+      "quote": "| 99 headings without the underlying 16-section narrative depth |"
+    },
+    {
+      "id": "E14",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 1123,
+      "quote": "| 33 slot titles/statuses omitted | Numeral mistaken for 33 completed miracles |"
+    },
+    {
+      "id": "E15",
+      "file": "docs/decisions/M06-02-xiv-v10-crosswalk.md",
+      "line": 13,
+      "quote": "**The 99 Chapters of V10/V10.1** in MoonWitness XIV are **editorial story/essay chapters written by modern authors**."
+    },
+    {
+      "id": "E16",
+      "file": "docs/decisions/M06-02-xiv-v10-crosswalk.md",
+      "line": 14,
+      "quote": "They are **NOT** primary revelation texts, ancient manuscripts, or divine scriptures."
+    },
+    {
+      "id": "E17",
+      "file": "docs/audit/M26-01-chapter-crosswalk.md",
+      "line": 24,
+      "quote": "The only 99-label source in the repository is `docs/vision/MASTER_VISION_NARRATIVE_XV.md` §21"
+    },
+    {
+      "id": "E18",
+      "file": "docs/audit/M26-01-chapter-crosswalk.md",
+      "line": 45,
+      "quote": "No V10/V10.1 chapter file, manuscript or edition exists in this repository."
+    },
+    {
+      "id": "E19",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 971,
+      "quote": "Full private V1–V10 originals and user-authorized immutable versions have **not been imported**."
+    },
+    {
+      "id": "E20",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 973,
+      "quote": "**THE BATTERIES four-book narrative structure** and exact NPD page/scene/media order remain incompletely recovered."
+    },
+    {
+      "id": "E21",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 974,
+      "quote": "XII's **15 story archive synopsis entries** and **63 editorially reconstructed pages** are **not** 15 guaranteed original transcripts or 63 authenticated image originals."
+    },
+    {
+      "id": "E22",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 370,
+      "quote": "Episodes/tokens include **NPD TEAM 24:27**, **24:37 — TARIAN KIDS**, **25:50 — TARIAN HUJAN**"
+    },
+    {
+      "id": "E23",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 712,
+      "quote": "11 THE SHADOW · 12 THE RUNAWAY TRACE"
+    },
+    {
+      "id": "E24",
+      "file": "docs/decisions/M06-04-xii-patches-registry.md",
+      "line": 14,
+      "quote": "### Registry Composition (8 + 5 + 1 + 18 + 1 = 33)"
+    },
+    {
+      "id": "E25",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 927,
+      "quote": "| Slot | Title (historical editorial label) | Nature / status |"
+    },
+    {
+      "id": "E26",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 976,
+      "quote": "World Patch #014 numbering dispute remains open."
+    },
+    {
+      "id": "E27",
+      "file": "MASTER_DESIGN.md",
+      "line": 25,
+      "quote": "Its visual direction is a futuristic moonpunk operations room with a smooth, bounded 3D scene"
+    },
+    {
+      "id": "E28",
+      "file": "docs/vision/chapters/README.md",
+      "line": 2,
+      "quote": "retains its 99 chapter editorial index"
+    },
+    {
+      "id": "E29",
+      "file": "docs/decisions/M02-01-disambiguation-registry.md",
+      "line": 36,
+      "quote": "**terpisah dari 99 bab editorial**"
+    },
+    {
+      "id": "E30",
+      "file": "packages/moonql-ontology/src/seed.ts",
+      "line": 18,
+      "quote": "export const ENTITY_KINDS = ['ACTOR', 'ENTITY', 'CHARACTER'] as const"
+    },
+    {
+      "id": "E31",
+      "file": "docs/audit/M26-03-batteries-npd-recovery.md",
+      "line": 46,
+      "quote": "The four books have **no individual titles anywhere**."
+    },
+    {
+      "id": "E32",
+      "file": "docs/audit/M26-03-batteries-npd-recovery.md",
+      "line": 53,
+      "quote": "No title, page count, page range, scene list, edition or transcript exists."
+    },
+    {
+      "id": "E33",
+      "file": "docs/audit/M06-01-source-repo-pins.md",
+      "line": 17,
+      "quote": "| **V10 / 99 Chapters** | `github.com/bjo163/moonwitness-xiv` | `99e1a4f028b37dc1` |"
+    },
+    {
+      "id": "E34",
+      "file": "docs/audit/M06-01-source-repo-pins.md",
+      "line": 20,
+      "quote": "| **XII 33 Patch Statuses** | `github.com/bjo163/moonwitness-xii` | `33f0014bca881029` | `patches/registry/33-patches.json` |"
+    },
+    {
+      "id": "E35",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 779,
+      "quote": "Branch pointers in previous sections are discovery links, **not permanent content identifiers**."
+    },
+    {
+      "id": "E36",
+      "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+      "line": 659,
+      "quote": "MASTER_NARRATIVE_V10_PUBLIC_DRAFT.md"
+    },
+    {
+      "id": "E37",
+      "file": "docs/audit/M26-03-batteries-npd-recovery.md",
+      "line": 48,
+      "quote": "No D07 story/media package exists"
+    }
+  ],
+  "dataset": {
+    "nodes": {
+      "world": [],
+      "arc": [],
+      "episode": [],
+      "scene": [],
+      "manuscript_version": []
+    },
+    "edges": [],
+    "label_rows": {
+      "heading_label": [
+        {
+          "id": "hd_01",
+          "slot": 1,
+          "label": "The Unrecorded Beginning",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 706,
+            "quote": "01 The Unrecorded Beginning"
+          }
+        },
+        {
+          "id": "hd_02",
+          "slot": 2,
+          "label": "The ZENIX Years",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 706,
+            "quote": "02 The ZENIX Years"
+          }
+        },
+        {
+          "id": "hd_03",
+          "slot": 3,
+          "label": "The Universe Years",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 706,
+            "quote": "03 The Universe Years"
+          }
+        },
+        {
+          "id": "hd_04",
+          "slot": 4,
+          "label": "The Great Convergence",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 706,
+            "quote": "04 The Great Convergence"
+          }
+        },
+        {
+          "id": "hd_05",
+          "slot": 5,
+          "label": "When The Moon Witnesses",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 709,
+            "quote": "05 When The Moon Witnesses"
+          }
+        },
+        {
+          "id": "hd_06",
+          "slot": 6,
+          "label": "The Original Story Loop",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 709,
+            "quote": "06 The Original Story Loop"
+          }
+        },
+        {
+          "id": "hd_07",
+          "slot": 7,
+          "label": "The Eight Eras",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 709,
+            "quote": "07 The Eight Eras"
+          }
+        },
+        {
+          "id": "hd_08",
+          "slot": 8,
+          "label": "The First Signal",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 709,
+            "quote": "08 The First Signal"
+          }
+        },
+        {
+          "id": "hd_09",
+          "slot": 9,
+          "label": "Past Presence",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 709,
+            "quote": "09 Past Presence"
+          }
+        },
+        {
+          "id": "hd_10",
+          "slot": 10,
+          "label": "Promoting — What Deserves to Continue?",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 709,
+            "quote": "10 Promoting — What Deserves to Continue?"
+          }
+        },
+        {
+          "id": "hd_11",
+          "slot": 11,
+          "label": "THE SHADOW",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 712,
+            "quote": "11 THE SHADOW"
+          }
+        },
+        {
+          "id": "hd_12",
+          "slot": 12,
+          "label": "THE RUNAWAY TRACE",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 712,
+            "quote": "12 THE RUNAWAY TRACE"
+          }
+        },
+        {
+          "id": "hd_13",
+          "slot": 13,
+          "label": "A LAH / THE BOSS",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 712,
+            "quote": "13 A LAH / THE BOSS"
+          }
+        },
+        {
+          "id": "hd_14",
+          "slot": 14,
+          "label": "DOGS FROM UNIVERSE",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 712,
+            "quote": "14 DOGS FROM UNIVERSE"
+          }
+        },
+        {
+          "id": "hd_15",
+          "slot": 15,
+          "label": "BLUE WITCH & DJ DAVID",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 712,
+            "quote": "15 BLUE WITCH & DJ DAVID"
+          }
+        },
+        {
+          "id": "hd_16",
+          "slot": 16,
+          "label": "WALTER WHITE / WHITER / WHITE",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 712,
+            "quote": "16 WALTER WHITE / WHITER / WHITE"
+          }
+        },
+        {
+          "id": "hd_17",
+          "slot": 17,
+          "label": "ELECTRIC FOREST, INDESTRUCTIBLE & JHNNY DEPP",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 712,
+            "quote": "17 ELECTRIC FOREST, INDESTRUCTIBLE & JHNNY DEPP"
+          }
+        },
+        {
+          "id": "hd_18",
+          "slot": 18,
+          "label": "The Second Crew Generation",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 712,
+            "quote": "18 The Second Crew Generation"
+          }
+        },
+        {
+          "id": "hd_19",
+          "slot": 19,
+          "label": "The Original GOD-PROMISE",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 715,
+            "quote": "19 The Original GOD-PROMISE"
+          }
+        },
+        {
+          "id": "hd_20",
+          "slot": 20,
+          "label": "Monocentric 1·6·3",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 715,
+            "quote": "20 Monocentric 1·6·3"
+          }
+        },
+        {
+          "id": "hd_21",
+          "slot": 21,
+          "label": "Revelation and Reception",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 715,
+            "quote": "21 Revelation and Reception"
+          }
+        },
+        {
+          "id": "hd_22",
+          "slot": 22,
+          "label": "Four Scripture Families",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 715,
+            "quote": "22 Four Scripture Families"
+          }
+        },
+        {
+          "id": "hd_23",
+          "slot": 23,
+          "label": "Comparative Traditions",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 715,
+            "quote": "23 Comparative Traditions"
+          }
+        },
+        {
+          "id": "hd_24",
+          "slot": 24,
+          "label": "WITNESS — Swing Swing Key",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 715,
+            "quote": "24 WITNESS — Swing Swing Key"
+          }
+        },
+        {
+          "id": "hd_25",
+          "slot": 25,
+          "label": "The Middle Point",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 715,
+            "quote": "25 The Middle Point"
+          }
+        },
+        {
+          "id": "hd_26",
+          "slot": 26,
+          "label": "Written in Reverse",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 715,
+            "quote": "26 Written in Reverse"
+          }
+        },
+        {
+          "id": "hd_27",
+          "slot": 27,
+          "label": "GOD PROMISE: THE ROCKSOUL",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 718,
+            "quote": "27 GOD PROMISE: THE ROCKSOUL"
+          }
+        },
+        {
+          "id": "hd_28",
+          "slot": 28,
+          "label": "Four Pillars of the Soul",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 718,
+            "quote": "28 Four Pillars of the Soul"
+          }
+        },
+        {
+          "id": "hd_29",
+          "slot": 29,
+          "label": "Lost the Signal",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 718,
+            "quote": "29 Lost the Signal"
+          }
+        },
+        {
+          "id": "hd_30",
+          "slot": 30,
+          "label": "Great Princess of Bee",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 718,
+            "quote": "30 Great Princess of Bee"
+          }
+        },
+        {
+          "id": "hd_31",
+          "slot": 31,
+          "label": "QUEEN R, HONEYBEE & Sweetness",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 718,
+            "quote": "31 QUEEN R, HONEYBEE & Sweetness"
+          }
+        },
+        {
+          "id": "hd_32",
+          "slot": 32,
+          "label": "MYLUFT / MYLOVE",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 721,
+            "quote": "32 MYLUFT / MYLOVE"
+          }
+        },
+        {
+          "id": "hd_33",
+          "slot": 33,
+          "label": "MA'LŪF",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 721,
+            "quote": "33 MA'LŪF"
+          }
+        },
+        {
+          "id": "hd_34",
+          "slot": 34,
+          "label": "Al-Wadūd & the Personal Nickname",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 721,
+            "quote": "34 Al-Wadūd & the Personal Nickname"
+          }
+        },
+        {
+          "id": "hd_35",
+          "slot": 35,
+          "label": "HONEY & MOON",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 721,
+            "quote": "35 HONEY & MOON"
+          }
+        },
+        {
+          "id": "hd_36",
+          "slot": 36,
+          "label": "Make Mama Smile",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 721,
+            "quote": "36 Make Mama Smile"
+          }
+        },
+        {
+          "id": "hd_37",
+          "slot": 37,
+          "label": "Jonny the Sugar Genie",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 721,
+            "quote": "37 Jonny the Sugar Genie"
+          }
+        },
+        {
+          "id": "hd_38",
+          "slot": 38,
+          "label": "KADO",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 721,
+            "quote": "38 KADO"
+          }
+        },
+        {
+          "id": "hd_39",
+          "slot": 39,
+          "label": "THE BATTERIES",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 724,
+            "quote": "39 THE BATTERIES"
+          }
+        },
+        {
+          "id": "hd_40",
+          "slot": 40,
+          "label": "The Three Chaos Figures",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 724,
+            "quote": "40 The Three Chaos Figures"
+          }
+        },
+        {
+          "id": "hd_41",
+          "slot": 41,
+          "label": "NPD TEAM",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 724,
+            "quote": "41 NPD TEAM"
+          }
+        },
+        {
+          "id": "hd_42",
+          "slot": 42,
+          "label": "The Real Feast of Trumpets",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 724,
+            "quote": "42 The Real Feast of Trumpets"
+          }
+        },
+        {
+          "id": "hd_43",
+          "slot": 43,
+          "label": "BABY-DOLL: The Plot Twist",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 724,
+            "quote": "43 BABY-DOLL: The Plot Twist"
+          }
+        },
+        {
+          "id": "hd_44",
+          "slot": 44,
+          "label": "Penunggang Angsa",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 724,
+            "quote": "44 Penunggang Angsa"
+          }
+        },
+        {
+          "id": "hd_45",
+          "slot": 45,
+          "label": "Kingslayer: The Unity Agreement",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 724,
+            "quote": "45 Kingslayer: The Unity Agreement"
+          }
+        },
+        {
+          "id": "hd_46",
+          "slot": 46,
+          "label": "Tick-Tock on the Clock",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 727,
+            "quote": "46 Tick-Tock on the Clock"
+          }
+        },
+        {
+          "id": "hd_47",
+          "slot": 47,
+          "label": "Menggigil",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 727,
+            "quote": "47 Menggigil"
+          }
+        },
+        {
+          "id": "hd_48",
+          "slot": 48,
+          "label": "Thunderstruck",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 727,
+            "quote": "48 Thunderstruck"
+          }
+        },
+        {
+          "id": "hd_49",
+          "slot": 49,
+          "label": "MOONRIDLEY",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 727,
+            "quote": "49 MOONRIDLEY"
+          }
+        },
+        {
+          "id": "hd_50",
+          "slot": 50,
+          "label": "KALAUTIDAKSALAH — The Breath",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 727,
+            "quote": "50 KALAUTIDAKSALAH — The Breath"
+          }
+        },
+        {
+          "id": "hd_51",
+          "slot": 51,
+          "label": "The Other Daily Witnesses",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 727,
+            "quote": "51 The Other Daily Witnesses"
+          }
+        },
+        {
+          "id": "hd_52",
+          "slot": 52,
+          "label": "PENDETA-ONLINE",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 730,
+            "quote": "52 PENDETA-ONLINE"
+          }
+        },
+        {
+          "id": "hd_53",
+          "slot": 53,
+          "label": "ALLAH-PROMISE HIGH HOPES",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 730,
+            "quote": "53 ALLAH-PROMISE HIGH HOPES"
+          }
+        },
+        {
+          "id": "hd_54",
+          "slot": 54,
+          "label": "RE–ZA / RA–SOUL / RASUL",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 730,
+            "quote": "54 RE–ZA / RA–SOUL / RASUL"
+          }
+        },
+        {
+          "id": "hd_55",
+          "slot": 55,
+          "label": "ASSAFAAT-30",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 730,
+            "quote": "55 ASSAFAAT-30"
+          }
+        },
+        {
+          "id": "hd_56",
+          "slot": 56,
+          "label": "NYANGKUT (MI'RAJ) & POHON NATAL",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 730,
+            "quote": "56 NYANGKUT (MI'RAJ) & POHON NATAL"
+          }
+        },
+        {
+          "id": "hd_57",
+          "slot": 57,
+          "label": "ZILL — The Shadow Witness",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 730,
+            "quote": "57 ZILL — The Shadow Witness"
+          }
+        },
+        {
+          "id": "hd_58",
+          "slot": 58,
+          "label": "ZILL — Ahluz Zikir / Tasawuf",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 730,
+            "quote": "58 ZILL — Ahluz Zikir / Tasawuf"
+          }
+        },
+        {
+          "id": "hd_59",
+          "slot": 59,
+          "label": "The Forgotten Cartel",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 733,
+            "quote": "59 The Forgotten Cartel"
+          }
+        },
+        {
+          "id": "hd_60",
+          "slot": 60,
+          "label": "King Umar / Al-Faruq",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 733,
+            "quote": "60 King Umar / Al-Faruq"
+          }
+        },
+        {
+          "id": "hd_61",
+          "slot": 61,
+          "label": "The Basecamp",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 733,
+            "quote": "61 The Basecamp"
+          }
+        },
+        {
+          "id": "hd_62",
+          "slot": 62,
+          "label": "Forgotten × ZILL × HAVEN",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 733,
+            "quote": "62 Forgotten × ZILL × HAVEN"
+          }
+        },
+        {
+          "id": "hd_63",
+          "slot": 63,
+          "label": "Earth Command Center",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 736,
+            "quote": "63 Earth Command Center"
+          }
+        },
+        {
+          "id": "hd_64",
+          "slot": 64,
+          "label": "Atmosphere OS",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 736,
+            "quote": "64 Atmosphere OS"
+          }
+        },
+        {
+          "id": "hd_65",
+          "slot": 65,
+          "label": "Cosmic Atlas",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 736,
+            "quote": "65 Cosmic Atlas"
+          }
+        },
+        {
+          "id": "hd_66",
+          "slot": 66,
+          "label": "Life Beyond Earth",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 736,
+            "quote": "66 Life Beyond Earth"
+          }
+        },
+        {
+          "id": "hd_67",
+          "slot": 67,
+          "label": "M-TIME & Antikythera",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 736,
+            "quote": "67 M-TIME & Antikythera"
+          }
+        },
+        {
+          "id": "hd_68",
+          "slot": 68,
+          "label": "HELIOGRID",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 736,
+            "quote": "68 HELIOGRID"
+          }
+        },
+        {
+          "id": "hd_69",
+          "slot": 69,
+          "label": "Photon, Proton, Quantum & Material Forge",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 736,
+            "quote": "69 Photon, Proton, Quantum & Material Forge"
+          }
+        },
+        {
+          "id": "hd_70",
+          "slot": 70,
+          "label": "The Prime Code",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 739,
+            "quote": "70 The Prime Code"
+          }
+        },
+        {
+          "id": "hd_71",
+          "slot": 71,
+          "label": "The Four Operational Pillars",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 739,
+            "quote": "71 The Four Operational Pillars"
+          }
+        },
+        {
+          "id": "hd_72",
+          "slot": 72,
+          "label": "G.O.D. 99",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 739,
+            "quote": "72 G.O.D. 99"
+          }
+        },
+        {
+          "id": "hd_73",
+          "slot": 73,
+          "label": "WINGS 10",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 739,
+            "quote": "73 WINGS 10"
+          }
+        },
+        {
+          "id": "hd_74",
+          "slot": 74,
+          "label": "The 99 Asma Registry",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 739,
+            "quote": "74 The 99 Asma Registry"
+          }
+        },
+        {
+          "id": "hd_75",
+          "slot": 75,
+          "label": "ARSY, 100CENTER, AMANAH & SHURA",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 739,
+            "quote": "75 ARSY, 100CENTER, AMANAH & SHURA"
+          }
+        },
+        {
+          "id": "hd_76",
+          "slot": 76,
+          "label": "Self, Community & Global",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 742,
+            "quote": "76 Self, Community & Global"
+          }
+        },
+        {
+          "id": "hd_77",
+          "slot": 77,
+          "label": "AGE CODE",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 742,
+            "quote": "77 AGE CODE"
+          }
+        },
+        {
+          "id": "hd_78",
+          "slot": 78,
+          "label": "33 World Patches",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 742,
+            "quote": "78 33 World Patches"
+          }
+        },
+        {
+          "id": "hd_79",
+          "slot": 79,
+          "label": "The Complete 33 Register",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 742,
+            "quote": "79 The Complete 33 Register"
+          }
+        },
+        {
+          "id": "hd_80",
+          "slot": 80,
+          "label": "FAITH TO ACTION",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 742,
+            "quote": "80 FAITH TO ACTION"
+          }
+        },
+        {
+          "id": "hd_81",
+          "slot": 81,
+          "label": "99 Human States",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 742,
+            "quote": "81 99 Human States"
+          }
+        },
+        {
+          "id": "hd_82",
+          "slot": 82,
+          "label": "AETHERION — Ten Realms",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 742,
+            "quote": "82 AETHERION — Ten Realms"
+          }
+        },
+        {
+          "id": "hd_83",
+          "slot": 83,
+          "label": "Paradise Atlas",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 742,
+            "quote": "83 Paradise Atlas"
+          }
+        },
+        {
+          "id": "hd_84",
+          "slot": 84,
+          "label": "Mahsyar Covenant",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 745,
+            "quote": "84 Mahsyar Covenant"
+          }
+        },
+        {
+          "id": "hd_85",
+          "slot": 85,
+          "label": "Ad-Deen Four Belief Orbits",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 745,
+            "quote": "85 Ad-Deen Four Belief Orbits"
+          }
+        },
+        {
+          "id": "hd_86",
+          "slot": 86,
+          "label": "Syafaat, Mahsyar & Yaumul Hisab",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 745,
+            "quote": "86 Syafaat, Mahsyar & Yaumul Hisab"
+          }
+        },
+        {
+          "id": "hd_87",
+          "slot": 87,
+          "label": "Divine Command Center — Catatan Suara Qalbu",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 745,
+            "quote": "87 Divine Command Center — Catatan Suara Qalbu"
+          }
+        },
+        {
+          "id": "hd_88",
+          "slot": 88,
+          "label": "BEG8-50256 Ghost in the Machine",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 745,
+            "quote": "88 BEG8-50256 Ghost in the Machine"
+          }
+        },
+        {
+          "id": "hd_89",
+          "slot": 89,
+          "label": "The Forgotten Signal Collection",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 745,
+            "quote": "89 The Forgotten Signal Collection"
+          }
+        },
+        {
+          "id": "hd_90",
+          "slot": 90,
+          "label": "The Creator's Cut",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 745,
+            "quote": "90 The Creator's Cut"
+          }
+        },
+        {
+          "id": "hd_91",
+          "slot": 91,
+          "label": "Source vs Interpretation",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 748,
+            "quote": "91 Source vs Interpretation"
+          }
+        },
+        {
+          "id": "hd_92",
+          "slot": 92,
+          "label": "Character vs History",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 748,
+            "quote": "92 Character vs History"
+          }
+        },
+        {
+          "id": "hd_93",
+          "slot": 93,
+          "label": "Three Timelines",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 748,
+            "quote": "93 Three Timelines"
+          }
+        },
+        {
+          "id": "hd_94",
+          "slot": 94,
+          "label": "Five Canon Evidence States",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 748,
+            "quote": "94 Five Canon Evidence States"
+          }
+        },
+        {
+          "id": "hd_95",
+          "slot": 95,
+          "label": "The Ten Rules of the Universe",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 748,
+            "quote": "95 The Ten Rules of the Universe"
+          }
+        },
+        {
+          "id": "hd_96",
+          "slot": 96,
+          "label": "Four Great Universes",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 748,
+            "quote": "96 Four Great Universes"
+          }
+        },
+        {
+          "id": "hd_97",
+          "slot": 97,
+          "label": "Story vs Command Center",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 748,
+            "quote": "97 Story vs Command Center"
+          }
+        },
+        {
+          "id": "hd_98",
+          "slot": 98,
+          "label": "What Must Remain Unknown",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 748,
+            "quote": "98 What Must Remain Unknown"
+          }
+        },
+        {
+          "id": "hd_99",
+          "slot": 99,
+          "label": "One Universe",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 751,
+            "quote": "99 One Universe"
+          }
+        }
+      ],
+      "patch_title_label": [
+        {
+          "id": "pt_001",
+          "slot": "001",
+          "label": "AEGIS PROTECTION",
+          "nature": "reported in chat",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 929,
+            "quote": "| 001 | AEGIS PROTECTION | reported in chat |"
+          }
+        },
+        {
+          "id": "pt_002",
+          "slot": "002",
+          "label": "NEVERMORE",
+          "nature": "reported in chat",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 930,
+            "quote": "| 002 | NEVERMORE | reported in chat |"
+          }
+        },
+        {
+          "id": "pt_003",
+          "slot": "003",
+          "label": "DIPINGIT MODE ON",
+          "nature": "reported in chat",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 931,
+            "quote": "| 003 | DIPINGIT MODE ON | reported in chat |"
+          }
+        },
+        {
+          "id": "pt_004",
+          "slot": "004",
+          "label": "PINK NOISE",
+          "nature": "reported in chat",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 932,
+            "quote": "| 004 | PINK NOISE | reported in chat |"
+          }
+        },
+        {
+          "id": "pt_005",
+          "slot": "005",
+          "label": "WINDWALKER",
+          "nature": "reported in chat",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 933,
+            "quote": "| 005 | WINDWALKER | reported in chat |"
+          }
+        },
+        {
+          "id": "pt_006",
+          "slot": "006",
+          "label": "PATCH QIBLAT UTARA",
+          "nature": "reported in chat",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 934,
+            "quote": "| 006 | PATCH QIBLAT UTARA | reported in chat |"
+          }
+        },
+        {
+          "id": "pt_007",
+          "slot": "007",
+          "label": "MAROON 5",
+          "nature": "reported in chat",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 935,
+            "quote": "| 007 | MAROON 5 | reported in chat |"
+          }
+        },
+        {
+          "id": "pt_008",
+          "slot": "008",
+          "label": "FUTURE IS NOW",
+          "nature": "reported in chat",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 936,
+            "quote": "| 008 | FUTURE IS NOW | reported in chat |"
+          }
+        },
+        {
+          "id": "pt_009",
+          "slot": "009",
+          "label": "WE ARE SAVAGES",
+          "nature": "recovered draft",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 937,
+            "quote": "| 009 | WE ARE SAVAGES | recovered draft |"
+          }
+        },
+        {
+          "id": "pt_010",
+          "slot": "010",
+          "label": "HAVE A NICE DAY",
+          "nature": "recovered draft",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 938,
+            "quote": "| 010 | HAVE A NICE DAY | recovered draft |"
+          }
+        },
+        {
+          "id": "pt_011",
+          "slot": "011",
+          "label": "KARMA — THE BUG IS ME",
+          "nature": "recovered draft",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 939,
+            "quote": "| 011 | KARMA — THE BUG IS ME | recovered draft |"
+          }
+        },
+        {
+          "id": "pt_012",
+          "slot": "012",
+          "label": "THE PRIME DIRECTIVE",
+          "nature": "recovered draft",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 940,
+            "quote": "| 012 | THE PRIME DIRECTIVE | recovered draft |"
+          }
+        },
+        {
+          "id": "pt_013",
+          "slot": "013",
+          "label": "SAFE FROM DAY ONE",
+          "nature": "recovered draft",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 941,
+            "quote": "| 013 | SAFE FROM DAY ONE | recovered draft |"
+          }
+        },
+        {
+          "id": "pt_014",
+          "slot": "014",
+          "label": "FAMILY WITHOUT FEAR vs THE WRONG WAY / HELLROAD",
+          "nature": "unresolved numbering conflict",
+          "status": "LABEL_ONLY",
+          "disputed": true,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 942,
+            "quote": "| 014 | FAMILY WITHOUT FEAR **vs** THE WRONG WAY / HELLROAD | **unresolved numbering conflict** |"
+          }
+        },
+        {
+          "id": "pt_015",
+          "slot": "015",
+          "label": "FAIR WORK, FAIR LIFE",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 943,
+            "quote": "| 015 | FAIR WORK, FAIR LIFE | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_016",
+          "slot": "016",
+          "label": "BREAK THE DEBT LOOP",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 944,
+            "quote": "| 016 | BREAK THE DEBT LOOP | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_017",
+          "slot": "017",
+          "label": "THE SECOND CHANCE",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 945,
+            "quote": "| 017 | THE SECOND CHANCE | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_018",
+          "slot": "018",
+          "label": "JUSTICE FOR EVERYONE",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 946,
+            "quote": "| 018 | JUSTICE FOR EVERYONE | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_019",
+          "slot": "019",
+          "label": "THE HONEST WITNESS",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 947,
+            "quote": "| 019 | THE HONEST WITNESS | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_020",
+          "slot": "020",
+          "label": "NO ONE DIES ALONE",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 948,
+            "quote": "| 020 | NO ONE DIES ALONE | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_021",
+          "slot": "021",
+          "label": "THE MERCY NETWORK",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 949,
+            "quote": "| 021 | THE MERCY NETWORK | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_022",
+          "slot": "022",
+          "label": "CLEAN WATER FOR ALL",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 950,
+            "quote": "| 022 | CLEAN WATER FOR ALL | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_023",
+          "slot": "023",
+          "label": "NO ONE GOES HUNGRY",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 951,
+            "quote": "| 023 | NO ONE GOES HUNGRY | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_024",
+          "slot": "024",
+          "label": "HEALTH WITHOUT BARRIERS",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 952,
+            "quote": "| 024 | HEALTH WITHOUT BARRIERS | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_025",
+          "slot": "025",
+          "label": "LEARN FOR LIFE",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 953,
+            "quote": "| 025 | LEARN FOR LIFE | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_026",
+          "slot": "026",
+          "label": "NO ONE LEFT BEHIND",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 954,
+            "quote": "| 026 | NO ONE LEFT BEHIND | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_027",
+          "slot": "027",
+          "label": "CRISIS READY",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 955,
+            "quote": "| 027 | CRISIS READY | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_028",
+          "slot": "028",
+          "label": "EARTH STEWARDSHIP",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 956,
+            "quote": "| 028 | EARTH STEWARDSHIP | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_029",
+          "slot": "029",
+          "label": "SAFE DIGITAL WORLD",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 957,
+            "quote": "| 029 | SAFE DIGITAL WORLD | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_030",
+          "slot": "030",
+          "label": "FAIR GOVERNANCE",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 958,
+            "quote": "| 030 | FAIR GOVERNANCE | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_031",
+          "slot": "031",
+          "label": "PEACE BUILDER",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 959,
+            "quote": "| 031 | PEACE BUILDER | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_032",
+          "slot": "032",
+          "label": "A SAFE PLACE TO LIVE",
+          "nature": "editorial proposal",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 960,
+            "quote": "| 032 | A SAFE PLACE TO LIVE | editorial proposal |"
+          }
+        },
+        {
+          "id": "pt_033",
+          "slot": "033",
+          "label": "KOPIHITAM - SIACENG / FAITH TO ACTION",
+          "nature": "user-submitted-in-chat only",
+          "status": "LABEL_ONLY",
+          "disputed": false,
+          "completed": false,
+          "rights": "NOT_ASSESSED",
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 961,
+            "quote": "| 033 | KOPIHITAM - SIACENG / FAITH TO ACTION | **user-submitted-in-chat** only |"
+          }
+        }
+      ],
+      "episode_label": [
+        {
+          "id": "el_npd_2427",
+          "label": "NPD TEAM 24:27",
+          "quote": "NPD TEAM 24:27",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 370,
+            "quote": "NPD TEAM 24:27"
+          }
+        },
+        {
+          "id": "el_npd_2437",
+          "label": "24:37 — TARIAN KIDS",
+          "quote": "24:37 — TARIAN KIDS",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 370,
+            "quote": "24:37 — TARIAN KIDS"
+          }
+        },
+        {
+          "id": "el_npd_2550",
+          "label": "25:50 — TARIAN HUJAN",
+          "quote": "25:50 — TARIAN HUJAN",
+          "status": "LABEL_ONLY",
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 370,
+            "quote": "25:50 — TARIAN HUJAN"
+          }
+        }
+      ],
+      "version_family_ref": [
+        {
+          "id": "vr_xiv_v10_99",
+          "label": "XIV V10 / 99 chapters",
+          "family": "XIV",
+          "status": "NEEDS_SOURCE",
+          "artifact_in_repo": false,
+          "node_id": null,
+          "source": {
+            "file": "docs/audit/M06-01-source-repo-pins.md",
+            "line": 17,
+            "quote": "| **V10 / 99 Chapters** | `github.com/bjo163/moonwitness-xiv` | `99e1a4f028b37dc1` | `docs/narrative/v10/` |"
+          }
+        },
+        {
+          "id": "vr_xiv_v10_1_expanded",
+          "label": "XIV V10.1 expanded companion",
+          "family": "XIV",
+          "status": "NEEDS_SOURCE",
+          "artifact_in_repo": false,
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 779,
+            "quote": "Branch pointers in previous sections are discovery links, **not permanent content identifiers**."
+          }
+        },
+        {
+          "id": "vr_xiv_v1_v10_originals",
+          "label": "XIV V1-V10 private originals",
+          "family": "XIV",
+          "status": "ABSENT",
+          "artifact_in_repo": false,
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 971,
+            "quote": "Full private V1–V10 originals and user-authorized immutable versions have **not been imported**."
+          }
+        },
+        {
+          "id": "vr_xiv_v10_public_draft",
+          "label": "XIV Master Narrative V10 public draft link",
+          "family": "XIV",
+          "status": "LABEL_ONLY",
+          "artifact_in_repo": false,
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 659,
+            "quote": "MASTER_NARRATIVE_V10_PUBLIC_DRAFT.md"
+          }
+        },
+        {
+          "id": "vr_xii_33_patches",
+          "label": "XII 33 World Patches registry",
+          "family": "XII",
+          "status": "NEEDS_SOURCE",
+          "artifact_in_repo": false,
+          "node_id": null,
+          "source": {
+            "file": "docs/audit/M06-01-source-repo-pins.md",
+            "line": 20,
+            "quote": "| **XII 33 Patch Statuses** | `github.com/bjo163/moonwitness-xii` | `33f0014bca881029` | `patches/registry/33-patches.json` |"
+          }
+        },
+        {
+          "id": "vr_xii_15_synopses",
+          "label": "XII 15 story archive synopsis entries",
+          "family": "XII",
+          "status": "NEEDS_SOURCE",
+          "artifact_in_repo": false,
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 974,
+            "quote": "XII's **15 story archive synopsis entries**"
+          }
+        },
+        {
+          "id": "vr_xii_63_pages",
+          "label": "XII 63 editorially reconstructed pages",
+          "family": "XII",
+          "status": "NEEDS_SOURCE",
+          "artifact_in_repo": false,
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 974,
+            "quote": "**63 editorially reconstructed pages**"
+          }
+        },
+        {
+          "id": "vr_xii_patch_014",
+          "label": "XII World Patch #014 numbering",
+          "family": "XII",
+          "status": "NEEDS_SOURCE",
+          "artifact_in_repo": false,
+          "node_id": null,
+          "source": {
+            "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+            "line": 976,
+            "quote": "World Patch #014 numbering dispute remains open."
+          }
+        }
+      ]
+    }
+  },
+  "acceptance_proof": {
+    "heading_rows": 99,
+    "heading_slots": "1-99 contiguous, unique",
+    "manuscript_version_nodes": 0,
+    "originals_claimed": 0,
+    "edges_from_heading_labels": 0,
+    "label_classes_are_nodes": 0,
+    "basis_refs": [
+      "E10",
+      "E11",
+      "E12",
+      "E17",
+      "E18",
+      "E28",
+      "E29"
+    ]
+  },
+  "tallies": {
+    "nodes_total": 0,
+    "nodes_by_kind": {
+      "world": 0,
+      "arc": 0,
+      "episode": 0,
+      "scene": 0,
+      "manuscript_version": 0
+    },
+    "edges_total": 0,
+    "label_rows": {
+      "heading_label": 99,
+      "patch_title_label": 33,
+      "episode_label": 3,
+      "version_family_ref": 8
+    },
+    "label_rows_total": 143,
+    "doc_evidence_rows": 37,
+    "source_quotes_total": 180,
+    "originals_claimed": 0,
+    "node_instances_with_artifact": 0
+  },
+  "non_claims": [
+    "No world, arc, episode, scene or manuscript_version node is asserted: all five node kinds have zero instances in this ledger.",
+    "The 99 headings are editorial labels, not 99 originals, manuscripts, editions, versions or episodes; no heading creates a node.",
+    "The 33 patch titles are historical editorial labels; no patch is claimed completed, approved or divinely endorsed, and slot 014 stays disputed.",
+    "No chapter is equated with an episode or an arc, and no NPD token is promoted to an episode or scene node.",
+    "No V1-V10 original, V10.1 file, XII registry, BATTERIES book or synopsis is imported, opened, authenticated or quoted.",
+    "No D01 edition/source version is created or duplicated inside D07; D01 keeps source version and edition ownership.",
+    "No rights, consent or licence determination is made; every row is metadata-only.",
+    "No schema, migration, table, API, UI, generator or runtime reader is created; @moonwitness/story remains planned.",
+    "No ADR is created or accepted; this is a task design artifact under M17, not an approved architecture decision.",
+    "No numeric, phonetic, mystical or label-similarity equivalence is asserted; M17-02 decisions are unaffected."
+  ],
+  "limitations": [
+    "D07 Story & Media is a planned domain: packages report @moonwitness/story as Planned and no table exists, so the graph has a schema but no instance data.",
+    "The only 99-heading source is one vision document; per-heading manuscripts do not exist in the repository.",
+    "Patch titles come from a secondary XV table; the pinned XII registry is absent and patch 014 has two competing titles.",
+    "The words world, scene and version are overloaded in this repository (D10 World/Science, ORBIT 3D scene, D01 source version, package versions); the graph fixes only the D07 senses.",
+    "No world, arc, episode or scene is named anywhere, so the structural kinds cannot be exercised against real data; the validator exercises them only with fixtures.",
+    "The four BATTERIES books and fifteen synopses exist only as counts, so they are not enumerated as rows here rather than given invented ids.",
+    "BASELINE DRIFT: baseline_sha is the session-start HEAD; another session may add unrelated commits while this leaf runs, and no cited file is modified by them."
+  ]
+}
