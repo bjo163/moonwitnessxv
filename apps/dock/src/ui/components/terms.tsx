@@ -111,6 +111,7 @@ function IdentityReviewRow({ review }: { review: IdentityReview }): ReactNode {
 export function TermIndexTable({ page, locale = 'en' }: { page: TermsPage; locale?: Locale }): ReactNode {
   type Row = TermsPage['terms'][number]
   const localeHref = dockHrefFor(locale)
+  const states = getStatesCopy(locale)
   const columns: ColumnDef<Row>[] = [
     {
       key: 'term',
@@ -141,8 +142,8 @@ export function TermIndexTable({ page, locale = 'en' }: { page: TermsPage; local
         rowKey={(row) => row.stableId}
         empty={
           <EmptyState
-            title="No term matches that filter"
-            hint="Search matches stable IDs, labels, definitions and recorded forms."
+            title={states.emptyTermsSearchTitle}
+            hint={states.emptyTermsSearchHint}
           />
         }
       />

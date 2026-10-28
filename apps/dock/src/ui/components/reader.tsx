@@ -162,7 +162,9 @@ export function ReaderView({
         </header>
 
         {result.state === 'rights_blocked' ? (
-          <Alert tone="hot">{result.message ?? copy.errorRightsBlocked}</Alert>
+          <div role="alert">
+            <Alert tone="hot">{result.message ?? copy.errorRightsBlocked}</Alert>
+          </div>
         ) : null}
 
         <section className="dk-reader-block" aria-labelledby="reader-source-heading">

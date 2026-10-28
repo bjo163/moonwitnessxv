@@ -75,6 +75,16 @@ test('globals.css defines prefers-reduced-motion media query suppressing animati
     /transform:\s*none\s*!important/i,
     'Must reset transforms on hover to none !important'
   )
+  assert.match(
+    cssContent,
+    /\.dk-space-card:hover\s*\{[^}]*transform:\s*translateY\(-2px\)/i,
+    'Space cards must define the hover transform that reduced motion overrides'
+  )
+  assert.match(
+    reducedMotionBlock,
+    /\.dk-space-card:hover[\s\S]*?transform:\s*none\s*!important/i,
+    'Reduced motion must suppress the space-card hover transform'
+  )
 })
 
 test('globals.css defines visible keyboard focus-visible outline rules for navigation links and buttons', () => {

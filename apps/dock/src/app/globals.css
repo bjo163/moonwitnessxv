@@ -2397,6 +2397,7 @@ body {
   gap: 10px;
   min-width: 0;
   padding: 18px;
+  overflow-wrap: anywhere;
   background: var(--surface);
   border: 1px solid var(--border);
   border-top: 3px solid var(--space-tone);
