@@ -19,6 +19,7 @@ import {
 } from './seed.js'
 
 export * from './seed.js'
+export * from './real-world-action-metrics.js'
 
 /**
  * @moonwitness/moonql-journey — Domain D11 Journey & 33 World Patches (Milestone M23)
