@@ -237,7 +237,7 @@ test('HQ browser flow preserves id/en locale, session boundaries, denial, and mo
   await page.reload()
   await page.getByText('Email atau nama pengguna').waitFor({ state: 'visible' })
   assert.equal(await page.locator('html').getAttribute('lang'), 'id')
-  assert.equal(await page.locator('a[href="https://dock.invalid"]').count(), 1)
+  assert.equal(await page.locator('a[href="https://dock.invalid/id"]').count(), 1)
 
   await page.locator('input[name="login"]').fill('synthetic-unknown')
   await page.locator('input[name="password"]').fill('synthetic-wrong-password')

@@ -69,7 +69,7 @@ const AUDITED = [
  */
 const IDENTICAL_VALUE_EXCEPTIONS = {
   'states-copy': ['formGenre', 'formCitationPlaceholder'],
-  'landing-copy': ['shadow', 'stationPinGlobal', 'radar', 'statusDemo'],
+  'landing-copy': ['shadow', 'stationPinGlobal', 'radar', 'statusDemo', 'navDenpa'],
   'provenance-copy': [],
   'reader-copy': [],
 }
