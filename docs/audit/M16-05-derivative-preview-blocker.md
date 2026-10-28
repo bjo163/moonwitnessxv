@@ -8,7 +8,7 @@
 
 ## Owner clarification — 2026-10-28
 
-The owner reports that approved redaction rules and a reviewer exist. The response did not include the policy document path or reviewer role, so the contents, approval scope, independence, and review evidence cannot yet be verified. A read-only search of repository Markdown and the M16 decision/audit/task folders found no identified general redaction procedure or M16-05 review record; the existing M03-06 minor-protection rule is not a complete redaction method for arbitrary testimony. No witness content, consent document, or private evidence was accessed. M16-05 remains open pending the exact policy reference and reviewer role/evidence.
+The owner reports that approved redaction rules and a reviewer exist. The response did not include the policy document path or reviewer role, so the contents, approval scope, independence, and review evidence cannot yet be verified. A read-only search of repository Markdown and the M16 decision/audit/task folders found no identified general redaction procedure or M16-05 review record; the existing M03-06 minor-protection rule is not a complete redaction method for arbitrary testimony. A separate agent prepared a contract-only candidate in [M16-05 redaction policy proposal](../design/M16-05-redaction-policy-proposal.md); a second read-only agent reviewed that document for contract alignment and confirmed its unratified boundary, but this was document-quality review, not privacy approval. The proposal is explicitly **not ratified**. No witness content, consent document, or private evidence was accessed. M16-05 remains open pending owner ratification, independent reviewer role/evidence, and implementation evidence.
 
 ## Evidence and boundary
 
