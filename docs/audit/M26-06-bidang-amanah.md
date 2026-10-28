@@ -2,10 +2,10 @@
 
 - **Task**: M26-06 — Locate exact 25 Bidang Amanah source and mission mapping
 - **Milestone**: M26 — Legacy canon, Empire registries and missing sources
-- **Baseline**: branch `dev`, task-pinned `baseline_sha` `659da2855f56c61ae9d21e2995be9649c77fc470` (659da28). Final observed worktree HEAD `e76df8b0931f7553615e7eb693084c2d36d39e55` (e76df8b). 659da28 is an ancestor of e76df8b.
+- **Baseline**: branch `dev`, task-pinned `baseline_sha` `659da2855f56c61ae9d21e2995be9649c77fc470` (659da28). Delivery-time observed HEAD `e76df8b0931f7553615e7eb693084c2d36d39e55` (e76df8b); integration commit for these files `a4408d965f11b9c35d35aec8efa505e93326d714` (a4408d9). Worktree HEAD continued to move afterwards as other sessions worked; `1b937da`, `89cfd7c`, `91a5ff7` and `51b62f8` were observed. 659da28 is an ancestor of all of them.
 - **Mode**: read-only repository research plus three new files. No TODO edit, no commit, no stash, no checkout, no reset, no build, no test of application code, no external fetch.
 - **Dependency**: M26-05 is closed at `TODO.md:601` (`- [x] **M26-05**`).
-- **Worktree note**: another session advanced `dev` during this task (commits `f4c18ca`, `dfc6556`, `f841db5`, `e76df8b`). Pre-existing uncommitted changes under `apps/cockpit`, `apps/dock`, `apps/headquarters` and `docs/audit/screens` were present and were not touched. The quoted `TODO.md` lines are unchanged by the new commits and all locators resolve at e76df8b.
+- **Worktree note**: another session advanced `dev` during this task (commits `f4c18ca`, `dfc6556`, `f841db5`, `e76df8b`), then after delivery committed the three deliverables at `a4408d9` and rewrote `TODO.md:602` into a closure note. Further unrelated commits followed; `1b937da`, `89cfd7c`, `91a5ff7` and `51b62f8` were observed. That status change was made by the other session, not by this worker. Pre-existing uncommitted changes under `apps/cockpit`, `apps/dock`, `apps/headquarters` and `docs/audit/screens` were present and were not touched.
 - **Deliverables**: `docs/data/M26-06-bidang-amanah.json`, `scripts/check-m26-06-bidang-amanah.mjs`, this audit. No existing file was modified by this task.
 
 ## 1. Verdict
@@ -16,7 +16,7 @@
 
 **Mission mapping: NOT FOUND.** Six source-cited missions exist in the M11 Prophetic Mission Table (`ms_001`–`ms_006`) for five figures, but none is mapped to a Bidang Amanah field. There is no mapping table, foreign key, 25-row matrix or document that assigns a mission to a field: 0 of 6 missions are mapped, and 0 of 25 slots receive a mission.
 
-This audit does not close M26-06. `TODO.md:602` remains unchecked; the integrator and a human reviewer decide closure.
+This audit does not close M26-06. At this worker's delivery-time observation (e76df8b), `TODO.md:602` was still `[ ]`. After delivery another session committed the three deliverables at a4408d9 and rewrote that row to `[x]` with a closure note. That status change was not made, reviewed or self-approved by this worker; it is recorded as an external integration event in §7.6.
 
 ## 2. Method
 
@@ -142,7 +142,7 @@ $ git branch --show-current
 dev
 $ git rev-parse HEAD            # first observation, before writing
 659da2855f56c61ae9d21e2995be9649c77fc470
-$ git rev-parse HEAD            # final observation
+$ git rev-parse HEAD            # delivery-time observation
 e76df8b0931f7553615e7eb693084c2d36d39e55
 $ git merge-base --is-ancestor 659da2855f56c61ae9d21e2995be9649c77fc470 HEAD && echo "659da28 IS ANCESTOR"
 659da28 IS ANCESTOR
@@ -169,7 +169,7 @@ HEAD:docs/vision/MASTER_VISION_NARRATIVE_XV.md:906:Earlier design discussions re
 HEAD:docs/vision/MASTER_VISION_NARRATIVE_XV.md:1124:| **P1** | 25 Bidang Amanah absent | Large conceptual agent/mission family lost | Authorized source retrieval and 25-row reviewed matrix |
 ```
 
-Seven lines in four files; the `M26-05:215` and `M26-06:1,6` references are derived task/audit text, not primary evidence. `git grep -c -i "bidang" HEAD` returned 10 matches in six files: the three additional matches are Headquarters UI strings where `bidang` means a form/table “field”, unrelated to Amanah.
+Seven lines in four files; the `M26-05:215` and `M26-06:1,6` references are derived task/audit text, not primary evidence. The `TODO.md:602` output above is the delivery-time observation; after a4408d9 that row was rewritten by the integrating session into a closure note, so the ledger's `EV-024` now quotes the surviving branch phrase “explicitly unverified, never guessed names” at the same line, while `EV-030` independently preserves the full acceptance phrase at `docs/tasks/M26/M26-06.md:6`. `git grep -c -i "bidang" HEAD` returned 10 matches in six files: the three additional matches are Headquarters UI strings where `bidang` means a form/table “field”, unrelated to Amanah.
 
 ```
 $ git grep -c -i "amanah" HEAD
@@ -258,6 +258,23 @@ EXIT=0
 
 Representative first errors, also observed: `declared slots 26 !== rows 25`; `declared by_slot_status.NEEDS_SOURCE=24 !== rows 25`; `evidence EV-001 quote "this text is not on the cited line" not found at docs/vision/MASTER_VISION_NARRATIVE_XV.md:904`; `slot amanah-slot-01 references missing evidence id "EV-999"`; `candidate candidate-exact-list-absence is NOT_FOUND but carries source_locator "TODO.md:602"`; `mission candidate-mission-ms-001 title quote "title: 'Nonexistent mission'," not found at packages/moonql-actors/src/seed.ts:247`.
 
+### 7.6 Post-delivery integration and re-verification
+
+After the delivery-time observations above, another session committed the three deliverables and rewrote the task row. This worker did not make that commit or the TODO change.
+
+```
+$ git show --stat --oneline a4408d9 | head -6
+a4408d9 docs(m26): record 25 unverified Bidang Amanah slots
+ docs/audit/M26-06-bidang-amanah.md     | 293 ++++++++++++
+ docs/data/M26-06-bidang-amanah.json    | 693 ++++++++++++++++++++++++++++
+ scripts/check-m26-06-bidang-amanah.mjs | 799 +++++++++++++++++++++++++++++++++
+ 3 files changed, 1785 insertions(+)
+$ git rev-parse HEAD            # one re-check; HEAD kept moving as other sessions worked
+1b937dacc759f8c5c0c4e8adc17d1242e037f617
+```
+
+Because `TODO.md:602` no longer contains the full original acceptance sentence, `EV-024` was retargeted to the surviving branch phrase “explicitly unverified, never guessed names” at that same line, and `EV-030` continues to carry the full sentence at `docs/tasks/M26/M26-06.md:6`. No slot depends on the closure status. The validator and self-test were re-run after that change: the positive run still reports 25 slots, 0 names, 0 mappings and 54 resolved locator quotes; the negative run still rejects 25/25 fixtures. Both exit 0. Later checks observed HEADs `89cfd7c`, `91a5ff7` and `51b62f8`. The worker's post-delivery edits to the JSON ledger and this audit are uncommitted against the integration commit `a4408d9`; the script is unchanged from that commit.
+
 ## 8. Rollback
 
 Delete exactly the three new files:
@@ -268,7 +285,7 @@ rm scripts/check-m26-06-bidang-amanah.mjs
 rm docs/audit/M26-06-bidang-amanah.md
 ```
 
-No other file was created or modified by this task. Rollback must not touch `TODO.md`, the pre-existing WIP under `apps/cockpit`, `apps/dock`, `apps/headquarters` or `docs/audit/screens`, or the commits made by the other session.
+No other file was created or modified by this task. At delivery these three paths were untracked, so deletion was a clean rollback. After `a4408d9` they are tracked: rollback now requires `git rm` plus a commit, or reverting `a4408d9`, rather than a silent filesystem delete. Rollback must not touch `TODO.md`, the pre-existing WIP under `apps/cockpit`, `apps/dock`, `apps/headquarters` or `docs/audit/screens`, or commits made by the other session.
 
 ## 9. Required report fields
 
@@ -284,10 +301,10 @@ No other file was created or modified by this task. Rollback must not touch `TOD
 | `security_rights_privacy` | No secrets, environment values, private witness material or external content fetched. Only short repository quotes. No rights, consent or publication claim is made; the field list and its originals remain `NEEDS_SOURCE`. |
 | `reviewer` | Not assigned. Human/integrator review required. |
 | `rollback` | Delete the three files listed in §8. |
-| `result_sha` | Not committed. Worktree HEAD at final observation `e76df8b`; ledger baseline `659da28`; three files untracked. |
+| `result_sha` | Delivered untracked at `e76df8b`; another session committed the delivery at `a4408d9`; later HEADs `1b937da`, `89cfd7c`, `91a5ff7` and `51b62f8` were observed. This worker's post-delivery edits to the JSON ledger and this audit are uncommitted. No commit was made by this worker. |
 | `limitations` | See §6; chiefly in-repository lexical search and no external source access. |
-| `next_eligible_task` | Not selected here. `TODO.md` remains canonical; M26-06 stays unchecked. |
+| `next_eligible_task` | Not selected here. `TODO.md` remains canonical; another session independently marked M26-06 closed at `a4408d9`. |
 
 ## 10. Closure decision
 
-**NOT CLOSED by this worker.** The task's research result is a documented absence, not a recovered 25-row name matrix. The acceptance branch “explicitly unverified, never guessed names” is met; the branch “25 evidence rows” in the sense of 25 named fields is not, and cannot be met from this repository at the baseline. `TODO.md:602` remains `[ ]` for the integrator to assess against this evidence. No name, sequence, mission mapping or canonical field was invented.
+**NOT CLOSED by this worker.** The task's research result is a documented absence, not a recovered 25-row name matrix. The acceptance branch “explicitly unverified, never guessed names” is met; the branch “25 evidence rows” in the sense of 25 named fields is not, and cannot be met from this repository at the baseline. At delivery time (`e76df8b`) `TODO.md:602` was `[ ]`. After delivery, another session changed it to `[x]` at `a4408d9`; that external status change is neither this worker's closure claim nor a self-approval. No name, sequence, mission mapping or canonical field was invented.
