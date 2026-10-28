@@ -1,0 +1,1010 @@
+{
+  "task": "M17-02",
+  "title": "False-alias prevention for Shadow/Batteries/Honey/ZILL and adjacent numeric labels",
+  "baseline_sha": "ee608f7",
+  "observed_head_sha": "4a9cb46f760f8d6595c0677c309c21d779d44f72",
+  "generated_utc": "2026-10-28T10:54:33Z",
+  "baseline_note": "The ledger was written when HEAD was ee608f7a12448a497d3295bf1649616693ffc5be. The session first observed 91a5ff7f2d9f94fa764115e4c875b6fb443bc453 and final verification observed 4a9cb46f760f8d6595c0677c309c21d779d44f72 after other sessions committed. git diff --stat 91a5ff7 4a9cb46 shows only TODO.md, one new dock test and five unrelated audit/data files; every file cited here is identical at all three SHAs.",
+  "acceptance": "No phonetic or mystical sameAs",
+  "method": "Enumerate only alias and near-alias pairs whose two referents and whose non-identity decision already exist in this repository. Every row resolves at least one file:line quote and records the rule that would be violated by an automatic sameAs. No referent, alias, translation, transliteration or lore item is invented. A label is not a referent, a shared sound is not a spelling, and an unrecorded question stays NEEDS_SOURCE.",
+  "decision_enum": [
+    "REJECTED",
+    "ALIAS_APPROVED",
+    "DISPUTED",
+    "NEEDS_SOURCE"
+  ],
+  "decision_definitions": {
+    "REJECTED": "A repository decision record, ratified policy, or explicit document states that the two referents are not one identity. The refusal is evidence and does not settle every neighbouring question.",
+    "ALIAS_APPROVED": "A repository decision record explicitly approves one surface as an alias of a named canonical identity, with reviewer and evidence. No row in this ledger uses this value because no such record exists for these pairs.",
+    "DISPUTED": "The repository preserves an open sameAs candidate or competing readings alongside a separation decision. Nothing may be merged, renamed or quietly promoted.",
+    "NEEDS_SOURCE": "Both labels exist in the repository, but no decision record, registry edge, reviewer decision or source locator decides whether they name one referent. Absence is recorded, not filled."
+  },
+  "basis_enum": [
+    "REGISTRY_DECISION",
+    "RATIFIED_POLICY",
+    "MISSING_SOURCE"
+  ],
+  "basis_definitions": {
+    "REGISTRY_DECISION": "A typed ontology identity review, graph candidate or UNILEX review records the decision or pending state.",
+    "RATIFIED_POLICY": "A ratified decision, the Blueprint ontology constraint, or the narrative vision states the separation directly, without a typed pair record.",
+    "MISSING_SOURCE": "Neither a registry record nor a policy sentence decides the pair; the row states what is missing."
+  },
+  "referent_class_enum": [
+    "FICTIONAL_PERSON",
+    "FICTIONAL_GROUP",
+    "FICTIONAL_SURFACE",
+    "SOFTWARE_SURFACE",
+    "HISTORICAL_TAXONOMY",
+    "THEOLOGICAL_REFERENT",
+    "THEOLOGICAL_NAME_REFERENCE",
+    "THEOLOGICAL_NAME_CATALOG",
+    "PROJECT_ACRONYM",
+    "STUDY_TRACK",
+    "DISPUTED_LEXICAL_TERM",
+    "EDITORIAL_LABEL",
+    "FICTIONAL_ORGANIZATION_TAXONOMY",
+    "FICTIONAL_ROLE_TAXONOMY",
+    "GAME_SYSTEM",
+    "CHRONOLOGY_LABEL",
+    "RESEARCH_METHOD",
+    "REJECTED_READING"
+  ],
+  "referent_kind_enum": [
+    "character",
+    "workspace",
+    "historical_taxonomy",
+    "divine_referent",
+    "project_acronym",
+    "ensemble",
+    "character_or_alias",
+    "editorial_label",
+    "archive_label",
+    "series_label",
+    "divine_name_reference",
+    "disputed_term",
+    "study_track",
+    "org_taxonomy",
+    "theological_referent",
+    "game_system",
+    "chronology_label",
+    "role_taxonomy",
+    "name_catalog",
+    "research_method",
+    "rejected_reading"
+  ],
+  "rule_categories": [
+    "LABEL",
+    "PHONETIC",
+    "MYSTICAL",
+    "NUMERICAL",
+    "THEMATIC",
+    "MEMBERSHIP",
+    "THEOLOGICAL",
+    "ONTOLOGICAL",
+    "VERSION"
+  ],
+  "rules": {
+    "SHARED_SURFACE_LABEL": {
+      "category": "LABEL",
+      "forbids_same_as": true,
+      "description": "Two referents carry the same surface label or homonym; a shared label is not a shared referent."
+    },
+    "SHARED_TOKEN": {
+      "category": "LABEL",
+      "forbids_same_as": true,
+      "description": "Two labels share one prominent word; the remaining words name different narrative roles."
+    },
+    "SHARED_SUBSTRING": {
+      "category": "LABEL",
+      "forbids_same_as": true,
+      "description": "One label is a substring of another; archive naming is not identity."
+    },
+    "CO_LISTED_ARCHIVE_LABEL": {
+      "category": "LABEL",
+      "forbids_same_as": true,
+      "description": "Two labels are printed in one archive or chapter list; co-listing is not equivalence."
+    },
+    "PHONETIC_RESEMBLANCE": {
+      "category": "PHONETIC",
+      "forbids_same_as": true,
+      "description": "The labels differ by one letter or sound; resemblance is not identity."
+    },
+    "LEETSPEAK_SOUND": {
+      "category": "PHONETIC",
+      "forbids_same_as": true,
+      "description": "A stylised spelling (for example a digit for a letter) sounds like another referent; sound is not identity."
+    },
+    "LETTER_SOUND_ACRONYM": {
+      "category": "PHONETIC",
+      "forbids_same_as": true,
+      "description": "A letter-by-letter acronym resembles a theological word; the expansion and domain differ."
+    },
+    "NAME_SOUND_RESEMBLANCE": {
+      "category": "PHONETIC",
+      "forbids_same_as": true,
+      "description": "A fictional name resembles a divine name in sound or popular reading; a fictional band is not a divine referent."
+    },
+    "MYSTICAL_HIERARCHY": {
+      "category": "MYSTICAL",
+      "forbids_same_as": true,
+      "description": "A story taxonomy places one label above or beside a divine referent; hierarchy is not equivalence or authority."
+    },
+    "MYSTICAL_RESONANCE": {
+      "category": "MYSTICAL",
+      "forbids_same_as": true,
+      "description": "A symbolic word (wing, realm, level) evokes a supernatural order; fictional org or game vocabulary is not that order."
+    },
+    "NUMEROLOGICAL_TEN": {
+      "category": "NUMERICAL",
+      "forbids_same_as": true,
+      "description": "Two unrelated taxonomies both count ten items; a shared count is not a shared system."
+    },
+    "NUMEROLOGICAL_HUNDRED": {
+      "category": "NUMERICAL",
+      "forbids_same_as": true,
+      "description": "A game level number and a human age number coincide; numbers in separate dimensions are not interchangeable."
+    },
+    "NUMEROLOGICAL_NINETY_NINE": {
+      "category": "NUMERICAL",
+      "forbids_same_as": true,
+      "description": "A fictional role count and a theological name count both equal 99; the count is not the catalog."
+    },
+    "NUMEROLOGICAL_MYSTICISM": {
+      "category": "MYSTICAL",
+      "forbids_same_as": true,
+      "description": "A project framework number could be read as a hidden scripture cipher; the framework is not an esoteric code."
+    },
+    "THEMATIC_METAPHOR": {
+      "category": "THEMATIC",
+      "forbids_same_as": true,
+      "description": "A literary metaphor or shared theme links two labels; thematic relation is not identity."
+    },
+    "NICKNAME_DEVOTIONAL_RESONANCE": {
+      "category": "THEOLOGICAL",
+      "forbids_same_as": true,
+      "description": "A poetic or personal nickname resembles a sourced divine name; a nickname does not become that name."
+    },
+    "WHOLE_PART_MEMBERSHIP": {
+      "category": "MEMBERSHIP",
+      "forbids_same_as": true,
+      "description": "A label names an ensemble and another names a member or alias inside it; membership is not identity."
+    },
+    "VERSION_SCOPE": {
+      "category": "VERSION",
+      "forbids_same_as": true,
+      "description": "A member is included only in particular versions; a version-scoped surface is not a universal alias."
+    },
+    "THEOLOGICAL_DOMAIN": {
+      "category": "THEOLOGICAL",
+      "forbids_same_as": true,
+      "description": "A fictional or technical referent sits in a different domain from a theological referent; domains are not merged."
+    },
+    "TYPE_DOMAIN_BOUNDARY": {
+      "category": "ONTOLOGICAL",
+      "forbids_same_as": true,
+      "description": "The two referents have different registry kinds or ownership domains; a type distinction is not an alias."
+    }
+  },
+  "guards": {
+    "no_same_as_claims": true,
+    "no_alias_approvals": true,
+    "no_phonetic_alias_approved": true,
+    "no_mystical_alias_approved": true,
+    "every_rule_forbids_same_as": true,
+    "rejected_pairs_not_equivalent": true,
+    "every_row_has_resolving_locator": true,
+    "every_referent_is_used": true,
+    "no_invented_referents": true,
+    "no_real_person_identified": true,
+    "source_variants_preserved": true,
+    "no_external_fetch": true
+  },
+  "same_as_claims": [],
+  "alias_approvals": [],
+  "referents": [
+    {
+      "id": "ref_shadow_character",
+      "label": "THE SHADOW (SHADOW Character, O007)",
+      "kind": "character",
+      "referent_class": "FICTIONAL_PERSON",
+      "registry": "onto_entities:O007",
+      "note": "Crew slot 11 in the M17-01 identity map; registry identityStatus CONTESTED."
+    },
+    {
+      "id": "ref_shadow_workspace",
+      "label": "SHADOW Workspace (O006)",
+      "kind": "workspace",
+      "referent_class": "SOFTWARE_SURFACE",
+      "registry": "onto_entities:O006",
+      "note": "Headquarters editorial and creative studio surface."
+    },
+    {
+      "id": "ref_shadow_legacy_root",
+      "label": "SHADOW legacy taxonomy root",
+      "kind": "historical_taxonomy",
+      "referent_class": "HISTORICAL_TAXONOMY",
+      "registry": null,
+      "note": "Historical/fictional taxonomy node named in the vision; preserved, not promoted to an identity."
+    },
+    {
+      "id": "ref_allah_theological",
+      "label": "ALLAH (theological referent)",
+      "kind": "divine_referent",
+      "referent_class": "THEOLOGICAL_REFERENT",
+      "registry": null,
+      "note": "Divine referent in the tawhid-focused lens; not a data object or a software entity."
+    },
+    {
+      "id": "ref_allah_acronym",
+      "label": "A-L-L-A-H (project acronym)",
+      "kind": "project_acronym",
+      "referent_class": "PROJECT_ACRONYM",
+      "registry": "onto_entities:O002",
+      "note": "Accountable Life, Learning & Action Hub technical acronym."
+    },
+    {
+      "id": "ref_batteries",
+      "label": "THE BATTERIES (O008)",
+      "kind": "ensemble",
+      "referent_class": "FICTIONAL_GROUP",
+      "registry": "onto_entities:O008",
+      "note": "Fictional band; ontology kind ACTOR is a narrative-agent taxonomy, not a real performer."
+    },
+    {
+      "id": "ref_battery_al4h",
+      "label": "A-L4H THE BATTERY",
+      "kind": "character_or_alias",
+      "referent_class": "FICTIONAL_SURFACE",
+      "registry": null,
+      "note": "Named inside THE BATTERIES in particular versions; the repository does not say whether it is a member, a version label or a separate character."
+    },
+    {
+      "id": "ref_honey",
+      "label": "HONEY",
+      "kind": "editorial_label",
+      "referent_class": "EDITORIAL_LABEL",
+      "registry": null,
+      "note": "Editorial label with no registry term or source locator."
+    },
+    {
+      "id": "ref_queen_r",
+      "label": "QUEEN R",
+      "kind": "archive_label",
+      "referent_class": "EDITORIAL_LABEL",
+      "registry": null,
+      "note": "Archive and chapter label; no referent type is resolved."
+    },
+    {
+      "id": "ref_honeybee",
+      "label": "HONEYBEE",
+      "kind": "archive_label",
+      "referent_class": "EDITORIAL_LABEL",
+      "registry": null,
+      "note": "Archive label printed beside QUEEN R; no registry term."
+    },
+    {
+      "id": "ref_honey_moon",
+      "label": "HONEY & MOON",
+      "kind": "series_label",
+      "referent_class": "EDITORIAL_LABEL",
+      "registry": null,
+      "note": "Chapter/series label kept as a separate row in M26-04."
+    },
+    {
+      "id": "ref_al_wadud",
+      "label": "Al-Wadūd",
+      "kind": "divine_name_reference",
+      "referent_class": "THEOLOGICAL_NAME_REFERENCE",
+      "registry": null,
+      "note": "Sourced divine-name reference; the Asma list itself is absent from this repository."
+    },
+    {
+      "id": "ref_zill_shadow",
+      "label": "ZILL — Shadow Witness (O003)",
+      "kind": "character",
+      "referent_class": "FICTIONAL_PERSON",
+      "registry": "onto_entities:O003",
+      "note": "Creative character; identityStatus CONTESTED is stored deliberately."
+    },
+    {
+      "id": "ref_ziil",
+      "label": "ZIIL (O004)",
+      "kind": "disputed_term",
+      "referent_class": "DISPUTED_LEXICAL_TERM",
+      "registry": "onto_entities:O004",
+      "note": "Referent disputed between historical spelling/typo and an independent historic safety/rights term."
+    },
+    {
+      "id": "ref_zill_tasawuf",
+      "label": "ZILL — Ahluz Zikir / Tasawuf (O005)",
+      "kind": "study_track",
+      "referent_class": "STUDY_TRACK",
+      "registry": "onto_entities:O005",
+      "note": "Sufi study track with a verified distinctFrom edge to O003."
+    },
+    {
+      "id": "ref_wings10",
+      "label": "WINGS 10",
+      "kind": "org_taxonomy",
+      "referent_class": "FICTIONAL_ORGANIZATION_TAXONOMY",
+      "registry": null,
+      "note": "Ten fictional org divisions."
+    },
+    {
+      "id": "ref_real_angels",
+      "label": "Real angels",
+      "kind": "theological_referent",
+      "referent_class": "THEOLOGICAL_REFERENT",
+      "registry": null,
+      "note": "The vision table's 'not this' column for WINGS 10."
+    },
+    {
+      "id": "ref_aetherion10",
+      "label": "AETHERION 10 realms",
+      "kind": "game_system",
+      "referent_class": "GAME_SYSTEM",
+      "registry": null,
+      "note": "Fictional game-world progression."
+    },
+    {
+      "id": "ref_aetherion100",
+      "label": "AETHERION 100 levels",
+      "kind": "game_system",
+      "referent_class": "GAME_SYSTEM",
+      "registry": null,
+      "note": "RPG progression levels."
+    },
+    {
+      "id": "ref_age_100",
+      "label": "AGE CODE 100+ human age",
+      "kind": "chronology_label",
+      "referent_class": "CHRONOLOGY_LABEL",
+      "registry": null,
+      "note": "A chronology value kept in its own dimension."
+    },
+    {
+      "id": "ref_god99",
+      "label": "G.O.D. 99",
+      "kind": "role_taxonomy",
+      "referent_class": "FICTIONAL_ROLE_TAXONOMY",
+      "registry": null,
+      "note": "99 task/persona slots of a fictional organization."
+    },
+    {
+      "id": "ref_asmaul99",
+      "label": "Asmaul Husna 99",
+      "kind": "name_catalog",
+      "referent_class": "THEOLOGICAL_NAME_CATALOG",
+      "registry": null,
+      "note": "Theological name catalog within sourced tradition."
+    },
+    {
+      "id": "ref_framework_163",
+      "label": "1·6·3 Framework",
+      "kind": "research_method",
+      "referent_class": "RESEARCH_METHOD",
+      "registry": null,
+      "note": "Research/perspective working framework."
+    },
+    {
+      "id": "ref_cipher_163",
+      "label": "Hidden esoteric scripture cipher (rejected reading)",
+      "kind": "rejected_reading",
+      "referent_class": "REJECTED_READING",
+      "registry": null,
+      "note": "A reading the ratified registry explicitly denies; recorded only as the rejected side of the pair."
+    }
+  ],
+  "rows": [
+    {
+      "id": "fa_shadow_character_workspace",
+      "left_ref": "ref_shadow_character",
+      "right_ref": "ref_shadow_workspace",
+      "decision": "DISPUTED",
+      "basis": "REGISTRY_DECISION",
+      "rules": ["SHARED_SURFACE_LABEL", "TYPE_DOMAIN_BOUNDARY"],
+      "rationale": "A story character and a headquarters workspace share the label SHADOW but are different kinds in different ownership domains. The vision and graph approve a distinctFrom edge, while ontology identity review IR-003 remains PENDING; the alias question is therefore not closed even though no merge is approved.",
+      "open_question": "IR-003 leaves open whether O006 and O007 could ever be one referent. Until a reviewer decides, the approved distinctFrom edge and the pending sameAs candidate both remain visible.",
+      "missing": null,
+      "decision_records": [
+        {
+          "system": "onto_identity_reviews",
+          "code": "IR-003",
+          "state": "PENDING",
+          "relation": "sameAs"
+        },
+        {
+          "system": "moonql_graph_candidates",
+          "code": "GC-O006-O007-distinctFrom-GENERAL",
+          "state": "APPROVED",
+          "relation": "distinctFrom"
+        }
+      ],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:25",
+          "quote": "**SHADOW (Character)**: Tokoh naratif kreatif dalam ark cerita MoonWitness."
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:493",
+          "quote": "Both carry the label SHADOW, but their kinds and domains differ."
+        },
+        {
+          "locator": "packages/moonql-graph/src/seed.ts:110",
+          "quote": "| `THE SHADOW` story character | `distinctFrom` | SHADOW workspace | Two ownership domains |"
+        }
+      ]
+    },
+    {
+      "id": "fa_shadow_legacy_root_character",
+      "left_ref": "ref_shadow_legacy_root",
+      "right_ref": "ref_shadow_character",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["SHARED_SURFACE_LABEL", "MYSTICAL_HIERARCHY"],
+      "rationale": "The historical creative ontology used a SHADOW root above story-role classes. The vision preserves that taxonomy as historical fiction while listing story:shadow and legacy-taxonomy:shadow-root as separate identities; the root is not the crew character.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:113",
+          "quote": "Separate identities: `story:shadow`, `workspace:shadow`, `legacy-taxonomy:shadow-root`, and `theology:allah-under-specific-lens`."
+        },
+        {
+          "locator": "BLUEPRINT.md:232",
+          "quote": "NEVER turn similarity of names, numbers, sounds, nicknames or rhetorical symbolism into `sameAs` automatically."
+        }
+      ]
+    },
+    {
+      "id": "fa_shadow_root_allah",
+      "left_ref": "ref_shadow_legacy_root",
+      "right_ref": "ref_allah_theological",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["SHARED_SURFACE_LABEL", "MYSTICAL_HIERARCHY"],
+      "rationale": "The legacy taxonomy placed a SHADOW root and an AGE OF LIGHT class numbered 0 ALLAH in one story-role scheme. The vision permits preserving that scheme as historical fiction but forbids turning it into a theological hierarchy or an equivalence with the divine referent.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:113",
+          "quote": "It cannot silently become a theological hierarchy with SHADOW above the divine referent."
+        },
+        {
+          "locator": "BLUEPRINT.md:232",
+          "quote": "NEVER turn similarity of names, numbers, sounds, nicknames or rhetorical symbolism into `sameAs` automatically."
+        }
+      ]
+    },
+    {
+      "id": "fa_batteries_allah",
+      "left_ref": "ref_batteries",
+      "right_ref": "ref_allah_theological",
+      "decision": "REJECTED",
+      "basis": "REGISTRY_DECISION",
+      "rules": ["NAME_SOUND_RESEMBLANCE", "THEOLOGICAL_DOMAIN"],
+      "rationale": "Ontology identity review IR-004 rejects a SAME_ENTITY merge between the fictional band O008 and the theological referent O001. The review log repeats the rejection: a fictional band and the theological referent are distinct domains.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [
+        {
+          "system": "onto_identity_reviews",
+          "code": "IR-004",
+          "state": "REJECTED",
+          "relation": "sameAs"
+        }
+      ],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:504",
+          "quote": "A fictional band and the theological referent are never merged"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:119",
+          "quote": "`THE BATTERIES / A-L4H THE BATTERY` is a **fictional character/alias**, not ALLAH."
+        },
+        {
+          "locator": "BLUEPRINT.md:220",
+          "quote": "`THE BATTERIES ≠ ALLAH`"
+        }
+      ]
+    },
+    {
+      "id": "fa_battery_al4h_allah",
+      "left_ref": "ref_battery_al4h",
+      "right_ref": "ref_allah_theological",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["LEETSPEAK_SOUND", "THEOLOGICAL_DOMAIN"],
+      "rationale": "A-L4H THE BATTERY uses digit-for-letter styling that sounds like the divine name. The vision names the pair directly as a fictional character/alias, not ALLAH, and the referent table excludes a fictional battery from the divine referent.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:119",
+          "quote": "`THE BATTERIES / A-L4H THE BATTERY` is a **fictional character/alias**, not ALLAH."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:101",
+          "quote": "An app, agent, account, fictional battery, algorithm, governance authority or theological endorsement of software"
+        }
+      ]
+    },
+    {
+      "id": "fa_batteries_battery_al4h",
+      "left_ref": "ref_batteries",
+      "right_ref": "ref_battery_al4h",
+      "decision": "NEEDS_SOURCE",
+      "basis": "MISSING_SOURCE",
+      "rules": ["WHOLE_PART_MEMBERSHIP", "VERSION_SCOPE"],
+      "rationale": "The vision says the ensemble includes A-L4H THE BATTERY in particular versions, and the graph seed calls the relation co-membership, not identity. No record states whether the surface is a member, a version-scoped alias for the ensemble, or a separate character.",
+      "open_question": "Is A-L4H THE BATTERY a member of THE BATTERIES, a version-specific alias for the ensemble, or a separate character? The repository states inclusion only.",
+      "missing": "No decision record, registry edge, alias row or reviewer note resolves the member-versus-alias question; the words 'in particular versions' make any universal alias claim unsafe.",
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:368",
+          "quote": "including A-L4H THE BATTERY in particular versions"
+        },
+        {
+          "locator": "packages/moonql-graph/src/seed.ts:96",
+          "quote": "a co-membership relation, not an identity"
+        }
+      ]
+    },
+    {
+      "id": "fa_honey_queen_r",
+      "left_ref": "ref_honey",
+      "right_ref": "ref_queen_r",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["THEMATIC_METAPHOR"],
+      "rationale": "The vision lists HONEY and QUEEN R among labels with different origins and states that thematic relation is not identity. It separately warns that honey metaphors are literary rather than automatic romantic identity matches.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:121",
+          "quote": "have different origins; thematic relation is not identity."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:358",
+          "quote": "Honey metaphors are literary, not chemical proofs or automatic romantic identity matches."
+        }
+      ]
+    },
+    {
+      "id": "fa_honey_honeybee",
+      "left_ref": "ref_honey",
+      "right_ref": "ref_honeybee",
+      "decision": "NEEDS_SOURCE",
+      "basis": "MISSING_SOURCE",
+      "rules": ["SHARED_SUBSTRING"],
+      "rationale": "HONEY and HONEYBEE share a substring and appear in overlapping archive material, but no registry term, alias record or reviewer decision links them. M26-04 records HONEY as an editorial label with no referent.",
+      "open_question": "Does HONEYBEE name the same referent as HONEY, a different archive label, or a devotional/character surface? No repository source decides.",
+      "missing": "No ontology entity, UNILEX term, alias row or source locator connects HONEY and HONEYBEE; the shared substring is the only link.",
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:356",
+          "quote": "**HONEYBEE**, **QUEEN R**"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:718",
+          "quote": "31 QUEEN R, HONEYBEE & Sweetness."
+        }
+      ]
+    },
+    {
+      "id": "fa_honey_honey_and_moon",
+      "left_ref": "ref_honey",
+      "right_ref": "ref_honey_moon",
+      "decision": "NEEDS_SOURCE",
+      "basis": "MISSING_SOURCE",
+      "rules": ["SHARED_SUBSTRING"],
+      "rationale": "HONEY & MOON is a separate chapter/series label. M26-04 keeps it as its own row and records that the shared word HONEY is not treated as an identity link, but neither a registry term nor a source decides the referent.",
+      "open_question": "Is HONEY & MOON a series title that merely contains the word HONEY, or does it name the same referent as HONEY? The repository only keeps them separate.",
+      "missing": "No registry term or source locator decides whether the two labels share a referent; the ampersand label is neither renamed nor merged.",
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:362",
+          "quote": "**HONEY & MOON**"
+        },
+        {
+          "locator": "docs/data/M26-04-zill-aliases.json:458",
+          "quote": "The shared word HONEY is not treated as an identity link"
+        }
+      ]
+    },
+    {
+      "id": "fa_queen_r_honeybee",
+      "left_ref": "ref_queen_r",
+      "right_ref": "ref_honeybee",
+      "decision": "NEEDS_SOURCE",
+      "basis": "MISSING_SOURCE",
+      "rules": ["CO_LISTED_ARCHIVE_LABEL"],
+      "rationale": "QUEEN R and HONEYBEE are printed together in one archive line and one chapter heading. Co-listing does not decide whether they are two names for one referent, two archive labels, or two characters.",
+      "open_question": "Do QUEEN R and HONEYBEE name one referent or two? The repository prints them together but records no alias or identity decision.",
+      "missing": "No registry term, alias row or reviewer decision distinguishes the two labels; M26-04 keeps the combined surface unresolved.",
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:718",
+          "quote": "31 QUEEN R, HONEYBEE & Sweetness."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:356",
+          "quote": "**HONEYBEE**, **QUEEN R**"
+        }
+      ]
+    },
+    {
+      "id": "fa_honey_al_wadud",
+      "left_ref": "ref_honey",
+      "right_ref": "ref_al_wadud",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["THEMATIC_METAPHOR", "NICKNAME_DEVOTIONAL_RESONANCE"],
+      "rationale": "The vision places HONEY and Al-Wadūd among labels with different origins and later records lexical, devotional and character distinctions. A sweet or affectionate nickname does not become a sourced divine name.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:121",
+          "quote": "have different origins; thematic relation is not identity."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:979",
+          "quote": "MYLUFT, MA'LŪF, HONEY, QUEEN R, Al-Wadūd have lexical, devotional and character distinctions."
+        }
+      ]
+    },
+    {
+      "id": "fa_zill_ziil",
+      "left_ref": "ref_zill_shadow",
+      "right_ref": "ref_ziil",
+      "decision": "REJECTED",
+      "basis": "REGISTRY_DECISION",
+      "rules": ["PHONETIC_RESEMBLANCE"],
+      "rationale": "Ontology identity review IR-002 rejects the ZILL/ZIIL merge as a difference of spelling and domain, and the review log calls it phonetic resemblance only. UNILEX review P004:P031 reaches the same rejection.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [
+        {
+          "system": "onto_identity_reviews",
+          "code": "IR-002",
+          "state": "REJECTED",
+          "relation": "sameAs"
+        },
+        {
+          "system": "unilex_identity_reviews",
+          "code": "P004:P031",
+          "state": "REJECTED",
+          "relation": "sameAs"
+        }
+      ],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:482",
+          "quote": "ZILL and ZIIL differ by spelling and domain; resemblance is not identity."
+        },
+        {
+          "locator": "packages/moonql-unilex/src/index.ts:351",
+          "quote": "Phonetic resemblance only. ZIIL and ZILL — Shadow Witness are distinct project concepts."
+        },
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:24",
+          "quote": "Bentuk historis `ZIIL` dipertahankan sebagai varian teks arkais"
+        }
+      ]
+    },
+    {
+      "id": "fa_zill_shadow_tasawuf",
+      "left_ref": "ref_zill_shadow",
+      "right_ref": "ref_zill_tasawuf",
+      "decision": "DISPUTED",
+      "basis": "REGISTRY_DECISION",
+      "rules": ["SHARED_SURFACE_LABEL", "TYPE_DOMAIN_BOUNDARY"],
+      "rationale": "The ontology carries a verified distinctFrom edge, UNILEX records separate referents, and the vision prescribes thematicallyRelatedTo with 'Never auto sameAs'. A graph sameAs candidate nevertheless remains PENDING, so the pair is disputed rather than merged or finally closed.",
+      "open_question": "An unapproved graph sameAs candidate for O003:O005 coexists with an approved distinctFrom edge. The candidate must stay visible and unapproved until an identity reviewer decides.",
+      "missing": null,
+      "decision_records": [
+        {
+          "system": "moonql_graph_candidates",
+          "code": "GC-O003-O005-sameAs-SUFI_STUDY",
+          "state": "PENDING",
+          "relation": "sameAs"
+        },
+        {
+          "system": "onto_relations",
+          "code": "EDG-O003-O005-distinctFrom",
+          "state": "VERIFIED",
+          "relation": "distinctFrom"
+        }
+      ],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "packages/moonql-graph/src/seed.ts:123",
+          "quote": "relationType: 'sameAs',"
+        },
+        {
+          "locator": "packages/moonql-graph/src/seed.ts:126",
+          "quote": "status: 'PENDING',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:386",
+          "quote": "edgeCode: 'EDG-O003-O005-distinctFrom',"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:683",
+          "quote": "Never auto `sameAs`"
+        }
+      ]
+    },
+    {
+      "id": "fa_zill_shadow_crew_shadow",
+      "left_ref": "ref_zill_shadow",
+      "right_ref": "ref_shadow_character",
+      "decision": "NEEDS_SOURCE",
+      "basis": "MISSING_SOURCE",
+      "rules": ["SHARED_TOKEN"],
+      "rationale": "ZILL — Shadow Witness and the crew character THE SHADOW both contain the word shadow. The repository lists both labels and requires typed identity review for THE SHADOW aliases, but it never compares ZILL with THE SHADOW or states whether the shared word links them.",
+      "open_question": "Does 'Shadow Witness' relate ZILL to THE SHADOW crew character, or is shadow only a shared narrative word? No repository document decides.",
+      "missing": "No pair record, alias row, reviewer decision or source locator compares ZILL — Shadow Witness with THE SHADOW; the alias-review note names THE SHADOW but not ZILL.",
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:730",
+          "quote": "57 ZILL — The Shadow Witness"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+          "quote": "11 THE SHADOW"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "quote": "THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review."
+        }
+      ]
+    },
+    {
+      "id": "fa_wings10_aetherion10",
+      "left_ref": "ref_wings10",
+      "right_ref": "ref_aetherion10",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["NUMEROLOGICAL_TEN", "TYPE_DOMAIN_BOUNDARY"],
+      "rationale": "Both taxonomies count ten items, but the vision separates WINGS 10 divisions from AETHERION 10 realms as organization versus game, and the relation table records distinctFrom. A shared count is not a shared system.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:687",
+          "quote": "| WINGS10 | `distinctFrom` | AETHERION 10 realms | Org vs game |"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:123",
+          "quote": "`WINGS 10` divisions **distinct from** `AETHERION 10 Realms`."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:472",
+          "quote": "| **10 AETHERION realms** | Game world progression | WINGS |"
+        }
+      ]
+    },
+    {
+      "id": "fa_wings10_real_angels",
+      "left_ref": "ref_wings10",
+      "right_ref": "ref_real_angels",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["MYSTICAL_RESONANCE"],
+      "rationale": "The word wing invites an angelic reading. The vision referent table places WINGS 10 as fictional org departments against 'Real angels', and the Blueprint forbids converting symbolic resemblance into sameAs.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:471",
+          "quote": "| **10 WINGS** | Fictional org departments | Real angels |"
+        },
+        {
+          "locator": "BLUEPRINT.md:232",
+          "quote": "NEVER turn similarity of names, numbers, sounds, nicknames or rhetorical symbolism into `sameAs` automatically."
+        }
+      ]
+    },
+    {
+      "id": "fa_aetherion100_age100",
+      "left_ref": "ref_aetherion100",
+      "right_ref": "ref_age_100",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["NUMEROLOGICAL_HUNDRED"],
+      "rationale": "AETHERION 100 levels is game progression, while 100+ is a human age in the AGE CODE. The vision keeps the numbers in separate dimensions and says physical or eschatological stages must not be inferred from levels.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:480",
+          "quote": "| **100 AETHERION levels** | RPG progression | Physical or eschatological stages |"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:485",
+          "quote": "Chronological age, scripture-reported years, fictional appearance, lunar-year calculation, duration and aspirations are not interchangeable."
+        }
+      ]
+    },
+    {
+      "id": "fa_god99_asmaul99",
+      "left_ref": "ref_god99",
+      "right_ref": "ref_asmaul99",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["NUMEROLOGICAL_NINETY_NINE", "THEOLOGICAL_DOMAIN"],
+      "rationale": "Both counts equal 99. The vision separates G.O.D. 99 organization from Asmaul Husna 99, and the ratified disambiguation registry states that the 99 fictional role slots are not 99 names and are separate from Asmaul Husna.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:476",
+          "quote": "| **99 G.O.D. slots** | Fictional roles | Asmaul Husna |"
+        },
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:36",
+          "quote": "**terpisah dari 99 bab editorial** dan dari Asmaul Husna"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:122",
+          "quote": "`G.O.D. 99` organization **distinct from** Asmaul Husna 99"
+        }
+      ]
+    },
+    {
+      "id": "fa_framework163_cipher",
+      "left_ref": "ref_framework_163",
+      "right_ref": "ref_cipher_163",
+      "decision": "REJECTED",
+      "basis": "RATIFIED_POLICY",
+      "rules": ["NUMEROLOGICAL_MYSTICISM"],
+      "rationale": "The 1·6·3 number sequence resembles a numerological cipher. The ratified registry states the framework is not a hidden esoteric scripture cipher, and its anti-sameAs rule forbids converting name, rhyme, number or artistic metaphor into owl:sameAs.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:26",
+          "quote": "BUKAN kode numerik rahasia kitab suci"
+        },
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:45",
+          "quote": "Kemiripan nama, rima, nomor, atau metafora artistik TIDAK BOLEH dikonversi menjadi relasi `owl:sameAs`"
+        }
+      ]
+    },
+    {
+      "id": "fa_allah_acronym",
+      "left_ref": "ref_allah_theological",
+      "right_ref": "ref_allah_acronym",
+      "decision": "REJECTED",
+      "basis": "REGISTRY_DECISION",
+      "rules": ["LETTER_SOUND_ACRONYM", "THEOLOGICAL_DOMAIN"],
+      "rationale": "Ontology identity review IR-001 rejects a merge between the divine name and the project acronym. The ratified registry forbids sameAs for this pair and requires the dotted acronym in technical contexts.",
+      "open_question": null,
+      "missing": null,
+      "decision_records": [
+        {
+          "system": "onto_identity_reviews",
+          "code": "IR-001",
+          "state": "REJECTED",
+          "relation": "sameAs"
+        }
+      ],
+      "approved_same_as": false,
+      "evidence": [
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:22",
+          "quote": "DILARANG menggunakan relasi `sameAs`."
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:472",
+          "quote": "The divine name and the project acronym are distinct referents; M02-01 forbids sameAs."
+        },
+        {
+          "locator": "BLUEPRINT.md:223",
+          "quote": "ALLAH as religious referent and A-L-L-A-H as project acronym (Accountable Life, Learning & Action Hub)."
+        }
+      ]
+    }
+  ],
+  "declared_counts": {
+    "total": 20,
+    "referents": 24,
+    "by_decision": {
+      "REJECTED": 13,
+      "ALIAS_APPROVED": 0,
+      "DISPUTED": 2,
+      "NEEDS_SOURCE": 5
+    },
+    "by_basis": {
+      "REGISTRY_DECISION": 5,
+      "RATIFIED_POLICY": 10,
+      "MISSING_SOURCE": 5
+    },
+    "by_rule": {
+      "SHARED_SURFACE_LABEL": 4,
+      "SHARED_TOKEN": 1,
+      "SHARED_SUBSTRING": 2,
+      "CO_LISTED_ARCHIVE_LABEL": 1,
+      "PHONETIC_RESEMBLANCE": 1,
+      "LEETSPEAK_SOUND": 1,
+      "LETTER_SOUND_ACRONYM": 1,
+      "NAME_SOUND_RESEMBLANCE": 1,
+      "MYSTICAL_HIERARCHY": 2,
+      "MYSTICAL_RESONANCE": 1,
+      "NUMEROLOGICAL_TEN": 1,
+      "NUMEROLOGICAL_HUNDRED": 1,
+      "NUMEROLOGICAL_NINETY_NINE": 1,
+      "NUMEROLOGICAL_MYSTICISM": 1,
+      "THEMATIC_METAPHOR": 2,
+      "NICKNAME_DEVOTIONAL_RESONANCE": 1,
+      "WHOLE_PART_MEMBERSHIP": 1,
+      "VERSION_SCOPE": 1,
+      "THEOLOGICAL_DOMAIN": 4,
+      "TYPE_DOMAIN_BOUNDARY": 3
+    },
+    "alias_approved_rows": 0,
+    "same_as_claims": 0,
+    "rejected_pairs": 13,
+    "evidence_items": 49
+  },
+  "non_claims": [
+    "No alias is approved by this ledger; alias_approvals and same_as_claims are empty.",
+    "No row resolves ZIIL to a single referent, aligns the ZILL creative and tasawuf tracks, or decides THE BATTERY versus THE BATTERIES.",
+    "No HONEY, QUEEN R, HONEYBEE or HONEY & MOON referent is identified, typed as a person, or linked to a real person.",
+    "No SHADOW alias, generation or real performer is named; IR-003 stays PENDING.",
+    "No theological referent is redefined, compared for authority, or treated as a data object.",
+    "No source text, lyric, manuscript, image or media bytes were copied.",
+    "No external repository, website or private witness material was fetched or consulted.",
+    "No canonical D04/D07 primary key or minted ARSY record is created by these referent ids."
+  ],
+  "limitations": [
+    "The ledger covers pairs that repository documents already name; it is not an exhaustive alias graph for every ship, era, patch or crew surface.",
+    "Policy-only rejections (vision, Blueprint, ratified registry) are not typed pair records; they are explicit non-identity statements but carry no reviewer decision for that exact pair.",
+    "NEEDS_SOURCE rows record repository silence plus one or more resolving labels; they do not prove that the labels are distinct.",
+    "IR-003 leaves SHADOW character/workspace at DISPUTED even though a distinctFrom edge is approved, because the ontology candidate was never rejected.",
+    "ZIIL remains a disputed term; this ledger does not choose between the historical-spelling and safety/rights readings.",
+    "HONEY and QUEEN R have no registry row, so their rows rely on the vision's policy statements and M26-04's absence record.",
+    "The WINGS/AETHERION and 99/100 pairs are policy separations in XV documents; no game or org schema exists to enforce them at runtime.",
+    "No executable alias-resolution code, API or UI reads this ledger yet."
+  ]
+}
