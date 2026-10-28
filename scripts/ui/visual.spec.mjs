@@ -52,6 +52,7 @@ const LOCALES = ['en', 'id']
 const VOCAB = statusWordVocabulary()
 /** `viewport` keeps the committed evidence small; the default is the whole page. */
 const SHOT_MODE = process.env.UI_SCREENSHOT === 'viewport' ? 'viewport' : 'fullPage'
+const HYDRATION_ERROR_PATTERN = /hydration failed|text content does not match/i
 
 /** Screens with a route and an owner today. `/` is addressed as /{locale}: locale is middleware-driven, not a route segment. */
 const SCREENS = [
@@ -355,6 +356,8 @@ async function runCase(testInfo, browser, spec) {
     await page.screenshot({ path: shotPath, fullPage: SHOT_MODE === 'fullPage' })
 
     const failures = evaluateCase(measured, { locale, expectStatusGrid: screen.key === 'home' })
+    const hydrationErrors = logs.errors.filter((message) => HYDRATION_ERROR_PATTERN.test(message))
+    for (const error of hydrationErrors) failures.push(`client hydration mismatch: ${error.slice(0, 240)}`)
     if (measured.stateBranch === 'error-boundary') {
       failures.unshift(
         `the route rendered app/error.tsx instead of the screen (no page heading; first alert: "${String(measured.alertTexts[0] ?? '').slice(0, 160)}")`,
@@ -520,6 +523,20 @@ test.describe('reduced-motion pass', () => {
         await runCase(testInfo, browser, { screen, locale: 'en', width, height, motion: 'reduce', passLabel: 'reduced-motion' })
       })
     }
+  }
+})
+
+test('telemetry clock hydrates and supports UTC/local switching', async ({ browser }) => {
+  const { context, page, logs } = await openPage(browser, { width: 1440, height: 900, locale: 'en', motion: 'no-preference' })
+  try {
+    await gotoSettled(page, '/en')
+    const clock = page.locator('button[title="Click to toggle UTC / Local Time"]')
+    await expect(clock).toContainText(/\d{2}:\d{2}:\d{2} UTC/)
+    await clock.click()
+    await expect(clock).toContainText(/\d{2}:\d{2}:\d{2} LOC/)
+    expect(logs.errors.filter((message) => HYDRATION_ERROR_PATTERN.test(message))).toEqual([])
+  } finally {
+    await context.close()
   }
 })
 

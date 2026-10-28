@@ -90,15 +90,13 @@ export function MtsTelemetryClock({
   compact = false,
   showLunarPhase = true,
 }: MtsTelemetryClockProps): ReactNode {
-  const [telemetry, setTelemetry] = useState<LunarTelemetry>(() =>
-    calculateLunarTelemetry(new Date())
-  )
+  const [telemetry, setTelemetry] = useState<LunarTelemetry | null>(null)
   const [viewMode, setViewMode] = useState<'utc' | 'local'>('utc')
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTelemetry(calculateLunarTelemetry(new Date()))
-    }, 1000)
+    const updateTelemetry = () => setTelemetry(calculateLunarTelemetry(new Date()))
+    updateTelemetry()
+    const timer = setInterval(updateTelemetry, 1000)
 
     return () => clearInterval(timer)
   }, [])
@@ -108,7 +106,9 @@ export function MtsTelemetryClock({
     setViewMode((prev) => (prev === 'utc' ? 'local' : 'utc'))
   }
 
-  const timeLabel = viewMode === 'utc' ? telemetry.utcStr : `${telemetry.localStr} LOC`
+  const timeLabel = telemetry
+    ? `${telemetry[viewMode === 'utc' ? 'utcStr' : 'localStr']}${viewMode === 'local' ? ' LOC' : ''}`
+    : '--:--:-- UTC'
 
   return (
     <button
@@ -120,7 +120,7 @@ export function MtsTelemetryClock({
       <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
       <span className="font-semibold text-white">{timeLabel}</span>
 
-      {showLunarPhase && (
+      {showLunarPhase && telemetry && (
         <>
           <span className="text-white/20">|</span>
           <span className="text-amber-400">{telemetry.lunarIcon}</span>

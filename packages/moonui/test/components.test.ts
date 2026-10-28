@@ -2,6 +2,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
+import { MtsTelemetryClock } from '../dist/client/index.js'
 import {
   Button,
   LinkButton,
@@ -147,6 +148,15 @@ describe('MoonUI Core Primitives SSR Rendering', () => {
     assert.ok(brandHtml.includes('data-size="lg"'))
     assert.ok(brandHtml.includes('href="/denpa"'), 'BrandLogo reuses the one Crown primitive')
     assert.ok(brandHtml.includes('<svg'))
+  })
+})
+
+describe('MtsTelemetryClock hydration contract', () => {
+  it('renders a stable placeholder before client telemetry starts', () => {
+    const html = renderToStaticMarkup(React.createElement(MtsTelemetryClock))
+    assert.ok(html.includes('--:--:-- UTC'))
+    assert.doesNotMatch(html, /\b\d{2}:\d{2}:\d{2} UTC\b/)
+    assert.ok(!html.includes('MTS '), 'phase data waits until the client has a stable clock')
   })
 })
 
