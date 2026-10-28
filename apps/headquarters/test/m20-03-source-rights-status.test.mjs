@@ -40,11 +40,13 @@ const reviewPolicy = async () => {
 void test('HQ source status reads the real D01 edition inventory only after its schema ACL check', async () => {
   const source = await readFile(dashboardPath, 'utf8')
   const schemaIndex = source.indexOf("const sourceModel = doc.models.corpus_editions")
-  const aclIndex = source.indexOf("guardModel(sourceModel, 'list')", schemaIndex)
-  const queryIndex = source.indexOf("listRecords('corpus_editions'", schemaIndex)
+  const inventoryIndex = source.indexOf('const sourceInventory = await loadSourceRightsInventory(', schemaIndex)
+  const aclIndex = source.indexOf("guardModel(model, 'list')", inventoryIndex)
+  const queryIndex = source.indexOf("listRecords('corpus_editions'", inventoryIndex)
 
   assert.ok(schemaIndex >= 0, 'the dashboard selects the D01 corpus edition model')
-  assert.ok(aclIndex > schemaIndex, 'the page asks the existing HQ guard for list access')
+  assert.ok(inventoryIndex > schemaIndex, 'the page uses the source inventory access gate')
+  assert.ok(aclIndex > inventoryIndex, 'the inventory gate delegates to the existing HQ guard')
   assert.ok(queryIndex > aclIndex, 'edition rows are fetched after the model ACL check')
   assert.match(source, /rows=\{sources\.rows\}/, 'the table renders fetched model rows, not hand-authored source records')
   assert.match(source, /D01 does not store a review or publication status/)

@@ -24,6 +24,8 @@ import { test } from 'node:test'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { can, MoonApiError, type CrudOp, type ModelMeta, type SchemaDocument, type ViewMeta } from '@moonwitness/moonql-client'
 import { denialMessage } from '../src/lib/denial-copy'
+import { loadSourceRightsInventory } from '../src/lib/source-rights-inventory.js'
+import type { ListResult } from '../src/data/queries/records.js'
 import type { Guard } from '../src/lib/authz.js'
 import type { SessionUser } from '../src/data/types.js'
 
@@ -356,6 +358,40 @@ void test('the guard asks the hub who is asking; a role is never read off the co
   await runGuard(guardModel(publishedModel({ get: 'auth' }), 'get'))
 
   assert.deepEqual(hubCalls, [`${SESSION_URL}|Bearer ${SYNTHETIC_COOKIE}`], 'the opaque cookie is offered to the hub, which answers with the role')
+})
+
+void test('HQ source inventory denies before loading rows and loads only after the published ACL allows', async () => {
+  const { guardModel } = await authz()
+  const sourceModel = publishedModel({ list: ['admin'] })
+  const rows: ListResult = { rows: [{ id: 'synthetic-edition' }], total: 1, page: 1, pageSize: 25 }
+  let listCalls = 0
+
+  withRequest(SYNTHETIC_COOKIE)
+  useHub('signed-in-viewer')
+  const denied = await loadSourceRightsInventory(
+    sourceModel,
+    async (model) => (await guardModel(model, 'list')).allowed,
+    async () => {
+      listCalls += 1
+      return rows
+    },
+  )
+  assert.deepEqual(denied, { accessAllowed: false, sources: null })
+  assert.equal(listCalls, 0, 'denied callers never trigger the edition data query')
+
+  withRequest(SYNTHETIC_COOKIE)
+  useHub('signed-in-admin')
+  const allowed = await loadSourceRightsInventory(
+    sourceModel,
+    async (model) => (await guardModel(model, 'list')).allowed,
+    async () => {
+      listCalls += 1
+      return rows
+    },
+  )
+  assert.equal(allowed.accessAllowed, true)
+  assert.equal(allowed.sources, rows)
+  assert.equal(listCalls, 1, 'allowed callers load the edition inventory once')
 })
 
 // ---------------------------------------------------------------- 4. hub outage

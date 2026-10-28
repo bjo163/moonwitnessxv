@@ -20,6 +20,7 @@ import { getMonitorOverview } from '@/data/queries/monitor'
 import { listRecords, type ListResult } from '@/data/queries/records'
 import { getSchema } from '@/data/schema'
 import { guardEndpoint, guardModel } from '@/lib/authz'
+import { loadSourceRightsInventory } from '@/lib/source-rights-inventory'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { EventStream } from '@/ui/client/EventStream'
 import { AuditFeed, JobTable } from '@/ui/widgets/Feeds'
@@ -243,10 +244,11 @@ export default async function DashboardPage() {
   if (!guard.allowed) return <AccessDenied code={guard.code} />
 
   const sourceModel = doc.models.corpus_editions
-  const sourceGuard = sourceModel ? await guardModel(sourceModel, 'list') : null
-  const sources = sourceModel?.operations.list && sourceGuard?.allowed
-    ? await listRecords('corpus_editions', { pageSize: 25, order: 'code' }).catch(() => null)
-    : null
+  const sourceInventory = await loadSourceRightsInventory(
+    sourceModel,
+    async (model) => (await guardModel(model, 'list')).allowed,
+    () => listRecords('corpus_editions', { pageSize: 25, order: 'code' }),
+  )
   const [ops, monitor] = await Promise.all([dashboard(), getMonitorOverview()])
   const totalRows = ops.models.reduce((sum, model) => sum + model.count, 0)
   const crons = ops.crons
@@ -474,7 +476,7 @@ export default async function DashboardPage() {
         </div>
       </Panel>
 
-      <SourceRightsPanel locale={locale} model={sourceModel} accessAllowed={sourceGuard?.allowed ?? false} sources={sources} />
+      <SourceRightsPanel locale={locale} model={sourceModel} accessAllowed={sourceInventory.accessAllowed} sources={sourceInventory.sources} />
 
       {/* 3. BOTTOM 3-PANEL ROW: PROJECT UNIVERSE + ACTIVE WORKFLOWS + COMMAND FEED / ALERTS */}
       <section className="hq-mc-bottom-grid" id="project-universe">
