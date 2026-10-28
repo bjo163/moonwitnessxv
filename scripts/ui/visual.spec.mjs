@@ -16,6 +16,7 @@
 // Run: pnpm exec playwright test --config scripts/ui/playwright.config.mjs
 // Options: UI_PORT=<free port >= 3101>, UI_HUB_URL=<reachable hub>, UI_SCREENSHOT=viewport.
 import fs from 'node:fs'
+import path from 'node:path'
 import process from 'node:process'
 import { expect, test } from '@playwright/test'
 
@@ -381,7 +382,7 @@ async function runCase(testInfo, browser, spec) {
       height,
       requestedRoute: screen.route(locale),
       httpStatus: status,
-      screenshot: `docs/audit/screens/${file}`,
+      screenshot: path.relative(process.cwd(), shotPath).replaceAll('\\', '/'),
       screenshotBytes: fs.statSync(shotPath).size,
       screenshotMode: SHOT_MODE,
       hubMode: HUB_MODE,
@@ -522,7 +523,7 @@ test.describe('reduced-motion pass', () => {
   }
 })
 
-test('keyboard pass · drawer at 390px, active-link semantics at 1440px', async ({ browser }, testInfo) => {
+test('keyboard pass · drawer at 390px and primary/index semantics at 1440px', async ({ browser }, testInfo) => {
   const report = { route: '/en', drawerViewport: '390x844', desktopViewport: '1440x900' }
 
   const { context, page, logs } = await openPage(browser, { width: 390, height: 844, locale: 'en', motion: 'no-preference' })
@@ -593,7 +594,39 @@ test('keyboard pass · drawer at 390px, active-link semantics at 1440px', async 
     expect(report.drawerRole, 'the drawer is a dialog').toBe('dialog')
     expect(report.drawerAriaModal, 'the drawer is modal').toBe('true')
     expect(report.spaceOpensDrawer, 'Space activates the drawer trigger').toBe(true)
-    expect(report.activeLinkInsideDrawer, 'the active link inside the drawer carries aria-current="page"').not.toBeNull()
+    expect(report.activeLinkInsideDrawer, 'the home brand owns the home destination; no drawer route is active').toBeNull()
+
+    await gotoSettled(page, '/en/reader')
+    await settlePage(page)
+    await trigger.click()
+    await expect(drawer, 'the drawer opens on the Reader route').toBeVisible()
+    report.activeReaderLinkInsideDrawer = await page.evaluate(() => {
+      const link = document.querySelector('#dk-mobile-menu a[aria-current="page"]')
+      return link ? { text: link.textContent.trim().slice(0, 30), href: link.getAttribute('href') } : null
+    })
+    expect(report.activeReaderLinkInsideDrawer?.href, 'Reader is the active destination in the drawer').toBe('/en/reader')
+
+    const mobileIndexTrigger = page.locator('#dk-mobile-menu .dk-mobile-nav .dk-nav-index-trigger')
+    const mobileIndexPanel = page.locator('#dk-index-mobile')
+    const firstMobileIndexLink = mobileIndexPanel.locator('a[href]').first()
+    await expect(firstMobileIndexLink, 'collapsed Index routes are hidden from the drawer').toBeHidden()
+    await mobileIndexTrigger.focus()
+    await page.keyboard.press('Tab')
+    const drawerJoin = page.locator('#dk-mobile-menu a[href="#join-crew"]')
+    await expect(drawerJoin, 'Tab skips the collapsed Index routes and reaches Join').toBeFocused()
+    await page.keyboard.press('Shift+Tab')
+    await expect(mobileIndexTrigger, 'Shift+Tab returns to the Index trigger, not hidden links').toBeFocused()
+
+    await page.keyboard.press('Enter')
+    await expect(mobileIndexTrigger).toHaveAttribute('aria-expanded', 'true')
+    await expect(firstMobileIndexLink, 'Enter opens mobile Index routes').toBeVisible()
+    await expect(firstMobileIndexLink, 'opening mobile Index moves focus into the group').toBeFocused()
+    expect(await firstMobileIndexLink.getAttribute('href')).toBe('/en/figures')
+    await page.keyboard.press('Escape')
+    await expect(mobileIndexTrigger, 'Escape closes mobile Index').toHaveAttribute('aria-expanded', 'false')
+    await expect(mobileIndexTrigger, 'Escape restores focus to the mobile Index trigger').toBeFocused()
+    await page.keyboard.press('Escape')
+    await expect(drawer).toBeHidden()
     report.consoleErrors = logs.errors.slice(0, 5)
   } finally {
     await context.close()
@@ -611,11 +644,37 @@ test('keyboard pass · drawer at 390px, active-link semantics at 1440px', async 
         : null
     })
     report.desktopActiveLinkCount = await desktop.page.locator('nav.dk-nav a[aria-current="page"]').count()
-    expect(report.activeLinkOnDesktopNav, 'one active nav link carries aria-current="page"').not.toBeNull()
-    expect(report.activeLinkOnDesktopNav.text).toBe('HOME')
-    expect(report.activeLinkOnDesktopNav.href).toBe('/en')
-    expect(report.activeLinkOnDesktopNav.visible, 'the active link is the visible desktop nav link').toBe(true)
-    expect(report.desktopActiveLinkCount, 'one and only one active desktop nav link').toBe(1)
+    expect(report.activeLinkOnDesktopNav, 'the brand owns home, so no route link is falsely active').toBeNull()
+    expect(report.desktopActiveLinkCount, 'home has no active route link in primary navigation').toBe(0)
+
+    const readLink = desktop.page.locator('nav.dk-nav a.dk-nav-primary-link').first()
+    report.desktopReadHref = await readLink.getAttribute('href')
+    expect(report.desktopReadHref, 'READ is the first primary destination').toBe('/en/reader')
+
+    const indexTrigger = desktop.page.locator('nav.dk-nav .dk-nav-index-trigger')
+    await indexTrigger.focus()
+    await desktop.page.keyboard.press('Enter')
+    await expect(indexTrigger).toHaveAttribute('aria-expanded', 'true')
+    const firstIndexLink = desktop.page.locator('#dk-index-desktop a[href]').first()
+    await expect(firstIndexLink, 'opening INDEX exposes grouped routes').toBeVisible()
+    await expect(firstIndexLink, 'opening INDEX moves focus to its first route').toBeFocused()
+    report.firstIndexHref = await firstIndexLink.getAttribute('href')
+    expect(report.firstIndexHref).toBe('/en/figures')
+    await desktop.page.keyboard.press('Escape')
+    await expect(indexTrigger, 'Escape closes INDEX and restores focus').toHaveAttribute('aria-expanded', 'false')
+    await expect(indexTrigger).toBeFocused()
+
+    await gotoSettled(desktop.page, '/en/reader')
+    await settlePage(desktop.page)
+    report.activeLinkOnReader = await desktop.page.locator('nav.dk-nav a[aria-current="page"]').evaluate((link) => ({
+      text: link.textContent.trim(),
+      href: link.getAttribute('href'),
+      visible: link.getBoundingClientRect().width > 0,
+    }))
+    expect(report.activeLinkOnReader.href).toBe('/en/reader')
+    expect(report.activeLinkOnReader.text).toContain('READ')
+    expect(report.activeLinkOnReader.visible).toBe(true)
+    expect(await desktop.page.locator('nav.dk-nav a[aria-current="page"]').count()).toBe(1)
   } finally {
     await desktop.context.close()
   }
