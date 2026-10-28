@@ -107,15 +107,14 @@ test('UI-F16 Tab is trapped inside the drawer in both directions', () => {
 })
 
 test('UI-F16 the open-focus step and the Tab trap use one identical focusable selector', () => {
-  // Two divergent selectors are the classic regression: the trap thinks a node
-  // is not focusable, so Tab walks out of the dialog into the page behind it.
-  const selectors = [...shellSource.matchAll(/querySelectorAll<HTMLElement>\(\s*'([^']+)'/g)].map(
-    (match) => match[1],
-  )
-  assert.equal(selectors.length, 2, 'the drawer must move focus on open and trap Tab')
-  assert.equal(selectors[0], selectors[1], 'the trap selector must match the move-focus selector')
-  assert.match(selectors[0], /a\[href\], button:not\(\[disabled\]\)/)
-  assert.match(selectors[0], /\[tabindex\]:not\(\[tabindex="-1"\]\)/, 'the selector must honour tabindex')
+  // Keep the selector centralized so opening focus and Tab trapping cannot drift.
+  const helper = /function drawerFocusableElements\(drawer: HTMLDivElement\): HTMLElement\[\] \{([\s\S]*?)\n\}/.exec(shellSource)?.[0] ?? ''
+  assert.ok(helper.length > 0, 'the drawer focus selector is defined in one helper')
+  assert.equal((shellSource.match(/function drawerFocusableElements\(/g) ?? []).length, 1)
+  assert.equal((shellSource.match(/drawerFocusableElements\(drawer\)/g) ?? []).length, 2,
+    'the same helper serves focus-on-open and the Tab trap')
+  assert.match(helper, /querySelectorAll<HTMLElement>\(\s*'a\[href\], button:not\(\[disabled\]\)/)
+  assert.match(helper, /\[tabindex\]:not\(\[tabindex="-1"\]\)/, 'the selector must honour tabindex')
 })
 
 test('UI-F16 focus is captured on open and restored to the trigger on close', () => {
@@ -176,14 +175,15 @@ test('UI-F16 both the trigger and the in-drawer close give a localized accessibl
 })
 
 test('UI-F16 route-active marking is applied in the desktop nav and again in the drawer', () => {
-  const current = shellSource.match(/aria-current=\{active \? 'page' : undefined\}/g) ?? []
-  assert.equal(current.length, 2, 'both navigation surfaces must mark the active route')
-
   const desktopNav = /<nav className="dk-nav"[\s\S]*?<\/nav>/.exec(shellSource)?.[0] ?? ''
   const drawerNav = /<nav\s+className="dk-mobile-nav"[\s\S]*?<\/nav>/.exec(shellSource)?.[0] ?? ''
   assert.match(desktopNav, /aria-current=\{active \? 'page' : undefined\}/)
   assert.match(drawerNav, /aria-current=\{active \? 'page' : undefined\}/)
   assert.match(drawerNav, /onClick=\{closeMenu\}/, 'a drawer link dismisses the drawer on activation')
+
+  const indexDisclosure = shellSource.slice(shellSource.indexOf('function IndexDisclosure('), shellSource.indexOf('/**\n * Normalizes a path'))
+  assert.match(indexDisclosure, /aria-current=\{active \? 'page' : undefined\}/,
+    'reusable index links mark their own active route')
 })
 
 // -------------------------------------------------------------- rendered ----
@@ -205,18 +205,14 @@ test('UI-F16 the drawer marks the active route and leaves the others unmarked', 
   const drawer = /<nav class="dk-mobile-nav"[\s\S]*?<\/nav>/.exec(html)?.[0] ?? ''
   assert.ok(drawer.length > 0, 'the drawer navigation must be present in the markup')
 
-  assert.match(
-    drawer,
-    /<a[^>]*href="\/id\/stations"[^>]*aria-current="page"[^>]*>SIGNALS<\/a>|<a[^>]*href="\/id\/stations"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*aria-current="page"[^>]*>SIGNALS<\/a>|<a[^>]*aria-current="page"[^>]*href="\/id\/stations"/,
-  )
-  const signals = /<a[^>]*href="\/id\/stations"[^>]*>SIGNALS<\/a>/.exec(drawer)?.[0] ?? ''
-  assert.match(signals, /aria-current="page"/, 'SIGNALS is the active route')
+  const signal = /<a\b[^>]*href="\/id\/stations"[^>]*>[\s\S]*?<\/a>/.exec(drawer)?.[0] ?? ''
+  assert.ok(signal.length > 0, 'the Indonesian route catalog links to /id/stations')
+  assert.match(signal, /aria-current="page"/, 'the route is marked current')
+  assert.match(signal, />SINYAL(?:<span\b[^>]*>\s*·\s*NYATA<\/span>)?<\/a>/,
+    'the active link uses the Indonesian catalog label and may include its status span')
 
-  const home = /<a[^>]*href="\/id"[^>]*>HOME<\/a>/.exec(drawer)?.[0] ?? ''
-  assert.ok(home.length > 0, 'the drawer carries the home link')
-  assert.doesNotMatch(home, /aria-current="page"/, 'an inactive drawer link is not marked current')
-
-  const reader = /<a[^>]*href="\/id\/reader"[^>]*>READER<\/a>/.exec(drawer)?.[0] ?? ''
+  const reader = /<a\b[^>]*href="\/id\/reader"[^>]*>[\s\S]*?<\/a>/.exec(drawer)?.[0] ?? ''
+  assert.match(reader, />BACA(?:<span\b[^>]*>\s*·\s*NYATA<\/span>)?<\/a>/, 'the reader link uses its Indonesian catalog label and status')
   assert.doesNotMatch(reader, /aria-current="page"/)
 })
 
@@ -225,8 +221,11 @@ test('UI-F16 the English drawer labels its control and dialog in English', () =>
   assert.match(html, /aria-label="Open navigation"/)
   assert.match(html, /aria-label="Mobile navigation"/)
   const drawer = /<nav class="dk-mobile-nav"[\s\S]*?<\/nav>/.exec(html)?.[0] ?? ''
-  const terms = /<a[^>]*href="\/en\/terms"[^>]*>TERMS<\/a>/.exec(drawer)?.[0] ?? ''
+  const terms = /<a\b[^>]*href="\/en\/terms"[^>]*>[\s\S]*?<\/a>/.exec(drawer)?.[0] ?? ''
+  assert.ok(terms.length > 0, 'the English route catalog links to /en/terms')
   assert.match(terms, /aria-current="page"/)
+  assert.match(terms, />EXPLORE(?:<span\b[^>]*>[\s\S]*?<\/span>)?<\/a>/,
+    'the active link uses the current English catalog label')
 })
 
 test('UI-F16 the drawer is announced by its own accessible name, not only by role', () => {
