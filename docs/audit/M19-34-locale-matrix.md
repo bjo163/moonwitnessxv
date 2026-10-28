@@ -30,14 +30,15 @@
 ## Remaining evidence gaps
 
 1. The Dock visual harness honestly skipped the term-detail matrix because forced-offline `/terms` exposed no stable term ID. A seeded/runtime fixture is needed to cover that route in both locales.
-2. The Dock keyboard record in `geometry.json` contains one React hydration `pageerror`. The visible source `MtsTelemetryClock` initializes from the current time during render, which may explain the mismatch; that cause is an inference, not proven here. `@moonwitness/moonui` is shared and this task did not change it.
+2. The original Dock visual run at the `c46552a` source baseline and integration `8720423` recorded one React hydration `pageerror` in its keyboard record. A later exact-`dev`-SHA revalidation at `189aba80cce4f07d4bc98c112b5ed7d0fe7aec65`, after stabilizing `MtsTelemetryClock`, recorded zero hydration errors across all 32 viewport and 8 reduced-motion captures; see [M30-05 revalidation](M30-05-hydration-fix-189aba8.md). The cross-app locale suites above were not rerun at `189aba8`.
 3. The ARSY denial matrix's skipped assertion documents an unapproved public-projection gap. This is tracked separately by M19-19 and is not represented as a green API gate.
 4. No live Hub, PostgreSQL, CI, production deployment, or deployed URL was tested.
 
-These gaps prevent a full M19-34 completion claim. The task checkbox must remain open until the term-detail case and hydration signal have a reviewed disposition and the API skip is handled within its owning rights/governance task.
+These gaps prevent a full M19-34 completion claim. The task checkbox must remain open until term-detail coverage and the API skip are handled within their owning tasks, and an independent reviewer confirms the integrated evidence.
 
 ## Artifacts and review
 
 - Dock screenshots and machine-readable result: [`M19-34-clean-dock-matrix`](M19-34-clean-dock-matrix/geometry.json) (41 PNGs plus JSON; 32 base matrix and 8 reduced-motion records, with one term-detail skip).
-- Independent review confirmed the test corrections and ORBIT case, and recommended leaving M19-34 open for the recorded gaps.
+- Latest Dock visual revalidation: [M30-05 hydration-fixed captures](M30-05-clean-matrix/geometry.json) records the original exact-`8137b09` baseline; [hydration-fixed run](M30-05-hydration-fix/geometry.json) records `189aba8` with zero pageerrors. The latter is Dock-only visual evidence, not a rerun of all app locale suites.
+- Independent review at the earlier integration baseline confirmed the test corrections and ORBIT case, and recommended leaving M19-34 open. The `189aba8` revalidation has not received a new independent review.
 - Rollback is limited to the three QA test changes and this audit/artifact folder; no product application behavior or data changed.
