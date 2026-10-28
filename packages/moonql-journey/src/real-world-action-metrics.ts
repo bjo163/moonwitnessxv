@@ -96,11 +96,13 @@ export function calculateRealWorldActionMetrics(
   const eligible = accepted.filter((record) => record.validSafePlan && record.voluntary)
   const startedActionCount = eligible.filter((record) => record.started).length
   const completedActionCount = eligible.filter((record) => record.completed).length
-  const barriers = accepted.filter((record) => record.barrierObserved)
+  // Outcome rates are scoped to voluntary, safe plans; unsafe records remain in
+  // integrity counts but cannot improve or worsen efficacy metrics.
+  const barriers = eligible.filter((record) => record.barrierObserved)
   const safeBarrierResponseCount = barriers.filter(
     (record) => record.barrierResponse !== null && SAFE_BARRIER_RESPONSES.has(record.barrierResponse),
   ).length
-  const evaluatedBenefits = accepted.filter(
+  const evaluatedBenefits = eligible.filter(
     (record) => record.benefitEvidence === 'VERIFIED_BENEFIT' || record.benefitEvidence === 'NO_VERIFIED_BENEFIT',
   )
   const verifiedBenefitCount = evaluatedBenefits.filter(
@@ -119,8 +121,8 @@ export function calculateRealWorldActionMetrics(
     safeBarrierResponseCount,
     evaluatedBenefitCount: evaluatedBenefits.length,
     verifiedBenefitCount,
-    unknownBenefitCount: accepted.filter((record) => record.benefitEvidence === 'UNKNOWN').length,
-    unassessedBenefitCount: accepted.filter((record) => record.benefitEvidence === 'NOT_ASSESSED').length,
+    unknownBenefitCount: eligible.filter((record) => record.benefitEvidence === 'UNKNOWN').length,
+    unassessedBenefitCount: eligible.filter((record) => record.benefitEvidence === 'NOT_ASSESSED').length,
     initiationRate: rate(startedActionCount, eligible.length),
     barrierResponseRate: rate(safeBarrierResponseCount, barriers.length),
     completionRate: rate(completedActionCount, eligible.length),
