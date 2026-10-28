@@ -1,0 +1,1284 @@
+{
+  "task": "M17-01",
+  "title": "Identity map: II eight eras, II crew and XII/XIV story versions",
+  "baseline_sha": "dfc6556",
+  "generated_utc": "2026-10-31",
+  "method": "Enumerate only labels and identities already present in this repository. Every row carries a file:line locator and an exact quote. A label is not a person, an ontology ACTOR row is not a real performer, and two enumerations are never merged without a source.",
+  "status_enum": [
+    "EVIDENCED",
+    "LABEL_ONLY",
+    "NEEDS_SOURCE",
+    "ABSENT"
+  ],
+  "status_definitions": {
+    "EVIDENCED": "A typed identity row exists in this repository (onto_entities or an equivalent registry) and the label plus registry id are both quoted at resolving locators. EVIDENCED does not mean the identity is uncontested, canonised, rights-cleared, or that any source text was recovered.",
+    "LABEL_ONLY": "The exact label is enumerated in an in-repository document at a resolving locator, but no typed identity row and no present source artifact exist. The missing artifact is recorded on the owning claim or row, not converted into an identity.",
+    "NEEDS_SOURCE": "The label exists, and a repository document explicitly records its referent, alias, generation, numbering, or source as missing, conflicting, disputed, or requiring typed identity review.",
+    "ABSENT": "The repository records the artifact or real-person identity as not present at all. The absence is recorded here rather than filled with an invented identity."
+  },
+  "kind_enum": [
+    "character",
+    "crew_label",
+    "ensemble",
+    "entity",
+    "actor",
+    "era",
+    "story_version",
+    "gap"
+  ],
+  "kind_definitions": {
+    "character": "A fictional narrative person asserted as such by a repository document and/or a typed CHARACTER registry row.",
+    "crew_label": "A surface label from the II crew index whose referent type (character, alias, generation, work) is not resolved by the repository. It is deliberately not promoted to character or actor.",
+    "ensemble": "A fictional group, band, or generation. Not a single person.",
+    "entity": "A non-person project surface or software entity that shares a label with a story label.",
+    "actor": "A real performer/actor identity slot. No real performer is evidenced for the II crew; the one row is an explicit ABSENT record.",
+    "era": "A narrative era label reference. Not a calendar period and not a person.",
+    "story_version": "A named source version, edition, archive, or patch-registry reference. Not a manuscript claim.",
+    "gap": "An explicit unresolved cross-reference that cannot be assigned to one identity without inventing lore."
+  },
+  "id_prefixes": {
+    "character": "ch_",
+    "crew_label": "cr_",
+    "ensemble": "grp_",
+    "entity": "ent_",
+    "actor": "fg_",
+    "era": "er_",
+    "story_version": "sv_",
+    "gap": "gap_"
+  },
+  "id_prefix_notes": {
+    "fg_": "Taken from the D04 Figures/Actors prefix in docs/decisions/M02-05-stable-ids-and-legacy-refs.md:21.",
+    "other": "ch_, cr_, grp_, ent_, er_, sv_ and gap_ are map-local kind prefixes. They identify rows in this evidence map, not canonical D04/D07 primary keys or minted ARSY records. Canonical pointers live in registry_ref."
+  },
+  "guards": {
+    "character_actor_distinct": true,
+    "no_character_actor_same_as": true,
+    "no_real_person_asserted_as_character": true,
+    "every_row_has_resolving_locator": true,
+    "eight_eras_claims_enumerated_or_gapped": true,
+    "ontology_actor_kind_is_not_performer": true,
+    "no_invented_lore": true,
+    "no_external_fetch": true,
+    "source_locator_required_unless_absent": true
+  },
+  "same_as_claims": [],
+  "identity_claims": [
+    {
+      "id": "clm_shadow_character_distinct_workspace",
+      "relation": "DISTINCT_FROM",
+      "from": "ch_shadow",
+      "to": "ent_shadow_workspace",
+      "status": "EVIDENCED",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:682",
+          "quote": "| `THE SHADOW` story character | `distinctFrom` | SHADOW workspace | Two ownership domains |"
+        },
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:25",
+          "quote": "**SHADOW (Workspace)**: Ruang kerja editorial dan studio kreatif di Headquarters (Next.js)."
+        }
+      ]
+    }
+  ],
+  "era_claims": [
+    {
+      "id": "era_claim_m0603",
+      "locator": "docs/decisions/M06-03-ii-lore-recovery.md:18",
+      "quote": "**The 8 Eras (Chronology Schema)**:",
+      "states_eight": true,
+      "enumeration_size": 8,
+      "enumeration": [
+        "er_m0603_01",
+        "er_m0603_02",
+        "er_m0603_03",
+        "er_m0603_04",
+        "er_m0603_05",
+        "er_m0603_06",
+        "er_m0603_07",
+        "er_m0603_08"
+      ],
+      "source_artifact": "github.com/bjo163/moonwitness-ii @ 48a27d19c0bfe831, path not an eras file: spec/lore/13-functions.yaml",
+      "source_artifact_status": "ABSENT",
+      "artifact_evidence": [
+        {
+          "locator": "docs/audit/M06-01-source-repo-pins.md:19",
+          "quote": "| **II 13 Functions / 8 Eras** | `github.com/bjo163/moonwitness-ii` | `48a27d19c0bfe831` | `spec/lore/13-functions.yaml` | `D04 Actor & Event` | LORE_REFERENCE |"
+        },
+        {
+          "locator": "docs/audit/M26-07-zenix-age-code-audit.md:94",
+          "quote": "`docs/narrative/v10/`, `spec/lore/13-functions.yaml`, `research/frameworks/srgbl.md`, `core/manifest.json`, `packages/mftl/manifest.json`, `patches/registry/33-patches.json`, `data/editions/quran-hafs.json` (all M06-01 pins) | ABSENT"
+        }
+      ],
+      "alignment": "UNRESOLVED",
+      "alignment_gap_id": "gap_era_alignment"
+    },
+    {
+      "id": "era_claim_vision",
+      "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "quote": "**All eight eras** recovered from the public XIV V10.1 companion to II:",
+      "states_eight": true,
+      "enumeration_size": 8,
+      "enumeration": [
+        "er_vision_01",
+        "er_vision_02",
+        "er_vision_03",
+        "er_vision_04",
+        "er_vision_05",
+        "er_vision_06",
+        "er_vision_07",
+        "er_vision_08"
+      ],
+      "source_artifact": "II data/eras.yaml (named, not pinned, not present)",
+      "source_artifact_status": "ABSENT",
+      "artifact_evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "Preserve II's own `data/eras.yaml` source/version and publication status."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:173",
+          "quote": "**MOONWITNESS II eight eras:** a source-specific narrative structure that must preserve exact original names/version when recovered."
+        }
+      ],
+      "alignment": "UNRESOLVED",
+      "alignment_gap_id": "gap_era_alignment"
+    }
+  ],
+  "rows": [
+    {
+      "id": "ch_shadow",
+      "kind": "character",
+      "section": "ii_crew",
+      "crew_slot": 11,
+      "label": "THE SHADOW",
+      "status": "EVIDENCED",
+      "person_class": "FICTIONAL_PERSON",
+      "fiction": "FICTION",
+      "real_person_identity": "NOT_ASSERTED",
+      "registry_ref": {
+        "system": "onto_entities",
+        "id": "O007"
+      },
+      "registry_identity_status": "CONTESTED",
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_quote": "11 THE SHADOW",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+          "quote": "11 THE SHADOW"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:682",
+          "quote": "| `THE SHADOW` story character | `distinctFrom` | SHADOW workspace | Two ownership domains |"
+        },
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:25",
+          "quote": "**SHADOW (Character)**: Tokoh naratif kreatif dalam ark cerita MoonWitness."
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:228",
+          "quote": "stableId: 'O007',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:229",
+          "quote": "kind: 'CHARACTER',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:234",
+          "quote": "A narrative character in the MoonWitness story arc. Shares a label with the workspace but not its kind or domain."
+        }
+      ],
+      "distinct_from": [
+        "ent_shadow_workspace"
+      ],
+      "unresolved": "The registry row is CONTESTED and the vision still requires typed candidate identity review for SHADOW aliases and generations; EVIDENCED here means the typed row exists, not that the alias question is closed.",
+      "notes": "The only II crew slot that a repository document both calls a story character and registers as a CHARACTER row."
+    },
+    {
+      "id": "cr_runaway_trace",
+      "kind": "crew_label",
+      "section": "ii_crew",
+      "crew_slot": 12,
+      "label": "THE RUNAWAY TRACE",
+      "status": "LABEL_ONLY",
+      "person_class": "UNRESOLVED",
+      "fiction": "UNRESOLVED",
+      "real_person_identity": "NOT_ASSERTED",
+      "registry_ref": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_quote": "12 THE RUNAWAY TRACE",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+          "quote": "12 THE RUNAWAY TRACE"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "The repository gives a crew label only. It does not say whether this is a character, an alias, a work, or an event. It is not mapped to the separately named era THE RUNAWAYS.",
+      "notes": "Deliberate: do not infer personhood from a crew index entry."
+    },
+    {
+      "id": "cr_a_lah",
+      "kind": "crew_label",
+      "section": "ii_crew",
+      "crew_slot": 13,
+      "label": "A LAH / THE BOSS",
+      "status": "NEEDS_SOURCE",
+      "person_class": "UNRESOLVED",
+      "fiction": "UNRESOLVED",
+      "real_person_identity": "NOT_ASSERTED",
+      "registry_ref": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+      "source_quote": "THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+          "quote": "13 A LAH / THE BOSS"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "quote": "THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review."
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "A LAH / 4-LAH is named in the alias-review gap. THE BOSS is part of the same index slot but is not separately named in the gap note. The combined label is kept unresolved rather than split or guessed.",
+      "notes": "The surface form 4-LAH appears only in the gap note, not as a separate crew slot."
+    },
+    {
+      "id": "cr_dogs_from_universe",
+      "kind": "crew_label",
+      "section": "ii_crew",
+      "crew_slot": 14,
+      "label": "DOGS FROM UNIVERSE",
+      "status": "NEEDS_SOURCE",
+      "person_class": "UNRESOLVED",
+      "fiction": "UNRESOLVED",
+      "real_person_identity": "NOT_ASSERTED",
+      "registry_ref": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+      "source_quote": "THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+          "quote": "14 DOGS FROM UNIVERSE"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "quote": "THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:368",
+          "quote": "**DOGFROMUNIVERSE**"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "The repository preserves DOGS FROM UNIVERSE and DOGFROMUNIVERSE as surface variants but does not decide whether they are one character, a group, or a generation.",
+      "notes": "No ontology or D04 row exists for this label."
+    },
+    {
+      "id": "cr_blue_witch_dj_david",
+      "kind": "crew_label",
+      "section": "ii_crew",
+      "crew_slot": 15,
+      "label": "BLUE WITCH & DJ DAVID",
+      "status": "NEEDS_SOURCE",
+      "person_class": "UNRESOLVED",
+      "fiction": "UNRESOLVED",
+      "real_person_identity": "NOT_ASSERTED",
+      "registry_ref": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+      "source_quote": "THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+          "quote": "15 BLUE WITCH & DJ DAVID"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "quote": "THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:368",
+          "quote": "**BLUE WITCH**"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "BLUE WITCH is named in the alias-review gap. DJ DAVID is not named in any gap note and has no registry row; the repository does not state whether DJ DAVID is a person, a stage name, or a creative label. The combined slot stays NEEDS_SOURCE rather than being split into two invented identities.",
+      "notes": "No real performer link is asserted for DJ DAVID."
+    },
+    {
+      "id": "cr_walter_white",
+      "kind": "crew_label",
+      "section": "ii_crew",
+      "crew_slot": 16,
+      "label": "WALTER WHITE / WHITER / WHITE",
+      "status": "NEEDS_SOURCE",
+      "person_class": "UNRESOLVED",
+      "fiction": "UNRESOLVED",
+      "real_person_identity": "NOT_ASSERTED",
+      "registry_ref": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+      "source_quote": "THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+          "quote": "16 WALTER WHITE / WHITER / WHITE"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:977",
+          "quote": "THE SHADOW, A LAH / 4-LAH, DOGS FROM UNIVERSE, BLUE WITCH, WALTER aliases and generations require typed candidate identity review."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:368",
+          "quote": "**WALTER-WHITER**"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Three spellings plus the WALTER-WHITER form are preserved. The repository does not decide whether they are one fictional character, a generation, or several labels. The surface resemblance to any real or other fictional person is not evidence and is not linked.",
+      "notes": "No real-person identity is asserted."
+    },
+    {
+      "id": "cr_electric_forest_jhnny_depp",
+      "kind": "crew_label",
+      "section": "ii_crew",
+      "crew_slot": 17,
+      "label": "ELECTRIC FOREST, INDESTRUCTIBLE & JHNNY DEPP",
+      "status": "NEEDS_SOURCE",
+      "person_class": "UNRESOLVED",
+      "fiction": "UNRESOLVED",
+      "real_person_identity": "NOT_ASSERTED",
+      "registry_ref": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_quote": "17 ELECTRIC FOREST, INDESTRUCTIBLE & JHNNY DEPP",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+          "quote": "17 ELECTRIC FOREST, INDESTRUCTIBLE & JHNNY DEPP"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "The index gives one combined slot with three surface labels and no gap note. It is not split into three identities. Because the slot aggregates three surfaces with no registry row, its identity stays NEEDS_SOURCE rather than being treated as one resolved label. JHNNY DEPP is treated as a label only; no repository source names a real performer or public figure, and no such link is asserted.",
+      "notes": "Surface-string name collision is not identity. See docs/vision/MASTER_VISION_NARRATIVE_XV.md:370."
+    },
+    {
+      "id": "grp_second_crew_generation",
+      "kind": "ensemble",
+      "section": "ii_crew",
+      "crew_slot": 18,
+      "label": "The Second Crew Generation",
+      "status": "LABEL_ONLY",
+      "person_class": "FICTIONAL_GROUP",
+      "fiction": "FICTION",
+      "real_person_identity": "NOT_ASSERTED",
+      "registry_ref": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+      "source_quote": "18 The Second Crew Generation.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:712",
+          "quote": "18 The Second Crew Generation."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:370",
+          "quote": "multiple crew generations"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "A generation label, not a single character. Its members are not enumerated in this repository.",
+      "notes": "Kept as a group so that no unnamed member is invented."
+    },
+    {
+      "id": "grp_batteries",
+      "kind": "ensemble",
+      "section": "ii_ensemble",
+      "crew_slot": null,
+      "label": "THE BATTERIES",
+      "status": "EVIDENCED",
+      "person_class": "FICTIONAL_GROUP",
+      "fiction": "FICTION",
+      "real_person_identity": "NOT_ASSERTED",
+      "registry_ref": {
+        "system": "onto_entities",
+        "id": "O008"
+      },
+      "registry_kind": "ACTOR",
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:368",
+      "source_quote": "Fictional ensemble: **THE BATTERIES**",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:368",
+          "quote": "Fictional ensemble: **THE BATTERIES**"
+        },
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:27",
+          "quote": "Nama band/proyek kreatif dalam dunia fiksi MoonWitness."
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:240",
+          "quote": "stableId: 'O008',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:241",
+          "quote": "kind: 'ACTOR',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:246",
+          "quote": "A fictional band inside the MoonWitness creative universe. It has no theological authority and is not an acronym for the divine name."
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "This is the only ontology row of kind ACTOR in the cited seed, yet its own text calls it a fictional band. The registry kind ACTOR is a narrative-agent taxonomy, not evidence of a real performer.",
+      "notes": "Guards the category error ontology ACTOR equals real actor."
+    },
+    {
+      "id": "ent_shadow_workspace",
+      "kind": "entity",
+      "section": "identity_boundary",
+      "crew_slot": null,
+      "label": "SHADOW Workspace",
+      "status": "EVIDENCED",
+      "person_class": "SOFTWARE_SURFACE",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": {
+        "system": "onto_entities",
+        "id": "O006"
+      },
+      "source_locator": "docs/decisions/M02-01-disambiguation-registry.md:25",
+      "source_quote": "**SHADOW (Workspace)**: Ruang kerja editorial dan studio kreatif di Headquarters (Next.js).",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:25",
+          "quote": "**SHADOW (Workspace)**: Ruang kerja editorial dan studio kreatif di Headquarters (Next.js)."
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:216",
+          "quote": "stableId: 'O006',"
+        },
+        {
+          "locator": "packages/moonql-ontology/src/seed.ts:219",
+          "quote": "labelEn: 'SHADOW Workspace',"
+        }
+      ],
+      "distinct_from": [
+        "ch_shadow"
+      ],
+      "unresolved": "None for the type distinction. The workspace is not a narrative person.",
+      "notes": "Included only to evidence the character/workspace split required by the SHADOW boundary."
+    },
+    {
+      "id": "fg_ii_crew_performers",
+      "kind": "actor",
+      "section": "actor_registry",
+      "crew_slot": null,
+      "label": "II crew real performer/actor (no identity named)",
+      "status": "ABSENT",
+      "person_class": "REAL_PERFORMER",
+      "fiction": "REALITY",
+      "real_person_identity": "ABSENT",
+      "registry_ref": null,
+      "source_locator": null,
+      "source_quote": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:370",
+          "quote": "**Do not infer ethnicity or identify real people from fictional labels.**"
+        },
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:16",
+          "quote": "Never conflated with prophetic figures or real historical persons."
+        },
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:45",
+          "quote": "Prinsip Anti-`sameAs` Otomatis"
+        }
+      ],
+      "distinct_from": [],
+      "absence": "No real performer, actor, voice actor, or casting identity is named anywhere in this repository for the II crew. This row records that absence instead of inventing one. The fg_ prefix follows the D04 Figures/Actors convention; this row is not a D04 figure.",
+      "notes": "Actor rows are real-person slots. They are never merged with character rows."
+    },
+    {
+      "id": "er_m0603_01",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "Era 1: Origin & Genesis",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_m0603",
+      "ordinal": 1,
+      "source_locator": "docs/decisions/M06-03-ii-lore-recovery.md:20",
+      "source_quote": "Era 1: Origin & Genesis",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:20",
+          "quote": "Era 1: Origin & Genesis"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in a ratified decision. The II eras artifact is absent and no alignment to the vision enumeration is evidenced.",
+      "notes": ""
+    },
+    {
+      "id": "er_m0603_02",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "Era 2: Ancient Alliances",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_m0603",
+      "ordinal": 2,
+      "source_locator": "docs/decisions/M06-03-ii-lore-recovery.md:21",
+      "source_quote": "Era 2: Ancient Alliances",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:21",
+          "quote": "Era 2: Ancient Alliances"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in a ratified decision. The II eras artifact is absent and no alignment to the vision enumeration is evidenced.",
+      "notes": ""
+    },
+    {
+      "id": "er_m0603_03",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "Era 3: Rise of the Towers",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_m0603",
+      "ordinal": 3,
+      "source_locator": "docs/decisions/M06-03-ii-lore-recovery.md:22",
+      "source_quote": "Era 3: Rise of the Towers",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:22",
+          "quote": "Era 3: Rise of the Towers"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in a ratified decision. The II eras artifact is absent and no alignment to the vision enumeration is evidenced.",
+      "notes": ""
+    },
+    {
+      "id": "er_m0603_04",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "Era 4: The Great Eclipse",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_m0603",
+      "ordinal": 4,
+      "source_locator": "docs/decisions/M06-03-ii-lore-recovery.md:23",
+      "source_quote": "Era 4: The Great Eclipse",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:23",
+          "quote": "Era 4: The Great Eclipse"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in a ratified decision. The II eras artifact is absent and no alignment to the vision enumeration is evidenced.",
+      "notes": ""
+    },
+    {
+      "id": "er_m0603_05",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "Era 5: Fragmented Realms",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_m0603",
+      "ordinal": 5,
+      "source_locator": "docs/decisions/M06-03-ii-lore-recovery.md:24",
+      "source_quote": "Era 5: Fragmented Realms",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:24",
+          "quote": "Era 5: Fragmented Realms"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in a ratified decision. The II eras artifact is absent and no alignment to the vision enumeration is evidenced.",
+      "notes": ""
+    },
+    {
+      "id": "er_m0603_06",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "Era 6: The Voice in the Wasteland",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_m0603",
+      "ordinal": 6,
+      "source_locator": "docs/decisions/M06-03-ii-lore-recovery.md:25",
+      "source_quote": "Era 6: The Voice in the Wasteland",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:25",
+          "quote": "Era 6: The Voice in the Wasteland"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in a ratified decision. The II eras artifact is absent and no alignment to the vision enumeration is evidenced.",
+      "notes": ""
+    },
+    {
+      "id": "er_m0603_07",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "Era 7: Digital Radio & Silent Frequencies",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_m0603",
+      "ordinal": 7,
+      "source_locator": "docs/decisions/M06-03-ii-lore-recovery.md:26",
+      "source_quote": "Era 7: Digital Radio & Silent Frequencies",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:26",
+          "quote": "Era 7: Digital Radio & Silent Frequencies"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in a ratified decision. The II eras artifact is absent and no alignment to the vision enumeration is evidenced.",
+      "notes": ""
+    },
+    {
+      "id": "er_m0603_08",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "Era 8: The Witness Horizon (XV)",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_m0603",
+      "ordinal": 8,
+      "source_locator": "docs/decisions/M06-03-ii-lore-recovery.md:27",
+      "source_quote": "Era 8: The Witness Horizon (XV)",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:27",
+          "quote": "Era 8: The Witness Horizon (XV)"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in a ratified decision. The II eras artifact is absent and no alignment to the vision enumeration is evidenced.",
+      "notes": ""
+    },
+    {
+      "id": "er_vision_01",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "BEFORE LIGHT",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_vision",
+      "ordinal": 1,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "source_quote": "BEFORE LIGHT",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "BEFORE LIGHT"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in the vision. The named II data/eras.yaml is absent and its order is not aligned to the M06-03 enumeration.",
+      "notes": ""
+    },
+    {
+      "id": "er_vision_02",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "THE ARRIVAL",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_vision",
+      "ordinal": 2,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "source_quote": "THE ARRIVAL",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "THE ARRIVAL"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in the vision. The named II data/eras.yaml is absent and its order is not aligned to the M06-03 enumeration.",
+      "notes": ""
+    },
+    {
+      "id": "er_vision_03",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "THE WITNESS",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_vision",
+      "ordinal": 3,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "source_quote": "THE WITNESS",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "THE WITNESS"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in the vision. The named II data/eras.yaml is absent and its order is not aligned to the M06-03 enumeration.",
+      "notes": ""
+    },
+    {
+      "id": "er_vision_04",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "THE RUNAWAYS",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_vision",
+      "ordinal": 4,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "source_quote": "THE RUNAWAYS",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "THE RUNAWAYS"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in the vision. The named II data/eras.yaml is absent and its order is not aligned to the M06-03 enumeration.",
+      "notes": ""
+    },
+    {
+      "id": "er_vision_05",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "THE EXPOSURE",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_vision",
+      "ordinal": 5,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "source_quote": "THE EXPOSURE",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "THE EXPOSURE"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in the vision. The named II data/eras.yaml is absent and its order is not aligned to the M06-03 enumeration.",
+      "notes": ""
+    },
+    {
+      "id": "er_vision_06",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "THE CHANGE",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_vision",
+      "ordinal": 6,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "source_quote": "THE CHANGE",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "THE CHANGE"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in the vision. The named II data/eras.yaml is absent and its order is not aligned to the M06-03 enumeration.",
+      "notes": ""
+    },
+    {
+      "id": "er_vision_07",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "END OF AN ERA",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_vision",
+      "ordinal": 7,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "source_quote": "END OF AN ERA",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "END OF AN ERA"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in the vision. The named II data/eras.yaml is absent and its order is not aligned to the M06-03 enumeration.",
+      "notes": ""
+    },
+    {
+      "id": "er_vision_08",
+      "kind": "era",
+      "section": "ii_eras",
+      "crew_slot": null,
+      "label": "NEXT PHASE",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "era_claim": "era_claim_vision",
+      "ordinal": 8,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "source_quote": "NEXT PHASE",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "NEXT PHASE"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Label enumerated in the vision. The named II data/eras.yaml is absent and its order is not aligned to the M06-03 enumeration.",
+      "notes": ""
+    },
+    {
+      "id": "sv_xiv_v10_99",
+      "kind": "story_version",
+      "section": "xiv_story_versions",
+      "crew_slot": null,
+      "label": "XIV V10 99 editorial chapters",
+      "status": "NEEDS_SOURCE",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "lineage": "XIV",
+      "pinned_ref": "99e1a4f028b37dc1",
+      "pinned_ref_is_full_sha": false,
+      "artifact_in_repo": false,
+      "source_locator": "docs/audit/M06-01-source-repo-pins.md:17",
+      "source_quote": "| **V10 / 99 Chapters** | `github.com/bjo163/moonwitness-xiv` | `99e1a4f028b37dc1` | `docs/narrative/v10/` |",
+      "evidence": [
+        {
+          "locator": "docs/audit/M06-01-source-repo-pins.md:17",
+          "quote": "| **V10 / 99 Chapters** | `github.com/bjo163/moonwitness-xiv` | `99e1a4f028b37dc1` | `docs/narrative/v10/` |"
+        },
+        {
+          "locator": "docs/decisions/M06-02-xiv-v10-crosswalk.md:13",
+          "quote": "**The 99 Chapters of V10/V10.1** in MoonWitness XIV are **editorial story/essay chapters written by modern authors**."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:753",
+          "quote": "this is a *coverage index*, not evidence that all 99 primary manuscripts, images or chronology matches have been recovered."
+        },
+        {
+          "locator": "docs/audit/M26-01-chapter-crosswalk.md:45",
+          "quote": "No V10/V10.1 chapter file, manuscript or edition exists in this repository."
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "The family is pinned with a 16-hex ref, not a full commit, and the pinned path conflicts with the V10.1 citation. No per-chapter artifact is present, so zero chapters are VERIFIED_SOURCE.",
+      "notes": "Counts are editorial slots, not manuscripts."
+    },
+    {
+      "id": "sv_xiv_v10_1_expanded",
+      "kind": "story_version",
+      "section": "xiv_story_versions",
+      "crew_slot": null,
+      "label": "XIV V10.1 expanded companion",
+      "status": "NEEDS_SOURCE",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "lineage": "XIV",
+      "pinned_ref": "fff3b0dbc452e998f221e2ca15fd1d41e0ffc599",
+      "pinned_ref_is_full_sha": true,
+      "artifact_in_repo": false,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:779",
+      "source_quote": "fff3b0dbc452e998f221e2ca15fd1d41e0ffc599",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:779",
+          "quote": "fff3b0dbc452e998f221e2ca15fd1d41e0ffc599"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:971",
+          "quote": "V10.1 is a public-safe expansion, not verbatim original."
+        },
+        {
+          "locator": "docs/audit/M26-07-zenix-age-code-audit.md:91",
+          "quote": "`git ls-files` miss"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "The full SHA is cited but not resolvable in this repository, and the document itself says V10.1 is a public-safe expansion rather than the verbatim original.",
+      "notes": "A cited full SHA is not the same as a present or opened artifact."
+    },
+    {
+      "id": "sv_xiv_v1_v10_originals",
+      "kind": "story_version",
+      "section": "xiv_story_versions",
+      "crew_slot": null,
+      "label": "XIV V1-V10 private originals",
+      "status": "ABSENT",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "lineage": "XIV",
+      "pinned_ref": null,
+      "pinned_ref_is_full_sha": false,
+      "artifact_in_repo": false,
+      "source_locator": null,
+      "source_quote": null,
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:971",
+          "quote": "Full private V1–V10 originals and user-authorized immutable versions have **not been imported**."
+        }
+      ],
+      "distinct_from": [],
+      "absence": "The repository explicitly states the originals were not imported. No private text, manuscript, or immutable version is recorded here.",
+      "notes": "Absence is recorded, not filled."
+    },
+    {
+      "id": "sv_xiv_v10_public_draft",
+      "kind": "story_version",
+      "section": "xiv_story_versions",
+      "crew_slot": null,
+      "label": "XIV Master Narrative V10 public draft",
+      "status": "LABEL_ONLY",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "lineage": "XIV",
+      "pinned_ref": null,
+      "pinned_ref_is_full_sha": false,
+      "artifact_in_repo": false,
+      "mutable_ref": true,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:659",
+      "source_quote": "MASTER_NARRATIVE_V10_PUBLIC_DRAFT.md",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:659",
+          "quote": "MASTER_NARRATIVE_V10_PUBLIC_DRAFT.md"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:779",
+          "quote": "Branch pointers in previous sections are discovery links, **not permanent content identifiers**."
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "A branch link is a discovery pointer, not a pinned source version; it is not opened or verified here.",
+      "notes": "LABEL_ONLY because only the mutable link is present."
+    },
+    {
+      "id": "sv_xii_33_patches",
+      "kind": "story_version",
+      "section": "xii_story_versions",
+      "crew_slot": null,
+      "label": "XII 33 World Patches registry",
+      "status": "NEEDS_SOURCE",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "lineage": "XII",
+      "pinned_ref": "33f0014bca881029",
+      "pinned_ref_is_full_sha": false,
+      "artifact_in_repo": false,
+      "source_locator": "docs/audit/M06-01-source-repo-pins.md:20",
+      "source_quote": "| **XII 33 Patch Statuses** | `github.com/bjo163/moonwitness-xii` | `33f0014bca881029` | `patches/registry/33-patches.json` |",
+      "evidence": [
+        {
+          "locator": "docs/audit/M06-01-source-repo-pins.md:20",
+          "quote": "| **XII 33 Patch Statuses** | `github.com/bjo163/moonwitness-xii` | `33f0014bca881029` | `patches/registry/33-patches.json` |"
+        },
+        {
+          "locator": "docs/decisions/M06-04-xii-patches-registry.md:14",
+          "quote": "### Registry Composition (8 + 5 + 1 + 18 + 1 = 33)"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:976",
+          "quote": "World Patch #014 numbering dispute remains open."
+        },
+        {
+          "locator": "docs/audit/M26-07-zenix-age-code-audit.md:94",
+          "quote": "`patches/registry/33-patches.json`"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "The registry is pinned with a 16-hex ref; the artifact is absent locally, and patch 014 numbering is explicitly disputed.",
+      "notes": "The 8+5+1+18+1 composition is an in-repo summary, not 33 opened patch records."
+    },
+    {
+      "id": "sv_xii_15_synopses",
+      "kind": "story_version",
+      "section": "xii_story_versions",
+      "crew_slot": null,
+      "label": "XII 15 story archive synopsis entries",
+      "status": "NEEDS_SOURCE",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "lineage": "XII",
+      "pinned_ref": null,
+      "pinned_ref_is_full_sha": false,
+      "artifact_in_repo": false,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+      "source_quote": "XII's **15 story archive synopsis entries**",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "XII's **15 story archive synopsis entries**"
+        },
+        {
+          "locator": "docs/audit/M26-03-batteries-npd-recovery.md:47",
+          "quote": "The 15 synopses have **no titles, text or sequence**."
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Only a count exists. No title, text, sequence, or transcript is recorded.",
+      "notes": "A count is not 15 original transcripts."
+    },
+    {
+      "id": "sv_xii_63_pages",
+      "kind": "story_version",
+      "section": "xii_story_versions",
+      "crew_slot": null,
+      "label": "XII 63 editorially reconstructed pages",
+      "status": "NEEDS_SOURCE",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "lineage": "XII",
+      "pinned_ref": null,
+      "pinned_ref_is_full_sha": false,
+      "artifact_in_repo": false,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+      "source_quote": "**63 editorially reconstructed pages**",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:974",
+          "quote": "**63 editorially reconstructed pages**"
+        },
+        {
+          "locator": "docs/audit/M26-01-chapter-crosswalk.md:146",
+          "quote": "XII's 15 synopses / 63 reconstructed pages (`:974`)"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Only a count of editorially reconstructed pages exists; no page, image, or original is recorded.",
+      "notes": "A count is not 63 authenticated image originals."
+    },
+    {
+      "id": "sv_xii_patch_014",
+      "kind": "story_version",
+      "section": "xii_story_versions",
+      "crew_slot": null,
+      "label": "XII World Patch #014 numbering",
+      "status": "NEEDS_SOURCE",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "lineage": "XII",
+      "pinned_ref": "33f0014bca881029",
+      "pinned_ref_is_full_sha": false,
+      "artifact_in_repo": false,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:976",
+      "source_quote": "World Patch #014 numbering dispute remains open.",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:976",
+          "quote": "World Patch #014 numbering dispute remains open."
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:942",
+          "quote": "| 014 | FAMILY WITHOUT FEAR **vs** THE WRONG WAY / HELLROAD | **unresolved numbering conflict** |"
+        },
+        {
+          "locator": "docs/decisions/M06-04-xii-patches-registry.md:17",
+          "quote": "3. **Disputed Patch 014 (1)**:"
+        },
+        {
+          "locator": "docs/decisions/M06-04-xii-patches-registry.md:18",
+          "quote": "**Status**: `DISPUTED`"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "Two patch titles compete for slot 014. The conflict is preserved; no title is chosen.",
+      "notes": "M06-04 records zero divine approval inferred."
+    },
+    {
+      "id": "gap_era_alignment",
+      "kind": "gap",
+      "section": "era_alignment",
+      "crew_slot": null,
+      "label": "II eight eras - alignment between two in-repository enumerations",
+      "status": "NEEDS_SOURCE",
+      "person_class": "NOT_A_PERSON",
+      "fiction": "NOT_APPLICABLE",
+      "real_person_identity": "NOT_APPLICABLE",
+      "registry_ref": null,
+      "source_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+      "source_quote": "**All eight eras** recovered from the public XIV V10.1 companion to II:",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:805",
+          "quote": "**All eight eras** recovered from the public XIV V10.1 companion to II:"
+        },
+        {
+          "locator": "docs/decisions/M06-03-ii-lore-recovery.md:18",
+          "quote": "**The 8 Eras (Chronology Schema)**:"
+        },
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:173",
+          "quote": "**MOONWITNESS II eight eras:** a source-specific narrative structure that must preserve exact original names/version when recovered."
+        },
+        {
+          "locator": "docs/audit/M26-07-zenix-age-code-audit.md:94",
+          "quote": "`spec/lore/13-functions.yaml`"
+        }
+      ],
+      "distinct_from": [],
+      "unresolved": "M06-03 enumerates Era 1-8 as Origin & Genesis, Ancient Alliances, Rise of the Towers, The Great Eclipse, Fragmented Realms, The Voice in the Wasteland, Digital Radio & Silent Frequencies, The Witness Horizon (XV). The vision enumerates BEFORE LIGHT, THE ARRIVAL, THE WITNESS, THE RUNAWAYS, THE EXPOSURE, THE CHANGE, END OF AN ERA, NEXT PHASE. No in-repository source aligns the two orders or identifies which set is II's original data/eras.yaml. Both are kept, neither is merged.",
+      "notes": "This is the gap that keeps all 16 era rows at LABEL_ONLY."
+    }
+  ],
+  "declared_counts": {
+    "total": 36,
+    "by_status": {
+      "EVIDENCED": 3,
+      "LABEL_ONLY": 19,
+      "NEEDS_SOURCE": 12,
+      "ABSENT": 2
+    },
+    "by_kind": {
+      "character": 1,
+      "crew_label": 6,
+      "ensemble": 2,
+      "entity": 1,
+      "actor": 1,
+      "era": 16,
+      "story_version": 8,
+      "gap": 1
+    },
+    "eras": {
+      "label_rows": 16,
+      "evidenced": 0,
+      "label_only": 16,
+      "needs_source": 0,
+      "absent": 0,
+      "claims": 2,
+      "source_artifacts_present": 0,
+      "alignment": "UNRESOLVED",
+      "alignment_gap_id": "gap_era_alignment"
+    },
+    "crew": {
+      "slots": 8,
+      "character": 1,
+      "crew_label": 6,
+      "ensemble": 1,
+      "evidenced": 1,
+      "label_only": 2,
+      "needs_source": 5,
+      "absent": 0
+    },
+    "story_versions": {
+      "rows": 8,
+      "xiv": 4,
+      "xii": 4,
+      "evidenced": 0,
+      "label_only": 1,
+      "needs_source": 6,
+      "absent": 1
+    },
+    "character_actor_separation": {
+      "character_rows": 1,
+      "crew_label_rows": 6,
+      "actor_rows": 1,
+      "shared_ids": 0,
+      "same_as_claims": 0,
+      "real_person_asserted_rows": 0
+    }
+  },
+  "non_claims": [
+    "No II era order, source version, or data/eras.yaml content is recovered here.",
+    "No crew label is promoted to a character, actor, or real person without a typed registry row and locator.",
+    "No real performer, voice actor, or casting identity is named for the II crew.",
+    "No XII patch title is chosen for disputed slot 014.",
+    "No XIV V10 chapter is claimed as a manuscript, original, or per-chapter source version.",
+    "No external repository was fetched, cloned, or opened.",
+    "No identity here is a canonical D04/D07 primary key or a minted ARSY record."
+  ],
+  "limitations": [
+    "Era labels come from two in-repository enumerations that do not align; the underlying II data/eras.yaml was not fetched and is not present.",
+    "The M06-01 II pin points at spec/lore/13-functions.yaml, not an eras file, and is a 16-hex ref rather than a full commit.",
+    "Crew slot 11 is the only slot with a typed CHARACTER row; the other slots are surface labels or a generation group whose referent type is unresolved.",
+    "The ontology kind ACTOR on O008 describes a fictional band; it must not be read as a real performer.",
+    "XII and XIV artifacts are external or absent; counts in documents are not opened records.",
+    "The absence of real performers is recorded from repository silence plus the rule against identifying real people from fictional labels, not from a casting archive."
+  ]
+}
