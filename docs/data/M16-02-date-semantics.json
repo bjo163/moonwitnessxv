@@ -1,0 +1,861 @@
+{
+  "task": "M16-02",
+  "schema_version": 1,
+  "illustrative_notice": "HYPOTHETICAL / ILLUSTRATIVE ONLY. Every identifier, date, event, person and reason in this file is invented to exercise the date-slot contract. Nothing here is real testimony, a real source, or a real witness record.",
+  "semantics_doc": "docs/design/M16-02-date-semantics.md",
+  "precision_enum": ["EXACT", "APPROXIMATE", "RANGE", "UNKNOWN"],
+  "slot_enum": ["occurredAt", "observedAt", "recordedAt", "writtenAt"],
+  "violation_codes": [
+    "SLOT_INFERRED",
+    "CHRONOLOGY_COLLAPSED",
+    "SLOT_MISSING",
+    "TIMEZONE_MISSING",
+    "OFFSET_UTC_MISMATCH",
+    "PRECISION_INVALID",
+    "APPROXIMATE_QUALIFIER_MISSING",
+    "RANGE_BOUNDS_INVALID",
+    "UNKNOWN_SLOT_HAS_VALUE",
+    "CORRECTION_OVERWRITES_ORIGINAL",
+    "CORRECTION_SEQUENCE_INVALID",
+    "CORRECTION_TARGET_INVALID",
+    "CORRECTION_SHAPE_INVALID",
+    "EFFECTIVE_CHRONOLOGY_MISMATCH",
+    "FIXTURE_CONTRACT_INVALID",
+    "DECLARED_COUNT_MISMATCH"
+  ],
+  "declared_counts": {
+    "total": 17,
+    "valid": 5,
+    "invalid": 12,
+    "by_expected": { "VALID": 5, "INVALID": 12 },
+    "by_violation": {
+      "SLOT_INFERRED": 1,
+      "CHRONOLOGY_COLLAPSED": 1,
+      "SLOT_MISSING": 1,
+      "TIMEZONE_MISSING": 1,
+      "OFFSET_UTC_MISMATCH": 1,
+      "APPROXIMATE_QUALIFIER_MISSING": 1,
+      "RANGE_BOUNDS_INVALID": 1,
+      "UNKNOWN_SLOT_HAS_VALUE": 1,
+      "CORRECTION_OVERWRITES_ORIGINAL": 1,
+      "CORRECTION_SEQUENCE_INVALID": 1,
+      "CORRECTION_TARGET_INVALID": 1,
+      "CORRECTION_SHAPE_INVALID": 1
+    }
+  },
+  "fixtures": [
+    {
+      "id": "V1-four-full-exact-dates",
+      "expected": "VALID",
+      "expected_violation": null,
+      "description": "All four slots are separately stated, exact, with IANA zone, retained offset and UTC normalisation.",
+      "record": {
+        "stableId": "wt_illustrative_0001",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": []
+      },
+      "expectedEffective": {
+        "occurredAt": "2026-10-27T02:00:00.000Z",
+        "observedAt": "2026-10-27T02:02:00.000Z",
+        "recordedAt": "2026-10-27T02:05:00.000Z",
+        "writtenAt": "2026-10-27T03:30:00.000Z"
+      }
+    },
+    {
+      "id": "V2-unknown-occurrence-slot",
+      "expected": "VALID",
+      "expected_violation": null,
+      "description": "The witness cannot date the event; occurredAt stays UNKNOWN and is not filled from observedAt, recordedAt or writtenAt.",
+      "record": {
+        "stableId": "wt_illustrative_0002",
+        "revision": 1,
+        "slots": {
+          "occurredAt": { "precision": "UNKNOWN" },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": []
+      },
+      "expectedEffective": {
+        "occurredAt": null,
+        "observedAt": "2026-10-27T02:02:00.000Z",
+        "recordedAt": "2026-10-27T02:05:00.000Z",
+        "writtenAt": "2026-10-27T03:30:00.000Z"
+      }
+    },
+    {
+      "id": "V3-range-occurrence-slot",
+      "expected": "VALID",
+      "expected_violation": null,
+      "description": "The event is bounded overnight; occurredAt is a RANGE with two exact bounds and is not collapsed to a midpoint.",
+      "record": {
+        "stableId": "wt_illustrative_0003",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "RANGE",
+            "earliest": {
+              "utc": "2026-10-26T17:00:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T00:00:00"
+            },
+            "latest": {
+              "utc": "2026-10-27T02:00:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T09:00:00"
+            }
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": []
+      },
+      "expectedEffective": {
+        "occurredAt": null,
+        "observedAt": "2026-10-27T02:02:00.000Z",
+        "recordedAt": "2026-10-27T02:05:00.000Z",
+        "writtenAt": "2026-10-27T03:30:00.000Z"
+      }
+    },
+    {
+      "id": "V4-corrected-chronology",
+      "expected": "VALID",
+      "expected_violation": null,
+      "description": "Tick-Tock: two appended corrections change occurredAt and writtenAt; the original four values are untouched and the effective chronology is recomputed exactly.",
+      "record": {
+        "stableId": "wt_illustrative_0004",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": [
+          {
+            "correctionId": "corr_illustrative_0001",
+            "sequence": 1,
+            "targetSlot": "occurredAt",
+            "corrected": {
+              "precision": "EXACT",
+              "utc": "2026-10-27T01:30:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T08:30:00"
+            },
+            "reason": "Witness checked a wall clock after the interview and moved the event time 30 minutes earlier.",
+            "assertedBy": "witness",
+            "assertedAt": "2026-10-28T03:00:00.000Z",
+            "appended": true,
+            "basedOnRevision": 1
+          },
+          {
+            "correctionId": "corr_illustrative_0002",
+            "sequence": 2,
+            "targetSlot": "writtenAt",
+            "corrected": {
+              "precision": "EXACT",
+              "utc": "2026-10-27T04:00:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T11:00:00"
+            },
+            "reason": "Transcription of the handwritten notes finished one hour later than first estimated.",
+            "assertedBy": "recorder",
+            "assertedAt": "2026-10-28T03:10:00.000Z",
+            "appended": true,
+            "basedOnRevision": 1
+          }
+        ]
+      },
+      "expectedEffective": {
+        "occurredAt": "2026-10-27T01:30:00.000Z",
+        "observedAt": "2026-10-27T02:02:00.000Z",
+        "recordedAt": "2026-10-27T02:05:00.000Z",
+        "writtenAt": "2026-10-27T04:00:00.000Z"
+      }
+    },
+    {
+      "id": "V5-approximate-written-slot",
+      "expected": "VALID",
+      "expected_violation": null,
+      "description": "The authoring time is only known qualitatively; writtenAt is APPROXIMATE with a qualifier and carries no false instant.",
+      "record": {
+        "stableId": "wt_illustrative_0005",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "APPROXIMATE",
+            "qualifier": "later the same evening, after the interview"
+          }
+        },
+        "corrections": []
+      },
+      "expectedEffective": {
+        "occurredAt": "2026-10-27T02:00:00.000Z",
+        "observedAt": "2026-10-27T02:02:00.000Z",
+        "recordedAt": "2026-10-27T02:05:00.000Z",
+        "writtenAt": null
+      }
+    },
+    {
+      "id": "I1-inferred-observed-slot",
+      "expected": "INVALID",
+      "expected_violation": "SLOT_INFERRED",
+      "description": "observedAt is marked as derived from occurredAt instead of being stated by the witness.",
+      "record": {
+        "stableId": "wt_illustrative_0101",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00",
+            "inferredFrom": "occurredAt"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": []
+      }
+    },
+    {
+      "id": "I2-collapsed-single-date",
+      "expected": "INVALID",
+      "expected_violation": "CHRONOLOGY_COLLAPSED",
+      "description": "Four distinct slots are collapsed into one date field.",
+      "record": {
+        "stableId": "wt_illustrative_0102",
+        "revision": 1,
+        "slots": { "date": "2026-10-27" },
+        "corrections": []
+      }
+    },
+    {
+      "id": "I3-correction-overwrites-original",
+      "expected": "INVALID",
+      "expected_violation": "CORRECTION_OVERWRITES_ORIGINAL",
+      "description": "The correction is applied in place: the original occurredAt slot already holds the corrected value and the correction is flagged as mutating the original.",
+      "record": {
+        "stableId": "wt_illustrative_0103",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T01:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T08:30:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": [
+          {
+            "correctionId": "corr_illustrative_0103",
+            "sequence": 1,
+            "targetSlot": "occurredAt",
+            "corrected": {
+              "precision": "EXACT",
+              "utc": "2026-10-27T01:30:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T08:30:00"
+            },
+            "reason": "Witness corrected the time after the interview.",
+            "assertedBy": "witness",
+            "assertedAt": "2026-10-28T03:00:00.000Z",
+            "appended": false,
+            "mutatesOriginal": true,
+            "basedOnRevision": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "I4-timezone-less-exact",
+      "expected": "INVALID",
+      "expected_violation": "TIMEZONE_MISSING",
+      "description": "A timestamp without a zone or offset is presented as EXACT instead of APPROXIMATE or UNKNOWN.",
+      "record": {
+        "stableId": "wt_illustrative_0104",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T09:00:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": []
+      }
+    },
+    {
+      "id": "I5-offset-utc-mismatch",
+      "expected": "INVALID",
+      "expected_violation": "OFFSET_UTC_MISMATCH",
+      "description": "Local wall time plus the retained offset does not reconstruct the stored UTC instant.",
+      "record": {
+        "stableId": "wt_illustrative_0105",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": []
+      }
+    },
+    {
+      "id": "I6-approximate-without-qualifier",
+      "expected": "INVALID",
+      "expected_violation": "APPROXIMATE_QUALIFIER_MISSING",
+      "description": "An APPROXIMATE slot carries no qualifier and would render as a bare value.",
+      "record": {
+        "stableId": "wt_illustrative_0106",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": { "precision": "APPROXIMATE" }
+        },
+        "corrections": []
+      }
+    },
+    {
+      "id": "I7-reversed-range",
+      "expected": "INVALID",
+      "expected_violation": "RANGE_BOUNDS_INVALID",
+      "description": "The earliest range bound is later than the latest bound.",
+      "record": {
+        "stableId": "wt_illustrative_0107",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "RANGE",
+            "earliest": {
+              "utc": "2026-10-27T02:00:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T09:00:00"
+            },
+            "latest": {
+              "utc": "2026-10-26T17:00:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T00:00:00"
+            }
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": []
+      }
+    },
+    {
+      "id": "I8-unknown-slot-with-value",
+      "expected": "INVALID",
+      "expected_violation": "UNKNOWN_SLOT_HAS_VALUE",
+      "description": "An UNKNOWN slot still carries a UTC value, which would smuggle an inferred instant past the contract.",
+      "record": {
+        "stableId": "wt_illustrative_0108",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "UNKNOWN",
+            "utc": "2026-10-27T02:00:00.000Z"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": []
+      }
+    },
+    {
+      "id": "I9-correction-sequence-not-increasing",
+      "expected": "INVALID",
+      "expected_violation": "CORRECTION_SEQUENCE_INVALID",
+      "description": "Two appended corrections share sequence 1, so the order of assertion is ambiguous.",
+      "record": {
+        "stableId": "wt_illustrative_0109",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": [
+          {
+            "correctionId": "corr_illustrative_0109a",
+            "sequence": 1,
+            "targetSlot": "occurredAt",
+            "corrected": {
+              "precision": "EXACT",
+              "utc": "2026-10-27T01:30:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T08:30:00"
+            },
+            "reason": "First correction of the event time.",
+            "assertedBy": "witness",
+            "assertedAt": "2026-10-28T03:00:00.000Z",
+            "appended": true,
+            "basedOnRevision": 1
+          },
+          {
+            "correctionId": "corr_illustrative_0109b",
+            "sequence": 1,
+            "targetSlot": "writtenAt",
+            "corrected": {
+              "precision": "EXACT",
+              "utc": "2026-10-27T04:00:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T11:00:00"
+            },
+            "reason": "Correction of the transcription time.",
+            "assertedBy": "recorder",
+            "assertedAt": "2026-10-28T03:10:00.000Z",
+            "appended": true,
+            "basedOnRevision": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "I10-invalid-correction-target",
+      "expected": "INVALID",
+      "expected_violation": "CORRECTION_TARGET_INVALID",
+      "description": "A correction targets a slot outside the four-slot vocabulary.",
+      "record": {
+        "stableId": "wt_illustrative_0110",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": [
+          {
+            "correctionId": "corr_illustrative_0110",
+            "sequence": 1,
+            "targetSlot": "publishedAt",
+            "corrected": {
+              "precision": "EXACT",
+              "utc": "2026-10-27T01:30:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T08:30:00"
+            },
+            "reason": "Targets a field that the witness object does not own.",
+            "assertedBy": "recorder",
+            "assertedAt": "2026-10-28T03:00:00.000Z",
+            "appended": true,
+            "basedOnRevision": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "I11-missing-slot",
+      "expected": "INVALID",
+      "expected_violation": "SLOT_MISSING",
+      "description": "The record omits writtenAt entirely instead of carrying it as UNKNOWN.",
+      "record": {
+        "stableId": "wt_illustrative_0111",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          }
+        },
+        "corrections": []
+      }
+    },
+    {
+      "id": "I12-correction-assertion-not-utc",
+      "expected": "INVALID",
+      "expected_violation": "CORRECTION_SHAPE_INVALID",
+      "description": "The correction assertion timestamp is offset-bearing rather than UTC-normalised, so the append log is not directly comparable.",
+      "record": {
+        "stableId": "wt_illustrative_0112",
+        "revision": 1,
+        "slots": {
+          "occurredAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:00:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:00:00"
+          },
+          "observedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:02:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:02:00"
+          },
+          "recordedAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T02:05:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T09:05:00"
+          },
+          "writtenAt": {
+            "precision": "EXACT",
+            "utc": "2026-10-27T03:30:00.000Z",
+            "timezone": "Asia/Jakarta",
+            "originalOffset": "+07:00",
+            "local": "2026-10-27T10:30:00"
+          }
+        },
+        "corrections": [
+          {
+            "correctionId": "corr_illustrative_0112",
+            "sequence": 1,
+            "targetSlot": "occurredAt",
+            "corrected": {
+              "precision": "EXACT",
+              "utc": "2026-10-27T01:30:00.000Z",
+              "timezone": "Asia/Jakarta",
+              "originalOffset": "+07:00",
+              "local": "2026-10-27T08:30:00"
+            },
+            "reason": "Witness corrected the event time after the interview.",
+            "assertedBy": "witness",
+            "assertedAt": "2026-10-28T10:00:00+07:00",
+            "appended": true,
+            "basedOnRevision": 1
+          }
+        ]
+      }
+    }
+  ]
+}
