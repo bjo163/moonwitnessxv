@@ -1,0 +1,856 @@
+{
+  "task": "M24-01",
+  "title": "Audit A-L-L-A-H USGS/GDACS/NOAA/Open-Meteo historical code and terms",
+  "baseline_sha": "659da2855f56c61ae9d21e2995be9649c77fc470",
+  "observed_head_sha": "ac5010815418ac1a2355a678f7d52704be4590d2",
+  "baseline_note": "The task states baseline dev HEAD 659da28. Several unrelated commits (M31, M16, M23, M26, HQ editor, witness lineage) advanced dev while this audit ran; 659da28 is an ancestor and the last observed HEAD was ac50108. Over every cited path the only change from 659da28 is .env.example API_VERSION; the cited EGRESS_ENABLED=false line 150 is unchanged and was rechecked. The worktree also contains another session's uncommitted changes, including a 131-line insertion above the Headquarters status literals; both the worktree and committed locations are recorded.",
+  "acceptance": "Historical fixtures not mislabeled live production",
+  "scope_note": "Read-only static audit. Four named environmental providers plus A-L-L-A-H and HELIOGRID. No provider client, provider URL, provider-specific feature flag or provider terms text exists in the repository. NOAA and Open-Meteo are absent from code; USGS and GDACS are tokens, one test-only fixture and static prose. External provider terms and quotas were not fetched and are recorded NOT_IN_REPO.",
+  "evidence_class_enum": [
+    "REPO_EVIDENCE",
+    "FIXTURE_ONLY",
+    "DOC_ONLY_PLAN",
+    "REPORTED_TERMS"
+  ],
+  "artifact_kind_enum": [
+    "type_token",
+    "fixture",
+    "test_consumer",
+    "prose_seed",
+    "doc_claim",
+    "sample_data",
+    "schema",
+    "ui_surface",
+    "ui_status",
+    "feature_flag"
+  ],
+  "live_verdict_enum": [
+    "LIVE_IMPLEMENTED",
+    "CONTROL_IMPLEMENTED",
+    "FIXTURE_ONLY_NOT_LIVE",
+    "FIXTURE_PRESENTED_AS_LIVE",
+    "TOKEN_ONLY_NOT_LIVE",
+    "DOC_ONLY_NOT_IMPLEMENTED",
+    "ABSENT"
+  ],
+  "terms_status_enum": [
+    "NOT_IN_REPO",
+    "IN_REPO"
+  ],
+  "providers": [
+    "USGS",
+    "GDACS",
+    "NOAA",
+    "OPEN_METEO"
+  ],
+  "related_subjects": [
+    "ALLAH",
+    "HELIOGRID"
+  ],
+  "provider_kind": {
+    "USGS": "DATA_PROVIDER",
+    "GDACS": "DATA_PROVIDER",
+    "NOAA": "DATA_PROVIDER",
+    "OPEN_METEO": "DATA_PROVIDER",
+    "ALLAH": "HISTORICAL_INTERFACE",
+    "HELIOGRID": "HISTORICAL_SYSTEM"
+  },
+  "rows": [
+    {
+      "id": "usgs-type-token",
+      "provider": "USGS",
+      "artifact_kind": "type_token",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "packages/types/src/sentinel/signals.ts:11",
+      "quote": "platform: 'youtube' | 'x' | 'rss' | 'gdacs' | 'usgs' | 'agent'",
+      "evidence": [
+        {
+          "locator": "packages/types/src/sentinel/signals.ts:11",
+          "quote": "platform: 'youtube' | 'x' | 'rss' | 'gdacs' | 'usgs' | 'agent'"
+        }
+      ],
+      "live_verdict": "TOKEN_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "SentinelSignal admits 'usgs' as a platform string. The type is imported only by packages/testing/src/fixtures.ts; no worker, hub model or route uses it."
+    },
+    {
+      "id": "usgs-mock-fixture",
+      "provider": "USGS",
+      "artifact_kind": "fixture",
+      "evidence_class": "FIXTURE_ONLY",
+      "locator": "packages/testing/src/fixtures.ts:40",
+      "quote": "platform: 'usgs',",
+      "evidence": [
+        {
+          "locator": "packages/testing/src/fixtures.ts:38",
+          "quote": "title: 'Seismic and environmental anomaly detected in Pacific sector',"
+        },
+        {
+          "locator": "packages/testing/src/fixtures.ts:40",
+          "quote": "platform: 'usgs',"
+        },
+        {
+          "locator": "packages/testing/src/fixtures.ts:43",
+          "quote": "summary: 'Automated clustering correlates shallow earthquake with undersea sensor reports.',"
+        }
+      ],
+      "live_verdict": "FIXTURE_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "createMockSignal fabricates a seismic signal with urgency 75 and no provider payload, measurement, URL or timestamp from USGS. The URL is sentinel.internal, not a provider URL."
+    },
+    {
+      "id": "usgs-fixture-consumer",
+      "provider": "USGS",
+      "artifact_kind": "test_consumer",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "apps/arsy/test/testing-cli.test.ts:104",
+      "quote": "const signal = createMockSignal({ urgencyScore: 92 })",
+      "evidence": [
+        {
+          "locator": "apps/arsy/test/testing-cli.test.ts:104",
+          "quote": "const signal = createMockSignal({ urgencyScore: 92 })"
+        }
+      ],
+      "live_verdict": "FIXTURE_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "The only consumer of the USGS fixture is a CLI test. No user-visible surface imports it."
+    },
+    {
+      "id": "usgs-empire-prose",
+      "provider": "USGS",
+      "artifact_kind": "prose_seed",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "packages/moonql-ops/src/empire.ts:112",
+      "quote": "xvMapping: 'Sentinel OSINT radar clustering USGS and GDACS sensor events',",
+      "evidence": [
+        {
+          "locator": "packages/moonql-ops/src/empire.ts:112",
+          "quote": "xvMapping: 'Sentinel OSINT radar clustering USGS and GDACS sensor events',"
+        }
+      ],
+      "live_verdict": "TOKEN_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Atmosphere OS taxonomy prose. No driver, fetch, sensor table or clustering input accepts USGS data."
+    },
+    {
+      "id": "usgs-vision-claim",
+      "provider": "USGS",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "DOC_ONLY_PLAN",
+      "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+      "quote": "**USGS earthquake**",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+          "quote": "Fixtures/source adapters refer to **USGS earthquake**"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Vision text attributes USGS earthquake types to historical A-L-L-A-H adapters/fixtures. The same line hedges that it establishes code and fixture presence, not live feed freshness."
+    },
+    {
+      "id": "gdacs-type-token",
+      "provider": "GDACS",
+      "artifact_kind": "type_token",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "packages/types/src/sentinel/signals.ts:11",
+      "quote": "platform: 'youtube' | 'x' | 'rss' | 'gdacs' | 'usgs' | 'agent'",
+      "evidence": [
+        {
+          "locator": "packages/types/src/sentinel/signals.ts:11",
+          "quote": "platform: 'youtube' | 'x' | 'rss' | 'gdacs' | 'usgs' | 'agent'"
+        }
+      ],
+      "live_verdict": "TOKEN_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "GDACS is a union member only. No value 'gdacs' is constructed anywhere in the repository."
+    },
+    {
+      "id": "gdacs-empire-prose",
+      "provider": "GDACS",
+      "artifact_kind": "prose_seed",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "packages/moonql-ops/src/empire.ts:112",
+      "quote": "Sentinel OSINT radar clustering USGS and GDACS sensor events",
+      "evidence": [
+        {
+          "locator": "packages/moonql-ops/src/empire.ts:112",
+          "quote": "Sentinel OSINT radar clustering USGS and GDACS sensor events"
+        }
+      ],
+      "live_verdict": "TOKEN_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Same Atmosphere OS string as the USGS row. No GDACS feed, URL or disaster record exists."
+    },
+    {
+      "id": "gdacs-vision-claim",
+      "provider": "GDACS",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "DOC_ONLY_PLAN",
+      "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+      "quote": "**GDACS disaster**",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+          "quote": "**GDACS disaster**"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Vision-only attribution to historical A-L-L-A-H adapters/fixtures. No source adapter exists in this repository."
+    },
+    {
+      "id": "noaa-vision-claim",
+      "provider": "NOAA",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "DOC_ONLY_PLAN",
+      "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+      "quote": "**NOAA geomagnetic/space weather**",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+          "quote": "**NOAA geomagnetic/space weather**"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "NOAA has zero source-code occurrences. This vision line is the only occurrence in the repository."
+    },
+    {
+      "id": "open-meteo-vision-claim",
+      "provider": "OPEN_METEO",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "DOC_ONLY_PLAN",
+      "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+      "quote": "**Open-Meteo weather/air quality**",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+          "quote": "**Open-Meteo weather/air quality**"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Open-Meteo has zero source-code occurrences. This vision line is the only occurrence in the repository."
+    },
+    {
+      "id": "allah-hub-pin",
+      "provider": "ALLAH",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "docs/audit/M06-01-source-repo-pins.md:21",
+      "quote": "github.com/bjo163/allah-hub",
+      "evidence": [
+        {
+          "locator": "docs/audit/M06-01-source-repo-pins.md:21",
+          "quote": "github.com/bjo163/allah-hub"
+        },
+        {
+          "locator": "docs/audit/M06-01-source-repo-pins.md:21",
+          "quote": "TAXONOMY_ONLY"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "The accepted pin records a manifest at core/manifest.json with classification TAXONOMY_ONLY. It pins no adapter, schema, URL or sample observation."
+    },
+    {
+      "id": "allah-interface-map",
+      "provider": "ALLAH",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "docs/decisions/M06-05-historical-interfaces-map.md:18",
+      "quote": "Disambiguated acronym taxonomy only",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M06-05-historical-interfaces-map.md:18",
+          "quote": "Disambiguated acronym taxonomy only"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "M06-05 ratified integration for A-L-L-A-H as D00 acronym taxonomy only. Bulk import is forbidden by the same decision."
+    },
+    {
+      "id": "allah-vision-world-monitor",
+      "provider": "ALLAH",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "DOC_ONLY_PLAN",
+      "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:861",
+      "quote": "World Monitor ingestion/scheduling/storage",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:861",
+          "quote": "World Monitor ingestion/scheduling/storage"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "The vision asserts this existed in the external A-L-L-A-H/dev tree. It is not imported into XV. No assertion is made here that the external code exists or runs."
+    },
+    {
+      "id": "allah-vision-conflicting-pin",
+      "provider": "ALLAH",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "DOC_ONLY_PLAN",
+      "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:772",
+      "quote": "47bac90cade77ee2136cb66d546156b220fe8481",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:772",
+          "quote": "47bac90cade77ee2136cb66d546156b220fe8481"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "This SHA conflicts with the M06-01 pin 71a80c94dae0021b. Two different SHAs and a manifest-only pin cannot evidence ingestion code. The external repository was not fetched."
+    },
+    {
+      "id": "allah-decision-open",
+      "provider": "ALLAH",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "docs/decisions/M02-07-historical-decisions-matrix.md:34",
+      "quote": "Ditangguhkan ke G5",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M02-07-historical-decisions-matrix.md:34",
+          "quote": "Ditangguhkan ke G5"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "World Monitor / Video Sentinel remains OPEN in the decision matrix, deferred to M24 pending rate-limit, platform-moderation and privacy audit."
+    },
+    {
+      "id": "allah-acronym-disambiguation",
+      "provider": "ALLAH",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "docs/decisions/M02-01-disambiguation-registry.md:22",
+      "quote": "DILARANG menggunakan relasi",
+      "evidence": [
+        {
+          "locator": "docs/decisions/M02-01-disambiguation-registry.md:22",
+          "quote": "A-L-L-A-H**: Akronim teknis proyek"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Positive control: ALLAH the religious referent is explicitly distinct from the A-L-L-A-H project acronym. No provider, telemetry or monitoring claim attaches to the referent."
+    },
+    {
+      "id": "allah-world-monitor-seed-data",
+      "provider": "ALLAH",
+      "artifact_kind": "sample_data",
+      "evidence_class": "FIXTURE_ONLY",
+      "locator": "packages/moonql-monitor/src/index.ts:371",
+      "quote": "externalId: 'yt:narasi:civic-townhall-01',",
+      "evidence": [
+        {
+          "locator": "packages/moonql-monitor/src/index.ts:371",
+          "quote": "externalId: 'yt:narasi:civic-townhall-01',"
+        },
+        {
+          "locator": "packages/moonql-monitor/src/index.ts:385",
+          "quote": "status: 'verified',"
+        }
+      ],
+      "live_verdict": "FIXTURE_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "XV-native World Monitor, not imported A-L-L-A-H code. Twelve committed seed signals carry placeholder URLs, invented engagement counts and pre-set editorial statuses. They are fixtures and no provider observation."
+    },
+    {
+      "id": "allah-world-monitor-platform-enum",
+      "provider": "ALLAH",
+      "artifact_kind": "schema",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "packages/moonql-monitor/src/index.ts:28",
+      "quote": "const PLATFORMS = ['youtube', 'x', 'instagram', 'tiktok', 'rss', 'web'] as const",
+      "evidence": [
+        {
+          "locator": "packages/moonql-monitor/src/index.ts:28",
+          "quote": "const PLATFORMS = ['youtube', 'x', 'instagram', 'tiktok', 'rss', 'web'] as const"
+        }
+      ],
+      "live_verdict": "TOKEN_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "The monitor_signals platform enum excludes usgs and gdacs, so the dead type union cannot reach a stored row even if a driver produced one."
+    },
+    {
+      "id": "allah-dock-surface",
+      "provider": "ALLAH",
+      "artifact_kind": "ui_surface",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "apps/dock/src/app/page.tsx:78",
+      "quote": "{copy.worldMonitor}",
+      "evidence": [
+        {
+          "locator": "apps/dock/src/app/page.tsx:74",
+          "quote": "<Card id=\"world-monitor\">"
+        },
+        {
+          "locator": "apps/dock/src/app/page.tsx:78",
+          "quote": "{copy.worldMonitor}"
+        },
+        {
+          "locator": "apps/dock/src/app/page.tsx:82",
+          "quote": "{copy.liveFeedAiTriaged}"
+        },
+        {
+          "locator": "apps/dock/src/app/page.tsx:107",
+          "quote": "{sig.platform} · {sig.radarRefRecord?.name ?? copy.radar}"
+        },
+        {
+          "locator": "apps/dock/src/lib/landing-copy.ts:70",
+          "quote": "WORLD MONITOR · OSINT RADAR INTERCEPT"
+        },
+        {
+          "locator": "apps/dock/src/lib/landing-copy.ts:72",
+          "quote": "OSINT MONITORING"
+        }
+      ],
+      "live_verdict": "FIXTURE_PRESENTED_AS_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Public Dock homepage renders the first six committed seed signals with sentiment, urgency and AI summaries under OSINT MONITORING. It does not print the literal word LIVE, but there is no fixture, source, provider, fetch-time or stale label. Risk is current-intelligence presentation of fixture rows."
+    },
+    {
+      "id": "allah-hq-atmosphere-status",
+      "provider": "ALLAH",
+      "artifact_kind": "ui_status",
+      "evidence_class": "FIXTURE_ONLY",
+      "locator": "apps/headquarters/src/app/(admin)/page.tsx:230",
+      "quote": "status: 'STREAMING'",
+      "evidence": [
+        {
+          "locator": "apps/headquarters/src/app/(admin)/page.tsx:230",
+          "quote": "name: 'Atmosphere OS', domain: 'Environmental sensor & space weather grid', status: 'STREAMING'"
+        }
+      ],
+      "live_verdict": "FIXTURE_PRESENTED_AS_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Static literal inside EMPIRE_14_SYSTEMS. No provider, fetch, sensor, table or timestamp backs it. Worktree :230; committed HEAD :108 because another session inserted 131 lines above the array."
+    },
+    {
+      "id": "allah-hq-panel-subtitle",
+      "provider": "ALLAH",
+      "artifact_kind": "ui_status",
+      "evidence_class": "FIXTURE_ONLY",
+      "locator": "apps/headquarters/src/app/(admin)/page.tsx:445",
+      "quote": "telemetry, evidence, and research compute",
+      "evidence": [
+        {
+          "locator": "apps/headquarters/src/app/(admin)/page.tsx:445",
+          "quote": "telemetry, evidence, and research compute"
+        }
+      ],
+      "live_verdict": "FIXTURE_PRESENTED_AS_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Panel subtitle implies telemetry binding that does not exist. Worktree :445; committed HEAD :317."
+    },
+    {
+      "id": "allah-hq-sync-badge",
+      "provider": "ALLAH",
+      "artifact_kind": "ui_status",
+      "evidence_class": "FIXTURE_ONLY",
+      "locator": "apps/headquarters/src/app/(admin)/page.tsx:446",
+      "quote": "14 / 14 SYNCHRONIZED",
+      "evidence": [
+        {
+          "locator": "apps/headquarters/src/app/(admin)/page.tsx:446",
+          "quote": "14 / 14 SYNCHRONIZED"
+        }
+      ],
+      "live_verdict": "FIXTURE_PRESENTED_AS_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Hardcoded badge asserting synchronization across 14 systems. No synchronization mechanism or per-system status source exists. Worktree :446; committed HEAD :318."
+    },
+    {
+      "id": "allah-egress-flag",
+      "provider": "ALLAH",
+      "artifact_kind": "feature_flag",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": ".env.example:150",
+      "quote": "EGRESS_ENABLED=false",
+      "evidence": [
+        {
+          "locator": ".env.example:150",
+          "quote": "EGRESS_ENABLED=false"
+        }
+      ],
+      "live_verdict": "CONTROL_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Global outbound gate, default false. It is not provider-specific and contains no USGS/GDACS/NOAA/Open-Meteo host, key or quota."
+    },
+    {
+      "id": "allah-egress-gate",
+      "provider": "ALLAH",
+      "artifact_kind": "feature_flag",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "packages/moonql-monitor/src/index.ts:978",
+      "quote": "if (env.EGRESS_ENABLED !== 'true') {",
+      "evidence": [
+        {
+          "locator": "packages/moonql-monitor/src/index.ts:978",
+          "quote": "if (env.EGRESS_ENABLED !== 'true') {"
+        }
+      ],
+      "live_verdict": "CONTROL_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "The 10-minute source scheduler refuses to enqueue unless the global flag is true. No environmental provider task is registered."
+    },
+    {
+      "id": "heliogrid-empire-seed",
+      "provider": "HELIOGRID",
+      "artifact_kind": "prose_seed",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "packages/moonql-ops/src/empire.ts:121",
+      "quote": "Falsifiable solar ephemeris and renewable energy telemetry tracking",
+      "evidence": [
+        {
+          "locator": "packages/moonql-ops/src/empire.ts:118",
+          "quote": "code: 'sys_heliogrid',"
+        },
+        {
+          "locator": "packages/moonql-ops/src/empire.ts:121",
+          "quote": "Falsifiable solar ephemeris and renewable energy telemetry tracking"
+        },
+        {
+          "locator": "packages/moonql-ops/src/empire.ts:122",
+          "quote": "disallowedInterpretation: 'Completed quantum energy generator',"
+        }
+      ],
+      "live_verdict": "TOKEN_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Seeded taxonomy prose with an explicit disallowed interpretation. No ephemeris, meter, PV, battery or telemetry code exists."
+    },
+    {
+      "id": "heliogrid-type-token",
+      "provider": "HELIOGRID",
+      "artifact_kind": "type_token",
+      "evidence_class": "REPO_EVIDENCE",
+      "locator": "packages/types/src/sentinel/telemetry.ts:13",
+      "quote": "| 'HELIOGRID'",
+      "evidence": [
+        {
+          "locator": "packages/types/src/sentinel/telemetry.ts:13",
+          "quote": "| 'HELIOGRID'"
+        }
+      ],
+      "live_verdict": "TOKEN_ONLY_NOT_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "EmpireSystemCode union member in a dead telemetry contract with no producer or consumer outside this file."
+    },
+    {
+      "id": "heliogrid-hq-status",
+      "provider": "HELIOGRID",
+      "artifact_kind": "ui_status",
+      "evidence_class": "FIXTURE_ONLY",
+      "locator": "apps/headquarters/src/app/(admin)/page.tsx:231",
+      "quote": "name: 'HELIOGRID', domain: 'Solar energy & physics telemetry tracker', status: 'NOMINAL'",
+      "evidence": [
+        {
+          "locator": "apps/headquarters/src/app/(admin)/page.tsx:231",
+          "quote": "name: 'HELIOGRID', domain: 'Solar energy & physics telemetry tracker', status: 'NOMINAL'"
+        }
+      ],
+      "live_verdict": "FIXTURE_PRESENTED_AS_LIVE",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "Static NOMINAL badge for a system with no meter, sample or health source. Worktree :231; committed HEAD :109."
+    },
+    {
+      "id": "heliogrid-blueprint-rule",
+      "provider": "HELIOGRID",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "DOC_ONLY_PLAN",
+      "locator": "BLUEPRINT.md:110",
+      "quote": "HELIOGRID pilot must start with verified read-only meters",
+      "evidence": [
+        {
+          "locator": "BLUEPRINT.md:110",
+          "quote": "HELIOGRID pilot must start with verified read-only meters"
+        },
+        {
+          "locator": "BLUEPRINT.md:110",
+          "quote": "simulations never masquerade as measured generation/savings"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "The repository's own rule forbids simulated generation from being presented as measured. It is prose only; nothing enforces it at the HQ badge."
+    },
+    {
+      "id": "allah-licensing-review",
+      "provider": "ALLAH",
+      "artifact_kind": "doc_claim",
+      "evidence_class": "DOC_ONLY_PLAN",
+      "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:871",
+      "quote": "licensed/source-compatible, test-driven review",
+      "evidence": [
+        {
+          "locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:871",
+          "quote": "licensed/source-compatible, test-driven review"
+        }
+      ],
+      "live_verdict": "DOC_ONLY_NOT_IMPLEMENTED",
+      "terms_status": "NOT_IN_REPO",
+      "notes": "A-L-L-A-H code may be adapted only after licensed/source-compatible review. No licence text, grant, attribution string or provider term is present in the repository."
+    }
+  ],
+  "provider_records": [
+    {
+      "provider": "USGS",
+      "status": "TOKENS_FIXTURE_PROSE_ONLY",
+      "code_present": true,
+      "client_implemented": false,
+      "adapter_imported": false,
+      "url_count": 0,
+      "fixture_row_count": 1,
+      "code_row_count": 4,
+      "doc_row_count": 1,
+      "absent_locator": null,
+      "absent_quote": null,
+      "terms_status": "NOT_IN_REPO",
+      "row_ids": [
+        "usgs-type-token",
+        "usgs-mock-fixture",
+        "usgs-fixture-consumer",
+        "usgs-empire-prose",
+        "usgs-vision-claim"
+      ]
+    },
+    {
+      "provider": "GDACS",
+      "status": "TOKENS_PROSE_ONLY",
+      "code_present": true,
+      "client_implemented": false,
+      "adapter_imported": false,
+      "url_count": 0,
+      "fixture_row_count": 0,
+      "code_row_count": 2,
+      "doc_row_count": 1,
+      "absent_locator": null,
+      "absent_quote": null,
+      "terms_status": "NOT_IN_REPO",
+      "row_ids": [
+        "gdacs-type-token",
+        "gdacs-empire-prose",
+        "gdacs-vision-claim"
+      ]
+    },
+    {
+      "provider": "NOAA",
+      "status": "ABSENT_FROM_CODE",
+      "code_present": false,
+      "client_implemented": false,
+      "adapter_imported": false,
+      "url_count": 0,
+      "fixture_row_count": 0,
+      "code_row_count": 0,
+      "doc_row_count": 1,
+      "absent_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+      "absent_quote": "**NOAA geomagnetic/space weather**",
+      "terms_status": "NOT_IN_REPO",
+      "row_ids": [
+        "noaa-vision-claim"
+      ]
+    },
+    {
+      "provider": "OPEN_METEO",
+      "status": "ABSENT_FROM_CODE",
+      "code_present": false,
+      "client_implemented": false,
+      "adapter_imported": false,
+      "url_count": 0,
+      "fixture_row_count": 0,
+      "code_row_count": 0,
+      "doc_row_count": 1,
+      "absent_locator": "docs/vision/MASTER_VISION_NARRATIVE_XV.md:863",
+      "absent_quote": "**Open-Meteo weather/air quality**",
+      "terms_status": "NOT_IN_REPO",
+      "row_ids": [
+        "open-meteo-vision-claim"
+      ]
+    },
+    {
+      "provider": "ALLAH",
+      "status": "TAXONOMY_PIN_AND_XV_NATIVE_MONITOR_ONLY",
+      "code_present": true,
+      "client_implemented": false,
+      "adapter_imported": false,
+      "url_count": 0,
+      "fixture_row_count": 4,
+      "code_row_count": 12,
+      "doc_row_count": 3,
+      "absent_locator": null,
+      "absent_quote": null,
+      "terms_status": "NOT_IN_REPO",
+      "row_ids": [
+        "allah-hub-pin",
+        "allah-interface-map",
+        "allah-vision-world-monitor",
+        "allah-vision-conflicting-pin",
+        "allah-decision-open",
+        "allah-acronym-disambiguation",
+        "allah-world-monitor-seed-data",
+        "allah-world-monitor-platform-enum",
+        "allah-dock-surface",
+        "allah-hq-atmosphere-status",
+        "allah-hq-panel-subtitle",
+        "allah-hq-sync-badge",
+        "allah-egress-flag",
+        "allah-egress-gate",
+        "allah-licensing-review"
+      ]
+    },
+    {
+      "provider": "HELIOGRID",
+      "status": "STATIC_PROSE_TOKEN_AND_UI_ONLY",
+      "code_present": true,
+      "client_implemented": false,
+      "adapter_imported": false,
+      "url_count": 0,
+      "fixture_row_count": 1,
+      "code_row_count": 3,
+      "doc_row_count": 1,
+      "absent_locator": null,
+      "absent_quote": null,
+      "terms_status": "NOT_IN_REPO",
+      "row_ids": [
+        "heliogrid-empire-seed",
+        "heliogrid-type-token",
+        "heliogrid-hq-status",
+        "heliogrid-blueprint-rule"
+      ]
+    }
+  ],
+  "terms_register": [
+    {
+      "subject": "USGS",
+      "status": "NOT_IN_REPO",
+      "locator": null,
+      "quote": null,
+      "detail": "No USGS terms of use, licence, attribution, quota, rate-limit or user-agent text exists in the repository. Not fetched for this audit."
+    },
+    {
+      "subject": "GDACS",
+      "status": "NOT_IN_REPO",
+      "locator": null,
+      "quote": null,
+      "detail": "No GDACS/JRC terms, attribution, quota, rate-limit or user-agent text exists in the repository. Not fetched for this audit."
+    },
+    {
+      "subject": "NOAA",
+      "status": "NOT_IN_REPO",
+      "locator": null,
+      "quote": null,
+      "detail": "No NOAA terms, attribution, quota or user-agent text exists in the repository. The provider has no code occurrence. Not fetched."
+    },
+    {
+      "subject": "OPEN_METEO",
+      "status": "NOT_IN_REPO",
+      "locator": null,
+      "quote": null,
+      "detail": "No Open-Meteo terms, attribution, quota or user-agent text exists in the repository. The provider has no code occurrence. Not fetched."
+    },
+    {
+      "subject": "ALLAH",
+      "status": "NOT_IN_REPO",
+      "locator": null,
+      "quote": null,
+      "detail": "No A-L-L-A-H source-code licence grant or provider terms text exists. The vision requires licensed/source-compatible review but records no licence."
+    },
+    {
+      "subject": "HELIOGRID",
+      "status": "NOT_IN_REPO",
+      "locator": null,
+      "quote": null,
+      "detail": "No HELIOGRID terms, meter licence, utility agreement or quota text exists. There is no device or data source."
+    }
+  ],
+  "url_inventory": [
+    {
+      "subject": "USGS",
+      "urls": []
+    },
+    {
+      "subject": "GDACS",
+      "urls": []
+    },
+    {
+      "subject": "NOAA",
+      "urls": []
+    },
+    {
+      "subject": "OPEN_METEO",
+      "urls": []
+    },
+    {
+      "subject": "ALLAH",
+      "urls": []
+    },
+    {
+      "subject": "HELIOGRID",
+      "urls": []
+    }
+  ],
+  "feature_flags": [
+    {
+      "name": "EGRESS_ENABLED",
+      "scope": "global outbound fetch gate",
+      "default": "false",
+      "provider_specific": false,
+      "locator": ".env.example:150",
+      "quote": "EGRESS_ENABLED=false"
+    }
+  ],
+  "declared_counts": {
+    "total": 29,
+    "by_evidence_class": {
+      "REPO_EVIDENCE": 15,
+      "FIXTURE_ONLY": 6,
+      "DOC_ONLY_PLAN": 8,
+      "REPORTED_TERMS": 0
+    },
+    "by_live_verdict": {
+      "LIVE_IMPLEMENTED": 0,
+      "CONTROL_IMPLEMENTED": 2,
+      "FIXTURE_ONLY_NOT_LIVE": 3,
+      "FIXTURE_PRESENTED_AS_LIVE": 5,
+      "TOKEN_ONLY_NOT_LIVE": 7,
+      "DOC_ONLY_NOT_IMPLEMENTED": 12,
+      "ABSENT": 0
+    },
+    "by_provider": {
+      "USGS": 5,
+      "GDACS": 3,
+      "NOAA": 1,
+      "OPEN_METEO": 1,
+      "ALLAH": 15,
+      "HELIOGRID": 4
+    },
+    "by_artifact_kind": {
+      "type_token": 3,
+      "fixture": 1,
+      "test_consumer": 1,
+      "prose_seed": 3,
+      "doc_claim": 12,
+      "sample_data": 1,
+      "schema": 1,
+      "ui_surface": 1,
+      "ui_status": 4,
+      "feature_flag": 2
+    },
+    "by_terms_status": {
+      "NOT_IN_REPO": 29,
+      "IN_REPO": 0
+    },
+    "providers_with_live_client": 0,
+    "provider_urls_found": 0,
+    "provider_specific_feature_flags": 0,
+    "fixture_rows_labelled_live": 0,
+    "terms_claims_without_locator": 0,
+    "absent_providers": 2
+  }
+}
