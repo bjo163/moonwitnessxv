@@ -133,3 +133,19 @@ test('UI2-P14b the route catalogue is id/en complete and the old encrypted claim
   }
   assert.ok(!page.includes('Zero Data In Clear'), 'the removed subtitle must not come back')
 })
+
+test('UI2-P14b the deck states the write it can prove, not a review step the hub does not run', () => {
+  const accept = /async \(req: FastifyRequest[\s\S]*?reply\.code\(201\)\.send\(transmission\)/.exec(hubModule)?.[0]
+  assert.ok(accept, 'the transmit handler must stay the shape this test reads')
+  assert.match(accept, /status: 'ON_AIR'/, 'an accepted transmission is recorded ON-AIR at write time')
+  assert.match(accept, /const stationRef = await resolveStationRef/, 'a station hint the hub cannot find is dropped, not stored')
+
+  for (const locale of ['en', 'id']) {
+    const subtitle = denpaCopy[locale].transmitterSubtitle
+    assert.ok(
+      !/decides whether|memutuskan apakah/i.test(subtitle),
+      `${locale}: the deck must not promise a moderation decision the hub never makes`,
+    )
+    assert.ok(/ON-AIR|MENGUDARA/.test(subtitle), `${locale}: and it must say what actually happens to the record`)
+  }
+})

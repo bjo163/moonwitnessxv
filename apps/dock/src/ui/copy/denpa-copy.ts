@@ -23,7 +23,7 @@ export const denpaCopy = defineLocaleCatalog({
     stationSelectUnknownHint:
       'The catalog read failed, so no station is offered. The message still transmits to the global network.',
     transmitterSubtitle:
-      'The message, handle and target station you submit are sent to the hub. The hub decides whether the record enters the public feed.',
+      'What you submit is sent as typed. The hub takes the message, drops a target station it cannot find, and records the transmission as ON-AIR; this deck keeps no copy and holds no transmission back.',
     feedTitle: 'Transmissions the hub published',
     feedSubtitle:
       'This is the public feed the hub returned for this request. A transmission appears here only after the hub has recorded it.',
@@ -43,7 +43,7 @@ export const denpaCopy = defineLocaleCatalog({
     stationSelectUnknownHint:
       'Pembacaan katalog gagal, sehingga tidak ada stasiun yang ditawarkan. Pesan tetap dikirim ke jaringan global.',
     transmitterSubtitle:
-      'Pesan, nama samaran, dan stasiun tujuan yang Anda kirim dikirim ke hub. Hub yang memutuskan apakah catatan itu masuk ke umpan publik.',
+      'Yang Anda kirim dikirim apa adanya. Hub menerima pesan, membuang stasiun tujuan yang tidak dapat ditemukannya, dan mencatat siaran sebagai MENGUDARA; dek ini tidak menyimpan salinan dan tidak menahan siaran.',
     feedTitle: 'Siaran yang diterbitkan hub',
     feedSubtitle:
       'Ini umpan publik yang hub kembalikan untuk permintaan ini. Sebuah siaran muncul di sini hanya setelah hub mencatatnya.',
