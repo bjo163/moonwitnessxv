@@ -1,0 +1,286 @@
+{
+  "task": "M17-04",
+  "title": "Record four-book THE BATTERIES and separate NPD variants gaps",
+  "baseline_sha": "788fcab610bdd18cc89f4d0707f01bf3d30bf3ef",
+  "generated_utc": "2026-10-31",
+  "acceptance": "Missing scene/pages marked NEEDS_SOURCE",
+  "packet": {
+    "path": "docs/tasks/M17/M17-04.md",
+    "present": false,
+    "tracked": false,
+    "note": "No M17-04 packet exists: docs/tasks/M17 holds M17-01..03 and M17-05..07 only, and the M17 milestone links M17-04 to TODO.md. Scope here is the TODO line plus this task statement, not a packet."
+  },
+  "method": "Enumerate only what this repository holds for the four-book THE BATTERIES structure and for NPD. A reported count stays a count; no book title, variant name, sequence or page is invented. Every non-ABSENT row carries one file:line quote that the validator must find verbatim on that line. NPD works are a separate set from the book set and are never counted as books.",
+  "status_enum": [
+    "EVIDENCED",
+    "PARTIAL",
+    "NEEDS_SOURCE",
+    "ABSENT"
+  ],
+  "status_definitions": {
+    "EVIDENCED": "The named referent itself is present at the cited locator as an in-repository label or typed row (for example the ensemble label and its O008 identity). It does not mean a book, page, manuscript, scene or variant is present.",
+    "PARTIAL": "The repository holds the referent only as a count, an editorial heading, a label set, or a report that explicitly calls the structure incompletely recovered. At least one required attribute (title, sequence, page, mapping) is missing.",
+    "NEEDS_SOURCE": "The repository names the label and a cited locator records its content, page, sequence, mapping or source as missing. The locator documents the gap, not the artifact.",
+    "ABSENT": "The repository names the category but holds no instance and no locator asserts one. The empty set is recorded here rather than filled; an ABSENT row therefore has no source."
+  },
+  "kind_enum": [
+    "ensemble_label",
+    "chapter_band",
+    "count",
+    "title_gap",
+    "order_gap",
+    "page_gap",
+    "npd_label_set",
+    "chapter_mapping_gap",
+    "variant_gap",
+    "artifact_gap",
+    "relation_gap"
+  ],
+  "set_enum": [
+    "BATTERIES_FOUR_BOOK",
+    "NPD_WORKS",
+    "BATTERIES_NPD_SEPARATION"
+  ],
+  "set_definitions": {
+    "BATTERIES_FOUR_BOOK": "Rows about the reported four-book THE BATTERIES narrative structure. Contains zero book rows and zero book titles.",
+    "NPD_WORKS": "Rows about the NPD works/labels. NPD is not a fifth BATTERIES book and is not part of the four-book count.",
+    "BATTERIES_NPD_SEPARATION": "Rows recording the only in-repository relation between the two sets. A relation is not a merge."
+  },
+  "guards": {
+    "quote_resolves_at_line": true,
+    "declared_tallies_equal_rows": true,
+    "no_absent_row_with_source": true,
+    "no_invented_book_title": true,
+    "no_npd_merged_into_batteries": true,
+    "every_evidenced_row_has_locator": true,
+    "four_book_count_recorded_as_a_count": true,
+    "book_rows_zero": true,
+    "no_external_fetch": true,
+    "no_writes": true
+  },
+  "rows": [
+    {
+      "id": "bat_ensemble_label",
+      "set": "BATTERIES_FOUR_BOOK",
+      "kind": "ensemble_label",
+      "label": "THE BATTERIES (fictional ensemble)",
+      "referent": "The fictional ensemble label only; not a book, manuscript or page.",
+      "status": "EVIDENCED",
+      "book_title": null,
+      "source": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 368,
+        "quote": "Fictional ensemble: **THE BATTERIES**"
+      },
+      "gap": "The ensemble label is present and typed as O008 in the ontology. No book, page, manuscript, transcript or media manifest for the ensemble exists in this repository."
+    },
+    {
+      "id": "bat_chaos_medic_band",
+      "set": "BATTERIES_FOUR_BOOK",
+      "kind": "chapter_band",
+      "label": "VII. THE BATTERIES — Chaos Medic (39–45)",
+      "referent": "Seven editorial chapter slots (39-45) printed under one band heading.",
+      "status": "PARTIAL",
+      "book_title": null,
+      "source": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 723,
+        "quote": "## VII. THE BATTERIES — Chaos Medic (39–45)"
+      },
+      "gap": "The band holds seven editorial slot headings, not four books. No mapping from any slot to a book, and no statement that a slot is a book, is recorded."
+    },
+    {
+      "id": "bat_four_book_count",
+      "set": "BATTERIES_FOUR_BOOK",
+      "kind": "count",
+      "label": "THE BATTERIES four-book structure (count = 4)",
+      "referent": "A reported count of four books; no individual book is named.",
+      "status": "PARTIAL",
+      "book_title": null,
+      "count_reported": 4,
+      "count_unit": "books",
+      "source": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 973,
+        "quote": "THE BATTERIES four-book narrative structure"
+      },
+      "gap": "Only the count is reported, and the same line calls the structure incompletely recovered. No title, index, sequence, page range, edition, transcript or per-book locator exists, so this row is one count and not four sourced books."
+    },
+    {
+      "id": "bat_book_titles_gap",
+      "set": "BATTERIES_FOUR_BOOK",
+      "kind": "title_gap",
+      "label": "Individual THE BATTERIES book titles",
+      "referent": "The four book titles, if any.",
+      "status": "NEEDS_SOURCE",
+      "book_title": null,
+      "source": {
+        "file": "docs/audit/M26-03-batteries-npd-recovery.md",
+        "line": 46,
+        "quote": "The four books have **no individual titles anywhere**."
+      },
+      "gap": "Zero of the four books has a title in this repository. No title may be minted from the band headings, the NPD labels or the ensemble name."
+    },
+    {
+      "id": "bat_book_order_gap",
+      "set": "BATTERIES_FOUR_BOOK",
+      "kind": "order_gap",
+      "label": "THE BATTERIES book order and chronology",
+      "referent": "The sequence, publication order and dates of the four books.",
+      "status": "NEEDS_SOURCE",
+      "book_title": null,
+      "source": {
+        "file": "docs/audit/M26-03-batteries-npd-recovery.md",
+        "line": 58,
+        "quote": "No publication dates, production dates or book order."
+      },
+      "gap": "No book order, publication date, production date or chronology is recorded; book one through book four cannot be placed or ranked."
+    },
+    {
+      "id": "bat_book_pages_gap",
+      "set": "BATTERIES_FOUR_BOOK",
+      "kind": "page_gap",
+      "label": "THE BATTERIES book pages, scenes and transcripts",
+      "referent": "Page and scene content for any of the four books.",
+      "status": "NEEDS_SOURCE",
+      "book_title": null,
+      "source": {
+        "file": "docs/audit/M26-03-batteries-npd-recovery.md",
+        "line": 53,
+        "quote": "No title, page count, page range, scene list, edition or transcript exists."
+      },
+      "gap": "Missing scene/pages are marked NEEDS_SOURCE: no page count, page range, scene list, edition or transcript exists for any of the four books."
+    },
+    {
+      "id": "npd_named_works",
+      "set": "NPD_WORKS",
+      "kind": "npd_label_set",
+      "label": "NPD named labels: 24:27, 24:37, 25:50",
+      "referent": "Three timestamp-like NPD labels reported as different works.",
+      "status": "PARTIAL",
+      "book_title": null,
+      "count_reported": 3,
+      "count_unit": "labels",
+      "source": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 370,
+        "quote": "Episodes/tokens include **NPD TEAM 24:27**, **24:37 — TARIAN KIDS**, **25:50 — TARIAN HUJAN**"
+      },
+      "gap": "Three NPD labels are printed, but they are episode/token labels, not scenes or pages. The same document (:973) says the exact NPD page/scene/media order is incompletely recovered and that the three are different works."
+    },
+    {
+      "id": "npd_scene_order_gap",
+      "set": "NPD_WORKS",
+      "kind": "order_gap",
+      "label": "NPD page, scene and media order",
+      "referent": "The exact order of NPD pages, scenes and media.",
+      "status": "NEEDS_SOURCE",
+      "book_title": null,
+      "source": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 973,
+        "quote": "exact NPD page/scene/media order remain incompletely recovered"
+      },
+      "gap": "NPD page/scene/media order is recorded as incompletely recovered. No ordered list, page number, scene list or media manifest exists, so no sequence can be asserted."
+    },
+    {
+      "id": "npd_chapter_slot_gap",
+      "set": "NPD_WORKS",
+      "kind": "chapter_mapping_gap",
+      "label": "Editorial slot 41 NPD TEAM",
+      "referent": "One editorial heading in the 99-slot index.",
+      "status": "NEEDS_SOURCE",
+      "book_title": null,
+      "source": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 724,
+        "quote": "41 NPD TEAM"
+      },
+      "gap": "The index prints one heading named NPD TEAM. It is a heading, not a work, page or scene, and no mapping from it to 24:27, 24:37 or 25:50 is recorded."
+    },
+    {
+      "id": "npd_variants_named",
+      "set": "NPD_WORKS",
+      "kind": "variant_gap",
+      "label": "Named NPD variants",
+      "referent": "Any named NPD variant, its parent work and its relation.",
+      "status": "ABSENT",
+      "book_title": null,
+      "named_instances": 0,
+      "source": null,
+      "gap": "No NPD variant name, id, parent work, relation or sequence exists anywhere in this repository. The three NPD labels are stated to be different works (:973), and the task phrase 'NPD variants' names no referent, so the set is empty rather than filled."
+    },
+    {
+      "id": "npd_artifact_gap",
+      "set": "NPD_WORKS",
+      "kind": "artifact_gap",
+      "label": "NPD scene text, pages and media manifest",
+      "referent": "Any NPD scene text, page or media artifact.",
+      "status": "NEEDS_SOURCE",
+      "book_title": null,
+      "source": {
+        "file": "docs/audit/M26-03-batteries-npd-recovery.md",
+        "line": 54,
+        "quote": "No page, scene text or media manifest"
+      },
+      "gap": "No NPD page, scene text or media manifest exists in the repository, and the 24:37 scene relation is still flagged for verification (:681)."
+    },
+    {
+      "id": "sep_batteries_npd_relation",
+      "set": "BATTERIES_NPD_SEPARATION",
+      "kind": "relation_gap",
+      "label": "THE BATTERIES appearsIn NPD TEAM 24:37",
+      "referent": "The only recorded relation between the ensemble and an NPD work.",
+      "status": "NEEDS_SOURCE",
+      "book_title": null,
+      "source": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 681,
+        "quote": "Creative-brief source; verify scene"
+      },
+      "gap": "The recorded relation is appearsIn against a creative-brief source whose scene still needs verification. It is not identity, membership or a book assignment; no document maps NPD works into the four-book set."
+    }
+  ],
+  "declared_counts": {
+    "total": 12,
+    "by_status": {
+      "EVIDENCED": 1,
+      "PARTIAL": 3,
+      "NEEDS_SOURCE": 7,
+      "ABSENT": 1
+    },
+    "by_set": {
+      "BATTERIES_FOUR_BOOK": 6,
+      "NPD_WORKS": 5,
+      "BATTERIES_NPD_SEPARATION": 1
+    },
+    "four_book": {
+      "reported": 4,
+      "book_rows": 0,
+      "book_titles": 0,
+      "sequenced": 0
+    },
+    "npd": {
+      "named_labels": 3,
+      "named_variants": 0,
+      "merged_into_batteries": 0
+    },
+    "book_rows": 0,
+    "book_titles": 0
+  },
+  "non_claims": [
+    "No THE BATTERIES book is named, numbered, titled, sequenced, paged or quoted; four is a reported count only.",
+    "No NPD variant is named. The three NPD labels are different works per :973, not variants of one work.",
+    "No NPD work is counted as a fifth BATTERIES book or merged into the four-book set.",
+    "No page, scene, transcript, manuscript or media byte is recovered, authenticated or reproduced.",
+    "No rights, licence or consent determination is made; no narrative text is copied.",
+    "No external archive, repository or website was fetched or opened."
+  ],
+  "limitations": [
+    "The task has no packet; scope is the TODO line and this task statement, so no packet acceptance beyond 'Missing scene/pages marked NEEDS_SOURCE' is claimed.",
+    "The four-book count and the NPD labels come from a secondary XV vision report that itself says the structure is incompletely recovered; its underlying RECOVERY_GAPS_V10.md is not in this repository.",
+    "Three NPD labels are not an exhaustive NPD inventory; only labels printed at :370 are recorded.",
+    "The only tracked file matching 'batter' besides the M26-03 ledger is the project card image apps/headquarters/public/art/proj-batteries.jpg, whose rights are unresolved; it is not a book or page and is not counted.",
+    "Prior M26-03 rows are not reused as sources; its audit is cited only where it states the repository gap explicitly."
+  ]
+}
