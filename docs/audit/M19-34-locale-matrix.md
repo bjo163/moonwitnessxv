@@ -5,6 +5,8 @@
 ## Baseline and scope
 
 - Clean checkout baseline: `dev` SHA `c46552ae0ec8f809b64b7d86539d514471e084d0`.
+- Test/evidence integration commit: `8720423e84cf219fa7eaea4e746b31c6936592df`.
+- The locale suites, including the new ORBIT browser test, were rerun from a clean checkout at that exact integration SHA. The only differences from the visual run baseline are QA tests and audit artifacts; no app source changed between the two SHAs.
 - Runtime: Node `v24.22.1`, pnpm `10.33.4`.
 - GUI apps covered: Dock, Headquarters, Cockpit, and ORBIT. The app inventory classifies ARSY, AI Gateway, SKYLINK, and ECHOLOG as services and Sentinel as a worker, not GUI apps.
 - Browser data was synthetic or forced offline. No production credential, live Hub, or source content was used.
