@@ -198,7 +198,6 @@ function lint(data, { read, designText }) {
   }
 
   const invariants = Array.isArray(data.invariants) ? data.invariants : []
-  const invariantIds = new Set(invariants.map((r) => r && r.id))
   for (const needed of REQUIRED_INVARIANTS) {
     const row = invariants.find((r) => r && r.id === needed)
     if (!row) errors.push(err('MISSING_INVARIANT', `required invariant ${needed} is missing`))
@@ -210,7 +209,6 @@ function lint(data, { read, designText }) {
   }
 
   const inferences = Array.isArray(data.forbidden_inferences) ? data.forbidden_inferences : []
-  const inferenceIds = new Set(inferences.map((r) => r && r.id))
   for (const needed of REQUIRED_INFERENCES) {
     const row = inferences.find((r) => r && r.id === needed)
     if (!row) errors.push(err('MISSING_INFERENCE', `required forbidden inference ${needed} is missing`))
@@ -544,7 +542,7 @@ function runSelfTest() {
     d.doc_evidence[0].line = 999999
   }, 'LOCATOR_RANGE')
 
-  add('design-document drift is rejected', (d) => ({
+  add('design-document drift is rejected', () => ({
     design: designText
       .split(/\r?\n/)
       .map((line) => (line.includes('**E01**') ? line.replace('| D07 | Story & Media | World, arc, character, episode, scene, poster/media manifest, editorial variants | SHADOW workspace consumes it |', '| D07 | Story & Media | tampered |') : line))

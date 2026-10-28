@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict'
 
 const ACTIONS = new Set(['INTERNAL_PREVIEW', 'DOWNLOAD', 'PUBLICATION'])
-const PUBLIC_CREDIT_SCOPES = new Set(['PUBLICATION'])
 
 function evaluatePosterRequest(poster, request) {
   if (!poster || !request) return { allowed: false, reason: 'REQUEST_MISSING' }
