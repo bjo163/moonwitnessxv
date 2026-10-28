@@ -27,6 +27,21 @@
 | ARSY/API denial | `pnpm --filter @moonwitness/arsy exec tsx --test test/public-projection-denial.test.ts` | 14 passed, 0 failed, 1 skipped. The skipped case explicitly says the global rule “guessing a public link must be denied for every unapproved projection” is not satisfied. |
 | Test lint and diff | `pnpm exec eslint apps/dock/test/locale-boundary-coverage.test.mjs apps/headquarters/test/hq-locale-e2e.spec.mjs apps/orbit/test/orbit-locale-browser.test.mjs`; `git diff --check` | Both passed with no diagnostics. |
 
+## Exact-SHA cross-app revalidation at `189aba8`
+
+All rows below were rerun in the isolated checkout at source HEAD `189aba80cce4f07d4bc98c112b5ed7d0fe7aec65` after the shared MoonUI hydration fix. The generated Next `next-env.d.ts` files changed during the relevant browser/typecheck commands and were restored afterward; no product source changed. This pins source SHA, though the checkout was not pristine throughout every command.
+
+| Surface | Command(s) | Observed result |
+|---|---|---|
+| Cockpit browser/catalog/type | `pnpm --filter @moonwitness/cockpit exec node --test test/m19-34-locale-browser.test.mjs`; `pnpm --filter @moonwitness/cockpit exec tsx --test test/locale.test.ts test/locale-usage.test.ts`; `pnpm --filter @moonwitness/cockpit typecheck` | Browser 2/2, catalog 6/6, typecheck passed. |
+| Headquarters locale/auth/browser/type | `pnpm --filter @moonwitness/arsy exec tsx --test ../../apps/headquarters/test/login-locale.test.ts ../../apps/headquarters/test/shell-locale.test.ts ../../apps/headquarters/test/hq-authz-guard.test.ts ../../apps/headquarters/test/locale-preference.test.ts ../../apps/headquarters/test/hq-locale-regression.test.ts ../../apps/headquarters/test/editor-actions.test.ts`; `pnpm --filter @moonwitness/arsy exec node --test ../../apps/headquarters/test/hq-locale-e2e.spec.mjs`; `pnpm --filter @moonwitness/headquarters typecheck` | Locale/auth 46/46, browser E2E 1/1, typecheck passed. |
+| Dock locale/accessibility/type | `pnpm --filter @moonwitness/dock exec node --test test/locale-routes.test.mjs test/locale-href-contract.test.mjs test/locale-boundary-coverage.test.mjs test/states-copy-parity.test.mjs test/landing-copy.test.mjs test/landing-copy-required-keys.test.mjs test/landing-copy-english.test.mjs test/responsive-accessibility.test.mjs`; `pnpm --filter @moonwitness/dock typecheck` | 54/54, typecheck passed. |
+| ORBIT browser/suite/type | `pnpm --filter @moonwitness/orbit exec node --test test/orbit-locale-browser.test.mjs`; `pnpm --filter @moonwitness/orbit test`; `pnpm --filter @moonwitness/orbit typecheck` | Browser 1/1, suite 89/89, typecheck passed. |
+| ARSY/API denial | `pnpm --filter @moonwitness/arsy exec tsx --test test/public-projection-denial.test.ts` | 14 passed, 0 failed, 1 skipped. The skipped global rule still identifies permissive public Graph/Ontology projections tracked under M19-19. |
+| Scoped test lint | `pnpm exec eslint apps/dock/test/locale-boundary-coverage.test.mjs apps/headquarters/test/hq-locale-e2e.spec.mjs apps/orbit/test/orbit-locale-browser.test.mjs` | Passed, no diagnostics. |
+
+The exact-`189aba8` Dock visual run is recorded separately in [M30-05 revalidation](M30-05-hydration-fix-189aba8.md): 44 passed, 0 failed, 1 offline term-detail skip; 32 viewport + 8 reduced-motion captures; zero hydration errors, overflow, or clipped elements. An independent read-only review approved the hydration fix and this covered-route evidence. The reviewer recommended keeping M19-34 open until term-detail and API denial gaps are resolved or formally accepted under their owners.
+
 ## Remaining evidence gaps
 
 1. The Dock visual harness honestly skipped the term-detail matrix because forced-offline `/terms` exposed no stable term ID. A seeded/runtime fixture is needed to cover that route in both locales.
