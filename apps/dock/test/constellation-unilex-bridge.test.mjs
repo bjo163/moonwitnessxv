@@ -48,7 +48,7 @@ test('UI-P06c the UNILEX key on a constellation node is a link, not printed text
   assert.match(viewSource, /import \{ dockHrefFor \} from '@\/lib\/locale-context\.mjs'/)
   assert.match(
     nodeCardSource,
-    /aria-label=\{`Open the UNILEX entry \$\{node\.unilexStableId\}`\}/,
+    /aria-label=\{`\$\{copy\.unilexLinkAria\} \$\{node\.unilexStableId\}`\}/,
     'the link text is a bare code, so its accessible name must say what it opens',
   )
   // The prefix is written by the locale seam and nowhere else.
@@ -57,7 +57,7 @@ test('UI-P06c the UNILEX key on a constellation node is a link, not printed text
 
 test('UI-P06c the bridge appears only when the projection actually carries a mapping', () => {
   assert.match(nodeCardSource, /\{node\.unilexStableId \? \(/)
-  assert.match(nodeCardSource, /no term mapping/, 'an unmapped node says so instead of rendering a dead link')
+  assert.match(nodeCardSource, /UNILEX: \{copy\.unilexNone\}/, 'an unmapped node says so instead of rendering a dead link')
   assert.match(projectionSource, /unilexStableId: string \| null/, 'the null branch is the projected shape, not a local guess')
   assert.doesNotMatch(nodeCardSource, /href=\{localeHref\(`\/terms\/`\)\}/, 'an empty stable id must never build a bare /terms href')
 })

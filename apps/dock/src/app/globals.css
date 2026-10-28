@@ -1708,6 +1708,9 @@ body {
   background: var(--surface);
   padding: 16px 18px;
   min-width: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
 }
 .dk-graph-detail-head {
   display: flex;

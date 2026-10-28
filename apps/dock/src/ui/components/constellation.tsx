@@ -150,7 +150,7 @@ function AliasChips({
             {alias.scriptCode} · {alias.languageCode} · {alias.direction.toUpperCase()} · {alias.perspective}
           </span>
           <Badge tone={toneFor(ALIAS_TONE, alias.status)}>{alias.status}</Badge>
-          {alias.reviewer ? <span className="dk-graph-meta">reviewer: {alias.reviewer}</span> : null}
+          {alias.reviewer ? <span className="dk-graph-meta">{copy.fieldReviewer}: {alias.reviewer}</span> : null}
           {alias.reason ? <span className="dk-graph-citation">{alias.reason}</span> : null}
           {alias.evidenceRef ? (
             <span className="dk-graph-meta">
@@ -197,7 +197,7 @@ function NodeCard({
           <Badge tone="cyan">{node.kind}</Badge>
           <Badge tone="night">{node.perspective}</Badge>
           <Badge tone={toneFor(IDENTITY_TONE, node.identityStatus)}>{node.identityStatus}</Badge>
-          <Badge tone="moon">IDENTITY v{node.identityVersion}</Badge>
+          <Badge tone="moon">{copy.badgeIdentityVersion} v{node.identityVersion}</Badge>
         </div>
       </div>
 
@@ -214,13 +214,13 @@ function NodeCard({
             <a
               className="dk-graph-source-link"
               href={localeHref(`/terms/${node.unilexStableId}`)}
-              aria-label={`Open the UNILEX entry ${node.unilexStableId}`}
+              aria-label={`${copy.unilexLinkAria} ${node.unilexStableId}`}
             >
               <code>{node.unilexStableId}</code>
             </a>
           </span>
         ) : (
-          <span className="dk-graph-meta">UNILEX: no term mapping</span>
+          <span className="dk-graph-meta">UNILEX: {copy.unilexNone}</span>
         )}
         <a
           className="dk-graph-source-link"
@@ -396,7 +396,7 @@ function NodeInspector({
   const conflictsTotal = conflicts.length
 
   return (
-    <div className="dk-graph-detail" role="group" aria-labelledby="graph-node-inspector-heading">
+    <div className="dk-graph-detail" role="group" tabIndex={0} aria-labelledby="graph-node-inspector-heading">
       <div className="dk-graph-detail-head">
         <div>
           <p className="dk-graph-detail-kicker">{copy.inspectorKicker}</p>
@@ -410,7 +410,7 @@ function NodeInspector({
           <Badge tone="cyan">{node.kind}</Badge>
           <Badge tone="night">{node.perspective}</Badge>
           <Badge tone={toneFor(IDENTITY_TONE, node.identityStatus)}>{node.identityStatus}</Badge>
-          <Badge tone="moon">IDENTITY v{node.identityVersion}</Badge>
+          <Badge tone="moon">{copy.badgeIdentityVersion} v{node.identityVersion}</Badge>
         </div>
       </div>
 
@@ -607,8 +607,8 @@ export function ConstellationView({
       <Panel title={copy.panelGraphIdentity} subtitle={copy.panelGraphIdentitySub}>
         <div className="dk-graph-identity">
           <div className="m-row" style={{ gap: 10, flexWrap: 'wrap' }}>
-            <Badge tone="ok">READ ONLY</Badge>
-            <Badge tone="cyan">REGISTRY {projection.registry.version}</Badge>
+            <Badge tone="ok">{copy.badgeReadOnly}</Badge>
+            <Badge tone="cyan">{copy.badgeRegistry} {projection.registry.version}</Badge>
             <Badge tone="night">{projection.registry.status}</Badge>
             <span className="dk-graph-meta">
               {projection.registry.entityCount} {copy.labelSeededEntities}

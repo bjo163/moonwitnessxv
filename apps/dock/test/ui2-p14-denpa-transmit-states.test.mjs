@@ -113,7 +113,7 @@ test('UI2-P14d the feed counts rows the projection returned and its on-air claim
   assert.match(page, /\{feed\.length\} \{dCopy\.badgeOnAir\}/, 'the count is the rows returned for this request')
   assert.match(page, /\{stations\.length\} \{dCopy\.badgeTargetStations\}/, 'the station count is the catalog rows returned')
 
-  const onAirView = /publicLiveTransmissions: defineView\('publicLiveTransmissions', \{[\s\S]*?\n {4}\)\)/.exec(stationsView)?.[0]
+  const onAirView = /publicLiveTransmissions: defineView\('publicLiveTransmissions', \{[\s\S]*?\n {4}\}\)/.exec(stationsView)?.[0]
   assert.ok(onAirView, 'the public transmissions view must stay defined for the badge to mean anything')
   assert.match(onAirView, /where: \{ status: 'ON_AIR' \}/, 'ON-AIR is the view filter, so the badge repeats no stronger claim')
   const dot = deck.indexOf('<LiveDot on={true} />')

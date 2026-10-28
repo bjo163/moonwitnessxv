@@ -9,6 +9,7 @@ import {
   nodeRelations,
   normalizeAliasSurface,
 } from '../src/data/queries/graph-projection.ts'
+import { constellationCopy } from '../src/ui/copy/constellation-copy.ts'
 
 /**
  * UI-II P15a/P15e · the graph-projection inventory the node inspector reads, and
@@ -18,11 +19,18 @@ import {
  * these tests exercise the derivations against a hand-built projection shaped
  * like the hub's: nodes with typed aliases, edges whose endpoints may point
  * outside the projection, identity decisions, and the four conflict codes.
+ *
+ * The last three tests read the source text instead of running it: Dock tests
+ * strip types without JSX, so the keyboard path and the class names are pinned
+ * as written and the derivations above carry the behavior.
  */
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const repoRoot = path.resolve(appRoot, '..', '..')
 const read = (...segments) => fs.readFileSync(path.resolve(repoRoot, ...segments), 'utf8')
+
+const view = read('apps', 'dock', 'src', 'ui', 'components', 'constellation.tsx')
+const css = read('apps', 'dock', 'src', 'app', 'globals.css')
 
 const projection = {
   nodes: [
@@ -146,8 +154,58 @@ test('UI2-P15e an empty projection yields an empty inspector, not a fabricated g
 // --- 4 · the inspector stays read-only ----------------------------------------
 
 test('UI2-P15b the inspector offers no merge, edit or resolve action', () => {
-  const view = read('apps', 'dock', 'src', 'ui', 'components', 'constellation.tsx')
   for (const forbidden of ['<form', 'onClick={() => merge', 'action="', 'method="post"']) {
     assert.ok(!view.includes(forbidden), `the inspector must stay read-only, found ${forbidden}`)
+  }
+})
+
+test('UI2-P15c the entity list stays a keyboard path into the inspector', () => {
+  const href = "href={localeHref('/constellation', `?node=${encodeURIComponent(node.stableId)}`)}"
+  const nodeLink = view.indexOf(href)
+  assert.ok(nodeLink > -1, 'a node is selected by a real link into the same route, not a script-only handler')
+  assert.ok(view.lastIndexOf('<a', nodeLink) > -1, 'the card is an anchor, so Tab reaches it and Enter selects it')
+  assert.ok(nodeLink - view.lastIndexOf('<a', nodeLink) < 400, 'that anchor is the element carrying the href')
+  assert.ok(!view.includes('onClick={() => select'), 'selection never needs a pointer')
+
+  assert.match(
+    view,
+    /aria-label=\{`\$\{copy\.inspectLinkAria\} \$\{node\.stableId\}`\}/,
+    'the link names its destination for a screen reader instead of a bare "inspect"',
+  )
+  assert.match(view, /href=\{localeHref\('\/constellation'\)\}/, 'a link back to the plain route clears the selection')
+  assert.match(view, /#graph-node-\$\{node\.stableId\}/, 'the return link lands on the node it came from')
+  assert.match(view, /aria-current=\{selected \? 'true' : undefined\}/, 'the selected card announces itself to a screen reader')
+})
+
+test('UI2-P15c the inspector scrolls inside itself and long names wrap', () => {
+  const detail = css.match(/\.dk-graph-detail \{[\s\S]*?\n\}/)?.[0]
+  assert.ok(detail, 'the inspector keeps one rule the containment can live in')
+  assert.match(detail, /max-height: \d+vh/, 'the inspector is contained instead of stretching the page')
+  assert.match(detail, /overflow-y: auto/, 'and scrolls inside itself')
+  assert.match(detail, /overflow-wrap: anywhere/, 'a long label wraps instead of widening the panel')
+  assert.match(
+    view,
+    /className="dk-graph-detail" role="group" tabIndex=\{0\} aria-labelledby=/,
+    'the scroll region is reachable by keyboard and named',
+  )
+
+  const title = css.match(/\.dk-graph-node-title \{[\s\S]*?\n\}/)?.[0]
+  assert.match(title ?? '', /overflow-wrap: anywhere/, 'a long entity name wraps in the card')
+  assert.match(css, /@media \(max-width: 900px\)[\s\S]*?\.dk-graph-nodes \{[\s\S]*?grid-template-columns: 1fr/, 'one column on a phone')
+})
+
+test('UI2-P15d the inspector chrome is catalogue-bound, not inline English', () => {
+  for (const inline of ['>READ ONLY<', '>REGISTRY ', '>IDENTITY v', '>reviewer: ', 'UNILEX: no term mapping']) {
+    assert.ok(!view.includes(inline), `${inline} must come from the id/en catalogue, not the component`)
+  }
+  for (const key of [
+    'badgeReadOnly',
+    'badgeRegistry',
+    'badgeIdentityVersion',
+    'fieldReviewer',
+    'unilexLinkAria',
+    'unilexNone',
+  ]) {
+    assert.ok(key in constellationCopy.en && key in constellationCopy.id, `${key} must exist in both locales`)
   }
 })
