@@ -1,0 +1,600 @@
+{
+  "schema": "m19-19-dock-rights-projection/1",
+  "task": "M19-19",
+  "title": "Dock public research/reader projection: rights and review containment ledger",
+  "baseline_sha": "358853a970aeaa78ef3704b14d692e39cb74149f",
+  "baseline_branch": "dev",
+  "worker": "M19-19 dock rights projection audit (leaf)",
+  "scope": "Dock public routes /reader, /reader/compare and /research plus the hub owner of /corpus/reader and /corpus/browse. No application code was changed.",
+  "quote_semantics": "source.quote must occur verbatim as a substring of the trimmed source line at source.file:source.line",
+  "status_enum": ["EVIDENCED", "ABSENT", "NEEDS_SOURCE"],
+  "required_invariants": [
+    "rights_status_gate",
+    "consent_clearance_gate",
+    "blocked_state_path",
+    "compare_page_no_text"
+  ],
+  "tallies": {
+    "total": 51,
+    "EVIDENCED": 48,
+    "ABSENT": 2,
+    "NEEDS_SOURCE": 1
+  },
+  "claims": [
+    {
+      "id": "C01-clearance-token",
+      "invariant": "rights_status_gate",
+      "status": "EVIDENCED",
+      "claim": "Clearance is an exact token, not any non-empty rights field: only RIGHTS_EXACT_VERSION_CLEARED is treated as cleared.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 40,
+        "quote": "const CLEARED = 'RIGHTS_EXACT_VERSION_CLEARED'"
+      }
+    },
+    {
+      "id": "C02-public-domain-label",
+      "invariant": "rights_status_gate",
+      "status": "EVIDENCED",
+      "claim": "The shared veto compares the edition rightsStatus to the exact cleared token, so PUBLIC_DOMAIN remains a label and cannot clear text.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 101,
+        "quote": "const isCleared = (edition: Row | null): boolean => nonEmpty(edition?.rightsStatus) === CLEARED"
+      }
+    },
+    {
+      "id": "C03-reader-edition-veto",
+      "invariant": "rights_status_gate",
+      "status": "EVIDENCED",
+      "claim": "/corpus/reader derives editionCleared from the edition rights before serializing any passage field.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 380,
+        "quote": "const editionCleared = meta.rightsStatus === CLEARED"
+      }
+    },
+    {
+      "id": "C04-reader-translation-veto",
+      "invariant": "rights_status_gate",
+      "status": "EVIDENCED",
+      "claim": "A translation is cleared only when both the edition and the translation row are exactly cleared.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 386,
+        "quote": "const cleared = editionCleared && row.rightsStatus === CLEARED"
+      }
+    },
+    {
+      "id": "C05-reader-translation-null",
+      "invariant": "rights_status_gate",
+      "status": "EVIDENCED",
+      "claim": "An uncleared translation serializes text:null instead of its wording.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 395,
+        "quote": "text: cleared ? nonEmpty(row.translationText) : null,"
+      }
+    },
+    {
+      "id": "C06-reader-arabic-null",
+      "invariant": "rights_status_gate",
+      "status": "EVIDENCED",
+      "claim": "The Arabic object is present only when the edition is cleared and text exists.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 422,
+        "quote": "editionCleared && arabicText"
+      }
+    },
+    {
+      "id": "C07-reader-state",
+      "invariant": "rights_status_gate",
+      "status": "EVIDENCED",
+      "claim": "The public reader returns state available only for a cleared edition, otherwise rights_blocked.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 418,
+        "quote": "state: editionCleared ? 'available' : 'rights_blocked',"
+      }
+    },
+    {
+      "id": "C08-reader-withheld-message",
+      "invariant": "rights_status_gate",
+      "status": "EVIDENCED",
+      "claim": "A blocked reader states that text is withheld and names the edition rights status.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 419,
+        "quote": "message: editionCleared ? null : `Text withheld: edition rights are ${meta.rightsStatus}.`,"
+      }
+    },
+    {
+      "id": "C09-research-overview-admin",
+      "invariant": "consent_clearance_gate",
+      "status": "EVIDENCED",
+      "claim": "The research overview endpoint is ADMIN_ONLY; it is not a public projection of research records.",
+      "source": {
+        "file": "packages/moonql-research/src/index.ts",
+        "line": 653,
+        "quote": "requires: ADMIN_ONLY,"
+      }
+    },
+    {
+      "id": "C10-research-case-admin",
+      "invariant": "consent_clearance_gate",
+      "status": "EVIDENCED",
+      "claim": "The research case endpoint, which carries claims and evidence spans, is ADMIN_ONLY.",
+      "source": {
+        "file": "packages/moonql-research/src/index.ts",
+        "line": 661,
+        "quote": "requires: ADMIN_ONLY,"
+      }
+    },
+    {
+      "id": "C11-research-trace-admin",
+      "invariant": "consent_clearance_gate",
+      "status": "EVIDENCED",
+      "claim": "The research trace endpoint is ADMIN_ONLY.",
+      "source": {
+        "file": "packages/moonql-research/src/index.ts",
+        "line": 683,
+        "quote": "requires: ADMIN_ONLY,"
+      }
+    },
+    {
+      "id": "C12-research-no-public-endpoint",
+      "invariant": "consent_clearance_gate",
+      "status": "EVIDENCED",
+      "claim": "No endpoint in packages/moonql-research declares requires: 'public'; every declared research endpoint is admin- or auth-gated.",
+      "source": {
+        "file": "packages/moonql-research/src/index.ts",
+        "line": 653,
+        "quote": "requires: ADMIN_ONLY,"
+      },
+      "check": {
+        "kind": "no_match",
+        "files": ["packages/moonql-research/src"],
+        "pattern": "requires:\\s*'public'"
+      }
+    },
+    {
+      "id": "C13-research-review-state",
+      "invariant": "consent_clearance_gate",
+      "status": "EVIDENCED",
+      "claim": "Even the admin-only research case projection labels itself ENGINEERING_ONLY rather than approved for publication.",
+      "source": {
+        "file": "packages/moonql-research/src/projection.ts",
+        "line": 263,
+        "quote": "state: 'ENGINEERING_ONLY' as const,"
+      }
+    },
+    {
+      "id": "C14-research-human-reviewed-false",
+      "invariant": "consent_clearance_gate",
+      "status": "EVIDENCED",
+      "claim": "The research case projection hard-codes humanReviewed false; it is not a human review or a D08 approval.",
+      "source": {
+        "file": "packages/moonql-research/src/projection.ts",
+        "line": 265,
+        "quote": "humanReviewed: false as const,"
+      }
+    },
+    {
+      "id": "C15-release-publication-unavailable",
+      "invariant": "consent_clearance_gate",
+      "status": "EVIDENCED",
+      "claim": "The research release verdict type fixes publicationAvailable to false, so no research release path can claim publication today.",
+      "source": {
+        "file": "packages/moonql-research/src/review.ts",
+        "line": 171,
+        "quote": "publicationAvailable: false"
+      }
+    },
+    {
+      "id": "C16-dock-research-withheld",
+      "invariant": "consent_clearance_gate",
+      "status": "EVIDENCED",
+      "claim": "Dock's public /research page renders only the localized withholding alert and no research records.",
+      "source": {
+        "file": "apps/dock/src/app/research/page.tsx",
+        "line": 28,
+        "quote": "<Alert tone=\"hot\">{copy.errorResearchUnavailable}</Alert>"
+      }
+    },
+    {
+      "id": "C17-dock-research-no-server-client",
+      "invariant": "consent_clearance_gate",
+      "status": "EVIDENCED",
+      "claim": "The /research page test forbids readResearchRegistry, ResearchExplorer, serverClient and model reads on the public page.",
+      "source": {
+        "file": "apps/dock/test/research-public-withholding.test.mjs",
+        "line": 13,
+        "quote": "assert.doesNotMatch(pageSource, /readResearchRegistry|ResearchExplorer|serverClient|\\.model\\(/)"
+      }
+    },
+    {
+      "id": "C18-blocked-placeholder",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "A blocked response carries a machine-readable placeholder in place of text, not an empty success.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 428,
+        "quote": "blockedPlaceholder: editionCleared ? null : BLOCKED_PLACEHOLDER,"
+      }
+    },
+    {
+      "id": "C19-blocked-placeholder-constant",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "The blocked placeholder is a fixed non-source string that cannot carry verse wording.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 41,
+        "quote": "const BLOCKED_PLACEHOLDER = '[TEXT_BLOCKED_PENDING_RIGHTS_CLEARANCE]'"
+      }
+    },
+    {
+      "id": "C20-blocked-test-no-arabic",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "The negative matrix asserts that an uncleared edition serializes no Arabic object for five citation variants.",
+      "source": {
+        "file": "apps/arsy/test/public-projection-denial.test.ts",
+        "line": 253,
+        "quote": "assert.equal(data.arabic, null, `${citation} (${fixture.status}) must serialize no arabic object`)"
+      }
+    },
+    {
+      "id": "C21-blocked-reader-crosscheck",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "A research case with a rights-unknown source is still rights_blocked when its address is read through /corpus/reader.",
+      "source": {
+        "file": "apps/arsy/test/public-projection-denial.test.ts",
+        "line": 1138,
+        "quote": "assert.equal(dataOf<{ state: string }>(readerView).state, 'rights_blocked')"
+      }
+    },
+    {
+      "id": "C22-absent-no-arabic",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "The absent path returns no Arabic object rather than an empty or invented verse.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 68,
+        "quote": "arabic: null,"
+      }
+    },
+    {
+      "id": "C23-absent-no-citation-text",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "The absent path returns no citation text and no candidates.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 71,
+        "quote": "citationText: null,"
+      }
+    },
+    {
+      "id": "C24-dock-withheld-flag",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "The Dock reader derives a withheld flag from the upstream rights_blocked state.",
+      "source": {
+        "file": "apps/dock/src/ui/components/reader.tsx",
+        "line": 146,
+        "quote": "const withheld = result.state === 'rights_blocked'"
+      }
+    },
+    {
+      "id": "C25-dock-arabic-guard",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "The Dock reader renders Arabic text only when the withheld flag is false, even if a projection returns bytes.",
+      "source": {
+        "file": "apps/dock/src/ui/components/reader.tsx",
+        "line": 184,
+        "quote": "{!withheld && result.arabic ? ("
+      }
+    },
+    {
+      "id": "C26-dock-translation-guard",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "The Dock reader renders translation text only when the row has text and the withheld flag is false.",
+      "source": {
+        "file": "apps/dock/src/ui/components/reader.tsx",
+        "line": 223,
+        "quote": "{row.text && !withheld ? ("
+      }
+    },
+    {
+      "id": "C27-dock-blocked-alert",
+      "invariant": "blocked_state_path",
+      "status": "EVIDENCED",
+      "claim": "A blocked Dock reader states the denial in words instead of rendering a silent empty panel.",
+      "source": {
+        "file": "apps/dock/src/ui/components/reader.tsx",
+        "line": 165,
+        "quote": "<Alert tone=\"hot\">{result.message ?? copy.errorRightsBlocked}</Alert>"
+      }
+    },
+    {
+      "id": "C28-compare-alert-only",
+      "invariant": "compare_page_no_text",
+      "status": "EVIDENCED",
+      "claim": "The public compare page body is a heading plus one withholding alert; it renders no source text.",
+      "source": {
+        "file": "apps/dock/src/app/reader/compare/page.tsx",
+        "line": 30,
+        "quote": "<Alert tone=\"hot\">{copy.errorResearchUnavailable}</Alert>"
+      }
+    },
+    {
+      "id": "C29-compare-metadata",
+      "invariant": "compare_page_no_text",
+      "status": "EVIDENCED",
+      "claim": "The compare page metadata states that source text is shown only after an approved public projection is available.",
+      "source": {
+        "file": "apps/dock/src/app/reader/compare/page.tsx",
+        "line": 11,
+        "quote": "description: 'Compare only source text available through an approved public projection.',"
+      }
+    },
+    {
+      "id": "C30-compare-test-forbids-inline",
+      "invariant": "compare_page_no_text",
+      "status": "EVIDENCED",
+      "claim": "The compare-page test forbids the former inline edition data, citation helper, self-asserted clearance badge and text payload.",
+      "source": {
+        "file": "apps/dock/test/research-public-withholding.test.mjs",
+        "line": 19,
+        "quote": "assert.doesNotMatch(comparePageSource, /EDITIONS_QS_2_82|createPassageCitation|RIGHTS_CLEARED|textPayload/)"
+      }
+    },
+    {
+      "id": "C31-compare-test-forbids-verse-bytes",
+      "invariant": "compare_page_no_text",
+      "status": "EVIDENCED",
+      "claim": "The compare-page test forbids the former Indonesian-translation marker and the Sahih International label in the public page source.",
+      "source": {
+        "file": "apps/dock/test/research-public-withholding.test.mjs",
+        "line": 20,
+        "quote": "|Sahih International/)"
+      }
+    },
+    {
+      "id": "N01-corpus-passages-admin-full",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "Raw corpus_passages rows, which hold arabicText, are ADMIN_FULL rather than ADMIN_WRITE.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 226,
+        "quote": "acl: ADMIN_FULL,"
+      }
+    },
+    {
+      "id": "N02-corpus-translations-admin-full",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "Raw corpus_translations rows, which hold translationText, are ADMIN_FULL rather than ADMIN_WRITE.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 259,
+        "quote": "acl: ADMIN_FULL,"
+      }
+    },
+    {
+      "id": "N03-admin-full-list-get",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "ADMIN_FULL gates list and get, not only writes.",
+      "source": {
+        "file": "packages/moonql/src/model.ts",
+        "line": 39,
+        "quote": "list: ADMIN_ONLY,"
+      }
+    },
+    {
+      "id": "N04-rest-list-guard",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "The REST list route applies the model ACL as a preHandler guard.",
+      "source": {
+        "file": "packages/moonql/src/rest.ts",
+        "line": 171,
+        "quote": "preHandler: guard(model.acl.list),"
+      }
+    },
+    {
+      "id": "N05-undefined-acl-public",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "An undefined ACL rule would be public, which is why the ADMIN_FULL declaration on text-bearing models matters.",
+      "source": {
+        "file": "packages/moonql/src/acl.ts",
+        "line": 26,
+        "quote": "if (rule === undefined || rule === 'public') return true"
+      }
+    },
+    {
+      "id": "N06-test-raw-passages-401",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "The denial matrix asserts 401 for anonymous raw reads of corpus_passages and corpus_translations.",
+      "source": {
+        "file": "apps/arsy/test/public-projection-denial.test.ts",
+        "line": 990,
+        "quote": "assert.equal(res.statusCode, 401, `${path} must require an admin session`)"
+      }
+    },
+    {
+      "id": "N07-test-research-rest-401",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "Anonymous raw research model lists and details return 401 and carry no synthetic or cleared bytes.",
+      "source": {
+        "file": "apps/arsy/test/public-projection-denial.test.ts",
+        "line": 925,
+        "quote": "assert.equal(res.statusCode, 401, `${path} must deny anonymous raw Research reads: ${why}`)"
+      }
+    },
+    {
+      "id": "N08-test-research-endpoint-401",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "Anonymous calls to every declared research endpoint return 401 and carry no bytes.",
+      "source": {
+        "file": "apps/arsy/test/public-projection-denial.test.ts",
+        "line": 1055,
+        "quote": "assert.equal(denied.statusCode, 401, `${path} denies anonymous Research access`)"
+      }
+    },
+    {
+      "id": "N09-test-no-publication-flags",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "The admin-only research payload reports nothing as published, released or approved for publication.",
+      "source": {
+        "file": "apps/arsy/test/public-projection-denial.test.ts",
+        "line": 1191,
+        "quote": "assert.equal(truthyPublicationFlags(privateRes.json().data).length, 0, `${path} must report nothing as published`)"
+      }
+    },
+    {
+      "id": "N10-browse-no-text-fields",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "/corpus/browse is public but its response body contains neither arabicText nor translationText and no cleared bytes.",
+      "source": {
+        "file": "apps/arsy/test/corpus-browse.test.ts",
+        "line": 210,
+        "quote": "assert.ok(!res.body.includes('arabicText'), 'the field name itself must not be part of this projection')"
+      }
+    },
+    {
+      "id": "N11-browse-export-guard",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "The browse export flag is true only for an exactly cleared context edition.",
+      "source": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 609,
+        "quote": "textExportAllowed: contextRights === CLEARED,"
+      }
+    },
+    {
+      "id": "N12-dock-query-reader-endpoint",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "Dock reads passage text only through the hub projection /corpus/reader, not through an ORM model.",
+      "source": {
+        "file": "apps/dock/src/data/queries/reader.ts",
+        "line": 58,
+        "quote": "return serverClient().call<ReaderResult>('/corpus/reader', {"
+      }
+    },
+    {
+      "id": "N13-dock-query-browse-endpoint",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "Dock reads the rail metadata only through /corpus/browse.",
+      "source": {
+        "file": "apps/dock/src/data/queries/reader.ts",
+        "line": 125,
+        "quote": "return serverClient().call<BrowseResult>('/corpus/browse', {"
+      }
+    },
+    {
+      "id": "N16-unilex-term-public",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "Adjacent, out-of-scope finding: /unilex/term is declared public.",
+      "source": {
+        "file": "packages/moonql-unilex/src/index.ts",
+        "line": 917,
+        "quote": "requires: 'public',"
+      }
+    },
+    {
+      "id": "N17-unilex-definition-leak",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "Adjacent, out-of-scope leak: the public /unilex/term detail serializes term.definition without an editorialStatus or approved-source filter, so a DRAFT_REVIEW term backed only by a non-APPROVED source is readable anonymously; this is not the Dock research/reader path and was not patched here.",
+      "source": {
+        "file": "packages/moonql-unilex/src/index.ts",
+        "line": 1041,
+        "quote": "definition: term.definition,"
+      }
+    },
+    {
+      "id": "N14-adjacent-unilex-gap",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "Adjacent, out-of-scope finding: /unilex/term is a public projection that answers for a DRAFT_REVIEW term the list projection hides; this is not the Dock research/reader path and is recorded as a limitation, not fixed here.",
+      "source": {
+        "file": "apps/arsy/test/public-projection-denial.test.ts",
+        "line": 505,
+        "quote": "assert.equal(detail.statusCode, 200, 'PERMISSIVE-TODAY: the detail projection answers anyway')"
+      }
+    },
+    {
+      "id": "N15-umbrella-negative-skipped",
+      "invariant": "negative_surface",
+      "status": "EVIDENCED",
+      "claim": "The umbrella denial test 'guessing a public link must be denied for every unapproved projection' remains skipped, so this audit does not claim that broader property.",
+      "source": {
+        "file": "apps/arsy/test/public-projection-denial.test.ts",
+        "line": 1256,
+        "quote": "test.skip('UI-P05e NOT SATISFIED: guessing a public link must be denied for every unapproved projection', async () => {"
+      }
+    },
+    {
+      "id": "A01-claimed-research-query-absent",
+      "invariant": "negative_surface",
+      "status": "ABSENT",
+      "claim": "The task packet's claimed Dock query module apps/dock/src/data/queries/research.ts does not exist in this tree; the real Dock data path is reader.ts.",
+      "source": {
+        "file": "docs/tasks/M19/M19-19.md",
+        "line": 6,
+        "quote": "apps/dock/src/data/queries/research.ts"
+      },
+      "check": {
+        "kind": "file_absent",
+        "path": "apps/dock/src/data/queries/research.ts"
+      }
+    },
+    {
+      "id": "A02-d08-publication-gate-absent",
+      "invariant": "consent_clearance_gate",
+      "status": "ABSENT",
+      "claim": "No D08 publication/consent gate exists in the research package: no research source declares publicationAvailable true, and M18-01 records D08 enforcement as unimplemented.",
+      "source": {
+        "file": "docs/audit/M18-01-single-publication-state-machine.md",
+        "line": 37,
+        "quote": "D08 publication enforcement, D06 consent storage, Story media manifests, and Story's M17 release acceptance remain unimplemented/open"
+      },
+      "check": {
+        "kind": "no_match",
+        "files": ["packages/moonql-research/src"],
+        "pattern": "publicationAvailable:\\s*true"
+      }
+    },
+    {
+      "id": "A03-positive-d08-projection-missing",
+      "invariant": "consent_clearance_gate",
+      "status": "NEEDS_SOURCE",
+      "claim": "A positive test of an approved D08 public projection is not possible: no approved projection exists, so only fail-closed containment can be evidenced.",
+      "source": {
+        "file": "docs/audit/M18-01-single-publication-state-machine.md",
+        "line": 41,
+        "quote": "M19-19 may proceed with a fail-closed mitigation but must remain open until D08's approved projection exists."
+      }
+    }
+  ]
+}
