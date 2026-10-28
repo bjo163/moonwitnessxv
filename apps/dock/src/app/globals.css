@@ -21,14 +21,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* The brand band and the utility cluster share one row; the nav owns the next
-     row (see .dk-nav order/flex-wrap). Without wrapping, the 15 single-word nav
-     labels (one line = 1296px measured at 1440) cannot shrink, so everything to
-     their right is pushed past the viewport edge.
-     UI2-G05 no-clipping contract, measured on the running app in both locales:
-     the widest focusable header element sits at 1004px of a 1041px viewport,
-     1138px of 1200px, 1378px of 1440px and 1858px of 1920px, so no control is
-     ever cut between the desktop breakpoint (1040px, see below) and 1920px.
+  /* The brand, four primary destinations, Index disclosure and utility cluster
+     share the header. The nav can wrap at tablet widths without clipping focus.
+     UI2-G05 no-clipping contract remains source-enforced. Geometry for this
+     four-space + Index layout is pending a clean browser capture.
      The header owns no `overflow-x` rule: a row of focusable controls must stay
      visible, never be clipped by its own container. */
   flex-wrap: wrap;
@@ -44,13 +40,8 @@ body {
 .dk-nav {
   display: flex;
   align-items: center;
-  /* Placed last on the header's own row so the brand and the cluster keep their
-     natural width; wraps internally as the safety net between 1041px and the
-     width where all 15 labels no longer share one line. Measured: the band is
-     1296px wide (28 → 1324 at 1366px and above), so it resolves to two rows from
-     1041px up to 1280px and to one row from 1366px; either way its right edge
-     stays inside the viewport, so nothing is clipped. */
-  order: 3;
+  /* DOM and visual order agree: brand → primary spaces → utility actions. */
+  order: 0;
   flex-wrap: wrap;
   min-width: 0;
   gap: 8px 26px;
@@ -79,6 +70,68 @@ body {
   bottom: -2px;
   height: 4px;
   background: var(--pink);
+}
+.dk-nav-index-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+  border: 0;
+  color: var(--fg);
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+.dk-nav-index-trigger:hover,
+.dk-nav-index-trigger[aria-expanded="true"] {
+  color: var(--pink);
+}
+.dk-index-panel {
+  display: grid;
+  flex: 0 0 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+  padding: 12px 0 4px;
+  border-top: 1px solid var(--border);
+}
+.dk-index-panel[hidden] {
+  display: none;
+}
+.dk-index-group {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+.dk-index-group-title {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.dk-index-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 14px;
+}
+.dk-index-link {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.dk-nav-status,
+.dk-nav-withheld {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  letter-spacing: 0.04em;
+}
+.dk-nav-withheld {
+  color: var(--cyan);
 }
 
 .dk-icon-btn {
@@ -112,6 +165,8 @@ body {
 }
 
 .dk-nav a:focus-visible,
+.dk-nav-index-trigger:focus-visible,
+.dk-index-link:focus-visible,
 .dk-icon-btn:focus-visible,
 .m-btn:focus-visible,
 .m-brand-link:focus-visible {
@@ -687,6 +742,25 @@ body {
   font-size: 12px;
   background: #050408;
 }
+.dk-footer-section-links {
+  display: flex;
+  gap: 14px;
+}
+.dk-footer-section-links a {
+  color: var(--fg);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.dk-footer-section-links a:hover,
+.dk-footer-section-links a:focus-visible {
+  color: var(--pink);
+}
+.dk-footer-section-links a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
 
 /* Mobile Navigation & Drawer */
 .dk-mobile-toggle {
@@ -766,6 +840,31 @@ body {
 
   .dk-nav {
     display: none;
+  }
+
+  .dk-mobile-nav > .dk-nav-index-trigger {
+    justify-content: flex-start;
+    padding: 6px 0;
+    font-size: 18px;
+  }
+
+  .dk-mobile-nav > .dk-index-panel {
+    flex-basis: auto;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 0 0 8px 10px;
+    border-top: 0;
+  }
+
+  .dk-mobile-nav .dk-index-links {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .dk-mobile-nav .dk-index-link {
+    font-size: 15px;
+    padding: 4px 0;
   }
 
   .dk-mobile-toggle {

@@ -59,7 +59,7 @@ const {
 } = shellMod
 
 test('header navigation assigns aria-current="page" and dk-nav-active only to the active route', () => {
-  // Case 1: Active on Indonesian home page (/id)
+  // The brand owns HOME; the four primary spaces follow in the agreed order.
   const homeHtml = renderToStaticMarkup(
     createElement(SiteHeader, {
       initialPath: '/id',
@@ -68,19 +68,17 @@ test('header navigation assigns aria-current="page" and dk-nav-active only to th
     })
   )
 
-  // Home link must have aria-current="page" and dk-nav-active
-  assert.match(
-    homeHtml,
-    /<a\s+[^>]*href="\/id"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*aria-current="page"[^>]*>HOME<\/a>|<a\s+[^>]*href="\/id"[^>]*aria-current="page"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*>HOME<\/a>/
-  )
-  // Non-active links must not have aria-current="page" or dk-nav-active
-  assert.match(homeHtml, /<a\s+href="\/id\/stations"[^>]*>SIGNALS<\/a>/)
-  assert.doesNotMatch(homeHtml, /<a\s+[^>]*href="\/id\/stations"[^>]*aria-current="page"/)
-  assert.doesNotMatch(homeHtml, /<a\s+[^>]*href="\/id\/stations"[^>]*dk-nav-active/)
-  assert.match(homeHtml, /<a\s+href="\/id\/reader"[^>]*>READER<\/a>/)
-  assert.doesNotMatch(homeHtml, /<a\s+[^>]*href="\/id\/reader"[^>]*aria-current="page"/)
-  assert.match(homeHtml, /<a\s+href="\/id\/terms"[^>]*>TERMS<\/a>/)
-  assert.doesNotMatch(homeHtml, /<a\s+[^>]*href="\/id\/terms"[^>]*aria-current="page"/)
+  assert.match(homeHtml, /<a\s+href="\/id"[^>]*class="m-brand-link"/)
+  const desktop = /<nav class="dk-nav"[\s\S]*?<\/nav>/.exec(homeHtml)?.[0] ?? ''
+  assert.deepEqual([...desktop.matchAll(/<a\s+([^>]+)>([\s\S]*?)<\/a>/g)].filter((match) => /class="dk-nav-primary-link/.test(match[1])).map((match) => [(/href="([^"]+)"/.exec(match[1]) ?? [])[1], match[2].replace(/<[^>]+>/g, '').trim()]), [
+    ['/id/reader', 'BACA · NYATA'],
+    ['/id/terms', 'JELAJAHI · NYATA'],
+    ['/id/stations', 'SINYAL · NYATA'],
+    ['/id/studio', 'CIPTA · DEMO'],
+  ])
+  assert.doesNotMatch(desktop, />HOME<|>CREW<|>ABOUT</)
+  assert.equal((homeHtml.match(/· NYATA/g) ?? []).length, 6, 'all three real destinations are labeled in desktop and drawer')
+  assert.equal((homeHtml.match(/· DEMO/g) ?? []).length, 2, 'Create is marked demo in desktop and drawer')
 
   // Case 2: Active on English Signals page (/en/stations)
   const stationsHtml = renderToStaticMarkup(
@@ -91,15 +89,10 @@ test('header navigation assigns aria-current="page" and dk-nav-active only to th
     })
   )
 
-  // Signals link must be active
-  assert.match(
-    stationsHtml,
-    /<a\s+[^>]*href="\/en\/stations"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*aria-current="page"[^>]*>SIGNALS<\/a>|<a\s+[^>]*href="\/en\/stations"[^>]*aria-current="page"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*>SIGNALS<\/a>/
-  )
-  // Home link must NOT be active
-  assert.match(stationsHtml, /<a\s+href="\/en"[^>]*>HOME<\/a>/)
+  assert.match(stationsHtml, /<a\s+[^>]*href="\/en\/stations"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*aria-current="page"[^>]*>SIGNAL<span class="dk-nav-status"> · REAL<\/span><\/a>/)
+  assert.equal((stationsHtml.match(/· REAL/g) ?? []).length, 6, 'all three real destinations are labeled in both nav surfaces')
+  assert.equal((stationsHtml.match(/· DEMO/g) ?? []).length, 2, 'Create is marked demo in both nav surfaces')
   assert.doesNotMatch(stationsHtml, /<a\s+[^>]*href="\/en"[^>]*aria-current="page"/)
-  assert.doesNotMatch(stationsHtml, /<a\s+[^>]*href="\/en"[^>]*dk-nav-active/)
 
   // Case 3: Active on sub-path (/id/reader/compare matches READER)
   const readerSubHtml = renderToStaticMarkup(
@@ -111,12 +104,12 @@ test('header navigation assigns aria-current="page" and dk-nav-active only to th
   )
   assert.match(
     readerSubHtml,
-    /<a\s+[^>]*href="\/id\/reader"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*aria-current="page"[^>]*>READER<\/a>|<a\s+[^>]*href="\/id\/reader"[^>]*aria-current="page"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*>READER<\/a>/
+    /<a\s+[^>]*href="\/id\/reader"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*aria-current="page"[^>]*>BACA<span class="dk-nav-status"> · NYATA<\/span><\/a>/
   )
   assert.doesNotMatch(readerSubHtml, /<a\s+[^>]*href="\/id"[^>]*aria-current="page"/)
   assert.doesNotMatch(readerSubHtml, /<a\s+[^>]*href="\/id\/stations"[^>]*aria-current="page"/)
 
-  // Case 4: Active on English Terms page (/en/terms)
+  // Terms uses the EXPLORE label and remains locale-aware.
   const termsHtml = renderToStaticMarkup(
     createElement(SiteHeader, {
       initialPath: '/en/terms',
@@ -126,12 +119,12 @@ test('header navigation assigns aria-current="page" and dk-nav-active only to th
   )
   assert.match(
     termsHtml,
-    /<a\s+[^>]*href="\/en\/terms"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*aria-current="page"[^>]*>TERMS<\/a>|<a\s+[^>]*href="\/en\/terms"[^>]*aria-current="page"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*>TERMS<\/a>/
+    /<a\s+[^>]*href="\/en\/terms"[^>]*class="[^"]*dk-nav-active[^"]*"[^>]*aria-current="page"[^>]*>EXPLORE<span class="dk-nav-status"> · REAL<\/span><\/a>/
   )
   assert.doesNotMatch(termsHtml, /<a\s+[^>]*href="\/en"[^>]*aria-current="page"/)
 })
 
-test('header navigation links preserve active locale prefix across id and en', () => {
+test('primary and index routes preserve locale prefix; home section links live in the footer', () => {
   // Indonesian locale
   const idHtml = renderToStaticMarkup(
     createElement(SiteHeader, {
@@ -143,17 +136,10 @@ test('header navigation links preserve active locale prefix across id and en', (
 
   // BrandLogo carries /id
   assert.match(idHtml, /<a\s+href="\/id"[^>]*class="m-brand-link"/)
-  // Nav links carry /id prefix
-  assert.match(idHtml, /href="\/id\/stations"/)
-  assert.match(idHtml, /href="\/id\/reader"/)
-  assert.match(idHtml, /href="\/id\/terms"/)
-  assert.match(idHtml, /href="\/id\/research"/)
-  assert.match(idHtml, /href="\/id\/schedule"/)
-  assert.match(idHtml, /href="\/id#constellation"/)
-  assert.match(idHtml, /href="\/id#zine-poster"/)
-  // Icon buttons carry /id prefix
-  assert.match(idHtml, /<a\s+href="\/id\/stations"[^>]*class="dk-icon-btn"[^>]*>SRC<\/a>/)
-  assert.match(idHtml, /<a\s+href="\/id#constellation"[^>]*class="dk-icon-btn"[^>]*>NET<\/a>/)
+  for (const href of ['/id/reader', '/id/terms', '/id/stations', '/id/studio', '/id/figures', '/id/missions', '/id/constellation', '/id/prisms', '/id/timeline', '/id/patches', '/id/schedule', '/id/denpa', '/id/research']) {
+    assert.ok(idHtml.includes(`href="${href}"`), `${href} remains in the localized primary or Index routes`)
+  }
+  assert.doesNotMatch(idHtml, /class="dk-icon-btn"[^>]*>SRC<|>NET<\/a>/)
 
   // English locale
   const enHtml = renderToStaticMarkup(
@@ -166,17 +152,17 @@ test('header navigation links preserve active locale prefix across id and en', (
 
   // BrandLogo carries /en
   assert.match(enHtml, /<a\s+href="\/en"[^>]*class="m-brand-link"/)
-  // Nav links carry /en prefix
-  assert.match(enHtml, /href="\/en\/stations"/)
-  assert.match(enHtml, /href="\/en\/reader"/)
-  assert.match(enHtml, /href="\/en\/terms"/)
-  assert.match(enHtml, /href="\/en\/research"/)
-  assert.match(enHtml, /href="\/en\/schedule"/)
-  assert.match(enHtml, /href="\/en#constellation"/)
-  assert.match(enHtml, /href="\/en#zine-poster"/)
-  // Icon buttons carry /en prefix
-  assert.match(enHtml, /<a\s+href="\/en\/stations"[^>]*class="dk-icon-btn"[^>]*>SRC<\/a>/)
-  assert.match(enHtml, /<a\s+href="\/en#constellation"[^>]*class="dk-icon-btn"[^>]*>NET<\/a>/)
+  for (const href of ['/en/reader', '/en/terms', '/en/stations', '/en/studio', '/en/figures', '/en/missions', '/en/constellation', '/en/prisms', '/en/timeline', '/en/patches', '/en/schedule', '/en/denpa', '/en/research']) {
+    assert.ok(enHtml.includes(`href="${href}"`), `${href} remains in the localized primary or Index routes`)
+  }
+  assert.doesNotMatch(enHtml, /class="dk-icon-btn"[^>]*>SRC<|>NET<\/a>/)
+
+  const idFooter = renderToStaticMarkup(createElement(SiteFooter, { initialLocale: 'id' }))
+  const enFooter = renderToStaticMarkup(createElement(SiteFooter, { initialLocale: 'en' }))
+  assert.match(idFooter, /href="\/id#constellation"[^>]*>KRU<\/a>/)
+  assert.match(idFooter, /href="\/id#zine-poster"[^>]*>TENTANG<\/a>/)
+  assert.match(enFooter, /href="\/en#constellation"[^>]*>CREW<\/a>/)
+  assert.match(enFooter, /href="\/en#zine-poster"[^>]*>ABOUT<\/a>/)
 })
 
 test('header Join CTA points directly to in-page footer anchor #join-crew without resetting route', () => {
@@ -233,8 +219,10 @@ test('mobile menu trigger and drawer declare valid ARIA accessibility attributes
   // Drawer is hidden by default
   assert.match(html, /<div\s+[^>]*id="dk-mobile-menu"[^>]*hidden=""/)
 
-  // Drawer contains responsive mobile navigation items
+  // Drawer contains the four primary routes and a collapsed Index disclosure.
   assert.match(html, /<nav\s+class="dk-mobile-nav"/)
+  assert.match(html, /aria-expanded="false"[^>]*aria-controls="dk-index-mobile"/)
+  assert.match(html, /id="dk-index-mobile"[^>]*hidden=""/)
 })
 
 test('route normalization and active route computation logic covers subroutes and fragments', () => {
@@ -266,6 +254,5 @@ test('route normalization and active route computation logic covers subroutes an
   assert.equal(getLocalizedNavHref('/#constellation', 'id'), '/id#constellation')
   assert.equal(getLocalizedNavHref('/#zine-poster', 'en'), '/en#zine-poster')
 
-  // All 15 nav links declared
-  assert.equal(NAV_LINKS.length, 15)
+  assert.deepEqual(NAV_LINKS.map((item) => item.href), ['/reader', '/terms', '/stations', '/studio'])
 })

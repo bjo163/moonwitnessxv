@@ -5,13 +5,14 @@ import {
   useEffect,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from 'react'
 import { BrandLogo, Crown, LinkButton, LiveDot, Tape, ZineNote, Chevron } from '@moonwitness/moonui'
 import { MtsTelemetryClock } from '@moonwitness/moonui/client'
 import type { Locale } from '@moonwitness/core'
 import { SITE_NAME, SITE_TAGLINE } from '@/lib/env'
-import { getLandingCopy } from '@/lib/landing-copy'
+import { getLandingCopy, type LandingCopy } from '@/lib/landing-copy'
 import { localizedDockHref } from '@/lib/locale-context.mjs'
 import { zineLines } from '@/lib/zine-lines'
 import { LocaleSwitcher } from './locale-switcher'
@@ -20,27 +21,136 @@ import { LocaleSwitcher } from './locale-switcher'
 
 export interface NavItem {
   href: string
-  label: string
-  primary?: boolean
+  labelKey: keyof LandingCopy
+  demo?: boolean
 }
 
 export const NAV_LINKS: readonly NavItem[] = [
-  { href: '/', label: 'HOME', primary: true },
-  { href: '/stations', label: 'SIGNALS', primary: true },
-  { href: '/reader', label: 'READER', primary: true },
-  { href: '/terms', label: 'TERMS', primary: true },
-  { href: '/figures', label: 'FIGURES' },
-  { href: '/constellation', label: 'CONSTELLATION' },
-  { href: '/research', label: 'RESEARCH', primary: true },
-  { href: '/prisms', label: 'PRISMS' },
-  { href: '/timeline', label: 'TIMELINE' },
-  { href: '/patches', label: 'PATCHES' },
-  { href: '/denpa', label: 'DENPA' },
-  { href: '/studio', label: 'STUDIO' },
-  { href: '/schedule', label: 'ARCHIVE', primary: true },
-  { href: '/#constellation', label: 'CREW' },
-  { href: '/#zine-poster', label: 'ABOUT' },
+  { href: '/reader', labelKey: 'spaceRead' },
+  { href: '/terms', labelKey: 'spaceExplore' },
+  { href: '/stations', labelKey: 'spaceSignal' },
+  { href: '/studio', labelKey: 'spaceCreate', demo: true },
 ] as const
+
+interface IndexGroup {
+  labelKey: 'navIndexWitnessLibrary' | 'navIndexSignalDesk' | 'navIndexResearch'
+  links: readonly NavItem[]
+}
+
+export const INDEX_GROUPS: readonly IndexGroup[] = [
+  {
+    labelKey: 'navIndexWitnessLibrary',
+    links: [
+      { href: '/figures', labelKey: 'navFigures' },
+      { href: '/missions', labelKey: 'navMissions' },
+      { href: '/constellation', labelKey: 'navConstellation' },
+      { href: '/prisms', labelKey: 'navPrisms' },
+      { href: '/timeline', labelKey: 'navTimeline' },
+      { href: '/patches', labelKey: 'navPatches' },
+    ],
+  },
+  {
+    labelKey: 'navIndexSignalDesk',
+    links: [
+      { href: '/schedule', labelKey: 'navArchive' },
+      { href: '/denpa', labelKey: 'navDenpa' },
+    ],
+  },
+  {
+    labelKey: 'navIndexResearch',
+    links: [{ href: '/research', labelKey: 'navResearch' }],
+  },
+] as const
+
+interface IndexDisclosureProps {
+  id: string
+  locale: Locale
+  copy: LandingCopy
+  initialPath: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onNavigate?: () => void
+}
+
+function IndexDisclosure({
+  id,
+  locale,
+  copy,
+  initialPath,
+  open,
+  onOpenChange,
+  onNavigate,
+}: IndexDisclosureProps): ReactNode {
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const focusFirstLinkOnOpenRef = useRef(false)
+
+  useEffect(() => {
+    if (open && focusFirstLinkOnOpenRef.current) {
+      panelRef.current?.querySelector<HTMLAnchorElement>('a[href]')?.focus()
+      focusFirstLinkOnOpenRef.current = false
+    }
+  }, [open])
+
+  const closeOnEscape = (event: ReactKeyboardEvent<HTMLButtonElement | HTMLDivElement>) => {
+    if (event.key !== 'Escape' || !open) return
+    event.preventDefault()
+    event.stopPropagation()
+    focusFirstLinkOnOpenRef.current = false
+    onOpenChange(false)
+    triggerRef.current?.focus()
+  }
+
+  return (
+    <>
+      <button
+        ref={triggerRef}
+        type="button"
+        className="dk-nav-index-trigger"
+        aria-expanded={open}
+        aria-controls={id}
+        onClick={() => {
+          focusFirstLinkOnOpenRef.current = !open
+          onOpenChange(!open)
+        }}
+        onKeyDown={closeOnEscape}
+      >
+        {copy.navIndex} <Chevron dir={open ? 'up' : 'down'} />
+      </button>
+      <div
+        id={id}
+        ref={panelRef}
+        className="dk-index-panel"
+        hidden={!open}
+        onKeyDown={closeOnEscape}
+      >
+        {INDEX_GROUPS.map((group) => (
+          <div className="dk-index-group" key={group.labelKey}>
+            <p className="dk-index-group-title">{copy[group.labelKey]}</p>
+            <div className="dk-index-links">
+              {group.links.map((link) => {
+                const active = isRouteActive(initialPath, link.href)
+                const research = link.href === '/research'
+                return (
+                  <a
+                    key={link.href}
+                    href={getLocalizedNavHref(link.href, locale)}
+                    className="dk-index-link"
+                    aria-current={active ? 'page' : undefined}
+                    onClick={onNavigate}
+                  >
+                    {copy[link.labelKey]}
+                    {research ? <span className="dk-nav-withheld"> · {copy.navWithheld}</span> : null}
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
 
 /**
  * Normalizes a path by removing locale prefixes (/id, /en) and trailing slashes.
@@ -99,6 +209,12 @@ export function getLocalizedNavHref(targetHref: string, initialLocale: Locale): 
   return localizedDockHref(targetPath, '', targetHash, initialLocale)
 }
 
+function drawerFocusableElements(drawer: HTMLDivElement): HTMLElement[] {
+  return Array.from(drawer.querySelectorAll<HTMLElement>(
+    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+  )).filter((element) => !element.closest('[hidden]'))
+}
+
 export function SiteHeader({
   initialPath,
   initialSearch,
@@ -109,17 +225,26 @@ export function SiteHeader({
   initialLocale: Locale
 }): ReactNode {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isDesktopIndexOpen, setIsDesktopIndexOpen] = useState(() =>
+    INDEX_GROUPS.some((group) => group.links.some((link) => isRouteActive(initialPath, link.href))),
+  )
+  const [isMobileIndexOpen, setIsMobileIndexOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const drawerRef = useRef<HTMLDivElement>(null)
   const previousActiveElementRef = useRef<HTMLElement | null>(null)
 
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false)
+    setIsMobileIndexOpen(false)
   }, [])
 
   const toggleMenu = useCallback(() => {
-    setIsMenuOpen((prev) => !prev)
-  }, [])
+    if (isMenuOpen) {
+      closeMenu()
+      return
+    }
+    setIsMenuOpen(true)
+  }, [closeMenu, isMenuOpen])
 
   // Keyboard accessibility: Escape to close, focus trap while open, focus restoration on close
   useEffect(() => {
@@ -128,9 +253,7 @@ export function SiteHeader({
 
       const drawer = drawerRef.current
       if (drawer) {
-        const focusable = drawer.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
+        const focusable = drawerFocusableElements(drawer)
         if (focusable.length > 0) {
           focusable[0].focus()
         }
@@ -146,9 +269,7 @@ export function SiteHeader({
         if (event.key === 'Tab') {
           const drawer = drawerRef.current
           if (!drawer) return
-          const focusable = drawer.querySelectorAll<HTMLElement>(
-            'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          )
+          const focusable = drawerFocusableElements(drawer)
           if (focusable.length === 0) return
 
           const first = focusable[0]
@@ -203,35 +324,28 @@ export function SiteHeader({
             <a
               key={link.href}
               href={href}
-              className={active ? 'dk-nav-active' : undefined}
+              className={`dk-nav-primary-link${active ? ' dk-nav-active' : ''}`}
               aria-current={active ? 'page' : undefined}
             >
-              {link.label}
+              {copy[link.labelKey]}
+              <span className="dk-nav-status"> · {link.demo ? copy.statusDemo : copy.statusReal}</span>
             </a>
           )
         })}
+        <IndexDisclosure
+          id="dk-index-desktop"
+          locale={initialLocale}
+          copy={copy}
+          initialPath={initialPath}
+          open={isDesktopIndexOpen}
+          onOpenChange={setIsDesktopIndexOpen}
+        />
       </nav>
 
       {/* Header utility actions and mobile menu toggle */}
       <div className="m-row" style={{ gap: 10, alignItems: 'center' }}>
         <LocaleSwitcher initialPath={initialPath} initialSearch={initialSearch} initialLocale={initialLocale} />
         <MtsTelemetryClock compact />
-        <a
-          href={localizedDockHref('/stations', '', '', initialLocale)}
-          className="dk-icon-btn"
-          aria-label={copy.navSearchLabel}
-          title={copy.navSearchLabel}
-        >
-          SRC
-        </a>
-        <a
-          href={localizedDockHref('/', '', '#constellation', initialLocale)}
-          className="dk-icon-btn"
-          aria-label={copy.navNetworkLabel}
-          title={copy.navNetworkLabel}
-        >
-          NET
-        </a>
         <LinkButton href="#join-crew" variant="paper" size="sm">
           {copy.joinTheCrew} <Chevron dir="right" />
         </LinkButton>
@@ -297,15 +411,24 @@ export function SiteHeader({
               <a
                 key={link.href}
                 href={href}
-                className={active ? 'dk-nav-active' : undefined}
+                className={`dk-nav-primary-link${active ? ' dk-nav-active' : ''}`}
                 aria-current={active ? 'page' : undefined}
                 onClick={closeMenu}
-                style={{ fontSize: 18, textDecoration: 'none', letterSpacing: '0.08em', padding: '6px 0' }}
               >
-                {link.label}
+                {copy[link.labelKey]}
+                <span className="dk-nav-status"> · {link.demo ? copy.statusDemo : copy.statusReal}</span>
               </a>
             )
           })}
+          <IndexDisclosure
+            id="dk-index-mobile"
+            locale={initialLocale}
+            copy={copy}
+            initialPath={initialPath}
+            open={isMobileIndexOpen}
+            onOpenChange={setIsMobileIndexOpen}
+            onNavigate={closeMenu}
+          />
         </nav>
 
         <div style={{ marginTop: 'auto', paddingTop: 24, borderTop: '1px solid rgba(247, 244, 236, 0.15)', display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -360,6 +483,10 @@ export function SiteFooter({ initialLocale = 'en' }: { initialLocale?: Locale } 
         </div>
         <div className="m-muted">
           {copy.footerWitnesses} · {copy.footerPoweredBy} <Crown tone="gold" size="sm" />
+        </div>
+        <div className="dk-footer-section-links">
+          <a href={localizedDockHref('/', '', '#constellation', initialLocale)}>{copy.footerCrewLink}</a>
+          <a href={localizedDockHref('/', '', '#zine-poster', initialLocale)}>{copy.footerAboutLink}</a>
         </div>
       </div>
     </footer>

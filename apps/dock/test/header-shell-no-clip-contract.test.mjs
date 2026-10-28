@@ -106,17 +106,16 @@ test('UI2-G05 the header is a wrapping row, so nothing right of the nav can be p
   )
 })
 
-test('UI2-G05 the measured fit of the header row is recorded where the rule lives', () => {
-  // DoD "source of truth documented": the numbers are part of the rule, not folklore.
+test('UI2-G05 geometry for the four-space header is explicitly pending clean browser evidence', () => {
   const header = ruleBlock(cssSource, '.dk-header')
-  assert.match(header, /1041px[\s\S]*?1920px/, 'the rule must cite the measured viewport range')
-  assert.match(header, /1440px/, '1440px is the width defect A was reported at')
+  assert.match(header, /Geometry for this[\s\S]*?layout is pending a clean browser capture/)
+  assert.doesNotMatch(header, /1004px|1138px|1378px|1858px|1296px/)
 })
 
 test('UI2-G05 the nav owns its own band and wraps internally instead of overflowing', () => {
   const nav = stripComments(ruleBlock(cssSource, '.dk-nav'))
-  assert.match(nav, /order:\s*3/, 'the nav is placed last so the brand and the cluster keep their width')
-  assert.match(nav, /flex-wrap:\s*wrap/, '16 single-word labels cannot shrink; they have to wrap')
+  assert.match(nav, /order:\s*0/, 'the primary nav follows the brand in visual and DOM order')
+  assert.match(nav, /flex-wrap:\s*wrap/, 'primary destinations and the Index panel can wrap at tablet widths')
   assert.match(nav, /min-width:\s*0/, 'without this the flex item resolves to its one-line min-content')
   assert.doesNotMatch(nav, HEADER_CLIPPERS, 'the nav band may not hide its own overflow')
 })
@@ -213,14 +212,14 @@ const { SiteHeader, NAV_LINKS } = await loadShell()
 const renderHeader = (initialPath, initialLocale = 'en') =>
   renderToStaticMarkup(createElement(SiteHeader, { initialPath, initialSearch: '', initialLocale }))
 
-test('UI2-G05 one nav source feeds the shell; the second surface is the drawer, closed at rest', () => {
+test('UI2-G05 one primary nav source feeds desktop and drawer; the secondary panel is closed at rest', () => {
   const html = renderHeader('/en')
   const navs = html.match(/<nav\b/g) ?? []
   assert.equal(navs.length, 2, 'the shell is one desktop bar plus one drawer dialog, never a third bar')
 
   const desktop = /<nav class="dk-nav"[\s\S]*?<\/nav>/.exec(html)?.[0] ?? ''
   assert.ok(desktop.length > 0, 'the desktop bar must render')
-  assert.equal((desktop.match(/<a\b/g) ?? []).length, NAV_LINKS.length)
+  assert.equal((desktop.match(/class="dk-nav-primary-link/g) ?? []).length, NAV_LINKS.length)
 
   const drawerStart = html.indexOf('id="dk-mobile-menu"')
   const drawerNavStart = html.indexOf('<nav class="dk-mobile-nav"')
@@ -231,9 +230,11 @@ test('UI2-G05 one nav source feeds the shell; the second surface is the drawer, 
   assert.equal((shellSource.match(/NAV_LINKS\.map\(/g) ?? []).length, 2)
   assert.equal(
     NAV_LINKS.length,
-    15,
-    'the label row measured at 1296px is the case defect A was reported for',
+    4,
+    'only the four public spaces receive equal-weight primary labels',
   )
+  assert.match(desktop, /aria-controls="dk-index-desktop"/)
+  assert.match(desktop, /id="dk-index-desktop"[^>]*hidden=""/)
 })
 
 test('UI2-G05 the shell consumes MoonUI tokens rather than naming colors in the header row', () => {

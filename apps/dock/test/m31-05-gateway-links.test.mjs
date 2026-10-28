@@ -98,6 +98,9 @@ function parseJourneyRows(source) {
 
 const journeys = parseJourneyRows(designSource)
 const navHrefs = parseNavHrefs(shellSource)
+const indexStart = shellSource.indexOf('export const INDEX_GROUPS')
+const indexEnd = shellSource.indexOf('] as const', indexStart)
+const indexHrefs = [...shellSource.slice(indexStart, indexEnd).matchAll(/\{ href: '([^']+)'/g)].map((match) => match[1])
 const sitemapRoutes = parseSitemapRoutes(sitemapSource)
 
 /**
@@ -311,16 +314,15 @@ test('every PLANNED journey has no route file and is absent from nav and sitemap
 /* Navigation and sitemap                                             */
 /* ------------------------------------------------------------------ */
 
-test('navigation exposes 15 same-origin links and every route link resolves', () => {
-  assert.equal(navHrefs.length, 15, 'the Dock header keeps its 15-item NAV_LINKS list')
+test('navigation exposes four primary links and nine Index routes; every route resolves', () => {
+  assert.equal(navHrefs.length, 4, 'the header exposes four primary destinations')
+  assert.deepEqual(navHrefs, ['/reader', '/terms', '/stations', '/studio'])
+  assert.equal(indexHrefs.length, 9, 'Index groups the remaining nine routes')
+  const routeHrefs = [...navHrefs, ...indexHrefs]
+  assert.equal(new Set(routeHrefs).size, 13, 'all public destinations are represented once')
 
-  const anchors = navHrefs.filter((href) => href.includes('#'))
-  const routeHrefs = navHrefs.filter((href) => !href.includes('#'))
-  assert.deepEqual(anchors, ['/#constellation', '/#zine-poster'], 'the only non-route links are same-page anchors')
-  assert.equal(routeHrefs.length, 13, '13 nav entries are real routes')
-
-  assert.deepEqual(absoluteHrefHits(navHrefs), [], 'navigation may not carry an absolute external URL')
-  for (const href of navHrefs) {
+  assert.deepEqual(absoluteHrefHits(routeHrefs), [], 'navigation may not carry an absolute external URL')
+  for (const href of routeHrefs) {
     assert.ok(href.startsWith('/') && !href.startsWith('//'), `${href} must be a same-origin path`)
   }
 
@@ -358,7 +360,7 @@ test('sitemap lists 15 real public routes and none is a private destination', ()
 test('no navigation, sitemap, journey or Dock source names a private surface', () => {
   const journeyRoutes = Object.values(JOURNEY_ROUTES).flat()
   assert.deepEqual(
-    privateSurfaceHits([...navHrefs, ...sitemapRoutes, ...journeyRoutes]),
+    privateSurfaceHits([...navHrefs, ...indexHrefs, ...sitemapRoutes, ...journeyRoutes]),
     [],
     'nav, sitemap and journey links must not expose headquarters, cockpit, ARSY, SKYLINK, ECHOLOG or /admin',
   )
@@ -370,7 +372,7 @@ test('no navigation, sitemap, journey or Dock source names a private surface', (
 })
 
 test('every internal navigation href is a same-origin path', () => {
-  assert.deepEqual(absoluteHrefHits(navHrefs), [])
+  assert.deepEqual(absoluteHrefHits([...navHrefs, ...indexHrefs]), [])
   assert.deepEqual(absoluteHrefHits(sitemapRoutes), [])
   assert.deepEqual(absoluteHrefHits([...Object.values(JOURNEY_ROUTES).flat()]), [])
 
@@ -391,7 +393,7 @@ test('locale-prefixed gateway links stay inside the id/en contract', () => {
   const switcherLocales = [...localeSwitcherSource.matchAll(/locale: '(id|en)'/g)].map((match) => match[1])
   assert.deepEqual(switcherLocales, ['id', 'en'], 'the switcher offers exactly the two supported locales')
 
-  for (const href of navHrefs) {
+  for (const href of [...navHrefs, ...indexHrefs]) {
     const [pathnamePart, hashPart = ''] = href.split('#')
     const pathname = pathnamePart === '' ? '/' : pathnamePart
     const hash = hashPart ? `#${hashPart}` : ''
