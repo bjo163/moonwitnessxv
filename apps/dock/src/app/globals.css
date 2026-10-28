@@ -582,6 +582,7 @@ body {
   flex-direction: column;
   gap: 6px;
   text-decoration: none;
+  overflow-wrap: anywhere;
   transition: transform 120ms ease, border-color 120ms ease;
 }
 .dk-station:hover {

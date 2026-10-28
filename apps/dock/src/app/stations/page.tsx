@@ -17,6 +17,7 @@ import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
+import { getStationsCopy } from '@/ui/copy/stations-copy'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,6 +30,7 @@ export default async function StationsPage({
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
   const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
+  const sCopy = getStationsCopy(locale)
 
   const filters = await searchParams
 
@@ -63,16 +65,18 @@ export default async function StationsPage({
   return (
     <div className="m-stack" style={{ gap: 20 }}>
       <PageHeader
-        title="Signal Catalog"
+        title={sCopy.pageTitle}
         subtitle={
           page
-            ? `${filtered ? `${page.total} of ${page.catalogSize}` : page.catalogSize} public stations in the network`
+            ? (filtered
+              ? `${page.total} ${sCopy.countOf} ${page.catalogSize} ${sCopy.stationsInNetwork}`
+              : `${page.catalogSize} ${sCopy.stationsInNetwork}`)
             : undefined
         }
-        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Signals' }]}
+        breadcrumbs={[{ label: sCopy.breadcrumbHome, href: localeHref('/') }, { label: sCopy.breadcrumbSignals }]}
       />
 
-      <Panel title="Filter Signals" subtitle="search by station name, genre, or origin country">
+      <Panel title={sCopy.filterTitle} subtitle={sCopy.filterSubtitle}>
         <form className="m-row" style={{ alignItems: 'flex-end', gap: 14 }} method="get" action={localeHref('/stations')}>
           <Field label={copy.formSearch} htmlFor="q">
             <TextInput id="q" name="q" defaultValue={filters.q ?? ''} placeholder={copy.formSearchStationPlaceholder} icon="FIND" />

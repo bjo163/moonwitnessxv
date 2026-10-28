@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback, useMemo, type ReactNode } from 'react'
+import type { Locale } from '@moonwitness/core'
 import { Badge, Button, LiveDot, StationSeal } from '@moonwitness/moonui'
 import {
   LivingBackdrop,
@@ -16,10 +17,14 @@ import {
 } from '@moonwitness/moonui/client'
 import { TimeShiftPlayer } from './TimeShiftPlayer'
 import { clientDockLocale, dockHrefFor } from '@/lib/locale-context.mjs'
+import { getStatesCopy } from '@/lib/states-copy'
 
 /** A session shorter than this is a skip: nobody drifts into it by accident. */
 const SKIP_AFTER_SECONDS = 30
 const AMBIENT_FAILOVER_URL = 'https://ice2.somafm.com/dronezone-128-mp3'
+
+/** Which transport fault the player is reporting; the wording comes from the locale catalogue. */
+type StreamFault = 'statusStreamUnavailable' | 'statusStreamStall' | 'statusAutoplayBlocked'
 
 export interface LiveMetaInfo {
   artist: string | null
@@ -37,16 +42,26 @@ export function Player({
   stationName,
   streamUrl,
   availableStations = [],
+  locale,
 }: {
   stationId: string
   stationName: string
   streamUrl: string
   availableStations?: Array<{ id: string; name: string; streamUrl: string; genre?: string | null; country?: string | null }>
+  locale?: Locale
 }): ReactNode {
+  const [activeLocale, setActiveLocale] = useState<Locale>(() => locale ?? 'en')
+
+  useEffect(() => {
+    setActiveLocale(locale ?? clientDockLocale())
+  }, [locale])
+
+  const copy = getStatesCopy(activeLocale)
+
   const audio = useRef<HTMLAudioElement | null>(null)
   const [playing, setPlaying] = useState(false)
   const [beacon, setBeacon] = useState<'idle' | 'sent' | 'failed'>('idle')
-  const [streamError, setStreamError] = useState<string | null>(null)
+  const [streamFault, setStreamFault] = useState<StreamFault | null>(null)
   const [isFailover, setIsFailover] = useState(false)
   const [liveMeta, setLiveMeta] = useState<LiveMetaInfo | null>(null)
   const startedAt = useRef<number | null>(null)
@@ -155,17 +170,17 @@ export function Player({
   const triggerFailover = useCallback(() => {
     triggerHaptic('alert')
     if (isFailover) {
-      setStreamError('stream unavailable')
+      setStreamFault('statusStreamUnavailable')
       return
     }
     setIsFailover(true)
-    setStreamError('primary stream stall - failover active')
+    setStreamFault('statusStreamStall')
 
     // Attempt recovery back to primary stream in 8 seconds
     if (retryTimer.current) clearTimeout(retryTimer.current)
     retryTimer.current = setTimeout(() => {
       setIsFailover(false)
-      setStreamError(null)
+      setStreamFault(null)
     }, 8_000)
   }, [isFailover])
 
@@ -183,7 +198,7 @@ export function Player({
     try {
       await element.play()
       setPlaying(true)
-      setStreamError(null)
+      setStreamFault(null)
       startedAt.current = Date.now()
 
       // Ensure DSP rack is attached and running
@@ -202,7 +217,7 @@ export function Player({
     } catch (err) {
       startedAt.current = null
       if (err instanceof Error && err.name === 'NotAllowedError') {
-        setStreamError('browser blocked autoplay — press play again')
+        setStreamFault('statusAutoplayBlocked')
       } else {
         triggerFailover()
       }
@@ -265,7 +280,7 @@ export function Player({
             onClick={() => void toggle()}
             aria-pressed={playing}
           >
-            {playing ? 'STOP' : 'PLAY'}
+            {playing ? copy.playerStop : copy.playerPlay}
           </Button>
 
           <div className="m-col" style={{ gap: 4, flex: 1, minWidth: 200 }}>
@@ -273,20 +288,20 @@ export function Player({
               <LiveDot on={playing} />
               <strong style={{ letterSpacing: '0.04em' }}>{stationName}</strong>
               {isFailover ? (
-                <Badge tone="hot">FAILOVER: AMBIENT BACKUP</Badge>
+                <Badge tone="hot">{copy.statusFailoverAmbient}</Badge>
               ) : liveMeta?.title && liveMeta.title !== stationName ? (
                 <Badge tone="cyan">
-                  ON AIR: {liveMeta.artist ? `${liveMeta.artist} - ` : ''}{liveMeta.title}
+                  {copy.statusOnAir}: {liveMeta.artist ? `${liveMeta.artist} - ` : ''}{liveMeta.title}
                 </Badge>
               ) : (
-                <Badge tone={streamError || beacon === 'failed' ? 'hot' : beacon === 'sent' ? 'ok' : 'cyan'}>
-                  {streamError
-                    ? `${streamError} — logging paused`
+                <Badge tone={streamFault || beacon === 'failed' ? 'hot' : beacon === 'sent' ? 'ok' : 'cyan'}>
+                  {streamFault
+                    ? `${copy[streamFault]} · ${copy.statusLoggingPaused}`
                     : beacon === 'sent'
-                      ? 'listen logged — charts updated'
+                      ? copy.statusBeaconSent
                       : beacon === 'failed'
-                        ? 'beacon failed'
-                        : 'stream live'}
+                        ? copy.statusBeaconFailed
+                        : copy.statusStreamLive}
                 </Badge>
               )}
             </div>
@@ -320,9 +335,9 @@ export function Player({
                   triggerHaptic('switch')
                   setTunerOpen(!tunerOpen)
                 }}
-                title="Analog Shortwave Dial & S-Meter Galvanometer"
+                title={copy.controlTunerHint}
               >
-                SW TUNER {tunerOpen ? '▼' : '▲'}
+                {copy.controlTuner} {tunerOpen ? '▼' : '▲'}
               </Button>
               <Button
                 type="button"
@@ -332,9 +347,9 @@ export function Player({
                   triggerHaptic('switch')
                   setDspOpen(!dspOpen)
                 }}
-                title="Tactical WebAudio DSP FX & Parametric EQ Rack"
+                title={copy.controlDspHint}
               >
-                DSP FX {tape.enabled ? '● TAPE' : ''}
+                {copy.controlDsp} {tape.enabled ? '● TAPE' : ''}
               </Button>
             </div>
           </div>
@@ -380,7 +395,7 @@ export function Player({
           >
             <div className="m-row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--cyan)', letterSpacing: '0.04em' }}>
-                ACOUSTIC CONDITIONER & 5-BAND PARAMETRIC EQ
+                {copy.controlAcousticConditioner}
               </span>
               <div className="m-row" style={{ gap: 6 }}>
                 <Button
@@ -389,7 +404,7 @@ export function Player({
                   size="sm"
                   onClick={handleToggleTape}
                 >
-                  {tape.enabled ? 'TAPE WARMTH: ON' : 'TAPE WARMTH: OFF'}
+                  {tape.enabled ? copy.controlTapeWarmthOn : copy.controlTapeWarmthOff}
                 </Button>
               </div>
             </div>

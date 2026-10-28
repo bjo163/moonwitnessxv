@@ -3,6 +3,7 @@ import { Badge, CardSkeleton, LinkButton, PageHeader, Panel, StatCard, Chevron }
 import { getStation } from '@/data/queries/catalog'
 import { clock } from '@/lib/time'
 import { Player } from '@/ui/client/Player'
+import { getStationsCopy } from '@/ui/copy/stations-copy'
 import { PanelState } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
@@ -15,6 +16,7 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
   const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
+  const sCopy = getStationsCopy(locale)
 
   const { id } = await params
   const detail = await getStation(id)
@@ -26,23 +28,27 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
     <div className="m-stack" style={{ gap: 20 }}>
       <PageHeader
         title={station.name}
-        subtitle={`${station.genre ?? copy.fallbackUnformatted} · ${station.countryRefRecord?.name ?? copy.fallbackUnknownCountry} · ${plays} logged play${plays === 1 ? '' : 's'}`}
-        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Signals', href: localeHref('/stations') }, { label: station.name }]}
+        subtitle={`${station.genre ?? copy.fallbackUnformatted} · ${station.countryRefRecord?.name ?? copy.fallbackUnknownCountry} · ${plays} ${plays === 1 ? sCopy.playsOne : sCopy.playsMany}`}
+        breadcrumbs={[
+          { label: sCopy.breadcrumbHome, href: localeHref('/') },
+          { label: sCopy.breadcrumbSignals, href: localeHref('/stations') },
+          { label: station.name },
+        ]}
         actions={
           <span className="m-row">
             <Badge tone={station.statusLabel === 'live' ? 'ok' : 'accent'}>
-              {station.statusLabel === 'live' ? 'on the air' : 'off the air'}
+              {station.statusLabel === 'live' ? sCopy.statusOnAir : sCopy.statusOffAir}
             </Badge>
             <LinkButton href={localeHref('/stations')} variant="ghost" size="sm">
-              <Chevron dir="left" /> Back to catalog
+              <Chevron dir="left" /> {sCopy.backToCatalog}
             </LinkButton>
           </span>
         }
       />
 
-      <Player stationId={station.id} stationName={station.name} streamUrl={station.streamUrl} />
+      <Player stationId={station.id} stationName={station.name} streamUrl={station.streamUrl} locale={locale} />
 
-      <Panel title="Reference Telemetry" subtitle="country, region, currency and language metadata">
+      <Panel title={sCopy.telemetryTitle} subtitle={sCopy.telemetrySubtitle}>
         <PanelState
           state={country ? 'ready' : 'empty'}
           loadingLabel={copy.loadingContent}
@@ -50,17 +56,17 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
           errorMessage={copy.emptyStationNoCountry}
         >
           <div className="m-grid m-grid-3">
-            <StatCard label="country" value={`${country?.name ?? '—'} (${country?.code ?? '—'})`} />
-            <StatCard label="region" value={country?.region ?? '—'} />
-            <StatCard label="calling code" value={country?.calling ?? '—'} />
-            <StatCard label="currency" value={country?.currencyRefRecord?.name ?? '—'} />
-            <StatCard label="language" value={country?.officialLangRecord?.name ?? '—'} />
-            <StatCard label="logged plays" value={plays} />
+            <StatCard label={sCopy.labelCountry} value={`${country?.name ?? '—'} (${country?.code ?? '—'})`} />
+            <StatCard label={sCopy.labelRegion} value={country?.region ?? '—'} />
+            <StatCard label={sCopy.labelCallingCode} value={country?.calling ?? '—'} />
+            <StatCard label={sCopy.labelCurrency} value={country?.currencyRefRecord?.name ?? '—'} />
+            <StatCard label={sCopy.labelLanguage} value={country?.officialLangRecord?.name ?? '—'} />
+            <StatCard label={sCopy.labelLoggedPlays} value={plays} />
           </div>
         </PanelState>
       </Panel>
 
-      <Panel title={`Schedule (${slots.length} slots)`} subtitle="weekly transmission windows in UTC">
+      <Panel title={`${sCopy.scheduleTitle} (${slots.length} ${sCopy.scheduleSlots})`} subtitle={sCopy.scheduleSubtitle}>
         <PanelState
           state={slots.length === 0 ? 'empty' : 'ready'}
           loadingLabel={copy.loadingContent}
@@ -79,7 +85,7 @@ export default async function StationPage({ params }: { params: Promise<{ id: st
                   {clock(slot.startMin)}–{clock(slot.endMin)}
                 </div>
                 <div className="m-muted" style={{ fontSize: 12 }}>
-                  {slot.host ? `hosted by ${slot.host}` : copy.emptyStationNoHost}
+                  {slot.host ? `${sCopy.hostedBy} ${slot.host}` : copy.emptyStationNoHost}
                 </div>
               </div>
             ))}

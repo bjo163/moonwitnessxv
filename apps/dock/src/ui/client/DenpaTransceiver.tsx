@@ -5,6 +5,7 @@ import type { PublicLiveTransmissionsOutput } from '@moonwitness/moonql-client'
 import type { Locale } from '@moonwitness/core'
 import { clientDockLocale } from '@/lib/locale-context.mjs'
 import { getStatesCopy } from '@/lib/states-copy'
+import { getDenpaCopy } from '@/ui/copy/denpa-copy'
 import {
   Alert,
   Badge,
@@ -28,7 +29,7 @@ export interface StationOption {
 
 export interface DenpaTransceiverProps {
   initialTransmissions: PublicLiveTransmissionsOutput[]
-  stations: StationOption[]
+  stations: StationOption[] | null
   locale?: Locale
 }
 
@@ -44,6 +45,7 @@ export function DenpaTransceiver({ initialTransmissions, stations, locale }: Den
   }, [locale])
 
   const copy = getStatesCopy(activeLocale)
+  const dCopy = getDenpaCopy(activeLocale)
   const [transmissions, setTransmissions] = useState<PublicLiveTransmissionsOutput[]>(initialTransmissions)
   const [message, setMessage] = useState('')
   const [pseudonym, setPseudonym] = useState('')
@@ -53,65 +55,95 @@ export function DenpaTransceiver({ initialTransmissions, stations, locale }: Den
 
   const handleTransmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!message.trim()) return
+    if (isPending) return
+
+    const trimmedMessage = message.trim()
+    if (!trimmedMessage) {
+      setStatusMsg({ tone: 'hot', text: copy.formDenpaErrorEmpty })
+      return
+    }
+    if (message.length > 500) {
+      setStatusMsg({ tone: 'hot', text: copy.formDenpaErrorTooLong })
+      return
+    }
+    if (pseudonym.trim().length > 50) {
+      setStatusMsg({ tone: 'hot', text: copy.formDenpaErrorPseudonymTooLong })
+      return
+    }
 
     triggerHaptic('switch')
     playUiSound('relay')
 
     startTransition(async () => {
+      const refuse = (text: string) => {
+        triggerHaptic('alert')
+        playUiSound('alert')
+        setStatusMsg({ tone: 'hot', text })
+      }
+
       try {
         const res = await fetch('/api/denpa/transmit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            message: message.trim(),
+            message: trimmedMessage,
             pseudonym: pseudonym.trim() || undefined,
             stationRef: selectedStation || undefined,
           }),
         })
 
-        const body = (await res.json()) as { ok: boolean; data?: PublicLiveTransmissionsOutput; error?: string }
+        // A proxy or outage page is not JSON. Reading it defensively keeps the deck
+        // from presenting an unparseable answer as a recorded transmission.
+        const body = (await res.json().catch(() => null)) as {
+          ok?: boolean
+          data?: PublicLiveTransmissionsOutput
+        } | null
 
-        if (res.ok && body.ok) {
+        if (res.ok && body?.ok && body.data) {
           playUiSound('toggle')
           triggerHaptic('switch')
           setStatusMsg({ tone: 'ok', text: copy.formDenpaSuccess })
           setMessage('')
-          if (body.data) {
-            const newRow = body.data
-            setTransmissions((prev) => [newRow, ...prev])
-          }
-        } else {
-          triggerHaptic('alert')
-          playUiSound('alert')
-          setStatusMsg({ tone: 'hot', text: body.error || copy.formDenpaError })
+          const newRow = body.data
+          setTransmissions((prev) => [newRow, ...prev])
+          return
         }
-      } catch (err) {
-        triggerHaptic('alert')
-        playUiSound('alert')
-        setStatusMsg({ tone: 'hot', text: err instanceof Error ? err.message : copy.formDenpaFailure })
+
+        // The hub's own message text is an internal string, so the deck states the
+        // outcome by status code instead of echoing it.
+        if (res.status === 400) refuse(copy.formDenpaRejected)
+        else if (res.status === 401 || res.status === 403) refuse(copy.formDenpaDenied)
+        else if (res.status === 429) refuse(copy.formDenpaRateLimited)
+        else if (res.status >= 500) refuse(copy.formDenpaServerDown)
+        else refuse(copy.formDenpaUnknown)
+      } catch {
+        refuse(typeof navigator !== 'undefined' && navigator.onLine === false
+          ? copy.formDenpaOffline
+          : copy.formDenpaServerDown)
       }
     })
   }
 
   const stationSelectOptions = [
     { value: '', label: copy.formDenpaGlobal },
-    ...stations.map((st) => ({ value: st.id, label: st.name })),
+    ...(stations ?? []).map((st) => ({ value: st.id, label: st.name })),
   ]
 
   return (
     <div className="m-stack" style={{ gap: 24 }}>
       {statusMsg ? (
-        <Alert tone={statusMsg.tone}>
-          {statusMsg.text}
-        </Alert>
+        <div role="status" aria-live="polite">
+          <Alert tone={statusMsg.tone}>
+            {statusMsg.text}
+          </Alert>
+        </div>
       ) : null}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
         {/* Transmitter Deck */}
         <Panel
-          title="DENPA Transceiver (電波)"
-          subtitle="Inbound shortwave message broadcast deck · Broadcast directly into live DJ queues"
+          title={dCopy.pageTitle}
+          subtitle={dCopy.transmitterSubtitle}
         >
           <form onSubmit={(e) => void handleTransmit(e)} className="m-stack" style={{ gap: 14 }}>
             <Field label={copy.formDenpaContent} htmlFor="denpa-msg">
@@ -127,13 +159,13 @@ export function DenpaTransceiver({ initialTransmissions, stations, locale }: Den
             </Field>
 
             <div className="m-row" style={{ justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--muted)' }}>
-              <span>{copy.formDenpaEncrypted}</span>
-              <span>{message.length} / 500</span>
+              <span>{copy.formDenpaPrivacyNotice}</span>
+              <span aria-label={copy.formDenpaCharCounterAria}>{message.length} / 500</span>
             </div>
 
             <div className="m-row" style={{ gap: 12, flexWrap: 'wrap' }}>
               <div style={{ flex: 1, minWidth: 160 }}>
-                <Field label={copy.formDenpaPseudonym} htmlFor="denpa-pseudo">
+                <Field label={copy.formDenpaPseudonym} htmlFor="denpa-pseudo" hint={copy.formDenpaPseudonymHint}>
                   <TextInput
                     id="denpa-pseudo"
                     value={pseudonym}
@@ -144,7 +176,11 @@ export function DenpaTransceiver({ initialTransmissions, stations, locale }: Den
               </div>
 
               <div style={{ flex: 1, minWidth: 160 }}>
-                <Field label={copy.formDenpaTargetStation} htmlFor="denpa-station">
+                <Field
+                  label={copy.formDenpaTargetStation}
+                  htmlFor="denpa-station"
+                  hint={stations ? undefined : dCopy.stationSelectUnknownHint}
+                >
                   <SelectInput
                     id="denpa-station"
                     options={stationSelectOptions}
@@ -168,8 +204,8 @@ export function DenpaTransceiver({ initialTransmissions, stations, locale }: Den
 
         {/* Live On-Air Monitor */}
         <Panel
-          title="On-Air Frequency Feed"
-          subtitle="Real-time public shortwave telemetry captured across the network"
+          title={dCopy.feedTitle}
+          subtitle={dCopy.feedSubtitle}
         >
           <div className="m-stack" style={{ gap: 12, maxHeight: 460, overflowY: 'auto' }}>
             {transmissions.length === 0 ? (
@@ -190,7 +226,7 @@ export function DenpaTransceiver({ initialTransmissions, stations, locale }: Den
                     }
                     actions={
                       <span style={{ fontSize: '0.75rem', color: 'var(--muted)', fontFamily: 'monospace' }}>
-                        {t.broadcastAt ? new Date(t.broadcastAt).toLocaleTimeString() : 'RECENT'}
+                        {t.broadcastAt ? new Date(t.broadcastAt).toLocaleTimeString() : dCopy.feedRecent}
                       </span>
                     }
                   />
@@ -199,13 +235,13 @@ export function DenpaTransceiver({ initialTransmissions, stations, locale }: Den
                       {t.message}
                     </p>
                     <div className="m-row" style={{ justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-                      <Badge tone="cyan">ON-AIR</Badge>
+                      <Badge tone="cyan">{dCopy.feedOnAir}</Badge>
                       {t.stationRef ? (
                         <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
-                          Station: {t.stationRef}
+                          {dCopy.feedStation}: {t.stationRef}
                         </span>
                       ) : (
-                        <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>Global</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{dCopy.feedGlobalNetwork}</span>
                       )}
                     </div>
                   </CardBody>

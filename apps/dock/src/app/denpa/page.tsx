@@ -4,6 +4,7 @@ import { readLiveTransmissions } from '@/data/queries/denpa'
 import { panelErrorMessage } from '@/data/queries/error'
 import { serverClient } from '@/data/sdk'
 import { DenpaTransceiver } from '@/ui/client/DenpaTransceiver'
+import { getDenpaCopy } from '@/ui/copy/denpa-copy'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
@@ -21,6 +22,7 @@ export default async function DenpaPage(): Promise<ReactNode> {
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
   const localeHref = dockHrefFor(locale)
   const copy = getStatesCopy(locale)
+  const dCopy = getDenpaCopy(locale)
 
   const panelCopy: PanelCopy = {
     loadingLabel: copy.loadingTransmissions,
@@ -28,30 +30,36 @@ export default async function DenpaPage(): Promise<ReactNode> {
     errorMessage: copy.errorDenpaUnavailable,
   }
 
-  const [feedOutcome, stationsRes] = await Promise.all([
+  const [feedOutcome, stationRows] = await Promise.all([
     readPanel(() => readLiveTransmissions(), panelCopy, neverEmpty, (err) =>
       panelErrorMessage(err, copy.errorDenpaUnavailable),
     ),
-    serverClient().view('stationCatalog').read({ limit: 50 }).catch(() => ({ rows: [] })),
+    serverClient()
+      .view('stationCatalog')
+      .read({ limit: 50 })
+      .then((res) => res.rows)
+      .catch(() => null),
   ])
 
-  const stations = stationsRes.rows.map((s) => ({
-    id: String(s.id),
-    name: s.name,
-  }))
+  // null is a failed catalog read, not an empty network: the deck says which.
+  const stations = stationRows?.map((s) => ({ id: String(s.id), name: s.name })) ?? null
 
   const feed = feedOutcome.state === 'ready' ? feedOutcome.value : null
 
   return (
     <div className="m-stack" style={{ gap: 20 }}>
       <PageHeader
-        title="DENPA Transceiver (電波)"
-        subtitle="Tactical Shortwave Inbound Broadcast Deck · Zero Data In Clear · Epistemic Telemetry Feed"
-        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Denpa' }]}
+        title={dCopy.pageTitle}
+        subtitle={dCopy.pageSubtitle}
+        breadcrumbs={[{ label: dCopy.breadcrumbHome, href: localeHref('/') }, { label: dCopy.breadcrumbDenpa }]}
         actions={
           <div className="m-row" style={{ gap: 8, flexWrap: 'wrap' }}>
-            {feed ? <Badge tone="cyan">{feed.length} on-air</Badge> : null}
-            <Badge tone="ok">{stations.length} target stations</Badge>
+            {feed ? <Badge tone="cyan">{feed.length} {dCopy.badgeOnAir}</Badge> : null}
+            {stations ? (
+              <Badge tone="ok">{stations.length} {dCopy.badgeTargetStations}</Badge>
+            ) : (
+              <Badge tone="hot">{dCopy.badgeStationsUnknown}</Badge>
+            )}
           </div>
         }
       />

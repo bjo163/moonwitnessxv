@@ -1,8 +1,9 @@
 /**
- * Required 127 keys for Dock forms, loading indicators, error boundaries, and empty states.
+ * Required 144 keys for Dock forms, loading indicators, error boundaries, and empty states.
+ * Keep this list in lockstep with `src/lib/states-copy.ts`; the parity test asserts both counts.
  */
 export const REQUIRED_STATES_UI_KEYS = [
-  // Forms (56 keys)
+  // Forms (65 keys)
   'formSearch',
   'formGenre',
   'formCountry',
@@ -46,12 +47,21 @@ export const REQUIRED_STATES_UI_KEYS = [
   'formDenpaPseudonymPlaceholder',
   'formDenpaTargetStation',
   'formDenpaGlobal',
-  'formDenpaEncrypted',
+  'formDenpaPrivacyNotice',
+  'formDenpaPseudonymHint',
+  'formDenpaCharCounterAria',
+  'formDenpaErrorEmpty',
+  'formDenpaErrorTooLong',
+  'formDenpaErrorPseudonymTooLong',
   'formDenpaTransmit',
   'formDenpaTransmitting',
   'formDenpaSuccess',
-  'formDenpaError',
-  'formDenpaFailure',
+  'formDenpaRejected',
+  'formDenpaDenied',
+  'formDenpaRateLimited',
+  'formDenpaServerDown',
+  'formDenpaOffline',
+  'formDenpaUnknown',
   'formPatchSearchLabel',
   'formPatchSearchPlaceholder',
   'formClearSearch',
@@ -60,10 +70,11 @@ export const REQUIRED_STATES_UI_KEYS = [
   'formCopySuccess',
   'formCopyFailure',
 
-  // Loading & Stream Status (12 keys)
+  // Loading & Stream Status (20 keys)
   'loadingContent',
   'loadingTransmissions',
   'statusStreamLive',
+  'statusOnAir',
   'statusAutoplayBlocked',
   'statusStreamStall',
   'statusStreamUnavailable',
@@ -73,6 +84,13 @@ export const REQUIRED_STATES_UI_KEYS = [
   'statusFailoverAmbient',
   'playerPlay',
   'playerStop',
+  'controlTuner',
+  'controlTunerHint',
+  'controlDsp',
+  'controlDspHint',
+  'controlAcousticConditioner',
+  'controlTapeWarmthOn',
+  'controlTapeWarmthOff',
 
   // Errors & Boundaries (24 keys)
   'errorBoundaryTitle',

@@ -8,13 +8,13 @@ test('M19-15 states copy catalog has full 1:1 key parity between English and Ind
   const englishKeys = Object.keys(statesCopy.en).sort()
   const indonesianKeys = Object.keys(statesCopy.id).sort()
 
-  assert.equal(englishKeys.length, 127)
-  assert.equal(indonesianKeys.length, 127)
+  assert.equal(englishKeys.length, 144)
+  assert.equal(indonesianKeys.length, 144)
   assert.deepEqual(indonesianKeys, englishKeys)
 })
 
-test('M19-15 states copy catalog satisfies all 127 REQUIRED_STATES_UI_KEYS', () => {
-  assert.equal(REQUIRED_STATES_UI_KEYS.length, 127)
+test('M19-15 states copy catalog satisfies all 144 REQUIRED_STATES_UI_KEYS', () => {
+  assert.equal(REQUIRED_STATES_UI_KEYS.length, 144)
   assert.doesNotThrow(() => assertRequiredLocaleKeys(statesCopy, REQUIRED_STATES_UI_KEYS))
 
   // Sample check across categories

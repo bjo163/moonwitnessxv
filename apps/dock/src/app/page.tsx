@@ -180,6 +180,7 @@ export default async function HomePage() {
           stationName={live.name}
           streamUrl={live.streamUrl}
           availableStations={payload.stations}
+          locale={locale}
         />
       ) : null}
     </div>
