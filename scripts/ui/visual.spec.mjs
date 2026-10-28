@@ -624,6 +624,20 @@ test('keyboard pass · drawer at 390px and primary/index semantics at 1440px', a
     await expect(firstMobileIndexLink, 'Enter opens mobile Index routes').toBeVisible()
     await expect(firstMobileIndexLink, 'opening mobile Index moves focus into the group').toBeFocused()
     expect(await firstMobileIndexLink.getAttribute('href')).toBe('/en/figures')
+
+    await page.keyboard.press('Tab')
+    await expect(mobileIndexPanel.locator('a[href]').nth(1), 'Tab advances through expanded Index routes').toBeFocused()
+    await page.keyboard.press('Shift+Tab')
+    await expect(firstMobileIndexLink, 'Shift+Tab returns to the first expanded Index route').toBeFocused()
+
+    const drawerFirstFocusable = page.locator('#dk-mobile-menu .m-brand-link')
+    await drawerFirstFocusable.focus()
+    await page.keyboard.press('Shift+Tab')
+    await expect(drawerJoin, 'Shift+Tab wraps from the drawer start to its end').toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(drawerFirstFocusable, 'Tab wraps from the drawer end to its start').toBeFocused()
+
+    await firstMobileIndexLink.focus()
     await page.keyboard.press('Escape')
     await expect(mobileIndexTrigger, 'Escape closes mobile Index').toHaveAttribute('aria-expanded', 'false')
     await expect(mobileIndexTrigger, 'Escape restores focus to the mobile Index trigger').toBeFocused()
