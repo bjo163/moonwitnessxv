@@ -23,3 +23,21 @@ export function validatedDockUrl(value: unknown): string | null {
   }
 }
 
+/** Build the public Dock home link for the current HQ UI locale. Never carry HQ query/fragment data across origins. */
+export function dockUrlForLocale(value: unknown, localeValue: unknown): string | null {
+  const dockUrl = validatedDockUrl(value)
+  const locale = validateLocalePreference(localeValue)
+  if (!dockUrl || !locale) return null
+
+  try {
+    const url = new URL(dockUrl)
+    const basePath = url.pathname.replace(/\/+$/, '').replace(/\/(?:id|en)$/i, '')
+    url.pathname = `${basePath}/${locale}`
+    url.search = ''
+    url.hash = ''
+    return url.toString().replace(/\/$/, '')
+  } catch {
+    return null
+  }
+}
+

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { BrandLogo, Crown, LinkButton, ZineNote, Chevron } from '@moonwitness/moonui'
 import type { Locale } from '@moonwitness/core'
 import { DOCK_URL, SITE_NAME } from '@/lib/env'
+import { dockUrlForLocale } from '@/lib/locale-preference'
 import { loginCopy } from '@/lib/login-copy'
 import { LocaleSelector } from '@/ui/client/LocaleSelector'
 
@@ -11,6 +12,7 @@ import { LocaleSelector } from '@/ui/client/LocaleSelector'
  */
 export function AuthLayout({ children, locale }: { children: ReactNode; locale: Locale }) {
   const copy = loginCopy(locale)
+  const dockHref = dockUrlForLocale(DOCK_URL, locale)
   return (
     <div className="hq-auth-shell" lang={locale}>
       <header className="hq-auth-topbar">
@@ -32,8 +34,8 @@ export function AuthLayout({ children, locale }: { children: ReactNode; locale: 
             {copy.sameMoon}
           </ZineNote>
           <LocaleSelector locale={locale} />
-          {DOCK_URL ? (
-            <LinkButton href={DOCK_URL} variant="accent" size="md">
+          {dockHref ? (
+            <LinkButton href={dockHref} variant="accent" size="md">
               {copy.followSignal} <Chevron dir="right" />
             </LinkButton>
           ) : null}

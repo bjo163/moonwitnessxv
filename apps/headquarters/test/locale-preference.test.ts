@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { currentRelativeUrl, validatedDockUrl, validateLocalePreference } from '../src/lib/locale-preference.js'
+import { currentRelativeUrl, dockUrlForLocale, validatedDockUrl, validateLocalePreference } from '../src/lib/locale-preference.js'
 
 void test('locale preference accepts only canonical supported values', () => {
   assert.equal(validateLocalePreference('id'), 'id')
@@ -30,6 +30,30 @@ void test('Dock links require a credential-free HTTP(S) URL', () => {
   assert.equal(validatedDockUrl('https://dock.example/path/'), 'https://dock.example/path')
   for (const value of [undefined, '', 'not a url', 'javascript:alert(1)', 'https://user:pass@dock.example']) {
     assert.equal(validatedDockUrl(value), null)
+  }
+})
+
+void test('HQ-to-Dock links carry only the supported UI locale and never copy HQ query or fragment data', async () => {
+  const configured = 'https://dock.example/base/en/?token=private&return=%2Fmodels#record-7'
+  assert.equal(dockUrlForLocale(configured, 'id'), 'https://dock.example/base/id')
+  assert.equal(dockUrlForLocale(configured, 'en'), 'https://dock.example/base/en')
+  assert.equal(dockUrlForLocale('https://dock.example/id', 'en'), 'https://dock.example/en')
+  for (const locale of ['fr', 'en-US', '', null]) {
+    assert.equal(dockUrlForLocale(configured, locale), null)
+  }
+  for (const value of [undefined, 'javascript:alert(1)', 'https://user:pass@dock.example']) {
+    assert.equal(dockUrlForLocale(value, 'id'), null)
+  }
+
+  const authLayout = await import('node:fs/promises').then(({ readFile }) =>
+    readFile(new URL('../src/layouts/auth.tsx', import.meta.url), 'utf8'),
+  )
+  const verticalLayout = await import('node:fs/promises').then(({ readFile }) =>
+    readFile(new URL('../src/layouts/vertical.tsx', import.meta.url), 'utf8'),
+  )
+  for (const source of [authLayout, verticalLayout]) {
+    assert.match(source, /dockUrlForLocale\(DOCK_URL, locale\)/)
+    assert.doesNotMatch(source, /href=\{DOCK_URL\}/)
   }
 })
 
