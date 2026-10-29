@@ -1,0 +1,15 @@
+{
+  "sourceSha": "005e51ab4248b5dee91061ed39bc22e630afe7d4",
+  "evidenceType": "anonymous localized withholding page geometry; no public term detail is rendered",
+  "hub": "ephemeral in-memory seeded fixture on 127.0.0.1; admin password was throwaway and kept in process environment",
+  "cases": [
+    { "locale": "en", "viewport": "390x844", "horizontalOverflowPx": 0, "elementsOutsideViewport": 0, "mainCount": 1, "headingCount": 1, "detailContainers": 0 },
+    { "locale": "en", "viewport": "768x1024", "horizontalOverflowPx": 0, "elementsOutsideViewport": 0, "mainCount": 1, "headingCount": 1, "detailContainers": 0 },
+    { "locale": "en", "viewport": "1440x900", "horizontalOverflowPx": 0, "elementsOutsideViewport": 0, "mainCount": 1, "headingCount": 1, "detailContainers": 0 },
+    { "locale": "en", "viewport": "1920x1080", "horizontalOverflowPx": 0, "elementsOutsideViewport": 0, "mainCount": 1, "headingCount": 1, "detailContainers": 0 },
+    { "locale": "id", "viewport": "390x844", "horizontalOverflowPx": 0, "elementsOutsideViewport": 0, "mainCount": 1, "headingCount": 1, "detailContainers": 0 },
+    { "locale": "id", "viewport": "768x1024", "horizontalOverflowPx": 0, "elementsOutsideViewport": 0, "mainCount": 1, "headingCount": 1, "detailContainers": 0 },
+    { "locale": "id", "viewport": "1440x900", "horizontalOverflowPx": 0, "elementsOutsideViewport": 0, "mainCount": 1, "headingCount": 1, "detailContainers": 0 },
+    { "locale": "id", "viewport": "1920x1080", "horizontalOverflowPx": 0, "elementsOutsideViewport": 0, "mainCount": 1, "headingCount": 1, "detailContainers": 0 }
+  ]
+}
