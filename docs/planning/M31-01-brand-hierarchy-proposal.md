@@ -1,5 +1,7 @@
 # M31-01 — Brand hierarchy and public domain purpose (proposal)
 
+> **Superseded in part by [ADR-0016](../decisions/ADR-0016-public-domain-map.md) (accepted 2026-10-29).** The owner assigned `a-l-l-a-h.com` to `apps/empire-web` (the static pilot) and `moonwitness.biz.id` to Dock, with an explicit access tier per hostname. The proposal below stays as the rationale of record for the LIGHTHOUSE-outside-this-decision question; where it says `a-l-l-a-h.com` is the address of LIGHTHOUSE inside Dock, ADR-0016 supersedes it. Dock remains the canonical LIGHTHOUSE runtime (ADR-0011).
+
 **State: proposed, pending owner review.** This document records a bounded proposal for M31-01. It is not an accepted decision, launch announcement, domain claim, or final marketing copy. TODO remains the task-status authority; M31-01 is still open until its owner reviews evidence and the integrator records any status change.
 
 ## Evidence reviewed
