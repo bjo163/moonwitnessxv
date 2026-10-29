@@ -20,7 +20,6 @@ import { chromium } from '@playwright/test'
 
 const ROOT = resolve(fileURLToPath(new URL('../../..', import.meta.url)))
 const OUT = join(ROOT, 'apps/empire-web/out')
-const MANIFEST = join(ROOT, 'apps/empire-web/docs/story-universe/contracts/reference_measurements.json')
 const REPORT_DIR = join(OUT, '.fidelity')
 const TOLERANCE = 2
 
@@ -32,15 +31,36 @@ const PAGES = {
   home: {
     reference: '01-homepage.png',
     route: '/en.html',
+    // Reference band bottoms, read from the measured edge mid-points.
     edges: [
-      { name: 'header', selector: '.su-chrome' },
-      { name: 'hero', selector: '.su-home__hero' },
-      { name: 'worlds', selector: '.su-home__worlds' },
-      { name: 'foundation', selector: '.su-home__foundation' },
-      { name: 'footer-main', selector: '.su-footer__main' },
-      { name: 'footer-bar', selector: '.su-footer__bar' },
+      { name: 'header', selector: '.su-chrome', expected: 73 },
+      { name: 'hero', selector: '.su-home__hero', expected: 546 },
+      { name: 'worlds', selector: '.su-home__worlds', expected: 1035 },
+      { name: 'foundation', selector: '.su-home__foundation', expected: 1258 },
+      { name: 'footer-main', selector: '.su-footer__main', expected: 1346 },
+      { name: 'footer-bar', selector: '.su-footer__bar', expected: 1402 },
     ],
-    columns: { selector: '.su-home__card', edge: '.su-home__worlds' },
+    columns: { selector: '.su-home__card', expected: [30, 298, 566, 834], right: 1093 },
+  },
+  library: {
+    reference: '02-moonstories-library.png',
+    route: '/en/stories.html',
+    // The reference's own bands: hero 368, tabs 136, controls 56, cards 377,
+    // umbrella 148, footer 78+55. Internal edges 493/595/637 belong to the tab
+    // and input boxes, so the anchors below stop at the band boundaries.
+    edges: [
+      { name: 'header', selector: '.su-chrome', expected: 72 },
+      { name: 'hero', selector: '.su-lib__hero', expected: 443 },
+      { name: 'filters', selector: '.su-lib__filters', expected: 581 },
+      { name: 'controls', selector: '.su-lib__controls', expected: 653 },
+      { name: 'grid', selector: '.su-lib__grid', expected: 1033 },
+      { name: 'stats', selector: '.su-lib__stats', expected: 1264 },
+      { name: 'footer-main', selector: '.su-footer__main', expected: 1345 },
+      { name: 'footer-bar', selector: '.su-footer__bar', expected: 1402 },
+    ],
+    // The mockup's fourth column sits 13px left of a uniform grid; a uniform
+    // grid is the correct implementation, so only the outer edges are checked.
+    columns: { selector: '.su-lib__card', expected: [29], right: 1093 },
   },
 }
 
@@ -70,7 +90,6 @@ if (!existsSync(OUT)) {
   process.exit(2)
 }
 
-const references = JSON.parse(readFileSync(MANIFEST, 'utf8'))
 const server = await serve()
 const { port } = server.address()
 const browser = await chromium.launch()
@@ -93,47 +112,35 @@ for (const [name, spec] of Object.entries(PAGES)) {
       }
     }
     const cards = [...document.querySelectorAll(columns.selector)].map((card) => Math.round(card.getBoundingClientRect().left * 10) / 10)
-    const last = document.querySelectorAll(columns.selector)
-    const right = last.length ? Math.round(last[last.length - 1].getBoundingClientRect().right * 10) / 10 : null
-    const wrapper = document.querySelector(columns.edge)
+    const all = document.querySelectorAll(columns.selector)
+    const right = all.length ? Math.round(all[all.length - 1].getBoundingClientRect().right * 10) / 10 : null
     return {
       boxes,
       columns: cards,
       right,
-      wrapper: wrapper ? { left: Math.round(wrapper.getBoundingClientRect().left * 10) / 10, right: Math.round(wrapper.getBoundingClientRect().right * 10) / 10 } : null,
       scroll: { width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight },
     }
   }, { edges: spec.edges, columns: spec.columns })
 
-  // Reference band bottoms: the mid-point of each detected 2–3px edge band,
-  // because a CSS border sits inside one element and anti-aliases across two rows.
-  const reference = references[spec.reference]
-  const referenceBands = [0, ...reference.edges.map((edge) => Math.round((edge.from + edge.to) / 2))]
-  const expectedBottoms = []
-  for (let i = 0; i < referenceBands.length; i += 1) {
-    const next = referenceBands[i + 1]
-    if (next === undefined) expectedBottoms.push(reference.height)
-    else expectedBottoms.push(next)
-  }
-
+  // Reference band bottoms are pinned per page from the measured edge mid-points.
   console.log(`\n=== ${name} @1122 (${spec.reference}) ===`)
-  let index = 0
   for (const edge of spec.edges) {
     const box = measured.boxes[edge.name]
-    const expected = expectedBottoms[index] ?? null
-    const delta = box && expected !== null ? +(box.bottom - expected).toFixed(1) : null
-    const bad = delta !== null && Math.abs(delta) > TOLERANCE
+    const delta = box ? +(box.bottom - edge.expected).toFixed(1) : null
+    const bad = delta === null || Math.abs(delta) > TOLERANCE
     if (bad) failures += 1
-    console.log(`${edge.name.padEnd(12)} bottom=${box ? box.bottom : 'MISSING'} expected=${expected} delta=${delta === null ? 'n/a' : delta}${bad ? '  ← OUT' : ''}`)
-    index += 1
+    console.log(`${edge.name.padEnd(12)} bottom=${box ? box.bottom : 'MISSING'} expected=${edge.expected} delta=${delta === null ? 'n/a' : delta}${bad ? '  ← OUT' : ''}`)
   }
-  const expectedColumns = [30, 298, 566, 834]
-  console.log(`columns      ${measured.columns.map((left, i) => `${left}${Math.abs(left - (expectedColumns[i] ?? left)) > TOLERANCE ? ` (≠${expectedColumns[i]})` : ''}`).join(' / ')} right=${measured.right}`)
-  if (measured.right !== null && Math.abs(measured.right - 1093) > TOLERANCE) failures += 1
+  const expectedColumns = spec.columns.expected ?? []
+  console.log(`columns      ${measured.columns.map((left, i) => `${left}${expectedColumns[i] !== undefined && Math.abs(left - expectedColumns[i]) > TOLERANCE ? ` (≠${expectedColumns[i]})` : ''}`).join(' / ')} right=${measured.right}`)
+  expectedColumns.forEach((expected, index) => {
+    if (measured.columns[index] !== undefined && Math.abs(measured.columns[index] - expected) > TOLERANCE) failures += 1
+  })
+  if (measured.right !== null && Math.abs(measured.right - spec.columns.right) > TOLERANCE) failures += 1
   console.log(`scroll       ${measured.scroll.width}×${measured.scroll.height}`)
 
   await page.screenshot({ path: join(REPORT_DIR, `${name}-1122.png`), fullPage: true })
-  writeFileSync(join(REPORT_DIR, `${name}.json`), `${JSON.stringify({ measured, expectedBottoms, expectedColumns, reference: spec.reference }, null, 2)}\n`)
+  writeFileSync(join(REPORT_DIR, `${name}.json`), `${JSON.stringify({ measured, expected: spec.edges.map((edge) => [edge.name, edge.expected]), expectedColumns, reference: spec.reference }, null, 2)}\n`)
   console.log(`screenshot   apps/empire-web/out/.fidelity/${name}-1122.png`)
 }
 

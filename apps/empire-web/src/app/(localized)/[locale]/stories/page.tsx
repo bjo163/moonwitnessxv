@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { StoryLibrary } from '../../../../components/StoryUniverse'
+import { LibraryPage } from '../../../../components/story/LibraryPage'
 import { isLocale, routeMetadata } from '../../../../lib/seo'
 
 export const dynamicParams = false
@@ -12,5 +12,5 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function StoriesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (locale !== 'id' && locale !== 'en') notFound()
-  return <StoryLibrary locale={locale} />
+  return <LibraryPage locale={locale} />
 }
