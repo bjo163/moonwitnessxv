@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* global process, console, Buffer */
 /**
  * Safely import the FIVE SHA-256-verified original PNG references from the
  * user-supplied zip. Built-in Node 24 modules only; no NPM package or network.

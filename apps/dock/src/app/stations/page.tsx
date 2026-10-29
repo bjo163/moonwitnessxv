@@ -77,7 +77,7 @@ export default async function StationsPage({
       />
 
       <Panel title={sCopy.filterTitle} subtitle={sCopy.filterSubtitle}>
-        <form className="m-row" style={{ alignItems: 'flex-end', gap: 14 }} method="get" action={localeHref('/stations')}>
+        <form className="m-row" style={{ alignItems: 'flex-end', gap: 14 }} method="get" action={localeHref('/stations')} role="search">
           <Field label={copy.formSearch} htmlFor="q">
             <TextInput id="q" name="q" defaultValue={filters.q ?? ''} placeholder={copy.formSearchStationPlaceholder} icon="FIND" />
           </Field>

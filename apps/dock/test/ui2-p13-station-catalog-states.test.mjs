@@ -40,6 +40,7 @@ test('UI2-P13a every count on the catalog is a field the hub returned', () => {
 
 test('UI2-P13b the filter form is a GET the browser drives without script', () => {
   assert.match(list, /method="get" action=\{localeHref\('\/stations'\)\}/, 'filtering works with JS disabled and survives a reload')
+  assert.match(list, /<form[^>]*method="get"[^>]*role="search"/, 'assistive technology can identify station filters as a search landmark')
   for (const name of ['q', 'genre', 'country']) {
     assert.match(list, new RegExp(`name="${name}"`), `the ${name} filter must be a real form field`)
     assert.match(list, new RegExp(`params\\.set\\('${name}'`), `pagination must carry the ${name} filter forward`)
