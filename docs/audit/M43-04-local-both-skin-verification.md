@@ -11,7 +11,7 @@
 | Static export | `apps/empire-web/out/` from `pnpm --filter @moonwitness/empire-web build` at `1fa799d` |
 | Browser | Playwright 1.64.1, Chromium headless, deviceScaleFactor 1 |
 | Server | throwaway `node:http` file server bound to `127.0.0.1:0`, closed at the end of the run |
-| Artifacts | [`M43-04-local/geometry.json`](M43-04-local/geometry.json) and 22 screenshots at 390 and 1440 in [`M43-04-local/screens/`](M43-04-local/screens/) |
+| Artifacts | [`M43-04-local/geometry.json`](M43-04-local/geometry.json), 22 screenshots at 390 and 1440 in [`M43-04-local/screens/`](M43-04-local/screens/), and [`M43-04-local/states/`](M43-04-local/states/) |
 
 ## Matrix actually observed
 
@@ -39,9 +39,25 @@
 
 The screen captures are viewport screenshots, not full-page, to keep the evidence set at 16 MB.
 
+## Interaction states observed
+
+A second Playwright pass over the same static export (`states/states.json`):
+
+| State | zine (`/`) | empire (`/en`) |
+|---|---|---|
+| Hover on the first `.m-btn` | `transform: translate(-1px,-1px)`, `filter: brightness(1.1)` | same transform and filter |
+| Active (mouse down on the same button) | transform animates toward `+1px,+1px` | same |
+| Disabled controls present | 0 | 0 |
+| Mobile menu (390 only) | no menu control exists on the entry page | `aria-expanded` `false`→`true`, nav `display` `none`→`grid`, height 345px, closes back to `false`; no console errors |
+| Error page `/definitely-missing` | 404, no `data-skin` attribute, computed `--bg` `#07060b` (default `:root` zine), no overflow at 390 or 1440 | no empire-specific 404 is exported |
+
+The 404 console entry is the navigation request itself (404 status), not a script error.
+
 ## Not observed — why the row stays open
 
-- **Hover, active, disabled, empty and error states** were not exercised. The exported pages expose no disabled control to probe, and no empty/error route exists for both skins; the only exported 404 is the entry skin.
+- **Empty state** was not exercised: the exported pages contain no search/filter input and no empty collection view.
+- **Disabled state** has no control to exercise: `:disabled` matches zero elements in both skins, so the state is absent rather than verified.
+- **Error state** exists only as the entry-skin 404; there is no empire-specific error route to compare.
 - **Security headers** (`X-Content-Type-Options`, `frame-ancestors`, referrer policy) cannot be observed from a local file server; the M42-02 live check remains the authority for headers. `noindex, nofollow` was observed as a meta tag only.
 - **WebP responses** were verified by `export-check.mjs` at build time, not over HTTP in this run.
 - **Baseline pixel comparison** was not performed; screenshots here have no committed pre-change counterpart.

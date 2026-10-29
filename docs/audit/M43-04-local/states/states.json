@@ -1,0 +1,111 @@
+{
+  "generatedAt": "2026-10-29T13:51:00.500Z",
+  "runHead": "7b4d219147a6582f728be70438cb90eec98a35e8",
+  "buttons": [
+    {
+      "route": "/",
+      "skin": "zine",
+      "text": "EXPLORE ECOSYSTEM ↘",
+      "normal": {
+        "background": "rgb(255, 212, 0)",
+        "color": "rgb(7, 6, 11)",
+        "transform": "none",
+        "boxShadow": "rgb(255, 0, 122) 2px 2px 0px 0px",
+        "filter": "none"
+      },
+      "hover": {
+        "background": "rgb(255, 212, 0)",
+        "color": "rgb(7, 6, 11)",
+        "transform": "matrix(1, 0, 0, 1, -1, -1)",
+        "boxShadow": "rgb(255, 0, 122) 2px 2px 0px 0px",
+        "filter": "brightness(1.1)"
+      },
+      "active": {
+        "background": "rgb(255, 212, 0)",
+        "color": "rgb(7, 6, 11)",
+        "transform": "matrix(1, 0, 0, 1, 0.84926, 0.84926)",
+        "boxShadow": "rgb(255, 0, 122) 2px 2px 0px 0px",
+        "filter": "brightness(1.1)"
+      },
+      "disabledCount": 0,
+      "consoleErrors": [],
+      "failedRequests": []
+    },
+    {
+      "route": "/en",
+      "skin": "empire",
+      "text": "A BRIGHTER HUMANITY AWAITS",
+      "normal": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(197, 165, 120)",
+        "transform": "none",
+        "boxShadow": "none",
+        "filter": "none"
+      },
+      "hover": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(197, 165, 120)",
+        "transform": "matrix(1, 0, 0, 1, -1, -1)",
+        "boxShadow": "none",
+        "filter": "brightness(1.1)"
+      },
+      "active": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(197, 165, 120)",
+        "transform": "matrix(1, 0, 0, 1, 0.84926, 0.84926)",
+        "boxShadow": "none",
+        "filter": "brightness(1.1)"
+      },
+      "disabledCount": 0,
+      "consoleErrors": [],
+      "failedRequests": []
+    }
+  ],
+  "menu": {
+    "route": "/en",
+    "skin": "empire",
+    "before": {
+      "expanded": "false",
+      "navDisplay": "none",
+      "navVisibility": "visible",
+      "bodyClass": "emp-body"
+    },
+    "after": {
+      "expanded": "true",
+      "navDisplay": "grid",
+      "navVisibility": "visible",
+      "bodyClass": "emp-body",
+      "navHeight": 345
+    },
+    "closedExpanded": "false",
+    "consoleErrors": []
+  },
+  "notFound": [
+    {
+      "width": 390,
+      "status": 404,
+      "skin": null,
+      "bg": "#07060b",
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "heading": "Page not found",
+      "overflow": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "width": 1440,
+      "status": 404,
+      "skin": null,
+      "bg": "#07060b",
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "heading": "Page not found",
+      "overflow": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    }
+  ]
+}
