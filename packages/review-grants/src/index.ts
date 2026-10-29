@@ -424,6 +424,16 @@ function parseStore(store: unknown): GrantStore | null {
     if (grant.revokedByRef !== null && !accountRefs.has(grant.revokedByRef)) return null
     if (grant.supersedesRef !== null && !grantRefs.has(grant.supersedesRef)) return null
   }
+  const byRef = new Map(grants.map((grant) => [grant.grantRef, grant]))
+  for (const grant of grants) {
+    const seen = new Set<string>([grant.grantRef])
+    let cursor = grant.supersedesRef
+    while (cursor !== null) {
+      if (seen.has(cursor)) return null
+      seen.add(cursor)
+      cursor = byRef.get(cursor)?.supersedesRef ?? null
+    }
+  }
   return { accounts: frozen(accounts), grants: frozen(grants) }
 }
 
@@ -450,18 +460,34 @@ function parseContext(raw: unknown): GrantContext | null {
 /**
  * Derive the lifecycle state from the record, supersession links, server time
  * and the bounded pending TTL. A pending request past its TTL is terminal and
- * carries no authority, so it derives as `EXPIRED`.
+ * carries no authority, so it derives as `EXPIRED`. A predecessor becomes
+ * `SUPERSEDED` only once the replacement itself is `ACTIVE`, so an unconfirmed
+ * approval request never revokes the grant it intends to replace.
  */
 export function deriveGrantState(
   grant: ReviewScopeGrant,
   context: { readonly grants: readonly ReviewScopeGrant[]; readonly now: string; readonly pendingTtlMs: number },
 ): GrantState {
+  return deriveState(grant, context.grants, Date.parse(context.now), context.pendingTtlMs, new Set())
+}
+
+function deriveState(
+  grant: ReviewScopeGrant,
+  grants: readonly ReviewScopeGrant[],
+  nowMs: number,
+  pendingTtlMs: number,
+  seen: Set<string>,
+): GrantState {
   if (grant.revokedAt !== null) return 'REVOKED'
-  if (context.grants.some((other) => other.supersedesRef === grant.grantRef)) return 'SUPERSEDED'
-  const nowMs = Date.parse(context.now)
+  if (seen.has(grant.grantRef)) return 'SUPERSEDED'
+  seen.add(grant.grantRef)
+  const replacement = grants.find((other) => other.supersedesRef === grant.grantRef)
+  if (replacement !== undefined && deriveState(replacement, grants, nowMs, pendingTtlMs, seen) === 'ACTIVE') {
+    return 'SUPERSEDED'
+  }
   if (nowMs >= Date.parse(grant.expiresAt)) return 'EXPIRED'
   if (grant.grantKind === 'approve' && grant.confirmedByRef === null) {
-    if (nowMs - Date.parse(grant.issuedAt) > context.pendingTtlMs) return 'EXPIRED'
+    if (nowMs - Date.parse(grant.issuedAt) > pendingTtlMs) return 'EXPIRED'
     return 'PENDING_CONFIRMATION'
   }
   return 'ACTIVE'

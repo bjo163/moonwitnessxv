@@ -230,6 +230,58 @@ test('T10 a second live grant needs explicit supersession', () => {
   assert.equal(stateOf(book.grants.find((grant) => grant.grantRef === 'grant:fixture:003'), book), 'ACTIVE')
 })
 
+test('T10b an unconfirmed approve replacement leaves the predecessor live', () => {
+  const book = ledger()
+  commit(requestGrant(request({ grantKind: 'approve', lane: 'D05.RESEARCH' }), context(book.grants)), book)
+  commit(
+    confirmGrant(
+      { grantRef: 'grant:fixture:001', reasonRef: 'reason:fixture:002' },
+      context(book.grants, ADMIN_B, LATER),
+    ),
+    book,
+  )
+
+  const replacement = requestGrant(
+    request({
+      grantRef: 'grant:fixture:002',
+      grantKind: 'approve',
+      lane: 'D05.RESEARCH',
+      reasonRef: 'reason:fixture:003',
+      supersedesRef: 'grant:fixture:001',
+    }),
+    context(book.grants, ADMIN_A, '2026-10-29T12:00:00.000Z'),
+  )
+  commit(replacement, book)
+  const atRequest = '2026-10-29T12:00:00.000Z'
+  assert.equal(stateOf(book.grants.find((grant) => grant.grantRef === 'grant:fixture:001'), book, atRequest), 'ACTIVE')
+  assert.equal(stateOf(book.grants.find((grant) => grant.grantRef === 'grant:fixture:002'), book, atRequest), 'PENDING_CONFIRMATION')
+
+  const stillOld = loadReviewerGrants(
+    { principalRef: GRANTEE, domain: 'D05_RESEARCH', scope: 'public', at: atRequest },
+    store(book.grants),
+  )
+  assert.equal(stillOld.ok, true)
+  assert.deepEqual(stillOld.grants.map((grant) => grant.grantRef), ['grant:fixture:001'])
+
+  commit(
+    confirmGrant(
+      { grantRef: 'grant:fixture:002', reasonRef: 'reason:fixture:004' },
+      context(book.grants, ADMIN_B, '2026-10-29T13:00:00.000Z'),
+    ),
+    book,
+  )
+  const atConfirm = '2026-10-29T13:00:00.000Z'
+  assert.equal(stateOf(book.grants.find((grant) => grant.grantRef === 'grant:fixture:001'), book, atConfirm), 'SUPERSEDED')
+  assert.equal(stateOf(book.grants.find((grant) => grant.grantRef === 'grant:fixture:002'), book, atConfirm), 'ACTIVE')
+
+  const nowNew = loadReviewerGrants(
+    { principalRef: GRANTEE, domain: 'D05_RESEARCH', scope: 'public', at: atConfirm },
+    store(book.grants),
+  )
+  assert.equal(nowNew.ok, true)
+  assert.deepEqual(nowNew.grants.map((grant) => grant.grantRef), ['grant:fixture:002'])
+})
+
 test('T11 confirmation after the pending TTL never activates the grant', () => {
   const book = ledger()
   commit(requestGrant(request({ grantKind: 'approve', lane: 'D07.STORY' }), context(book.grants)), book)
