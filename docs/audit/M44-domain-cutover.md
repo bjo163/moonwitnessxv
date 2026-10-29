@@ -1,8 +1,8 @@
 # M44 — Domain cutover: runbook and current evidence
 
-**Status: REPOSITORY SIDE IMPLEMENTED; CUTOVER NOT EXECUTED.** 29 October 2026 (Asia/Jakarta). Decision: [ADR-0016](../decisions/ADR-0016-public-domain-map.md). [TODO](../../TODO.md) owns task status; this note is the operator runbook and the place to paste evidence.
+**Status: CUTOVER EXECUTED 2026-10-29; SIX OF NINE HOSTS VERIFIED, SKYLINK NOT SERVING.** 29 October 2026 (Asia/Jakarta). Decision: [ADR-0016](../decisions/ADR-0016-public-domain-map.md). [TODO](../../TODO.md) owns task status; this note is the operator runbook and the place to paste evidence.
 
-Nothing in this file proves a hostname is live. DNS, certificates and redirects are operator actions on the registrar and the Coolify host; the repository cannot observe them.
+The evidence in §8 and §9 comes from probes run against the public hosts and the Coolify API on 2026-10-29. This host's system resolver is stale (it still answers `a-l-l-a-h.com` with the old Hostinger parking IP `2.57.91.91`), so every probe below pins the Cloudflare edge with `--resolve` or the Playwright `--host-resolver-rules` flag, and every DNS answer was read through `https://dns.google/resolve`.
 
 ## 1. What is already in the repository
 
@@ -189,3 +189,210 @@ for p in 3000 3001 3002 3003 3004 3005 3006 3007; do timeout 3 bash -c "</dev/tc
 1. Point `a-l-l-a-h.com` and `www.a-l-l-a-h.com` from the Hostinger parking IP to `163.61.134.104`, then attach `https://a-l-l-a-h.com` to `empire-web` (3010) and the `www` redirect.
 2. Create the `www`, `hq`, `orbit`, `media`, `skylink` names (CNAME → `moonwitness.biz.id`, proxied) and attach the matching Coolify domains.
 3. Enable HSTS at the Cloudflare edge for `moonwitness.biz.id`, or accept that the apex will be the only host sending it (empire-web's nginx already does).
+
+## 9. Cutover executed — 2026-10-29 (DNS, edge, Coolify bindings)
+
+Steps 8.5.1 and 8.5.2 were carried out on 2026-10-29 in the Cloudflare dashboard and through the Coolify API. This section replaces them as the current state.
+
+### 9.1 DNS record set
+
+Zone registrations were switched to Cloudflare earlier in the milestone; verified again here.
+
+| Zone | Name servers |
+|---|---|
+| `a-l-l-a-h.com` | `dilbert.ns.cloudflare.com`, `sunny.ns.cloudflare.com` |
+| `moonwitness.biz.id` | `brian.ns.cloudflare.com`, `chan.ns.cloudflare.com` |
+
+`moonwitness.biz.id` zone export (`C:/Users/bjo16/Downloads/moonwitness.biz.id.txt`, exported from the dashboard):
+
+```text
+moonwitness.biz.id.          1 IN A     163.61.134.104          ; cf-proxied:true
+www.moonwitness.biz.id.      1 IN CNAME moonwitness.biz.id.    ; cf-proxied:true
+hq.moonwitness.biz.id.       1 IN CNAME moonwitness.biz.id.    ; cf-proxied:true
+orbit.moonwitness.biz.id.    1 IN CNAME moonwitness.biz.id.    ; cf-proxied:true
+media.moonwitness.biz.id.    1 IN CNAME moonwitness.biz.id.    ; cf-proxied:true
+skylink.moonwitness.biz.id.  1 IN CNAME moonwitness.biz.id.    ; cf-proxied:true
+```
+
+`a-l-l-a-h.com` answers as a proxied apex A record and a proxied `www`; the proxied answers come from the Cloudflare edge:
+
+```bash
+curl -s 'https://dns.google/resolve?name=a-l-l-a-h.com&type=A'          # 104.21.32.59, 172.67.184.57
+curl -s 'https://dns.google/resolve?name=www.a-l-l-a-h.com&type=A'      # 104.21.32.59, 172.67.184.57
+curl -s 'https://dns.google/resolve?name=moonwitness.biz.id&type=A'     # 104.21.76.120, 172.67.194.50
+curl -s 'https://dns.google/resolve?name=hq.moonwitness.biz.id&type=A'  # 104.21.76.120, 172.67.194.50
+```
+
+Proxied answers carry TTL 300, which is the TTL M44-09 requires before cutover. `cockpit` and `ai` return NXDOMAIN (`Status: 3`) in both DoH and anycast, which is the Variant A outcome M44-07 asks for. No `NS`, `MX`, `SPF`, `DKIM` or `DMARC` record was touched.
+
+### 9.2 `www` redirects (edge, not Coolify)
+
+**Deviation from M44-02, recorded deliberately.** The packet asks for the `www` 301 to be configured once, in Coolify. Coolify's compose integration exposes no redirect primitive — a compose domain is `scheme://host[:port][/path]` with nothing that can express "301 every path to another host" — so the redirect was configured as one Cloudflare Single Redirect (wildcard) rule per zone:
+
+| Zone | Rule | Target |
+|---|---|---|
+| `a-l-l-a-h.com` | `www.a-l-l-a-h.com/*` → dynamic | `https://a-l-l-a-h.com/${1}`, 301, query string preserved |
+| `moonwitness.biz.id` | `www.moonwitness.biz.id/*` → dynamic | `https://moonwitness.biz.id/${1}`, 301, query string preserved |
+
+Observed, one hop each, path and query preserved:
+
+```bash
+curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' --resolve www.a-l-l-a-h.com:443:104.21.32.59 https://www.a-l-l-a-h.com/en
+# 301 https://a-l-l-a-h.com/en
+curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' --resolve www.a-l-l-a-h.com:443:104.21.32.59 'https://www.a-l-l-a-h.com/id?z=9'
+# 301 https://a-l-l-a-h.com/id?z=9
+curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' 'https://www.moonwitness.biz.id/id?y=2'
+# 301 https://moonwitness.biz.id/id?y=2
+```
+
+A `www` request never reaches the origin, so the redirect stays a single hop and no `www` certificate is needed on the Coolify server.
+
+### 9.3 Coolify host bindings
+
+`GET /api/v1/applications/hm1sboa7yp2p6ttuc9jukzzp` (`docker_compose_domains`, read 2026-10-29T16:49Z):
+
+| Service | Bound domain |
+|---|---|
+| `empire-web` | `https://a-l-l-a-h.com` |
+| `dock` | `https://moonwitness.biz.id` |
+| `hq` → `headquarters` | `https://hq.moonwitness.biz.id` |
+| `arsy` | `https://api.moonwitness.biz.id` |
+| `orbit` | `https://orbit.moonwitness.biz.id` |
+| `echolog` | `https://media.moonwitness.biz.id` |
+| `skylink` | `https://skylink.moonwitness.biz.id/api/v1/webhooks` |
+
+`db`, `backup`, `sentinel` and `lumen-runtime` carry no domain, as M44-02 requires. `cockpit` and `ai` were deliberately left unbound (M44-07 Variant A). Deployments observed this session: `6xueyhxvpbhmoh3ronsye7ai` and `dw8ng6m3eti9kc2kigpzw6va`.
+
+### 9.4 Certificates
+
+Read from the origin with `openssl s_client -connect 163.61.134.104:443 -servername <host>`:
+
+| Host | Issuer | SAN | Validity |
+|---|---|---|---|
+| `a-l-l-a-h.com` | Let's Encrypt `YR2` | `a-l-l-a-h.com` | 2026-10-29 → 2027-01-27 |
+| `moonwitness.biz.id` | Let's Encrypt `YR1` | `moonwitness.biz.id` | 2026-08-31 → 2026-11-29 |
+| `hq.moonwitness.biz.id` | Let's Encrypt `YR2` | `hq.moonwitness.biz.id` | 2026-10-29 → 2027-01-27 |
+| `api.moonwitness.biz.id` | Let's Encrypt `YR1` | `api.moonwitness.biz.id` | 2026-08-31 → 2026-11-29 |
+| `orbit.moonwitness.biz.id` | Let's Encrypt `YR2` | `orbit.moonwitness.biz.id` | 2026-10-29 → 2027-01-27 |
+| `media.moonwitness.biz.id` | Let's Encrypt `YR1` | `media.moonwitness.biz.id` | 2026-10-29 → 2027-01-27 |
+| `skylink.moonwitness.biz.id` | **TRAEFIK DEFAULT CERT** | the Traefik self-signed default | 2026-10-29 → 2027-10-29 |
+
+Skylink has no certificate because no container is behind its router (§9.7).
+
+### 9.5 Host matrix observed
+
+All probes pinned to the Cloudflare edge; `AH=104.21.32.59`, `MW=104.21.76.120`.
+
+| Row | Result |
+|---|---|
+| `a-l-l-a-h.com/`, `/en`, `/id` | 200 at the apex |
+| `/id` meta | `<html lang="id">`, `robots: index, follow`, canonical `https://a-l-l-a-h.com/id`, alternates `id`/`en`/`x-default` |
+| `/en` headers | `strict-transport-security: max-age=15552000`, `x-content-type-options: nosniff`, `x-frame-options: DENY`, `referrer-policy: strict-origin-when-cross-origin`, `Server: cloudflare` |
+| `/sitemap.xml` | 200, 23 `<loc>` |
+| `/robots.txt` | 200, `User-Agent: *`, `Allow: /`, `Host: https://a-l-l-a-h.com`, `Sitemap: https://a-l-l-a-h.com/sitemap.xml` |
+| `www.a-l-l-a-h.com/*` | 301 → apex, one hop, query preserved |
+| `www.moonwitness.biz.id/*` | 301 → dock, one hop, query preserved |
+| `moonwitness.biz.id/` | 307 → `/en`; `/en` 200 with CSP, `nosniff`, `DENY`, referrer policy; canonical `https://moonwitness.biz.id/en` |
+| `hq.moonwitness.biz.id/` | 307 → `/login`; `/login` 200 with title `Moonwitness HQ` |
+| `orbit.moonwitness.biz.id/` | 200, title `ORBIT — Spatial Agent Operations | MoonWitness XV` |
+| `api.moonwitness.biz.id/api/v1/health` | 200 `{"ok":true,…}` |
+| API preflight, `Origin: https://moonwitness.biz.id` | 204 with `access-control-allow-origin: https://moonwitness.biz.id` |
+| API preflight, `Origin: https://evil.example` | 204 with **no** `access-control-allow-origin` |
+| `media.moonwitness.biz.id/health` | 200 `{"status":"ok","app":"echolog","port":3006}` |
+| `media…/api/v1/objects/sha256/<digest>` (no grant, no bearer) | **401** `{"error":{"code":"unauthorized",…}}` — anonymous reads are refused |
+| `skylink.moonwitness.biz.id/` | **503** `no available server` |
+| `cockpit…`, `ai…` | NXDOMAIN in DoH (`Status: 3`) — no route |
+| Vercel `a-l-l-a-h-empire-web.vercel.app/en` | 200, `X-Robots-Tag: noindex, nofollow` |
+| Vercel `a-l-l-a-h-empire-web-bjo163s-projects.vercel.app/en` | 200, `X-Robots-Tag: noindex, nofollow` |
+
+**Media row deviation.** M44-08 expects `403` for an unsigned object and a `200` for a SigV4 fixture. The implementation splits the surface in two: the JSON object API refuses an unauthenticated read with `401 unauthorized`, and the S3/SigV4 surface only registers when `ECHOLOG_S3_BUCKET` *and* both S3 keys are set — none are set in Coolify, so `/moonwitness/<key>` returns 404 and no SigV4 fixture can be observed at all. Enabling it means creating S3 credentials for the deployment, which is operator work.
+
+### 9.6 Defect found and fixed: the BFFs could not reach the hub
+
+The first live login attempt returned `303 /login?error=unavailable`, and the Coolify log for the stack repeated:
+
+```text
+⨯ [TypeError: fetch failed] { cause: Error: getaddrinfo ENOTFOUND radio … hostname: 'radio' }
+```
+
+Coolify rewrites the compose file so every service joins its own external network (`networks: {<uuid>: null}`); `arsy` keeps `default: {aliases: [radio]}`, and no other service joins `default`, so the legacy `radio` alias is never registered where the BFFs resolve it. `headquarters`, `dock`, `orbit` and `sentinel` now dial `http://arsy:3000${API_PREFIX:-/api/v1}`. Fixed in `25a1e784fbce7c3134ad360bde20d10216b9cd32`; the compose contract test asserts both the new host and the absence of the old one (`pnpm --filter @moonwitness/arsy exec tsx --test test/compose-contract.test.ts` → 17/17).
+
+That defect is also what the browser pass saw: dock `/en` and `/id` rendered the route error boundary ("Transmission Interrupted", React error `#441`) instead of the page, at the edge and at the origin alike.
+
+### 9.7 Rows still not observed
+
+| Row | Why |
+|---|---|
+| `skylink.moonwitness.biz.id` | The `skylink` compose service sits behind `profiles: ["skylink"]`, and Coolify does not honour `COMPOSE_PROFILES` ([coollabsio/coolify#6395](https://github.com/collabsio/coolify/issues/6395)), so no container starts and Traefik has no backend. `SKYLINK_SERVICE_KEY` is also unset, and SKYLINK refuses to boot in production without it. No webhook row can be measured until M38 messaging exists |
+| SigV4 fixture on `media` | S3 surface not enabled (§9.5) |
+| `http://` → `https://` upgrade | Probed through the local resolver, which still answers the parking IP for `a-l-l-a-h.com`; the redirect was not observed through a clean resolver |
+| HSTS on `moonwitness.biz.id` and subdomains | Absent at the edge and at the origin. Only `a-l-l-a-h.com` sends it (empire-web nginx) |
+| 48 h alias retention, timed `www` repoint rehearsal | M44-09; the clock starts at this cutover |
+
+### 9.8 Operator actions left
+
+1. Enable HSTS for `moonwitness.biz.id` in Cloudflare (SSL/TLS → Edge Certificates), or accept a per-host split.
+2. Decide the SKYLINK host: leave it bound and failing, detach it until M38 lands, or drop the profile and provide `SKYLINK_SERVICE_KEY`.
+3. Add the Cloudflare analytics host to dock's CSP or disable automatic injection — the beacon script is blocked by `script-src 'self'` and logs a console error on every page.
+4. Create S3 credentials for `media` if the SigV4 row is to be verified.
+
+## 10. Post-fix verification — 2026-10-29 17:16–17:20Z
+
+`373324e` (containing `25a1e78`, the BFF networking fix) was promoted to `main` at ~16:57Z and Coolify redeployed the stack. All probes below run against the public hosts through the Cloudflare edge.
+
+### 10.1 HQ login and cookie
+
+```bash
+curl -sS -c jar -D - -o /dev/null -X POST \
+  --resolve hq.moonwitness.biz.id:443:104.21.76.120 \
+  -H 'content-type: application/json' \
+  -d '{"login":"admin","password":"<from .env.coolify>"}' \
+  https://hq.moonwitness.biz.id/api/session
+curl -sS -b jar -o /dev/null -w '%{http_code}\n' https://hq.moonwitness.biz.id/
+curl -sS -b jar -o /dev/null -w '%{http_code}\n' https://hq.moonwitness.biz.id/world-monitor
+```
+
+| Check | Result |
+|---|---|
+| `POST /api/session` | `303 See Other`, `location: /` — no `?error=unavailable` |
+| `Set-Cookie` | `hq_token=<redacted>; Path=/; Expires=Thu, 05 Nov 2026 17:19:57 GMT; Max-Age=604800; Secure; HttpOnly; SameSite=lax` |
+| `Domain` attribute | absent (host-only cookie) |
+| `GET /` with the cookie | 200, title `Moonwitness HQ` |
+| `GET /world-monitor` with the cookie | 200 |
+
+The `error=unavailable` failure from §9.6 is gone, so the BFFs reach the hub again. Availability during the redeploy was not clean: `hq` answered 503 from 17:13:40Z to 17:16:30Z while Coolify recreated the container, then held 200 for every probe from 17:16:37Z onward.
+
+### 10.2 Browser pass at 390 / 768 / 1440
+
+Playwright (Chromium, `--host-resolver-rules` pinning the two zones to their Cloudflare edge addresses), `domcontentloaded` + element wait, then a 2.5 s settle. Six pages × three widths.
+
+| Page | 390 | 768 | 1440 | Route error boundary | Horizontal overflow |
+|---|---|---|---|---|---|
+| `a-l-l-a-h.com/en` | 200 | 200 | 200 | no | 0 px |
+| `a-l-l-a-h.com/id` | 200 | 200 | 200 | no | 0 px |
+| `moonwitness.biz.id/en` | 200 | 200 | 200 | no | 0 px |
+| `moonwitness.biz.id/id` | 200 | 200 | 200 | no | 0 px |
+| `hq.moonwitness.biz.id/login` | 200 | 200 | 200 | no | **21 px at 390** |
+| `orbit.moonwitness.biz.id/` | 200 | 200 | 200 | no | 0 px |
+
+Dock now renders its page at every width; the "Transmission Interrupted" boundary from §9.6 is gone and no React error appears in the console. Screenshots were written to `.m44-shots/` locally and are not committed (they are throwaway captures, ~4 MB total).
+
+Two defects surfaced by the pass, neither part of the M44 matrix:
+
+1. **HQ login overflows 21 px at 390.** Offenders reported by `getBoundingClientRect`: `DIV.m-row`, `DIV.m-zine-sticker`, `LABEL.m-row`, `SELECT` (the language picker), `A.m-btn`. The page also renders a broken image box above the "WITNESS THE REAL" sticker.
+2. **Dock's CSP blocks the Cloudflare analytics beacon** (`script-src 'self'`), producing one console error per page. Nothing else in the console fails.
+
+### 10.3 What this closes
+
+| Row | State |
+|---|---|
+| M44-02 host binding and certificate table | Nine of ten rows pass; skylink has no backend (§9.7) |
+| M44-05 Vercel preview-only | Closed: header proof on both aliases, apex served by Coolify |
+| M44-07 Variant A | Closed: both hostnames NXDOMAIN, unbound in Coolify |
+| M44-08 hq cookie, apex meta, sitemap, robots, CORS, redirects, certificates, browser pass | Observed |
+| M44-08 media unsigned object | Refused with `401`, not `403` (§9.5); SigV4 fixture still unobservable |
+| M44-08 skylink webhook rows | Not observable; no container (§9.7) |
+| M44-09 TTL 300 | Observed |
+| M44-09 48 h retention and timed drill | Not started/not possible (§9.7, packet note) |
+
+`DEPLOYED_VERIFIED` in `docs/architecture/RELEASE.md` is **not** claimed: the matrix still has two unobserved rows.
