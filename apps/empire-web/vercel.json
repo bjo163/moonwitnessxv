@@ -1,8 +1,18 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --filter @moonwitness/core build && pnpm --filter @moonwitness/moonui build && pnpm --filter @moonwitness/empire-web build",
+  "outputDirectory": "out",
+  "framework": "nextjs",
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"

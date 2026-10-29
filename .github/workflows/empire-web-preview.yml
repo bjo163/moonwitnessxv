@@ -2,7 +2,10 @@ name: Empire Web Preview Build
 
 on:
   push:
-    branches: [feature/empire-web-vercel]
+    # The pilot's release branch is `main`: ADR-0012 authorizes the isolated
+    # production project there. The old `feature/empire-web-vercel` branch was
+    # merged and deleted, which left this workflow unable to ever run again.
+    branches: [main]
     paths:
       - 'apps/empire-web/**'
       - 'packages/moonui/**'
@@ -17,6 +20,7 @@ on:
       - 'packages/core/**'
       - 'pnpm-lock.yaml'
       - '.github/workflows/empire-web-preview.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
