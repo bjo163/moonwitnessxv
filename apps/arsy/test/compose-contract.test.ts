@@ -60,6 +60,36 @@ function services(): Map<string, string> {
 
 const blocks = services()
 
+/** The `ports:` entries of one service block, as written (`127.0.0.1:5432:5432`, `3001:3001`). */
+function portBindings(block: string): string[] {
+  const lines = block.split('\n')
+  const at = lines.findIndex((line) => /^\s{4}ports:\s*$/.test(line))
+  if (at < 0) return []
+  const out: string[] = []
+  for (let index = at + 1; index < lines.length && /^\s{6}-/.test(lines[index]!); index += 1) {
+    out.push(lines[index]!.trim().replace(/^-\s*/, '').replace(/"/g, ''))
+  }
+  return out
+}
+
+test('compose: only the frontends and the hub publish off loopback', () => {
+  // M27-10 — a service that binds 0.0.0.0 is reachable from the host network even
+  // when the reverse proxy never routes to it. The database, ECHOLOG, SKYLINK,
+  // the AI gateway and the pilot frontends are internal by default; the two
+  // public frontends and the hub are the deliberate host-published surface, and
+  // their wide binding is the open production-security review item (RELEASE.md),
+  // not an approved posture.
+  const wide = [...blocks].filter(([, block]) => portBindings(block).some((entry) => /^\d+:/.test(entry))).map(([name]) => name).sort()
+  assert.deepEqual(wide, ['arsy', 'dock', 'headquarters'], 'a service gained or lost a host-wide port binding')
+
+  for (const name of ['db', 'echolog', 'skylink', 'aigateway', 'orbit', 'empire-web']) {
+    const block = blocks.get(name)
+    if (!block) continue
+    const open = portBindings(block).filter((entry) => !entry.startsWith('127.0.0.1:'))
+    assert.deepEqual(open, [], `${name} must stay loopback-bound by default`)
+  }
+})
+
 test('compose: every service declares a healthcheck', () => {
   assert.ok(blocks.size >= 5, `only found ${blocks.size} services`)
   const missing = [...blocks].filter(([, block]) => !/^\s{4}healthcheck:/m.test(block)).map(([name]) => name)
