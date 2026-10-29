@@ -78,8 +78,9 @@ test('UI2-P14b a failed catalog read is stated as unknown, not counted as zero s
   assert.ok(denpaCopy.en.badgeStationsUnknown !== denpaCopy.id.badgeStationsUnknown)
 })
 
-test('UI2-P14c the compose fields carry help, a counter and an announced status', () => {
-  assert.match(deck, /role="status" aria-live="polite"/, 'the transmit result is announced, not only coloured')
+test('UI2-P14c the compose fields carry help, a counter and an announced result', () => {
+  assert.match(deck, /role=\{statusMsg\.tone === 'hot' \? 'alert' : 'status'\}/, 'failures interrupt as alerts while success is a status')
+  assert.match(deck, /aria-live=\{statusMsg\.tone === 'hot' \? 'assertive' : 'polite'\}/, 'announcement urgency follows the result')
   assert.match(deck, /aria-label=\{copy\.formDenpaCharCounterAria\}/, 'the counter has an accessible name')
   assert.match(deck, /htmlFor="denpa-pseudo"[\s\S]{0,80}hint=\{copy\.formDenpaPseudonymHint\}/, 'the handle field states its own limit rule')
   const msgStart = deck.indexOf('id="denpa-msg"')
