@@ -1,6 +1,6 @@
 # M43-01 — MoonUI skin layer: implementation and verification evidence
 
-**Status: IMPLEMENTED AND VERIFIED LOCALLY; RELEASE NOT PERFORMED.** 29 October 2026 (Asia/Jakarta). [TODO](../../TODO.md) owns task status; this note records evidence only and closes nothing.
+**Status: IMPLEMENTED AND VERIFIED LOCALLY; RELEASED at promotion SHA `e740900`.** 29 October 2026 (Asia/Jakarta). [TODO](../../TODO.md) owns task status; this note records evidence only and closes nothing. Promotion, production redeploy and the live both-skin proof are recorded in [M43-04-both-skin-release.md](M43-04-both-skin-release.md).
 
 ## Baseline recorded before the change
 
@@ -63,7 +63,7 @@ Artifacts live in the gitignored build directory `apps/empire-web/out/.screens/{
 - **Contrast-pair deviation from the plan.** The plan listed `on-brand/brand-2 ≥ 4.5`, which no skin can satisfy (`#f7f4ec` on `#ff007a` is 3.45:1 in zine, `#14100a` on `#db1e31` is 3.83:1 in empire) and which no primitive actually renders — `.m-btn[data-variant="accent"]` pairs `--on-brand` with `--brand`. `skins.test.ts` therefore asserts the pairs the components use: `on-brand/brand` (13.8:1 zine, 8.2:1 empire) and, for empire, `fg/brand-2-strong` (6.4:1) plus `brand-2` against the canvas at ≥3:1 for non-text accents. Zine's pre-existing white-on-pink 3.45:1 is grandfathered, not introduced here.
 - Six 8-digit alpha forms of the panel surface remain literal in `apps/empire-web/src/app/globals.css` (`#111316ef`, `#111316e8`, `#111316dd`, `#11131655`, `#11131635`, `#11131629`) because they overlay artwork and `color-mix()` is only used elsewhere behind `@supports`. The spec's rule permits the nearest solid token in exactly this case; they are frozen decorative overlays, not palette declarations.
 - `pnpm lint` repo-wide is red for pre-existing reasons; only the changed paths were linted.
-- No commit, push, `dev`→`main` promotion or Vercel redeploy was performed. Rollback target for that step is production deployment `dpl_G4b6HsDLK81qseMRYHA251jmCTqe` at `cea723ca`.
+- No commit, push, `dev`→`main` promotion or Vercel redeploy was performed at the time this note was written. That step happened later at `e740900`: see [M43-04-both-skin-release.md](M43-04-both-skin-release.md), which records the green CI run, the fast-forward of `main`, release `v2.20.0` and the live skin values. Rollback target remains production deployment `dpl_G4b6HsDLK81qseMRYHA251jmCTqe` at `cea723ca`.
 
 ## Rollback
 
