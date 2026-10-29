@@ -2,9 +2,9 @@
 
 **Task:** M19-07 — "Run J01/J03 browser acceptance; J05 only when Story is in release scope".
 **Acceptance:** "Selected-scope flows pass with accessibility; optional Story cannot block Reader".
-**Result: MET at this baseline.** A real Chromium run against the ephemeral in-memory Hub plus the Dock dev server passed 29/29 clauses in both locales, with the reader passage rendered at full width and the skip link as the first keyboard focus stop. This is a browser-acceptance record, not an accessibility certification or a deployment.
+**Result: MET at this baseline.** A real Chromium run against the ephemeral in-memory Hub plus the Dock dev server passed 39/39 clauses in both locales and at six viewport widths, with the reader passage rendered at full width and the skip link as the first keyboard focus stop. This is a browser-acceptance record, not an accessibility certification or a deployment.
 
-**Run baseline:** `ca80eeabacc11f42a8a8578daa946bafb7dafc8a` (`dev`) plus the uncommitted fix described below. The implementation commit is recorded in `TODO.md` at closure; this record is superseded by that SHA as evidence of the exact tree.
+**Run baseline:** `ca80eeabacc11f42a8a8578daa946bafb7dafc8a` (`dev`) plus the reader/skip-link fix committed at `818a92d86a2c0ff97fad833504b361fba3f2fd34`. The breakpoint sweep, visibility wait and this record are a later commit whose SHA is cited in `TODO.md`.
 
 **Supersedes:** [M19-07-j01-j03-browser-acceptance-attempt.md](M19-07-j01-j03-browser-acceptance-attempt.md) (NOT MET at `8cd98ab183c528110fed82e56f7b045291f5db68`).
 
@@ -26,7 +26,8 @@ The harness is committed as `scripts/ui/m19-07-acceptance.mjs` and stays out of 
 
 - spawns `scripts/ui/ephemeral-hub.mjs` through the `apps/arsy` tsx CLI with `MOONQL_AUTH_ADMIN_PASSWORD` set to a throwaway value, in-memory engine, cron off, seeded, on a free loopback port;
 - spawns the Dock dev server on another free loopback port with `RADIO_API_URL` pointing at that hub;
-- drives Chromium at 1440×900 and 390×844, asserting the J01 search/source/translation/citation clauses in `en` and `id`, the J03 comparison journey, the skip-link focus order and the narrow-viewport contract;
+- drives Chromium at 1440×900, asserting the J01 search/source/translation/citation clauses in `en` and `id`, the J03 comparison journey and the skip-link focus order, then sweeps 390, 640, 768, 900, 1280 and 1440 px — both sides of the 640 px container query and the 900 px rail breakpoint — for overflow and passage/Arabic width;
+- waits for `article.dk-reader-passage` to have a visible box before measuring: the route is `force-dynamic` and streams its panel, so a measurement taken at the `load` event can sample a 0×0 box that says nothing about layout. An earlier harness revision did exactly that and reported intermittent 0×0 passages; with the wait, two consecutive runs passed 39/39. This was a sampling race in the harness, not a regression in the page;
 - stops both processes and the browser in `finally`.
 
 Command (repository root), exit code **0**:
@@ -66,10 +67,20 @@ PASS  id: J01 Arabic source is visible with real width — box={"width":364,"hei
 PASS  id: J01 licensed translation renders — Adapun orang-orang yang beriman dan beramal saleh, mereka it
 PASS  id: citation panel renders beside the passage — box={"width":406,"height":504}
 PASS  390px: no horizontal overflow — scrollWidth=390 innerWidth=390
-PASS  390px: the Arabic source stays visible — {"width":292,"height":168}
+PASS  390px: the passage and Arabic source keep real width — passage={"width":326,"height":760} arabic={"width":292,"height":168}
+PASS  640px: no horizontal overflow — scrollWidth=640 innerWidth=640
+PASS  640px: the passage and Arabic source keep real width — passage={"width":576,"height":565} arabic={"width":542,"height":120}
+PASS  768px: no horizontal overflow — scrollWidth=768 innerWidth=768
+PASS  768px: the passage and Arabic source keep real width — passage={"width":704,"height":576} arabic={"width":670,"height":128}
+PASS  900px: no horizontal overflow — scrollWidth=900 innerWidth=900
+PASS  900px: the passage and Arabic source keep real width — passage={"width":836,"height":599} arabic={"width":802,"height":146}
+PASS  1280px: no horizontal overflow — scrollWidth=1280 innerWidth=1280
+PASS  1280px: the passage and Arabic source keep real width — passage={"width":406,"height":800} arabic={"width":364,"height":240}
+PASS  1440px: no horizontal overflow — scrollWidth=1440 innerWidth=1440
+PASS  1440px: the passage and Arabic source keep real width — passage={"width":406,"height":800} arabic={"width":364,"height":240}
 J05 / Story: NOT RUN — Story is not in release scope (matches the M19-07 row).
 
-29/29 clauses PASS
+39/39 clauses PASS
 ```
 
 Before the fix the same diagnostic measured `p.dk-reader-arabic box=0x3984` inside `ARTICLE.dk-reader-passage box=42x8773`; the run above measures the same paragraph at `364×240` inside a `406×800` article, so the collapse is gone rather than masked.
@@ -83,7 +94,7 @@ apps/dock: pnpm typecheck    → tsc --noEmit, no diagnostics
 
 ## What this proves and what it does not
 
-- Proves: at 1440 px the selected-scope Reader journey (search entry, seeded rights-cleared Arabic source, licensed translation, reproducible citation) is usable and visible in `en` and `id`; the comparative route resolves and withholds its body without fabricating names; the skip link is the first focus stop and moves focus to `main#main`; the reader does not overflow at 390 px; Story is not required and was not exercised.
+- Proves: at 1440 px the selected-scope Reader journey (search entry, seeded rights-cleared Arabic source, licensed translation, reproducible citation) is usable and visible in `en` and `id`; the comparative route resolves and withholds its body without fabricating names; the skip link is the first focus stop and moves focus to `main#main`; at 390, 640, 768, 900, 1280 and 1440 px the reader neither overflows nor loses the passage/Arabic width; Story is not required and was not exercised.
 - Does not prove: any other journey, a deployment, the real Hub, production data, a screen-reader matrix, or a WCAG conformance claim. The run used loopback ports, an in-memory seeded engine and throwaway credentials only.
 - J05 / Story remains NOT RUN by design; the TODO row keeps that conditional.
 

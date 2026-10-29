@@ -106,6 +106,15 @@ async function measure(page) {
   })
 }
 
+// The reader route is force-dynamic and streams its panel, so a `load` event can
+// precede the ready panel; measuring at that instant yields a 0x0 box that says
+// nothing about layout. Wait for the passage to have a visible box first.
+async function openReader(page, url) {
+  const response = await page.goto(url, { waitUntil: 'load', timeout: 180000 })
+  await page.locator('article.dk-reader-passage').waitFor({ state: 'visible', timeout: 120000 })
+  return response
+}
+
 const children = []
 let browser
 let exitCode = 1
@@ -146,7 +155,7 @@ try {
   const page = await context.newPage()
 
   for (const locale of ['en', 'id']) {
-    const response = await page.goto(`${dockUrl}/${locale}/reader`, { waitUntil: 'load', timeout: 180000 })
+    const response = await openReader(page, `${dockUrl}/${locale}/reader`)
     check(`J01 ${locale}: /${locale}/reader returns 200`, response?.status() === 200, `status ${response?.status()}`)
 
     const shell = await measure(page)
@@ -179,10 +188,11 @@ try {
       check('J03: comparative route opens from the Reader', compareHeading === 'Comparative Reader', compareHeading)
       check('J03: comparison body is withheld, no fabricated names', await withheld.isVisible() && !/Elohim|YHWH/i.test(withheldText), withheldText.slice(0, 80))
       await page.goBack({ waitUntil: 'load', timeout: 120000 })
+      await page.locator('article.dk-reader-passage').waitFor({ state: 'visible', timeout: 120000 })
       const after = await arabic.boundingBox()
       check('J03: the withheld comparison cannot block the Reader', (after?.width ?? 0) === (before?.width ?? 0) && (after?.width ?? 0) > 240, `before=${before?.width} after=${after?.width}`)
 
-      await page.goto(`${dockUrl}/en/reader`, { waitUntil: 'load', timeout: 120000 })
+      await openReader(page, `${dockUrl}/en/reader`)
       await page.keyboard.press('Tab')
       const first = await page.evaluate(() => {
         const node = document.activeElement
@@ -199,12 +209,16 @@ try {
     }
   }
 
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto(`${dockUrl}/en/reader`, { waitUntil: 'load', timeout: 120000 })
-  const narrow = await measure(page)
-  const narrowArabic = page.locator('p.dk-reader-arabic')
-  check('390px: no horizontal overflow', narrow.scrollWidth <= narrow.innerWidth + 1, `scrollWidth=${narrow.scrollWidth} innerWidth=${narrow.innerWidth}`)
-  check('390px: the Arabic source stays visible', await narrowArabic.isVisible(), JSON.stringify(narrow.arabic))
+  // The reader splits panes inside a container query at 640px and stacks its rails
+  // at a 900px media query, so measure both sides of each boundary.
+  for (const width of [390, 640, 768, 900, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await openReader(page, `${dockUrl}/en/reader`)
+    const measured = await measure(page)
+    const arabicAtWidth = page.locator('p.dk-reader-arabic')
+    check(`${width}px: no horizontal overflow`, measured.scrollWidth <= measured.innerWidth + 1, `scrollWidth=${measured.scrollWidth} innerWidth=${measured.innerWidth}`)
+    check(`${width}px: the passage and Arabic source keep real width`, (measured.passage?.width ?? 0) > 300 && await arabicAtWidth.isVisible(), `passage=${JSON.stringify(measured.passage)} arabic=${JSON.stringify(measured.arabic)}`)
+  }
 
   console.log('J05 / Story: NOT RUN — Story is not in release scope (matches the M19-07 row).')
   exitCode = results.every((result) => result.ok) ? 0 : 1
