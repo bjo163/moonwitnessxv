@@ -1,6 +1,6 @@
 # M20-04 reviewer authority proposal
 
-**Status: non-binding owner decision proposal; not an accepted ADR or implementation authorization.**
+**Status: non-binding owner decision proposal; not an accepted ADR or implementation authorization.** **Policy update 2026-10-29:** the reviewer-grant prerequisite is ratified by [ADR-0015](../decisions/ADR-0015-d00-d12-reviewer-grants.md); the grant-model choices below are superseded at policy level. This document remains unchanged as the historical proposal and still authorizes no code, schema, route or UI.
 
 - Repository: `Z:\project\moonradio`, branch `dev`.
 - Baseline: `7e9f2c2359aa1d3b5824e6eff9dbb69735120ac9`; `git ls-remote origin refs/heads/dev` returned the same SHA.
