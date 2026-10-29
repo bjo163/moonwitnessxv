@@ -69,7 +69,8 @@ Do **not** add a domain to `db`, `backup`, `sentinel` or `lumen-runtime`. Add `c
 `docker-compose.yml` already maps them; set the values in Coolify (see the local `.env.coolify`, which is gitignored):
 
 - `CORS_ORIGIN=https://moonwitness.biz.id,https://orbit.moonwitness.biz.id`
-- `DOCK_URL=https://moonwitness.biz.id`
+- `DOCK_URL=https://moonwitness.biz.id` (the hub's advertisement only)
+- `DOCK_PUBLIC_URL=https://moonwitness.biz.id` (Dock's canonical, OpenGraph and sitemap origin — without it Dock renders `http://localhost:3001` even behind the public host)
 - `HQ_URL=https://hq.moonwitness.biz.id`
 - `HQ_COOKIE_SECURE=true`, `TRUST_PROXY=true`
 - `ECHOLOG_URL` defaults to `http://echolog:3006` inside the stack

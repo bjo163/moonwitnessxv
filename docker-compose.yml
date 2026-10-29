@@ -320,6 +320,9 @@ services:
       RADIO_API_URL: http://radio:3000${API_PREFIX:-/api/v1}
       SITE_NAME: ${SITE_NAME:-Moonwitness}
       DOCK_URL: ${DOCK_URL:-http://localhost:3001}
+      # canonical and sitemap origin, read per request; empty keeps the local
+      # FRONTEND_URLS.dock default. DOCK_URL alone does not set it.
+      DOCK_PUBLIC_URL: ${DOCK_PUBLIC_URL:-}
       # origins allowed to frame /embed/*; empty keeps 'none' everywhere
       EMBED_ORIGINS: ${EMBED_ORIGINS:-}
     healthcheck:

@@ -90,6 +90,16 @@ test('compose: only the hub publishes off loopback', () => {
   }
 })
 
+test('compose: dock receives the public origin its canonical metadata reads', () => {
+  const dock = blocks.get('dock')
+  assert.ok(dock, 'dock service exists')
+  // Dock resolves canonical/OpenGraph/sitemap from DOCK_PUBLIC_URL (falling back
+  // to FRONTEND_URLS.dock), not from DOCK_URL — which only feeds the hub's
+  // advertisement. Without this passthrough a public deployment still emits
+  // http://localhost:3001 canonicals.
+  assert.match(dock!, /DOCK_PUBLIC_URL:\s*\$\{DOCK_PUBLIC_URL:-\}/, 'dock must pass DOCK_PUBLIC_URL through')
+})
+
 test('compose: every service declares a healthcheck', () => {
   assert.ok(blocks.size >= 5, `only found ${blocks.size} services`)
   const missing = [...blocks].filter(([, block]) => !/^\s{4}healthcheck:/m.test(block)).map(([name]) => name)
