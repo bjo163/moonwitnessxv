@@ -133,6 +133,7 @@ Recorded by probing `apps.mycocolink.com` (Coolify) and the public hosts; nothin
 | Deployment | `mwixadma2zkoptaqi3kfu7jr`, webhook-triggered from `main` |
 | Commit | `9cab9650da62f3ad8ee4c25a03a2ffcfc4d277d2` |
 | Result | `finished` at `2026-10-29T16:01:58Z`; all service containers started |
+| Follow-up deploy | `00pb7afq6l00l2whsyzloov3`, `ee4ff9b`, `finished` at `2026-10-29T16:21:04Z` — carries the dock `robots.txt` route |
 | Bindings | `arsy` → `https://api.moonwitness.biz.id`, `dock` → `https://moonwitness.biz.id` |
 | Env | `DOCK_PUBLIC_URL=https://moonwitness.biz.id` present in both the production and preview env rows |
 
@@ -170,7 +171,7 @@ for p in 3000 3001 3002 3003 3004 3005 3006 3007; do timeout 3 bash -c "</dev/tc
 | `api.…/api/v1/health` | 200 `{"ok":true,…}`; preflight from `https://moonwitness.biz.id` echoes `access-control-allow-origin`; from `https://evil.example` no allow-origin header |
 | API certificate | Let's Encrypt `CN=YR1`, `CN=api.moonwitness.biz.id`, valid 2026-08-31 → 2026-11-29 |
 | Public port surface | only `3000` open; `3001`–`3007` closed (dock and HQ are loopback-only) |
-| `https://moonwitness.biz.id/robots.txt` | 200, but it is **Cloudflare's managed file** (no `Sitemap:` line). At the origin the same path returned 404 — dock had no `robots.txt` route. Added `apps/dock/src/app/robots.ts`; it reaches the origin with the next deploy |
+| `https://moonwitness.biz.id/robots.txt` | 200 with `User-Agent: *`, `Allow: /`, `Host: https://moonwitness.biz.id`, `Sitemap: https://moonwitness.biz.id/sitemap.xml` — first at the origin (`--resolve`), then through Cloudflare once the route existed. Before the route, Cloudflare substituted its managed file (no `Sitemap:` line) and the origin 404'd; `apps/dock/src/app/robots.ts` fixed the origin |
 
 ### 8.4 Rows not observed
 
@@ -187,5 +188,4 @@ for p in 3000 3001 3002 3003 3004 3005 3006 3007; do timeout 3 bash -c "</dev/tc
 
 1. Point `a-l-l-a-h.com` and `www.a-l-l-a-h.com` from the Hostinger parking IP to `163.61.134.104`, then attach `https://a-l-l-a-h.com` to `empire-web` (3010) and the `www` redirect.
 2. Create the `www`, `hq`, `orbit`, `media`, `skylink` names (CNAME → `moonwitness.biz.id`, proxied) and attach the matching Coolify domains.
-3. Turn off Cloudflare's managed `robots.txt` for `moonwitness.biz.id`, otherwise the origin file — and its `Sitemap:` line — never reaches crawlers.
-4. Enable HSTS at the Cloudflare edge for `moonwitness.biz.id`, or accept that the apex will be the only host sending it (empire-web's nginx already does).
+3. Enable HSTS at the Cloudflare edge for `moonwitness.biz.id`, or accept that the apex will be the only host sending it (empire-web's nginx already does).
