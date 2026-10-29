@@ -32,11 +32,14 @@ export function SiteFooter({ locale }: { locale: StoryLocale }) {
       <span className="su-footer__meta">A-L-L-A-H.COM</span>
       <span aria-hidden="true">|</span>
       <span className="su-footer__meta">{locale === 'id' ? 'SEJAK 2025' : 'EST. 2025'}</span>
-      <span className="su-footer__legal">
+      <nav className="su-footer-info" aria-label={locale === 'id' ? 'Informasi pilot' : 'Pilot information'}>
+        <a href={local(locale, '/about')}>{locale === 'id' ? 'Tentang' : 'About'}</a>
+        <a href={local(locale, '/ecosystem')}>{locale === 'id' ? 'Ekosistem' : 'Ecosystem'}</a>
         <a href={local(locale, '/values')}>{locale === 'id' ? 'Nilai' : 'Values'}</a>
+        <a href={local(locale, '/roadmap')}>{locale === 'id' ? 'Linimasa' : 'Roadmap'}</a>
         <a href={local(locale, '/sources')}>{locale === 'id' ? 'Sumber' : 'Sources'}</a>
         <a href={local(locale, '/privacy')}>{locale === 'id' ? 'Privasi' : 'Privacy'}</a>
-      </span>
+      </nav>
       <span className="su-footer__meta su-footer__meta--end">{locale === 'id' ? 'BANGSA BERBEDA' : 'DIFFERENT PEOPLES'}</span>
       <span aria-hidden="true">|</span>
       <span className="su-footer__meta">{locale === 'id' ? 'BULAN SAMA' : 'SAME MOON'}</span>
