@@ -45,15 +45,33 @@ Verbatim failure excerpt from the run:
 ## What this proves and what it does not
 
 - The acceptance test infrastructure works: the ephemeral Hub, the Dock dev server, Chromium and the locale routing all run, and the reader page renders its shell, its prefilled search and the seeded rights-cleared Arabic text in the DOM.
-- It does **not** prove J01: the source block is present but not visible to the browser, so a member cannot read it in this fixture state. Whether that is a CSS/layout defect, a hydration/suspense boundary that never completes against the fixture, or an intentional disclosure that the test must open is **undetermined** — no further diagnostic completed, so no cause is asserted here.
+- It does **not** prove J01: the source block is present but not visible to the browser, so a member cannot read it in this fixture state. A follow-up diagnostic (below) measured the cause as a CSS layout collapse, not a hydration or disclosure problem.
 - It does **not** prove J03 or accessibility: the reader visibility failure blocks the J03 clause, and the skip link is absent, so "flows pass with accessibility" is unmet on its face, independently of the reader issue.
 - No deployment, real Hub, production data or real witness material was involved. The run used loopback ports only; both processes were stopped with the test process.
 
 ## Follow-up needed
 
-1. Owner of the Dock reader layout: determine why `p.dk-reader-arabic` computes invisible while its text is in the DOM (inspect the ancestor chain and any suspense/hidden template during the fixture run).
-2. Accessibility owner (M19-04 / M19-03 line of work): add the skip link and a `main` target so the first focus stop is the skip link; that clause is a prerequisite for M19-07's accessibility acceptance.
+**Measured root cause (same day, separate diagnostic).** The ephemeral Hub (`127.0.0.1:3102`, in-memory, seeded) and the Dock dev server (`127.0.0.1:3101`, `RADIO_API_URL` pointing at it) were started again, and a direct Chromium evaluation of `/en/reader` at 1440×900 measured the element chain. The paragraph is rendered, `display:block`, `visibility:visible`, opacity 1 — but its **width is 0 px**:
+
+```text
+P.dk-reader-arabic      box=0x3984        (visible, zero width)
+SECTION.dk-reader-block box=0x4212
+ARTICLE.dk-reader-passage box=42x8773
+DIV.dk-reader-grid      box=286x8773
+DIV.dk-reader-main      box=286x9187
+DIV.dk-reader-layout    box=872x9187
+MAIN.dk-main            box=936x9342
+```
+
+`.dk-reader-layout` is a three-column grid (`minmax(0, 1.7fr) minmax(210px, 250px) minmax(220px, 300px)`, `apps/dock/src/app/globals.css:1125`), which leaves the main column 286 px inside the 872 px page container at 1440 px. Inside that, `.dk-reader-grid` (`:946`) declares `minmax(0, 1.7fr) minmax(280px, 1fr)`; the 280 px rail minimum consumes the whole track, so the passage column collapses to `minmax(0, …)` = 0 px and the article keeps only its 36 px padding and 6 px border. Playwright therefore reports the Arabic block as hidden even though the markup, text and styles are correct. Two smaller defects share the same origin: the `skip link` is absent and `<main class="dk-main">` has no `id`/`tabIndex` (`apps/dock/src/layouts/site.tsx:53`), so the first focus stop is the header link.
+
+Follow-up, in order:
+
+1. **Dock layout owner:** fix the nested grid so the passage never collapses at desktop width — give the main/layout columns a usable minimum (for example `min-width: 0` plus a rail minimum that cannot exceed its track) at `apps/dock/src/app/globals.css:946` and `:1125`. This is a user-visible reader defect, independent of M19-07.
+2. **Accessibility owner (M19-04 / M19-03 line of work):** add the skip link and a `main` target so the first focus stop is the skip link; that clause is a prerequisite for M19-07's accessibility acceptance.
 3. Then re-run a J01/J03 acceptance with the same ephemeral fixture and record real output here or in a successor audit.
+
+Both servers were stopped after the diagnostic and the generated `apps/dock/next-env.d.ts` churn was reverted; no repository file was changed by the diagnostic.
 
 ## Rights, privacy and limits
 
