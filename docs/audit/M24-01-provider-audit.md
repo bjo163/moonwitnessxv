@@ -14,6 +14,10 @@
 - **Rollback:** delete the three new files listed in §8. No other state was touched.
 - **result_sha:** `f86bede` — external commit by the concurrent session that contains the three deliverables. This audit created no commit, staged nothing and amended nothing; the working tree may hold later edits to these three files.
 
+**Follow-up on 2026-10-29:** the “external repository not fetched” limitation below describes the audit date and is superseded by [the pinned A-L-L-A-H code review](M24-01-A-L-L-A-H-pinned-code-review-2026-10-29.md). That follow-up read `bjo163/A-L-L-A-H@47bac90` and confirmed provider fetch adapters plus offline fixture tests in the external snapshot. It does not change this report's XV-only baseline findings, prove runtime/deployment, reconcile the separate `bjo163/allah-hub@71a80c94` pin, or grant reuse rights. At that point the leaf still awaited current-state reassessment; §11 records its later scoped integrator acceptance. The M24 milestone human-review gate remains open.
+
+**Scope clarification:** §§1–10 below are a dated inventory of the MoonWitness XV repository and its recorded pins at the cited baseline; statements such as “no provider client” and “no provider terms artefact” apply to that XV baseline only. They do not describe the separately pinned A-L-L-A-H repository. The follow-up addendum supersedes the original report's unavailability claim for `A-L-L-A-H@47bac90`, while the separate `allah-hub@71a80c94` reference remains unreconciled.
+
 ---
 
 ## 1. Scope and method
@@ -405,10 +409,22 @@ $ echo $?
 
 ---
 
-## 10. Acceptance assessment (not a closure claim)
+## 10. Baseline acceptance assessment (historical snapshot)
 
 - **Named-provider fixtures are not mislabelled as live.** USGS is a test-only fixture with no user-visible consumer; GDACS has no fixture at all; NOAA and Open-Meteo are absent from code. No provider URL, client, flag or terms artefact exists.
 - **But the repository still ships false live/current status around this domain.** HQ hardcodes `Atmosphere OS: STREAMING`, `HELIOGRID: NOMINAL` and `14 / 14 SYNCHRONIZED` (`apps/headquarters/src/app/(admin)/page.tsx:230-231,445-446`; committed `:108-109,317-318`). Dock renders 12 seeded monitor signals as current OSINT monitoring with no fixture or freshness label (`apps/dock/src/app/page.tsx:74-133`; `packages/moonql-monitor/src/index.ts:371-590`).
 - If M24-01 is read narrowly as "the four named provider fixtures are not labelled live", the evidence supports the acceptance. If it is read repository-wide as "no historical fixture is presented as live production", the two findings above keep the acceptance **open** until M24-05 (and M25-02 for the HQ status ontology) lands.
-- **This audit does not close M24-01 and does not tick the TODO row.** The integrator and a human reviewer must decide the reading and route the findings.
+- **At the original audit baseline, this report did not close M24-01.** The current-state reassessment in §11 supersedes that interim status without changing the historical baseline findings.
 - **Next eligible work:** M24-02 (provider/timestamp model), M24-03 (egress/quota/terms gate), M24-05 (stale/fixture labelling, beginning with F1–F5), then M24-04.
+## 11. Current-state acceptance revalidation (2026-10-29)
+
+- **Current source SHA:** `c3e827e3f5d2b2fda9558d485018b39b2107ba06`. The mitigation code in the relevant Dock and Headquarters paths was last changed at `69d5a84c60e1e35e90526d1cc3802df820b17380` and is unchanged at the current source SHA.
+- **Dock current state:** the existing World Monitor card renders a localized `role="status"` notice and does not render the seeded monitor rows. English and Indonesian copy say those sample rows remain withheld until source, observation time and freshness can be displayed. Exact-source focused tests passed **16/16** at current `dev` SHA `c3e827e` (`home-spaces`, Indonesian/English landing copy and required-key tests). The positive branch verifies the public home is honest about unavailable provider observations; it is not a source-backed feed test.
+- **Headquarters current state:** the system catalogue identifies Atmosphere OS and HELIOGRID as concepts, explicitly says no measured HELIOGRID feed is configured, and no longer asserts `STREAMING`, `NOMINAL` or a synchronized-system count. Headquarters typecheck passed at current `dev` SHA `c3e827e`.
+- **Historical source distinction:** the pinned `A-L-L-A-H@47bac90` code review found live-fetch-capable adapters in that historical source and separately named offline fixtures/tests. It does not establish a deployment or live fetch. The external source's fixture tests label fixture identifiers explicitly. The distinct `allah-hub@71a80c94` pin remains unreconciled; M06-05 still prohibits bulk import, and no code-reuse permission is inferred.
+- **Provider terms:** the date-stamped [terms review](M24-01-provider-terms-2026-10-29.md) records official-source limitations and attribution/quota conditions. It is a technical inventory only: no specific product, project rights, commercial-use classification or reuse permission is approved.
+- **Ledger reproducibility:** `node scripts/check-m24-01-provider-audit.mjs` passed with **29 rows and 73 quotes resolved against the immutable `659da28` baseline**; `node scripts/check-m24-01-provider-audit.mjs --self-test` rejected all **22** invalid mutations. The validator reads baseline content from Git so later legitimate code changes do not invalidate a historical citation. This is not a current-source scanner.
+- **Reviewer and decision:** an independent AI technical review and integrator review agree that the narrow M24-01 acceptance, **historical fixtures not mislabelled as live production**, is met by the baseline inventory, the pinned historical-source review and the current containment evidence. This is not human legal/privacy review, provider authorization, project-specific data-rights clearance, or a claim of live provider use. The M24 milestone human-review exit gate remains outstanding; M24-02 is now eligible as the next dependent task.
+- **Commands observed on current `dev` SHA `c3e827e`:** the focused Dock suite passed 16/16; `pnpm --filter @moonwitness/dock typecheck`, `pnpm --filter @moonwitness/headquarters typecheck`, and the scoped ESLint command listed in [M24-01-progress-69d5a84.md](M24-01-progress-69d5a84.md) all passed. No live provider, database, deployment or external API was exercised.
+
+**Conclusion:** M24-01's audit deliverable and stated leaf acceptance are complete at the exact evidence above. This closes the scoped audit task only; it does not close M24, approve source reuse, or authorize provider ingestion. Keep the M24 milestone exit gate and all implementation/rights decisions open until their own requirements are met.

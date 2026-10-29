@@ -420,11 +420,11 @@
       "provider": "ALLAH",
       "artifact_kind": "ui_status",
       "evidence_class": "FIXTURE_ONLY",
-      "locator": "apps/headquarters/src/app/(admin)/page.tsx:230",
+      "locator": "apps/headquarters/src/app/(admin)/page.tsx:108",
       "quote": "status: 'STREAMING'",
       "evidence": [
         {
-          "locator": "apps/headquarters/src/app/(admin)/page.tsx:230",
+          "locator": "apps/headquarters/src/app/(admin)/page.tsx:108",
           "quote": "name: 'Atmosphere OS', domain: 'Environmental sensor & space weather grid', status: 'STREAMING'"
         }
       ],
@@ -437,11 +437,11 @@
       "provider": "ALLAH",
       "artifact_kind": "ui_status",
       "evidence_class": "FIXTURE_ONLY",
-      "locator": "apps/headquarters/src/app/(admin)/page.tsx:445",
+      "locator": "apps/headquarters/src/app/(admin)/page.tsx:317",
       "quote": "telemetry, evidence, and research compute",
       "evidence": [
         {
-          "locator": "apps/headquarters/src/app/(admin)/page.tsx:445",
+          "locator": "apps/headquarters/src/app/(admin)/page.tsx:317",
           "quote": "telemetry, evidence, and research compute"
         }
       ],
@@ -454,11 +454,11 @@
       "provider": "ALLAH",
       "artifact_kind": "ui_status",
       "evidence_class": "FIXTURE_ONLY",
-      "locator": "apps/headquarters/src/app/(admin)/page.tsx:446",
+      "locator": "apps/headquarters/src/app/(admin)/page.tsx:318",
       "quote": "14 / 14 SYNCHRONIZED",
       "evidence": [
         {
-          "locator": "apps/headquarters/src/app/(admin)/page.tsx:446",
+          "locator": "apps/headquarters/src/app/(admin)/page.tsx:318",
           "quote": "14 / 14 SYNCHRONIZED"
         }
       ],
@@ -471,11 +471,11 @@
       "provider": "ALLAH",
       "artifact_kind": "feature_flag",
       "evidence_class": "REPO_EVIDENCE",
-      "locator": ".env.example:152",
+      "locator": ".env.example:150",
       "quote": "EGRESS_ENABLED=false",
       "evidence": [
         {
-          "locator": ".env.example:152",
+          "locator": ".env.example:150",
           "quote": "EGRESS_ENABLED=false"
         }
       ],
@@ -547,11 +547,11 @@
       "provider": "HELIOGRID",
       "artifact_kind": "ui_status",
       "evidence_class": "FIXTURE_ONLY",
-      "locator": "apps/headquarters/src/app/(admin)/page.tsx:231",
+      "locator": "apps/headquarters/src/app/(admin)/page.tsx:109",
       "quote": "name: 'HELIOGRID', domain: 'Solar energy & physics telemetry tracker', status: 'NOMINAL'",
       "evidence": [
         {
-          "locator": "apps/headquarters/src/app/(admin)/page.tsx:231",
+          "locator": "apps/headquarters/src/app/(admin)/page.tsx:109",
           "quote": "name: 'HELIOGRID', domain: 'Solar energy & physics telemetry tracker', status: 'NOMINAL'"
         }
       ],
@@ -801,7 +801,7 @@
       "scope": "global outbound fetch gate",
       "default": "false",
       "provider_specific": false,
-      "locator": ".env.example:152",
+      "locator": ".env.example:150",
       "quote": "EGRESS_ENABLED=false"
     }
   ],

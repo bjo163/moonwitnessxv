@@ -27,6 +27,7 @@
  * Exit 0 when clean, 1 on any violation. No third-party dependencies.
  */
 
+import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 
 const LEDGER = 'docs/data/M24-01-provider-audit.json'
@@ -64,10 +65,16 @@ function loadLedger() {
   return JSON.parse(readFileSync(LEDGER, 'utf8'))
 }
 
-function makeLineReader() {
+function makeLineReader(snapshotSha) {
+  if (!isHexSha(snapshotSha) || !snapshotSha.startsWith(EXPECTED_BASELINE_PREFIX)) {
+    throw new Error(`refusing to read evidence from unexpected baseline ${JSON.stringify(snapshotSha)}`)
+  }
   const cache = new Map()
   return (file) => {
-    if (!cache.has(file)) cache.set(file, readFileSync(file, 'utf8').split(/\r?\n/))
+    if (!cache.has(file)) {
+      const contents = execFileSync('git', ['show', `${snapshotSha}:${file}`], { encoding: 'utf8' })
+      cache.set(file, contents.split(/\r?\n/))
+    }
     return cache.get(file)
   }
 }
@@ -466,7 +473,7 @@ function validate(doc, readLines, stats = { locatorChecks: 0 }) {
 
 function selfTest() {
   const base = loadLedger()
-  const readLines = makeLineReader()
+  const readLines = makeLineReader(base.baseline_sha)
   const baseErrors = validate(base, readLines, { locatorChecks: 0 })
   if (baseErrors.length > 0) {
     console.log(`SELF-TEST FAIL: baseline ledger is invalid: ${baseErrors[0]}`)
@@ -642,7 +649,7 @@ if (args.includes('--self-test')) {
 
 const doc = loadLedger()
 const stats = { locatorChecks: 0 }
-const errors = validate(doc, makeLineReader(), stats)
+const errors = validate(doc, makeLineReader(doc.baseline_sha), stats)
 if (errors.length > 0) {
   for (const error of errors) console.error('VIOLATION ' + error)
   console.error(`FAIL: ${errors.length} violation(s)`)
@@ -660,7 +667,7 @@ console.log(
 console.log(
   `PASS subjects USGS=${counts.by_provider.USGS} GDACS=${counts.by_provider.GDACS} NOAA=${counts.by_provider.NOAA} OPEN_METEO=${counts.by_provider.OPEN_METEO} ALLAH=${counts.by_provider.ALLAH} HELIOGRID=${counts.by_provider.HELIOGRID}`,
 )
-console.log(`PASS ${stats.locatorChecks} locator quotes resolved at the cited file:line`)
+console.log(`PASS ${stats.locatorChecks} locator quotes resolved at cited file:line in baseline ${doc.baseline_sha}`)
 console.log('PASS zero FIXTURE_ONLY rows labelled LIVE_IMPLEMENTED')
 console.log(`PASS zero terms claims without an in-repo locator (NOT_IN_REPO rows=${counts.by_terms_status.NOT_IN_REPO})`)
 console.log('PASS all four named providers represented; NOAA and OPEN_METEO explicitly recorded absent from code')
