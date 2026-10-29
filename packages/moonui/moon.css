@@ -1,38 +1,70 @@
-/* @moonwitness/moonui — the ONE visual language of the monorepo.
+/* @moonwitness/moonui — the shared visual language of the monorepo.
    Punk-Zine / Street-Art / Grunge Comic Command Center aesthetic:
    pitch-black zine ink, chalk-white distressed borders, neon hot-pink brush
    strokes, electric yellow tape strips, cyan signal accents, and Basquiat crowns.
-   All reusable UI and zine primitives live here under the `.m-` prefix. */
+   All reusable UI and zine primitives live here under the `.m-` prefix.
 
-:root {
-  --ink: #07060b;
+   SKIN CONTRACT (ADR-0014): one token layer, two self-contained skins selected by
+   `data-skin` on <html>. A skin may set colour, edge and type roles only — never
+   geometry, layout, copy, keyboard behaviour or ARIA. `zine` is the default and must
+   stay value-identical to the pre-ADR palette; `empire` is the Story Universe recipe.
+   Each block repeats the legacy aliases because a custom property that references
+   another one resolves on the element that declares it. */
+
+:root,
+:root[data-skin='zine'] {
+  /* skin roles */
+  --bg: #07060b;
+  --bg-1: #13101d;
+  --bg-2: #1b172a;
   --night: #0b0912;
   --paper: #0d0b14;
-  --surface: #13101d;
-  --surface-2: #1b172a;
   --fg: #f7f4ec;
-  --accent: #ffd400;
-  --pink: #ff007a;
-  --hot: #ff1e56;
-  --cyan: #00d4ff;
-  --blue: #1da1f2;
-  --ok: #00e676;
+  --fg-muted: #9e96b0;
+  --fg-subtle: rgba(247, 244, 236, 0.55);
+  --rule: rgba(247, 244, 236, 0.22);
+  --rule-soft: rgba(247, 244, 236, 0.13);
+  --rule-strong: rgba(247, 244, 236, 0.45);
+  --brand: #ffd400;
+  --brand-soft: rgba(255, 212, 0, 0.45);
+  --on-brand: #07060b;
+  --brand-2: #ff007a;
+  --brand-2-hover: #ff1e56;
+  --brand-2-strong: #ff007a;
+  --signal: #00d4ff;
+  --info: #1da1f2;
+  --success: #00e676;
+  --danger: #ff1e56;
   --moon: #9d4edd;
-  --muted: #9e96b0;
+  --focus: #00d4ff;
+  --edge-shadow: 3px 3px 0 #000000;
+  --edge-shadow-sm: 2px 2px 0 #000000;
+  /* legacy aliases — same names, same computed values as before ADR-0014 */
+  --ink: var(--bg);
+  --surface: var(--bg-1);
+  --surface-2: var(--bg-2);
+  --accent: var(--brand);
+  --pink: var(--brand-2);
+  --hot: var(--danger);
+  --cyan: var(--signal);
+  --blue: var(--info);
+  --ok: var(--success);
+  --muted: var(--fg-muted);
   --chalk: rgba(247, 244, 236, 0.88);
   --chalk-dim: rgba(247, 244, 236, 0.28);
-  --hair: rgba(247, 244, 236, 0.13);
-  --border: rgba(247, 244, 236, 0.22);
-  --border-strong: rgba(247, 244, 236, 0.45);
+  --hair: var(--rule-soft);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
   --line: 2px solid var(--chalk);
-  --shadow: 3px 3px 0 #000000;
-  --shadow-sm: 2px 2px 0 #000000;
-  --shadow-pink: 3px 3px 0 var(--pink);
-  --shadow-accent: 3px 3px 0 var(--accent);
+  --shadow: var(--edge-shadow);
+  --shadow-sm: var(--edge-shadow-sm);
+  --shadow-pink: 3px 3px 0 var(--brand-2);
+  --shadow-accent: 3px 3px 0 var(--brand);
   --pink-glow: rgba(255, 0, 122, 0.45);
   --cyan-glow: rgba(0, 212, 255, 0.45);
   --accent-glow: rgba(255, 212, 0, 0.45);
   --ok-glow: rgba(0, 230, 118, 0.45);
+  /* skin-independent geometry + typography */
   --s1: 4px;
   --s2: 6px;
   --s3: 12px;
@@ -41,9 +73,76 @@
   --ctl: 30px;
   --font-sans: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-display: "Impact", "Anton", "Arial Black", "Franklin Gothic Heavy", sans-serif;
+  --font-editorial: "Georgia", "Iowan Old Style", "Times New Roman", serif;
   --font-zine: "Segoe Print", "Comic Sans MS", "Bradley Hand", "Chalkboard SE", cursive, sans-serif;
   --font-mono: "JetBrains Mono", "Cascadia Mono", "Consolas", ui-monospace, monospace;
 }
+
+:root[data-skin='empire'] {
+  color-scheme: dark;
+  /* skin roles */
+  --bg: #090b0d;
+  --bg-1: #131518;
+  --bg-2: #1c1e22;
+  --night: #0b0d10;
+  --paper: #101215;
+  --fg: #f1ede5;
+  --fg-muted: #92938f;
+  --fg-subtle: #b5afa4;
+  --rule: #514638;
+  --rule-soft: #3c3427;
+  --rule-strong: #8d7146;
+  --brand: #c5a578;
+  --brand-soft: #d8b67f;
+  --on-brand: #14100a;
+  --brand-2: #db1e31;
+  --brand-2-hover: #e03c49;
+  --brand-2-strong: #a91525;
+  --signal: #8fa4b8;
+  --info: #6f8ea8;
+  --success: #7fae88;
+  --danger: #ff5a6b;
+  --moon: #d6d5cd;
+  --focus: #e3c391;
+  --edge-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  --edge-shadow-sm: 0 0 0 rgba(0, 0, 0, 0);
+  /* legacy aliases — the same names every primitive already reads */
+  --ink: var(--bg);
+  --surface: var(--bg-1);
+  --surface-2: var(--bg-2);
+  --accent: var(--brand);
+  --pink: var(--brand-2);
+  --hot: var(--danger);
+  --cyan: var(--signal);
+  --blue: var(--info);
+  --ok: var(--success);
+  --muted: var(--fg-muted);
+  --chalk: rgba(241, 237, 229, 0.9);
+  --chalk-dim: rgba(241, 237, 229, 0.3);
+  --hair: var(--rule-soft);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
+  --line: 2px solid var(--chalk);
+  --shadow: var(--edge-shadow);
+  --shadow-sm: var(--edge-shadow-sm);
+  --shadow-pink: 0 0 0 rgba(0, 0, 0, 0);
+  --shadow-accent: 0 0 0 rgba(0, 0, 0, 0);
+  --pink-glow: rgba(219, 30, 49, 0.3);
+  --cyan-glow: rgba(143, 164, 184, 0.22);
+  --accent-glow: rgba(197, 165, 120, 0.28);
+  --ok-glow: rgba(127, 174, 136, 0.24);
+}
+
+/* The Empire field replaces the pink/cyan haze with a warm gold vignette. */
+:root[data-skin='empire'] body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 70% 12%, rgba(197, 165, 120, 0.1), transparent 46%),
+    radial-gradient(ellipse at 20% 88%, rgba(219, 30, 49, 0.06), transparent 52%),
+    radial-gradient(rgba(241, 237, 229, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 22px 22px;
+}
+
 
 * {
   box-sizing: border-box;
@@ -985,10 +1084,10 @@ pre,
   border-color: #ffffff;
 }
 .m-btn[data-variant="accent"] {
-  background: var(--accent);
-  color: #07060b;
-  border-color: #07060b;
-  box-shadow: 2px 2px 0 var(--pink);
+  background: var(--brand);
+  color: var(--on-brand);
+  border-color: var(--on-brand);
+  box-shadow: 2px 2px 0 var(--brand-2);
 }
 .m-btn[data-variant="cyan"] {
   background: var(--blue);
@@ -1002,7 +1101,7 @@ pre,
   box-shadow: 2px 2px 0 var(--pink);
 }
 .m-btn[data-variant="danger"] {
-  background: var(--hot);
+  background: var(--danger);
   color: #ffffff;
   border-color: #ffffff;
 }

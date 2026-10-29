@@ -30,9 +30,99 @@ export const MOON_COLORS = {
 
 export type MoonColorName = keyof typeof MOON_COLORS
 
+/**
+ * Skin contract (ADR-0014).
+ *
+ * A skin is a token layer, never a layout or behaviour change. Both skins expose
+ * the same key set, so a consumer never asks "which skin am I?" — it asks for a
+ * role. `zine` is the default and is asserted equal to MOON_COLORS by
+ * `test/skins.test.ts`; `empire` is the approved Story Universe recipe.
+ */
+export type MoonSkinName = 'zine' | 'empire'
+
+export type MoonSkin = {
+  readonly bg: string
+  readonly bg1: string
+  readonly bg2: string
+  readonly night: string
+  readonly paper: string
+  readonly fg: string
+  readonly fgMuted: string
+  readonly fgSubtle: string
+  readonly rule: string
+  readonly ruleSoft: string
+  readonly ruleStrong: string
+  readonly brand: string
+  readonly brandSoft: string
+  readonly onBrand: string
+  readonly brand2: string
+  readonly brand2Hover: string
+  readonly brand2Strong: string
+  readonly signal: string
+  readonly info: string
+  readonly success: string
+  readonly danger: string
+  readonly moon: string
+  readonly focus: string
+}
+
+export const MOON_SKINS = {
+  zine: {
+    bg: '#07060b',
+    bg1: '#13101d',
+    bg2: '#1b172a',
+    night: '#0b0912',
+    paper: '#0d0b14',
+    fg: '#f7f4ec',
+    fgMuted: '#9e96b0',
+    fgSubtle: 'rgba(247, 244, 236, 0.55)',
+    rule: 'rgba(247, 244, 236, 0.22)',
+    ruleSoft: 'rgba(247, 244, 236, 0.13)',
+    ruleStrong: 'rgba(247, 244, 236, 0.45)',
+    brand: '#ffd400',
+    brandSoft: 'rgba(255, 212, 0, 0.45)',
+    onBrand: '#07060b',
+    brand2: '#ff007a',
+    brand2Hover: '#ff1e56',
+    brand2Strong: '#ff007a',
+    signal: '#00d4ff',
+    info: '#1da1f2',
+    success: '#00e676',
+    danger: '#ff1e56',
+    moon: '#9d4edd',
+    focus: '#00d4ff',
+  },
+  empire: {
+    bg: '#090b0d',
+    bg1: '#131518',
+    bg2: '#1c1e22',
+    night: '#0b0d10',
+    paper: '#101215',
+    fg: '#f1ede5',
+    fgMuted: '#92938f',
+    fgSubtle: '#b5afa4',
+    rule: '#514638',
+    ruleSoft: '#3c3427',
+    ruleStrong: '#8d7146',
+    brand: '#c5a578',
+    brandSoft: '#d8b67f',
+    onBrand: '#14100a',
+    brand2: '#db1e31',
+    brand2Hover: '#e03c49',
+    brand2Strong: '#a91525',
+    signal: '#8fa4b8',
+    info: '#6f8ea8',
+    success: '#7fae88',
+    danger: '#ff5a6b',
+    moon: '#d6d5cd',
+    focus: '#e3c391',
+  },
+} as const satisfies Record<MoonSkinName, MoonSkin>
+
 export const MOON_FONTS = {
   sans: '"Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif',
   display: '"Impact", "Anton", "Arial Black", "Franklin Gothic Heavy", sans-serif',
+  editorial: '"Georgia", "Iowan Old Style", "Times New Roman", serif',
   zine: '"Segoe Print", "Comic Sans MS", "Bradley Hand", "Chalkboard SE", cursive, sans-serif',
   mono: '"JetBrains Mono", "Cascadia Mono", "Consolas", ui-monospace, monospace',
 } as const
