@@ -1,8 +1,7 @@
 name: moonwitness
 
 # Every secret/credential comes from the environment or the .env file next to
-# this compose file — never from a value committed here. Missing ones fail the
-# `:?` check with a readable message instead of booting a known-password stack.
+# this compose file — never from a value committed here.
 #
 #   POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB   database identity
 #   MOONQL_AUTH_ADMIN_PASSWORD                        seeded HQ admin
@@ -17,11 +16,21 @@ name: moonwitness
 # pseudonym salt, bot copy) are read from the same .env as the hub itself, each
 # with the production-safe default spelled out below. MOONQL_ACL_POLICY is the
 # deliberate exception: it is pinned, never widened from the environment.
+#
+# Why the database identity uses `:-` and not `:?`: `docker compose build`
+# interpolates this whole file before it builds any image, and hosted builders
+# such as Coolify hand that step only their build-time variables. A required
+# interpolation therefore fails every deploy before a single image is built.
+# Nothing falls back to a known password — with POSTGRES_PASSWORD unset the
+# postgres image refuses to initialise an empty volume, and moonql-auth throws
+# at seed time in production when MOONQL_AUTH_ADMIN_PASSWORD is empty, so a
+# missing secret still fails loudly, just at container start instead of at parse.
+# The identifiers default to the same names .env.example documents.
 
 x-db-identity: &db-identity
-  POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
-  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
-  POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+  POSTGRES_USER: ${POSTGRES_USER:-moonwitness}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+  POSTGRES_DB: ${POSTGRES_DB:-moonwitness}
 
 services:
   db:
@@ -39,7 +48,7 @@ services:
       # `/backups/<dump>` inside this container. Only `backup` writes there.
       - db-backups:/backups:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:?set POSTGRES_USER in .env} -d ${POSTGRES_DB:?set POSTGRES_DB in .env}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-moonwitness} -d ${POSTGRES_DB:-moonwitness}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -79,7 +88,7 @@ services:
       # the two frontends by default; "*" reflects every origin and must be a
       # deliberate choice, not the shipped default
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3001,http://localhost:3002}
-      DATABASE_URL: postgresql://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-moonwitness}:${POSTGRES_PASSWORD:-}@db:5432/${POSTGRES_DB:-moonwitness}
       MOONQL_AUTOSYNC: ${MOONQL_AUTOSYNC:-true}
       # addon-declared crons (e.g. auth session purge, ops retention) arm at boot
       MOONQL_CRON_ENABLED: ${MOONQL_CRON_ENABLED:-true}
@@ -92,7 +101,7 @@ services:
       # only trust X-Forwarded-* when a real proxy terminates in front of the hub
       TRUST_PROXY: ${TRUST_PROXY:-false}
       # moonql-auth: admin password seeded once (change it for every deployment)
-      MOONQL_AUTH_ADMIN_PASSWORD: ${MOONQL_AUTH_ADMIN_PASSWORD:?set MOONQL_AUTH_ADMIN_PASSWORD in .env}
+      MOONQL_AUTH_ADMIN_PASSWORD: ${MOONQL_AUTH_ADMIN_PASSWORD:-}
       # the hub advertises both frontends on GET /
       DOCK_URL: ${DOCK_URL:-http://localhost:3001}
       HQ_URL: ${HQ_URL:-http://localhost:3002}
@@ -157,7 +166,7 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: "3005"
-      DATABASE_URL: postgresql://${POSTGRES_USER:?set POSTGRES_USER in .env}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-moonwitness}:${POSTGRES_PASSWORD:-}@db:5432/${POSTGRES_DB:-moonwitness}
       SKYLINK_ARSY_URL: http://arsy:3000
       SKYLINK_SERVICE_KEY: ${SKYLINK_SERVICE_KEY:-}
       # SKYLINK also refuses to boot with NODE_ENV=production when the service key
@@ -406,9 +415,9 @@ services:
       # pg_dump reads PG*, not the POSTGRES_* bootstrap vars; both come from .env
       PGHOST: db
       PGPORT: "5432"
-      PGUSER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
-      PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
-      PGDATABASE: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      PGUSER: ${POSTGRES_USER:-moonwitness}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-}
+      PGDATABASE: ${POSTGRES_DB:-moonwitness}
       BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-3600}
       BACKUP_KEEP: ${BACKUP_KEEP:-48}
       BACKUP_S3_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}
