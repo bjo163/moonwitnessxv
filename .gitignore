@@ -11,6 +11,8 @@ auth_info_baileys/
 dist/
 /data/
 coverage/
+test-results/
+playwright-report/
 .DS_Store
 *.tsbuildinfo
 .next/
