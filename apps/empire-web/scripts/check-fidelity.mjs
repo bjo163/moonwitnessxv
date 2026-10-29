@@ -20,7 +20,8 @@ import { chromium } from '@playwright/test'
 
 const ROOT = resolve(fileURLToPath(new URL('../../..', import.meta.url)))
 const OUT = join(ROOT, 'apps/empire-web/out')
-const REPORT_DIR = join(OUT, '.fidelity')
+// Outside out/: the export contract asserts that no .png reaches the build output.
+const REPORT_DIR = join(ROOT, 'apps/empire-web/test-results/fidelity')
 const TOLERANCE = 2
 
 /**
@@ -61,6 +62,22 @@ const PAGES = {
     // The mockup's fourth column sits 13px left of a uniform grid; a uniform
     // grid is the correct implementation, so only the outer edges are checked.
     columns: { selector: '.su-lib__card', expected: [29], right: 1093 },
+  },
+  reader: {
+    reference: '03-story-detail-reader.png',
+    route: '/en/stories/angelwithshotgun.html',
+    // Poster column 34–565, copy column 593–1090, NEXT control at 870,866
+    // 220×65, four thumbs at 34/301/570/835. The reference compresses its
+    // footer to 43+28, which the page reproduces through the footer tokens.
+    edges: [
+      { name: 'header', selector: '.su-chrome', expected: 73 },
+      { name: 'crumb', selector: '.su-reader__crumb', expected: 104 },
+      { name: 'grid', selector: '.su-reader__grid', expected: 1218 },
+      { name: 'panels', selector: '.su-reader__panels', expected: 1331 },
+      { name: 'footer-main', selector: '.su-footer__main', expected: 1374 },
+      { name: 'footer-bar', selector: '.su-footer__bar', expected: 1402 },
+    ],
+    columns: { selector: '.su-reader__thumb', expected: [34, 301, 570, 835], right: 1089 },
   },
 }
 
@@ -141,7 +158,7 @@ for (const [name, spec] of Object.entries(PAGES)) {
 
   await page.screenshot({ path: join(REPORT_DIR, `${name}-1122.png`), fullPage: true })
   writeFileSync(join(REPORT_DIR, `${name}.json`), `${JSON.stringify({ measured, expected: spec.edges.map((edge) => [edge.name, edge.expected]), expectedColumns, reference: spec.reference }, null, 2)}\n`)
-  console.log(`screenshot   apps/empire-web/out/.fidelity/${name}-1122.png`)
+  console.log(`screenshot   apps/empire-web/test-results/fidelity/${name}-1122.png`)
 }
 
 await browser.close()
