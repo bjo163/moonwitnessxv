@@ -7,8 +7,8 @@
 | Item | Value |
 |---|---|
 | Branch | `dev` |
-| HEAD at run | `e9d8a59` (M43 code identical to `1fa799d`; `e9d8a59` adds docs only) |
-| Static export | `apps/empire-web/out/` from `pnpm --filter @moonwitness/empire-web build` at `1fa799d` |
+| HEAD at run | `b3f120c` (M43 code identical to `1fa799d`; the intervening commits add docs and an unrelated M19-07 harness line) |
+| Static export | `apps/empire-web/out/` built from the same M43 source (`1fa799d`) |
 | Browser | Playwright 1.64.1, Chromium headless, deviceScaleFactor 1 |
 | Server | throwaway `node:http` file server bound to `127.0.0.1:0`, closed at the end of the run |
 | Artifacts | [`M43-04-local/geometry.json`](M43-04-local/geometry.json), 22 screenshots at 390 and 1440 in [`M43-04-local/screens/`](M43-04-local/screens/), and [`M43-04-local/states/`](M43-04-local/states/) |
