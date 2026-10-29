@@ -17,7 +17,7 @@
     "build": "vite build && tsc -b",
     "dev": "vite build && node --import tsx --env-file-if-exists=../../.env src/index.ts",
     "gui": "vite build && node --import tsx --env-file-if-exists=../../.env src/index.ts --open",
-    "test": "tsx --test test/**/*.test.ts",
+    "test": "tsx --test test/**/*.test.ts test/*.test.mjs",
     "start": "node --env-file-if-exists=../../.env dist/index.js",
     "typecheck": "tsc --noEmit"
   },
