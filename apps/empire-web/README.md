@@ -1,8 +1,8 @@
 # A-L-L-A-H.COM — Empire Gateway (Vercel preview)
 
-**Status:** Isolated static pilot only. This owner-requested branch is an isolated frontend pilot. Accepted ADR-0004 and ADR-0011 continue to make Dock the canonical LIGHTHOUSE runtime; this pilot does not amend those decisions. **No new backend, auth, schema, API secrets, or public control plane.**
+**Status:** Isolated static pilot only. Accepted ADR-0012 permits this local/CI pilot while ADR-0004 and ADR-0011 keep Dock as the canonical LIGHTHOUSE runtime. This pilot does not replace or re-route Dock. **No new backend, auth, schema, API secrets, or public control plane.**
 
-Repository: bjo163/moonwitnessxv · branch feature/empire-web-vercel · apps/empire-web.
+Repository: bjo163/moonwitnessxv · apps/empire-web.
 
 ## Local checks (Node 24, pnpm 10)
 From the monorepo root:

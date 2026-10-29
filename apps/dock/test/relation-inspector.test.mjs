@@ -35,7 +35,7 @@ function declarationOf(source, signature) {
   const start = source.indexOf(signature)
   assert.notEqual(start, -1, `${signature} must exist`)
   const rest = source.slice(start)
-  const end = rest.search(/\n\}(?=\n)/)
+  const end = rest.search(/\r?\n\}(?=\r?\n)/)
   return end === -1 ? rest : rest.slice(0, end + 2)
 }
 

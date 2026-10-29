@@ -136,6 +136,21 @@ export const APPS = [
     color: 'cyan',
   },
   {
+    tag: 'empire-web',
+    pkg: '@moonwitness/empire-web',
+    port: 3010,
+    kind: 'web',
+    dev: true,
+    // Isolated static pilot; kept outside the Cockpit supervisor.
+    supervised: false,
+    name: 'A-L-L-A-H.COM Empire Gateway Pilot',
+    desc: 'Bilingual static gateway pilot; no backend or private data owner',
+    url: 'http://localhost:3010',
+    health: '/',
+    keys: [],
+    color: 'yellow',
+  },
+  {
     tag: 'sentinel',
     pkg: '@moonwitness/sentinel',
     kind: 'worker',

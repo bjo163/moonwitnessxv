@@ -14,6 +14,7 @@
 | `skylink` | 3005 | service | yes | yes | `/health` | Bounded D18 service |
 | `echolog` | 3006 | service | yes | yes | `/health` | Bounded D19 storage; ignores the Radio `PORT` |
 | `orbit` | 3007 | web | yes | yes | `/` | M40 spatial frontend; fixtures only |
+| `empire-web` | 3010 | web | yes | — | `/` | Isolated bilingual static pilot; not the canonical LIGHTHOUSE runtime |
 | `sentinel` | — | worker | yes | yes | — | Daemon, no HTTP surface |
 | `lumen-runtime` | — | scaffold | **no** | — | — | M41 plan; listed so absence is explicit |
 

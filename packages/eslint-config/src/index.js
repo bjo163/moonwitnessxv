@@ -17,6 +17,7 @@ export const GLOBAL_IGNORES = [
   'node_modules/**',
   '**/node_modules/**',
   '**/dist/**',
+  '**/out/**',
   '**/.next/**',
   '**/*.tsbuildinfo',
   'packages/moonql/drizzle/meta/**',
