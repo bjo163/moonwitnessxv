@@ -61,8 +61,17 @@ test('both route families pin their skin on the html element', () => {
   assert.match(read('src/app/(localized)/[locale]/layout.tsx'), /<html[^>]*data-skin="empire"/)
 })
 
-test('the Empire stylesheet still keeps its artwork', () => {
+test('the Empire stylesheet and pages still keep their artwork', () => {
   const css = read('src/app/globals.css')
-  assert.ok(rules(css).some(({ selector }) => /su-cover/.test(selector)), 'the drawn covers must still exist')
-  assert.match(css, /url\('\/story-universe\/codex-guardian\.webp'\)/)
+  // M45 moved the covers from CSS backgrounds into <img> elements; the one
+  // remaining CSS-drawn painting is the GGS reflection panel.
+  assert.match(css, /url\('\/story-universe\/home-mooncity\.webp'\)/, 'the reflection panel keeps its artwork')
+  // Components and their copy modules together carry the five approved files.
+  const art = [
+    ...['HomePage', 'LibraryPage', 'ReaderPage', 'CodexPage', 'GgsPage'].map((page) => read(`src/components/story/${page}.tsx`)),
+    ...['home-copy', 'library-copy', 'reader-copy', 'codex-copy', 'ggs-copy'].map((copy) => read(`src/lib/${copy}.ts`)),
+  ].join('\n')
+  for (const name of ['home-mooncity', 'library-guardian', 'reader-poster', 'codex-guardian', 'moon-academy']) {
+    assert.match(art, new RegExp(`${name}\\.webp`), `${name}: still drawn somewhere`)
+  }
 })
