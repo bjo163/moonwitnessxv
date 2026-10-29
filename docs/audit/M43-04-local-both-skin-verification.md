@@ -1,6 +1,6 @@
 # M43-04 — Both-skin local verification (PARTIAL)
 
-**Status: PARTIAL, NOT CLOSED.** 29 October 2026 (Asia/Jakarta). [TODO](../../TODO.md) owns task status. This note records only what was observed locally; the row stays open because promotion, redeploy and the full interaction-state sweep did not happen.
+**Status: LOCAL EVIDENCE; M43-04 CLOSED at `e740900`.** 29 October 2026 (Asia/Jakarta). [TODO](../../TODO.md) owns task status. This note records only what was observed locally before promotion; closure rests on [`M43-04-both-skin-release.md`](M43-04-both-skin-release.md).
 
 ## Run identity
 
@@ -53,7 +53,7 @@ A second Playwright pass over the same static export (`states/states.json`):
 
 The 404 console entry is the navigation request itself (404 status), not a script error.
 
-## Not observed — why the row stays open
+## Not observed locally — closed by the later release run
 
 - **Empty state** was not exercised: the exported pages contain no search/filter input and no empty collection view.
 - **Disabled state** has no control to exercise: `:disabled` matches zero elements in both skins, so the state is absent rather than verified.
@@ -61,7 +61,7 @@ The 404 console entry is the navigation request itself (404 status), not a scrip
 - **Security headers** (`X-Content-Type-Options`, `frame-ancestors`, referrer policy) cannot be observed from a local file server; the M42-02 live check remains the authority for headers. `noindex, nofollow` was observed as a meta tag only.
 - **WebP responses** were verified by `export-check.mjs` at build time, not over HTTP in this run.
 - **Baseline pixel comparison** was not performed; screenshots here have no committed pre-change counterpart.
-- **Promotion and redeploy** were not performed: no push, no `dev`→`main`, no Vercel deployment. No promoted SHA or redeploy result exists to record.
+- **Promotion and redeploy** were outside this local run. They were performed afterwards for `e740900` (`v2.20.0`) and verified live in [`M43-04-both-skin-release.md`](M43-04-both-skin-release.md); independently re-checked here: `/`, `/en`, `/id/stories` and `/en/stories/angelwithshotgun` return 200 with the expected `data-skin`, `noindex, nofollow` and the nosniff/DENY/referrer headers.
 
 ## Rollback
 
@@ -69,4 +69,4 @@ Unchanged: production deployment `dpl_G4b6HsDLK81qseMRYHA251jmCTqe` at `cea723ca
 
 ## Disposition
 
-The local both-skin render contract holds at the five required viewports. M43-04 remains open for the interaction-state sweep, live header/WebP checks, baseline comparison, promotion and recorded redeploy.
+The local both-skin render contract holds at the five required viewports. M43-04 was closed later at `e740900` with the interaction sweep, baseline comparison, promotion and live verification recorded in the release audit; this note remains the reproducible local baseline.

@@ -28,7 +28,7 @@ The M43 files themselves had no uncommitted edits when the commands below ran; t
 | `pnpm --filter @moonwitness/empire-web build` | exit 0, static export emitted |
 | `node apps/empire-web/test/export-check.mjs` | 5 PASS lines: eight localized routes, twelve information pages, five WebP/zero PNG, 25 HTML files' anchors, 404 |
 
-Not executed end to end: root `pnpm test`. The working tree carries unrelated cockpit and M19 changes, so a full-monorepo run would mix other sessions' in-progress work into this evidence. The root `test` script now ends with `pnpm --filter @moonwitness/moonui test` (here `package.json:40`), and that suite was run directly with the result above. This is a limitation of the evidence, not a failure.
+Root `pnpm test` was not executed locally here. It was executed later by CI run [40885808102](https://github.com/bjo163/moonwitnessxv/actions/runs/40885808102) at `e740900`, a descendant of this SHA: the `pnpm verify` chain (build, `ui:check`, lint, `gen:sdk:check`, `pnpm test`, `build:web`) concluded **success**, so the root wiring is proved by CI rather than by this local evidence.
 
 ## Contract checks
 
