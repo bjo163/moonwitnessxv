@@ -118,6 +118,74 @@ Expected: 200 with `index, follow` + canonical on the apex; `Allow: /` and a `Si
 
 ## 7. Not observed
 
-- No certificate was issued, no record was created, no hostname was resolved.
 - `apps/orbit`'s call path (server-side or browser) is unconfirmed, which is why `CORS_ORIGIN` lists it optimistically but no preflight has been measured.
 - Cockpit and the AI Gateway are declared in ADR-0016 but intentionally unrouted until M44-07 decides.
+
+## 8. Coolify execution log — 2026-10-29
+
+Recorded by probing `apps.mycocolink.com` (Coolify) and the public hosts; nothing here is inferred from a green CI run.
+
+### 8.1 Stack state
+
+| Item | Value |
+|---|---|
+| Application uuid | `hm1sboa7yp2p6ttuc9jukzzp` (`moonwitnessxv:main-…`, compose) |
+| Deployment | `mwixadma2zkoptaqi3kfu7jr`, webhook-triggered from `main` |
+| Commit | `9cab9650da62f3ad8ee4c25a03a2ffcfc4d277d2` |
+| Result | `finished` at `2026-10-29T16:01:58Z`; all service containers started |
+| Bindings | `arsy` → `https://api.moonwitness.biz.id`, `dock` → `https://moonwitness.biz.id` |
+| Env | `DOCK_PUBLIC_URL=https://moonwitness.biz.id` present in both the production and preview env rows |
+
+Only hosts that already resolve are bound. A domain has **not** been attached to `empire-web`, `headquarters`, `orbit`, `echolog` or `skylink`, because their names do not resolve yet: attaching one would fail the ACME challenge and leave the router returning 404 for that host.
+
+### 8.2 Deployment failures seen and fixed
+
+1. Deployment `5766` (`9900868`) failed with `Bind for 127.0.0.1:3001 failed: port is already allocated` — another compose on the same server publishes `127.0.0.1:3001`. Fixed by publishing dock on `127.0.0.1:${DOCK_HOST_PORT:-3001}` with `DOCK_HOST_PORT=13001` in Coolify, and headquarters on loopback only (`177fc62`). Traefik reaches both over the `A-L-L-A-H` network, so the published port is irrelevant to routing.
+2. Two overlapping deploys (an automatic one and a manual one) both failed at `15:36:57Z`; Coolify cannot cancel a queued deployment (`DELETE /deployments/{uuid}` → 404). One deploy at a time is the working rule.
+3. Dock emitted `http://localhost:3001` in its canonical/OpenGraph/sitemap because nothing set the public origin. Fixed by passing `DOCK_PUBLIC_URL` through compose (`0bd10cf`) plus the Coolify env above; Dock computes metadata per request, so no rebuild behaviour was needed beyond the deploy.
+
+### 8.3 Observed rows (probes run 2026-10-29 16:02–16:05Z)
+
+```bash
+curl -sSI https://moonwitness.biz.id/en
+curl -s  https://moonwitness.biz.id/en | grep -oE '<link rel="canonical"[^>]*>|<link rel="alternate"[^>]*>|<meta property="og:url"[^>]*>'
+curl -s  https://moonwitness.biz.id/sitemap.xml | grep -c '<loc>'
+curl -sS -o /dev/null -w '%{http_code}\n' https://moonwitness.biz.id/id
+curl -sS https://api.moonwitness.biz.id/api/v1/health
+curl -sSI -X OPTIONS https://api.moonwitness.biz.id/api/v1/health -H 'Origin: https://moonwitness.biz.id' -H 'Access-Control-Request-Method: GET'
+curl -sSI -X OPTIONS https://api.moonwitness.biz.id/api/v1/health -H 'Origin: https://evil.example'            -H 'Access-Control-Request-Method: GET'
+curl -sSI --resolve moonwitness.biz.id:443:163.61.134.104 https://moonwitness.biz.id/en
+echo | openssl s_client -connect 163.61.134.104:443 -servername moonwitness.biz.id 2>/dev/null | openssl x509 -noout -issuer -subject -dates -ext subjectAltName
+for p in 3000 3001 3002 3003 3004 3005 3006 3007; do timeout 3 bash -c "</dev/tcp/163.61.134.104/$p" 2>/dev/null && echo "$p open" || echo "$p closed"; done
+```
+
+| Check | Result |
+|---|---|
+| `https://moonwitness.biz.id/en`, `/id` | 200 / 200 |
+| Canonical + hreflang | `canonical https://moonwitness.biz.id/en`; alternates `id`→`/id`, `en`→`/en`, `x-default`→`/en`; `og:url` matches. No `localhost` anywhere in the sitemap (0 occurrences) |
+| `sitemap.xml` | 30 `<loc>` (15 dock routes × 2 locales) with hreflang alternates |
+| Security headers (origin) | CSP, `x-content-type-options: nosniff`, `x-frame-options: DENY`, `referrer-policy: strict-origin-when-cross-origin`, `permissions-policy` |
+| `Strict-Transport-Security` | **absent** at both Cloudflare and the origin |
+| Origin certificate | Let's Encrypt `CN=YR1`, `CN=moonwitness.biz.id`, SAN that host only, valid 2026-08-31 → 2026-11-29 |
+| `api.…/api/v1/health` | 200 `{"ok":true,…}`; preflight from `https://moonwitness.biz.id` echoes `access-control-allow-origin`; from `https://evil.example` no allow-origin header |
+| API certificate | Let's Encrypt `CN=YR1`, `CN=api.moonwitness.biz.id`, valid 2026-08-31 → 2026-11-29 |
+| Public port surface | only `3000` open; `3001`–`3007` closed (dock and HQ are loopback-only) |
+| `https://moonwitness.biz.id/robots.txt` | 200, but it is **Cloudflare's managed file** (no `Sitemap:` line). At the origin the same path returned 404 — dock had no `robots.txt` route. Added `apps/dock/src/app/robots.ts`; it reaches the origin with the next deploy |
+
+### 8.4 Rows not observed
+
+| Row | Why |
+|---|---|
+| `a-l-l-a-h.com` / `www.a-l-l-a-h.com` | Both resolve to `2.57.91.91` (`Server: hcdn`, Hostinger parking). The apex is not on the Coolify server, so no `/en`, `/id`, canonical, sitemap or 301 exists to measure |
+| `www.moonwitness.biz.id` → 301 | NXDOMAIN |
+| `hq.moonwitness.biz.id/login` | NXDOMAIN (also unbound in Coolify) |
+| `orbit`, `media`, `skylink` | NXDOMAIN and unbound |
+| `cockpit`, `ai` | NXDOMAIN; unrouted by design under M44-07 variant A |
+| Vercel alias `X-Robots-Tag` | not fetched in this pass |
+
+### 8.5 Operator actions left
+
+1. Point `a-l-l-a-h.com` and `www.a-l-l-a-h.com` from the Hostinger parking IP to `163.61.134.104`, then attach `https://a-l-l-a-h.com` to `empire-web` (3010) and the `www` redirect.
+2. Create the `www`, `hq`, `orbit`, `media`, `skylink` names (CNAME → `moonwitness.biz.id`, proxied) and attach the matching Coolify domains.
+3. Turn off Cloudflare's managed `robots.txt` for `moonwitness.biz.id`, otherwise the origin file — and its `Sitemap:` line — never reaches crawlers.
+4. Enable HSTS at the Cloudflare edge for `moonwitness.biz.id`, or accept that the apex will be the only host sending it (empire-web's nginx already does).
