@@ -67,3 +67,13 @@ export const content = {
     spaces: spaces.en,
   },
 } as const
+
+/** Evidence describes the inspected pilot baseline, never service availability. */
+export const spaceEvidence: Record<string, { owner: string; sourceRef: string; reviewedAt: string }> = {
+  moonwitness: { owner: 'MoonWitness XV / STORY', sourceRef: 'docs/product/A-L-L-A-H-COM-MASTER-SPEC.md', reviewedAt: '2026-10-29' },
+  dock: { owner: 'MoonWitness XV / Dock', sourceRef: 'apps/dock/package.json', reviewedAt: '2026-10-29' },
+  harbor: { owner: 'MoonWitness XV / proposed Harbor', sourceRef: 'docs/product/A-L-L-A-H-COM-MASTER-SPEC.md', reviewedAt: '2026-10-29' },
+  moonlab: { owner: 'MoonWitness XV / proposed MoonLab', sourceRef: 'docs/product/A-L-L-A-H-COM-MASTER-SPEC.md', reviewedAt: '2026-10-29' },
+  shadow: { owner: 'MoonWitness XV / proposed SHADOW', sourceRef: 'docs/product/A-L-L-A-H-COM-MASTER-SPEC.md', reviewedAt: '2026-10-29' },
+  works: { owner: 'MoonWitness XV / proposed WORKS', sourceRef: 'docs/product/A-L-L-A-H-COM-MASTER-SPEC.md', reviewedAt: '2026-10-29' },
+}

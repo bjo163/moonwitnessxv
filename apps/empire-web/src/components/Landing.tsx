@@ -45,20 +45,33 @@ export function Landing({ locale }: { locale: Locale }) {
       <div><h2 id="mission-title">{t.missionTitle}</h2><p>{t.mission}</p></div>
       <span className="emp-manifesto-star" aria-hidden="true">✳</span>
     </section>
+    <section className="emp-discover" aria-labelledby="discover-title">
+      <h2 id="discover-title">{locale === 'id' ? 'Mulai menjelajah' : 'Start exploring'}</h2>
+      <div className="emp-discover-grid">
+        {([
+          ['sources', 'READ', locale === 'id' ? 'Kenali sumber dan konteks' : 'Understand sources and context'],
+          ['ecosystem', 'EXPLORE', locale === 'id' ? 'Lihat peta ekosistem' : 'Browse the ecosystem map'],
+          ['values', 'CREATE', locale === 'id' ? 'Pelajari prinsip berkarya' : 'Read our creative principles'],
+          ['roadmap', 'SIGNAL', locale === 'id' ? 'Periksa rencana dan status radio' : 'Check plans and radio status'],
+        ] as const).map(([section, label, description]) => <a key={section} href={`/${locale}/${section}`}>
+          <span>{label}</span><strong>{description}</strong><span aria-hidden="true">↗</span>
+        </a>)}
+      </div>
+    </section>
     <section className="emp-section" id="ecosystem" aria-labelledby="ecosystem-title">
       <div className="emp-section-heading"><p className="emp-eyebrow">{t.spacesEyebrow}</p><h2 id="ecosystem-title">{t.spacesTitle}</h2><p>{t.spacesNote}</p></div>
       <div className="emp-space-grid">
         {t.spaces.map((s, i) => <article key={s.id} className={'emp-space emp-space-' + s.accent}>
           <div className="emp-space-top"><span className="emp-space-index">{String(i + 1).padStart(2, '0')}</span><span className="emp-space-status">{s.status}</span></div>
           <p className="emp-space-caption">{s.caption}</p><h3>{s.name}</h3><p>{s.description}</p>
-          <span className="emp-space-mark" aria-hidden="true">↗</span>
+
         </article>)}
       </div>
     </section>
     <section className="emp-story" id="story" aria-labelledby="story-title">
       <div className="emp-story-mark" aria-hidden="true">“</div>
       <div><p className="emp-eyebrow">{t.storyEyebrow}</p><h2 id="story-title">{t.storyTitle}</h2><p>{t.story}</p><small>{t.storyNote}</small></div>
-      <div className="emp-story-notebook" aria-hidden="true"><span>28.10.2026</span><strong>NIAT → KARYA → MANFAAT</strong><span>ROCKSOUL / HUMAN STORY</span></div>
+      <div className="emp-story-notebook" aria-hidden="true"><span>28.10.2026</span><strong>{locale === 'id' ? 'NIAT → KARYA → MANFAAT' : 'INTENT → WORK → BENEFIT'}</strong><span>ROCKSOUL / HUMAN STORY</span></div>
     </section>
     <section className="emp-principles" id="principles" aria-labelledby="principles-title">
       <p className="emp-eyebrow">{t.principlesEyebrow}</p><h2 id="principles-title">{t.principlesTitle}</h2>

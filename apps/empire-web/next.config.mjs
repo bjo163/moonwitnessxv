@@ -5,6 +5,7 @@
 /** @type {import('next').NextConfig} */
 const config = {
   output: 'export',
+  experimental: { globalNotFound: true },
   poweredByHeader: false,
   reactStrictMode: true,
   transpilePackages: ['@moonwitness/moonui'],

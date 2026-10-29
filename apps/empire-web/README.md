@@ -1,6 +1,6 @@
 # A-L-L-A-H.COM — Empire Gateway (Vercel preview)
 
-**Status:** Isolated static pilot only. Separate frontend is a proposed exception to the accepted Lighthouse-within-Dock boundary (ADR-0004); see ADR-0011 (PROPOSED). **No new backend, auth, schema, API secrets, or public control plane.**
+**Status:** Isolated static pilot only. This owner-requested branch is an isolated frontend pilot. Accepted ADR-0004 and ADR-0011 continue to make Dock the canonical LIGHTHOUSE runtime; this pilot does not amend those decisions. **No new backend, auth, schema, API secrets, or public control plane.**
 
 Repository: bjo163/moonwitnessxv · branch feature/empire-web-vercel · apps/empire-web.
 
@@ -44,4 +44,20 @@ The isolated pilot now includes `/id/about`, `/id/sources`, `/id/privacy` and th
 
 Privacy copy describes the application code separately from hosting logs, whose retention has not been verified. Source copy does not imply publication rights for scripture, research, or poster assets. This increment does not complete or change the canonical M31/Dock task statuses. The owner's explicit branch-specific pilot request is the scope for this work; accepted Dock runtime decisions remain authoritative for the canonical gateway.
 
-`node apps/empire-web/test/export-check.mjs` checks the generated HTML after building: six pages, locale links, headings, main landmarks, noindex and absence of forms/embeds. It is also run by the dedicated CI workflow. It is not a browser accessibility audit or deployment check.
+`node apps/empire-web/test/export-check.mjs` checks the generated HTML after building: information pages, locale links, headings, main landmarks, noindex and absence of forms/embeds. It is also run by the dedicated CI workflow. It is not a browser accessibility audit or deployment check.
+
+## Static pilot completion scope
+
+Both `/id` and `/en` expose home plus `about`, `ecosystem`, `values`, `roadmap`, `sources` and `privacy`. `/` deterministically serves the English fallback. Locale root layouts set the actual HTML document language before JavaScript; information-page language switches preserve the section. The multi-root layout uses Next's supported experimental `globalNotFound` configuration to produce an exported bilingual recovery page. This flag must be reviewed when upgrading Next.
+
+The atlas includes implementation state, separate unverified public-access state, audience, design owner, pinned planning/code references and source-review date. It has no unverified service destination. Four discovery cards lead to actual local information pages. Story content remains the already-present narrative reflection; no new poster or scripture publication is implied.
+
+Verification commands after build:
+```sh
+node apps/empire-web/test/export-check.mjs
+pnpm exec playwright install --with-deps chromium --only-shell
+pnpm exec playwright test --config apps/empire-web/playwright.config.mjs
+```
+The Playwright suite covers both locales at 390px and 1440px, keyboard skip navigation, all information-page links and locale round trips, overflow, global 404, JavaScript errors and unexpected external requests. The dedicated CI workflow runs it after the static build; configuring it is not evidence of a passing run.
+
+See `docs/audit/empire-web-static-pilot-2026-10-29.md` for observed local evidence and remaining release gates. No Vercel deployment, production promotion, domain attachment or DNS change is part of this increment.

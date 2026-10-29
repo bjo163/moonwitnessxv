@@ -63,6 +63,12 @@ jobs:
       - name: Verify exported information pages
         run: node apps/empire-web/test/export-check.mjs
 
+      - name: Install browser for keyboard and mobile checks
+        run: pnpm exec playwright install --with-deps chromium --only-shell
+
+      - name: Verify browser navigation
+        run: pnpm exec playwright test --config apps/empire-web/playwright.config.mjs
+
       - name: Confirm bilingual static export
         run: |
           test -f apps/empire-web/out/index.html

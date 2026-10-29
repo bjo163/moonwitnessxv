@@ -7,9 +7,12 @@ import assert from 'node:assert/strict'
 const app = join(dirname(fileURLToPath(import.meta.url)), '..')
 const read = (path) => readFileSync(join(app, path), 'utf8')
 
-test('Indonesian and English public routes exist', () => {
-  assert.ok(existsSync(join(app, 'src/app/id/page.tsx')))
-  assert.ok(existsSync(join(app, 'src/app/en/page.tsx')))
+test('public locale routes share one guarded static implementation', () => {
+  assert.ok(existsSync(join(app, 'src/app/(localized)/[locale]/page.tsx')))
+  const layout = read('src/app/(localized)/[locale]/layout.tsx')
+  assert.match(layout, /locale: 'id'/)
+  assert.match(layout, /locale: 'en'/)
+  assert.match(layout, /dynamicParams = false/)
 })
 test('preview does not claim launched or expose private API credentials', () => {
   const copy = read('src/lib/copy.ts')
@@ -20,7 +23,9 @@ test('preview does not claim launched or expose private API credentials', () => 
 })
 test('preview stays noindex until editorial and security approval', () => {
   assert.match(read('src/app/robots.ts'), /disallow:\s*'\/'/)
-  assert.match(read('src/app/layout.tsx'), /index:\s*false/)
+  for (const layout of ['src/app/(entry)/layout.tsx', 'src/app/(localized)/[locale]/layout.tsx']) {
+    assert.match(read(layout), /index:\s*false/)
+  }
 })
 test('static export has no duplicate API or login', () => {
   assert.match(read('next.config.mjs'), /output:\s*'export'/)

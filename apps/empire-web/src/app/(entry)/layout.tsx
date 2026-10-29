@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import '@moonwitness/moonui/moon.css'
-import './globals.css'
+import '../globals.css'
 
 export const metadata: Metadata = {
   title: { default: 'A-L-L-A-H.COM | Empire of the Light', template: '%s | A-L-L-A-H.COM' },
@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return <html lang="id"><body className="emp-body">{children}</body></html>
+  return <html lang="en"><body className="emp-body">{children}</body></html>
 }
