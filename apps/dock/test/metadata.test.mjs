@@ -4,6 +4,7 @@ import process from 'node:process'
 import { FRONTEND_URLS } from '@moonwitness/core'
 import { getDockBaseUrl, getDockMetadata } from '../src/lib/metadata.ts'
 import sitemap, { DOCK_SITEMAP_ROUTES } from '../src/app/sitemap.ts'
+import robots from '../src/app/robots.ts'
 import manifest from '../src/app/manifest.ts'
 
 test('metadata helper resolves Indonesian locale title, description, and canonical URL', () => {
@@ -172,6 +173,15 @@ test('sitemap generates valid, bidirectional localized entries for all public ro
       assert.equal(enEntry.priority, 0.8)
     }
   }
+})
+
+test('robots allows every crawler and points at the sitemap on the public origin', () => {
+  const result = robots()
+  const defaultBase = FRONTEND_URLS.dock
+
+  assert.deepEqual(result.rules, [{ userAgent: '*', allow: '/' }])
+  assert.equal(result.sitemap, `${defaultBase}/sitemap.xml`)
+  assert.equal(result.host, defaultBase)
 })
 
 test('manifest adheres to PWA standard and specifies lang en', () => {
