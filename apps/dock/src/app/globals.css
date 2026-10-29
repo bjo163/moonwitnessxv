@@ -17,6 +17,32 @@ body {
   overflow-x: clip;
 }
 
+/* M19-03 §4.4: the skip link is the first focusable element and targets
+   `<main id="main" tabIndex={-1}>`. It stays off-screen until focused so the
+   visual shell is unchanged for pointer users. */
+.dk-skip {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 14px;
+  border: 3px solid var(--fg);
+  background: var(--night);
+  color: var(--fg);
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: translateY(-150%);
+}
+.dk-skip:focus,
+.dk-skip:focus-visible {
+  transform: none;
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .dk-header {
   display: flex;
   align-items: center;
@@ -943,11 +969,21 @@ body {
 .dk-reader-form .m-field:nth-of-type(2) {
   flex: 1 1 200px;
 }
+/* One self-contained column by default: the export pane must never claim a
+   fixed track wider than the passage column it shares (M19-07 measured a
+   0 px passage when `minmax(280px, 1fr)` won the only free track). */
 .dk-reader-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   align-items: start;
+}
+/* Only split into passage + export panes when the reading column itself has
+   room; the container is the reader main column, not the viewport. */
+@container (min-width: 640px) {
+  .dk-reader-grid {
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 280px);
+  }
 }
 .dk-reader-passage {
   border: 3px solid var(--fg);
@@ -1123,7 +1159,9 @@ body {
 /* ---------- UI-P05b: Reader contents rail + reading record ---------- */
 .dk-reader-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(210px, 250px) minmax(220px, 300px);
+  /* The two rails are bounded at rest so the passage column keeps the width
+     left inside the accepted 72rem reader measure. */
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 200px) minmax(0, 230px);
   gap: 18px;
   align-items: start;
 }
@@ -1131,6 +1169,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  min-width: 0;
+  container-type: inline-size;
 }
 .dk-reader-rail {
   display: flex;

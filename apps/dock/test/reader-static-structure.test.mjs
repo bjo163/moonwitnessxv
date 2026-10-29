@@ -147,8 +147,16 @@ test('UI-P05b: reading order puts the passage before the browse list on a narrow
   assert.ok(main !== -1 && contents !== -1 && record !== -1, 'the three layout regions must exist')
   assert.ok(main < contents, 'the passage column precedes the contents rail in DOM order')
   assert.ok(contents < record, 'the reading record is the last region')
-  assert.match(css, /\.dk-reader-layout\s*\{[\s\S]*?grid-template-columns: minmax\(0, 1\.7fr\) minmax\(210px, 250px\) minmax\(220px, 300px\)/)
+  assert.match(css, /\.dk-reader-layout\s*\{[\s\S]*?grid-template-columns: minmax\(0, 1\.7fr\) minmax\(0, 200px\) minmax\(0, 230px\)/)
   assert.match(css, /@media \(max-width: 900px\) \{\s*\.dk-reader-layout \{\s*grid-template-columns: 1fr;/)
+})
+
+test('M19-07: the passage column owns its space and only splits when the column can host both panes', () => {
+  // A fixed-width export track inside a narrower reading column collapsed the
+  // passage to 0 px at 1440 px; the default must be a single content column.
+  assert.match(css, /\.dk-reader-grid\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\);/)
+  assert.match(css, /@container \(min-width: 640px\) \{\s*\.dk-reader-grid \{/)
+  assert.match(css, /\.dk-reader-main\s*\{[^}]*min-width: 0;[^}]*container-type: inline-size;/)
 })
 
 test('UI-P05b: rail rows are keyboard-visible and use tokens, not one-off colours', () => {

@@ -1,5 +1,7 @@
 # M19-07 — J01/J03 browser acceptance attempt (NOT MET)
 
+> **Superseded:** the Dock layout and skip-link defects recorded here were fixed, and the rerun at [M19-07-j01-j03-browser-acceptance.md](M19-07-j01-j03-browser-acceptance.md) passes 29/29 clauses. This file stays as the NOT MET history.
+
 **Task:** M19-07 — "Run J01/J03 browser acceptance; J05 only when Story is in release scope".
 **Acceptance:** "Selected-scope flows pass with accessibility; optional Story cannot block Reader".
 **Result: NOT MET.** This record documents a real browser run, what it proved, and why the leaf stays open. No checkbox change and no accessibility certification is claimed.

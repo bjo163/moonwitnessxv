@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { headers } from 'next/headers'
 import { SiteFooter, SiteHeader } from '@/ui/components/shell'
+import { getLandingCopy } from '@/lib/landing-copy'
 import { MOON_EXPERIENCES, type MoonExperienceName } from '@moonwitness/moonui'
 import type { CSSProperties } from 'react'
 import {
@@ -45,12 +46,15 @@ export async function SiteLayout({ children }: { children: ReactNode }) {
     : undefined
   return (
     <div className="dk-shell">
+      <a className="dk-skip" href="#main">
+        {getLandingCopy(locale).skipToContent}
+      </a>
       <SiteHeader
         initialPath={requestHeaders.get(DOCK_ROUTE_PATH_HEADER) ?? '/'}
         initialSearch={requestHeaders.get(DOCK_ROUTE_SEARCH_HEADER) ?? ''}
         initialLocale={locale}
       />
-      <main className="dk-main" data-experience={experience} style={experienceStyle}>{children}</main>
+      <main className="dk-main" id="main" tabIndex={-1} data-experience={experience} style={experienceStyle}>{children}</main>
       <SiteFooter initialLocale={locale} />
     </div>
   )
