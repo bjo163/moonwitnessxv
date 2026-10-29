@@ -1,6 +1,6 @@
 # D00/D12 reviewer-grant proposal
 
-**Status: PROPOSAL — NOT RATIFIED. Non-binding owner decision proposal; not an accepted ADR, not an implementation authorization.** It creates no schema, migration, route, UI, role value or code; assigns no principal and touches no content. Ratification is the owner's decision and must be recorded in an accepted ADR before any principal or role is treated as an authorized reviewer, as required by [ADR-0013 §2](../decisions/ADR-0013-d08-release-authority.md). This document does not accept itself, close a TODO leaf or claim that any reviewer exists.
+**Status: RATIFIED AS POLICY — 29 October 2026, by [ADR-0015](../decisions/ADR-0015-d00-d12-reviewer-grants.md).** The owner accepted the full conservative package below, including all ten choices, as one position. Ratification authorizes no schema, migration, route, UI, code change, role value, principal or grant assignment, and it does not clear, publish or project content. The document body is preserved as the ratification record and is not edited further.
 
 - Repository: `Z:\project\moonradio`, branch `dev`.
 - Local baseline: `aaa19d13993b434efdbf5bb46a2511aedea411c8`. At preparation time `git ls-remote origin refs/heads/dev` returned `3d8b6a00838a768a89f5218a2a5679769a588c2d`, which is an ancestor of this worktree: local `dev` is ahead of the remote and nothing has been pushed.
