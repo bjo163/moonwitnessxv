@@ -72,17 +72,17 @@ function portBindings(block: string): string[] {
   return out
 }
 
-test('compose: only the frontends and the hub publish off loopback', () => {
+test('compose: only the hub publishes off loopback', () => {
   // M27-10 — a service that binds 0.0.0.0 is reachable from the host network even
-  // when the reverse proxy never routes to it. The database, ECHOLOG, SKYLINK,
-  // the AI gateway and the pilot frontends are internal by default; the two
-  // public frontends and the hub are the deliberate host-published surface, and
-  // their wide binding is the open production-security review item (RELEASE.md),
-  // not an approved posture.
+  // when the reverse proxy never routes to it. Only the hub keeps a host-wide
+  // binding; the database, ECHOLOG, SKYLINK, the AI gateway, HQ, dock and the
+  // pilot frontends are loopback or proxy-only. HQ and dock reachability comes
+  // from Coolify's proxy over the compose network (ADR-0016), which is why the
+  // frontends no longer need a host-wide port.
   const wide = [...blocks].filter(([, block]) => portBindings(block).some((entry) => /^\d+:/.test(entry))).map(([name]) => name).sort()
-  assert.deepEqual(wide, ['arsy', 'dock', 'headquarters'], 'a service gained or lost a host-wide port binding')
+  assert.deepEqual(wide, ['arsy'], 'a service gained or lost a host-wide port binding')
 
-  for (const name of ['db', 'echolog', 'skylink', 'aigateway', 'orbit', 'empire-web']) {
+  for (const name of ['db', 'echolog', 'skylink', 'aigateway', 'orbit', 'empire-web', 'dock', 'headquarters']) {
     const block = blocks.get(name)
     if (!block) continue
     const open = portBindings(block).filter((entry) => !entry.startsWith('127.0.0.1:'))

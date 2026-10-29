@@ -269,7 +269,9 @@ services:
       arsy:
         condition: service_healthy
     ports:
-      - "3002:3002"
+      # Loopback only: the proxy reaches HQ over the compose network, and HQ is
+      # login-gated, so no host-wide binding (M27-10).
+      - "127.0.0.1:3002:3002"
     environment:
       NODE_ENV: production
       # follows API_PREFIX so a renamed prefix cannot leave the BFF dialling a
@@ -306,7 +308,12 @@ services:
       arsy:
         condition: service_healthy
     ports:
-      - "3001:3001"
+      # Loopback only: Coolify's proxy reaches dock over the compose network, and
+      # a host-wide binding would expose the site even when no domain is attached
+      # (M27-10). The host port is override-able because the Coolify host already
+      # runs another product on 127.0.0.1:3001; the default keeps local
+      # `docker compose up` on the port the dev runner documents.
+      - "127.0.0.1:${DOCK_HOST_PORT:-3001}:3001"
     environment:
       NODE_ENV: production
       # follows API_PREFIX, same reason as headquarters
