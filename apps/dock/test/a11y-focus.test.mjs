@@ -35,7 +35,11 @@ function cssRule(source, selector) {
 }
 
 test('space cards and provenance summary have visible keyboard focus', () => {
-  for (const selector of ['.dk-space-card:focus-visible', '.dk-provenance > summary:focus-visible']) {
+  for (const selector of [
+    '.dk-space-card:focus-visible',
+    '.dk-provenance > summary:focus-visible',
+    '.dk-term-index > summary:focus-visible',
+  ]) {
     const rule = cssRule(css, selector)
     assert.ok(rule, `${selector} must have a focus-visible rule`)
     assert.match(rule, /outline:\s*[^;]+/i, `${selector} must show a visible outline`)
@@ -59,6 +63,14 @@ test('reader provenance uses native details and summary as the first control', (
   assert.match(disclosure, /^<details className="dk-provenance">\s*<summary>/)
   assert.match(disclosure, /<summary>[^<]+<\/summary>\s*(?:\{source \? <SourceIdentity)/)
   assert.doesNotMatch(disclosure, /\b(?:onClick|role|tabIndex)\s*=/)
+})
+
+test('term table index remains a native keyboard-operable disclosure', () => {
+  const start = terms.indexOf('export function TermIndexTable(')
+  const end = terms.indexOf('export function TermList(', start)
+  const component = terms.slice(start, end)
+  assert.match(component, /<details className="dk-term-index">\s*<summary>/)
+  assert.doesNotMatch(component, /\b(?:onClick|role|tabIndex)\s*=/)
 })
 
 test('loading and error states announce status while empty term states use locale catalog copy', () => {
