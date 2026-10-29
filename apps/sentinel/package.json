@@ -17,7 +17,7 @@
     "build": "tsc -b",
     "start": "node --env-file-if-exists=../../.env dist/index.js",
     "typecheck": "tsc --noEmit && tsc --noEmit -p test/tsconfig.json",
-    "test": "tsx --test test/worker-log-contract.test.ts"
+    "test": "tsx --test test/worker-log-contract.test.ts test/observation-contract.test.ts"
   },
   "dependencies": {
     "@moonwitness/core": "workspace:*",
