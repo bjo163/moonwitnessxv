@@ -42,5 +42,7 @@
 - [M39 — ECHOLOG storage and attachments](M39.md)
 - [M40 — ORBIT spatial agent operations frontend](M40.md)
 - [M41 — LUMEN agent framework and internal runtime](M41.md)
+- [M42 — Empire Story Universe visual implementation and isolated Vercel release](M42.md)
+- [M43 — MoonUI dual-skin contract (zine + empire)](M43.md)
 
-42 milestone identities from M00–M41, including proposals that remain unimplemented. Original IDs and checkboxes remain in [TODO](../../TODO.md).
+44 milestone identities from M00–M43, including proposals that remain unimplemented. Original IDs and checkboxes remain in [TODO](../../TODO.md).
