@@ -8,7 +8,7 @@
 
 ## Baseline and worktree
 
-- The worktree was already dirty on entry with other sessions' WIP (`apps/cockpit`, `apps/empire-web`, `docs/audit/screens`, `TODO.md` M43 section, `next-env.d.ts`). None of it was edited, staged, restored or deleted by this task.
+- The worktree was already dirty on entry with other sessions' WIP (`apps/cockpit`, `apps/empire-web`, `docs/audit/screens`, `TODO.md` M43 section, `next-env.d.ts`). Those unrelated hunks were not edited, staged, restored or deleted. The only `TODO.md` change staged was the new M18-08 row; the M43 section stayed unstaged and uncommitted.
 - Files added by this task: `packages/governance/{package.json,tsconfig.json,src/index.ts,test/d08-release-decision.test.mjs}`. `pnpm-lock.yaml` gained only the `packages/governance` importer; the generated re-sort of the `apps/empire-web` block was removed so the diff contains this task's change only.
 - The pre-commit MoonUI token-purity gate passed on both commits (142 files scanned, 0 violations).
 - No push, rebase, branch creation or deployment was performed.
