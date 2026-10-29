@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* global document, console, URL, window */
+/* global document, console, URL, window, getComputedStyle */
 /**
  * M45-14 — measure the built export against the reference numbers.
  *
@@ -214,6 +214,59 @@ for (const [name, spec] of Object.entries(PAGES)) {
 
 await browser.close()
 server.close()
+
+// M45-14 — contrast, motion and touch targets, measured on the built export.
+{
+  const a11yBrowser = await chromium.launch()
+  const page = await a11yBrowser.newPage({ viewport: { width: 1122, height: 1402 }, reducedMotion: 'reduce' })
+  const a11yServer = await serve()
+  await page.goto(`http://127.0.0.1:${a11yServer.address().port}/en.html`, { waitUntil: 'networkidle' })
+
+  const tokens = await page.evaluate(() => {
+    const cs = getComputedStyle(document.documentElement)
+    const names = ['--bg', '--bg-1', '--fg', '--fg-subtle', '--fg-muted', '--brand', '--brand-2', '--danger']
+    return Object.fromEntries(names.map((n) => [n, cs.getPropertyValue(n).trim()]))
+  })
+  const lum = (hex) => {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+      .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+  const ratio = (a, b) => (Math.max(lum(a), lum(b)) + 0.05) / (Math.min(lum(a), lum(b)) + 0.05)
+  const pairs = [['--brand', '--bg'], ['--fg-subtle', '--bg'], ['--fg-muted', '--bg'], ['--danger', '--bg'], ['--danger', '--bg-1'], ['--fg', '--bg'], ['--brand', '--bg-1']]
+  console.log('\n=== contrast (AA small text 4.5) ===')
+  for (const [fg, bg] of pairs) {
+    const r = ratio(tokens[fg], tokens[bg])
+    const bad = r < 4.5
+    if (bad) failures += 1
+    console.log(`${fg} on ${bg}`.padEnd(26), r.toFixed(2), bad ? '  ← FAIL' : '')
+  }
+
+  const motion = await page.evaluate(() => [...document.querySelectorAll('*')].filter((el) => {
+    const cs = getComputedStyle(el)
+    const duration = Math.max(...cs.transitionDuration.split(',').map((d) => parseFloat(d) || 0))
+    return cs.animationName !== 'none' || duration > 0.05
+  }).length)
+  if (motion > 0) failures += 1
+  console.log(`reduced motion: ${motion} element(s) still animate`)
+
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.reload({ waitUntil: 'networkidle' })
+  const targets = await page.evaluate(() => [...document.querySelectorAll('a, button')]
+    .filter((el) => el.getBoundingClientRect().width > 0)
+    .map((el) => {
+      const r = el.getBoundingClientRect()
+      return { label: `${el.tagName.toLowerCase()}.${String(el.className).slice(0, 24)} "${(el.textContent || '').trim().slice(0, 12)}"`, w: Math.round(r.width), h: Math.round(r.height), inFooter: Boolean(el.closest('.su-footer')) }
+    }))
+  // WCAG 2.5.8 exempts inline text links; the footer legal row is that case.
+  const tiny = targets.filter((t) => (t.h < 24 || t.w < 24) && !t.inFooter)
+  const under44 = targets.filter((t) => t.h < 44)
+  if (tiny.length > 0) failures += 1
+  console.log(`touch targets: ${targets.length} measured · under 24px: ${tiny.length}${tiny.length ? ` (${tiny.slice(0, 4).map((t) => t.label).join(', ')})` : ''} · under 44px (AAA, advisory): ${under44.length}`)
+
+  await a11yBrowser.close()
+  a11yServer.close()
+}
 
 if (failures > 0) {
   console.log(`\n${failures} fidelity check(s) failed at 1122 or in the responsive sweep`)
