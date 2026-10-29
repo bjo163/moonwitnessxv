@@ -22,6 +22,12 @@ Source rights/consent in accepted ADR-0003 and D08 override public UI. `ADMIN_WR
 - **Egress.** `echolog` belongs on the `@moonwitness/core` egress deny list so a provider URL cannot be pointed back at the storage service.
 - **Related gate:** the owner-deferred off-host backup task waits for an S3-compatible target hosted off the backup machine and a demonstrated restore. ECHOLOG running on the same host does not satisfy “off-host.”
 
+## Declared but unrouted hostnames (M44-07)
+
+ADR-0016 gives every service a hostname, so `cockpit.moonwitness.biz.id` and `ai.moonwitness.biz.id` exist in the domain map. **Neither carries a route** (Variant A of M44-07): no hostname is attached to either service, and checking that both return no route belongs to M44-08. The reason is the trust model above. Cockpit has no identity system — its per-boot token is a CSRF guard, and the loopback `Host`/`Origin` predicate is the only thing stopping a remote caller from spawning or killing workspace processes. The AI Gateway authenticates nothing on the way in: `apps/aigateway/src/server.ts` registers the `/v1/*` handlers with no `onRequest`/`preHandler`, and every `apiKey` under `providers/` is an *outbound* provider credential. Containment today is the port binding alone — `aigateway` publishes `127.0.0.1:3003:3003` and Cockpit binds loopback.
+
+Publishing either one unchanged would turn a same-machine supervisor into an unauthenticated remote control plane and the gateway into an open LLM proxy billed to this project's provider keys. Variant B is gated on the code M44-07 names: a `COCKPIT_PUBLIC_HOST` allow-list that keeps the token, rebinding and traversal checks with edge basic-auth in front, and an inbound `x-api-key` check against `AI_GATEWAY_CLIENT_KEYS` with per-key rate limiting, tests included, and this section rewritten to the new invariant. Choosing Variant B is a security review, not a routing change.
+
 ## Cockpit local control plane
 
 Cockpit is a loopback-only supervisor that can spawn/kill workspace processes (`pnpm --filter <pkg> dev`), release ports, and read the error ledger. Its trust model is "same machine, same operator", which is enforced as follows:
