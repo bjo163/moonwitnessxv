@@ -96,7 +96,7 @@ export function CockpitHelpModal({
               {copy.helpSubtitle}
             </p>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose}>
+          <Button variant="ghost" size="sm" aria-label={copy.closeHelp} onClick={onClose}>
             ✕
           </Button>
         </div>

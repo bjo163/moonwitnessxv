@@ -64,6 +64,7 @@ test('M19-04 help dialog contains keyboard focus and restores its opener', async
     const first = dialog.locator('button').first()
     const last = dialog.locator('button').last()
     await last.waitFor({ state: 'visible' })
+    assert.equal(await first.getAttribute('aria-label'), 'CLOSE [ESC]')
     assert.equal(await first.evaluate((element) => element === document.activeElement), true)
 
     await page.keyboard.press('Shift+Tab')
