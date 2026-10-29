@@ -79,6 +79,23 @@ const PAGES = {
     ],
     columns: { selector: '.su-reader__thumb', expected: [34, 301, 570, 835], right: 1089 },
   },
+  codex: {
+    reference: '04-character-codex.png',
+    route: '/en/characters.html',
+    // Hero 343, featured 297 (x 19–1103), six-column traits 205, relations 305.
+    // The mockup's trait columns are uneven (178/184/172/179/174/191), so only
+    // the outer edges of a uniform six-column grid are asserted.
+    edges: [
+      { name: 'header', selector: '.su-chrome', expected: 72 },
+      { name: 'hero', selector: '.su-codex__hero', expected: 416 },
+      { name: 'featured', selector: '.su-codex__featured', expected: 722 },
+      { name: 'traits', selector: '.su-codex__traits', expected: 945 },
+      { name: 'relations', selector: '.su-codex__relations', expected: 1264 },
+      { name: 'footer-main', selector: '.su-footer__main', expected: 1348 },
+      { name: 'footer-bar', selector: '.su-footer__bar', expected: 1402 },
+    ],
+    columns: { selector: '.su-codex__traits article', expected: [19], right: 1097 },
+  },
 }
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json', '.txt': 'text/plain', '.xml': 'application/xml' }
