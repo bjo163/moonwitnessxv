@@ -49,3 +49,18 @@ Bangun 5 pengalaman visual yang sangat sesuai mockup:
 
 ## FINISH LINE
 You are done only when all five visual page contracts have been implemented or transparently flagged as editorial/release gated, behavior tested, and differences from the supplied mockups documented for review. Do not halt after generating a plan; make code changes where the existing authorization and repo policies permit it.
+## BOOTSTRAP ASET ORIGINAL — WAJIB SEBELUM VISUAL QA
+Dokumen ini sudah tersedia di repo, tetapi kelima PNG original **tidak otomatis ikut GitHub** karena keterbatasan upload binary. File original disediakan dalam paket `A-L-L-A-H-COM_STORY_UNIVERSE_MOCKUPS_AND_SPEC_v1.0.zip` dari percakapan; **jangan mengganti dengan image query atau mengarang poster baru**.
+
+1. Sinkronkan `dev` tanpa force-push; baca `apps/empire-web/docs/story-universe/README.md`.
+2. Periksa apakah `apps/empire-web/docs/story-universe/assets/01-homepage.png` hingga `05-ggs-full-moon-school.png` benar-benar ada.
+3. Bila belum ada, ambil ZIP asli dari pemilik proyek dan jalankan pada root repository:
+
+   ```sh
+   node apps/empire-web/scripts/import-story-universe-assets.mjs --zip "/path/to/A-L-L-A-H-COM_STORY_UNIVERSE_MOCKUPS_AND_SPEC_v1.0.zip"
+   ```
+
+4. Skrip memverifikasi SHA-256 kelima PNG. **Jangan klaim full visual parity bila PNG belum tersedia**; lanjutkan pekerjaan kontrak, struktur, tests yang tidak bergantung pada visual bila ZIP belum ada.
+5. Sesudah verified, masukkan lima PNG ke `docs/story-universe/assets/` pada `dev` sebagai private design references, jangan ke `public/` hingga review publikasi.
+6. Bedakan status: **docs committed** ≠ **five image binary committed** ≠ **MoonUI transformed** ≠ **feature implementation complete**.
+
