@@ -79,3 +79,39 @@ test('M19-04 help dialog contains keyboard focus and restores its opener', async
     await page.close()
   }
 })
+
+test('M19-04 reduced motion preference shortens Cockpit transitions and animations', async () => {
+  const page = await openSyntheticPage()
+  try {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(appUrl, { waitUntil: 'domcontentloaded' })
+    await page.getByText('MOONWITNESS COCKPIT', { exact: true }).waitFor({ state: 'visible' })
+    await page.locator('.cockpit-shell').evaluate((shell) => {
+      const probe = shell.ownerDocument.createElement('div')
+      probe.id = 'motion-probe'
+      probe.style.animationDuration = '2s'
+      probe.style.transitionDuration = '2s'
+      shell.append(probe)
+    })
+
+    const motionDurations = await page.locator('#motion-probe').evaluate((element) => {
+      const style = element.ownerDocument.defaultView?.getComputedStyle(element)
+      if (!style) throw new Error('Cockpit must expose computed browser styles')
+      const milliseconds = (duration) =>
+        duration.split(',').map((part) => {
+          const value = Number.parseFloat(part)
+          return part.trim().endsWith('ms') ? value : value * 1000
+        })
+      return {
+        animation: milliseconds(style.animationDuration),
+        transition: milliseconds(style.transitionDuration),
+      }
+    })
+
+    assert.ok(motionDurations.animation.every((duration) => duration <= 0.02))
+    assert.ok(motionDurations.transition.every((duration) => duration <= 0.02))
+    assert.equal(await page.evaluate(() => document.documentElement.ownerDocument.defaultView?.getComputedStyle(document.documentElement).scrollBehavior), 'auto')
+  } finally {
+    await page.close()
+  }
+})
