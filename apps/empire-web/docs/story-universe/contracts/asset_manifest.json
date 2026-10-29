@@ -1,0 +1,71 @@
+{
+  "schema": "moonwitness.story-universe.asset-manifest/1",
+  "edition": "2026-10-29",
+  "assets": [
+    {
+      "id": "REF-01",
+      "filename": "01-homepage.png",
+      "source_basename": "moonlit_empire_of_light_homepage.png",
+      "page": "Empire of the Light — Homepage",
+      "proposed_locale_route": "/id",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "a42b7c27e635deeb84ff9708a0e3e8d7b62e057a161bfe10ac2db6f14e9e8546",
+      "role": "private_design_reference",
+      "publish_approved": false,
+      "copyright_source": "original user-requested AI-generated mockup; editorial review required"
+    },
+    {
+      "id": "REF-02",
+      "filename": "02-moonstories-library.png",
+      "source_basename": "moonstories_library_a_moonlit_universe.png",
+      "page": "MoonStories Library",
+      "proposed_locale_route": "/id/stories",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "80b15d0bf707c63718835987e5a2d6c7329c4222382c0948fd7b0db1bc38a13d",
+      "role": "private_design_reference",
+      "publish_approved": false,
+      "copyright_source": "original user-requested AI-generated mockup; editorial review required"
+    },
+    {
+      "id": "REF-03",
+      "filename": "03-story-detail-reader.png",
+      "source_basename": "moonlit_guardian_empire_of_light.png",
+      "page": "AngelWithShotgun Story Detail / Reader",
+      "proposed_locale_route": "/id/stories/angelwithshotgun",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "5a29526616998ba8754d21f4d4dceaaf9799e828e0b2041fe2bade7ec7742270",
+      "role": "private_design_reference",
+      "publish_approved": false,
+      "copyright_source": "original user-requested AI-generated mockup; editorial review required"
+    },
+    {
+      "id": "REF-04",
+      "filename": "04-character-codex.png",
+      "source_basename": "moonwitness_xv_character_codex.png",
+      "page": "Character Codex",
+      "proposed_locale_route": "/id/characters",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "6a6ef416edd5c7ada077d26826e27d7c7a88689e9d5bcfcb12a4e5460f90968a",
+      "role": "private_design_reference",
+      "publish_approved": false,
+      "copyright_source": "original user-requested AI-generated mockup; editorial review required"
+    },
+    {
+      "id": "REF-05",
+      "filename": "05-ggs-full-moon-school.png",
+      "source_basename": "moon_academy_under_the_full_moon.png",
+      "page": "GGS Full Moon School",
+      "proposed_locale_route": "/id/ggs",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "b0071eafbed40f8112d28615392c82269d6a0f5a1548f2f0a1b516f3ee8cd079",
+      "role": "private_design_reference",
+      "publish_approved": false,
+      "copyright_source": "original user-requested AI-generated mockup; editorial review required"
+    }
+  ]
+}

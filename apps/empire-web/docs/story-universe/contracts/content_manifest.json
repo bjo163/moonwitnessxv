@@ -1,0 +1,548 @@
+{
+  "schema": "moonwitness.story-universe.content-manifest/1",
+  "documentStatus": "draft_design_and_canon_contract_not_deployed",
+  "site": {
+    "name": "A-L-L-A-H.COM",
+    "descriptor": "EMPIRE OF THE LIGHT",
+    "productAcronym": "Accountable Life, Learning & Action Hub",
+    "universe": "MOONWITNESS XV",
+    "headline": "WHEN THE MOON RISES, WE SHARE MESSAGES.",
+    "tagline": "Different peoples. Same moon. Bigger humanity.",
+    "footerQuote": "A brighter humanity is a story we build together.",
+    "slogan": "Only You. Your Deeds. And ALLAH.",
+    "fictionDisclosure": true,
+    "productionPublished": false,
+    "noIndexRequired": true,
+    "localeDefault": "en",
+    "locales": [
+      "id",
+      "en"
+    ]
+  },
+  "navigation": [
+    {
+      "id": "home",
+      "labelEN": "HOME",
+      "labelID": "BERANDA",
+      "pathEN": "/en",
+      "pathID": "/id"
+    },
+    {
+      "id": "stories",
+      "labelEN": "STORIES",
+      "labelID": "CERITA",
+      "pathEN": "/en/stories",
+      "pathID": "/id/stories"
+    },
+    {
+      "id": "characters",
+      "labelEN": "CHARACTERS",
+      "labelID": "KARAKTER",
+      "pathEN": "/en/characters",
+      "pathID": "/id/characters"
+    },
+    {
+      "id": "knowledge",
+      "labelEN": "KNOWLEDGE",
+      "labelID": "PENGETAHUAN",
+      "pathEN": "/en/knowledge",
+      "pathID": "/id/knowledge"
+    },
+    {
+      "id": "timeline",
+      "labelEN": "TIMELINE",
+      "labelID": "LINIMASA",
+      "pathEN": "/en/timeline",
+      "pathID": "/id/timeline"
+    },
+    {
+      "id": "ecosystem",
+      "labelEN": "ECOSYSTEM",
+      "labelID": "EKOSISTEM",
+      "pathEN": "/en/ecosystem",
+      "pathID": "/id/ecosystem"
+    },
+    {
+      "id": "about",
+      "labelEN": "ABOUT",
+      "labelID": "TENTANG",
+      "pathEN": "/en/about",
+      "pathID": "/id/about"
+    }
+  ],
+  "header": {
+    "searchIcon": "search",
+    "searchMustFunctionOrHide": true,
+    "cta": "A BRIGHTER HUMANITY AWAITS",
+    "ctaRoute": "/id/values"
+  },
+  "footer": {
+    "estYear": 2026,
+    "socialLinksApproved": false,
+    "rightQuote": "A brighter humanity is a story we build together."
+  },
+  "worlds": [
+    {
+      "id": "manusia-pulpen",
+      "index": 1,
+      "title": "MANUSIA PULPEN",
+      "category": "origin",
+      "worldLabel": "ORIGIN STORY",
+      "taglineEN": "WRITING A BRIGHTER HUMANITY.",
+      "taglineID": "MENULIS UNTUK KEMANUSIAAN YANG LEBIH BAIK.",
+      "bodyEN": "Stories, ideas, and actions from ordinary humans for an extraordinary tomorrow.",
+      "bodyID": "Seorang manusia pendiam mencoba belajar menulis, membangun karya teknologi, dan membuktikan niat baik melalui tindakan kecil yang bertanggung jawab.",
+      "mockStatus": "Completed",
+      "publicationState": "draft",
+      "published": false,
+      "imageApproved": false,
+      "proposedRoute": "/id/stories/manusia-pulpen",
+      "imageKey": "story-manusia-pulpen",
+      "visual": "Back-view writer and moonlit city with floating pages"
+    },
+    {
+      "id": "angelwithshotgun",
+      "index": 2,
+      "title": "ANGELWITHSHOTGUN",
+      "category": "guardian",
+      "worldLabel": "GUARDIAN STORY",
+      "taglineEN": "PROTECT WHAT STILL MATTERS.",
+      "taglineID": "LINDUNGI YANG MASIH BERHARGA.",
+      "bodyEN": "A guardian’s path through darkness, resistance, and the fight for a more humane world.",
+      "bodyID": "Ketika dunia terasa semakin gaduh, seorang penjaga sunyi belajar bahwa keberanian yang paling berarti adalah menjaga iman, belas kasih, dan keselamatan manusia.",
+      "mockStatus": "Ongoing",
+      "publicationState": "draft",
+      "published": false,
+      "imageApproved": false,
+      "proposedRoute": "/id/stories/angelwithshotgun",
+      "imageKey": "story-angelwithshotgun",
+      "visual": "Original rose-black wing-like guardian from behind under red moon"
+    },
+    {
+      "id": "ggs-full-moon-school",
+      "index": 3,
+      "title": "GGS FULL MOON SCHOOL",
+      "category": "learning",
+      "worldLabel": "LEARNING STORY",
+      "taglineEN": "LEARN. REFLECT. BUILD. TOGETHER.",
+      "taglineID": "BELAJAR. RENUNGKAN. BANGUN. BERSAMA.",
+      "bodyEN": "A school for curious minds, compassionate hearts, and brave actions.",
+      "bodyID": "Di sekolah purnama fiksi dalam kisah MYLUFT, ROCKSOUL mempelajari bahwa rasa syukur tetap diperlukan setelah kesusahan berlalu.",
+      "mockStatus": "Ongoing",
+      "publicationState": "draft",
+      "published": false,
+      "imageApproved": false,
+      "proposedRoute": "/id/ggs",
+      "imageKey": "story-ggs",
+      "visual": "Fictional lantern-lit gothic lunar academy; back view learners"
+    },
+    {
+      "id": "empire-of-the-light",
+      "index": 4,
+      "title": "EMPIRE OF THE LIGHT",
+      "category": "universe",
+      "worldLabel": "UNIVERSE STORY",
+      "taglineEN": "A LARGER VISION FOR HUMANITY.",
+      "taglineID": "VISI YANG LEBIH BESAR UNTUK MANUSIA.",
+      "bodyEN": "Civilizations, systems, and alliances towards a more just, conscious, and harmonious world.",
+      "bodyID": "Gagasan tentang semesta karya dan tindakan yang mengutamakan kejujuran, pembelajaran, kasih sayang, dan manfaat bagi manusia.",
+      "mockStatus": "In Development",
+      "publicationState": "proposed",
+      "published": false,
+      "imageApproved": false,
+      "proposedRoute": "/id/stories/empire-of-the-light",
+      "imageKey": "story-empire",
+      "visual": "Lunar orbital metropolis, golden roundtable, silver moon"
+    }
+  ],
+  "pages": [
+    {
+      "id": "01",
+      "ref": "assets/01-homepage.png",
+      "name": "EMPIRE OF THE LIGHT / HOME",
+      "routeID": "/id",
+      "routeEN": "/en",
+      "navActive": "home",
+      "screenLayout": "header 5%; 2-col moonlit hero ~33%; four unique story cards ~35%; four-column principles ~14%; footer",
+      "heroTitle": [
+        "WHEN THE",
+        "MOON RISES,",
+        "WE SHARE",
+        "MESSAGES."
+      ],
+      "heroEmphasis": [
+        "WE SHARE",
+        "MESSAGES."
+      ],
+      "eyebrow": "STORY UNIVERSE PORTAL / MOONWITNESS XV",
+      "intro": "A GATEWAY TO STORIES, KNOWLEDGE, AND MEANINGFUL ACTION.",
+      "buttons": [
+        "EXPLORE STORIES",
+        "READ THE VISION"
+      ],
+      "stats": [
+        "4+ STORY WORLDS (verify manifest count)",
+        "∞ IDEAS & POSSIBILITIES (symbolic)",
+        "1 HUMANITY (editorial)"
+      ],
+      "sections": [
+        "HERO",
+        "STORY WORLDS",
+        "OUR FOUNDATION / PRINCIPLES FOR A BRIGHTER HUMANITY",
+        "FOOTER"
+      ],
+      "stories": [
+        "manusia-pulpen",
+        "angelwithshotgun",
+        "ggs-full-moon-school",
+        "empire-of-the-light"
+      ],
+      "principles": [
+        {
+          "label": "TRUTH-SEEKING",
+          "description": "We explore reality with curiosity and humility.",
+          "icon": "crosshair"
+        },
+        {
+          "label": "COMPASSION",
+          "description": "We put people and all life at the center of progress.",
+          "icon": "flower-2 or custom lotus"
+        },
+        {
+          "label": "MEANINGFUL ACTION",
+          "description": "We turn ideas into real-world positive change.",
+          "icon": "mountain"
+        },
+        {
+          "label": "A UNITED HUMANITY",
+          "description": "Different paths, one shared moon, a brighter tomorrow.",
+          "icon": "custom interlocking-circles SVG"
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "ref": "assets/02-moonstories-library.png",
+      "name": "MOONSTORIES LIBRARY",
+      "routeID": "/id/stories",
+      "routeEN": "/en/stories",
+      "navActive": "stories",
+      "screenLayout": "header; panoramic city hero; five category tiles; search/sort/world/status toolbar; 4 cards; fictional stat row; footer",
+      "heroTitle": [
+        "MOONSTORIES",
+        "LIBRARY"
+      ],
+      "heroEmphasis": [
+        "LIBRARY"
+      ],
+      "eyebrow": "STORY UNIVERSE PORTAL / MOONWITNESS XV",
+      "intro": "Stories, ideas, and actions from ordinary humans for an extraordinary tomorrow. Explore real stories from the MoonWitness XV universe.",
+      "tabs": [
+        {
+          "id": "all",
+          "label": "ALL STORIES",
+          "sublabel": "4 WORLDS",
+          "icon": "users-round"
+        },
+        {
+          "id": "origin",
+          "label": "ORIGIN STORY",
+          "sublabel": "BEGINNINGS",
+          "icon": "compass"
+        },
+        {
+          "id": "guardian",
+          "label": "GUARDIAN STORY",
+          "sublabel": "PROTECT & SERVE",
+          "icon": "shield-check"
+        },
+        {
+          "id": "learning",
+          "label": "LEARNING STORY",
+          "sublabel": "GROW TOGETHER",
+          "icon": "graduation-cap"
+        },
+        {
+          "id": "universe",
+          "label": "UNIVERSE STORY",
+          "sublabel": "A LARGER VISION",
+          "icon": "orbit"
+        }
+      ],
+      "toolbar": {
+        "searchPlaceholder": "Search stories, characters, worlds, or themes...",
+        "sort": "Newest First",
+        "world": "All Worlds",
+        "status": "All Stories"
+      },
+      "stats": [
+        "4 STORY WORLDS (derive)",
+        "50+ STORIES & IDEAS (ILLUSTRATIVE / unverified)",
+        "1 HUMANITY (editorial)",
+        "∞ BIGGER TOMORROW (symbolic)"
+      ],
+      "stories": [
+        "manusia-pulpen",
+        "angelwithshotgun",
+        "ggs-full-moon-school",
+        "empire-of-the-light"
+      ]
+    },
+    {
+      "id": "03",
+      "ref": "assets/03-story-detail-reader.png",
+      "name": "ANGELWITHSHOTGUN STORY DETAIL / COMIC READER",
+      "routeID": "/id/stories/angelwithshotgun",
+      "routeEN": "/en/stories/angelwithshotgun",
+      "navActive": "stories",
+      "screenLayout": "header + breadcrumbs; 2-column left tall cover/right title-synopsis-details-reflection-navigation; 4 chapter thumbnails; footer",
+      "heroTitle": [
+        "ANGELWITH",
+        "SHOTGUN"
+      ],
+      "heroEmphasis": [
+        "SHOTGUN"
+      ],
+      "subtitle": "THE BOMBS ARE GETTING CLOSER EVERY DAY",
+      "breadcrumb": [
+        "STORY UNIVERSE PORTAL",
+        "MOONWITNESS XV",
+        "ANGELWITHSHOTGUN"
+      ],
+      "synopsis": "In a world where the bombs are getting closer every day, a lone guardian walks through the ruins, not to seek war, but to protect what still matters. AngelWithShotgun follows a journey of faith, responsibility, and quiet resistance—where every step is a prayer for a more humane world.",
+      "metadata": {
+        "CORE THEME": "Protection, responsibility, and hope in a collapsing world.",
+        "STORY WORLD": "MOONWITNESS XV — World 02 — AngelWithShotgun",
+        "TONE": "Vigilant, spiritual, reflective, human-centered."
+      },
+      "wisdom": "Strength is a trust, not a trophy. Real power protects life, defends those at risk, and keeps the door open for a more humane tomorrow.",
+      "sourceCaveat": "Quran 8:60 and verse tags depicted in AI mockup are unverified design placeholders; require source/context/rights check.",
+      "chapter": {
+        "id": "chapter-01",
+        "label": "CHAPTER 01",
+        "title": "THE BOMBS ARE GETTING CLOSER EVERY DAY",
+        "pages": [
+          {
+            "id": "page-01",
+            "page": 1,
+            "label": "A LONGER NIGHT",
+            "editorialState": "draft"
+          },
+          {
+            "id": "page-02",
+            "page": 2,
+            "label": "THE WEIGHT WE CARRY",
+            "editorialState": "draft"
+          },
+          {
+            "id": "page-03",
+            "page": 3,
+            "label": "CLOSER EVERY DAY",
+            "editorialState": "draft"
+          },
+          {
+            "id": "page-04",
+            "page": 4,
+            "label": "STILL HERE, STILL HUMAN",
+            "editorialState": "draft"
+          }
+        ]
+      },
+      "interactions": [
+        "select page by thumb",
+        "previous/next with boundaries",
+        "page counter and transcript synchronized",
+        "keyboard arrows",
+        "mobile accessible rail"
+      ]
+    },
+    {
+      "id": "04",
+      "ref": "assets/04-character-codex.png",
+      "name": "CHARACTER CODEX",
+      "routeID": "/id/characters",
+      "routeEN": "/en/characters",
+      "navActive": "characters",
+      "screenLayout": "header; CHARACTER/CODEX hero; featured AngelWithShotgun wide bio panel; six attribute blocks; two related characters + relationship map; footer",
+      "heroTitle": [
+        "CHARACTER",
+        "CODEX"
+      ],
+      "heroEmphasis": [
+        "CODEX"
+      ],
+      "subtitle": "PEOPLES. PATHS. PURPOSES.",
+      "intro": "Explore the beings who shape the stories, carry the light, and build a brighter humanity across worlds.",
+      "featured": {
+        "name": "ANGELWITHSHOTGUN",
+        "eyebrow": "WHO IS ANGELWITHSHOTGUN?",
+        "subtitle": "A GUARDIAN’S PATH THROUGH DARKNESS, TO PROTECT WHAT STILL MATTERS.",
+        "intro": "AngelWithShotgun is a seeker, protector, and bridge between broken worlds. Walking the edge between shadow and light, they carry both the weight of loss and the fire of a brighter tomorrow.",
+        "buttons": [
+          "READ FULL BIO",
+          "STORY APPEARANCES"
+        ]
+      },
+      "traits": [
+        {
+          "label": "ROLE",
+          "sub": "PURPOSE",
+          "icon": "user-round"
+        },
+        {
+          "label": "SYMBOLISM",
+          "sub": "WHAT THEY REPRESENT",
+          "icon": "moon"
+        },
+        {
+          "label": "TRAITS",
+          "sub": "KEY CHARACTERISTICS",
+          "icon": "sparkles"
+        },
+        {
+          "label": "INTERNAL CONFLICT",
+          "sub": "THE STRUGGLE WITHIN",
+          "icon": "eye"
+        },
+        {
+          "label": "WISDOM",
+          "sub": "CORE BELIEFS",
+          "icon": "book-open"
+        },
+        {
+          "label": "STORY LINKS",
+          "sub": "WHERE THEY APPEAR",
+          "icon": "link"
+        }
+      ],
+      "related": [
+        "ROCKSOUL",
+        "MYLUFT"
+      ],
+      "relations": [
+        {
+          "from": "ROCKSOUL",
+          "to": "ANGELWITHSHOTGUN",
+          "kind": "alter_ego"
+        },
+        {
+          "from": "MYLUFT",
+          "to": "ROCKSOUL",
+          "kind": "narrative_inspiration"
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "ref": "assets/05-ggs-full-moon-school.png",
+      "name": "GGS FULL MOON SCHOOL",
+      "routeID": "/id/ggs",
+      "routeEN": "/en/ggs",
+      "navActive": "stories",
+      "screenLayout": "header; full-moon academy 2-column hero; wide left lesson and narrow right reflection; bottom three-module Lessons/Full Moon Sessions/Learning Paths; footer",
+      "heroTitle": [
+        "GGS —",
+        "FULL MOON",
+        "SCHOOL"
+      ],
+      "heroEmphasis": [
+        "SCHOOL"
+      ],
+      "subtitle": "A SCHOOL THAT APPEARS UNDER THE FULL MOON.",
+      "intro": "A sanctuary for curious minds, compassionate hearts, and brave actions. Learn. Reflect. Build. Together.",
+      "buttons": [
+        "ENTER THE SCHOOL",
+        "EXPLORE LESSONS (replaces unverified WATCH TRAILER)"
+      ],
+      "stats": [
+        "4 LEARNING PATHS (verified local list)",
+        "∞ LESSONS & REFLECTIONS (metaphor only)",
+        "GLOBAL COMMUNITY (aspirational only)"
+      ],
+      "featuredLesson": {
+        "title": "THE FORGOTTEN PRAYER",
+        "tagline": "REDISCOVERING A CONVERSATION THAT NEVER LEFT US.",
+        "description": "A guided lesson on returning to the essence of prayer—not as a routine, but as a living connection, especially after hardship.",
+        "fictionalTime": "10:12 WIB",
+        "format": "Guided Lesson + Reflection",
+        "audience": "All Seekers",
+        "storySetting": "Under the Full Moon",
+        "live": false
+      },
+      "reflection": {
+        "title": "GRATITUDE AFTER HARDSHIP",
+        "body": "Sometimes the heaviest nights bring the clearest versions of ourselves. Hardship is not the end, but a doorway—to deeper gratitude, a softer heart, and a stronger return to Him."
+      },
+      "lessons": [
+        {
+          "title": "THE FORGOTTEN PRAYER",
+          "description": "Reconnecting with what matters most."
+        },
+        {
+          "title": "HEARTS AFTER HARDSHIP",
+          "description": "Healing, patience, and renewed purpose."
+        },
+        {
+          "title": "A KINDER TOMORROW",
+          "description": "Turning faith into action for a better world."
+        }
+      ],
+      "session": {
+        "fictional": true,
+        "label": "FULL MOON CIRCLE XV",
+        "exampleScreenshotDate": "12 APR 2025 20:00 WIB (STALE MOCK PLACEHOLDER, NEVER SCHEDULE AS REAL)",
+        "registrationEnabled": false
+      },
+      "learningPaths": [
+        {
+          "name": "FAITH & SELF",
+          "description": "Know. Remember. Return.",
+          "icon": "moon"
+        },
+        {
+          "name": "CHARACTER & ACTION",
+          "description": "From values to real impact.",
+          "icon": "mountain"
+        },
+        {
+          "name": "SOCIETY & HUMANITY",
+          "description": "People. Communities. Change.",
+          "icon": "users-round"
+        },
+        {
+          "name": "SCIENCE & CREATION",
+          "description": "Explore the signs around us.",
+          "icon": "atom"
+        }
+      ],
+      "source": {
+        "verse": "QS Yunus 10:12",
+        "context": "human prayer in hardship and forgetfulness after ease",
+        "translationVerified": false,
+        "fictionalInterpretation": "Don’t forget after the storm."
+      }
+    }
+  ],
+  "qualityGates": [
+    "No visible ROCKSOUL face",
+    "No actual angel/prophet/Allah depiction",
+    "Arabic verses require source and publishing rights",
+    "No ghost UI or fake LIVE/schedule",
+    "No live deployment without exact URL proof",
+    "Stay noindex in pilot",
+    "Do not modify canonical Dock ownership",
+    "No copyrighted anime character artwork",
+    "All controls accessible and wired"
+  ],
+  "pageSource": "Five user-provided original AI-generated visual mockup PNG files in assets, size 1122x1402",
+  "illustrativeScreenshotClaims": [
+    "EST. 2025",
+    "50+ STORIES & IDEAS",
+    "Completed/Ongoing status",
+    "GGS LIVE NOW",
+    "JOIN TODAY — 10:12 WIB",
+    "NEXT SESSION 12 APR 2025",
+    "unverified Qur’an 8:60 excerpts",
+    "mock social account logos"
+  ]
+}

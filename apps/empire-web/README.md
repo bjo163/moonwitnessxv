@@ -61,3 +61,7 @@ pnpm exec playwright test --config apps/empire-web/playwright.config.mjs
 The Playwright suite covers both locales at 390px and 1440px, keyboard skip navigation, all information-page links and locale round trips, overflow, global 404, JavaScript errors and unexpected external requests. The dedicated CI workflow runs it after the static build; configuring it is not evidence of a passing run.
 
 See `docs/audit/empire-web-static-pilot-2026-10-29.md` for observed local evidence and remaining release gates. No Vercel deployment, production promotion, domain attachment or DNS change is part of this increment.
+
+## Story Universe design reference (draft)
+
+Five page-level mockups are specified in [docs/story-universe/README.md](docs/story-universe/README.md), with the full visual/narrative bible, reusable design tokens, content manifest, source-image SHA-256 manifest, and local AI execution prompt. The complementary [MoonUI bridge](../../packages/moonui/docs/EMPIRE_STORY_UNIVERSE_BRIDGE.md) is a **proposal**, not a global MoonUI redesign. The five original PNGs require separate binary import from the companion ZIP; docs-only import does not mean the new story routes have been implemented. No preview/prod deployment is authorized by these docs.

@@ -1,0 +1,151 @@
+{
+  "schema": "moonwitness.story-universe.design-tokens/1",
+  "status": "screenshot_inspired_approximation_not_pixel_exact",
+  "sourceImages": [
+    "01-homepage.png",
+    "02-moonstories-library.png",
+    "03-story-detail-reader.png",
+    "04-character-codex.png",
+    "05-ggs-full-moon-school.png"
+  ],
+  "palette": {
+    "bg_canvas": "#090B0D",
+    "bg_surface": "#131518",
+    "bg_elevated": "#1C1E22",
+    "ink_primary": "#F1EDE5",
+    "ink_secondary": "#C1C0BC",
+    "ink_muted": "#92938F",
+    "line": "#514638",
+    "gold": "#C5A578",
+    "gold_bright": "#E3C391",
+    "red": "#DB1E31",
+    "red_hover": "#F03245",
+    "moonlight": "#D6D5CD",
+    "blue_shadow": "#4A596B",
+    "success": "#4FBE87",
+    "warning": "#DAA544",
+    "info": "#59B7CF"
+  },
+  "typography": {
+    "brand": {
+      "genre": "spaced serif uppercase",
+      "recommendedCandidates": [
+        "Cinzel",
+        "Cormorant Garamond"
+      ],
+      "fallback": "Georgia, serif",
+      "tracking": "0.12em"
+    },
+    "hero": {
+      "genre": "ultrabold condensed grotesk sans",
+      "recommendedCandidates": [
+        "Anton",
+        "Archivo Black"
+      ],
+      "fallback": "Impact, Arial Narrow, sans-serif",
+      "weight": 900,
+      "desktopSize": "clamp(64px, 7vw, 108px)",
+      "lineHeight": "0.92–1.04",
+      "tracking": "-0.04em"
+    },
+    "body": {
+      "genre": "readable plain sans",
+      "fallback": "system-ui, Arial, sans-serif",
+      "baseSize": "16px",
+      "lineHeight": "1.6"
+    },
+    "nav": {
+      "caps": true,
+      "tracking": "0.16–0.30em",
+      "fontSize": "11–13px"
+    },
+    "arabic": {
+      "rtl": true,
+      "fontRule": "use verified font/text, no letter-spacing or text-transform"
+    }
+  },
+  "layout": {
+    "contentMaxPx": 1440,
+    "containerPadding": "clamp(20px, 4vw, 64px)",
+    "headerHeightPx": [
+      68,
+      86
+    ],
+    "gridColumns": 12,
+    "desktopStoryCards": 4,
+    "tabletStoryCards": 2,
+    "mobileStoryCards": 1,
+    "cardCornerRadiusPx": [
+      0,
+      3
+    ],
+    "cardBorder": "1px solid muted antique gold"
+  },
+  "breakpoints": {
+    "mobile": [
+      360,
+      767
+    ],
+    "tablet": [
+      768,
+      1023
+    ],
+    "smallDesktop": [
+      1024,
+      1279
+    ],
+    "desktop": [
+      1280,
+      1920
+    ]
+  },
+  "icons": {
+    "logo": "moon / custom gold crescent SVG",
+    "search": "search",
+    "nav.mobile": "menu",
+    "nav.close": "x",
+    "story.all": "users-round",
+    "story.origin": "compass",
+    "story.guardian": "shield-check",
+    "story.learning": "graduation-cap",
+    "story.universe": "orbit",
+    "story.bookmark": "bookmark",
+    "story.enter": "arrow-right",
+    "story.reader": "book-open",
+    "story.previous": "chevron-left",
+    "story.next": "chevron-right",
+    "principles.truth": "crosshair",
+    "principles.compassion": "flower-2 or custom lotus",
+    "principles.action": "mountain",
+    "principles.unity": "custom interlocking-circles SVG",
+    "codex.role": "user-round",
+    "codex.symbolism": "moon",
+    "codex.traits": "sparkles",
+    "codex.conflict": "eye",
+    "codex.wisdom": "book-open",
+    "codex.story_links": "link",
+    "ggs.lessons": "book-open",
+    "ggs.moon": "moon",
+    "ggs.community": "users",
+    "ggs.calendar": "calendar-days",
+    "ggs.faith": "moon",
+    "ggs.action": "mountain",
+    "ggs.society": "users-round",
+    "ggs.science": "atom",
+    "brand.crown": "custom original XV line-crown SVG"
+  },
+  "effects": {
+    "grainOpacity": "0.02–0.045",
+    "vignette": "subtle",
+    "glow": "localized around lunar light",
+    "hoverLiftPx": -2,
+    "preferReducedMotion": true
+  },
+  "constraints": [
+    "Reuse existing @moonwitness/moonui/icons where exported; do not blindly install another icon library",
+    "No fake clickable button or status",
+    "ROCKSOUL and AngelWithShotgun back view only",
+    "Do not publish full mockup screenshots as app pages",
+    "Images require approval before public export"
+  ]
+}
