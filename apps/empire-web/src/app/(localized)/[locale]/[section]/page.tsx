@@ -27,7 +27,7 @@ export default async function InformationPage({ params }: { params: Promise<Para
   return <div className="emp-shell" lang={locale}>
     <a className="emp-skip" href="#content">{t.skip}</a>
     <header className="emp-header">
-      <a className="emp-logo" href={`/${locale}`}>A-L-L-A-H.COM</a>
+      <a className="emp-logo" href={`/${locale}`}><span className="m-brand">A-L-L-A-H.COM</span></a>
       <a className="emp-lang" href={`/${other}/${section}`} hrefLang={other}
         aria-label={locale === 'id' ? 'Switch to English' : 'Ganti ke Bahasa Indonesia'}>{other.toUpperCase()}</a>
     </header>
@@ -36,7 +36,7 @@ export default async function InformationPage({ params }: { params: Promise<Para
       <h1>{page.title}</h1><p className="emp-intro">{page.summary}</p>
       {page.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
       {section === 'ecosystem' ? <div className="emp-atlas">
-        {content[locale].spaces.map(space => <article key={space.id}>
+        {content[locale].spaces.map(space => <article key={space.id} className="m-card">
           <h2>{space.name}</h2><p>{space.description}</p>
           <dl>
             <dt>{locale === 'id' ? 'Implementasi' : 'Implementation'}</dt><dd>{space.status}</dd>
@@ -54,7 +54,7 @@ export default async function InformationPage({ params }: { params: Promise<Para
         <li><a href="https://github.com/bjo163/moonwitnessxv/blob/7ea2a01dc6fb6313ecbce8aa5562d45f6768abe2/docs/product/A-L-L-A-H-COM-MASTER-SPEC.md">{locale === 'id' ? 'Spesifikasi produk — usulan, bukan bukti rilis' : 'Product specification — proposal, not release evidence'}</a></li>
         <li><a href="https://github.com/bjo163/moonwitnessxv/blob/7ea2a01dc6fb6313ecbce8aa5562d45f6768abe2/docs/decisions/ADR-0011-lighthouse-dock-runtime.md">{locale === 'id' ? 'Keputusan runtime LIGHTHOUSE / Dock' : 'LIGHTHOUSE / Dock runtime decision'}</a></li>
       </ul> : null}
-      <a className="emp-button" href={`/${locale}`}>{t.home}</a>
+      <a className="m-btn" data-variant="accent" data-size="lg" href={`/${locale}`}>{t.home}</a>
     </main>
     <footer className="emp-footer">
       <nav className="emp-info-links" aria-label={t.navigation}>
