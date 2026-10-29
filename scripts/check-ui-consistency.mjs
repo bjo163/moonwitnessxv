@@ -95,6 +95,7 @@ const MANDATORY_MOONUI_SURFACES = [
   'apps/echolog/client/App.tsx',
   'apps/skylink/client/App.tsx',
   'apps/orbit/src/app/page.tsx',
+  'apps/empire-web/src/components/StoryUniverse.tsx',
 ]
 
 /** App stylesheets to check for local primitive cloning */
@@ -105,6 +106,7 @@ const APP_STYLESHEETS = [
   'apps/echolog/client/echolog-layout.css',
   'apps/skylink/client/skylink-layout.css',
   'apps/orbit/src/app/globals.css',
+  'apps/empire-web/src/app/globals.css',
 ]
 
 /** Recursively scan directory for files matching extension */
