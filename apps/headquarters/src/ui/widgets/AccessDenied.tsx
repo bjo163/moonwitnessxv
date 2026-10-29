@@ -1,7 +1,8 @@
-import { Alert, Button, PageHeader, Panel } from '@moonwitness/moonui'
+import { Button, PageHeader, Panel } from '@moonwitness/moonui'
 import { cookies, headers } from 'next/headers'
 import { resolveLocale } from '@moonwitness/core'
 import { denialCopy, denialMessage, type DenialCopyKey } from '@/lib/denial-copy'
+import { LiveAlert } from '@/ui/LiveAlert'
 
 /**
  * What a guarded page renders instead of privileged content.
@@ -37,7 +38,7 @@ export async function AccessDenied({ code }: { code: DenialCopyKey }) {
       />
       <Panel title={message.title} subtitle="access checked on the server, before any record was read">
         <div className="m-stack" style={{ gap: 12 }}>
-          <Alert tone={code === 'unavailable' ? 'accent' : 'hot'}>{message.body}</Alert>
+          <LiveAlert role="alert" tone={code === 'unavailable' ? 'accent' : 'hot'}>{message.body}</LiveAlert>
           {code === 'unavailable' ? (
             // no action: a GET form re-reads the current URL, i.e. re-checks
             // this exact page against the hub once it answers again

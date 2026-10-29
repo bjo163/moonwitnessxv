@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import type { Locale } from '@moonwitness/core'
 import type { ModelMeta } from '@moonwitness/moonql-client'
-import { Alert, Button, Panel } from '@moonwitness/moonui'
+import { Button, Panel } from '@moonwitness/moonui'
 import { formFields, type SelectOption } from '@/data/types'
 import { modelViewCopy } from '@/app/(admin)/models/locale-copy'
 import { FieldWidget } from '@/ui/fields/registry'
+import { LiveAlert } from '@/ui/LiveAlert'
 
 /**
  * The generic form: fields, order, labels and widgets all come from
@@ -35,7 +36,7 @@ export function RecordForm({
   return (
     <Panel title={`${mode === 'create' ? copy.create : copy.edit} ${meta.label.toLowerCase()}`} subtitle={copy.fieldsFromSchema.replace('{count}', String(fields.length))}>
       <div className="m-stack">
-        {error ? <Alert tone="hot">{error}</Alert> : null}
+        {error ? <LiveAlert role="alert" tone="hot">{error}</LiveAlert> : null}
         <form action={action} className="m-stack">
           <div className="m-grid m-grid-2">
             {fields.map((field) => (

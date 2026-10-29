@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { can, type ModelName } from '@moonwitness/moonql-client'
-import { Alert, Button, PageHeader, Pagination, Panel, TextInput } from '@moonwitness/moonui'
+import { Button, PageHeader, Pagination, Panel, TextInput } from '@moonwitness/moonui'
 import { deleteRecordAction } from '@/data/actions'
 import { isModelName } from '@/data/queries/registry'
 import { listRecords } from '@/data/queries/records'
@@ -11,6 +11,7 @@ import { ModelTable } from '@/ui/widgets/ModelTable'
 import { editorFailureMessage, editorStatusMessage, interpolate, modelViewCopy } from '../locale-copy'
 import { requestLocale } from '@/lib/request-locale'
 import { DELETE_CONFIRM_VALUE, editorCopy, fill } from '@/lib/editor-copy'
+import { LiveAlert } from '@/ui/LiveAlert'
 
 const hrefFor = (model: string, q: string | undefined, page: number): string => {
   const params = new URLSearchParams()
@@ -67,8 +68,8 @@ export default async function ModelRowsPage({
         }
       />
 
-      {error ? (editorFailureMessage(locale, error) ? <Alert tone="hot">{editorFailureMessage(locale, error)}</Alert> : null) : null}
-      {saved ? (editorStatusMessage(locale, saved) ? <Alert tone="ok">{editorStatusMessage(locale, saved)}</Alert> : null) : null}
+      {error ? (editorFailureMessage(locale, error) ? <LiveAlert role="alert" tone="hot">{editorFailureMessage(locale, error)}</LiveAlert> : null) : null}
+      {saved ? (editorStatusMessage(locale, saved) ? <LiveAlert role="status" tone="ok">{editorStatusMessage(locale, saved)}</LiveAlert> : null) : null}
 
       <Panel
         title={interpolate(copy.table, { model })}

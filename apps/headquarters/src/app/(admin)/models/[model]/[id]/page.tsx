@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { can, type ModelName } from '@moonwitness/moonql-client'
-import { Alert, Button, PageHeader, Panel } from '@moonwitness/moonui'
+import { Button, PageHeader, Panel } from '@moonwitness/moonui'
 import { deleteRecordAction, updateRecordAction } from '@/data/actions'
 import { isModelName } from '@/data/queries/registry'
 import { getRecord, optionsFor } from '@/data/queries/records'
@@ -12,6 +12,7 @@ import { RecordForm } from '@/ui/widgets/RecordForm'
 import { editorFailureMessage, editorStatusMessage, modelViewCopy } from '../../locale-copy'
 import { requestLocale } from '@/lib/request-locale'
 import { DELETE_CONFIRM_VALUE, editorCopy, fill } from '@/lib/editor-copy'
+import { LiveAlert } from '@/ui/LiveAlert'
 
 export default async function EditRecordPage({
   params,
@@ -71,8 +72,8 @@ export default async function EditRecordPage({
           ) : null
         }
       />
-      {error ? (editorFailureMessage(locale, error) ? <Alert tone="hot">{editorFailureMessage(locale, error)}</Alert> : null) : null}
-      {saved ? (editorStatusMessage(locale, saved) ? <Alert tone="ok">{editorStatusMessage(locale, saved)}</Alert> : null) : null}
+      {error ? (editorFailureMessage(locale, error) ? <LiveAlert role="alert" tone="hot">{editorFailureMessage(locale, error)}</LiveAlert> : null) : null}
+      {saved ? (editorStatusMessage(locale, saved) ? <LiveAlert role="status" tone="ok">{editorStatusMessage(locale, saved)}</LiveAlert> : null) : null}
       {canUpdate ? (
         <RecordForm
           model={model}
@@ -84,7 +85,7 @@ export default async function EditRecordPage({
           locale={locale}
         />
       ) : (
-        <Alert tone="accent">{locale === 'id' ? 'Akun ini dapat membaca data, tetapi tidak dapat mengubahnya; formulir tidak ditampilkan.' : 'This account may read this record but not edit it; the form is not offered.'}</Alert>
+        <LiveAlert role="status" tone="accent">{locale === 'id' ? 'Akun ini dapat membaca data, tetapi tidak dapat mengubahnya; formulir tidak ditampilkan.' : 'This account may read this record but not edit it; the form is not offered.'}</LiveAlert>
       )}
       <Panel title={locale === 'id' ? 'Payload mentah' : 'Raw payload'} subtitle={locale === 'id' ? 'data yang disimpan API (baris lengkap)' : 'what the API actually stores (hydrated row)'}>
         <pre className="m-mono" style={{ margin: 0, fontSize: 12, overflow: 'auto' }}>

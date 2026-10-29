@@ -1,8 +1,9 @@
-import { Alert, Button, Card, CardBody, Crown, Field, TextInput, Toggle, Chevron } from '@moonwitness/moonui'
+import { Button, Card, CardBody, Crown, Field, TextInput, Toggle, Chevron } from '@moonwitness/moonui'
 import { cookies, headers } from 'next/headers'
 import { resolveLocale } from '@moonwitness/core'
 import { AuthLayout } from '@/layouts/auth'
 import { loginCopy, loginErrorMessage } from '@/lib/login-copy'
+import { LiveAlert } from '@/ui/LiveAlert'
 
 export default async function LoginPage({
   searchParams,
@@ -33,7 +34,7 @@ export default async function LoginPage({
             </p>
           </div>
 
-          {notice ? <Alert tone="hot">{notice}</Alert> : null}
+          {notice ? <LiveAlert role="alert" tone="hot">{notice}</LiveAlert> : null}
 
           <form action="/api/session" method="post" className="m-stack" style={{ gap: 14 }}>
             <input type="hidden" name="next" value={next ?? '/'} />

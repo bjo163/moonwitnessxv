@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { Alert, PageHeader } from '@moonwitness/moonui'
+import { PageHeader } from '@moonwitness/moonui'
 import { createRecordAction } from '@/data/actions'
 import { isModelName } from '@/data/queries/registry'
 import { optionsFor } from '@/data/queries/records'
@@ -10,6 +10,7 @@ import { RecordForm } from '@/ui/widgets/RecordForm'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { editorFailureMessage, interpolate, modelViewCopy } from '../../locale-copy'
 import { requestLocale } from '@/lib/request-locale'
+import { LiveAlert } from '@/ui/LiveAlert'
 
 export default async function NewRecordPage({
   params,
@@ -49,7 +50,7 @@ export default async function NewRecordPage({
           { label: locale === 'id' ? 'baru' : 'new' },
         ]}
       />
-      {error ? (editorFailureMessage(locale, error) ? <Alert tone="hot">{editorFailureMessage(locale, error)}</Alert> : null) : null}
+      {error ? (editorFailureMessage(locale, error) ? <LiveAlert role="alert" tone="hot">{editorFailureMessage(locale, error)}</LiveAlert> : null) : null}
       <RecordForm
         model={model}
         meta={meta}
