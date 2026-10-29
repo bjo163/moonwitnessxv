@@ -102,6 +102,9 @@ services:
       TRUST_PROXY: ${TRUST_PROXY:-false}
       # moonql-auth: admin password seeded once (change it for every deployment)
       MOONQL_AUTH_ADMIN_PASSWORD: ${MOONQL_AUTH_ADMIN_PASSWORD:-}
+      # D06 validates private-media references against ECHOLOG server-side. Without
+      # this the hub falls back to 127.0.0.1:3006 — itself, inside its own container.
+      ECHOLOG_URL: ${ECHOLOG_URL:-http://echolog:3006}
       # the hub advertises both frontends on GET /
       DOCK_URL: ${DOCK_URL:-http://localhost:3001}
       HQ_URL: ${HQ_URL:-http://localhost:3002}
