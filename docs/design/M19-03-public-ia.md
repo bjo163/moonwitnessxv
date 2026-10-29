@@ -75,7 +75,7 @@ Utility cluster (not `NAV_LINKS`), same row: `LocaleSwitcher` (`ui/components/lo
 |---|---|---|---|
 | `/reader` | citation + edition lookup | `role="search"` (`reader/page.tsx:94`) | `/corpus/reader` via Hub |
 | `/terms` | registry filter + match form | `role="search"` ×2 (`terms/page.tsx:141,211`) | Hub terms projection |
-| `/stations` | `q` + genre/country selects | plain `<form>` (**no `role="search"`**, `stations/page.tsx:80`) | Hub stations |
+| `/stations` | `q` + genre/country selects | GET `<form role="search">` (`stations/page.tsx:80`, added at exact SHA `b7a1e99`) | Hub stations |
 | `/missions` | filter form | `role="search"` (`missions/page.tsx:90`) | Hub actors |
 | `/patches`, `/research` | client explorers | `TextInput` in client components (`PatchesExplorer.tsx:104`, `ResearchExplorer.tsx:166`) | in-memory projection |
 | Header | none | the `SRC` anchor *names* itself "Search signals" but performs navigation | — |
@@ -237,13 +237,13 @@ Ordering rule: the field the page is named after comes first, results after; the
 |---|---|
 | 4-label `NAV_LINKS` + grouped `INDEX` disclosure (replaces 15) | M19-13 follow-up / a new authorized leaf — **not** this docs leaf |
 | Skip link + `<main id="main" tabIndex={-1}>` | M19-04 (keyboard/focus) |
-| `role="search"` on the `/stations` filter form | M19-04 |
+| `role="search"` on the `/stations` filter form | Implemented at exact SHA `b7a1e9970738fad7e4f6b7e91869724b3b35802e`; Dock contract test and responsive browser search-flow matrix added |
 | Rename `SRC` accessible name away from "Search signals" | M19-13 follow-up |
 | Breadcrumbs on `/prisms`, `/timeline`, `/studio` | M19-13 follow-up |
 | Consume `MOON_EXPERIENCES.reader/research` at a layout boundary | M19-04 / M19-06 |
-| Browser/geometry verification of the target header at 390/768/1440/1920 in `id` and `en` | M19-06 (screenshots are environment-blocked per ADR-0009 §2.6) |
+| Bilingual header geometry at 390/768/1440/1920 | M19-35 [exact-SHA evidence](../audit/M19-35-cross-locale-b7a1e99/README.md) at `b7a1e9970738fad7e4f6b7e91869724b3b35802e`; broader experience-mode baseline remains M19-06 |
 
-No screenshot, browser or accessibility certification is claimed anywhere in this document.
+The current implementation and verification evidence are recorded in the M19-03/M19-35 task packets and audit reports; this design document is not a separate accessibility certification.
 
 ---
 
@@ -251,4 +251,4 @@ No screenshot, browser or accessibility certification is claimed anywhere in thi
 
 - Owner: Dock public surface (`apps/dock/src/ui/components/shell.tsx`, `spaces.tsx`, `src/app/**`), with MoonUI semantics unchanged.
 - Rollback: documentation only — delete this file; no runtime artefact exists to revert.
-- Acceptance trace for *"Reader not buried under 30 equal nav labels"*: baseline measures **30** equal nav anchors (15 × 2). The target states **4** equal-weight primary destination labels per surface (**8** anchors across desktop + drawer), `READ` first in nav, first home card, second hero CTA, and `RESEARCH` demoted while it publishes a withholding notice. Closing the parent row requires the header change plus M19-04 keyboard evidence and M19-06 geometry — this leaf alone does not close it.
+- Acceptance trace for *"Reader not buried under 30 equal nav labels"*: baseline measures **30** equal nav anchors (15 × 2). The target states **4** equal-weight primary destination labels per surface (**8** anchors across desktop + drawer), `READ` first in nav, first home card, second hero CTA, and `RESEARCH` demoted while it publishes a withholding notice. M19-03 closure evidence consists of the implemented IA, M19-04 keyboard behavior, M19-35 bilingual visual/long-label behavior, and the responsive per-surface GET search matrix. M19-06 remains a downstream broader experience-mode screenshot/behavior baseline; it depends on M19-03 and is not a prerequisite for closing M19-03.

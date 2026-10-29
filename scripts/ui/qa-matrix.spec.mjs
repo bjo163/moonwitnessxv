@@ -201,12 +201,73 @@ test.describe('UI2-G12 interaction and state matrix', () => {
         await context.close()
       })
 
-      test(`${screen.key} · ${locale} · reduced motion leaves nothing animating`, async ({ browser }) => {
+      test(`${screen.key} · ${locale} · reduced motion bounds animation and transition motion`, async ({ browser }) => {
         const { context, page } = await openContext(browser, 1440, locale, true)
         await page.goto(`${BASE_URL}${screen.route(locale)}`, { waitUntil: 'domcontentloaded' })
-        const running = await page.evaluate(() =>
-          document.getAnimations().filter((a) => a.playState === 'running').length)
-        expect(running, `${screen.key} keeps an animation running under reduced motion`).toBe(0)
+        const motion = await page.evaluate(() => {
+          const toMilliseconds = (duration) => {
+            const value = Number.parseFloat(duration)
+            return duration.trim().endsWith('ms') ? value : value * 1000
+          }
+          const styleMotion = [...document.querySelectorAll('*')].map((element) => {
+            const style = window.getComputedStyle(element)
+            return {
+              selector: `${element.tagName.toLowerCase()}${element.className && typeof element.className === 'string' ? `.${element.className.trim().split(/\s+/)[0]}` : ''}`,
+              animationDurations: style.animationDuration.split(',').map(toMilliseconds),
+              animationIterations: style.animationIterationCount.split(',').map((value) => value.trim() === 'infinite' ? Infinity : Number(value)),
+              transitionDurations: style.transitionDuration.split(',').map(toMilliseconds),
+            }
+          })
+          const activeAnimations = document.getAnimations().map((animation) => ({
+            name: animation.animationName,
+            duration: animation.effect?.getComputedTiming().duration,
+            iterations: animation.effect?.getComputedTiming().iterations,
+          }))
+          const infiniteIndicators = [...document.querySelectorAll('.m-spinner, .m-live-dot[data-on="true"]')].map((element) => {
+            const style = window.getComputedStyle(element)
+            const isLiveDot = element.matches('.m-live-dot[data-on="true"]')
+            const pseudoStyle = isLiveDot ? window.getComputedStyle(element, '::after') : null
+            return {
+              selector: element.className,
+              duration: toMilliseconds(style.animationDuration),
+              iterations: style.animationIterationCount === 'infinite' ? Infinity : Number(style.animationIterationCount),
+              pseudoAnimationName: pseudoStyle?.animationName ?? null,
+              pseudoDuration: pseudoStyle ? toMilliseconds(pseudoStyle.animationDuration) : null,
+              pseudoIterations: pseudoStyle
+                ? pseudoStyle.animationIterationCount === 'infinite' ? Infinity : Number(pseudoStyle.animationIterationCount)
+                : null,
+            }
+          })
+          const liveDotProbe = document.createElement('span')
+          liveDotProbe.className = 'm-live-dot'
+          liveDotProbe.dataset.on = 'true'
+          document.body.append(liveDotProbe)
+          const liveDotPseudoStyle = window.getComputedStyle(liveDotProbe, '::after')
+          const liveDotPseudoProbe = {
+            animationName: liveDotPseudoStyle.animationName,
+            duration: toMilliseconds(liveDotPseudoStyle.animationDuration),
+            iterations: liveDotPseudoStyle.animationIterationCount === 'infinite'
+              ? Infinity
+              : Number(liveDotPseudoStyle.animationIterationCount),
+          }
+          liveDotProbe.remove()
+          return { styleMotion, activeAnimations, infiniteIndicators, liveDotPseudoProbe }
+        })
+        const oversizedMotion = motion.styleMotion.filter((item) =>
+          item.animationDurations.some((duration) => duration > 0.01)
+          || item.animationIterations.some((iterations) => iterations > 1)
+          || item.transitionDurations.some((duration) => duration > 0.01))
+        expect(oversizedMotion, `${screen.key} leaves long or repeating motion under reduced motion`).toEqual([])
+        expect(motion.activeAnimations.filter((animation) => animation.iterations === Infinity),
+          `${screen.key} retains infinite running animations under reduced motion`).toEqual([])
+        expect(motion.infiniteIndicators.filter((indicator) => indicator.duration > 0.01 || indicator.iterations > 1),
+          `${screen.key} retains infinite MoonUI indicators under reduced motion`).toEqual([])
+        expect(motion.infiniteIndicators.filter((indicator) => indicator.pseudoAnimationName !== null
+          && (indicator.pseudoAnimationName !== 'none' || indicator.pseudoDuration > 0.01 || indicator.pseudoIterations > 1)),
+        `${screen.key} retains an animated live-dot pseudo-element under reduced motion`).toEqual([])
+        expect(motion.liveDotPseudoProbe.animationName).toBe('none')
+        expect(motion.liveDotPseudoProbe.duration).toBeLessThanOrEqual(0.01)
+        expect(motion.liveDotPseudoProbe.iterations).toBeLessThanOrEqual(1)
         await context.close()
       })
     }
@@ -219,6 +280,7 @@ test.describe('UI2-G12 interaction and state matrix', () => {
         const response = await page.goto(`${BASE_URL}/${locale}/stations/__no_such_station__`, {
           waitUntil: 'domcontentloaded',
         })
+        await expect(page.locator('main h1, main [role="alert"]')).toBeVisible()
         const status = response ? response.status() : 0
         const body = await page.evaluate(() => document.body.innerText)
         expect(status === 404 || /not|unknown|tidak|tak|unavailable|offline/i.test(body), `unknown station returned ${status}`).toBe(true)
