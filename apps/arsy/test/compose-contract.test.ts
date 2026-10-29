@@ -150,7 +150,8 @@ test('compose: the legacy radio DNS name aliases the one ARSY Hub service', () =
   assert.match(arsy, /aliases:[\s\S]*?\n\s+- radio\b/, 'radio resolves as a compatibility alias on the same service')
   assert.match(arsy, /container_name:\s*moonwitness\b/, 'the existing Hub container identity is retained')
   assert.match(compose, /depends_on:\n\s+arsy:\n\s+condition: service_healthy/, 'BFFs wait for the canonical ARSY service')
-  assert.match(compose, /RADIO_API_URL:\s*http:\/\/radio:3000\$\{API_PREFIX/, 'legacy consumers continue through the radio alias')
+  assert.match(compose, /RADIO_API_URL:\s*http:\/\/arsy:3000\$\{API_PREFIX/, 'BFFs dial the Hub by service name, the only name registered on Coolify\'s network')
+  assert.doesNotMatch(compose, /RADIO_API_URL:\s*http:\/\/radio:3000/, 'no BFF dials the default-network alias the proxy host does not share')
 })
 
 test('root workflows and dev runner select ARSY and retain the radio transition alias', () => {

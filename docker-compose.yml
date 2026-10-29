@@ -275,8 +275,11 @@ services:
     environment:
       NODE_ENV: production
       # follows API_PREFIX so a renamed prefix cannot leave the BFF dialling a
-      # path the hub no longer serves
-      RADIO_API_URL: http://radio:3000${API_PREFIX:-/api/v1}
+      # path the hub no longer serves. The host is the service name, not the
+      # `radio` alias: Coolify attaches every service to its own network, and an
+      # alias declared under compose's `default` network is not registered where
+      # the other services resolve it (ENOTFOUND radio at hq/dock/orbit).
+      RADIO_API_URL: http://arsy:3000${API_PREFIX:-/api/v1}
       SITE_NAME: ${SITE_NAME:-Moonwitness}
       HQ_URL: ${HQ_URL:-http://localhost:3002}
       DOCK_URL: ${DOCK_URL:-http://localhost:3001}
@@ -316,8 +319,9 @@ services:
       - "127.0.0.1:${DOCK_HOST_PORT:-3001}:3001"
     environment:
       NODE_ENV: production
-      # follows API_PREFIX, same reason as headquarters
-      RADIO_API_URL: http://radio:3000${API_PREFIX:-/api/v1}
+      # follows API_PREFIX, same reason as headquarters (and dials the service
+      # name for the same reason: the `radio` alias is not on Coolify's network)
+      RADIO_API_URL: http://arsy:3000${API_PREFIX:-/api/v1}
       SITE_NAME: ${SITE_NAME:-Moonwitness}
       DOCK_URL: ${DOCK_URL:-http://localhost:3001}
       # canonical and sitemap origin, read per request; empty keeps the local
@@ -351,7 +355,7 @@ services:
       - "127.0.0.1:3007:3007"
     environment:
       NODE_ENV: production
-      RADIO_API_URL: http://radio:3000${API_PREFIX:-/api/v1}
+      RADIO_API_URL: http://arsy:3000${API_PREFIX:-/api/v1}
       SITE_NAME: ${SITE_NAME:-Moonwitness}
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3007/').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
@@ -375,7 +379,7 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      RADIO_API_URL: http://radio:3000${API_PREFIX:-/api/v1}
+      RADIO_API_URL: http://arsy:3000${API_PREFIX:-/api/v1}
       AI_GATEWAY_URL: http://aigateway:3003
       SENTINEL_DRIVERS: ${SENTINEL_DRIVERS:-rss,api,playwright,openclaw,agent}
       SENTINEL_API_KEY: ${SENTINEL_API_KEY:-}

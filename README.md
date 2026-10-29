@@ -571,7 +571,7 @@ docker build -f Dockerfile.web --build-arg APP=headquarters --build-arg APP_PORT
 
 Both web images install without TypeScript (`next.config.mjs` is plain JS) and run
 `next start` — no `output: 'standalone'`, which keeps pnpm workspace tracing out of
-the picture. HQ talks to the hub over `RADIO_API_URL` (in compose: `http://radio:3000/api/v1`).
+the picture. HQ talks to the hub over `RADIO_API_URL` (in compose: `http://arsy:3000/api/v1`).
 
 The hub answers two probes: `GET /api/v1/health` (liveness — process + channel
 count) and `GET /api/v1/health/ready` (**readiness** — runs `SELECT 1` with a

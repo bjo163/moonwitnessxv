@@ -6,7 +6,7 @@
 
 - **Canonical Hub:** `apps/arsy`, package `@moonwitness/arsy`, one Fastify + MoonQL service and the sole Hub/database authority.
 - **HTTP contract:** port `3000`, API prefix `/api/v1`, readiness route `/api/v1/health/ready`.
-- **Compose service:** `arsy`; the same container retains the internal DNS alias `radio` during the compatibility window because Dock and Headquarters currently use `RADIO_API_URL` and `http://radio:3000`.
+- **Compose service:** `arsy`; the same container retains the internal DNS alias `radio` during the compatibility window. The BFFs dial `http://arsy:3000` (2026-10-29): the alias is declared on compose's `default` network, which Coolify does not give the other services, so `radio` resolved only on a bare `docker compose up`.
 - **Web apps:** Dock on `3001` and Headquarters on `3002`; their Compose health checks and station routes were exercised against the single Hub in the M28-06 rehearsal.
 - **Domain naming:** Radio stations, schedule and listening remain the SIGNAL/RADIO domain served by ARSY. They do not constitute a second service.
 
