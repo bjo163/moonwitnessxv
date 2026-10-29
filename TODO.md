@@ -844,7 +844,7 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 ---
 
-## Consistency controls for 40-milestone plan
+## Consistency controls for 43-milestone plan
 
 **Priority order:** rename the **Hub application** to ARSY only after M28 compatibility gates; always protect the independent **Radio/SIGNAL feature**, permissions, sources, persistence, review and production restoration before adding unrelated surfaces. Although M22 appears under G4, run its P0 suite from the beginning. Stated milestone dependencies are conceptual gates: a task must also respect source rights and privacy even if its individual row does not restate them.
 
@@ -902,6 +902,17 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 **Execution order:** All 12 tasks in Milestone M41 (M41-01 through M41-12) closed on 2026-10-27. Milestone M41 is 100% COMPLETE. LUMEN v1 single-agent framework library and internal runtime worker are verified and ready for live integration upon M28 environment gates. Multi-agent swarms, long-term memory/vector storage, arbitrary shell execution and Rust components remain deferred to future milestones. Keep all subsequent status checkboxes unchecked until exact-SHA evidence and reviewer sign-off exist.
 
-**Target register:** **42 milestones** (29 preserved M00–M28 + M29–M37 + appended M38, M39, M40 and M41), 267 preserved IDs from M00–M28 + 45 IDs from M29–M37 + 14 SKYLINK IDs + 12 ECHOLOG IDs + 10 ORBIT IDs + 12 LUMEN IDs = **360 unique task IDs**. Prior checkmarks and evidence remain unchanged. TODO is the only active task/status register.
+## M42 — Empire Story Universe visual implementation and isolated Vercel release
 
-**End of XV Master TODO — modular planning v4, 27 October 2026.**
+**Group:** G7 · **Priority:** P1 · **Owner authorization:** explicit, scoped pilot-production authorization recorded in [ADR-0012](docs/decisions/ADR-0012-empire-web-static-pilot.md), 29 October 2026 (Asia/Jakarta). **Prerequisites:** M31-05, M30-04; M30-05 evidence is required for the claimed screenshot matrix, not for reuse of shared MoonUI primitives. **Architecture:** Dock remains canonical LIGHTHOUSE under ADR-0011. **Status:** IN PROGRESS; visual implementation awaits exact-SHA verification, and Vercel deployment awaits `main` promotion.
+
+**Outcome:** bilingual (`id`/`en`) Story Universe compositions mapped to five private PNG references, using only the five generated WebP illustrations explicitly approved for public deployment. The five source PNGs stay under docs and are forbidden from public/static export. Keep all routes `noindex, nofollow`; the art approval does not approve editorial copy, religious quotations/translations/tafsir, source claims, broader rights, or the complete product. Keep the app static with no backend/auth/data owner. A dedicated Vercel project may be created only after the exact verified source is on `main`; do not alter the existing Vercel project, domains, or DNS.
+
+| Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
+|---|---|---|---|---|---|
+| - [ ] | **M42-01** — Match five Story Universe compositions and publish only the approved artwork | P1 | D4 | M31-05, M30-04 | **LEAF.** Five distinct responsive page compositions; `id`/`en` parity; existing MoonUI primitives with Empire-scoped styling; accurate vector-icon semantics; no fake live claims; noindex retained; five approved WebPs and zero PNG references in the static export. Evidence: exact source SHA, focused tests/typecheck/build/export checks, five-route browser comparison and remaining pixel deviations. [Packet](docs/tasks/M42/M42-01.md) · [reference/evidence checkpoint](apps/empire-web/docs/story-universe/README.md) |
+| - [ ] | **M42-02** — Deploy the isolated static pilot to a separate Vercel production project | P1 | D3 | M42-01, verified `main` promotion | **LEAF.** Create a distinct Vercel project for `bjo163/moonwitnessxv`, root `apps/empire-web`, production branch `main`; verify deployment READY, exact revision, all five id/en route pairs, five WebP responses, zero PNG references, noindex and security headers. No custom domain/DNS; existing `empire-of-the-light` project remains untouched. Record project/deployment IDs, exact SHA, URL, route evidence, and rollback target. [Packet](docs/tasks/M42/M42-02.md) · [ADR-0012](docs/decisions/ADR-0012-empire-web-static-pilot.md) |
+
+**Target register:** **43 milestones** (29 preserved M00–M28 + M29–M37 + appended M38, M39, M40, M41 and M42), 267 preserved IDs from M00–M28 + 45 IDs from M29–M37 + 14 SKYLINK IDs + 12 ECHOLOG IDs + 10 ORBIT IDs + 12 LUMEN IDs + 2 Story Universe IDs = **362 unique task IDs**. Prior checkmarks and evidence remain unchanged. TODO is the only active task/status register.
+
+**End of XV Master TODO — modular planning v5, 29 October 2026.**

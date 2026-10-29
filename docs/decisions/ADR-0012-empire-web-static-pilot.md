@@ -13,6 +13,10 @@ The owner requested that the existing `apps/empire-web` implementation be merged
 3. Keep the pilot `noindex`. This decision authorizes repository integration and local/CI preview only. Vercel deployment, production promotion, custom-domain attachment, and DNS changes require separate explicit authorization and release review.
 4. Preserve source rights, privacy, security, and publication gates. A static build or passing CI does not prove hosting, domain control, or release readiness.
 
+## Owner addendum — scoped production authorization (29 October 2026, Asia/Jakarta)
+
+The project owner explicitly authorized an isolated production deployment of this static pilot to a **new Vercel project** connected to `bjo163/moonwitnessxv`, rooted at `apps/empire-web`, on the repository's promoted `main` branch. This does not change the canonical Dock/LIGHTHOUSE decision. It does not authorize modifying the pre-existing `empire-of-the-light` project, attaching a custom domain, changing DNS, enabling indexing, or publishing private PNG references or unreviewed editorial/source content. Retain `noindex, nofollow`; require the exact-SHA and live-route release evidence in [M42-02](../../TODO.md#m42--empire-story-universe-visual-implementation-and-isolated-vercel-release).
+
 ## Rollback
 
 Remove the `empire-web` entry from `scripts/apps.registry.mjs`, its `PORTS.empireWeb` assignment, the workspace, and the pilot documentation. Dock remains the canonical gateway.

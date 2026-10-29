@@ -1,6 +1,6 @@
-# A-L-L-A-H.COM — Empire Gateway (Vercel preview)
+# A-L-L-A-H.COM — Empire Story Universe (isolated Vercel production pilot)
 
-**Status:** Isolated static pilot only. Accepted ADR-0012 permits this local/CI pilot while ADR-0004 and ADR-0011 keep Dock as the canonical LIGHTHOUSE runtime. This pilot does not replace or re-route Dock. **No new backend, auth, schema, API secrets, or public control plane.**
+**Status:** Isolated static pilot. The project owner explicitly authorized a separate Vercel production deployment on 2026-10-29. ADR-0011 still keeps Dock as canonical LIGHTHOUSE; this pilot does not replace or re-route Dock. **No new backend, auth, schema, API secrets, public control plane, custom domain, or DNS change.** Keep `noindex, nofollow` until editorial/source/security review.
 
 Repository: bjo163/moonwitnessxv · apps/empire-web.
 
@@ -20,12 +20,14 @@ Local app: http://localhost:3010
 
 ## Dedicated Vercel project settings
 - Name: a-l-l-a-h-empire-web
-- Git: bjo163/moonwitnessxv, branch feature/empire-web-vercel for preview
+- Git: bjo163/moonwitnessxv, production branch `main` (the repository's `dev`→`main` promotion is CI-controlled)
 - Framework: Next.js; Root Directory: apps/empire-web
 - Install: `pnpm install --frozen-lockfile`
 - Build: `pnpm --filter @moonwitness/core build && pnpm --filter @moonwitness/moonui build && pnpm --filter @moonwitness/empire-web build`
 - Next: static export; no API server or backend runtime; Node 24.x
-- Production custom domain not attached before security, rights, DNS and editorial approvals.
+- Do not attach a custom domain or change DNS under this authorization.
+- Keep the existing `empire-of-the-light` Vercel project untouched; use a separate `a-l-l-a-h-empire-web` project for this app.
+- The five generated WebP illustrations are approved for public deployment. The five PNG reference mockups, editorial copy, religious quotations, translations, tafsir, and source claims are not approved by that artwork decision.
 - No secrets required for this static first slice.
 
 ## Acceptance gates
@@ -33,7 +35,7 @@ Local app: http://localhost:3010
 2. Browser routes /, /id, /en; real accessible controls, mobile and keyboard.
 3. Status copy: CODE EXISTS ≠ DEPLOYED; PLANNED has no fake clickthrough.
 4. No PII, private sources, unsafe API endpoints, secrets or invented telemetry.
-5. Rights, privacy and canonical-domain decision before public index/production.
+5. Retain noindex and the editorial/source/security gates; this pilot deployment is not public-indexing or full-product approval.
 6. Existing Dock, ARSY and Headquarters continue unaffected.
 
 Read: docs/product/A-L-L-A-H-COM-MASTER-SPEC.md, BLUEPRINT.md, TODO.md, and accepted ADRs.
@@ -60,8 +62,8 @@ pnpm exec playwright test --config apps/empire-web/playwright.config.mjs
 ```
 The Playwright suite covers both locales at 390px and 1440px, keyboard skip navigation, all information-page links and locale round trips, overflow, global 404, JavaScript errors and unexpected external requests. The dedicated CI workflow runs it after the static build; configuring it is not evidence of a passing run.
 
-See `docs/audit/empire-web-static-pilot-2026-10-29.md` for observed local evidence and remaining release gates. No Vercel deployment, production promotion, domain attachment or DNS change is part of this increment.
+See `docs/audit/empire-web-static-pilot-2026-10-29.md` for observed local evidence and remaining release gates. The project owner's separate Vercel authorization is recorded in ADR-0012 and M42; it applies only to this isolated static pilot, without a custom domain or DNS change.
 
 ## Story Universe design reference (draft)
 
-Five page-level mockups are specified in [docs/story-universe/README.md](docs/story-universe/README.md), with the full visual/narrative bible, reusable design tokens, content manifest, source-image SHA-256 manifest, and local AI execution prompt. The complementary [MoonUI bridge](../../packages/moonui/docs/EMPIRE_STORY_UNIVERSE_BRIDGE.md) is a **proposal**, not a global MoonUI redesign. The five original PNGs require separate binary import from the companion ZIP; docs-only import does not mean the new story routes have been implemented. No preview/prod deployment is authorized by these docs.
+Five page-level mockups are specified in [docs/story-universe/README.md](docs/story-universe/README.md), with the full visual/narrative bible, reusable design tokens, content manifest, private source-image SHA-256 manifest, and local AI execution prompt. The complementary [MoonUI bridge](../../packages/moonui/docs/EMPIRE_STORY_UNIVERSE_BRIDGE.md) keeps shared package ownership unchanged. The five PNG files stay private under `docs/`; only the five owner-approved generated WebPs may be in `public/` and the export.

@@ -1,0 +1,22 @@
+{
+  "schema": "moonwitness.story-universe.generated-artwork/1",
+  "status": "publication_approved_for_generated_artwork_only",
+  "sourceImagesUsedAsPrivateCompositionReferences": true,
+  "publicationApproved": true,
+  "approvalScope": "Only the five generated WebP files listed below are approved for public deployment.",
+  "approvalEvidence": "Explicit project-owner approval in Codex conversation on 2026-10-29 (Asia/Jakarta).",
+  "approvalExcludes": [
+    "The five private PNG mockup references",
+    "Story, character, lesson, and other editorial content",
+    "Religious quotations, translations, tafsir, or source claims",
+    "Rights clearance for any source material beyond these generated WebP files",
+    "Search indexing or approval of the full MoonWitness product"
+  ],
+  "assets": [
+    { "filename": "home-mooncity.webp", "page": "Home hero and origin cover", "reference": "REF-01", "sha256": "06172c0819af0bacb8735339dbcc33b24a7a44f55640006db0a2b72d6a7134c3", "bytes": 310642 },
+    { "filename": "library-guardian.webp", "page": "Library hero and guardian cover", "reference": "REF-02", "sha256": "45e3727ca1b3a086ca6e6f7be5f6034b94533824e226c55e9e59c8f5040c1506", "bytes": 254828 },
+    { "filename": "reader-poster.webp", "page": "Reader poster and first comic panel", "reference": "REF-03", "sha256": "d945df57c68310e95a0bd8054c0c7d270fa09136248175b1e56433d2ecf39939", "bytes": 270472 },
+    { "filename": "codex-guardian.webp", "page": "Codex hero and universe cover", "reference": "REF-04", "sha256": "806577d44ede0a2e179704264cb80e7198c9d8c51a1eb99776963f0f84d4fc47", "bytes": 102216 },
+    { "filename": "moon-academy.webp", "page": "GGS hero and learning cover", "reference": "REF-05", "sha256": "6b2672751021e632f49421734fd5f07cf45bb40862f81f12f9fb1a0fd2c999d3", "bytes": 193172 }
+  ]
+}

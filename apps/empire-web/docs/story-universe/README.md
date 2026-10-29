@@ -9,8 +9,9 @@ This app-local folder is the **single editing location** for the five-page visua
 2. [contracts/design_tokens.json](contracts/design_tokens.json) — colors, type, spacing, UI glyph mapping, responsive constraints; screenshot-derived approximations.
 3. [contracts/content_manifest.json](contracts/content_manifest.json) — bilingual nav, story worlds, cards, editorial statuses, page content; distinguish canon from illustrative claims.
 4. [contracts/asset_manifest.json](contracts/asset_manifest.json) — SHA-256 and names of the five PNG originals.
-5. [AI_LOCAL_IMPLEMENTATION_PROMPT.md](prompts/AI_LOCAL_IMPLEMENTATION_PROMPT.md) — execution prompt for local AI.
-6. [MoonUI integration bridge](../../../../packages/moonui/docs/EMPIRE_STORY_UNIVERSE_BRIDGE.md) — reuse and scoped theme proposal; **not implemented**.
+5. [contracts/generated_artwork_manifest.json](contracts/generated_artwork_manifest.json) — checksums and scoped publication approval for the five new, AI-generated WebP illustrations.
+6. [AI_LOCAL_IMPLEMENTATION_PROMPT.md](prompts/AI_LOCAL_IMPLEMENTATION_PROMPT.md) — execution prompt for local AI.
+7. [MoonUI integration bridge](../../../../packages/moonui/docs/EMPIRE_STORY_UNIVERSE_BRIDGE.md) — shared package stays unchanged; Empire consumes its existing primitives in a scoped app theme.
 
 ## The five PNG originals
 
@@ -36,11 +37,25 @@ git push origin dev
 Each PNG is checked against the SHA-256 manifest and allowed filename list; a mismatch causes failure. Read script help using `--help`. The files should stay inside `docs/` (not `public/`) until publication is approved.
 
 ## Architecture boundaries and status
-- `apps/empire-web` remains a local/CI static pilot per accepted ADR-0012. Canonical LIGHTHOUSE remains Dock. No backend, auth, DB, DNS or Vercel production changes.
+- `apps/empire-web` remains an isolated static pilot per accepted ADR-0012. Canonical LIGHTHOUSE remains Dock. A separate Vercel production deployment is authorized in the ADR-0012 addendum; no backend, auth, DB, custom domain, DNS, or changes to the existing `empire-of-the-light` Vercel project.
 - Content, posters, scripture and source quotes require **human editorial/source/rights review** before publication. The mockup pictures are references, **not functioning pages**.
 - "LIVE NOW", visitor counters, planned releases, and fake links from generated mockups MUST NOT be copied as real data.
 - All 5 mockups differ: HOME, LIBRARY, READER, CODEX, GGS. Avoid repetitive dashboard templates.
-- Visual debt and actual screenshots need to be assessed at 390 / 768 / 1122 / 1440px. Preserve RTL verified Arabic as real text.
+- Visual debt and actual screenshots need to be assessed at 390 / 768 / 1122 / 1440 / 1920px. Preserve RTL verified Arabic as real text.
 - No new branch for ordinary local work. Align with the existing dev→main CI gates and canonical TODO, which are not rewritten by this bundle.
 
-**Implementation status:** docs/contract imported, application page implementation **not yet started by this design-only commit**.
+**Implementation status (local working tree):** all five conceptual page surfaces now exist in the bilingual static pilot: home, searchable/filterable library, interactive AngelWithShotgun reader, character codex, and fictional GGS learning page. The app uses MoonUI CSS, buttons, and vector icons with scoped Empire tokens; the shared MoonUI package is unchanged. The project owner approved the five original AI-generated WebP illustrations for public deployment on 2026-10-29 (Asia/Jakarta); exact file checksums and this narrow approval are recorded in `contracts/generated_artwork_manifest.json`. That approval covers those five WebP files only. The five PNG screenshots remain private design references outside `public/` and the exported app. The generated art follows their composition and mood, but is not a copy of the source imagery and does not make the pages pixel-exact. Routes remain noindex. Editorial copy, religious/source claims, broader rights review, full visual comparison, and final human acceptance remain open.
+
+**Release scope:** the project owner separately authorized an isolated Vercel production deployment for this static pilot. The canonical Lighthouse runtime remains Dock; this project must use a new Vercel project rooted at `apps/empire-web`, must not change the existing `empire-of-the-light` Vercel project or domains, and must keep `noindex, nofollow` until editorial/source/security review is complete.
+
+### Local visual implementation checkpoint
+
+| Page / route | Reference | In place locally | Still differs / gate |
+|---|---|---|---|
+| Home `/id`, `/en` | `01-homepage.png` | Moonlit city hero with faceless rear-view figure, four individually illustrated world cards, four semantic foundation icons | Original AI artwork and MoonUI/custom vector icons are composition-led approximations; precise crop, spacing and typography comparison remains |
+| Library `/[locale]/stories` | `02-moonstories-library.png` | Separate guardian hero, five icon filters, search/sort/world/status, four distinct story records and artwork | Artwork is original and distinct but not the reference painting; header/nav proportions and card crop need multi-viewport comparison |
+| Reader `/[locale]/stories/angelwithshotgun` | `03-story-detail-reader.png` | Separate poster + synopsis/metadata, four selectable panels with varied scene art, previous/next and transcript | Scene art is drawn from five original preview illustrations, not four sequential authored comic panels; exact composition remains open |
+| Codex `/[locale]/characters` | `04-character-codex.png` | Dedicated wide guardian artwork, six traits, relationship explanation and accessible text | Artwork is original rather than source reference; precise crop, diagram lines and section proportions need comparison |
+| GGS `/[locale]/ggs` | `05-ggs-full-moon-school.png` | Dedicated moon-academy art, fictional 10:12 WIB lesson, reflection, three lessons, session disclosure and four paths | Academy painting is original rather than source reference; exact crop, section proportions and typography need comparison |
+
+Current checkpoint evidence is from an earlier local run and must be repeated after this approval/test update. It covered app typecheck, app tests (6/6), the static export checker, and a production build. The five source mockup PNGs remain publication-gated and must not appear in any public export.
