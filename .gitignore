@@ -20,3 +20,4 @@ out/
 .vercel/
 .agents/teamwork/
 PROJECT.md
+.vercel-tmp/
