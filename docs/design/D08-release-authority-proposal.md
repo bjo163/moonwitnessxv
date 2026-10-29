@@ -1,6 +1,6 @@
 # D08 release authority proposal
 
-**Status: PROPOSAL — NOT RATIFIED.** This is a decision aid for the D08 owner and affected domain owners. It does not amend an accepted ADR, grant publication authority, clear any source, approve any content, or authorize runtime implementation. No witness content, private source bytes, consent evidence, credentials, or production data were accessed.
+**Status: RATIFIED AS POLICY — 29 October 2026, by [ADR-0013](../decisions/ADR-0013-d08-release-authority.md).** The owner accepted the *conservative starting position* below as one position, without item-by-item changes. Ratification grants no publication authority, clears no source, approves no content, and authorizes no schema, route or deployment; implementation still follows §"Suggested phased acceptance". The document body is preserved as the ratification record and is not edited further. No witness content, private source bytes, consent evidence, credentials, or production data were accessed.
 
 ## Purpose
 
