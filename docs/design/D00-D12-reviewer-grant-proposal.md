@@ -3,7 +3,7 @@
 **Status: PROPOSAL — NOT RATIFIED. Non-binding owner decision proposal; not an accepted ADR, not an implementation authorization.** It creates no schema, migration, route, UI, role value or code; assigns no principal and touches no content. Ratification is the owner's decision and must be recorded in an accepted ADR before any principal or role is treated as an authorized reviewer, as required by [ADR-0013 §2](../decisions/ADR-0013-d08-release-authority.md). This document does not accept itself, close a TODO leaf or claim that any reviewer exists.
 
 - Repository: `Z:\project\moonradio`, branch `dev`.
-- Local baseline: `aaa19d13993b434efdbf5bb46a2511aedea411c8`. At preparation time `git ls-remote origin refs/heads/dev` returned `3d8b6a00838a768a89f5218a2a5679769a588c2d`; those parallel-session commits are not in this worktree and are not evaluated here.
+- Local baseline: `aaa19d13993b434efdbf5bb46a2511aedea411c8`. At preparation time `git ls-remote origin refs/heads/dev` returned `3d8b6a00838a768a89f5218a2a5679769a588c2d`, so the remote is ahead of this worktree; those commits are not evaluated here.
 - Scope: define the grant contract that binds reviewer authority to verified D00 principals, with issuer, revoker, expiry and revocation rules, so that [M20-04](../tasks/M20/M20-04.md) and the D08 decision boundary can later use a real mandate. It does not define the D12 queue, D08 publication policy, classification taxonomy, HQ UI or storage implementation.
 - No witness testimony, private source bytes, consent records, credentials or production data were accessed.
 
