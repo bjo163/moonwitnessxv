@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
-import { Badge, PageHeader } from '@moonwitness/moonui'
+import { Alert, Badge, PageHeader } from '@moonwitness/moonui'
 import { readRelationDetail, readSamePairRelations, type SamePairRelations } from '@/data/queries/graph'
-import { panelErrorMessage } from '@/data/queries/error'
+import { isProjectionWithheld, panelErrorMessage } from '@/data/queries/error'
 import { RelationAlternativesView, RelationDetailView } from '@/ui/components/graph-relation'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
@@ -22,15 +22,32 @@ export default async function RelationPage({ params }: { params: Promise<{ relat
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
   const localeHref = dockHrefFor(locale)
   const { relationCode } = await params
-  const detail = await readRelationDetail(relationCode)
+  const copy = getStatesCopy(locale)
+  let detail: Awaited<ReturnType<typeof readRelationDetail>>
+  try {
+    detail = await readRelationDetail(relationCode)
+  } catch (err) {
+    if (!isProjectionWithheld(err)) throw err
+    return (
+      <div className="m-stack" style={{ gap: 20 }}>
+        <PageHeader
+          title="Constellation"
+          breadcrumbs={[
+            { label: 'Home', href: localeHref('/') },
+            { label: 'Constellation', href: localeHref('/constellation') },
+          ]}
+        />
+        <div role="alert"><Alert tone="hot">{copy.errorGraphWithheld}</Alert></div>
+      </div>
+    )
+  }
   if (!detail) notFound()
 
   const relation = detail.relation
-  const copy = getStatesCopy(locale)
   const provenance = getProvenanceCopy(locale)
 
   /**
-   * UI-P06d · the same-pair alternatives come from the public graph overview, so
+   * UI-P06d · the same-pair alternatives come from the existing graph overview, so
    * this is one extra read of an endpoint this route does not otherwise call,
    * against an existing D03 projection — no new route, table or owner.
    *
@@ -49,7 +66,8 @@ export default async function RelationPage({ params }: { params: Promise<{ relat
     () => readSamePairRelations(relation),
     alternativesCopy,
     () => false,
-    (err) => panelErrorMessage(err, copy.errorGraphUnavailable),
+    (err) =>
+      isProjectionWithheld(err) ? copy.errorGraphWithheld : panelErrorMessage(err, copy.errorGraphUnavailable),
   )
 
   return (

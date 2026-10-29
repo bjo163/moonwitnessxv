@@ -550,14 +550,16 @@ must(!html.includes('sameAs'), 'projection never emits a sameAs claim')
 const pageSource = readFileSync(new URL('../src/app/constellation/page.tsx', import.meta.url), 'utf8')
 must(pageSource.includes("export const dynamic = 'force-dynamic'"), 'page is server-rendered per request')
 must(pageSource.includes('readConstellation'), 'page reads the backend projection')
-must(pageSource.includes('MoonApiError'), 'page surfaces backend errors')
+must(pageSource.includes('isProjectionWithheld(err)'), 'page surfaces backend denial as withholding')
 must(!pageSource.includes('sha256') && !pageSource.includes('gph_'), 'page does not compute a graph ID')
 
 const componentSource = readFileSync(new URL('../src/ui/components/constellation.tsx', import.meta.url), 'utf8')
 must(!componentSource.includes('sha256') && !componentSource.includes('gph_'), 'component does not compute a graph ID')
 
 const querySource = readFileSync(new URL('../src/data/queries/constellation.ts', import.meta.url), 'utf8')
-must(querySource.includes("'/ontology/constellation'"), 'query reads the public projection endpoint')
+must(querySource.includes("'/ontology/constellation'"), 'query reads the existing ontology projection endpoint')
+must(pageSource.includes('isProjectionWithheld(err)'), 'page withholds the projection after anonymous API denial')
+must(pageSource.includes('copy.errorGraphWithheld'), 'withholding state is explicit and localized')
 must(!querySource.includes('/ontology/merges') && !querySource.includes('/ontology/conflicts'), 'query never calls a write or admin-only endpoint')
 
 const shell = readFileSync(new URL('../src/ui/components/shell.tsx', import.meta.url), 'utf8')

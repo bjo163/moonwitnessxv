@@ -244,7 +244,7 @@ export interface SamePairRelations {
  * see what else is asserted about that pair, and an unlisted alternative reads
  * as agreement. `/graph/overview` already projects every `graph_candidates` row
  * with its typed pair, status and source, so the alternatives are derived from
- * that existing public projection: D03 stays the only projection owner and no
+ * that existing D03 projection. D03 stays the only projection owner and no
  * route, table, second client or local inference is added.
  *
  * One extra read, deliberately: `readGraphOverview` caches nothing and the

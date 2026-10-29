@@ -105,6 +105,7 @@ export const REQUIRED_STATES_UI_KEYS = [
   'errorExploreSignals',
   'errorConstellationUnavailable',
   'errorGraphUnavailable',
+  'errorGraphWithheld',
   'errorFiguresUnavailable',
   'errorMissionsUnavailable',
   'errorPatchesUnavailable',

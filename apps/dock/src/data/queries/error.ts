@@ -11,4 +11,9 @@ export function panelErrorMessage(err: unknown, fallback: string): string {
   return err instanceof MoonApiError ? err.message : fallback
 }
 
+/** Public projections that require an unapproved D08 release are withheld by the Hub. */
+export function isProjectionWithheld(err: unknown): boolean {
+  return err instanceof MoonApiError && (err.statusCode === 401 || err.statusCode === 403)
+}
+
 /** The public Terms route is intentionally closed while no D08 release projection exists. */

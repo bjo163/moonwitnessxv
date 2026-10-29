@@ -13,7 +13,7 @@ import process from 'node:process'
 import path from 'node:path'
 import test from 'node:test'
 import { MoonApiError } from '@moonwitness/moonql-client'
-import { panelErrorMessage } from '../src/data/queries/error.ts'
+import { isProjectionWithheld, panelErrorMessage } from '../src/data/queries/error.ts'
 import { statesCopy } from '../src/lib/states-copy.ts'
 
 const require_ = createRequire(new URL('../package.json', import.meta.url))
@@ -340,6 +340,7 @@ test('UI-F10 every migrated panel sentence exists in both locales', () => {
     'emptyGraphRelease',
     'errorConstellationUnavailable',
     'errorGraphUnavailable',
+    'errorGraphWithheld',
     'emptyDenpaTransmissions',
     'errorDenpaUnavailable',
     'emptyReaderPanel',
@@ -352,4 +353,12 @@ test('UI-F10 every migrated panel sentence exists in both locales', () => {
     assert.ok(typeof id[key] === 'string' && id[key].trim().length > 0, `${key} has no Indonesian copy`)
     assert.notEqual(en[key], id[key], `${key} must be translated, not duplicated`)
   }
+})
+
+test('anonymous Graph and Ontology denial is identified as withholding, not infrastructure failure', () => {
+  assert.equal(isProjectionWithheld(new MoonApiError(401, 'Unauthorized')), true)
+  assert.equal(isProjectionWithheld(new MoonApiError(403, 'Forbidden')), true)
+  assert.equal(isProjectionWithheld(new MoonApiError(503, 'Unavailable')), false)
+  assert.equal(isProjectionWithheld(new Error('ECONNREFUSED')), false)
+  assert.notEqual(statesCopy.en.errorGraphWithheld, statesCopy.id.errorGraphWithheld)
 })

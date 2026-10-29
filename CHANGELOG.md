@@ -19,6 +19,7 @@ available.
 - Baseline evidence for the twelve design references: [UI audit](docs/audit/ui-baseline-8737fe4.md) and the [blocked-screen register](docs/audit/ui-blocked-screens-8737fe4.md).
 
 ### Changed
+- Graph and Ontology candidate/reviewer projections and raw REST reads now require admin authorization until an approved D08 public projection exists. The API major default advances to 5.0.0; Dock shows a localized withholding state. This is a security containment change, not D08 publication approval or deployment evidence.
 - Recorded the verified in-place ARSY Hub migration and exact-SHA rollback rehearsal at source `dbc5f01` in the [operator handoff](docs/runbook-arsy-migration.md). This is compatibility/runtime evidence, not a production deployment; M28-15 remains open.
 - Streamlined CI pipeline to run verification exactly once on `dev` and eliminate duplicate verification on `main`.
 - Reference design mockups (`docs/design/mockups-xv`) are reference-only and never shipped as product art; a per-asset rights ledger is required first ([ADR-0009](docs/decisions/ADR-0009-public-ui-reference-adoption.md)).
