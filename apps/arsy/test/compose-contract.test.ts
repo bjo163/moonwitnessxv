@@ -88,6 +88,21 @@ test('compose: the database name each service dials is actually defined for it',
   assert.match(arsy, /DATABASE_URL:.*POSTGRES_DB/, 'the hub dials the database by name')
 })
 
+test('compose: interpolates without runtime secrets so a hosted builder can start', () => {
+  // `docker compose build` resolves the whole file before building any image, and
+  // a hosted builder such as Coolify only receives build-time variables. A
+  // required `${VAR:?}` there fails every deploy at parse time, before an image
+  // exists. Missing secrets must still stop the stack — at runtime, not here.
+  assert.doesNotMatch(compose, /\$\{[A-Z0-9_]+:\?/, 'a required interpolation aborts hosted builds before any image is built')
+})
+
+test('compose: no secret falls back to a non-empty committed default', () => {
+  const secrets = [...compose.matchAll(/\$\{([A-Z0-9_]*(?:PASSWORD|SECRET|TOKEN|KEY)[A-Z0-9_]*):-([^}]*)\}/g)]
+  assert.ok(secrets.length >= 5, 'the compose file still passes its credentials through')
+  const unsafe = secrets.filter(([, , fallback]) => fallback.trim() !== '').map(([, name, fallback]) => `${name} → ${fallback}`)
+  assert.deepEqual(unsafe, [], 'a credential must come from the environment, never from a committed default')
+})
+
 test('compose: the legacy radio DNS name aliases the one ARSY Hub service', () => {
   const arsy = blocks.get('arsy')
   assert.ok(arsy, 'canonical arsy service exists')
