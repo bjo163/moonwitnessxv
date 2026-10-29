@@ -63,3 +63,31 @@ Each PNG is checked against the SHA-256 manifest and allowed filename list; a mi
 Browser verification covered all five `id` and five `en` routes at 390√ó844, 768√ó1024, 1122√ó1402, 1440√ó900, and 1920√ó1080. Every route retained `noindex, nofollow`; the 1920px matrix had no horizontal overflow. Full-page comparison at the 1122√ó1402 reference size confirmed five distinct compositions. Search for ‚ÄúGGS‚Äù returns one card, the guardian category filter returns one card, reader page controls update the current page, mobile navigation opens, and the browser console had no errors.
 
 **Remaining visual deviations:** the five approved WebPs are original composition-led illustrations rather than copies of the private mockup paintings; several crops, exact typography/spacing, and decorative/vector icon details still differ. The reader reuses conceptual scenes rather than four sequential final comic panels. No screenshot captures were added to the repository; the five reference PNGs remain private. Copy, religious/source claims, broader rights, and indexing remain gated.
+
+## M45 ó mockup-faithful reconstruction (status 2026-10-29)
+
+The five Story Universe routes were rebuilt against the five 1122◊1402 mockups. Fidelity is measured, not judged: docs/story-universe/LAYOUT_SPEC.md records the bands read out of the PNGs by scripts/measure-reference.mjs, and scripts/check-fidelity.mjs --strict fails the build when a band drifts past ±2px, a section disappears, a page has more than one h1, or a derived width (390/768/1440/1920) overflows.
+
+Measured at 1122◊1402, all five pages, deltas after the final pass:
+
+| Page | Bands | Columns |
+|---|---|---|
+| Home (REF-01) | 73 / 546 / 1035 / 1258 / 1346 / 1402 | 30 / 297.8 / 565.5 / 833.3, right 1092 |
+| Library (REF-02) | 73 / 443 / 581 / 653 / 1033 / 1264 / 1346 / 1403 | 29 / 298.3 / 567.5 / 836.8, right 1093 |
+| Reader (REF-03) | 73 / 104 / 1218 / 1331 / 1374 / 1402 | 34 / 301.5 / 569 / 836.5, right 1088 |
+| Codex (REF-04) | 73 / 416 / 722 / 945 / 1264 / 1349 / 1403 | 19 Ö 1097 |
+| GGS (REF-05) | 73 / 487 / 571 / 917 / 1260 / 1341 / 1403 | 27 / 525 / 840, right 1095 |
+
+### Deliberate deviations
+
+1. **Artwork.** The five approved WebPs still stand in for the 19 planned slots (ARTWORK_SLOTS.md). Generation is blocked on image credits; every page swaps one src per slot when the art lands.
+2. **Display face.** The mockups use a licensed condensed grotesk. The app keeps --font-display (Impact/Anton/Arial Black). No webfont was added.
+3. **Footer height per page.** The mockups disagree (home 88+56, library 78+55, reader 43+28, codex 73+51, GGS 78+59). One SiteFooter component serves all five, with --footer-main-h / --footer-bar-h tokens set per page so each mockup's own numbers are met.
+4. **Non-uniform grids.** The mockups' trait/thumbs columns are uneven (e.g. codex traits 178/184/172/179/174/191). The app uses a uniform grid and the harness asserts only the outer edges there.
+5. **Mockup copy.** Reproduced verbatim under the owner decision; every statement is registered in CLAIMS.md. The Qur'an panel is **withheld** (rights), LIVE NOW / JOIN TODAY carry a story-time caption, and 50+ STORIES & IDEAS remains an unsupported metric the owner accepted.
+6. **/ stays zine.** out/index.html is asserted to be data-skin="zine"; the entry picker keeps the dual-skin contract (ADR-0014). The six information pages moved to the empire chrome.
+
+### Deployment evidence
+
+- https://a-l-l-a-h-empire-web.vercel.app/en serves this build (su-home__hero present in the HTML, 38 KB).
+- https://a-l-l-a-h.com/en returns **<title>Parked Domain name on Hostinger DNS system</title>** with Server: hcdn. The apex is not yet pointed at Coolify, so DEPLOYED_VERIFIED per docs/architecture/RELEASE.md is **not** met and is recorded as operator work (M44-02/M44-08).
