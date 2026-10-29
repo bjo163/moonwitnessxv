@@ -185,6 +185,34 @@ body {
   gap: 18px;
 }
 
+/* Accepted M19-02 experience tokens are emitted by the shared Dock layout only
+   for the existing Reader, Terms/Research and Studio/Story routes. */
+.dk-main[data-experience] {
+  width: 100%;
+  max-width: var(--experience-max-width);
+  padding-right: var(--experience-gutter);
+  padding-left: var(--experience-gutter);
+  gap: var(--experience-section-gap);
+  font-family: var(--experience-body-font);
+  font-size: var(--experience-body-size);
+  line-height: var(--experience-line-height);
+}
+
+.dk-main[data-experience] h1 {
+  font-family: var(--experience-heading-font);
+  font-size: var(--experience-heading-size);
+}
+
+.dk-main[data-experience] code,
+.dk-main[data-experience] pre {
+  font-family: var(--experience-code-font);
+  font-size: var(--experience-code-size);
+}
+
+.dk-main[data-experience] p {
+  max-width: var(--experience-measure);
+}
+
 .dk-home-stack {
   display: flex;
   flex-direction: column;

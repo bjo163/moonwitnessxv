@@ -729,7 +729,7 @@ export function GeneratorStudio(): ReactNode {
           <Badge tone="cyan">GENERATIVE LIVING ENGINE</Badge>
           <Tape tone="accent">100% PURE SVG · ZERO DEPENDENCY</Tape>
         </div>
-        <h1 className="m-heading" style={{ fontSize: '2rem', margin: '4px 0' }}>
+        <h1 className="m-heading" style={{ fontSize: 'var(--experience-display-size)', margin: '4px 0' }}>
           MOONWITNESS VECTOR STUDIO
         </h1>
         <p className="m-body" style={{ color: MOON_COLORS.muted, maxWidth: 800 }}>
