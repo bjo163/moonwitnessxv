@@ -12,7 +12,9 @@
     "slogan": "Only You. Your Deeds. And ALLAH.",
     "fictionDisclosure": true,
     "productionPublished": false,
-    "noIndexRequired": true,
+    "noIndexRequired": false,
+    "noIndexSupersededBy": "ADR-0016",
+    "noIndexNote": "ADR-0016 (2026-10-29) makes the canonical Coolify host indexable; the Vercel preview project keeps noindex through its own X-Robots-Tag header.",
     "localeDefault": "en",
     "locales": [
       "id",
@@ -529,7 +531,7 @@
     "Arabic verses require source and publishing rights",
     "No ghost UI or fake LIVE/schedule",
     "No live deployment without exact URL proof",
-    "Stay noindex in pilot",
+    "Indexable on the canonical host (ADR-0016); the Vercel preview stays noindex",
     "Do not modify canonical Dock ownership",
     "No copyrighted anime character artwork",
     "All controls accessible and wired"

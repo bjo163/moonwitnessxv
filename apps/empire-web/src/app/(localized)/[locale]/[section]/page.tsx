@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { pageCopy, sections, type Section } from '../../../../lib/pages'
 import { content, spaceEvidence } from '../../../../lib/copy'
 import type { Locale } from '../../../../lib/copy'
+import { routeMetadata } from '../../../../lib/seo'
 
 type Params = { locale: string; section: string }
 export const dynamicParams = false
@@ -17,7 +18,7 @@ function resolve(params: Params): { locale: Locale; section: Section } {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale, section } = resolve(await params)
   const page = pageCopy[locale][section]
-  return { title: page.title, description: page.summary, robots: { index: false, follow: false } }
+  return { title: page.title, description: page.summary, ...routeMetadata(locale, `/${section}`) }
 }
 export default async function InformationPage({ params }: { params: Promise<Params> }) {
   const { locale, section } = resolve(await params)

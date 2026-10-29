@@ -22,11 +22,18 @@ test('preview does not claim launched or expose private API credentials', () => 
   assert.doesNotMatch(copy, /NEXT_PUBLIC_.*(?:SECRET|TOKEN|KEY)/)
   assert.doesNotMatch(read('src/components/Landing.tsx'), /fetch\s*\(/)
 })
-test('preview stays noindex until editorial and security approval', () => {
-  assert.match(read('src/app/robots.ts'), /disallow:\s*'\/'/)
+test('the pilot is indexable on the canonical host only (ADR-0016)', () => {
+  const robots = read('src/app/robots.ts')
+  assert.match(robots, /allow:\s*'\/'/)
+  assert.match(robots, /sitemap:\s*`\$\{SITE_ORIGIN\}\/sitemap\.xml`/)
+  assert.match(robots, /host:\s*SITE_ORIGIN/)
+  assert.ok(existsSync(join(app, 'src/app/sitemap.ts')), 'the sitemap route exists')
   for (const layout of ['src/app/(entry)/layout.tsx', 'src/app/(localized)/[locale]/layout.tsx']) {
-    assert.match(read(layout), /index:\s*false/)
+    assert.match(read(layout), /index:\s*true/)
   }
+  assert.match(read('src/lib/seo.ts'), /SITE_ORIGIN = 'https:\/\/a-l-l-a-h\.com'/)
+  // the preview origin must stay out of the index even though the app says index
+  assert.match(read('vercel.json'), /noindex, nofollow/)
 })
 test('static export has no duplicate API or login', () => {
   assert.match(read('next.config.mjs'), /output:\s*'export'/)

@@ -243,11 +243,11 @@ test('docker: no service image runs the root build from a partial copy', () => {
 
 /**
  * apps/empire-web runs with `output: 'export'`, so it has no Next runtime to start.
- * Its image therefore ships the exported folder behind a static server; the two
- * things that must never drift are the exported-file copy and the noindex decision
- * recorded in ADR-0012.
+ * Its image therefore ships the exported folder behind a static server; the three
+ * things that must never drift are the exported-file copy, the static-server
+ * choice, and the edge header set ADR-0016 defines for the canonical host.
  */
-test('docker: the static pilot ships the export behind a static server and keeps noindex', () => {
+test('docker: the static pilot ships the export behind a static server with the ADR-0016 headers', () => {
   const source = readRepoText('Dockerfile.empire-web')
   const byStage = stages(source)
   assert.ok(byStage.get('build'), 'the export is produced in a build stage')
@@ -267,5 +267,10 @@ test('docker: the static pilot ships the export behind a static server and keeps
   const nginx = readRepoText('apps/empire-web/nginx.conf')
   assert.match(nginx, /listen 3010/, 'nginx listens on the registered pilot port')
   assert.match(nginx, /try_files \$uri \$uri\.html/, 'extensionless routes resolve to the exported .html file')
-  assert.match(nginx, /X-Robots-Tag "noindex, nofollow"/, 'the noindex decision survives at the edge')
+  // ADR-0016: indexing is decided per route by robots.ts/sitemap.ts, so a global
+  // noindex header here would silently contradict them. HSTS marks the canonical host.
+  assert.match(nginx, /Strict-Transport-Security "max-age=15552000"/, 'the canonical host sends HSTS')
+  assert.doesNotMatch(nginx, /add_header\s+X-Robots-Tag/, 'a blanket noindex header must not override the new indexing decision')
+  assert.match(nginx, /X-Content-Type-Options "nosniff"/, 'the security headers survive the change')
+  assert.match(nginx, /X-Frame-Options "DENY"/, 'the frame denial survives the change')
 })

@@ -9,12 +9,14 @@ export function generateStaticParams() { return [{ locale: 'id' }, { locale: 'en
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   return {
+    metadataBase: new URL('https://a-l-l-a-h.com'),
     title: { default: 'A-L-L-A-H.COM | Empire of the Light', template: '%s | A-L-L-A-H.COM' },
     description: locale === 'id'
       ? 'Gerbang pengetahuan, cerita, karya bermanfaat, dan tindakan yang bertanggung jawab. Dikelola manusia.'
       : 'A human-governed gateway for knowledge, stories, meaningful work, and responsible action.',
     applicationName: 'A-L-L-A-H.COM — Empire Gateway',
-    robots: { index: false, follow: false },
+    // ADR-0016: indexable on the Coolify apex; each page declares its own canonical.
+    robots: { index: true, follow: true },
   }
 }
 export default async function LocaleLayout({ children, params }: { children: ReactNode; params: Promise<{ locale: string }> }) {
