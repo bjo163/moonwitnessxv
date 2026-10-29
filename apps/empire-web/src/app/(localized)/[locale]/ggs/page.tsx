@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { FullMoonSchool } from '../../../../components/StoryUniverse'
+import { GgsPage as FullMoonSchoolPage } from '../../../../components/story/GgsPage'
 import { isLocale, routeMetadata } from '../../../../lib/seo'
 
 export const dynamicParams = false
@@ -12,5 +12,5 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function GgsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (locale !== 'id' && locale !== 'en') notFound()
-  return <FullMoonSchool locale={locale} />
+  return <FullMoonSchoolPage locale={locale} />
 }

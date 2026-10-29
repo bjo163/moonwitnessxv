@@ -38,8 +38,13 @@ for (const locale of ['id', 'en']) {
     assert.ok(html.includes(`rel="canonical" href="https://a-l-l-a-h.com/${locale}/${route}"`), `${locale}/${route}: canonical`)
     assert.match(html, /su-preview/)
     assert.match(html, /su-main/)
-    assert.doesNotMatch(html, /GGS LIVE NOW|JOIN TODAY|50\+ STORIES/)
+    assert.doesNotMatch(html, /GGS LIVE NOW|50\+ STORIES/)
     if (route === 'ggs') {
+      // M45-11: the mockup's LIVE NOW and JOIN TODAY are story-time labels, so the
+      // page must say so next to the CTA instead of being banned outright.
+      assert.match(html, /not a live session|bukan sesi langsung/)
+    }
+    if (route === 'stories/angelwithshotgun') {
       assert.match(html, /RELIGIOUS SOURCE CONTENT WITHHELD|SUMBER KEAGAMAAN BELUM DITAMPILKAN/)
       assert.doesNotMatch(html, /QS Yunus 10:12|Quran 8:60/)
     }

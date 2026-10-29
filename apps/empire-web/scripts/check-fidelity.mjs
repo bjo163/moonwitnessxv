@@ -96,6 +96,22 @@ const PAGES = {
     ],
     columns: { selector: '.su-codex__traits article', expected: [19], right: 1097 },
   },
+  ggs: {
+    reference: '05-ggs-full-moon-school.png',
+    route: '/en/ggs.html',
+    // Hero 414, stat strip 84, lesson/reflection 330, three-column row 327,
+    // then the reference's 78+62 footer.
+    edges: [
+      { name: 'header', selector: '.su-chrome', expected: 73 },
+      { name: 'hero', selector: '.su-ggs__hero', expected: 487 },
+      { name: 'stats', selector: '.su-ggs__stats', expected: 571 },
+      { name: 'lesson', selector: '.su-ggs__lesson', expected: 917 },
+      { name: 'row', selector: '.su-ggs__row', expected: 1260 },
+      { name: 'footer-main', selector: '.su-footer__main', expected: 1340 },
+      { name: 'footer-bar', selector: '.su-footer__bar', expected: 1402 },
+    ],
+    columns: { selector: '.su-ggs__col', expected: [27], right: 1095 },
+  },
 }
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.json': 'application/json', '.txt': 'text/plain', '.xml': 'application/xml' }
