@@ -51,7 +51,9 @@ test('the Empire app no longer carries a private skin', () => {
   const css = read('src/app/globals.css')
   assert.doesNotMatch(css, /--eol-/, 'the --eol-* pseudo-skin must be gone')
   assert.doesNotMatch(css, /data-theme/, 'the stylesheet must not select on data-theme')
-  assert.doesNotMatch(read('src/components/StoryUniverse.tsx'), /data-theme/, 'components must not set data-theme')
+  assert.doesNotMatch(read('src/components/story/HomePage.tsx'), /data-theme/, 'components must not set data-theme')
+  assert.doesNotMatch(read('src/components/story/LibraryPage.tsx'), /data-theme/, 'components must not set data-theme')
+  assert.doesNotMatch(read('src/components/site/SiteHeader.tsx'), /data-theme/, 'components must not set data-theme')
 })
 
 test('both route families pin their skin on the html element', () => {

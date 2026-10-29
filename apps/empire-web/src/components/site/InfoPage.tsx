@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { IconCompass } from '@moonwitness/moonui'
 import { SiteFooter } from './SiteFooter'
 import { SiteHeader } from './SiteHeader'
 import type { StoryLocale } from '../../lib/story-universe'
@@ -27,7 +28,7 @@ export function InfoPage({ locale, section, sections, title, summary, preview, h
     <SiteHeader locale={locale} active="stories" />
     <main id="su-main" tabIndex={-1}>
       <div className="su-info__bar">
-        <p className="su-info__crumb"><a href={local(locale, '/')}>{home}</a><span aria-hidden="true">›</span><span>{title}</span></p>
+        <p className="su-info__crumb"><IconCompass size={13} aria-hidden="true" /><a href={local(locale, '/')}>{home}</a><span aria-hidden="true">›</span><span>{title}</span></p>
         <nav className="su-info__nav" aria-label={navigation}>
           {sections.map((item) => <a key={item} href={local(locale, `/${item}`)} aria-current={item === section ? 'page' : undefined}>{item}</a>)}
         </nav>

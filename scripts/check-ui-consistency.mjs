@@ -95,7 +95,14 @@ const MANDATORY_MOONUI_SURFACES = [
   'apps/echolog/client/App.tsx',
   'apps/skylink/client/App.tsx',
   'apps/orbit/src/app/page.tsx',
-  'apps/empire-web/src/components/StoryUniverse.tsx',
+  'apps/empire-web/src/components/story/HomePage.tsx',
+  'apps/empire-web/src/components/story/LibraryPage.tsx',
+  'apps/empire-web/src/components/story/ReaderPage.tsx',
+  'apps/empire-web/src/components/story/CodexPage.tsx',
+  'apps/empire-web/src/components/story/GgsPage.tsx',
+  'apps/empire-web/src/components/site/SiteHeader.tsx',
+  'apps/empire-web/src/components/site/SiteFooter.tsx',
+  'apps/empire-web/src/components/site/InfoPage.tsx',
 ]
 
 /** App stylesheets to check for local primitive cloning */
