@@ -945,6 +945,44 @@ a:focus-visible { outline: 3px solid var(--cyan); outline-offset: 5px; }
 .su-ggs__path-list b { font-family:var(--font-mono); font-size:6.2px; letter-spacing:.14em; text-transform:uppercase; color:var(--fg); }
 .su-ggs__path-list small { grid-column:2; font-size:7.6px; color:var(--fg-subtle); }
 
+/* --- M45-12 information pages ------------------------------------------- */
+.su-info { display:flex; flex-direction:column; min-height:100vh; }
+.su-info > main { flex:1; }
+.su-info__bar { display:flex; align-items:center; gap:20px; height:52px; padding:0 30px; border-bottom:1px solid var(--rule); }
+.su-info__crumb { display:flex; align-items:center; gap:8px; margin:0; font-family:var(--font-mono); font-size:6.4px; letter-spacing:.16em; text-transform:uppercase; color:var(--fg-muted); }
+.su-info__crumb a { color:var(--fg-muted); text-decoration:none; }
+.su-info__crumb span:last-child { color:var(--brand); }
+.su-info__nav { display:flex; gap:18px; margin-left:auto; }
+.su-info__nav a { font-family:var(--font-mono); font-size:6.4px; letter-spacing:.14em; text-transform:uppercase; color:var(--fg-subtle); text-decoration:none; }
+.su-info__nav a[aria-current='page'] { padding-bottom:2px; border-bottom:1px solid var(--brand-2); color:var(--fg); }
+.su-info .su-info__lang { margin-left:16px; font-family:var(--font-mono); font-size:7px; letter-spacing:.12em; color:var(--fg); text-decoration:none; }
+.su-info__doc { max-width:840px; margin:0 auto; padding:56px 30px 72px; }
+.su-info__eyebrow { margin:0; font-family:var(--font-mono); font-size:6.6px; letter-spacing:.22em; text-transform:uppercase; color:var(--brand); }
+.su-info__title { margin:12px 0 14px; font-family:var(--font-display); font-weight:400; font-size:clamp(40px,5.7vw,64px); line-height:.94; text-transform:uppercase; color:var(--fg); }
+.su-info__summary { margin:0 0 30px; padding-bottom:22px; border-bottom:1px solid var(--rule); font-family:var(--font-mono); font-size:9.4px; letter-spacing:.14em; line-height:1.8; text-transform:uppercase; color:var(--brand); }
+.su-info__body p { margin:0 0 16px; font-size:13px; line-height:1.85; color:var(--fg-subtle); }
+.su-info__cards { display:grid; gap:14px; margin:28px 0 8px; }
+.su-info__card { padding:18px 20px; border:1px solid var(--rule); background:var(--bg-1); }
+.su-info__card h2 { margin:0; font-family:var(--font-display); font-weight:400; font-size:22px; line-height:1; text-transform:uppercase; color:var(--fg); }
+.su-info__card-caption { margin:6px 0 8px !important; font-family:var(--font-mono); font-size:6.4px; letter-spacing:.16em; text-transform:uppercase; color:var(--brand) !important; }
+.su-info__card dl { display:grid; grid-template-columns:210px minmax(0,1fr); gap:7px 16px; margin:14px 0 0; padding-top:12px; border-top:1px solid var(--rule); }
+.su-info__card dt { font-family:var(--font-mono); font-size:6.2px; letter-spacing:.14em; text-transform:uppercase; color:var(--fg-muted); }
+.su-info__card dd { margin:0; font-size:9.6px; line-height:1.5; color:var(--fg-subtle); overflow-wrap:anywhere; }
+.su-info__card dd a { color:var(--brand); }
+.su-info__sources { margin:26px 0 0; padding-left:18px; }
+.su-info__sources li { margin-bottom:10px; font-size:12px; line-height:1.6; color:var(--fg-subtle); }
+.su-info__sources a { color:var(--brand); }
+.su-info__back { margin-top:24px; }
+@media (max-width:820px) {
+  .su-info__bar { flex-wrap:wrap; height:auto; padding:10px 16px; gap:8px 12px; }
+  .su-info__crumb { width:100%; }
+  .su-info__nav { order:3; width:100%; margin-left:0; gap:14px; overflow-x:auto; padding-bottom:4px; }
+  .su-info .su-info__lang { margin-left:auto; }
+  .su-info__doc { padding:32px 20px 48px; }
+  .su-info__card dl { grid-template-columns:minmax(0,1fr); gap:2px; }
+  .su-info__card dt { margin-top:8px; }
+}
+
 /* --- shared footer ------------------------------------------------------ */
 .su-footer { display:flex; flex-direction:column; align-items:stretch; gap:0; padding:0; border-top:1px solid var(--rule); background:var(--bg); }
 .su-footer__main { display:flex; align-items:center; gap:34px; height:var(--footer-main-h,88px); padding:0 30px; }

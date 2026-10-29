@@ -19,7 +19,8 @@ for (const locale of ['id', 'en']) {
   for (const [i, section] of ['about', 'ecosystem', 'values', 'roadmap', 'sources', 'privacy'].entries()) {
     assert.ok(home.includes(`href="/${locale}/${section}"`))
     const html = readFileSync(join(out, locale, `${section}.html`), 'utf8')
-    assert.ok(html.includes(`<h1>${titles[locale][i]}</h1>`))
+    // The heading text is pinned; presentation attributes on the h1 are allowed.
+    assert.match(html, new RegExp(`<h1[^>]*>${titles[locale][i]}</h1>`))
     assert.match(html, /<meta name="robots" content="index, follow"/)
     assert.ok(html.includes(`rel="canonical" href="https://a-l-l-a-h.com/${locale}/${section}"`), `${locale}/${section}: canonical`)
     assert.equal((html.match(/<main[ >]/g) ?? []).length, 1)
