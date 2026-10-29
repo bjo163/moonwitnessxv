@@ -134,6 +134,9 @@ function serve() {
 const args = process.argv.slice(2)
 const strict = args.includes('--strict')
 const pageFilter = args.includes('--page') ? args[args.indexOf('--page') + 1] : null
+// M45-13: the reference is 1122 wide; every other width is a derivation and is
+// checked for overflow and surviving anchors rather than for exact bands.
+const RESPONSIVE_WIDTHS = [390, 768, 1440, 1920]
 
 if (!existsSync(OUT)) {
   console.error('apps/empire-web/out is missing — run `pnpm --filter @moonwitness/empire-web build` first.')
@@ -192,13 +195,28 @@ for (const [name, spec] of Object.entries(PAGES)) {
   await page.screenshot({ path: join(REPORT_DIR, `${name}-1122.png`), fullPage: true })
   writeFileSync(join(REPORT_DIR, `${name}.json`), `${JSON.stringify({ measured, expected: spec.edges.map((edge) => [edge.name, edge.expected]), expectedColumns, reference: spec.reference }, null, 2)}\n`)
   console.log(`screenshot   apps/empire-web/test-results/fidelity/${name}-1122.png`)
+
+  for (const width of RESPONSIVE_WIDTHS) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto(`http://127.0.0.1:${port}${spec.route}`, { waitUntil: 'networkidle' })
+    const sweep = await page.evaluate((edges) => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      innerWidth: window.innerWidth,
+      missing: edges.filter((edge) => !document.querySelector(edge.selector)).map((edge) => edge.name),
+      h1: document.querySelectorAll('h1').length,
+    }), spec.edges)
+    const overflow = sweep.scrollWidth > sweep.innerWidth + 1
+    if (overflow || sweep.missing.length > 0 || sweep.h1 !== 1) failures += 1
+    console.log(`  ${String(width).padEnd(4)} scroll=${sweep.scrollWidth} / ${sweep.innerWidth}${overflow ? '  ← OVERFLOW' : ''}${sweep.missing.length ? `  missing: ${sweep.missing.join(', ')}` : ''}${sweep.h1 !== 1 ? `  h1=${sweep.h1}` : ''}`)
+  }
+  await page.setViewportSize({ width: 1122, height: 1402 })
 }
 
 await browser.close()
 server.close()
 
 if (failures > 0) {
-  console.log(`\n${failures} anchor(s) outside ±${TOLERANCE}px`)
+  console.log(`\n${failures} fidelity check(s) failed at 1122 or in the responsive sweep`)
   process.exit(strict ? 1 : 0)
 }
 console.log(`\nall anchors within ±${TOLERANCE}px`)

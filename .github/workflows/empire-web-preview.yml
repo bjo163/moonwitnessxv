@@ -73,6 +73,11 @@ jobs:
       - name: Verify browser navigation
         run: pnpm exec playwright test --config apps/empire-web/playwright.config.mjs
 
+      # M45-14: the mockups are 1122×1402; fail the build if any band drifts past
+      # ±2px or if a derived width (390/768/1440/1920) overflows.
+      - name: Verify mockup fidelity
+        run: node apps/empire-web/scripts/check-fidelity.mjs --strict
+
       - name: Confirm bilingual static export
         run: |
           test -f apps/empire-web/out/index.html
