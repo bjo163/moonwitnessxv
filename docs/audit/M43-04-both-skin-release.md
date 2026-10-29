@@ -53,3 +53,15 @@ Screenshots, `report.json` and `diff.json` are reproducible artifacts in the git
 ## Rollback
 
 Promote the previous production deployment `dpl_G4b6HsDLK81qseMRYHA251jmCTqe` (serving `cea723ca`) in the existing Vercel project, or revert `e740900` and the M43 commits. No domain or DNS action is required, and the default `zine` skin needs no consumer change.
+
+## Independent re-check of live state (2026-10-29, later in the day)
+
+Anonymous HTTP checks against the same pilot alias, recorded here because the closure above was written before this pass:
+
+| Check | Observed |
+|---|---|
+| `/`, `/en`, `/id/stories`, `/en/stories/angelwithshotgun` | 200; `data-skin="zine"` on `/`, `data-skin="empire"` on the three locale routes; `noindex, nofollow`; `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` |
+| Five approved WebP (`codex-guardian`, `home-mooncity`, `library-guardian`, `moon-academy`, `reader-poster`) | 200 `image/webp`; `reader-poster` needed a retry (two GET attempts timed out, a HEAD request then returned 200), so the timeout was transient |
+| Private PNG reference (`/story-universe/assets/01-homepage.png`) | 404 |
+
+No deployment, DNS or indexing change was made by this check.
