@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* global document, console, URL */
+/* global document, console, URL, window */
 /**
  * M45-14 — measure the built export against the reference numbers.
  *
