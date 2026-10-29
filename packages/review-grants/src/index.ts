@@ -263,8 +263,6 @@ const CONFIRM_KEYS: readonly string[] = ['grantRef', 'reasonRef']
 const REVOKE_KEYS: readonly string[] = ['grantRef', 'reasonRef']
 const LOADER_INPUT_KEYS: readonly string[] = ['principalRef', 'domain', 'scope', 'at']
 
-const DAY_MS = 24 * 60 * 60 * 1000
-
 function isRecord(value: unknown): value is UnknownRecord {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
@@ -435,7 +433,6 @@ function parseContext(raw: unknown): GrantContext | null {
   if (typeof raw.pendingTtlMs !== 'number' || !Number.isInteger(raw.pendingTtlMs) || raw.pendingTtlMs <= 0) {
     return null
   }
-  if (raw.pendingTtlMs > 30 * DAY_MS) return null
   if (!isRecord(raw.actor) || hasUnknownKey(raw.actor, ACTOR_KEYS)) return null
   if (!isNonEmptyString(raw.actor.principalRef)) return null
   if (raw.actor.kind !== 'HUMAN' && raw.actor.kind !== 'ACCOUNT_CONTROL') return null
