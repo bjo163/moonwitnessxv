@@ -24,7 +24,7 @@ Scope source: [MASTER_VISION_NARRATIVE_XV.md:1067](../../vision/MASTER_VISION_NA
 
 The harness is committed as `scripts/ui/m19-07-acceptance.mjs` and stays out of `pnpm test` (it boots the real hub app in-memory and a Next dev server, so it is an on-demand evidence run rather than a CI lane). It:
 
-- spawns `scripts/ui/ephemeral-hub.mjs` through `pnpm exec tsx` in `apps/arsy` with `MOONQL_AUTH_ADMIN_PASSWORD` set to a throwaway value, in-memory engine, cron off, seeded, on a free loopback port;
+- spawns `scripts/ui/ephemeral-hub.mjs` through the `apps/arsy` tsx CLI with `MOONQL_AUTH_ADMIN_PASSWORD` set to a throwaway value, in-memory engine, cron off, seeded, on a free loopback port;
 - spawns the Dock dev server on another free loopback port with `RADIO_API_URL` pointing at that hub;
 - drives Chromium at 1440×900 and 390×844, asserting the J01 search/source/translation/citation clauses in `en` and `id`, the J03 comparison journey, the skip-link focus order and the narrow-viewport contract;
 - stops both processes and the browser in `finally`.

@@ -18,6 +18,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const arsyRoot = resolve(root, 'apps/arsy')
 const dockRoot = resolve(root, 'apps/dock')
 const nextBin = resolve(dockRoot, 'node_modules/next/dist/bin/next')
+const hubScript = resolve(root, 'scripts/ui/ephemeral-hub.mjs')
 
 const results = []
 function check(clause, ok, detail) {
@@ -115,9 +116,8 @@ try {
   const hubUrl = `http://127.0.0.1:${hubPort}/api/v1`
   const dockUrl = `http://127.0.0.1:${dockPort}`
 
-  const hub = spawn(process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm', ['exec', 'tsx', '../../scripts/ui/ephemeral-hub.mjs'], {
+  const hub = spawn(process.execPath, [resolve(arsyRoot, 'node_modules/tsx/dist/cli.mjs'), hubScript], {
     cwd: arsyRoot,
-    shell: process.platform === 'win32',
     env: {
       ...process.env,
       MOONQL_AUTH_ADMIN_PASSWORD: 'm19-07-throwaway',
