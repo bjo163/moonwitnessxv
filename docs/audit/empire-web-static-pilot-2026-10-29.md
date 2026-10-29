@@ -26,7 +26,7 @@ Date: 29 October 2026 (Asia/Jakarta). Scope: the owner-requested `apps/empire-we
 
 ## Browser and hosting limits
 
-The browser suite is configured in dedicated CI, but local browser navigation, visual screenshots, keyboard behavior and overflow are not claimed as passed. HTML checks cannot establish visual correctness or WCAG compliance. Obtain a passing exact-commit CI browser result or run the documented suite in a browser-capable environment before declaring that gate complete.
+The browser suite is configured in dedicated CI, but local browser navigation, visual screenshots, keyboard behavior and overflow are not claimed as passed. HTML checks cannot establish visual correctness or WCAG compliance. The exact-commit CI browser result below completes the automated navigation gate; manual visual and assistive-technology review remains separate.
 
 Next's `experimental.globalNotFound` is used because separate root layouts are required to emit the correct document language without client-side mutation. The current installed Next version successfully exports `404.html`; review this experimental option on framework upgrades.
 
@@ -37,3 +37,14 @@ Illustrated stories, reader/radio integrations, community, research studio and e
 ## Rollback
 
 Revert this branch increment to the baseline above if required; no schema, migration, secret or external service state needs rollback. Do not force-push shared history. Rebuild and run the same export/contract checks after a revert.
+
+## Subsequent exact-commit CI evidence
+
+Implementation commit: `01758b08f20ed0b046bfc30484b76ac95c17a630`.
+
+- Dedicated push workflow [40805768772](https://github.com/bjo163/moonwitnessxv/actions/runs/40805768772): **SUCCESS**.
+- Dedicated PR workflow [40805773462](https://github.com/bjo163/moonwitnessxv/actions/runs/40805773462): **SUCCESS**.
+- Job `123224237126` logs confirm **4 passed (6.7s)**: Indonesian and English at 390px and 1440px. Keyboard skip focus, information-page navigation, locale round trips, document language, overflow, global 404, zero JavaScript page errors and no unexpected external requests passed.
+- CI also passed frozen install, shared dependency builds, contract tests, typecheck, static build and exported-page/link checks.
+
+CI's browser install succeeded on its runner despite the local download limitation. This resolves automated browser verification for the implementation commit; it does not establish screenshot-based design approval, complete WCAG compliance, hosting availability or deployment. This follow-up changes documentation only.
