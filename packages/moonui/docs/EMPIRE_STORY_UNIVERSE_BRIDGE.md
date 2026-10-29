@@ -1,6 +1,6 @@
 # MoonUI ↔ A-L-L-A-H.COM Story Universe — design integration bridge
 
-**Status: PROPOSED CONTRACT / NOT YET AN IMPLEMENTED MOONUI SKIN**
+**Status: ACCEPTED AND IMPLEMENTED (ADR-0014, 29 October 2026).** The `empire` skin now ships in `packages/moonui/moon.css` as a self-contained `:root[data-skin='empire']` block, `MOON_SKINS` carries both palettes, and `apps/empire-web` consumes role tokens only. The design notes below are the original proposal and remain the rationale of record; where they say the package stays unchanged, ADR-0014 supersedes them.
 **Reference:** `apps/empire-web/docs/story-universe/VISUAL_BIBLE.md` and its three manifests.
 **Date:** 2026-10-29 WIB.
 
@@ -11,8 +11,8 @@ The user-approved five-page mockup package constitutes a **design and narrative 
 ## Ownership and recommended approach
 
 - Keep semantic primitive API, accessibility, and icon exports owned by `@moonwitness/moonui`.
-- Keep **Empire-specific visual theme and storytelling layout** in `apps/empire-web` until an accepted ADR and tests approve reuse.
-- Proposed scoped wrapper: `data-theme="empire-story"` under the Empire app root, and tokens `--eol-*` mapped into MoonUI semantic primitives. No style leakage beyond that wrapper.
+- **Superseded by ADR-0014:** the Empire theme is no longer app-local. It is a second skin in `moon.css`, selected by `data-skin="empire"` on `<html>`; the app owns layout and artwork colours only. The default `zine` skin is unchanged, which is what keeps the original "no global regression" condition true.
+- Implementation as shipped: `data-skin="empire"` on `<html>`, with MoonUI role tokens (`--bg`, `--brand`, `--rule`, …) as the only palette. The earlier `--eol-*` / `data-theme="empire-story"` wrapper was removed by M43-03.
 - Do not import concepts from an unrelated standalone `moonframe` repo without reviewed dependency/license/API contract.
 - Do not create a parallel icon library. Prefer existing `@moonwitness/moonui/icons`; any new crown/crescent/lotus/interlocking circles must be original inline or MoonUI-owned SVG components, reviewed for viewBox, text alternatives and consistent stroke.
 
