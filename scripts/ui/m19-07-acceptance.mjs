@@ -1,3 +1,4 @@
+/* global document, window */
 // M19-07 manual acceptance harness — J01/J03 browser pass against the ephemeral Hub.
 //
 // Not part of `pnpm test`: it boots the real hub app in-memory plus the Dock dev
