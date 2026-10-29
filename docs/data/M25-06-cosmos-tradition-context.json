@@ -1,0 +1,324 @@
+{
+  "task": "M25-06",
+  "milestone": "M25",
+  "title": "Comparative-cosmos tradition context ledger",
+  "method": "Repository-only reading at the recorded baseline; no network fetch and no external source. Every statement is authored prose, not a reproduced translation.",
+  "rights_note": "Locator quotes are short repository fragments (<= 120 characters). No scripture translation is reproduced beyond the already verified QS 2:82 selector metadata, and no Arabic text is copied into this ledger.",
+  "tradition_enum": [
+    "islamic-quran",
+    "islamic-commentary",
+    "historical-near-east",
+    "abrahamic-torah",
+    "abrahamic-zabur",
+    "abrahamic-injil",
+    "modern-astronomy",
+    "comparative-method"
+  ],
+  "claim_type_enum": [
+    "PHYSICAL_READING",
+    "SIMULATION",
+    "ASTRONOMY",
+    "STORY"
+  ],
+  "status_enum": [
+    "EVIDENCED",
+    "PARTIAL",
+    "NEEDS_SOURCE",
+    "ABSENT"
+  ],
+  "evidence_kind_enum": [
+    "CORPUS_METADATA",
+    "SCRIPTURE_TEXT",
+    "COMMENTARY_TEXT",
+    "HISTORICAL_RECORD",
+    "PROJECT_POLICY",
+    "AUDIT_FINDING",
+    "ASTRONOMY_REFERENCE",
+    "INSTRUMENT_RECORD",
+    "MODEL_OUTPUT",
+    "NONE"
+  ],
+  "guards": {
+    "quote_resolves_at_line": true,
+    "declared_tallies_equal_rows": true,
+    "no_absent_row_with_locator": true,
+    "evidenced_and_partial_rows_have_locator": true,
+    "needs_source_rows_state_the_gap": true,
+    "scripture_rows_are_story_only": true,
+    "no_story_row_carries_reading_evidence": true,
+    "no_astronomy_row_cites_scripture": true,
+    "no_statement_asserts_measurement_from_scripture": true,
+    "all_four_claim_types_present": true,
+    "no_external_fetch": true,
+    "no_writes": true
+  },
+  "rows": [
+    {
+      "id": "iq-qs2-82-address",
+      "tradition": "islamic-quran",
+      "claimType": "STORY",
+      "evidenceKind": "CORPUS_METADATA",
+      "statement": "The corpus indexes one Qur'anic address, QS 2:82, as a passage row; this ledger keeps it as scripture narrative, not as evidence about the sky.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 243,
+        "quote": "citationKey: 'QS 2:82',"
+      }
+    },
+    {
+      "id": "iq-qs2-82-verified",
+      "tradition": "islamic-quran",
+      "claimType": "STORY",
+      "evidenceKind": "CORPUS_METADATA",
+      "statement": "The passage row records a verification instant from the M07-05 selector; verification of an address is not an astronomical result.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 250,
+        "quote": "verifiedAt: '2026-10-26T00:00:00.000Z',"
+      }
+    },
+    {
+      "id": "iq-qs2-82-translation",
+      "tradition": "islamic-quran",
+      "claimType": "STORY",
+      "evidenceKind": "CORPUS_METADATA",
+      "statement": "A named Indonesian translation is attached with its own rights status, so wording, translator identity and permission remain separate fields.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 286,
+        "quote": "translatorName: 'Kemenag RI',"
+      }
+    },
+    {
+      "id": "iq-edition-rights",
+      "tradition": "islamic-quran",
+      "claimType": "STORY",
+      "evidenceKind": "CORPUS_METADATA",
+      "statement": "Only an exact cleared Cairo edition may serialize text; the rights field gates reproduction, not a cosmological inference.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 212,
+        "quote": "rightsStatus: 'RIGHTS_EXACT_VERSION_CLEARED',"
+      }
+    },
+    {
+      "id": "ic-tafsir-lane-absent",
+      "tradition": "islamic-commentary",
+      "claimType": "STORY",
+      "evidenceKind": "CORPUS_METADATA",
+      "statement": "The corpus addon registers no tafsir or commentary model, so exegesis is reported as unavailable rather than reconstructed.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "packages/moonql-corpus/src/index.ts",
+        "line": 131,
+        "quote": "no commentary/interpretation model is registered in the corpus addon"
+      }
+    },
+    {
+      "id": "ic-tafsir-source-needed",
+      "tradition": "islamic-commentary",
+      "claimType": "STORY",
+      "evidenceKind": "PROJECT_POLICY",
+      "statement": "No licensed tafsir text for QS 2:82 is present; a commentary row would need an edition record, translator identity, rights status and a reviewed passage locator.",
+      "sourceStatus": "NEEDS_SOURCE",
+      "missing": "A licensed tafsir edition record (publisher, edition year, translator, rights status) plus a reviewed commentary passage locator for QS 2:82; the vision lists quran-tafsir-sample only as a source name requiring separate edition and rights review.",
+      "locator": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 817,
+        "quote": "quran-tafsir-sample"
+      }
+    },
+    {
+      "id": "hn-near-east-text-absent",
+      "tradition": "historical-near-east",
+      "claimType": "STORY",
+      "evidenceKind": "NONE",
+      "statement": "No ancient Near Eastern creation, flood or sky text is ingested; the repository holds no edition, passage, excerpt or translation for this tradition.",
+      "sourceStatus": "ABSENT"
+    },
+    {
+      "id": "ab-torah-inventory",
+      "tradition": "abrahamic-torah",
+      "claimType": "STORY",
+      "evidenceKind": "HISTORICAL_RECORD",
+      "statement": "A Torah edition is inventoried with provenance and a cleared licence, but no Torah passage is seeded in the corpus.",
+      "sourceStatus": "PARTIAL",
+      "locator": {
+        "file": "docs/audit/M07-01-editions-licenses-inventory.md",
+        "line": 18,
+        "quote": "Leningrad Codex (B19a, 1008 CE)"
+      }
+    },
+    {
+      "id": "ab-zabur-inventory",
+      "tradition": "abrahamic-zabur",
+      "claimType": "STORY",
+      "evidenceKind": "HISTORICAL_RECORD",
+      "statement": "A Psalms edition is inventoried as a historical codex witness; no Psalm text or passage row exists in the corpus.",
+      "sourceStatus": "PARTIAL",
+      "locator": {
+        "file": "docs/audit/M07-01-editions-licenses-inventory.md",
+        "line": 19,
+        "quote": "Aleppo Codex / Leningrad Codex"
+      }
+    },
+    {
+      "id": "ab-injil-inventory",
+      "tradition": "abrahamic-injil",
+      "claimType": "STORY",
+      "evidenceKind": "HISTORICAL_RECORD",
+      "statement": "Gospel codex witnesses are inventoried; the corpus contains no Gospel passage, so no comparison text is available.",
+      "sourceStatus": "PARTIAL",
+      "locator": {
+        "file": "docs/audit/M07-01-editions-licenses-inventory.md",
+        "line": 20,
+        "quote": "Codex Sinaiticus & Vaticanus (4th Century CE)"
+      }
+    },
+    {
+      "id": "ma-lunar-phase-arithmetic",
+      "tradition": "modern-astronomy",
+      "claimType": "ASTRONOMY",
+      "evidenceKind": "AUDIT_FINDING",
+      "statement": "The header phase value is arithmetic from a fixed mean synodic month and epoch, not a pinned ephemeris; an audit records it as an approximation.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "docs/audit/M25-01-mtime-antikythera-audit.md",
+        "line": 62,
+        "quote": "unvalidated mean-synodic approximation"
+      }
+    },
+    {
+      "id": "ma-ephemeris-needed",
+      "tradition": "modern-astronomy",
+      "claimType": "ASTRONOMY",
+      "evidenceKind": "PROJECT_POLICY",
+      "statement": "No pinned almanac, ephemeris library or astronomy store is present, so no sky position or phase can be quoted as an astronomy reference.",
+      "sourceStatus": "NEEDS_SOURCE",
+      "missing": "A pinned almanac or ephemeris library with publisher, edition, digest, time scale and licence or permission, as the M25-05 sketch requires and M25-03 H5 records as BLOCKED-SOURCE.",
+      "locator": {
+        "file": "docs/design/M25-05-cosmos-time-explorer-sketch.md",
+        "line": 106,
+        "quote": "**Absent.** No ephemeris code or feed"
+      }
+    },
+    {
+      "id": "ma-instrument-record-absent",
+      "tradition": "modern-astronomy",
+      "claimType": "PHYSICAL_READING",
+      "evidenceKind": "NONE",
+      "statement": "No instrument, calibration record or UTC observation accompanies any comparative-cosmos item; no physical reading exists to report.",
+      "sourceStatus": "ABSENT"
+    },
+    {
+      "id": "ma-simulation-record-absent",
+      "tradition": "modern-astronomy",
+      "claimType": "SIMULATION",
+      "evidenceKind": "NONE",
+      "statement": "No named cosmological model with declared inputs and a non-measurement notice exists; simulation output is not available for comparison.",
+      "sourceStatus": "ABSENT"
+    },
+    {
+      "id": "cm-strict-categories",
+      "tradition": "comparative-method",
+      "claimType": "STORY",
+      "evidenceKind": "PROJECT_POLICY",
+      "statement": "The vision requires astronomical observation, simulation, historical hypothesis, philosophical interpretation, scripture claim, speculative technology and RPG representation to stay in separate categories.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 493,
+        "quote": "astronomical observation, numerical simulation, historical hypothesis"
+      }
+    },
+    {
+      "id": "cm-scripture-not-timescale",
+      "tradition": "comparative-method",
+      "claimType": "STORY",
+      "evidenceKind": "PROJECT_POLICY",
+      "statement": "The vision states that Qur'anic creation references do not prove an arithmetic code or a scientific timescale; scripture cannot supply a cosmological constant.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 194,
+        "quote": "Doesn't prove a secret arithmetic code, nor arbitrary scientific timescales"
+      }
+    },
+    {
+      "id": "cm-tradition-scoped-canon",
+      "tradition": "comparative-method",
+      "claimType": "STORY",
+      "evidenceKind": "PROJECT_POLICY",
+      "statement": "Canon and sacredness are tradition-scoped assertions, so the ledger may not convert one tradition's canon into a shared verdict.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 205,
+        "quote": "Canon status and sacredness are tradition-scoped assertions"
+      }
+    },
+    {
+      "id": "cm-editorial-lenses",
+      "tradition": "comparative-method",
+      "claimType": "STORY",
+      "evidenceKind": "PROJECT_POLICY",
+      "statement": "The four universe lenses are editorial groupings, not verified cosmological realms, and carry no observational status.",
+      "sourceStatus": "EVIDENCED",
+      "locator": {
+        "file": "docs/vision/MASTER_VISION_NARRATIVE_XV.md",
+        "line": 467,
+        "quote": "| **4 universe lenses** | Editorial groupings | Verified cosmological realms |"
+      }
+    },
+    {
+      "id": "cm-comparative-rights-needed",
+      "tradition": "comparative-method",
+      "claimType": "STORY",
+      "evidenceKind": "NONE",
+      "statement": "No comparative-cosmos source set with per-edition rights exists; cross-tradition comparison needs reviewed editions before any row can be shown.",
+      "sourceStatus": "NEEDS_SOURCE",
+      "missing": "A comparative-cosmos source set with per-edition rights, translation identity and review status; the M25-05 sketch records that no comparative-cosmos source set exists (docs/design/M25-05-cosmos-time-explorer-sketch.md:115)."
+    }
+  ],
+  "declared_counts": {
+    "total": 19,
+    "by_status": {
+      "EVIDENCED": 10,
+      "PARTIAL": 3,
+      "NEEDS_SOURCE": 3,
+      "ABSENT": 3
+    },
+    "by_claim_type": {
+      "PHYSICAL_READING": 1,
+      "SIMULATION": 1,
+      "ASTRONOMY": 2,
+      "STORY": 15
+    },
+    "by_tradition": {
+      "islamic-quran": 4,
+      "islamic-commentary": 2,
+      "historical-near-east": 1,
+      "abrahamic-torah": 1,
+      "abrahamic-zabur": 1,
+      "abrahamic-injil": 1,
+      "modern-astronomy": 4,
+      "comparative-method": 5
+    },
+    "by_evidence_kind": {
+      "CORPUS_METADATA": 5,
+      "SCRIPTURE_TEXT": 0,
+      "COMMENTARY_TEXT": 0,
+      "HISTORICAL_RECORD": 3,
+      "PROJECT_POLICY": 6,
+      "AUDIT_FINDING": 1,
+      "ASTRONOMY_REFERENCE": 0,
+      "INSTRUMENT_RECORD": 0,
+      "MODEL_OUTPUT": 0,
+      "NONE": 4
+    }
+  }
+}
