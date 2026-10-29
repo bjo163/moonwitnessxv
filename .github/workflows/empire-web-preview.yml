@@ -2,10 +2,10 @@ name: Empire Web Preview Build
 
 on:
   push:
-    # The pilot's release branch is `main`: ADR-0012 authorizes the isolated
-    # production project there. The old `feature/empire-web-vercel` branch was
-    # merged and deleted, which left this workflow unable to ever run again.
-    branches: [main]
+    # `dev` is where the real gate runs: the promote job pushes to `main` with
+    # GITHUB_TOKEN, and GitHub does not start workflows for those pushes. `main`
+    # stays listed for a manual or local fast-forward push.
+    branches: [dev, main]
     paths:
       - 'apps/empire-web/**'
       - 'packages/moonui/**'
