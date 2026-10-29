@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { IconBookOpen, IconCompass, IconCrosshair, IconSearch, IconSparkles } from '@moonwitness/moonui'
 import { libraryCards, libraryCopy } from '../../lib/library-copy'
 import type { StoryLocale } from '../../lib/story-universe'
+import { StatRow } from './StatRow'
 import { SiteFooter } from '../site/SiteFooter'
 import { SiteHeader } from '../site/SiteHeader'
 
@@ -89,7 +90,7 @@ export function LibraryPage({ locale }: { locale: StoryLocale }) {
 
       <section className="su-lib__stats">
         <h2>{copy.statsTitle[0]}<br />{copy.statsTitle[1]}</h2>
-        <div className="su-lib__stats-row">{copy.stats.map((stat) => <div key={stat.label}><b>{stat.value}</b><span>{stat.label}</span></div>)}</div>
+        <StatRow className="su-lib__stats-row" items={copy.stats} />
         <p className="su-lib__stats-quote">{copy.statsQuote}</p>
       </section>
     </main>

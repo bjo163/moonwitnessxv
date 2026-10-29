@@ -1,6 +1,7 @@
 import { IconBookOpen, IconCompass, IconMoon, IconSparkles } from '@moonwitness/moonui'
 import { ggsCopy } from '../../lib/ggs-copy'
 import type { StoryLocale } from '../../lib/story-universe'
+import { StatRow } from './StatRow'
 import { SiteFooter } from '../site/SiteFooter'
 import { SiteHeader } from '../site/SiteHeader'
 
@@ -32,9 +33,7 @@ export function GgsPage({ locale }: { locale: StoryLocale }) {
         <p className="su-ggs__script">{copy.script}</p>
       </section>
 
-      <section className="su-ggs__stats">
-        {copy.stats.map((stat) => <div key={stat.label}><b>{stat.value}</b><span>{stat.label}</span></div>)}
-      </section>
+      <StatRow className="su-ggs__stats" items={copy.stats} as="section" />
 
       <section className="su-ggs__lesson">
         <article className="su-ggs__lesson-main">

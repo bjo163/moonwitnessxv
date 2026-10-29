@@ -1,6 +1,7 @@
 import { IconBookOpen, IconCompass, IconCrosshair, IconSparkles } from '@moonwitness/moonui'
 import { homeCardArtwork, homeCopy, homeHeroArtwork } from '../../lib/home-copy'
 import type { StoryLocale } from '../../lib/story-universe'
+import { StatRow } from './StatRow'
 import { SiteFooter } from '../site/SiteFooter'
 import { SiteHeader } from '../site/SiteHeader'
 
@@ -45,9 +46,7 @@ export function HomePage({ locale }: { locale: StoryLocale }) {
         </div>
         <p className="su-home__side">{copy.side}</p>
         <p className="su-home__script">{copy.script}</p>
-        <div className="su-home__stats">
-          {copy.stats.map((stat) => <div key={stat.label}><b>{stat.value}</b><span>{stat.label}</span></div>)}
-        </div>
+        <StatRow className="su-home__stats" items={copy.stats} />
       </section>
 
       <section className="su-home__worlds" aria-label={locale === 'id' ? 'Dunia cerita' : 'Story worlds'}>
