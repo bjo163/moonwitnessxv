@@ -4,7 +4,7 @@
 
 ## Scope and artifacts
 
-- Package [`packages/review-grants`](../../packages/review-grants) — pure D12 contract implementing [ADR-0015](../../decisions/ADR-0015-d00-d12-reviewer-grants.md) and the [M20-08 design](../../design/M20-08-reviewer-grant-store-design.md).
+- Package [`packages/review-grants`](../../packages/review-grants) — pure D12 contract implementing [ADR-0015](../decisions/ADR-0015-d00-d12-reviewer-grants.md) and the [M20-08 design](../design/M20-08-reviewer-grant-store-design.md).
 - `git diff --numstat 5f701d3..9ceec92` (observed):
   - `packages/review-grants/package.json` 24/0
   - `packages/review-grants/src/index.ts` 824/0
