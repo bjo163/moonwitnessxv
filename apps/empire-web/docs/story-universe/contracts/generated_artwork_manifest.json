@@ -18,5 +18,29 @@
     { "filename": "reader-poster.webp", "page": "Reader poster and first comic panel", "reference": "REF-03", "sha256": "d945df57c68310e95a0bd8054c0c7d270fa09136248175b1e56433d2ecf39939", "bytes": 270472 },
     { "filename": "codex-guardian.webp", "page": "Codex hero and universe cover", "reference": "REF-04", "sha256": "806577d44ede0a2e179704264cb80e7198c9d8c51a1eb99776963f0f84d4fc47", "bytes": 102216 },
     { "filename": "moon-academy.webp", "page": "GGS hero and learning cover", "reference": "REF-05", "sha256": "6b2672751021e632f49421734fd5f07cf45bb40862f81f12f9fb1a0fd2c999d3", "bytes": 193172 }
-  ]
+  ],
+  "slots": {
+    "note": "M45 planned artwork. `assets` stays the approved-and-shipped set; a slot moves there only after it is generated, size-checked and approved by the owner. Until then the page keeps the current asset.",
+    "items": [
+      { "slot": "home-hero", "filename": "home-hero.webp", "reference": "REF-01", "width": 2244, "height": 1380, "status": "pending_approval", "replaces": "home-mooncity.webp" },
+      { "slot": "card-manusia-pulpen", "filename": "card-manusia-pulpen.webp", "reference": "REF-01", "width": 560, "height": 900, "status": "pending_approval" },
+      { "slot": "card-angelwithshotgun", "filename": "card-angelwithshotgun.webp", "reference": "REF-01", "width": 560, "height": 900, "status": "pending_approval" },
+      { "slot": "card-ggs", "filename": "card-ggs.webp", "reference": "REF-01", "width": 560, "height": 900, "status": "pending_approval" },
+      { "slot": "card-empire", "filename": "card-empire.webp", "reference": "REF-01", "width": 560, "height": 900, "status": "pending_approval" },
+      { "slot": "library-hero", "filename": "library-hero.webp", "reference": "REF-02", "width": 2244, "height": 900, "status": "pending_approval", "replaces": "library-guardian.webp" },
+      { "slot": "reader-poster", "filename": "reader-poster-v2.webp", "reference": "REF-03", "width": 900, "height": 1500, "status": "pending_approval", "replaces": "reader-poster.webp" },
+      { "slot": "reader-panel-1", "filename": "reader-panel-1.webp", "reference": "REF-03", "width": 840, "height": 1120, "status": "pending_approval" },
+      { "slot": "reader-panel-2", "filename": "reader-panel-2.webp", "reference": "REF-03", "width": 840, "height": 1120, "status": "pending_approval" },
+      { "slot": "reader-panel-3", "filename": "reader-panel-3.webp", "reference": "REF-03", "width": 840, "height": 1120, "status": "pending_approval" },
+      { "slot": "reader-panel-4", "filename": "reader-panel-4.webp", "reference": "REF-03", "width": 840, "height": 1120, "status": "pending_approval" },
+      { "slot": "codex-hero", "filename": "codex-hero.webp", "reference": "REF-04", "width": 2244, "height": 900, "status": "pending_approval", "replaces": "codex-guardian.webp" },
+      { "slot": "codex-featured", "filename": "codex-featured.webp", "reference": "REF-04", "width": 1600, "height": 700, "status": "pending_approval" },
+      { "slot": "codex-rocksoul", "filename": "codex-rocksoul.webp", "reference": "REF-04", "width": 560, "height": 640, "status": "pending_approval" },
+      { "slot": "codex-myluft", "filename": "codex-myluft.webp", "reference": "REF-04", "width": 560, "height": 640, "status": "pending_approval" },
+      { "slot": "ggs-hero", "filename": "ggs-hero.webp", "reference": "REF-05", "width": 2244, "height": 980, "status": "pending_approval", "replaces": "moon-academy.webp" },
+      { "slot": "ggs-lesson", "filename": "ggs-lesson.webp", "reference": "REF-05", "width": 900, "height": 1100, "status": "pending_approval" },
+      { "slot": "ggs-reflection", "filename": "ggs-reflection.webp", "reference": "REF-05", "width": 900, "height": 1100, "status": "pending_approval" },
+      { "slot": "ggs-session", "filename": "ggs-session.webp", "reference": "REF-05", "width": 1200, "height": 600, "status": "pending_approval" }
+    ]
+  }
 }
