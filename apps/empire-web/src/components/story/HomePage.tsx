@@ -2,6 +2,7 @@ import { IconBookOpen, IconCompass, IconCrosshair, IconSparkles } from '@moonwit
 import { homeCardArtwork, homeCopy, homeHeroArtwork } from '../../lib/home-copy'
 import type { StoryLocale } from '../../lib/story-universe'
 import { StatRow } from './StatRow'
+import { PageActions } from './PageActions'
 import { SiteFooter } from '../site/SiteFooter'
 import { SiteHeader } from '../site/SiteHeader'
 
@@ -39,10 +40,11 @@ export function HomePage({ locale }: { locale: StoryLocale }) {
             <span className="su-home__title-red">{copy.heroLines[3]}</span>
           </h1>
           <p className="su-home__intro">{copy.intro}</p>
-          <div className="su-home__actions">
-            <a className="su-btn su-btn--primary" href={local(locale, '/stories')}><span aria-hidden="true">↘</span>{copy.primaryCta}</a>
-            <a className="su-btn su-btn--ghost" href={local(locale, '/values')}><IconBookOpen size={15} />{copy.secondaryCta}</a>
-          </div>
+          <PageActions
+            className="su-home__actions"
+            primary={{ href: local(locale, '/stories'), label: copy.primaryCta }}
+            secondary={{ href: local(locale, '/values'), label: copy.secondaryCta }}
+          />
         </div>
         <p className="su-home__side">{copy.side}</p>
         <p className="su-home__script">{copy.script}</p>

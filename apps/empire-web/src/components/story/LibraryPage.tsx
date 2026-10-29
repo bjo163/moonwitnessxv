@@ -5,6 +5,7 @@ import { IconBookOpen, IconCompass, IconCrosshair, IconSearch, IconSparkles } fr
 import { libraryCards, libraryCopy } from '../../lib/library-copy'
 import type { StoryLocale } from '../../lib/story-universe'
 import { StatRow } from './StatRow'
+import { PageActions } from './PageActions'
 import { SiteFooter } from '../site/SiteFooter'
 import { SiteHeader } from '../site/SiteHeader'
 
@@ -40,10 +41,11 @@ export function LibraryPage({ locale }: { locale: StoryLocale }) {
           <h1 className="su-lib__title"><span>{copy.title[0]}</span><span className="su-lib__title-red">{copy.title[1]}</span></h1>
           <p className="su-lib__lead">{copy.lead}</p>
           <p className="su-lib__body">{copy.body}</p>
-          <div className="su-lib__actions">
-            <a className="su-btn su-btn--primary" href={local(locale, '/stories')}><span aria-hidden="true">↘</span>{copy.primaryCta}</a>
-            <a className="su-btn su-btn--ghost" href={local(locale, '/values')}><IconBookOpen size={15} />{copy.secondaryCta}</a>
-          </div>
+          <PageActions
+            className="su-lib__actions"
+            primary={{ href: local(locale, '/stories'), label: copy.primaryCta }}
+            secondary={{ href: local(locale, '/values'), label: copy.secondaryCta }}
+          />
         </div>
         <p className="su-lib__script">{copy.script}</p>
       </section>

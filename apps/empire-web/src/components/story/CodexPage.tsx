@@ -2,6 +2,7 @@ import { IconBookOpen, IconCrosshair, IconEye, IconMoon, IconSparkles } from '@m
 import { codexCopy } from '../../lib/codex-copy'
 import type { StoryLocale } from '../../lib/story-universe'
 import { SiteFooter } from '../site/SiteFooter'
+import { PageActions } from './PageActions'
 import { SiteHeader } from '../site/SiteHeader'
 
 const local = (locale: StoryLocale, path: string) => `/${locale}${path === '/' ? '' : path}`
@@ -24,10 +25,11 @@ export function CodexPage({ locale }: { locale: StoryLocale }) {
           <h1 className="su-codex__title"><span>{copy.heroTitle[0]}</span><span className="su-codex__title-red">{copy.heroTitle[1]}</span></h1>
           <p className="su-codex__lead">{copy.heroLead}</p>
           <p className="su-codex__body">{copy.heroBody}</p>
-          <div className="su-codex__actions">
-            <a className="su-btn su-btn--primary" href={local(locale, '/characters')}><span aria-hidden="true">↘</span>{copy.heroCta}</a>
-            <a className="su-btn su-btn--ghost" href={local(locale, '/stories')}><IconBookOpen size={15} />{copy.heroSecondary}</a>
-          </div>
+          <PageActions
+            className="su-codex__actions"
+            primary={{ href: local(locale, '/characters'), label: copy.heroCta }}
+            secondary={{ href: local(locale, '/stories'), label: copy.heroSecondary }}
+          />
         </div>
         <p className="su-codex__side">{copy.side}</p>
         <p className="su-codex__script">{copy.script}</p>
@@ -41,10 +43,12 @@ export function CodexPage({ locale }: { locale: StoryLocale }) {
           <h2 className="su-codex__featured-title"><span>{copy.featuredTitle[0]}</span> <span className="su-codex__title-red">{copy.featuredTitle[1]}</span></h2>
           <p className="su-codex__featured-lead">{copy.featuredLead}</p>
           <p className="su-codex__body">{copy.featuredBody}</p>
-          <div className="su-codex__actions">
-            <a className="su-btn su-btn--primary su-btn--sm" href={local(locale, '/characters')}><span aria-hidden="true">↘</span>{copy.featuredCta}</a>
-            <a className="su-btn su-btn--ghost su-btn--sm" href={local(locale, '/stories/angelwithshotgun')}><IconBookOpen size={14} />{copy.featuredSecondary}</a>
-          </div>
+          <PageActions
+            className="su-codex__actions"
+            size="sm"
+            primary={{ href: local(locale, '/characters'), label: copy.featuredCta }}
+            secondary={{ href: local(locale, '/stories/angelwithshotgun'), label: copy.featuredSecondary }}
+          />
         </div>
         <p className="su-codex__featured-side">{copy.featuredSide}</p>
       </section>

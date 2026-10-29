@@ -2,6 +2,7 @@ import { IconBookOpen, IconCompass, IconMoon, IconSparkles } from '@moonwitness/
 import { ggsCopy } from '../../lib/ggs-copy'
 import type { StoryLocale } from '../../lib/story-universe'
 import { StatRow } from './StatRow'
+import { PageActions } from './PageActions'
 import { SiteFooter } from '../site/SiteFooter'
 import { SiteHeader } from '../site/SiteHeader'
 
@@ -25,10 +26,11 @@ export function GgsPage({ locale }: { locale: StoryLocale }) {
           <h1 className="su-ggs__title"><span>{copy.title[0]}</span><span>{copy.title[1]}</span><span className="su-ggs__title-red">{copy.title[2]}</span></h1>
           <p className="su-ggs__lead">{copy.lead}</p>
           <p className="su-ggs__body">{copy.body}</p>
-          <div className="su-ggs__actions">
-            <a className="su-btn su-btn--primary" href={local(locale, '/ggs')}><span aria-hidden="true">↘</span>{copy.primaryCta}</a>
-            <a className="su-btn su-btn--ghost" href={local(locale, '/stories')}><IconBookOpen size={15} />{copy.secondaryCta}</a>
-          </div>
+          <PageActions
+            className="su-ggs__actions"
+            primary={{ href: local(locale, '/ggs'), label: copy.primaryCta }}
+            secondary={{ href: local(locale, '/stories'), label: copy.secondaryCta }}
+          />
         </div>
         <p className="su-ggs__script">{copy.script}</p>
       </section>
