@@ -1,14 +1,16 @@
 import { content, type Locale } from '../lib/copy'
+import { pageCopy, sections } from '../lib/pages'
 
 export function Landing({ locale }: { locale: Locale }) {
   const t = content[locale]
-  return <main className="emp-shell">
+  return <div className="emp-shell" lang={locale}>
+    <a className="emp-skip" href="#content">{pageCopy[locale].skip}</a>
     <div className="emp-grain" aria-hidden="true" />
     <header className="emp-header">
       <a href={locale === 'id' ? '/id' : '/en'} className="emp-logo" aria-label="A-L-L-A-H.COM home">
         <span className="emp-crescent" aria-hidden="true">◕</span><span>A-L-L-A-H<span className="emp-dot">.COM</span></span>
       </a>
-      <nav className="emp-nav" aria-label="Main navigation">
+      <nav className="emp-nav" aria-label={locale === 'id' ? 'Navigasi utama' : 'Main navigation'}>
         <a href="#mission">{t.navigation[0]}</a>
         <a href="#ecosystem">{t.navigation[1]}</a>
         <a href="#story">{t.navigation[2]}</a>
@@ -16,6 +18,7 @@ export function Landing({ locale }: { locale: Locale }) {
       </nav>
       <a className="emp-lang" href={t.otherHref} hrefLang={locale === 'id' ? 'en' : 'id'} aria-label={locale === 'id' ? 'Switch to English' : 'Ganti ke Bahasa Indonesia'}>{t.other} <span aria-hidden="true">↗</span></a>
     </header>
+    <main id="content" tabIndex={-1}>
     <section className="emp-hero" aria-labelledby="hero-heading">
       <div className="emp-hero-copy">
         <p className="emp-eyebrow"><span className="emp-bullet" />{t.eyebrow}</p>
@@ -61,6 +64,7 @@ export function Landing({ locale }: { locale: Locale }) {
       <p className="emp-eyebrow">{t.principlesEyebrow}</p><h2 id="principles-title">{t.principlesTitle}</h2>
       <ol>{t.principles.map((s,i)=><li key={s}><span>{String(i + 1).padStart(2,'0')}</span>{s}</li>)}</ol>
     </section>
-    <footer className="emp-footer"><div className="emp-footer-logo">A-L-L-A-H.COM <small>EMPIRE OF THE LIGHT</small></div><div><p>{t.closing}</p><strong>{t.footer}</strong></div><span>© 2026 · PREVIEW · HUMAN-GOVERNED</span></footer>
-  </main>
+    </main>
+    <footer className="emp-footer"><nav className="emp-info-links" aria-label={pageCopy[locale].navigation}>{sections.map(section => <a key={section} href={`/${locale}/${section}`}>{pageCopy[locale][section].title}</a>)}</nav><div className="emp-footer-logo">A-L-L-A-H.COM <small>EMPIRE OF THE LIGHT</small></div><div><p>{t.closing}</p><strong>{t.footer}</strong></div><span>© 2026 · PREVIEW · HUMAN-GOVERNED</span></footer>
+  </div>
 }

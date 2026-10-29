@@ -13,6 +13,7 @@ pnpm --filter @moonwitness/moonui build
 pnpm --filter @moonwitness/empire-web test
 pnpm --filter @moonwitness/empire-web typecheck
 pnpm --filter @moonwitness/empire-web build
+node apps/empire-web/test/export-check.mjs
 pnpm --filter @moonwitness/empire-web dev
 ```
 Local app: http://localhost:3010
@@ -36,3 +37,11 @@ Local app: http://localhost:3010
 6. Existing Dock, ARSY and Headquarters continue unaffected.
 
 Read: docs/product/A-L-L-A-H-COM-MASTER-SPEC.md, BLUEPRINT.md, TODO.md, and accepted ADRs.
+
+## Information-page increment (29 October 2026)
+
+The isolated pilot now includes `/id/about`, `/id/sources`, `/id/privacy` and their `/en` equivalents. Language links preserve the current information page. Footer links, visible mobile section navigation, and a keyboard skip link provide navigation without client-side state or another backend. The information pages remain noindex.
+
+Privacy copy describes the application code separately from hosting logs, whose retention has not been verified. Source copy does not imply publication rights for scripture, research, or poster assets. This increment does not complete or change the canonical M31/Dock task statuses. The owner's explicit branch-specific pilot request is the scope for this work; accepted Dock runtime decisions remain authoritative for the canonical gateway.
+
+`node apps/empire-web/test/export-check.mjs` checks the generated HTML after building: six pages, locale links, headings, main landmarks, noindex and absence of forms/embeds. It is also run by the dedicated CI workflow. It is not a browser accessibility audit or deployment check.

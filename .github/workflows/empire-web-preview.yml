@@ -60,6 +60,9 @@ jobs:
       - name: Static production build
         run: pnpm --filter @moonwitness/empire-web build
 
+      - name: Verify exported information pages
+        run: node apps/empire-web/test/export-check.mjs
+
       - name: Confirm bilingual static export
         run: |
           test -f apps/empire-web/out/index.html
