@@ -27,7 +27,9 @@ export default async function ComparePage(): Promise<ReactNode> {
           { label: 'Compare' },
         ]}
       />
-      <Alert tone="hot">{copy.errorResearchUnavailable}</Alert>
+      <div role="alert">
+        <Alert tone="hot">{copy.errorResearchUnavailable}</Alert>
+      </div>
     </div>
   )
 }

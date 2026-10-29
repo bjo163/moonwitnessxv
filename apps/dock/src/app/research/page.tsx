@@ -25,7 +25,9 @@ export default async function ResearchPage(): Promise<ReactNode> {
         breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Research' }]}
       />
 
-      <Alert tone="hot">{copy.errorResearchUnavailable}</Alert>
+      <div role="alert">
+        <Alert tone="hot">{copy.errorResearchUnavailable}</Alert>
+      </div>
     </div>
   )
 }

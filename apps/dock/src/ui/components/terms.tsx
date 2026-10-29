@@ -250,10 +250,12 @@ export function TermDetailView({ detail, locale = 'en' }: { detail: TermDetail; 
   return (
     <div className="dk-terms-detail">
       {term.editorialStatus === 'DEPRECATED' ? (
-        <Alert tone="hot">
-          Deprecated: {term.deprecationReason ?? 'no reason recorded'}
-          {term.supersededBy ? ` — successor ${term.supersededBy.stableId} (${term.supersededBy.preferredEn})` : ''}
-        </Alert>
+        <div role="alert">
+          <Alert tone="hot">
+            Deprecated: {term.deprecationReason ?? 'no reason recorded'}
+            {term.supersededBy ? ` — successor ${term.supersededBy.stableId} (${term.supersededBy.preferredEn})` : ''}
+          </Alert>
+        </div>
       ) : null}
 
       <div className="dk-terms-detail-grid">

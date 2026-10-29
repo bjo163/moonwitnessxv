@@ -288,21 +288,30 @@ export function Player({
               <LiveDot on={playing} />
               <strong style={{ letterSpacing: '0.04em' }}>{stationName}</strong>
               {isFailover ? (
-                <Badge tone="hot">{copy.statusFailoverAmbient}</Badge>
+                <span role="status" aria-live="polite">
+                  <Badge tone="hot">{copy.statusFailoverAmbient}</Badge>
+                </span>
               ) : liveMeta?.title && liveMeta.title !== stationName ? (
-                <Badge tone="cyan">
-                  {copy.statusOnAir}: {liveMeta.artist ? `${liveMeta.artist} - ` : ''}{liveMeta.title}
-                </Badge>
+                <span role="status" aria-live="polite">
+                  <Badge tone="cyan">
+                    {copy.statusOnAir}: {liveMeta.artist ? `${liveMeta.artist} - ` : ''}{liveMeta.title}
+                  </Badge>
+                </span>
               ) : (
-                <Badge tone={streamFault || beacon === 'failed' ? 'hot' : beacon === 'sent' ? 'ok' : 'cyan'}>
-                  {streamFault
-                    ? `${copy[streamFault]} · ${copy.statusLoggingPaused}`
-                    : beacon === 'sent'
-                      ? copy.statusBeaconSent
-                      : beacon === 'failed'
-                        ? copy.statusBeaconFailed
-                        : copy.statusStreamLive}
-                </Badge>
+                <span
+                  role={streamFault || beacon === 'failed' ? 'alert' : 'status'}
+                  aria-live={streamFault || beacon === 'failed' ? 'assertive' : 'polite'}
+                >
+                  <Badge tone={streamFault || beacon === 'failed' ? 'hot' : beacon === 'sent' ? 'ok' : 'cyan'}>
+                    {streamFault
+                      ? `${copy[streamFault]} · ${copy.statusLoggingPaused}`
+                      : beacon === 'sent'
+                        ? copy.statusBeaconSent
+                        : beacon === 'failed'
+                          ? copy.statusBeaconFailed
+                          : copy.statusStreamLive}
+                  </Badge>
+                </span>
               )}
             </div>
 

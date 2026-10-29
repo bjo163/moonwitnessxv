@@ -132,7 +132,10 @@ export function DenpaTransceiver({ initialTransmissions, stations, locale }: Den
   return (
     <div className="m-stack" style={{ gap: 24 }}>
       {statusMsg ? (
-        <div role="status" aria-live="polite">
+        <div
+          role={statusMsg.tone === 'hot' ? 'alert' : 'status'}
+          aria-live={statusMsg.tone === 'hot' ? 'assertive' : 'polite'}
+        >
           <Alert tone={statusMsg.tone}>
             {statusMsg.text}
           </Alert>

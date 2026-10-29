@@ -26,7 +26,9 @@ export default function ErrorBoundary({
     <div className="m-stack" style={{ gap: 20, maxWidth: 640, margin: '40px auto' }}>
       <Panel title={copy.errorBoundaryTitle} subtitle={copy.errorBoundaryDescription}>
         <div className="m-stack" style={{ gap: 16 }}>
-          <Alert tone="hot">{error.message || copy.errorBoundaryDescription}</Alert>
+          <div role="alert">
+            <Alert tone="hot">{error.message || copy.errorBoundaryDescription}</Alert>
+          </div>
           <div className="m-row" style={{ gap: 12 }}>
             <Button type="button" variant="accent" onClick={() => reset()}>
               {copy.errorTryAgain}

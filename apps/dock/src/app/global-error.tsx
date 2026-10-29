@@ -27,13 +27,15 @@ export default function GlobalError({
       </head>
       <body style={{ margin: 0, padding: 32, fontFamily: 'monospace', background: '#0a0a0f', color: '#f0f0f5' }}>
         <div style={{ maxWidth: 640, margin: '40px auto', border: '1px solid #ff4444', padding: 24, borderRadius: 4 }}>
-          <h2 style={{ margin: '0 0 12px 0', color: '#ff6666' }}>{copy.errorGlobalTitle}</h2>
-          <p style={{ margin: '0 0 16px 0', color: '#aaa' }}>{copy.errorGlobalDescription}</p>
-          {error.message ? (
-            <pre style={{ margin: '0 0 16px 0', padding: 12, background: '#1a1a24', color: '#ff8888', whiteSpace: 'pre-wrap' }}>
-              {error.message}
-            </pre>
-          ) : null}
+          <div role="alert">
+            <h2 style={{ margin: '0 0 12px 0', color: '#ff6666' }}>{copy.errorGlobalTitle}</h2>
+            <p style={{ margin: '0 0 16px 0', color: '#aaa' }}>{copy.errorGlobalDescription}</p>
+            {error.message ? (
+              <pre style={{ margin: '0 0 16px 0', padding: 12, background: '#1a1a24', color: '#ff8888', whiteSpace: 'pre-wrap' }}>
+                {error.message}
+              </pre>
+            ) : null}
+          </div>
           <button
             type="button"
             onClick={() => reset()}
