@@ -17,6 +17,10 @@ The owner requested that the existing `apps/empire-web` implementation be merged
 
 The project owner explicitly authorized an isolated production deployment of this static pilot to a **new Vercel project** connected to `bjo163/moonwitnessxv`, rooted at `apps/empire-web`, on the repository's promoted `main` branch. This does not change the canonical Dock/LIGHTHOUSE decision. It does not authorize modifying the pre-existing `empire-of-the-light` project, attaching a custom domain, changing DNS, enabling indexing, or publishing private PNG references or unreviewed editorial/source content. Retain `noindex, nofollow`; require the exact-SHA and live-route release evidence in [M42-02](../../TODO.md#m42--empire-story-universe-visual-implementation-and-isolated-vercel-release).
 
+## Owner addendum — container deployment path (29 October 2026, Asia/Jakarta)
+
+The project owner authorized packaging this pilot as an isolated container image and running it on the owner-operated Coolify host. `apps/empire-web` is therefore a service in `docker-compose.yml`, built by `Dockerfile.empire-web` as a static export (`output: 'export'`) served by nginx on the registered port 3010. This carries the same constraints as the Vercel addendum above: Dock remains the canonical LIGHTHOUSE runtime, the pilot stays `noindex, nofollow` (page metadata plus an edge `X-Robots-Tag`), and this addendum authorizes no backend, API, identity, database, analytics, custom domain, DNS change or indexing. The Vercel authorization is unchanged — either hosting path may serve the pilot, never as two index-able origins, and release evidence still belongs to [M42-02](../../TODO.md#m42--empire-story-universe-visual-implementation-and-isolated-vercel-release).
+
 ## Rollback
 
 Remove the `empire-web` entry from `scripts/apps.registry.mjs`, its `PORTS.empireWeb` assignment, the workspace, and the pilot documentation. Dock remains the canonical gateway.

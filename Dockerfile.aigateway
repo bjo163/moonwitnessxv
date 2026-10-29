@@ -1,0 +1,54 @@
+# syntax=docker/dockerfile:1
+# Dedicated runtime for the AI Gateway (OpenAI-compatible router on :3003).
+# The default Dockerfile remains the ARSY Hub; Dockerfile.web stays the Next apps.
+
+# ---- Base ----
+FROM node:24-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+WORKDIR /repo
+
+# ---- Install deps (derived from the context, never a hand list) ----
+FROM base AS deps
+COPY scripts/setup-git-hooks.mjs ./scripts/
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+RUN --mount=type=bind,source=.,target=/ctx,readonly \
+    cd /ctx \
+    && find apps packages -mindepth 2 -maxdepth 2 -name package.json | while read -r m; do \
+         mkdir -p "/repo/$(dirname "$m")" && cp "/ctx/$m" "/repo/$m"; \
+       done
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
+
+# ---- Build ----
+FROM deps AS build
+COPY tsconfig.base.json ./
+COPY packages ./packages
+COPY apps/aigateway ./apps/aigateway
+RUN pnpm build:libs && pnpm --filter @moonwitness/aigateway build
+
+# ---- Production deps only ----
+FROM base AS prod-deps
+COPY scripts/setup-git-hooks.mjs ./scripts/
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+RUN --mount=type=bind,source=.,target=/ctx,readonly \
+    cd /ctx \
+    && find apps packages -mindepth 2 -maxdepth 2 -name package.json | while read -r m; do \
+         mkdir -p "/repo/$(dirname "$m")" && cp "/ctx/$m" "/repo/$m"; \
+       done
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --prod
+
+# ---- Runtime ----
+FROM node:24-slim AS runtime
+ENV NODE_ENV=production
+WORKDIR /repo
+COPY --from=prod-deps /repo ./
+COPY --from=build /repo/packages/core/dist packages/core/dist
+COPY --from=build /repo/apps/aigateway/package.json apps/aigateway/package.json
+COPY --from=build /repo/apps/aigateway/dist apps/aigateway/dist
+# Provider keys are read from the environment at boot and never baked in.
+EXPOSE 3003
+CMD ["node", "apps/aigateway/dist/index.js"]

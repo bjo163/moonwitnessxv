@@ -50,6 +50,11 @@ COPY tsconfig.base.json ./
 # the shared config pieces it used to hold now live in a real package.
 COPY packages ./packages
 COPY apps/${APP} ./apps/${APP}
+# Not every Next app ships a public/ directory (ORBIT has none), and the runtime
+# stage copies it unconditionally because `next start` serves it off disk. Creating
+# it here keeps ONE web image definition for every frontend instead of a per-app
+# COPY fork.
+RUN mkdir -p /repo/apps/${APP}/public
 RUN pnpm build:libs && pnpm --filter @moonwitness/${APP} build
 
 # ---- Production deps only ----

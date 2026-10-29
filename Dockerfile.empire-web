@@ -1,0 +1,38 @@
+# syntax=docker/dockerfile:1
+# ECHOLOG-style build stages, but the runtime is nginx: apps/empire-web builds with
+# `output: 'export'`, so the deliverable is a folder of HTML/RSC files, not a server.
+# ADR-0012 keeps this pilot isolated: no backend, no API, no private data.
+
+# ---- Base ----
+FROM node:24-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+WORKDIR /repo
+
+# ---- Install deps (derived from the context, never a hand list) ----
+FROM base AS deps
+COPY scripts/setup-git-hooks.mjs ./scripts/
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+RUN --mount=type=bind,source=.,target=/ctx,readonly \
+    cd /ctx \
+    && find apps packages -mindepth 2 -maxdepth 2 -name package.json | while read -r m; do \
+         mkdir -p "/repo/$(dirname "$m")" && cp "/ctx/$m" "/repo/$m"; \
+       done
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
+
+# ---- Build the export ----
+FROM deps AS build
+COPY tsconfig.base.json ./
+# moonui ships the moon.css the pilot imports, so the library tree has to exist.
+COPY packages ./packages
+COPY apps/empire-web ./apps/empire-web
+RUN pnpm build:libs && pnpm --filter @moonwitness/empire-web build
+
+# ---- Runtime: static files only ----
+FROM nginx:alpine AS runtime
+COPY apps/empire-web/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /repo/apps/empire-web/out /usr/share/nginx/html
+EXPOSE 3010

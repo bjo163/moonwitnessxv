@@ -141,8 +141,8 @@ export const APPS = [
     port: 3010,
     kind: 'web',
     dev: true,
-    // Isolated static pilot; kept outside the Cockpit supervisor.
-    supervised: false,
+    // Isolated static pilot; the Cockpit may start its local preview (ADR-0012).
+    supervised: true,
     name: 'A-L-L-A-H.COM Empire Gateway Pilot',
     desc: 'Bilingual static gateway pilot; no backend or private data owner',
     url: 'http://localhost:3010',

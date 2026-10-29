@@ -102,6 +102,19 @@ export const DEFAULT_CONFIG: MoondeckConfig = {
       healthEndpoint: `http://localhost:${PORTS.orbit}`,
     },
     {
+      tag: 'empire-web',
+      name: 'A-L-L-A-H.COM Empire Gateway',
+      pkg: '@moonwitness/empire-web',
+      port: PORTS.empireWeb,
+      // ADR-0012: isolated static pilot. Local preview only — no backend, API,
+      // identity or private data, so the supervisor starts it like any other web app.
+      color: '#ffd400',
+      icon: 'EW',
+      description: 'Next.js bilingual static gateway pilot (ADR-0012); no backend or private data owner',
+      url: `http://localhost:${PORTS.empireWeb}`,
+      healthEndpoint: `http://localhost:${PORTS.empireWeb}`,
+    },
+    {
       tag: 'sentinel',
       name: 'Sentinel Worker',
       pkg: '@moonwitness/sentinel',

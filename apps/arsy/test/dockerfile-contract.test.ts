@@ -175,3 +175,97 @@ test('docker: the build context excludes generated output', () => {
   }
   assert.ok(lines.includes('.env'), 'secrets never enter the build context')
 })
+
+/**
+ * The per-app service images (ECHOLOG, AI Gateway, SENTINEL) repeat the hub's
+ * contract: derive the manifest set, copy the dist of every workspace dependency
+ * the app declares, and run the compiled entry point. They exist so a deployment
+ * platform builds one image per service; a dependency added without its dist copy
+ * would fail at container import time, long after a green build.
+ */
+const SERVICE_IMAGES = [
+  { file: 'Dockerfile.echolog', app: 'echolog', entry: 'apps/echolog/dist/index.js' },
+  { file: 'Dockerfile.aigateway', app: 'aigateway', entry: 'apps/aigateway/dist/index.js' },
+  { file: 'Dockerfile.sentinel', app: 'sentinel', entry: 'apps/sentinel/dist/index.js' },
+] as const
+
+function workspaceDirectory(packageName: string): string {
+  const matches = membersOnDisk()
+    .filter((member) => member.startsWith('packages/'))
+    .filter((member) => JSON.parse(readRepoText(`${member}/package.json`)).name === packageName)
+  assert.equal(matches.length, 1, `${packageName} must resolve to exactly one packages/* workspace directory`)
+  return matches[0]!.slice('packages/'.length)
+}
+
+test('docker: each service image copies the dist of its declared workspace dependencies', () => {
+  for (const { file, app, entry } of SERVICE_IMAGES) {
+    const source = readRepoText(file)
+    const byStage = stages(source)
+    const runtime = byStage.get('runtime')
+    assert.ok(runtime, `${file} has a runtime stage`)
+
+    // same manifest-derivation rule as the hub and web images
+    for (const stage of ['deps', 'prod-deps']) {
+      const text = byStage.get(stage)
+      assert.ok(text, `${file} has a ${stage} stage`)
+      assert.match(text!, /find apps packages -mindepth 2 -maxdepth 2 -name package\.json/, `${file} ${stage} must derive the manifest set`)
+      assert.doesNotMatch(text!, /^COPY (?:apps|packages)\/[\w-]+\/package\.json/m, `${file} ${stage} enumerates member manifests again — derive them`)
+    }
+
+    const manifest = JSON.parse(readRepoText(`apps/${app}/package.json`)) as {
+      dependencies: Record<string, string>
+    }
+    const workspaceDeps = Object.entries(manifest.dependencies)
+      .filter(([, spec]) => spec === 'workspace:*')
+      .map(([name]) => ({ name, directory: workspaceDirectory(name) }))
+    assert.ok(workspaceDeps.length > 0, `apps/${app} declares workspace dependencies — manifest read wrong?`)
+
+    const missing = workspaceDeps.filter(({ directory }) =>
+      !runtime!.includes(`COPY --from=build /repo/packages/${directory}/dist packages/${directory}/dist`),
+    )
+    assert.deepEqual(
+      missing,
+      [],
+      `${file} never copies these declared dependencies:\n  ${missing.map(({ name, directory }) => `${name} (${directory})`).join('\n  ')}`,
+    )
+    assert.ok(source.includes(entry), `${file} must run ${entry}`)
+  }
+})
+
+test('docker: no service image runs the root build from a partial copy', () => {
+  for (const { file } of SERVICE_IMAGES) {
+    const build = stages(readRepoText(file)).get('build')
+    assert.ok(build, `${file} has a build stage`)
+    assert.doesNotMatch(build!, /^RUN pnpm build$/m, `${file} must build its own filter, not the root build`)
+    assert.ok(build!.includes('COPY packages ./packages'), `${file} copies the whole library tree`)
+  }
+})
+
+/**
+ * apps/empire-web runs with `output: 'export'`, so it has no Next runtime to start.
+ * Its image therefore ships the exported folder behind a static server; the two
+ * things that must never drift are the exported-file copy and the noindex decision
+ * recorded in ADR-0012.
+ */
+test('docker: the static pilot ships the export behind a static server and keeps noindex', () => {
+  const source = readRepoText('Dockerfile.empire-web')
+  const byStage = stages(source)
+  assert.ok(byStage.get('build'), 'the export is produced in a build stage')
+  assert.ok(source.includes('pnpm --filter @moonwitness/empire-web build'), 'the export comes from the app build')
+
+  const runtime = byStage.get('runtime')
+  assert.ok(runtime, 'Dockerfile.empire-web has a runtime stage')
+  // `stages()` slices the text after the FROM line, so the image assertion reads
+  // the whole file: the runtime must be a static server, never a Next server.
+  assert.match(source, /^FROM nginx:\S+ AS runtime$/m, 'the runtime is a static server')
+  assert.ok(
+    runtime!.includes('COPY --from=build /repo/apps/empire-web/out /usr/share/nginx/html'),
+    'the exported files are what ships',
+  )
+  assert.doesNotMatch(source, /next start/, 'a static export has no Next runtime')
+
+  const nginx = readRepoText('apps/empire-web/nginx.conf')
+  assert.match(nginx, /listen 3010/, 'nginx listens on the registered pilot port')
+  assert.match(nginx, /try_files \$uri \$uri\.html/, 'extensionless routes resolve to the exported .html file')
+  assert.match(nginx, /X-Robots-Tag "noindex, nofollow"/, 'the noindex decision survives at the edge')
+})
