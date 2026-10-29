@@ -102,6 +102,22 @@ body,
   row-gap: 2px;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html,
+  html:focus-within {
+    scroll-behavior: auto !important;
+  }
+
+  .cockpit-shell *,
+  .cockpit-shell *::before,
+  .cockpit-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 .cockpit-body {
   display: flex;
   flex: 1;

@@ -494,8 +494,10 @@ must(pageSource.includes('notFound()'), 'relation page returns 404 for an unknow
 must(!pageSource.includes('sha256') && !pageSource.includes('gph_'), 'relation page derives no graph identity')
 
 const querySource = readFileSync(new URL('../src/data/queries/graph.ts', import.meta.url), 'utf8')
-must(querySource.includes('/graph/relation?code='), 'query reads the public relation endpoint')
-must(querySource.includes("'/graph/overview'"), 'query reads the public release overview')
+must(querySource.includes('/graph/relation?code='), 'query reads the existing relation endpoint')
+must(querySource.includes("'/graph/overview'"), 'query reads the existing release overview endpoint')
+must(pageSource.includes('isProjectionWithheld(err)'), 'relation page withholds private details after anonymous denial')
+must(pageSource.includes('copy.errorGraphWithheld'), 'withholding state is explicit and localized')
 must(!querySource.includes('/graph/releases/build'), 'query never builds a release')
 must(!querySource.includes('/graph/releases/activate'), 'query never activates a release')
 must(!querySource.includes('/graph/candidates/decide'), 'query never decides a candidate')

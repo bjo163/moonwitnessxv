@@ -1,7 +1,6 @@
 import {
   ADMIN_FULL,
   ADMIN_ONLY,
-  ADMIN_WRITE,
   defineAddon,
   defineModel,
   int,
@@ -70,7 +69,7 @@ export const graph = defineAddon({
     graph_candidates: defineModel({
       label: 'Graph Candidate',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Graph', icon: 'GC', order: 10 },
       fields: {
         candidateCode: str({ maxLength: 140, unique: true }),
@@ -97,7 +96,7 @@ export const graph = defineAddon({
     graph_releases: defineModel({
       label: 'Graph Release',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Graph', icon: 'GR', order: 20 },
       fields: {
         releaseCode: str({ maxLength: 40, unique: true }),
@@ -136,7 +135,7 @@ export const graph = defineAddon({
     graph_adjacency: defineModel({
       label: 'Graph Adjacency (derived)',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Graph', icon: 'GA', order: 40 },
       fields: {
         adjacencyCode: str({ maxLength: 180, unique: true }),
@@ -257,7 +256,7 @@ export const graph = defineAddon({
     overview: {
       method: 'GET',
       path: '/graph/overview',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       menu: { group: 'Graph', icon: 'GO', order: 50 },
       handler: async ({ orm }) => graphOverview(orm),
     },
@@ -266,7 +265,7 @@ export const graph = defineAddon({
     relation: {
       method: 'GET',
       path: '/graph/relation',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ query, orm }) => {
         const code = asText(query.code)
         if (!code) throw badRequest('graph relation needs a code')
@@ -280,7 +279,7 @@ export const graph = defineAddon({
     adjacency: {
       method: 'GET',
       path: '/graph/adjacency',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ query, orm }) => adjacencyView(orm, nonEmpty(query.node) ? asText(query.node) : null),
     },
 
@@ -288,21 +287,21 @@ export const graph = defineAddon({
     search: {
       method: 'GET',
       path: '/graph/search',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ query, orm }) => searchGraph(orm, asText(query.q)),
     },
 
     releases: {
       method: 'GET',
       path: '/graph/releases',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ orm }) => listReleases(orm),
     },
 
     release: {
       method: 'GET',
       path: '/graph/release',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ query, orm }) => {
         const code = asText(query.code)
         if (!code) throw badRequest('graph release needs a code')
@@ -316,7 +315,7 @@ export const graph = defineAddon({
     export: {
       method: 'GET',
       path: '/graph/export',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       handler: async ({ query, orm }) => {
         const code = nonEmpty(query.code) ? asText(query.code) : null
         const detail = await exportRelease(orm, code)

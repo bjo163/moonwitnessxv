@@ -1,7 +1,7 @@
 import { Badge, CardSkeleton, PageHeader, TableSkeleton } from '@moonwitness/moonui'
 import { readConstellation, type ConstellationProjection } from '@/data/queries/constellation'
 import { readGraphOverview, type GraphOverview } from '@/data/queries/graph'
-import { panelErrorMessage } from '@/data/queries/error'
+import { isProjectionWithheld, panelErrorMessage } from '@/data/queries/error'
 import { ConstellationView } from '@/ui/components/constellation'
 import { GraphReleasePanel } from '@/ui/components/graph-relation'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
@@ -46,13 +46,15 @@ export default async function ConstellationPage() {
       readConstellation,
       graphCopy,
       (projection) => projection.nodes.length === 0,
-      (err) => panelErrorMessage(err, copy.errorConstellationUnavailable),
+      (err) =>
+        isProjectionWithheld(err) ? copy.errorGraphWithheld : panelErrorMessage(err, copy.errorConstellationUnavailable),
     ),
     readPanel<GraphOverview>(
       readGraphOverview,
       releaseCopy,
       (overview) => overview.active === null && overview.candidates.length === 0,
-      (err) => panelErrorMessage(err, copy.errorGraphUnavailable),
+      (err) =>
+        isProjectionWithheld(err) ? copy.errorGraphWithheld : panelErrorMessage(err, copy.errorGraphUnavailable),
     ),
   ])
 

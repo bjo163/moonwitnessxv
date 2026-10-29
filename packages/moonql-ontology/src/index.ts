@@ -1,7 +1,6 @@
 import {
   ADMIN_FULL,
   ADMIN_ONLY,
-  ADMIN_WRITE,
   defineAddon,
   defineModel,
   int,
@@ -206,7 +205,7 @@ export const ontology = defineAddon({
     onto_sources: defineModel({
       label: 'Ontology Source',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Ontology', icon: 'OS', order: 10 },
       fields: {
         code: str({ maxLength: 60, unique: true }),
@@ -225,7 +224,7 @@ export const ontology = defineAddon({
     onto_entities: defineModel({
       label: 'Ontology Entity',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Ontology', icon: 'EN', order: 20 },
       fields: {
         stableId: str({ maxLength: 8, unique: true, validate: (value: unknown) => stableIdError(String(value)) }),
@@ -249,7 +248,7 @@ export const ontology = defineAddon({
     onto_aliases: defineModel({
       label: 'Ontology Alias',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Ontology', icon: 'AL', order: 30 },
       fields: {
         aliasCode: str({ maxLength: 40, unique: true }),
@@ -272,7 +271,7 @@ export const ontology = defineAddon({
     onto_relations: defineModel({
       label: 'Ontology Relation',
       rest: true,
-      acl: ADMIN_WRITE,
+      acl: ADMIN_FULL,
       menu: { group: 'Ontology', icon: 'RL', order: 40 },
       fields: {
         edgeCode: str({ maxLength: 120, unique: true }),
@@ -455,7 +454,7 @@ export const ontology = defineAddon({
     constellation: {
       method: 'GET',
       path: '/ontology/constellation',
-      requires: 'public',
+      requires: ADMIN_ONLY,
       menu: { group: 'Ontology', icon: 'GR', order: 70 },
       handler: async ({ orm }) => buildConstellation(orm),
     },

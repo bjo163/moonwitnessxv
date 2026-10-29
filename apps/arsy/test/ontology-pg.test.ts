@@ -104,6 +104,7 @@ test(
     await app.register(envelope)
     await app.register(moonqlRest, { prefix: '/orm', instance: moonql })
     await app.ready()
+    const headers = await adminHeaders(app, '/orm')
 
     const cleanup = async (): Promise<void> => {
       await moonql.model('onto_identity_reviews').removeWhere({ pairCode: 'O004:O005' })
@@ -144,7 +145,7 @@ test(
     assert.equal(reviews.length, 4)
     assert.equal(log.length, 3)
 
-    const firstRes = await app.inject().get('/orm/ontology/constellation').end()
+    const firstRes = await app.inject().get('/orm/ontology/constellation').headers(headers).end()
     assert.equal(firstRes.statusCode, 200, firstRes.body)
     const first = dataOf<Projection>(firstRes)
     assert.equal(first.state, 'ok')
@@ -201,7 +202,6 @@ test(
     const anonymousQueue = await app.inject().get('/orm/ontology/conflicts').end()
     assert.equal(anonymousQueue.statusCode, 401)
 
-    const headers = await adminHeaders(app, '/orm')
     const queueRes = await app.inject().get('/orm/ontology/conflicts').headers(headers).end()
     assert.equal(queueRes.statusCode, 200, queueRes.body)
     const queue = dataOf<ConflictQueue>(queueRes)
@@ -215,7 +215,7 @@ test(
     assert.ok(queue.items.some((item) => item.type === 'IDENTITY' && item.status === 'PENDING'))
     assert.ok(queue.items.some((item) => item.type === 'ALIAS' && item.status === 'COLLISION'))
 
-    const graphBeforeMerge = (await app.inject().get('/orm/ontology/constellation').end()).json() as {
+    const graphBeforeMerge = (await app.inject().get('/orm/ontology/constellation').headers(headers).end()).json() as {
       data: Projection
     }
     const mergeRes = await app
@@ -241,7 +241,7 @@ test(
     assert.ok(merged.entities.every((entity) => entity.identityVersion === 2))
     assert.match(merged.notice, /not deleted or rewritten/)
 
-    const afterMergeRes = await app.inject().get('/orm/ontology/constellation').end()
+    const afterMergeRes = await app.inject().get('/orm/ontology/constellation').headers(headers).end()
     const afterMerge = dataOf<Projection>(afterMergeRes)
     assert.equal(afterMerge.graphId, merged.graphId)
     assert.notEqual(afterMerge.graphId, graphBeforeMerge.data.graphId, 'a merge changes the canonical graph ID')
@@ -272,7 +272,7 @@ test(
     const split = dataOf<MergeResult>(splitRes)
     assert.match(split.notice, /separately again/)
 
-    const afterSplit = dataOf<Projection>(await app.inject().get('/orm/ontology/constellation').end())
+    const afterSplit = dataOf<Projection>(await app.inject().get('/orm/ontology/constellation').headers(headers).end())
     assert.equal(afterSplit.counts.activeMerges, 0)
     assert.equal(afterSplit.counts.components, 8)
     const splitA = afterSplit.nodes.find((node) => node.stableId === 'O004')
@@ -326,7 +326,7 @@ test(
     const unknownEdge = dataOf<EdgeResult>(unknownRes)
     assert.equal(unknownEdge.edge.epistemicStatus, 'UNKNOWN')
     assert.equal(unknownEdge.edge.verified, false)
-    const unknownView = dataOf<Projection>(await app.inject().get('/orm/ontology/constellation').end())
+    const unknownView = dataOf<Projection>(await app.inject().get('/orm/ontology/constellation').headers(headers).end())
     assert.equal(
       unknownView.edges.find((edge) => edge.edgeCode === unknownEdge.edge.edgeCode)?.statusLabel,
       'Unknown — unresolved',
@@ -356,15 +356,15 @@ test(
     assert.equal(storedEdge.epistemicStatus, 'VERIFIED')
     assert.equal(storedEdge.reviewer, 'PG Reviewer')
     assert.equal(storedEdge.evidenceRef, 'docs/audit/M09-unilex-terminology.md')
-    const verifiedView = dataOf<Projection>(await app.inject().get('/orm/ontology/constellation').end())
+    const verifiedView = dataOf<Projection>(await app.inject().get('/orm/ontology/constellation').headers(headers).end())
     assert.equal(
       verifiedView.edges.find((edge) => edge.edgeCode === verifiedEdge.edge.edgeCode)?.statusLabel,
       'Verified by reviewer',
     )
 
     const reads = await Promise.all([
-      app.inject().get('/orm/ontology/constellation').end(),
-      app.inject().get('/orm/ontology/constellation').end(),
+      app.inject().get('/orm/ontology/constellation').headers(headers).end(),
+      app.inject().get('/orm/ontology/constellation').headers(headers).end(),
     ])
     assert.ok(reads.every((res) => res.statusCode === 200))
     assert.equal((await moonql.model('onto_entities').count()), 8, 'GET must not write')

@@ -29,7 +29,7 @@ const DATA_BACKED = [
     file: 'src/app/constellation/page.tsx',
     panelSymbols: ['OutcomePanel', 'readPanel', 'PanelCopy'],
     emptyKeys: ['emptyGraph', 'emptyGraphHint', 'emptyGraphRelease'],
-    errorKeys: ['errorConstellationUnavailable', 'errorGraphUnavailable'],
+    errorKeys: ['errorConstellationUnavailable', 'errorGraphUnavailable', 'errorGraphWithheld'],
   },
   {
     name: 'patches',

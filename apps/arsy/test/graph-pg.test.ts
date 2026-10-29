@@ -121,6 +121,7 @@ test(
     await app.register(envelope)
     await app.register(moonqlRest, { prefix: '/orm', instance: moonql })
     await app.ready()
+    const headers = await adminHeaders(app, '/orm')
 
     assert.equal(moonql.engine, 'pg', 'this drill must not silently fall back to memory')
     assert.ok(moonql.client, 'the pg boot exposes the raw client for test cleanup')
@@ -148,7 +149,7 @@ test(
     assert.equal(await moonql.model('graph_release_pointer').count(), 1)
     assert.equal(await moonql.model('graph_adjacency').count(), 5)
 
-    const initialRes = await app.inject().get('/orm/graph/overview').end()
+    const initialRes = await app.inject().get('/orm/graph/overview').headers(headers).end()
     assert.equal(initialRes.statusCode, 200, initialRes.body)
     const initial = dataOf<Overview>(initialRes)
     assert.ok(initial.active)
@@ -185,7 +186,7 @@ test(
     assert.equal(dedup.inActiveRelease, false, 'a deduplicated candidate is not a separate release edge')
 
     // ---- relation detail: candidate and reviewed stay separate ------------
-    const pendingRes = await app.inject().get(`/orm/graph/relation?code=${SAME_AS_PENDING}`).end()
+    const pendingRes = await app.inject().get(`/orm/graph/relation?code=${SAME_AS_PENDING}`).headers(headers).end()
     assert.equal(pendingRes.statusCode, 200, pendingRes.body)
     const pendingView = dataOf<DetailView>(pendingRes)
     assert.equal(pendingView.relation.kind, 'CANDIDATE')
@@ -197,7 +198,7 @@ test(
     assert.equal(pendingView.policy.releaseImmutable, true)
     assert.equal(pendingView.policy.automaticApproval, false)
 
-    const reviewedRes = await app.inject().get('/orm/graph/relation?code=EDG-O001-O002-distinctFrom').end()
+    const reviewedRes = await app.inject().get('/orm/graph/relation?code=EDG-O001-O002-distinctFrom').headers(headers).end()
     assert.equal(reviewedRes.statusCode, 200, reviewedRes.body)
     const reviewedView = dataOf<DetailView>(reviewedRes)
     assert.equal(reviewedView.relation.kind, 'REVIEWED')
@@ -207,7 +208,6 @@ test(
     assert.equal(reviewedView.relation.source?.provenanceSha, M02_SHA256)
     assert.ok(reviewedView.release)
 
-    const headers = await adminHeaders(app, '/orm')
 
     // ---- sameAs approval is refused without a partial write ---------------
     const sameAs = await app
@@ -441,7 +441,7 @@ test(
     assert.equal(await moonql.model('graph_release_pointer').count(), 1)
 
     const staleAdjacency = dataOf<{ stale: boolean; state: string }>(
-      await app.inject().get('/orm/graph/adjacency').end(),
+      await app.inject().get('/orm/graph/adjacency').headers(headers).end(),
     )
     assert.equal(staleAdjacency.stale, true)
     assert.equal(staleAdjacency.state, 'stale')
@@ -473,10 +473,10 @@ test(
     assert.equal(rebuiltAgain.stale, false)
 
     const search = dataOf<{ total: number; items: Array<{ code: string }> }>(
-      await app.inject().get('/orm/graph/search?q=O005').end(),
+      await app.inject().get('/orm/graph/search?q=O005').headers(headers).end(),
     )
     assert.ok(search.items.some((item) => item.code === NEW_CANDIDATE))
-    const candidateSearch = dataOf<{ total: number }>(await app.inject().get('/orm/graph/search?q=GC-O003').end())
+    const candidateSearch = dataOf<{ total: number }>(await app.inject().get('/orm/graph/search?q=GC-O003').headers(headers).end())
     assert.equal(candidateSearch.total, 0, 'candidates never enter the derived adjacency')
 
     // ---- revoked candidate: visible in history, out of the next release ---
@@ -493,13 +493,13 @@ test(
       .end()
     assert.equal(revokeRes.statusCode, 200, revokeRes.body)
 
-    const afterRevoke = dataOf<Overview>(await app.inject().get('/orm/graph/overview').end())
+    const afterRevoke = dataOf<Overview>(await app.inject().get('/orm/graph/overview').headers(headers).end())
     const revoked = afterRevoke.candidates.find((row) => row.candidateCode === APPROVED_CANDIDATE)
     assert.equal(revoked?.revoked, true)
     assert.equal(revoked?.inActiveRelease, true, 'the old release still contains the edge')
 
     const exported = dataOf<ExportView>(
-      await app.inject().get(`/orm/graph/export?code=${built.release.releaseCode}`).end(),
+      await app.inject().get(`/orm/graph/export?code=${built.release.releaseCode}`).headers(headers).end(),
     )
     assert.equal(exported.schema, 'moonwitness-graph-export-v1')
     assert.equal(exported.graphSha, built.release.graphSha)
@@ -552,7 +552,7 @@ test(
     assert.equal(finalRebuild.rows, 5)
     assert.equal(finalRebuild.stale, false)
     const revokedSearch = dataOf<{ total: number; items: Array<{ code: string }> }>(
-      await app.inject().get('/orm/graph/search?q=GC-O008').end(),
+      await app.inject().get('/orm/graph/search?q=GC-O008').headers(headers).end(),
     )
     assert.equal(revokedSearch.total, 0, 'the revoked candidate leaves the derived adjacency')
     assert.ok(!revokedSearch.items.some((item) => item.code === APPROVED_CANDIDATE))
@@ -586,7 +586,7 @@ test(
     assert.equal(rollbackRebuild.stale, false)
 
     const oldExport = dataOf<ExportView>(
-      await app.inject().get(`/orm/graph/export?code=${initial.active!.releaseCode}`).end(),
+      await app.inject().get(`/orm/graph/export?code=${initial.active!.releaseCode}`).headers(headers).end(),
     )
     assert.ok(
       oldExport.lineage.candidates.includes(APPROVED_CANDIDATE),
@@ -595,7 +595,7 @@ test(
     assert.equal(oldExport.graphSha, initial.active!.graphSha)
 
     // ---- reads wrote nothing, one pointer, three releases -----------------
-    const finalOverview = dataOf<Overview>(await app.inject().get('/orm/graph/overview').end())
+    const finalOverview = dataOf<Overview>(await app.inject().get('/orm/graph/overview').headers(headers).end())
     assert.equal(finalOverview.active?.releaseCode, initial.active!.releaseCode)
     assert.equal(finalOverview.pointer?.version, 4)
     assert.equal(await moonql.model('graph_release_pointer').count(), 1)

@@ -148,14 +148,19 @@ async function makeApp() {
 
 type _Mq = Awaited<ReturnType<typeof bootMoonQl>>
 
+async function adminRead(app: FastifyInstance, path: string) {
+  const headers = await adminHeaders(app, '/orm')
+  return app.inject().get(path).headers(headers).end()
+}
+
 async function overview(app: FastifyInstance): Promise<Overview> {
-  const res = await app.inject().get('/orm/graph/overview').end()
+  const res = await adminRead(app, '/orm/graph/overview')
   assert.equal(res.statusCode, 200, res.body)
   return dataOf<Overview>(res)
 }
 
 async function candidate(app: FastifyInstance, code: string): Promise<DetailView> {
-  const res = await app.inject().get(`/orm/graph/relation?code=${encodeURIComponent(code)}`).end()
+  const res = await adminRead(app, `/orm/graph/relation?code=${encodeURIComponent(code)}`)
   assert.equal(res.statusCode, 200, res.body)
   return dataOf<DetailView>(res)
 }
@@ -207,7 +212,7 @@ async function activate(
 }
 
 async function releaseDetail(app: FastifyInstance, code: string): Promise<ReleaseDetail> {
-  const res = await app.inject().get(`/orm/graph/release?code=${encodeURIComponent(code)}`).end()
+  const res = await adminRead(app, `/orm/graph/release?code=${encodeURIComponent(code)}`)
   assert.equal(res.statusCode, 200, res.body)
   return dataOf<ReleaseDetail>(res)
 }
@@ -433,7 +438,7 @@ test('M12-04: adjacency is derived, can be dropped, and rebuilds from the active
   assert.equal(initial.adjacency.rows, 5)
   assert.equal(initial.adjacency.releaseCode, initial.active?.releaseCode)
 
-  const adjacency = await app.inject().get('/orm/graph/adjacency').end()
+  const adjacency = await adminRead(app, '/orm/graph/adjacency')
   assert.equal(adjacency.statusCode, 200)
   const seeded = dataOf<{ state: string; total: number; items: Array<{ code: string }> }>(adjacency)
   assert.equal(seeded.state, 'ok')
@@ -447,7 +452,7 @@ test('M12-04: adjacency is derived, can be dropped, and rebuilds from the active
   assert.ok(pointer)
   await activate(app, headers, next.releaseCode, pointer.version)
 
-  const stale = await app.inject().get('/orm/graph/adjacency').end()
+  const stale = await adminRead(app, '/orm/graph/adjacency')
   assert.equal(stale.statusCode, 200)
   const staleView = dataOf<{ state: string; stale: boolean; total: number; notice: string }>(stale)
   assert.equal(staleView.state, 'stale')
@@ -456,7 +461,7 @@ test('M12-04: adjacency is derived, can be dropped, and rebuilds from the active
 
   const cleared = await moonql.model('graph_adjacency').removeWhere({}, 1000)
   assert.ok(cleared >= 5)
-  const empty = await app.inject().get('/orm/graph/adjacency').end()
+  const empty = await adminRead(app, '/orm/graph/adjacency')
   assert.equal(dataOf<{ total: number; stale: boolean }>(empty).total, 0)
 
   const rebuilt = await app.inject()
@@ -483,21 +488,21 @@ test('M12-04: adjacency is derived, can be dropped, and rebuilds from the active
   assert.equal(againView.rows, 6)
   assert.equal(againView.stale, false)
 
-  const search = await app.inject().get('/orm/graph/search?q=O005').end()
+  const search = await adminRead(app, '/orm/graph/search?q=O005')
   assert.equal(search.statusCode, 200)
   const found = dataOf<{ state: string; total: number; items: Array<{ code: string; from: string; to: string }> }>(search)
   assert.equal(found.state, 'ok')
   assert.ok(found.items.some((item) => item.code === approvedCode))
   assert.ok(found.items.some((item) => item.from === 'O005' || item.to === 'O005'))
 
-  const noCandidates = await app.inject().get('/orm/graph/search?q=GC-O003').end()
+  const noCandidates = await adminRead(app, '/orm/graph/search?q=GC-O003')
   assert.equal(noCandidates.statusCode, 200)
   assert.equal(dataOf<{ total: number }>(noCandidates).total, 0)
 
-  const tooShort = await app.inject().get('/orm/graph/search?q=O').end()
+  const tooShort = await adminRead(app, '/orm/graph/search?q=O')
   assert.equal(tooShort.statusCode, 400)
 
-  const unknown = await app.inject().get('/orm/graph/relation?code=GC-NOPE').end()
+  const unknown = await adminRead(app, '/orm/graph/relation?code=GC-NOPE')
   assert.equal(unknown.statusCode, 404)
 })
 
@@ -626,9 +631,9 @@ test('M12-06: relation detail labels candidate, reviewed edge and unknown proven
   assert.equal(approved.relation.inActiveRelease, true)
   assert.equal(approved.relation.evidence.frame, 'CO_OCCURRENCE')
 
-  const missing = await app.inject().get('/orm/graph/relation?code=NO-SUCH-RELATION').end()
+  const missing = await adminRead(app, '/orm/graph/relation?code=NO-SUCH-RELATION')
   assert.equal(missing.statusCode, 404)
-  const noCode = await app.inject().get('/orm/graph/relation').end()
+  const noCode = await adminRead(app, '/orm/graph/relation')
   assert.equal(noCode.statusCode, 400)
 })
 
@@ -645,7 +650,7 @@ test('M12-07: export lineage, replay dedup and revoked candidates stay visible',
   const seedCode = initial.active.releaseCode
   const seedSha = initial.active.graphSha
 
-  const exported = await app.inject().get('/orm/graph/export').end()
+  const exported = await adminRead(app, '/orm/graph/export')
   assert.equal(exported.statusCode, 200)
   const exportView = dataOf<{
     schema: string
@@ -671,10 +676,10 @@ test('M12-07: export lineage, replay dedup and revoked candidates stay visible',
   for (const source of exportView.lineage.sources) assert.match(source.sha256, /^[0-9a-f]{64}$/)
   assert.match(exportView.replay, /same graphSha/)
 
-  const byCode = await app.inject().get(`/orm/graph/export?code=${seedCode}`).end()
+  const byCode = await adminRead(app, `/orm/graph/export?code=${encodeURIComponent(seedCode)}`)
   assert.equal(byCode.statusCode, 200)
   assert.equal(dataOf<{ graphSha: string }>(byCode).graphSha, seedSha)
-  const missing = await app.inject().get('/orm/graph/export?code=grel_nope').end()
+  const missing = await adminRead(app, '/orm/graph/export?code=grel_nope')
   assert.equal(missing.statusCode, 404)
 
   const replay = await build(app, headers)
@@ -697,10 +702,13 @@ test('M12-07: export lineage, replay dedup and revoked candidates stay visible',
   assert.equal(stillVisible.revoked, true)
   assert.match(String(stillVisible.statusLabel), /revoked/i)
 
-  const oldExport = await app.inject().get(`/orm/graph/export?code=${seedCode}`).end()
+  const oldExport = await adminRead(app, `/orm/graph/export?code=${encodeURIComponent(seedCode)}`)
   assert.equal(oldExport.statusCode, 200)
   assert.equal(dataOf<{ graphSha: string }>(oldExport).graphSha, seedSha)
-  assert.equal(dataOf<ReleaseDetail>(await app.inject().get(`/orm/graph/release?code=${seedCode}`).end()).manifest.candidates.length, 1)
+  assert.equal(
+    dataOf<ReleaseDetail>(await adminRead(app, `/orm/graph/release?code=${encodeURIComponent(seedCode)}`)).manifest.candidates.length,
+    1,
+  )
 
   const rebuilt = await build(app, headers)
   assert.equal(rebuilt.statusCode, 200, JSON.stringify(rebuilt.payload))
@@ -715,7 +723,7 @@ test('M12-07: export lineage, replay dedup and revoked candidates stay visible',
   assert.ok(pointer)
   const activated = await activate(app, headers, next.releaseCode, pointer.version)
   assert.equal(activated.statusCode, 200)
-  const finalExport = await app.inject().get('/orm/graph/export').end()
+  const finalExport = await adminRead(app, '/orm/graph/export')
   assert.equal(finalExport.statusCode, 200)
   const finalView = dataOf<{ manifest: ReleaseDetail['manifest']; release: ReleaseSummary }>(finalExport)
   assert.equal(finalView.release.releaseCode, next.releaseCode)

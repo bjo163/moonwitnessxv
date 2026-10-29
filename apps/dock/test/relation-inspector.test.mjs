@@ -9,7 +9,7 @@
  * hub does not know.
  *
  * The contract below is a source contract, not a rendering proof: it asserts
- * where the alternatives come from (the already-public `/graph/overview`
+ * where the alternatives come from (the existing `/graph/overview`
  * candidate rows, never a second projection owner), that uncertainty and the
  * limits of the list are stated in words, that a candidate keeps its candidate
  * wording, that competing claims are compared only by type and direction rather
@@ -45,9 +45,9 @@ const samePairRowSource = declarationOf(viewSource, 'function SamePairRow(')
 const detailSource = declarationOf(viewSource, 'export function RelationDetailView(')
 const entityFactsSource = declarationOf(viewSource, 'function EntityFacts(')
 
-// --- UI-P06d · the data owner stays D03's existing public projection ---------
+// --- UI-P06d · the data owner stays D03's existing projection ---------------
 
-test('UI-P06d same-pair alternatives are derived from the already-public graph overview', () => {
+test('UI-P06d same-pair alternatives are derived from the existing graph overview', () => {
   // No new hub route, no new table, no second projection owner: the query layer
   // still calls exactly the two D03 endpoints it called before.
   const endpoints = [...querySource.matchAll(/\.call<\w+>\(\s*[`'"]([^`'"?]+)[^`'"]*[`'"]/g)].map((match) => match[1])
@@ -107,11 +107,18 @@ test('UI-P06c the relation route fetches the same-pair rows and hands them to th
   assert.match(pageSource, /if \(!detail\) notFound\(\)/, 'an absent relation stays a 404, not an empty panel')
 })
 
+test('public graph denial is rendered as a localized withholding state before detail data is rendered', () => {
+  assert.match(pageSource, /isProjectionWithheld\(err\)/)
+  assert.match(pageSource, /copy\.errorGraphWithheld/)
+  assert.match(pageSource, /if \(!isProjectionWithheld\(err\)\) throw err/)
+})
+
 test('UI-P06d a failed alternatives read uses the shared state wording; an empty list never hides the section', () => {
   assert.match(pageSource, /from '@\/ui\/components\/states'/, 'the panel must use the shared four-state contract')
   assert.match(pageSource, /errorMessage: copy\.errorGraphUnavailable/, 'the failure must reuse the states catalogue')
   assert.match(pageSource, /panelErrorMessage\(err, copy\.errorGraphUnavailable\)/)
-  assert.doesNotMatch(pageSource, /<Alert\b/, 'the route must not hand-roll an error alert')
+  assert.match(pageSource, /isProjectionWithheld\(err\)\s*\? copy\.errorGraphWithheld/)
+  assert.match(pageSource, /<div role="alert"><Alert/, 'a denied public read is an explicit withholding alert')
   // readPanel is called with a never-empty predicate, so `ready` still renders.
   assert.match(
     pageSource,

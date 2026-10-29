@@ -2,7 +2,8 @@ import { createServerSdk } from '@moonwitness/moonql-client'
 import { RADIO_API_URL } from '@/lib/env'
 
 /**
- * no token: the dock only reads public views and posts the listen beacon.
+ * No token: the Dock reads public views, posts the listen beacon, and renders
+ * withholding states for private Graph/Ontology projections until D08 approval.
  * Built by the shared kit, so the base URL is resolved exactly once — the exported
  * constant stays because pages import it for cache tags and error text.
  */

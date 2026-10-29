@@ -104,6 +104,12 @@ async function get(app: FastifyInstance, path: string, query?: Record<string, st
   return (query ? req.query(query) : req).end() as unknown as Res
 }
 
+async function getAdmin(app: FastifyInstance, path: string, query?: Record<string, string>): Promise<Res> {
+  const headers = await adminHeaders(app, '/orm')
+  const req = app.inject().get(path).headers(headers)
+  return (query ? req.query(query) : req).end() as unknown as Res
+}
+
 /** The blocked edition fixture: one address, four uncleared rights statuses. */
 async function seedBlockedEditions(moonql: Awaited<ReturnType<typeof bootMoonQl>>) {
   const work = (await moonql.model('corpus_works').list({ where: { code: 'quran' } }))[0] as Row
@@ -754,7 +760,7 @@ test('UI-P05e: released graph projections carry only the active release, never a
     active: { releaseCode: string; edgeCount: number } | null
     separation: { candidates: { pending: number }; reviewed: { edgeCount: number } }
     counts: { edgesInActiveRelease: number; reviewedRelations: number }
-  }>(await get(app, '/orm/graph/overview'))
+  }>(await getAdmin(app, '/orm/graph/overview'))
   const mine = overview.candidates.find((row) => row.candidateCode === candidateCode)
   assert.ok(mine, 'the candidate is in the review queue')
   assert.equal(mine.status, 'PENDING')
@@ -764,7 +770,7 @@ test('UI-P05e: released graph projections carry only the active release, never a
   const adjacency = dataOf<{
     stale: boolean
     items: Array<{ code: string; kind: string }>
-  }>(await get(app, '/orm/graph/adjacency'))
+  }>(await getAdmin(app, '/orm/graph/adjacency'))
   assert.ok(!adjacency.items.some((item) => item.code === candidateCode), 'a candidate is never a released adjacency row')
   assert.ok(
     adjacency.items.every((item) => item.kind === 'ONTOLOGY' || item.kind === 'CANDIDATE'),
@@ -779,7 +785,7 @@ test('UI-P05e: released graph projections carry only the active release, never a
   }
 
   const searched = dataOf<{ items: Array<{ code: string }>; notice?: string }>(
-    await get(app, '/orm/graph/search', { q: candidateCode }),
+    await getAdmin(app, '/orm/graph/search', { q: candidateCode }),
   )
   assert.ok(!searched.items.some((item) => item.code === candidateCode), 'search covers the release, not candidates')
   assert.match(searched.notice ?? '', /candidates appear in the review queue, not here/)
@@ -787,14 +793,14 @@ test('UI-P05e: released graph projections carry only the active release, never a
   const exported = dataOf<{
     manifest: { edges: Array<[string, string]> }
     lineage: { candidates: string[]; ontologyEdges: string[] }
-  }>(await get(app, '/orm/graph/export'))
+  }>(await getAdmin(app, '/orm/graph/export'))
   assert.ok(!exported.manifest.edges.some((edge) => edge[0] === candidateCode), 'the manifest excludes the pending claim')
   assert.ok(!exported.lineage.candidates.includes(candidateCode))
 
-  const releases = dataOf<{ items: Array<{ releaseCode: string; graphSha: string }> }>(await get(app, '/orm/graph/releases'))
+  const releases = dataOf<{ items: Array<{ releaseCode: string; graphSha: string }> }>(await getAdmin(app, '/orm/graph/releases'))
   for (const release of releases.items) {
     const detail = dataOf<{ manifest: { edges: Array<[string, string]> } }>(
-      await get(app, '/orm/graph/release', { code: release.releaseCode }),
+      await getAdmin(app, '/orm/graph/release', { code: release.releaseCode }),
     )
     for (const edge of detail.manifest.edges) {
       if (edge[1] !== 'CANDIDATE') continue
@@ -810,7 +816,7 @@ test('UI-P05e: released graph projections carry only the active release, never a
 })
 
 // --------------------------------------------------------------------------- 10
-test('UI-P05e GAP (PERMISSIVE-TODAY): /graph/relation serves an unreviewed candidate to an anonymous caller', async (t) => {
+test('UI-P05e: /graph/relation keeps candidate evidence admin-only until D08 release', async (t) => {
   const { app } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -819,7 +825,10 @@ test('UI-P05e GAP (PERMISSIVE-TODAY): /graph/relation serves an unreviewed candi
   // A seeded, never-reviewed sameAs claim, fetched by guessing its deterministic code.
   const pendingCode = 'GC-O003-O005-sameAs-SUFI_STUDY'
   const res = await get(app, '/orm/graph/relation', { code: pendingCode })
-  assert.equal(res.statusCode, 200, 'PERMISSIVE-TODAY: the public relation projection serves a PENDING candidate')
+  assert.equal(res.statusCode, 401, 'anonymous relation detail must be denied')
+  assertNoBytesIn('denied anonymous relation detail', res.body, allSynthMarkers)
+  const privateRes = await getAdmin(app, '/orm/graph/relation', { code: pendingCode })
+  assert.equal(privateRes.statusCode, 200, privateRes.body)
   const body = dataOf<{
     relation: {
       code: string
@@ -836,7 +845,7 @@ test('UI-P05e GAP (PERMISSIVE-TODAY): /graph/relation serves an unreviewed candi
     }
     release: unknown
     policy: { automaticApproval: boolean }
-  }>(res)
+  }>(privateRes)
   assert.equal(body.relation.kind, 'CANDIDATE', 'LABELLED-PERMISSIVE: it is typed as a claim, not an edge')
   assert.equal(body.relation.status, 'PENDING')
   assert.equal(body.relation.pending, true)
@@ -845,18 +854,18 @@ test('UI-P05e GAP (PERMISSIVE-TODAY): /graph/relation serves an unreviewed candi
   assert.match(body.relation.statusLabel, /pending review/)
   assert.equal(body.relation.epistemicStatus, 'UNKNOWN')
   assert.equal(body.policy.automaticApproval, false)
-  // the unreviewed evidence span is nonetheless public
-  assert.ok(body.relation.evidence.span, 'PERMISSIVE-TODAY: unreviewed evidence text is public')
+  // The admin-only view retains the pending evidence for internal review.
+  assert.ok(body.relation.evidence.span, 'admin can inspect the evidence in the private review view')
 
   // What is NOT possible: making it look released by guessing another code shape.
-  assert.equal((await get(app, '/orm/graph/relation', { code: 'EDG-NOPE' })).statusCode, 404)
-  assert.equal((await get(app, '/orm/graph/relation', {})).statusCode, 400)
-  assert.ok(!res.body.includes('"kind":"REVIEWED"'), 'a candidate is never reported as a reviewed edge')
-  assert.ok(!res.body.includes('"verified":true'), 'a candidate is never reported as verified')
+  assert.equal((await getAdmin(app, '/orm/graph/relation', { code: 'EDG-NOPE' })).statusCode, 404)
+  assert.equal((await getAdmin(app, '/orm/graph/relation', {})).statusCode, 400)
+  assert.ok(!privateRes.body.includes('"kind":"REVIEWED"'), 'a candidate is never reported as a reviewed edge')
+  assert.ok(!privateRes.body.includes('"verified":true'), 'a candidate is never reported as verified')
 })
 
 // --------------------------------------------------------------------------- 11
-test('UI-P05e GAP (PERMISSIVE-TODAY): /ontology/constellation publishes the reviewer queue that /ontology/conflicts guards', async (t) => {
+test('UI-P05e: ontology constellation stays private until D08 releases an allowlisted projection', async (t) => {
   const { app } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -891,23 +900,26 @@ test('UI-P05e GAP (PERMISSIVE-TODAY): /ontology/constellation publishes the revi
   assert.equal(gated.statusCode, 401, '/ontology/conflicts is admin-only')
 
   const publicView = await get(app, '/orm/ontology/constellation')
-  assert.equal(publicView.statusCode, 200)
+  assert.equal(publicView.statusCode, 401)
+  assertNoBytesIn('denied anonymous ontology constellation', publicView.body, allSynthMarkers)
+  const privateView = await getAdmin(app, '/orm/ontology/constellation')
+  assert.equal(privateView.statusCode, 200, privateView.body)
   const body = dataOf<{
     edges: Array<{ edgeCode: string; epistemicStatus: string; verified: boolean; reason: string | null }>
     identityDecisions: Array<{ decision: string; candidate: boolean }>
     conflicts: Array<{ type: string; code: string; status: string }>
     counts: { edges: number; verifiedEdges: number; unresolvedConflicts: number }
     authority: { readOnly: boolean }
-  }>(publicView)
+  }>(privateView)
 
   const mine = body.edges.find((edge) => edge.edgeCode === edgeCode)
-  assert.ok(mine, 'PERMISSIVE-TODAY: the unreviewed edge is served by the public constellation')
+  assert.ok(mine, 'authorized admin can still inspect the private review projection')
   assert.equal(mine.epistemicStatus, 'UNKNOWN')
   assert.equal(mine.verified, false, 'LABELLED-PERMISSIVE: it is explicitly not verified')
-  assert.match(publicView.body, new RegExp(SYNTH.unreviewedEdge), 'PERMISSIVE-TODAY: the unreviewed reason is public')
+  assert.match(privateView.body, new RegExp(SYNTH.unreviewedEdge), 'the private admin projection includes the unreviewed reason')
   assert.ok(
     body.conflicts.some((conflict) => conflict.code === edgeCode && conflict.status === 'UNKNOWN'),
-    'the reviewer-queue item itself is inside the public payload',
+    'the reviewer queue remains available only in the admin view',
   )
   assert.ok(
     body.identityDecisions.every((decision) => typeof decision.decision === 'string'),
@@ -918,7 +930,7 @@ test('UI-P05e GAP (PERMISSIVE-TODAY): /ontology/constellation publishes the revi
 })
 
 // --------------------------------------------------------------------------- 12
-test('M34-04: raw Research REST requires an admin; unrelated projection-source ACLs are unchanged', async (t) => {
+test('Graph and Ontology containment: raw reads require admin until D08 releases projections', async (t) => {
   const { app, moonql } = await makeApp()
   t.after(async () => {
     await app.close()
@@ -934,26 +946,20 @@ test('M34-04: raw Research REST requires an admin; unrelated projection-source A
     { path: '/orm/research_quality_runs', why: 'case-linked quality evidence' },
     { path: '/orm/research_hypotheses', why: 'CANDIDATE hypotheses' },
   ]
-  const otherPublicReads: Array<{ path: string; why: string }> = [
+  const privateProjectionReads: Array<{ path: string; why: string }> = [
+    { path: '/orm/onto_sources', why: 'source citations and provenance' },
     { path: '/orm/onto_entities', why: 'CONTESTED entities' },
     { path: '/orm/onto_aliases', why: 'CANDIDATE aliases' },
     { path: '/orm/onto_relations', why: 'UNKNOWN/DISPUTED edges' },
-    { path: '/orm/graph_candidates', why: 'PENDING candidates' },
-    { path: '/orm/graph_releases', why: 'full release manifests' },
-    { path: '/orm/graph_adjacency', why: 'derived adjacency' },
+    { path: '/orm/graph_candidates', why: 'PENDING candidates and evidence' },
+    { path: '/orm/graph_releases', why: 'release manifests and lineage' },
+    { path: '/orm/graph_adjacency', why: 'derived graph data' },
+  ]
+  const otherPublicReads: Array<{ path: string; why: string }> = [
+    ...privateProjectionReads,
     { path: '/orm/corpus_editions', why: 'edition metadata (no text field exists here)' },
   ]
-
-  const nonEmpty = new Set([
-    '/orm/research_cases',
-    '/orm/onto_entities',
-    '/orm/onto_relations',
-    '/orm/onto_aliases',
-    '/orm/graph_candidates',
-    '/orm/graph_releases',
-    '/orm/graph_adjacency',
-    '/orm/corpus_editions',
-  ])
+  const nonEmpty = new Set(otherPublicReads.map(({ path }) => path))
   const admin = await adminHeaders(app, '/orm')
   for (const { path, why } of researchReads) {
     const res = await get(app, path)
@@ -976,22 +982,39 @@ test('M34-04: raw Research REST requires an admin; unrelated projection-source A
     }
   }
   for (const { path, why } of otherPublicReads) {
-    const res = await get(app, path)
-    assert.equal(res.statusCode, 200, `${path} behavior is outside M34-04: ${why}`)
-    const rows = res.json().data as unknown[]
-    assert.ok(Array.isArray(rows), `${path} returns a row list`)
-    if (nonEmpty.has(path)) assert.ok(rows.length > 0, `${path} returns rows`)
+    const anonymous = await get(app, path)
+    if (path === '/orm/corpus_editions') {
+      assert.equal(anonymous.statusCode, 200, `${path} publishes metadata only: ${why}`)
+      const rows = anonymous.json().data as unknown[]
+      assert.ok(Array.isArray(rows))
+      assert.ok(rows.length > 0, `${path} retains its metadata-only public contract`)
+      continue
+    }
+    assert.equal(anonymous.statusCode, 401, `${path} must deny anonymous Graph/Ontology reads: ${why}`)
+    assertNoBytesIn(`anonymous ${path}`, anonymous.body, [...allSynthMarkers, CLEARED_BYTES, CLEARED_TRANSLATION_BYTES])
+    const privateRes = await app.inject().get(path).headers(admin).end()
+    assert.equal(privateRes.statusCode, 200, `${path} remains available to an authenticated admin`)
+    const rows = privateRes.json().data as unknown[]
+    assert.ok(Array.isArray(rows), `${path} returns an admin row list`)
+    if (nonEmpty.has(path)) assert.ok(rows.length > 0, `${path} returns seeded rows`)
+    const row = rows[0] as Row | undefined
+    if (row && typeof row.id === 'string') {
+      const privateDetail = await app.inject().get(`${path}/${encodeURIComponent(row.id)}`).headers(admin).end()
+      assert.equal(privateDetail.statusCode, 200, `${path}/:id remains admin-readable`)
+      const anonymousDetail = await app.inject().get(`${path}/${encodeURIComponent(row.id)}`).end()
+      assert.equal(anonymousDetail.statusCode, 401, `${path}/:id denies anonymous raw reads`)
+      assertNoBytesIn(`anonymous ${path}/:id`, anonymousDetail.body, [...allSynthMarkers, CLEARED_BYTES, CLEARED_TRANSLATION_BYTES])
+    }
   }
-
   // Concrete proof that the raw routes reach material the projections withheld.
-  const candidatesRaw = await get(app, '/orm/graph_candidates')
+  const candidatesRaw = await app.inject().get('/orm/graph_candidates').headers(admin).end()
   assert.ok(
     (candidatesRaw.body as string).includes('"PENDING"'),
     'raw REST lists PENDING graph candidates',
   )
-  const aliasesRaw = await get(app, '/orm/onto_aliases')
+  const aliasesRaw = await app.inject().get('/orm/onto_aliases').headers(admin).end()
   assert.ok(aliasesRaw.body.includes('"CANDIDATE"'), 'raw REST lists CANDIDATE aliases')
-  const entitiesRaw = await get(app, '/orm/onto_entities')
+  const entitiesRaw = await app.inject().get('/orm/onto_entities').headers(admin).end()
   assert.ok(entitiesRaw.body.includes('"CONTESTED"'), 'raw REST lists CONTESTED entities')
 
   // The one thing these public reads must never carry: uncleared corpus bytes.
@@ -1285,21 +1308,36 @@ test('M34-04/M19-19/M27-08: no anonymous research projection or release state is
 })
 
 // --------------------------------------------------------------------------- 15
-test.skip('UI-P05e NOT SATISFIED: guessing a public link must be denied for every unapproved projection', async () => {
-  // Precise reason this is skipped rather than asserted:
-  //   D08 (Publication & Governance) is planned-only — no @moonwitness/governance addon and
-  //   none of release_manifests / rights_approvals / editorial_signoffs / takedown_logs exist
-  //   (proved above from moonql.registry.models). Until that gate exists there is no
-  //   "approved public projection" concept for the hub to deny against, and three surfaces are
-  //   demonstrably permissive today:
-  //     1. GET /orm/ontology/constellation returns the same conflicts array as the ADMIN_ONLY
-  //        /orm/ontology/conflicts (packages/moonql-ontology/src/index.ts:457-470).
-  //     2. GET /orm/graph/relation?code=<candidateCode> serves PENDING candidates anonymously
-  //        (packages/moonql-graph/src/projection.ts:480-500).
-  //     3. GET /orm/research/case + /orm/research/trace publish licensed translation text whose
-  //        own table (corpus_translations) is ADMIN_FULL, i.e. denied (test 13 above).
-  //   Plus the documented ADMIN_WRITE hole: raw REST list/get on research_cases, onto_entities,
-  //   onto_aliases and graph_* are public-by-model (packages/moonql/src/model.ts:30-42,
-  //   docs/architecture/SECURITY.md). Enabling this test requires a D08 approval model plus read
-  //   gating on those routes; M27-08 stays BLOCKED until then.
+test('UI-P05e: data-bearing Graph and Ontology projections deny anonymous reads until D08 approval', async (t) => {
+  const { app } = await makeApp()
+  t.after(async () => {
+    await app.close()
+  })
+
+  const releases = dataOf<{ items: Array<{ releaseCode: string }> }>(await getAdmin(app, '/orm/graph/releases'))
+  const releaseCode = releases.items[0]?.releaseCode
+  assert.ok(releaseCode, 'the synthetic admin fixture includes a release for positive controls')
+
+  const routes: Array<{ path: string; query?: Record<string, string> }> = [
+    { path: '/orm/graph/overview' },
+    { path: '/orm/graph/relation', query: { code: 'GC-O003-O005-sameAs-SUFI_STUDY' } },
+    { path: '/orm/graph/adjacency' },
+    { path: '/orm/graph/search', query: { q: 'O005' } },
+    { path: '/orm/graph/releases' },
+    { path: '/orm/graph/release', query: { code: releaseCode } },
+    { path: '/orm/graph/export' },
+    { path: '/orm/ontology/constellation' },
+  ]
+  for (const { path, query } of routes) {
+    const denied = await get(app, path, query)
+    assert.equal(denied.statusCode, 401, `${path} must remain private until an approved D08 projection exists`)
+    assertNoBytesIn(`anonymous ${path}`, denied.body, [...allSynthMarkers, CLEARED_BYTES, CLEARED_TRANSLATION_BYTES])
+    const privateRead = await getAdmin(app, path, query)
+    assert.equal(privateRead.statusCode, 200, `${path} remains available to existing admin workflows`)
+  }
+
+  // Static policy metadata carries no domain rows and remains public.
+  const policy = await get(app, '/orm/graph/policy')
+  assert.equal(policy.statusCode, 200)
+  assertNoBytesIn('public static Graph policy', policy.body, allSynthMarkers)
 })

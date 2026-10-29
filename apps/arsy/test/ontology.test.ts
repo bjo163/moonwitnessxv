@@ -156,7 +156,8 @@ async function makeApp() {
 }
 
 async function constellation(app: FastifyInstance): Promise<Projection> {
-  const res = await app.inject().get('/orm/ontology/constellation').end()
+  const headers = await adminHeaders(app, '/orm')
+  const res = await app.inject().get('/orm/ontology/constellation').headers(headers).end()
   assert.equal(res.statusCode, 200, res.body)
   return dataOf<Projection>(res)
 }
