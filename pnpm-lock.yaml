@@ -613,6 +613,15 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
+  packages/review-grants:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
   packages/moonql:
     dependencies:
       '@moonwitness/core':
