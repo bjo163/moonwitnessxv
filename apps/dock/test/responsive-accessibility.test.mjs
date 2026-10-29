@@ -25,6 +25,22 @@ function extractMediaBlock(css, mediaQueryRegex) {
   return css.slice(startIndex, i - 1)
 }
 
+function extractRule(css, selector) {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const match = css.match(new RegExp(`${escapedSelector}\\s*\\{`))
+  if (!match) return null
+
+  const startIndex = match.index + match[0].length
+  let depth = 1
+  let i = startIndex
+  while (i < css.length && depth > 0) {
+    if (css[i] === '{') depth++
+    else if (css[i] === '}') depth--
+    i++
+  }
+  return css.slice(startIndex, i - 1)
+}
+
 test('globals.css defines prefers-reduced-motion media query suppressing animations and hover transforms', () => {
   assert.match(
     cssContent,
@@ -177,4 +193,36 @@ test('globals.css defines responsive layout safeguards and horizontal overflow c
     /\.dk-nav\s*\{[^}]*display:\s*none;/i,
     'Must collapse desktop .dk-nav for viewports <= 1040px'
   )
+})
+
+test('space cards use the four-to-two-to-one responsive grid without fixed widths', () => {
+  const baseGrid = extractRule(cssContent, '.dk-space-grid')
+  assert.ok(baseGrid, 'Space grid base rule must exist')
+  assert.match(
+    baseGrid,
+    /grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/i,
+    'Wide layouts must render four flexible columns'
+  )
+
+  const tabletBlock = extractMediaBlock(cssContent, /@media\s*\(\s*max-width:\s*1024px\s*\)\s*\{/i)
+  assert.ok(tabletBlock, 'Tablet grid breakpoint must exist')
+  assert.match(
+    extractRule(tabletBlock, '.dk-space-grid'),
+    /grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/i,
+    'Tablet layouts must render two flexible columns'
+  )
+
+  const mobileBlock = extractMediaBlock(cssContent, /@media\s*\(\s*max-width:\s*560px\s*\)\s*\{/i)
+  assert.ok(mobileBlock, 'Mobile grid breakpoint must exist')
+  assert.match(
+    extractRule(mobileBlock, '.dk-space-grid'),
+    /grid-template-columns:\s*minmax\(0,\s*1fr\)/i,
+    'Mobile layouts must render one flexible column'
+  )
+
+  const cardRule = extractRule(cssContent, '.dk-space-card')
+  assert.ok(cardRule, 'Space card rule must exist')
+  assert.match(cardRule, /min-width:\s*0/i, 'Cards must be allowed to shrink within the grid')
+  assert.match(cardRule, /overflow-wrap:\s*anywhere/i, 'Long card copy must wrap without forcing overflow')
+  assert.doesNotMatch(cardRule, /(?:^|;)\s*width:\s*\d+(?:\.\d+)?px\s*(?:;|$)/i, 'Cards must not set a fixed pixel width')
 })

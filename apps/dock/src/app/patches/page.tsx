@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react'
 import { Badge, CardSkeleton, PageHeader } from '@moonwitness/moonui'
 import { readPatchesRegistry, type PatchesRegistry } from '@/data/queries/journey'
+import { censusPatches } from '@/data/queries/patches'
 import { panelErrorMessage } from '@/data/queries/error'
 import { PatchesExplorer } from '@/ui/client/PatchesExplorer'
+import { getPatchesCopy } from '@/ui/copy/patches-copy'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
@@ -19,12 +21,13 @@ export default async function PatchesPage(): Promise<ReactNode> {
   const requestHeaders = await headers()
   const locale = localeFromMiddlewareHeader(requestHeaders.get(DOCK_LOCALE_HEADER))
   const localeHref = dockHrefFor(locale)
-  const copy = getStatesCopy(locale)
+  const stateCopy = getStatesCopy(locale)
+  const copy = getPatchesCopy(locale)
 
   const panelCopy: PanelCopy = {
-    loadingLabel: copy.loadingContent,
-    emptyTitle: copy.emptyPatches,
-    errorMessage: copy.errorPatchesUnavailable,
+    loadingLabel: stateCopy.loadingContent,
+    emptyTitle: stateCopy.emptyPatches,
+    errorMessage: stateCopy.errorPatchesUnavailable,
   }
 
   // The header badges are derived from the same read, so the registry is awaited
@@ -32,26 +35,32 @@ export default async function PatchesPage(): Promise<ReactNode> {
   const outcome = await readPanel<PatchesRegistry>(
     readPatchesRegistry,
     panelCopy,
-    (registry) => registry.patches.length === 0 && registry.mandates.length === 0,
-    (err) => panelErrorMessage(err, copy.errorPatchesUnavailable),
+    (registry) => registry.patches.length === 0,
+    (err) => panelErrorMessage(err, stateCopy.errorPatchesUnavailable),
   )
   const registry = outcome.state === 'ready' ? outcome.value : null
+  const census = registry ? censusPatches(registry) : null
 
   return (
     <div className="m-stack" style={{ gap: 20 }}>
       <PageHeader
-        title="World Patches & Historical Context"
-        subtitle="33 Canonical Patches · Dual-title Conflict Preserved · Declarative MoonQL Journey Domain"
-        breadcrumbs={[{ label: 'Home', href: localeHref('/') }, { label: 'Patches' }]}
+        title={copy.pageTitle}
+        subtitle={copy.pageSubtitle}
+        breadcrumbs={[{ label: copy.breadcrumbHome, href: localeHref('/') }, { label: copy.breadcrumbPatches }]}
         actions={
-          registry ? (
+          census ? (
             <div className="m-row" style={{ gap: 8, flexWrap: 'wrap' }}>
-              <Badge tone="cyan">{registry.counts.total} patches</Badge>
-              <Badge tone="ok">{registry.counts.canonical} canonical</Badge>
-              {registry.counts.disputed > 0 ? (
-                <Badge tone="hot">{registry.counts.disputed} disputed</Badge>
+              <Badge tone="cyan">
+                {census.records} {copy.badgePatches}
+              </Badge>
+              <Badge tone="ok">
+                {census.canonical} {copy.badgeCanonical}
+              </Badge>
+              {census.conflicts > 0 ? (
+                <Badge tone="hot">
+                  {census.conflicts} {copy.badgeDisputed}
+                </Badge>
               ) : null}
-              <Badge tone="accent">{registry.counts.mandates} mandates</Badge>
             </div>
           ) : null
         }
@@ -69,7 +78,7 @@ export default async function PatchesPage(): Promise<ReactNode> {
           </div>
         }
       >
-        {(value) => <PatchesExplorer initialPatches={value.patches} initialMandates={value.mandates} />}
+        {(value) => <PatchesExplorer registry={value} locale={locale} />}
       </OutcomePanel>
     </div>
   )

@@ -144,9 +144,12 @@ for (const panel of DATA_BACKED) {
   test(`UI-F10 ${panel.name} takes its empty and error sentences from the states catalogue`, () => {
     const source = read(...panel.file.split('/'))
     const referenced = new Set(
-      [...source.matchAll(/\bcopy\.([A-Za-z0-9_]+)/g)].map((match) => match[1]),
+      [...source.matchAll(/\b(?:copy|stateCopy)\.([A-Za-z0-9_]+)/g)].map((match) => match[1]),
     )
     assert.ok(referenced.size > 0, `${panel.file} must read its wording off the locale catalogue`)
+    if (/\bstateCopy\./.test(source)) {
+      assert.match(source, /const stateCopy = getStatesCopy\(locale\)/, `${panel.file} must bind its shared state catalogue explicitly`)
+    }
 
     for (const key of [...panel.emptyKeys, ...panel.errorKeys]) {
       assert.ok(referenced.has(key), `${panel.file} must show ${key} through copy, not inline text`)

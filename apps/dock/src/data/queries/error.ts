@@ -10,3 +10,5 @@ import { MoonApiError } from '@moonwitness/moonql-client'
 export function panelErrorMessage(err: unknown, fallback: string): string {
   return err instanceof MoonApiError ? err.message : fallback
 }
+
+/** The public Terms route is intentionally closed while no D08 release projection exists. */
