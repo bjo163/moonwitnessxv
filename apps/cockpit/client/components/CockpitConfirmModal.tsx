@@ -1,5 +1,6 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Button } from '@moonwitness/moonui'
+import { useModalFocus } from './modal-focus'
 
 export interface CockpitConfirmModalProps {
   isOpen: boolean
@@ -26,7 +27,7 @@ export function CockpitConfirmModal({
   onConfirm,
   onCancel,
 }: CockpitConfirmModalProps): ReactNode {
-  const dialogRef = useRef<HTMLDivElement | null>(null)
+  const dialogRef = useModalFocus(isOpen)
 
   useEffect(() => {
     if (!isOpen) return
@@ -39,9 +40,6 @@ export function CockpitConfirmModal({
     }
 
     window.addEventListener('keydown', handleKeyDown)
-    // Button is a plain function component, so a ref on it never attached. Focus
-    // the dialog container instead: the intent was "move focus into the dialog".
-    dialogRef.current?.focus()
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
@@ -56,6 +54,8 @@ export function CockpitConfirmModal({
       aria-modal="true"
       aria-labelledby="confirm-modal-title"
       aria-describedby="confirm-modal-desc"
+      ref={dialogRef}
+      tabIndex={-1}
       style={{
         position: 'fixed',
         inset: 0,
@@ -70,8 +70,6 @@ export function CockpitConfirmModal({
       onClick={onCancel}
     >
       <div
-        ref={dialogRef}
-        tabIndex={-1}
         style={{
           background: 'var(--surface, #13101d)',
           border: '2px solid var(--accent, #ffd400)',

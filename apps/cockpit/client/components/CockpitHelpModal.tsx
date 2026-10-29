@@ -1,6 +1,7 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Button } from '@moonwitness/moonui'
 import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
+import { useModalFocus } from './modal-focus'
 
 export interface CockpitHelpModalProps {
   isOpen: boolean
@@ -13,7 +14,7 @@ export function CockpitHelpModal({
   copy,
   onClose,
 }: CockpitHelpModalProps): ReactNode {
-  const closeBtnRef = useRef<HTMLButtonElement | null>(null)
+  const dialogRef = useModalFocus(isOpen)
 
   useEffect(() => {
     if (!isOpen) return
@@ -26,7 +27,6 @@ export function CockpitHelpModal({
     }
 
     window.addEventListener('keydown', handleKeyDown)
-    closeBtnRef.current?.focus()
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
@@ -50,6 +50,8 @@ export function CockpitHelpModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="help-modal-title"
+      ref={dialogRef}
+      tabIndex={-1}
       style={{
         position: 'fixed',
         inset: 0,
@@ -94,7 +96,7 @@ export function CockpitHelpModal({
               {copy.helpSubtitle}
             </p>
           </div>
-          <Button ref={closeBtnRef} variant="ghost" size="sm" onClick={onClose}>
+          <Button variant="ghost" size="sm" onClick={onClose}>
             ✕
           </Button>
         </div>
