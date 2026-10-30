@@ -26,6 +26,49 @@ One record has one owner. D20 stores no duplicate customer profile, invoice, pay
 - `apps/isp-radius` binds RADIUS UDP 1812/1813 and RadSec TCP 2083 as configured. It has health/readiness checks but no business REST API or SQL access. It reads NAS secrets from mounted secret files and never logs credentials or raw authentication material.
 - `apps/isp-console` calls only its server-side BFF; browser code never receives ARSY or RADIUS service credentials.
 
+## Runtime configuration and protocol boundary
+
+`apps/isp-radius` is configured entirely by environment values that name files and
+listeners, never by a value that carries a secret:
+
+| Variable | Meaning | Default |
+|---|---|---|
+| `ISP_ARSY_URL` | ARSY origin the D20 service routes live under; the adapter appends `/api/v1` when the URL carries no path | required |
+| `ISP_ARSY_KEY_FILE` | mounted file holding the D00 service key with the `isp-radius` role | required |
+| `ISP_SECRETS_DIR` | mounted directory the NAS shared-secret references resolve inside | required |
+| `ISP_RADIUS_AUTH_ADDR` / `ISP_RADIUS_ACCT_ADDR` | UDP 1812/1813 bind addresses; must differ | `127.0.0.1:1812` / `127.0.0.1:1813` |
+| `ISP_RADSEC_ADDR` + `ISP_RADSEC_CERT_FILE` / `_KEY_FILE` / `_CA_FILE` | RadSec TCP 2083 and its three mounted TLS files; all four or none | unset |
+| `ISP_MSG_AUTHENTICATOR` | `disabled`, `warn` or `enforce` for the RFC 3579/2869 attribute | `warn` |
+| `ISP_COA_TIMEOUT` / `ISP_ACTION_POLL_INTERVAL` / `ISP_ARSY_TIMEOUT` | one Dynamic Authorization attempt window, the action poll cadence (200ms–60s) and the ARSY call budget | `5s` / `2s` / `4s` |
+| `ISP_HEALTH_ADDR` | liveness/readiness listener | `127.0.0.1:8081` |
+
+Startup fails closed when the process cannot tell which ARSY it talks to or where
+its secrets live, so it never opens a protocol listener it cannot serve honestly.
+Readiness reports each declared listener plus a live ARSY probe; liveness only says
+the health socket answers.
+
+What the runtime deliberately does **not** carry from the reviewed MWX-ISP source:
+
+- No EAP method state machines and no vendor attribute dictionaries. The runtime
+  authenticates the PAP credential the NAS protected with the shared secret and
+  answers with the bounded profile attributes ARSY returns; anything richer belongs
+  to the tenant's ARSY profile and its NAS configuration.
+- No `Disconnect-Cause` or `Operator-Name` on a CoA/Disconnect-Request. RFC 5176 §3
+  identifies the target with NAS and session attributes only (NAS-Identifier plus
+  Acct-Session-Id and User-Name), and the classic one-octet RADIUS type field cannot
+  even carry attribute 419, so a request that "sent" it silently sent nothing.
+- No Message-Authenticator shortcut on Dynamic Authorization: RFC 5176 §3.4 digests
+  a CoA/Disconnect-Request with the Request Authenticator considered to be sixteen
+  zero octets, which is a different rule from an Access-Request.
+- No SQL, no business REST and no durable cache. The only in-memory state is a
+  bounded view of which NAS identifiers this process has served and where their
+  sessions arrived, which the action runner uses instead of a second NAS inventory.
+
+Message-Authenticator handling is the RADIUS/UDP hardening lever for CVE-2024-3596
+("BlastRADIUS"); RadSec remains the only transport that protects the whole
+conversation, and it trusts a peer only when its certificate chains to the
+configured CA bundle and the leaf is in date when the port opens.
+
 ## Source feature migration
 
 `docs/research/mwx-isp-into-xv-migration-matrix.md` maps the accepted MWX-ISP feature checklist at the pinned source SHA. Reuse the Go protocol pipeline and compatible reference dictionaries after dependency/security review. Translate persistence and business APIs into MoonQL/ARSY. Rebuild the operator surface with MoonUI. Do not migrate source database rows or runtime secrets.
