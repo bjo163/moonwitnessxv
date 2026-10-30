@@ -66,23 +66,26 @@ function portBindings(block: string): string[] {
   const at = lines.findIndex((line) => /^\s{4}ports:\s*$/.test(line))
   if (at < 0) return []
   const out: string[] = []
-  for (let index = at + 1; index < lines.length && /^\s{6}-/.test(lines[index]!); index += 1) {
-    out.push(lines[index]!.trim().replace(/^-\s*/, '').replace(/"/g, ''))
+  for (let index = at + 1; index < lines.length; index += 1) {
+    const line = lines[index]!
+    if (/^\s{6}#/.test(line)) continue
+    if (!/^\s{6}-/.test(line)) break
+    out.push(line.trim().replace(/^-\s*/, '').replace(/"/g, ''))
   }
   return out
 }
 
-test('compose: only the hub publishes off loopback', () => {
-  // M27-10 — a service that binds 0.0.0.0 is reachable from the host network even
-  // when the reverse proxy never routes to it. Only the hub keeps a host-wide
-  // binding; the database, ECHOLOG, SKYLINK, the AI gateway, HQ, dock and the
-  // pilot frontends are loopback or proxy-only. HQ and dock reachability comes
-  // from Coolify's proxy over the compose network (ADR-0016), which is why the
-  // frontends no longer need a host-wide port.
-  const wide = [...blocks].filter(([, block]) => portBindings(block).some((entry) => /^\d+:/.test(entry))).map(([name]) => name).sort()
-  assert.deepEqual(wide, ['arsy'], 'a service gained or lost a host-wide port binding')
+test('compose: every published port is loopback-bound', () => {
+  // M27-10/M27-13 — a service that binds 0.0.0.0 is reachable from the host
+  // network even when the reverse proxy never routes to it. Every service,
+  // including the hub, publishes on 127.0.0.1 only; Traefik reaches them over
+  // the compose network (ADR-0016), so no host-wide binding is needed.
+  assert.deepEqual(portBindings(blocks.get('arsy')!), ['127.0.0.1:3000:3000'], 'the hub publishes on loopback only')
 
-  for (const name of ['db', 'echolog', 'skylink', 'aigateway', 'orbit', 'empire-web', 'dock', 'headquarters']) {
+  const wide = [...blocks].filter(([, block]) => portBindings(block).some((entry) => /^\d+:/.test(entry))).map(([name]) => name).sort()
+  assert.deepEqual(wide, [], 'a service gained a host-wide port binding')
+
+  for (const name of ['arsy', 'db', 'echolog', 'skylink', 'aigateway', 'orbit', 'empire-web', 'dock', 'headquarters']) {
     const block = blocks.get(name)
     if (!block) continue
     const open = portBindings(block).filter((entry) => !entry.startsWith('127.0.0.1:'))

@@ -583,6 +583,12 @@ Docker checklist: create `.env` from `.env.example` (compose fails without
 `docker compose build`, `curl :3000/api/v1/health/ready`, `curl :3002/login`,
 `curl :3001/`.
 
+Production deploys from Git through Coolify — repository/branch, the full
+service→port→domain table, the secret names, health probes, deploy and rollback
+steps, and the behaviour that bites (profiles ignored, `default` aliases not
+resolved, no redirects in compose domains) are in
+[docs/runbook-coolify-deploy.md](docs/runbook-coolify-deploy.md).
+
 ## Conventions
 
 - Shared contract lives in `@moonwitness/core`: envelope types, `PORTS` /

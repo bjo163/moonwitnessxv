@@ -64,7 +64,10 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "3000:3000"
+      # loopback like every other service: the proxy reaches the hub by service
+      # name over the compose network, so a host-wide publish only exposes the
+      # API on the box's public IP, outside TLS and CORS
+      - "127.0.0.1:3000:3000"
     environment:
       <<: *db-identity
       NODE_ENV: production
