@@ -414,4 +414,6 @@ Three fixes landed the same day, none live until the next promotion:
 - HSTS on dock, HQ and orbit: `securityHeaders()` emits `max-age=15552000` at `2830a59`; HQ and orbit consume it through `@moonwitness/web-config`/`@moonwitness/core`, and `apps/dock/test/locale-routes.test.mjs` asserts it on `/id`, `/en`, `/fr` and `/api/on-air` (319/319). `apps/echolog` does not use the shared headers, so `media` sets the same value from an `onSend` hook at `f4b4dee` (`apps/echolog/test/echolog.test.ts` 7/7, covering both a 200 and a 404).
 - Runbook: `docs/runbook-coolify-deploy.md` §5–§7 now carries these probes and the measured exposure.
 
-Post-promotion re-probe still required: port 3000 must refuse the connection, and dock/`hq`/`orbit`/`media` must answer `Strict-Transport-Security`. The `www` plain-HTTP `404` is an edge rule, not a repository change.
+Post-promotion re-probe still required after an authorized deploy: port 3000 must refuse the connection, and dock/`hq`/`orbit`/`media` must answer `Strict-Transport-Security`. The `www` plain-HTTP `404` is an edge rule, not a repository change.
+
+Measured at 2026-10-30T00:22Z, after CI promoted `b0b44f9` to `main` (run `40978574691`, success): `http://163.61.134.104:3000/api/v1/health` still `200`; dock, `hq`, `orbit` and `media` still send no `Strict-Transport-Security`; `a-l-l-a-h.com/en` still `max-age=15552000`; plain HTTP on the dock apex still `302` to the same path and query. Promotion alone does not rebuild the host, so all three fixes remain unobservable in production until a deploy.

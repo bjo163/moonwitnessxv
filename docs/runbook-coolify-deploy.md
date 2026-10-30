@@ -115,7 +115,9 @@ Until 2026-10-30 the hub published `3000:3000` on every interface while the othe
 
 `docker-compose.yml` now publishes `127.0.0.1:3000:3000`. Routing is unaffected because Traefik reaches the hub over the `A-L-L-A-H` network. `apps/arsy/test/compose-contract.test.ts` pins this: the hub's only binding is loopback, and no service may hold a host-wide port (the assertion fails on the previous file with "the hub publishes on loopback only").
 
-The running host still serves the pre-change container until the next promotion, so the probe above keeps answering `200` until then; after the deploy, a refused connection is the expected result.
+The running host still serves the pre-change container until an authorized deploy, so the probe above keeps answering `200` until then; after the deploy, a refused connection is the expected result.
+
+**Promotion is not a deploy.** CI reached `main` at `b0b44f9` on 2026-10-30 and the host did not change: at 00:22Z port `3000` still answered `200`, and dock, `hq`, `orbit` and `media` still sent no `Strict-Transport-Security`. The same applies to the HSTS commits `2830a59` and `f4b4dee` — they become observable only after a Coolify redeploy of `main`.
 
 ## 8. Rollback
 
