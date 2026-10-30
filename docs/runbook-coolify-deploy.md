@@ -32,9 +32,8 @@ Deployment happens by promotion, never by hand-editing the server. `git push ori
 | `orbit` | `moonwitness-orbit` | 3007 | `127.0.0.1:3007` | `orbit.moonwitness.biz.id` |
 | `sentinel` | `moonwitness-sentinel` | — | — | **none** |
 | `empire-web` | `moonwitness-empire-web` | 3010 | `127.0.0.1:3010` | `a-l-l-a-h.com` |
-| `backup` | `moonwitness-backup` | — | — | **none** |
 
-`db`, `backup`, `sentinel`, `aigateway`, `cockpit` and `lumen-runtime` must stay unrouted. `cockpit` and `ai` are deliberately unbound (M44-07 Variant A).
+`db`, `sentinel`, `aigateway`, `cockpit` and `lumen-runtime` must stay unrouted. There is no scheduled `backup` sidecar since `b0b44f9` (it restart-looped in Coolify); `scripts/db-backup.sh` still ships for on-demand dumps. `cockpit` and `ai` are deliberately unbound (M44-07 Variant A).
 
 Domains are bound through `docker_compose_domains`, a JSON **object** keyed by service name:
 
