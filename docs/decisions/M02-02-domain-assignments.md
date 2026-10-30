@@ -1,4 +1,4 @@
-# M02-02 — Domain Ownership Mapping & Boundary Register (D00–D19)
+# M02-02 — Domain Ownership Mapping & Boundary Register (D00–D20)
 
 - **Milestone**: M02 — XV Governance and Source of Truth
 - **Status**: RATIFIED
@@ -12,7 +12,7 @@ Setiap entitas data di MoonWitness XV hanya dimiliki oleh **satu domain kanonika
 
 ---
 
-## 2. Matriks Kepemilikan Domain D00–D19
+## 2. Matriks Kepemilikan Domain D00–D20
 
 | Domain ID | Nama Domain | Paket / Modul Target | Entitas Kanonikal yang Dimiliki | Batas & Aturan Anti-Tumpang Tindih |
 |---|---|---|---|---|
@@ -32,6 +32,7 @@ Setiap entitas data di MoonWitness XV hanya dimiliki oleh **satu domain kanonika
 | **D13** | **Design System** *(Existing)* | `@moonwitness/moonui` | Komponen visual, token styling CSS, SVG Zine & Crown, layouts | Kontrak visual antarmuka monorepo. Bebas dari business logic atau database state. |
 | **D18** | **Messages & Channels** *(Accepted — ADR-0006)* | `@moonwitness/skylink-store`, disajikan oleh `apps/skylink` | `channel_accounts`, `conversations`, `messages`, `delivery_attempts` (schema `skylink`) | Pemilik tunggal pesan/percakapan. **Tidak memiliki** identitas, sesi, atau login (D00 tetap ARSY). ARSY dan app lain hanya klien lewat REST/WS. Semantik `channels` pindah dari D09 ke D18 secara migrasi, bukan duplikasi; D09 tetap memiliki stations/schedule/playlog/DENPA. |
 | **D19** | **Object Storage & Attachments** *(Accepted — ADR-0007)* | `@moonwitness/echolog-core` + `apps/echolog` | Objek byte, `sha256` digest, size, MIME, retensi, legal hold, kuota, grant unduh (metadata sidecar; **tanpa tabel**) | Pemilik tunggal byte. **Stateless** — himpunan SQL owner tetap `{moonql, skylink-store}`. Bukan pemilik consent (D08), identitas (D00), `media_manifests` (D07), artifact (D01), atau baris pesan (D18); konsumen hanya menyimpan `{object_key, digest, size, content_type}`. |
+| **D20** | **ISP & Network Operations** *(Accepted — ADR-0018; implementation M51)* | `@moonwitness/moonql-isp` through ARSY; protocol runtime `apps/isp-radius` | ISP organizations/tenant scope, RADIUS users/profiles, NAS/network nodes, technical subscription bindings, accounting/sessions, IPAM/ODP references, registered-target observations/incidents/syslog | ARSY/MoonQL remains the sole durable owner. D00 owns principals/grants; ISP customer/package/subscription/invoice records map to D15; manual payment/reconciliation maps to D16. D20 stores references, never duplicate customer/invoice/payment rows or NAS shared secrets. Go runtime has no SQL. |
 
 ---
 

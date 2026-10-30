@@ -34,12 +34,15 @@ Current application surfaces and accepted planned targets:
 | **`@moonwitness/echolog`** (M39) | 3006 by default (local) | Filesystem content-addressed storage and bounded S3-compatible subset; consumer UI/final e2e gates remain open; D19, no tables |
 | **ORBIT** (M40) | 3007 by default (local) | Spatial frontend shell (3D plus accessible 2D) rendering fixtures; no backend/domain owner yet |
 | **LUMEN Runtime** (M41; planned app) | no HTTP port | Internal worker paired with `@moonwitness/lumen`; no dev server, task API, database, identity or model-routing owner; ADR-0010 accepted |
+| **ISP Console** (M51; planned) | 3008 by default (local) | Private Next.js/MoonUI operator frontend; shares D00 and ARSY/MoonQL; no public Dock route |
+| **ISP RADIUS Runtime** (M51; planned) | UDP 1812/1813; TCP 2083 when enabled | Go RADIUS/RadSec protocol adapter to ARSY; no SQL, business REST API or login |
 
 Process, port and supervision assignment is defined once in `scripts/apps.registry.mjs`; run `pnpm apps` to print what the dev runner and the Cockpit actually cover. See [Dev processes](docs/architecture/DEV_PROCESSES.md).
 
 The hub behind everything:
 
 - **ARSY** — canonical identity of the existing central API/ORM/plugin runtime; path/package move and exact-SHA compatibility/rollback evidence are recorded, while deployment proof remains open (M28-15)
+- **D20 ISP & Network Operations** — accepted by ADR-0018 for implementation through ARSY/MoonQL under M51; D00 owns principals, D15 customer/commercial/subscription/invoice records, and D16 manual payment/reconciliation records
 - **stations** — radio station management (CRUD)
 - **moonql addons** — declarative ORM features (schedule, playlog, settings, auth, api keys, ops) with auto-REST, views and a metadata-driven Studio admin
 - **channels** — outbound IM channels (WhatsApp first, add more as plugins); **target: served by [SKYLINK](docs/architecture/SKYLINK.md) (D18, ADR-0006), with these routes kept as an admin proxy**
