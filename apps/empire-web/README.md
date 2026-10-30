@@ -58,7 +58,7 @@ Measured at `2e911af` after `pnpm --filter @moonwitness/empire-web build`; `node
 | codex | +1 (header, footer) | 19 / 200.3 / 381.7 / 563 / 744.3 / 925.7, right 1097 |
 | ggs | +1 (footer) | 27 / 525 / 840, right 1095 |
 
-The same run keeps small text at or above AA (`--brand` 8.47, `--fg-subtle` 9.04, `--fg-muted` 6.38, `--danger` 6.50 on `--bg`), finds 0 elements still animating under `prefers-reduced-motion`, and checks 48 information-page layouts (6 sections × 2 locales × 4 widths). `node apps/empire-web/test/export-check.mjs` and `pnpm --filter @moonwitness/empire-web test` both pass.
+The same run keeps small text at or above AA (`--brand` 8.47, `--fg-subtle` 9.04, `--fg-muted` 6.38, `--danger` 6.50 on `--bg`), finds 0 elements still animating under `prefers-reduced-motion`, and checks 48 information-page layouts (6 sections × 2 locales × 4 widths). `node apps/empire-web/test/export-check.mjs` and `pnpm --filter @moonwitness/empire-web test` both pass. A rebuild and strict re-run on the tree that carries `b4b655f` (the footer social marks) exits 0 with the same anchors.
 
 Deviations from the mockups, recorded rather than hidden:
 
