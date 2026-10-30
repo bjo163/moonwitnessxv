@@ -820,3 +820,17 @@ a:focus-visible { outline: 3px solid var(--cyan); outline-offset: 5px; }
   .su-lib__card-art { object-position:50% 48%; }
   .su-home__card-art { object-position:50% 45%; }
 }
+
+/* --- M45-08: reader internal rhythm at the 1122 composition ------------ */
+/* The reference puts the title at 304, the synopsis at 479–627, the meta row
+   at 630–849 and the prev/next row at 866. Only one title line fits before
+   495px, so the display size drops to 60px (Impact substitution). */
+@media (min-width:1100px) {
+  .su-reader__copy { padding-top:180px; }
+  .su-reader__title { font-size:60px; }
+  .su-reader__title span { display:inline; }
+  .su-reader__synopsis { margin-top:38px; min-height:148px; }
+  .su-reader__meta { margin-top:3px; min-height:219px; }
+  .su-reader__pager a { height:65px; }
+  .su-reader__wisdom { margin-top:1px; min-height:284px; }
+}
