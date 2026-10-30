@@ -21,6 +21,7 @@ import {
 export * from './seed.js'
 export * from './consent-scope.js'
 export * from './mandate-lifecycle.js'
+export * from './mission-checklist.js'
 export * from './real-world-action-metrics.js'
 
 /**
