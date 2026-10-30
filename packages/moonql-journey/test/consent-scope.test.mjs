@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
-import { authoriseScopeAction, impliesAuthorityOverOthers, SCOPE_ORDER } from '../src/consent-scope.ts'
+import { authoriseScopeAction, impliesAuthorityOverOthers, SCOPE_ORDER } from '../dist/consent-scope.js'
 
 void test('the contract lists the same audiences the model publishes', () => {
   const seed = readFileSync(new URL('../src/seed.ts', import.meta.url), 'utf8')
