@@ -1,5 +1,6 @@
 import { IconMoon } from '@moonwitness/moonui'
 import { text, type StoryLocale } from '../../lib/story-universe'
+import { SocialRow } from './SocialRow'
 
 const local = (locale: StoryLocale, path: string) => `/${locale}${path === '/' ? '' : path}`
 
@@ -21,6 +22,7 @@ export function SiteFooter({ locale }: { locale: StoryLocale }) {
       <nav className="su-footer__nav" aria-label={locale === 'id' ? 'Navigasi kaki halaman' : 'Footer navigation'}>
         {links.map(([path, label], index) => <a key={`${path}-${index}`} href={local(locale, `/${path}`)}>{label}</a>)}
       </nav>
+      <SocialRow className="su-footer__social" />
       <div className="su-footer__aside">
         <p className="su-footer__quote">“{locale === 'id' ? 'Kemanusiaan yang lebih cerah adalah cerita yang kita bangun bersama.' : 'A brighter humanity is a story we build together.'}”</p>
         <p className="su-preview su-footer__preview" role="note">{text[locale].preview}</p>

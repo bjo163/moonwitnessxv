@@ -664,7 +664,7 @@ a:focus-visible { outline: 3px solid var(--cyan); outline-offset: 5px; }
 .su-brand--footer .su-brand__text b { font-size:19px; }
 .su-footer__nav { display:flex; gap:22px; margin-left:26px; }
 .su-footer .su-footer__nav a { display:inline-flex; align-items:center; min-height:24px; font-family:var(--font-mono); font-size:7px; letter-spacing:.14em; text-transform:uppercase; color:var(--fg-subtle); text-decoration:none; white-space:nowrap; }
-.su-footer .su-footer__aside { margin-left:auto; text-align:right; }
+.su-footer .su-footer__social { display:flex; align-items:center; gap:10px; margin:0 0 0 6px; color:var(--fg-subtle); }\n.su-footer__aside { margin-left:auto; text-align:right; }
 .su-footer .su-footer__quote { margin:0; max-width:260px; font-family:var(--font-editorial); font-style:italic; font-size:12px; line-height:1.5; color:var(--fg); }
 .su-footer .su-preview { display:block; margin-top:5px; padding:0; border:0; background:none; text-align:right; font-family:var(--font-mono); font-size:5.4px; font-weight:400; letter-spacing:.14em; color:var(--fg-muted); }
 .su-footer__bar { display:flex; align-items:center; gap:10px; height:var(--footer-bar-h,56px); padding:0 30px; border-top:1px solid var(--rule); font-family:var(--font-mono); font-size:6.4px; letter-spacing:.16em; text-transform:uppercase; color:var(--fg-muted); }
