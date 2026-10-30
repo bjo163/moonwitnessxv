@@ -92,7 +92,11 @@ curl -sS --resolve api.moonwitness.biz.id:443:$MW https://api.moonwitness.biz.id
 curl -sS -o /dev/null -w '%{http_code}\n' --resolve hq.moonwitness.biz.id:443:$MW https://hq.moonwitness.biz.id/login
 curl -s "https://dns.google/resolve?name=a-l-l-a-h.com&type=A"   # authoritative edge answers
 curl -sS -m 5 -o /dev/null -w '%{http_code}\n' http://163.61.134.104:3000/api/v1/health   # must stop answering (§7)
+curl -sSI --resolve moonwitness.biz.id:80:$MW http://moonwitness.biz.id/en | grep -iE 'HTTP/|location'   # 302 to https, same path
+curl -sSI --resolve hq.moonwitness.biz.id:443:$MW https://hq.moonwitness.biz.id/login | grep -i strict-transport   # max-age=15552000
 ```
+
+Plain HTTP is answered with a `302` to the same path and query, not a browser-pinned `301`; the `301` for `www` lives at the edge and matches HTTPS only, so `http://www.<zone>/…` falls through to the origin (observed `404` at `a-l-l-a-h.com` in October 2026). Each app therefore sends its own HSTS — empire from nginx, the hub from helmet, dock/HQ/orbit from the shared `securityHeaders()`, and echolog from an `onSend` hook.
 
 DNS answers must come from `https://dns.google/resolve` or a Cloudflare DoH endpoint; the machine resolver in this workspace is not authoritative.
 
@@ -103,7 +107,8 @@ DNS answers must come from `https://dns.google/resolve` or a Cloudflare DoH endp
 1. **Compose `profiles` are ignored.** Coolify starts only services without a profile, so `skylink` never runs (`COMPOSE_PROFILES` has no effect — [coollabsio/coolify#6395](https://github.com/collabsio/coolify/issues/6395)). Its host therefore answers 503 and Traefik serves its default certificate.
 2. **Compose network aliases on `default` do not resolve.** Coolify puts every service on its own external network; an alias declared under `default` is not registered there. Call services by service name (`arsy`, not `radio`).
 3. **Domains cannot express redirects.** A compose domain is `scheme://host[:port][/path]`; the `www` 301s live in Cloudflare (one wildcard Single Redirect per zone) and a `www` request never reaches the origin.
-4. **`localhost` inside a container is the container.** Any URL passed to a BFF must name the service, and any cookie must be `Secure` only when the public origin is HTTPS (`HQ_COOKIE_SECURE`).
+4. **The proxy does not pin plain HTTP.** It answers `302`, so HSTS has to come from the app; a host that sends none leaves the first visit upgradable by anyone who can intercept it.
+5. **`localhost` inside a container is the container.** Any URL passed to a BFF must name the service, and any cookie must be `Secure` only when the public origin is HTTPS (`HQ_COOKIE_SECURE`).
 
 ## 7. Hub port binding
 
