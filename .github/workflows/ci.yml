@@ -32,6 +32,13 @@ jobs:
           node-version-file: .nvmrc
           cache: 'pnpm'
 
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.0'
+          cache: ''
+          check-latest: true
       - name: Install dependencies
         id: install_dependencies
         run: pnpm install --frozen-lockfile
@@ -51,6 +58,25 @@ jobs:
             ghcr.io/gitleaks/gitleaks:v8.30.0@sha256:105ac66a57b2bb8afb61a3b8a5dcc4817773d03724a7e8a515214cfe58225556 \
             git --redact=100 --exit-code=1 --no-banner --no-color .
 
+      - name: Record UI consistency report
+        # Evidence only: `pnpm verify` below is the gate. This step runs the same
+        # script in machine-readable mode so a reviewer can see the ADR-0017
+        # ledger debt and the duplicate matrix without reading the log.
+        continue-on-error: true
+        run: node scripts/check-ui-consistency.mjs --json=ui-consistency.json
+
+      - name: Upload UI consistency report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-consistency
+          path: ui-consistency.json
+          if-no-files-found: warn
+
+
+      - name: Run Go RADIUS runtime tests
+        working-directory: apps/isp-radius
+        run: go test ./...
       - name: Run Monorepo Verification (build, lint, gen:sdk:check, test, build:web)
         run: pnpm verify
 

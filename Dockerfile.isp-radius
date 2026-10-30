@@ -1,0 +1,15 @@
+# syntax=docker/dockerfile:1
+
+FROM golang:1.26-alpine AS builder
+WORKDIR /build
+COPY apps/isp-radius/go.mod apps/isp-radius/go.sum ./
+RUN go mod download
+COPY apps/isp-radius ./
+RUN CGO_ENABLED=0 GOOS=linux go build -o isp-radius ./cmd/isp-radius
+
+FROM alpine:3.19
+RUN apk add --no-cache ca-certificates
+WORKDIR /app
+COPY --from=builder /build/isp-radius .
+EXPOSE 1812/udp 1813/udp 2083/tcp
+CMD ["./isp-radius"]
