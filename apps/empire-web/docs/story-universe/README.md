@@ -87,7 +87,7 @@ Measured at 1122×1402 in **both locales** (`en` and `id`), all five pages, delt
 5. **Mockup copy.** Reproduced verbatim under the owner decision; every statement is registered in CLAIMS.md. The Qur'an panel is **withheld** (rights), LIVE NOW / JOIN TODAY carry a story-time caption, and 50+ STORIES & IDEAS remains an unsupported metric the owner accepted.
 6. **/ stays zine.** out/index.html is asserted to be data-skin="zine"; the entry picker keeps the dual-skin contract (ADR-0014). The six information pages moved to the empire chrome.
 
-7. **Social marks are drawn, not linked.** The four icons match the mockup; they carry ria-hidden and no href until a real account exists (CLAIMS.md row 7).
+7. **Social marks are drawn, not linked.** The four icons match the mockup; they carry `aria-hidden` and no `href` until a real account exists (CLAIMS.md row 7).
 
 ### Deployment evidence
 

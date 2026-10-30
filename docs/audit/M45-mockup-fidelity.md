@@ -61,6 +61,7 @@ The contrast gate found a real defect: `--brand-2` (`#db1e31`) is **3.98:1** on 
 4. **Uniform grids** where the mockups are uneven (see §2).
 5. **Verbatim copy** under `CLAIMS.md`. The Qur'an panel is withheld (rights); `LIVE NOW` / `JOIN TODAY` carry a story-time caption; `50+ STORIES & IDEAS` is an unsupported metric the owner accepted.
 6. **`/` stays zine.** `out/index.html` is asserted to be `data-skin="zine"` (ADR-0014); only the six information pages moved to the empire chrome.
+7. **Social marks drawn, not linked** — `aria-hidden` SVGs with no `href`; they become links only when a real account exists.
 
 ## 6. Not met
 
