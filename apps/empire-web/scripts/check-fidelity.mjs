@@ -134,6 +134,7 @@ function serve() {
 const args = process.argv.slice(2)
 const strict = args.includes('--strict')
 const pageFilter = args.includes('--page') ? args[args.indexOf('--page') + 1] : null
+const LOCALE = args.includes('--locale') ? args[args.indexOf('--locale') + 1] : 'en'
 // M45-13: the reference is 1122 wide; every other width is a derivation and is
 // checked for overflow and surviving anchors rather than for exact bands.
 const RESPONSIVE_WIDTHS = [390, 768, 1440, 1920]
@@ -153,7 +154,7 @@ mkdirSync(REPORT_DIR, { recursive: true })
 
 for (const [name, spec] of Object.entries(PAGES)) {
   if (pageFilter && pageFilter !== name) continue
-  await page.goto(`http://127.0.0.1:${port}${spec.route}`, { waitUntil: 'networkidle' })
+  await page.goto(`http://127.0.0.1:${port}${spec.route.replace(/^\/en/, `/${LOCALE}`)}`, { waitUntil: 'networkidle' })
 
   const measured = await page.evaluate(({ edges, columns }) => {
     const boxes = {}
@@ -176,7 +177,7 @@ for (const [name, spec] of Object.entries(PAGES)) {
   }, { edges: spec.edges, columns: spec.columns })
 
   // Reference band bottoms are pinned per page from the measured edge mid-points.
-  console.log(`\n=== ${name} @1122 (${spec.reference}) ===`)
+  console.log(`\n=== ${name}[${LOCALE}] @1122 (${spec.reference}) ===`)
   for (const edge of spec.edges) {
     const box = measured.boxes[edge.name]
     const delta = box ? +(box.bottom - edge.expected).toFixed(1) : null
@@ -192,13 +193,13 @@ for (const [name, spec] of Object.entries(PAGES)) {
   if (measured.right !== null && Math.abs(measured.right - spec.columns.right) > TOLERANCE) failures += 1
   console.log(`scroll       ${measured.scroll.width}×${measured.scroll.height}`)
 
-  await page.screenshot({ path: join(REPORT_DIR, `${name}-1122.png`), fullPage: true })
-  writeFileSync(join(REPORT_DIR, `${name}.json`), `${JSON.stringify({ measured, expected: spec.edges.map((edge) => [edge.name, edge.expected]), expectedColumns, reference: spec.reference }, null, 2)}\n`)
-  console.log(`screenshot   apps/empire-web/test-results/fidelity/${name}-1122.png`)
+  await page.screenshot({ path: join(REPORT_DIR, `${name}-${LOCALE}-1122.png`), fullPage: true })
+  writeFileSync(join(REPORT_DIR, `${name}-${LOCALE}.json`), `${JSON.stringify({ measured, expected: spec.edges.map((edge) => [edge.name, edge.expected]), expectedColumns, reference: spec.reference }, null, 2)}\n`)
+  console.log(`screenshot   apps/empire-web/test-results/fidelity/${name}-${LOCALE}-1122.png`)
 
   for (const width of RESPONSIVE_WIDTHS) {
     await page.setViewportSize({ width, height: 900 })
-    await page.goto(`http://127.0.0.1:${port}${spec.route}`, { waitUntil: 'networkidle' })
+    await page.goto(`http://127.0.0.1:${port}${spec.route.replace(/^\/en/, `/${LOCALE}`)}`, { waitUntil: 'networkidle' })
     const sweep = await page.evaluate((edges) => ({
       scrollWidth: document.documentElement.scrollWidth,
       innerWidth: window.innerWidth,

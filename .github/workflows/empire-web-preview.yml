@@ -74,9 +74,13 @@ jobs:
         run: pnpm exec playwright test --config apps/empire-web/playwright.config.mjs
 
       # M45-14: the mockups are 1122×1402; fail the build if any band drifts past
-      # ±2px or if a derived width (390/768/1440/1920) overflows.
-      - name: Verify mockup fidelity
+      # ±2px or if a derived width (390/768/1440/1920) overflows. Both locales are
+      # measured because the plan requires the `id` copy to sit in the same boxes.
+      - name: Verify mockup fidelity (en)
         run: node apps/empire-web/scripts/check-fidelity.mjs --strict
+
+      - name: Verify mockup fidelity (id)
+        run: node apps/empire-web/scripts/check-fidelity.mjs --strict --locale id
 
       - name: Confirm bilingual static export
         run: |

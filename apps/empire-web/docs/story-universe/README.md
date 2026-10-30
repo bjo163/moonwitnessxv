@@ -64,18 +64,18 @@ Browser verification covered all five `id` and five `en` routes at 390Ã—844, 768
 
 **Remaining visual deviations:** the five approved WebPs are original composition-led illustrations rather than copies of the private mockup paintings; several crops, exact typography/spacing, and decorative/vector icon details still differ. The reader reuses conceptual scenes rather than four sequential final comic panels. No screenshot captures were added to the repository; the five reference PNGs remain private. Copy, religious/source claims, broader rights, and indexing remain gated.
 
-## M45 — mockup-faithful reconstruction (status 2026-10-29)
+## M45 â€” mockup-faithful reconstruction (status 2026-10-29)
 
-The five Story Universe routes were rebuilt against the five 1122×1402 mockups. Fidelity is measured, not judged: docs/story-universe/LAYOUT_SPEC.md records the bands read out of the PNGs by scripts/measure-reference.mjs, and scripts/check-fidelity.mjs --strict fails the build when a band drifts past ±2px, a section disappears, a page has more than one h1, or a derived width (390/768/1440/1920) overflows.
+The five Story Universe routes were rebuilt against the five 1122Ã—1402 mockups. Fidelity is measured, not judged: docs/story-universe/LAYOUT_SPEC.md records the bands read out of the PNGs by scripts/measure-reference.mjs, and scripts/check-fidelity.mjs --strict fails the build when a band drifts past Â±2px, a section disappears, a page has more than one h1, or a derived width (390/768/1440/1920) overflows.
 
-Measured at 1122×1402, all five pages, deltas after the final pass:
+Measured at 1122Ã—1402 in **both locales** (`en` and `id`), all five pages, deltas after the final pass. CI runs the harness twice (`--locale en`, `--locale id`) because the plan requires the Indonesian copy to sit in the same boxes:
 
 | Page | Bands | Columns |
 |---|---|---|
 | Home (REF-01) | 73 / 546 / 1035 / 1258 / 1346 / 1402 | 30 / 297.8 / 565.5 / 833.3, right 1092 |
 | Library (REF-02) | 73 / 443 / 581 / 653 / 1033 / 1264 / 1346 / 1403 | 29 / 298.3 / 567.5 / 836.8, right 1093 |
 | Reader (REF-03) | 73 / 104 / 1218 / 1331 / 1374 / 1402 | 34 / 301.5 / 569 / 836.5, right 1088 |
-| Codex (REF-04) | 73 / 416 / 722 / 945 / 1264 / 1349 / 1403 | 19 … 1097 |
+| Codex (REF-04) | 73 / 416 / 722 / 945 / 1264 / 1349 / 1403 | 19 â€¦ 1097 |
 | GGS (REF-05) | 73 / 487 / 571 / 917 / 1260 / 1341 / 1403 | 27 / 525 / 840, right 1095 |
 
 ### Deliberate deviations
