@@ -17,11 +17,12 @@ One record has one owner. D20 stores no duplicate customer profile, invoice, pay
 ## API and service boundary
 
 - `packages/moonql-isp` declares D20 models with generic auto-REST disabled for tenant-sensitive records. Custom ARSY endpoints enforce D00 identity, tenant grants, validation and audit.
-- `POST /api/v1/isp-radius/nas/resolve` resolves a source NAS and returns only the protocol runtime's minimum tenant/NAS decision and a secret reference.
+- Operator-authored D20 records reach the existing ops audit trail. The machine-written telemetry tables (`isp_sessions`, `isp_accounting_events`, `isp_monitor_targets`, `isp_syslog_events`) are themselves the event record and opt out of a second audit row per write.
+- `POST /api/v1/isp-radius/nas/resolve` resolves a source NAS and returns only the protocol runtime's minimum tenant/NAS decision and a secret reference; the secret value itself is never returned.
 - `POST /api/v1/isp-radius/authorize` returns an allow/deny result and bounded RADIUS reply attributes for one request.
 - `POST /api/v1/isp-radius/accounting` records one accounting event idempotently and returns success only after the durable write.
-- `POST /api/v1/isp-radius/session-actions` claims an already persisted CoA/Disconnect action and records its ACK/NAK/timeout result.
-- The four routes require the D00 machine role `isp-radius`; they do not accept a browser session as a substitute. Operator routes use D00 session identity plus a tenant-scoped capability grant.
+- `GET /api/v1/isp-radius/session-actions?nasId=…` hands the runtime the persisted CoA/Disconnect actions that are still retryable for that NAS, and `POST /api/v1/isp-radius/session-actions` records one ACK/NAK/timeout result against the server-side attempt limit.
+- These service routes require the D00 machine role `isp-radius`; they do not accept a browser session as a substitute. Operator routes use D00 session identity plus a tenant-scoped capability grant.
 - `apps/isp-radius` binds RADIUS UDP 1812/1813 and RadSec TCP 2083 as configured. It has health/readiness checks but no business REST API or SQL access. It reads NAS secrets from mounted secret files and never logs credentials or raw authentication material.
 - `apps/isp-console` calls only its server-side BFF; browser code never receives ARSY or RADIUS service credentials.
 

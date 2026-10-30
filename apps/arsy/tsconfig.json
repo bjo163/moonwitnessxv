@@ -22,6 +22,7 @@
     { "path": "../../packages/moonql-unilex" },
     { "path": "../../packages/moonql-ontology" },
     { "path": "../../packages/moonql-journey" },
+    { "path": "../../packages/moonql-isp" },
     { "path": "../../packages/moonql-graph" },
     { "path": "../../packages/moonql-actors" },
     { "path": "../../packages/moonql-research" },

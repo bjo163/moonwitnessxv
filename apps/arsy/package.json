@@ -30,6 +30,7 @@
     "@moonwitness/moonql-corpus": "workspace:*",
     "@moonwitness/moonql-graph": "workspace:*",
     "@moonwitness/moonql-journey": "workspace:*",
+    "@moonwitness/moonql-isp": "workspace:*",
     "@moonwitness/moonql-monitor": "workspace:*",
     "@moonwitness/moonql-ontology": "workspace:*",
     "@moonwitness/moonql-ops": "workspace:*",
