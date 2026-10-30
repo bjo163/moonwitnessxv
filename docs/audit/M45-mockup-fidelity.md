@@ -1,6 +1,6 @@
 # M45 — mockup fidelity evidence ledger
 
-**Date:** 2026-10-30 (Asia/Jakarta) · **SHA at last verification:** `2e0ab9c` · **Owner authorization:** explicit instruction to make the five pages match the mockups, with three scoped choices (regenerate artwork per slot, reproduce copy verbatim, carry the language across the site).
+**Date:** 2026-10-30 (Asia/Jakarta) · **SHA at last verification:** `8cfe3e5` · **Owner authorization:** explicit instruction to make the five pages match the mockups, with three scoped choices (regenerate artwork per slot, reproduce copy verbatim, carry the language across the site).
 
 This file is the audit trail for the fidelity claim. The readable design rationale lives in [docs/story-universe/README.md](../story-universe/README.md); the measured reference values live in [docs/story-universe/LAYOUT_SPEC.md](../story-universe/LAYOUT_SPEC.md) and `contracts/reference_measurements.json`.
 
@@ -15,14 +15,14 @@ This file is the audit trail for the fidelity claim. The readable design rationa
 | Page | Band bottoms (px) | Columns (px) |
 |---|---|---|
 | Home (REF-01) | 73 / 546 / 1035 / 1258 / 1346 / 1402 | 30 / 297.8 / 565.5 / 833.3, right 1092 |
-| Library (REF-02) | 73 / 443 / 581 / 653 / 1033 / 1264 / 1346 / 1403 | 29 / 298.3 / 567.5 / 836.8, right 1093 |
+| Library (REF-02) | 73 / 443 / 581 / 653 / 1033 / 1264 / 1346 / 1403 | 29 / 297 / 567 / 821, right 1093 |
 | Reader (REF-03) | 73 / 104 / 1218 / 1331 / 1374 / 1402 | 34 / 301.5 / 569 / 836.5, right 1088 |
 | Codex (REF-04) | 73 / 416 / 722 / 945 / 1264 / 1349 / 1403 | 19 … 1097 |
 | GGS (REF-05) | 73 / 487 / 571 / 917 / 1260 / 1341 / 1403 | 27 / 525 / 840, right 1095 |
 
 `--locale en` and `--locale id` both report **all anchors within ±2px**. The Indonesian copy is longer in places (`GGS — / SEKOLAH BULAN / PURNAMA`) and still lands in the same boxes, which is what the plan's assumption required.
 
-Reference deltas that remain inside tolerance but are not zero: the library's fourth card sits 13px left of a uniform grid in the mockup, and the codex trait columns are uneven (178/184/172/179/174/191). The app uses uniform grids and the harness asserts only the outer edges there.
+Reference deltas that remain inside tolerance but are not zero: the codex trait columns are uneven (178/184/172/179/174/191) while the app keeps a uniform six-column grid, and the harness asserts only the outer edges there. The library and reader no longer carry that deviation: at `8cfe3e5` the library grid and filter tabs reproduce the reference boundaries (cards 29/297/567/821, tabs 183/328.2/488.3/669.5/870.8) and the reader's internal blocks land at 303.8/478.5/629.5/866.5/932.5.
 
 ## 3. Gates in CI
 
@@ -56,7 +56,7 @@ The contrast gate found a real defect: `--brand-2` (`#db1e31`) is **3.98:1** on 
 ## 5. Deviations carried deliberately
 
 1. **Artwork.** Five approved WebPs stand in for 19 planned slots (`ARTWORK_SLOTS.md`). Generation is blocked on image credits; each slot swaps one `src`.
-2. **Display face.** The mockups use a licensed condensed grotesk; the app keeps `--font-display` (Impact/Anton/Arial Black). No webfont was added.
+2. **Display face.** The mockups use a licensed condensed grotesk; the app keeps `--font-display` (Impact/Anton/Arial Black). No webfont was added. The reader title renders as one 60px line because 74px measured 607px against its 495px column; that size is an inference from the column width, not a glyph-cap measurement.
 3. **Per-page footer height.** The mockups disagree (88+56 home, 78+55 library, 43+28 reader, 73+51 codex, 78+59 GGS). One `SiteFooter` component serves all five through `--footer-main-h` / `--footer-bar-h`.
 4. **Uniform grids** where the mockups are uneven (see §2).
 5. **Verbatim copy** under `CLAIMS.md`. The Qur'an panel is withheld (rights); `LIVE NOW` / `JOIN TODAY` carry a story-time caption; `50+ STORIES & IDEAS` is an unsupported metric the owner accepted.
@@ -68,9 +68,9 @@ The contrast gate found a real defect: `--brand-2` (`#db1e31`) is **3.98:1** on 
 | Item | Evidence |
 |---|---|
 | **M45-03** — 19 artwork slots | `ImageGen` returns `Insufficient Credits for ImageGen`; zero slots generated. Probe repeated 2026-10-30. |
-| **M45-15** — `DEPLOYED_VERIFIED` | `https://a-l-l-a-h.com/en` → `Server: hcdn`, 32 079 bytes, `<title>Parked Domain name on Hostinger DNS system</title>`. The Vercel preview does serve the build (`su-home__hero` present), but it is not the canonical host. |
+| **M45-15** — `DEPLOYED_VERIFIED` | Superseded on 2026-10-30: the parked-domain observation no longer holds. TODO M45-15 records the apex probe (canonical `/en` and `/id`, Hostinger parking gone) and Coolify deployment `qvgfqmwmbfhvaxqaqbcvywmg` (`id 5784`, commit `b0b44f9d…`, image-build and container-start logs). That recorded evidence was not re-run for this ledger edit. |
 
-`DEPLOYED_VERIFIED` is defined in [RELEASE.md](../architecture/RELEASE.md) as a real HTTPS host with the deployment SHA and logs. Neither exists for M45 yet, so the milestone cannot be marked complete regardless of how green the repository gates are.
+`DEPLOYED_VERIFIED` is defined in [RELEASE.md](../architecture/RELEASE.md) as a real HTTPS host with the deployment SHA and logs. The M45-15 closure rests on the deployment record and apex probe logged in TODO, not on this ledger; M45-03 is the only remaining fidelity item.
 
 ## 7. Re-running this evidence
 
