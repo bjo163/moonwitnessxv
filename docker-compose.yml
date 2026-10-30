@@ -418,55 +418,9 @@ services:
       retries: 3
       start_period: 10s
 
-  # Backup lives here and not in a moonql cron for two reasons the ORM enforces:
-  # CronDef.run only receives orm/env/log (no driver connection), and parseEvery
-  # speaks intervals, not wall-clock times. A sidecar on the same image the db
-  # already uses needs no new dependency, and its dumps land on a named volume.
-  backup:
-    build:
-      context: .
-      dockerfile: Dockerfile.backup
-    container_name: moonwitness-backup
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      # pg_dump reads PG*, not the POSTGRES_* bootstrap vars; both come from .env
-      PGHOST: db
-      PGPORT: "5432"
-      PGUSER: ${POSTGRES_USER:-moonwitness}
-      PGPASSWORD: ${POSTGRES_PASSWORD:-}
-      PGDATABASE: ${POSTGRES_DB:-moonwitness}
-      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-3600}
-      BACKUP_KEEP: ${BACKUP_KEEP:-48}
-      BACKUP_S3_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}
-      BACKUP_S3_BUCKET: ${BACKUP_S3_BUCKET:-}
-      BACKUP_S3_REGION: ${BACKUP_S3_REGION:-us-east-1}
-      BACKUP_S3_ACCESS_KEY_ID: ${BACKUP_S3_ACCESS_KEY_ID:-}
-      BACKUP_S3_SECRET_ACCESS_KEY: ${BACKUP_S3_SECRET_ACCESS_KEY:-}
-      BACKUP_S3_PREFIX: ${BACKUP_S3_PREFIX:-moonwitness-backups}
-      BACKUP_S3_MAX_OBJECT_BYTES: ${BACKUP_S3_MAX_OBJECT_BYTES:-52428800}
-      BACKUP_S3_KEEP: ${BACKUP_S3_KEEP:-90}
-    command: ["sh", "/backup.sh", "loop"]
-    volumes:
-      - db-backups:/backups
-      # The dump algorithm lives in scripts/db-backup.sh: the interval loop this
-      # service runs and the on-demand snapshot docs/decisions/M04-02 asks for
-      # (`sh /backup.sh manual-pre-migration`) are then the same code. Two copies
-      # of "write the .part, rename on success" is how a half-dump comes back.
-      # `sh` is spelled out so the recipe does not depend on the exec bit of a
-      # bind-mounted file from a Windows checkout.
-      - ./scripts/db-backup.sh:/backup.sh:ro
-    healthcheck:
-      # a backup that has not run recently is not a backup: freshness is the signal
-      test: ["CMD-SHELL", "f=$$(ls -1t /backups/*.dump 2>/dev/null | head -1); [ -n \"$${f}\" ] && [ $$(( $$(date +%s) - $$(stat -c %Y \"$${f}\") )) -le $$(( ${BACKUP_INTERVAL_SECONDS:-3600} * 3 )) ] && { [ -z \"$${BACKUP_S3_ENDPOINT}$${BACKUP_S3_BUCKET}$${BACKUP_S3_ACCESS_KEY_ID}$${BACKUP_S3_SECRET_ACCESS_KEY}\" ] || { [ -s /backups/.remote-success ] && [ $$(( $$(date +%s) - $$(cat /backups/.remote-success) )) -le $$(( ${BACKUP_INTERVAL_SECONDS:-3600} * 3 )) ]; }; }"]
-      interval: 60s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
 volumes:
+  # No backup sidecar: dumps are produced manually with scripts/db-backup.sh,
+  # and `db` still mounts this volume read-only for the rollback recipe.
   pgdata:
     name: moonwitness_pgdata
   db-backups:

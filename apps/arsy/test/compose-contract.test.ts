@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url'
  *
  * - a service without a healthcheck is a service whose failure nobody notices;
  * - a service that talks to Postgres has to be given the database name it talks to
- *   (`$PGDATABASE` exists only in `backup`, which is how the runbook ended up
+ *   (`$PGDATABASE` was once only in `backup`, which is how the runbook ended up
  *   querying the wrong database);
  * - a dump written straight to its final name looks fresh while it is half-written.
  *
@@ -24,11 +24,8 @@ const ROOT = fileURLToPath(new URL('../../..', import.meta.url))
 const readRepoText = (rel: string): string => readFileSync(`${ROOT}/${rel}`, 'utf8').replace(/\r\n/g, '\n')
 const compose = readRepoText('docker-compose.yml')
 const runbook = readRepoText('docs/runbook-restore.md')
-const backupDockerfile = readRepoText('Dockerfile.backup')
-// The dump algorithm moved out of the compose `command:` block into a script, so
-// the service the stack runs and the on-demand snapshot the recovery docs call
-// share one copy of it. The invariants below now guard that file — read RAW,
-// because line endings are the thing being asserted there, not an artefact.
+// M45 follow-up: the backup sidecar was removed, so there is no Dockerfile.backup.
+// scripts/db-backup.sh stays and is now run on demand.
 const backupScript = readFileSync(`${ROOT}/scripts/db-backup.sh`, 'utf8')
 
 /** service name -> its block, from `services:` to the next top-level key */
@@ -122,9 +119,10 @@ test('compose: the database name each service dials is actually defined for it',
   assert.match(db, /pg_isready[^\n]*POSTGRES_DB/, 'and its healthcheck probes that database, not the default one')
 
   const backup = blocks.get('backup')
-  assert.ok(backup, 'backup service exists')
-  // pg_dump/pg_restore read PG*, so the sidecar must be given PGDATABASE
-  assert.match(backup, /PGDATABASE:\s*\$\{POSTGRES_DB/, 'backup maps POSTGRES_DB to PGDATABASE')
+  // The user asked for the sidecar to be removed: it restart-looped in Coolify.
+  // Dumps are now produced on demand from scripts/db-backup.sh, so the absence
+  // of the service is itself the contract.
+  assert.equal(backup, undefined, 'no scheduled backup sidecar in the stack')
 
   const arsy = blocks.get('arsy')
   assert.ok(arsy, 'canonical arsy service exists')
@@ -173,18 +171,9 @@ test('root workflows and dev runner select ARSY and retain the radio transition 
   assert.match(registry, /ALIASES = \{ radio: 'arsy' \}/)
 })
 
-test('compose: the backup runs the shared script, mounted read-only', () => {
-  const backup = blocks.get('backup')
-  assert.ok(backup, 'backup service exists')
-
-  // no second copy of the dump algorithm living in the compose file
-  assert.match(backup, /command: \["sh", "\/backup\.sh", "loop"\]/, 'the service runs scripts/db-backup.sh')
-  assert.doesNotMatch(backup, /pg_dump -Fc/, 'and does not inline its own dump command')
-  assert.match(backup, /\.\/scripts\/db-backup\.sh:\/backup\.sh:ro/, 'the script is mounted, not baked into an image')
-  assert.match(backup, /Dockerfile\.backup/, 'the backup image includes AWS CLI without changing the database image')
-  assert.match(backup, /BACKUP_S3_SECRET_ACCESS_KEY:/, 'remote credentials are passed at runtime from environment')
-  // freshness is judged on committed dumps only, in the container that writes them
-  assert.match(backup, /healthcheck:[\s\S]*ls -1t \/backups\/\*\.dump/, 'freshness is judged on committed dumps only')
+test('backup script: kept for manual dumps, no service runs it', () => {
+  assert.equal(blocks.get('backup'), undefined, 'the sidecar is gone')
+  assert.ok(backupScript.length > 0, 'scripts/db-backup.sh still ships for on-demand dumps')
 })
 
 test('backup script: ECHOLOG uses only bounded single-object S3 API operations', () => {
@@ -195,7 +184,6 @@ test('backup script: ECHOLOG uses only bounded single-object S3 API operations',
   assert.match(backupScript, /--output json/, 'AWS CLI combines paginated results before sorting')
   assert.match(backupScript, /sort_by\(\.LastModified\) \| reverse \| \.\[\]\.Key \| @base64/, 'retention globally orders and safely encodes keys')
   assert.match(backupScript, /case "\$old_key" in[\s\S]*\[0-9\]\[0-9\]\[0-9\]\[0-9\]\[0-9\]\[0-9\]\[0-9\]\[0-9\]T/, 'retention only counts generated timestamped dump keys')
-  assert.match(backupDockerfile, /apk add --no-cache aws-cli jq/, 'backup image contains the S3 client and safe JSON key parser')
   assert.doesNotMatch(backupScript, /aws\s+s3\s+(cp|rm)\b/, 'high-level transfer commands may use unsupported multipart/batch APIs')
   assert.match(backupScript, /-gt "\$BACKUP_S3_MAX_OBJECT_BYTES"/, 'oversized dumps fail before upload')
   assert.match(backupScript, /S3 backup configuration is incomplete/, 'partial credential/configuration fails closed')
@@ -238,10 +226,11 @@ test('compose: db can read the dumps its rollback recipe restores from', () => {
   assert.match(compose, /^\s{2}db-backups:\s*$/m, 'the backup volume is declared')
 })
 
-test('compose: the backup volume exists and is mounted at /backups', () => {
+test('compose: the backup volume exists and stays visible to db', () => {
   assert.match(compose, /^volumes:\s*$/m, 'there is a volumes: section')
   assert.match(compose, /^\s{2}db-backups:\s*$/m, 'the backup volume is declared')
-  assert.match(blocks.get('backup') ?? '', /db-backups:\/backups/, 'and mounted where the script writes')
+  // No writer service any more; `db` keeps the read-only view the rollback recipe uses.
+  assert.match(blocks.get('db') ?? '', /db-backups:\/backups:ro/, 'and db can still read manually placed dumps')
 })
 
 test('compose: a probe never glues a slash onto a prefix that already has one', () => {
