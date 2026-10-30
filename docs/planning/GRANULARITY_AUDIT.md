@@ -1,4 +1,6 @@
-# Full task granularity classification — 311 task IDs
+# Full task granularity classification — 311 task IDs (historical snapshot)
+**Historical static audit:** this 311-ID review predates M44–M50 and does not classify those additions. At V5 registration, TODO was 51 milestones / 493 IDs (334 checked, 159 unchecked); at HEAD ad96dbf3ae98731e7c10972d7f0600b809398e9d (historical snapshot, 2026-10-30) had 335 checked and 158 unchecked after M20-06 closed; at HEAD ca395d1 (2026-10-30) has 52 milestones, 499 IDs, 347 checked, 152 unchecked. Use current packets and TODO for M44–M51. This is not a second status register.
+
 **Static audit, not another TODO.** `ATOMIC_READY` means a packet exists, not that dependencies are satisfied. `ALREADY_VERIFIED` means scoped prior checkbox evidence, not complete deployment. M03-07 and M04-07 have still-open predecessor gates; they are flagged REQUIRES_REVALIDATION. M19/M27/M28 original roll-ups are not independently assigned alongside children.
 
 | Task | Difficulty | Assessment | Detail |
