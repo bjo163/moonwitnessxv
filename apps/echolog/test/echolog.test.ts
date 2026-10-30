@@ -20,6 +20,20 @@ async function getAvailablePort(): Promise<number> {
   return address.port
 }
 
+void test('every ECHOLOG response pins HTTPS with HSTS', async (t) => {
+  const storageRoot = await mkdtemp(join(tmpdir(), 'echolog-hsts-'))
+  const app = createEchologServer(parseConfig({ ECHOLOG_STORAGE_ROOT: storageRoot }))
+  t.after(async () => {
+    await app.close()
+    await rm(storageRoot, { recursive: true, force: true })
+  })
+
+  const healthy = await app.inject({ method: 'GET', url: '/health' })
+  assert.equal(healthy.headers['strict-transport-security'], 'max-age=15552000')
+  const missing = await app.inject({ method: 'GET', url: '/no-such-route' })
+  assert.equal(missing.headers['strict-transport-security'], 'max-age=15552000')
+})
+
 void test('ECHOLOG boots on an explicit port and exposes only honest health surfaces', async (t) => {
   const port = await getAvailablePort()
   const storageRoot = await mkdtemp(join(tmpdir(), 'echolog-health-'))

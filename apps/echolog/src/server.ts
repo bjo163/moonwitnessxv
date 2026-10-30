@@ -13,6 +13,13 @@ export function createEchologServer(config: EchologConfig, options: EchologServe
     logController: new LogController({ disableRequestLogging: true }),
   })
 
+  // The media host is only reachable over HTTPS through the proxy, and the proxy
+  // answers plain HTTP with a 302 rather than a browser-pinned redirect (M44-08).
+  app.addHook('onSend', (_request, reply, _payload, done) => {
+    reply.header('strict-transport-security', 'max-age=15552000')
+    done()
+  })
+
   app.setErrorHandler((error, _request, reply) => {
     const statusCode = error instanceof Error && 'statusCode' in error && typeof error.statusCode === 'number'
       ? error.statusCode
