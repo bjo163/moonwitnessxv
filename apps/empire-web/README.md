@@ -46,6 +46,27 @@ The isolated pilot now includes `/id/about`, `/id/sources`, `/id/privacy` and th
 
 Privacy copy describes the application code separately from hosting logs, whose retention has not been verified. Source copy does not imply publication rights for scripture, research, or poster assets. This increment does not complete or change the canonical M31/Dock task statuses. The owner's explicit branch-specific pilot request is the scope for this work; accepted Dock runtime decisions remain authoritative for the canonical gateway.
 
+## M45 fidelity, deviations and release record (30 October 2026)
+
+Measured at `2e911af` after `pnpm --filter @moonwitness/empire-web build`; `node apps/empire-web/scripts/check-fidelity.mjs --strict` exits 0 with **all anchors within ±2 px** at 1122×1402 against `reference_measurements.json`, and every page reports `scroll == viewport` at 390/768/1440/1920.
+
+| page | largest delta | measured columns |
+|---|---|---|
+| home | −1 (foundation 1257 vs 1258) | 30 / 297.8 / 565.5 / 833.3, right 1092 |
+| library | +1 (header, footer) | 29 / 298.3 / 567.5 / 836.8, right 1093 |
+| reader | 0 | 34 / 301.5 / 569 / 836.5, right 1088 |
+| codex | +1 (header, footer) | 19 / 200.3 / 381.7 / 563 / 744.3 / 925.7, right 1097 |
+| ggs | +1 (footer) | 27 / 525 / 840, right 1095 |
+
+The same run keeps small text at or above AA (`--brand` 8.47, `--fg-subtle` 9.04, `--fg-muted` 6.38, `--danger` 6.50 on `--bg`), finds 0 elements still animating under `prefers-reduced-motion`, and checks 48 information-page layouts (6 sections × 2 locales × 4 widths). `node apps/empire-web/test/export-check.mjs` and `pnpm --filter @moonwitness/empire-web test` both pass.
+
+Deviations from the mockups, recorded rather than hidden:
+
+- **Display face.** The references use a licensed display face. The ADR-0014 token stack resolves `--font-display` to `"Impact", "Anton", "Arial Black", …`, so the display role falls back to a locally installed face instead of a licensed webfont; the ±2 px harness matched the laid-out boxes anyway.
+- **Artwork.** The five approved WebP illustrations ship; the 19 M45 slots are still `pending_approval` because the 2026-10-29 generation attempt returned `Insufficient Credits for ImageGen`, so their blocks are drawn with CSS.
+
+Release evidence: Coolify deployment `qvgfqmwmbfhvaxqaqbcvywmg` built commit `b0b44f9d606654d45a7395b343ec73a1c9941639` (`is_webhook: true`, created 00:21:50Z, finished 2026-10-30T00:28:15Z). Its log shows `Image …-empire-web Built` and `Container empire-web-…-20261030T002351 Started`; after `finished_at`, `https://a-l-l-a-h.com/id` and `/en` served the Empire title and canonicals over HTTPS ([audit §11](../../docs/audit/M44-domain-cutover.md)).
+
 `node apps/empire-web/test/export-check.mjs` checks the generated HTML after building: information pages, locale links, headings, main landmarks, noindex and absence of forms/embeds. It is also run by the dedicated CI workflow. It is not a browser accessibility audit or deployment check.
 
 ## Static pilot completion scope
