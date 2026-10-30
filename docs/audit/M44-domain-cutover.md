@@ -396,3 +396,22 @@ Two defects surfaced by the pass, neither part of the M44 matrix:
 | M44-09 48 h retention and timed drill | Not started/not possible (§9.7, packet note) |
 
 `DEPLOYED_VERIFIED` in `docs/architecture/RELEASE.md` is **not** claimed: the matrix still has two unobserved rows.
+
+## 11. Perimeter and edge probes — 2026-10-30
+
+All probes pinned to the Cloudflare edge (`--resolve <host>:80|443:<edge>`); the workspace resolver is not authoritative and answers stale for both zones.
+
+| Probe | Observed |
+|---|---|
+| `http://` → `https://` on `a-l-l-a-h.com`, dock apex, `hq`, `api`, `orbit`, `media` | `302` to the same path and query (`/en?probe=1` preserved) — the proxy's answer, not a browser-pinned `301` |
+| `http://www.a-l-l-a-h.com/en?probe=1` | **`404`** — the edge `www` rule matches HTTPS only, so plain-HTTP `www` falls through to the origin router, which has no `www` host (operator fix) |
+| `Strict-Transport-Security` | `a-l-l-a-h.com` `max-age=15552000`; `api` `max-age=31536000; includeSubDomains`; **dock apex, `hq`, `orbit`, `media`: absent** |
+| `http://163.61.134.104:3000/api/v1/health` | **`200`** — the hub published `3000:3000` on every interface, outside Traefik, TLS and CORS |
+
+Three fixes landed the same day, none live until the next promotion:
+
+- Hub binding: `127.0.0.1:3000:3000` at `bb41d9f`, pinned by `apps/arsy/test/compose-contract.test.ts` (17/17; the new assertion fails on the previous compose with "the hub publishes on loopback only").
+- HSTS on dock, HQ and orbit: `securityHeaders()` emits `max-age=15552000` at `2830a59`; HQ and orbit consume it through `@moonwitness/web-config`/`@moonwitness/core`, and `apps/dock/test/locale-routes.test.mjs` asserts it on `/id`, `/en`, `/fr` and `/api/on-air` (319/319). `apps/echolog` does not use the shared headers, so `media` sets the same value from an `onSend` hook at `f4b4dee` (`apps/echolog/test/echolog.test.ts` 7/7, covering both a 200 and a 404).
+- Runbook: `docs/runbook-coolify-deploy.md` §5–§7 now carries these probes and the measured exposure.
+
+Post-promotion re-probe still required: port 3000 must refuse the connection, and dock/`hq`/`orbit`/`media` must answer `Strict-Transport-Security`. The `www` plain-HTTP `404` is an edge rule, not a repository change.
