@@ -1,4 +1,4 @@
-> **Update (2026-10-30): the `backup` sidecar was removed on owner instruction** — it restart-looped in Coolify. There is no scheduled backup any more. docker compose no longer builds Dockerfile.backup; dumps are produced on demand with `sh scripts/db-backup.sh one` (or a tagged mode) against a database container, and db still mounts the `db-backups` volume read-only so the restore steps below keep working. The rest of this runbook is unchanged.
+> **Update (2026-10-30): the `backup` sidecar was removed on owner instruction** â€” it restart-looped in Coolify. There is no scheduled backup any more. docker compose no longer builds Dockerfile.backup; dumps are produced on demand with `sh scripts/db-backup.sh one` (or a tagged mode) against a database container, and db still mounts the `db-backups` volume read-only so the restore steps below keep working. The rest of this runbook is unchanged.
 
 # Runbook: mencadangkan dan memulihkan database
 
