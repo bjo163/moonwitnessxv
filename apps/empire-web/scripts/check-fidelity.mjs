@@ -269,6 +269,40 @@ server.close()
   a11yServer.close()
 }
 
+// M45-13 — the six information pages have no mockup, so the gate is survival:
+// no horizontal overflow and exactly one h1 at every derived width, both locales.
+{
+  const INFO_SECTIONS = ['about', 'ecosystem', 'values', 'roadmap', 'sources', 'privacy']
+  const infoBrowser = await chromium.launch()
+  const page = await infoBrowser.newPage()
+  const infoServer = await serve()
+  const base = `http://127.0.0.1:${infoServer.address().port}`
+  let checked = 0
+  const broken = []
+  for (const locale of ['en', 'id']) {
+    for (const section of INFO_SECTIONS) {
+      for (const width of RESPONSIVE_WIDTHS) {
+        await page.setViewportSize({ width, height: 900 })
+        await page.goto(`${base}/${locale}/${section}.html`, { waitUntil: 'networkidle' })
+        const result = await page.evaluate(() => ({
+          scrollWidth: document.documentElement.scrollWidth,
+          innerWidth: window.innerWidth,
+          h1: document.querySelectorAll('h1').length,
+        }))
+        checked += 1
+        if (result.scrollWidth > result.innerWidth + 1 || result.h1 !== 1) {
+          failures += 1
+          broken.push(`${locale}/${section}@${width} (scroll ${result.scrollWidth}/${result.innerWidth}, h1 ${result.h1})`)
+        }
+      }
+    }
+  }
+  if (broken.length) console.log(`info pages: ${broken.length} layout(s) failed: ${broken.slice(0, 4).join(', ')}`)
+  console.log(`info pages: ${checked} layouts checked (6 sections × 2 locales × ${RESPONSIVE_WIDTHS.join('/')})`)
+  await infoBrowser.close()
+  infoServer.close()
+}
+
 if (failures > 0) {
   console.log(`\n${failures} fidelity check(s) failed at 1122 or in the responsive sweep`)
   process.exit(strict ? 1 : 0)
