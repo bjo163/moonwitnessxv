@@ -117,7 +117,7 @@ Until 2026-10-30 the hub published `3000:3000` on every interface while the othe
 
 The running host still serves the pre-change container until an authorized deploy, so the probe above keeps answering `200` until then; after the deploy, a refused connection is the expected result.
 
-**Promotion is not a deploy.** CI reached `main` at `b0b44f9` on 2026-10-30 and the host did not change: at 00:22Z port `3000` still answered `200`, and dock, `hq`, `orbit` and `media` still sent no `Strict-Transport-Security`. The same applies to the HSTS commits `2830a59` and `f4b4dee` — they become observable only after a Coolify redeploy of `main`.
+**Promotion triggers a webhook rebuild, but only `finished_at` counts.** On 2026-10-30 CI pushed `b0b44f9` to `main` and Coolify started deployment `qvgfqmwmbfhvaxqaqbcvywmg` (`is_webhook: true`; `git_commit_sha` follows `HEAD` on `main`). Probes taken while it built still showed `200` on port `3000` and no HSTS — the old containers, not a missing fix. After it finished at `00:28:15Z`, port `3000` and `3001`–`3007` all refused, and HSTS `max-age=15552000` appeared on dock, `hq`, `orbit` and `media` (`api` keeps `max-age=31536000; includeSubDomains`). Assume the §6 5–10 minute 503 window and re-probe only after the deployment reports `finished_at`.
 
 ## 8. Rollback
 
