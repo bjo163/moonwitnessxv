@@ -202,16 +202,16 @@ export function App(): ReactNode {
 
   // The media tab mounts and unmounts the only <video>. Attaching through a
   // callback ref keeps one owner and re-plans playback the moment it appears.
-  const attachVideo = useCallback((el: HTMLVideoElement | null) => {
+  const _attachVideo = useCallback((el: HTMLVideoElement | null) => {
     videoRef.current = el
     setVideoSurface(Boolean(el))
   }, [])
 
   // Data sync hook
-  const { config, serviceStates, setServiceStates, logs, setLogs, clock, uptime, portStatus, rackSource, progressPayload, progressLive } =
+  const { config, serviceStates, setServiceStates, logs, setLogs, clock, uptime, portStatus, rackSource: _rackSource, progressPayload, progressLive } =
     useCockpitSync(setChannels)
   const progress = useTodoProgress({ progressPayload, progressLive })
-  const reducedMotion = useReducedMotion()
+  const _reducedMotion = useReducedMotion()
 
   // Actions hook
   const {
