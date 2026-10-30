@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "baseline": {
     "design": "d54ad43",
-    "runHead": "278f26a"
+    "runHead": "43cff7c"
   },
   "server": {
     "baseUrl": "http://127.0.0.1:3101",
     "port": 3101,
-    "hubMode": "offline-forced",
+    "hubMode": "live-hub",
     "hubUrl": "http://127.0.0.1:3102/api/v1",
-    "note": "The harness spawns and stops its own Dock dev server. Ports 3000/3001 belong to another local project and are never bound, probed or killed. Because the hub URL points at a closed port, every data-backed screen below was measured on the hub-offline branch — the live branch is NOT covered by these numbers."
+    "note": "The harness spawns and stops its own Dock dev server. Ports 3000/3001 belong to another local project and are never bound, probed or killed. The hub URL points at a reachable hub in live-hub mode, so data-backed screens are measured on their live branch. This run's hub is an ephemeral in-process instance, not the deployed one."
   },
   "breakpoints": [
     390,
@@ -35,12 +35,12 @@
   },
   "screenshotMode": "fullPage",
   "totals": {
-    "matrixRecords": 35,
-    "reducedMotionRecords": 8,
+    "matrixRecords": 29,
+    "reducedMotionRecords": 6,
     "skips": 0,
-    "recordsWithFailures": 20,
+    "recordsWithFailures": 0,
     "maxHorizontalOverflowPx": 0,
-    "maxInteractiveElementsOutsideViewport": 8,
+    "maxInteractiveElementsOutsideViewport": 0,
     "maxElementsOutsideViewport": 68
   },
   "results": [
@@ -55,10 +55,10 @@
       "requestedRoute": "/en/constellation",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/constellation-en-390.png",
-      "screenshotBytes": 1850944,
+      "screenshotBytes": 1844585,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 850,
+      "hubMode": "live-hub",
+      "settleMs": 1145,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -67,7 +67,7 @@
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 16827,
+      "documentHeight": 16756,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -124,10 +124,10 @@
       "requestedRoute": "/en/constellation",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/constellation-en-768.png",
-      "screenshotBytes": 1993342,
+      "screenshotBytes": 1993351,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 848,
+      "hubMode": "live-hub",
+      "settleMs": 839,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -193,10 +193,10 @@
       "requestedRoute": "/en/constellation",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/constellation-en-1440.png",
-      "screenshotBytes": 2497457,
+      "screenshotBytes": 2444892,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1152,
+      "hubMode": "live-hub",
+      "settleMs": 1472,
       "stableSamples": 3,
       "sawLoadingFallback": true,
       "stillLoading": false,
@@ -205,111 +205,13 @@
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 8461,
+      "documentHeight": 8267,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": null,
       "spaceGridWidth": null,
       "spaceCardCount": 0,
@@ -347,9 +249,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1629,\"width\":74},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1629,\"width\":74}]"
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -362,10 +262,10 @@
       "requestedRoute": "/en/constellation",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/constellation-en-1920.png",
-      "screenshotBytes": 3088217,
+      "screenshotBytes": 3083590,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 887,
+      "hubMode": "live-hub",
+      "settleMs": 845,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -374,7 +274,7 @@
       "documentScrollWidth": 1920,
       "viewportClientWidth": 1920,
       "horizontalOverflowPx": 0,
-      "documentHeight": 8256,
+      "documentHeight": 8267,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -431,10 +331,10 @@
       "requestedRoute": "/id/constellation",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/constellation-id-390.png",
-      "screenshotBytes": 1895871,
+      "screenshotBytes": 1887412,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1163,
+      "hubMode": "live-hub",
+      "settleMs": 1554,
       "stableSamples": 3,
       "sawLoadingFallback": true,
       "stillLoading": false,
@@ -443,7 +343,7 @@
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 17178,
+      "documentHeight": 17094,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -500,19 +400,19 @@
       "requestedRoute": "/id/constellation",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/constellation-id-768.png",
-      "screenshotBytes": 2069974,
+      "screenshotBytes": 2071983,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1136,
+      "hubMode": "live-hub",
+      "settleMs": 902,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/id/constellation",
       "htmlLang": "id",
       "documentScrollWidth": 768,
       "viewportClientWidth": 768,
       "horizontalOverflowPx": 0,
-      "documentHeight": 10753,
+      "documentHeight": 10747,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -569,123 +469,25 @@
       "requestedRoute": "/id/constellation",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/constellation-id-1440.png",
-      "screenshotBytes": 2497333,
+      "screenshotBytes": 2459768,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1127,
+      "hubMode": "live-hub",
+      "settleMs": 835,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/id/constellation",
       "htmlLang": "id",
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 8560,
+      "documentHeight": 8410,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1599,
-          "right": 1633,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": null,
       "spaceGridWidth": null,
       "spaceCardCount": 0,
@@ -723,9 +525,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1636,\"width\":81},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1599,\"right\":1633,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1636,\"width\":81}]"
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -738,10 +538,10 @@
       "requestedRoute": "/id/constellation",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/constellation-id-1920.png",
-      "screenshotBytes": 3080108,
+      "screenshotBytes": 3071115,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 930,
+      "hubMode": "live-hub",
+      "settleMs": 1349,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -750,7 +550,7 @@
       "documentScrollWidth": 1920,
       "viewportClientWidth": 1920,
       "horizontalOverflowPx": 0,
-      "documentHeight": 8365,
+      "documentHeight": 8376,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -807,10 +607,10 @@
       "requestedRoute": "/en",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/home-en-390.png",
-      "screenshotBytes": 2514495,
+      "screenshotBytes": 2578590,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1485,
+      "hubMode": "live-hub",
+      "settleMs": 1106,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -819,99 +619,13 @@
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 10287,
+      "documentHeight": 10567,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 30,
-      "interactiveElementsOutsideViewport": 6,
-      "outsideSamples": [
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-4",
-          "left": 248,
-          "right": 402,
-          "width": 154
-        },
-        {
-          "selector": "span.m-badge",
-          "left": 248,
-          "right": 402,
-          "width": 154
-        },
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-5",
-          "left": 275,
-          "right": 415,
-          "width": 141
-        },
-        {
-          "selector": "span.m-badge",
-          "left": 275,
-          "right": 415,
-          "width": 141
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 387,
-          "right": 497,
-          "width": 110
-        },
-        {
-          "selector": "div.dk-archive-thumb-wrap",
-          "left": 387,
-          "right": 497,
-          "width": 110
-        },
-        {
-          "selector": "img.dk-archive-thumb",
-          "left": 389,
-          "right": 495,
-          "width": 106
-        },
-        {
-          "selector": "span.dk-archive-arrow",
-          "left": 483,
-          "right": 492,
-          "width": 9
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-4",
-          "left": 248,
-          "right": 402,
-          "width": 154
-        },
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-5",
-          "left": 275,
-          "right": 415,
-          "width": 141
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 387,
-          "right": 497,
-          "width": 110
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 507,
-          "right": 617,
-          "width": 110
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 627,
-          "right": 737,
-          "width": 110
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": 1,
       "spaceGridWidth": 362,
       "spaceCardCount": 4,
@@ -954,10 +668,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "6 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a.dk-map-pin.dk-map-pin-4\",\"left\":248,\"right\":402,\"width\":154},{\"selector\":\"a.dk-map-pin.dk-map-pin-5\",\"left\":275,\"right\":415,\"width\":141},{\"selector\":\"a.dk-archive-node\",\"left\":387,\"right\":497,\"width\":110},{\"selector\":\"a.dk-archive-node\",\"left\":507,\"right\":617,\"width\":110},{\"selector\":\"a.dk-archive-node\",\"left\":627,\"right\":737,\"width\":110},{\"selector\":\"a.dk-archive-node\",\"left\":747,\"right\":857,\"width\":110}]",
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -970,10 +681,10 @@
       "requestedRoute": "/en",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/home-en-768.png",
-      "screenshotBytes": 3552918,
+      "screenshotBytes": 3582895,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1107,
+      "hubMode": "live-hub",
+      "settleMs": 1201,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -982,51 +693,13 @@
       "documentScrollWidth": 768,
       "viewportClientWidth": 768,
       "horizontalOverflowPx": 0,
-      "documentHeight": 7412,
+      "documentHeight": 7528,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 5,
-      "interactiveElementsOutsideViewport": 1,
-      "outsideSamples": [
-        {
-          "selector": "a.dk-archive-node",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        },
-        {
-          "selector": "div.dk-archive-thumb-wrap",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        },
-        {
-          "selector": "img.dk-archive-thumb",
-          "left": 749,
-          "right": 855,
-          "width": 106
-        },
-        {
-          "selector": "span.m-badge",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        },
-        {
-          "selector": "strong.dk-archive-title",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a.dk-archive-node",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": 2,
       "spaceGridWidth": 740,
       "spaceCardCount": 4,
@@ -1069,10 +742,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "1 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a.dk-archive-node\",\"left\":747,\"right\":857,\"width\":110}]",
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -1085,194 +755,19 @@
       "requestedRoute": "/en",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/home-en-1440.png",
-      "screenshotBytes": 3936713,
+      "screenshotBytes": 3857330,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1132,
+      "hubMode": "live-hub",
+      "settleMs": 1241,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/en",
       "htmlLang": "en",
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 4564,
-      "htmlOverflowX": "hidden",
-      "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "spaceGridColumns": 4,
-      "spaceGridWidth": 1332,
-      "spaceCardCount": 4,
-      "statusWords": [
-        "REAL",
-        "REAL",
-        "DEMO",
-        "REAL"
-      ],
-      "stateBranch": "ready",
-      "alertCount": 0,
-      "alertTexts": [],
-      "emptyPanelCount": 0,
-      "spinnerCount": 0,
-      "landmarks": {
-        "h1": 1,
-        "h1Text": "MOONWITNESS",
-        "main": 1,
-        "primaryNav": 1,
-        "navTotal": 3,
-        "banner": 1,
-        "headerTotal": 5,
-        "footer": 1
-      },
-      "activeLinks": [
-        {
-          "text": "HOME",
-          "href": "/en",
-          "visible": true
-        },
-        {
-          "text": "HOME",
-          "href": "/en",
-          "visible": false
-        }
-      ],
-      "title": "Moonwitness — late-night radio",
-      "consoleErrors": [
-        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
-      ],
-      "consoleWarningCount": 0,
-      "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1629,\"width\":74},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1629,\"width\":74}]",
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
-    },
-    {
-      "kind": "geometry",
-      "pass": "matrix",
-      "screen": "home",
-      "screenTitle": "Lighthouse / Dock home (UI-P01)",
-      "locale": "en",
-      "width": 1920,
-      "height": 1080,
-      "requestedRoute": "/en",
-      "httpStatus": 200,
-      "screenshot": "docs/audit/screens/home-en-1920.png",
-      "screenshotBytes": 4170965,
-      "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1094,
-      "stableSamples": 3,
-      "sawLoadingFallback": true,
-      "stillLoading": false,
-      "url": "http://127.0.0.1:3101/en",
-      "htmlLang": "en",
-      "documentScrollWidth": 1920,
-      "viewportClientWidth": 1920,
-      "horizontalOverflowPx": 0,
-      "documentHeight": 4359,
+      "documentHeight": 4370,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -1321,9 +816,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -1336,10 +829,10 @@
       "requestedRoute": "/id",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/home-id-390.png",
-      "screenshotBytes": 2520232,
+      "screenshotBytes": 2598596,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1217,
+      "hubMode": "live-hub",
+      "settleMs": 931,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -1348,99 +841,13 @@
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 10324,
+      "documentHeight": 10590,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 30,
-      "interactiveElementsOutsideViewport": 6,
-      "outsideSamples": [
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-4",
-          "left": 248,
-          "right": 402,
-          "width": 154
-        },
-        {
-          "selector": "span.m-badge",
-          "left": 248,
-          "right": 402,
-          "width": 154
-        },
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-5",
-          "left": 275,
-          "right": 415,
-          "width": 141
-        },
-        {
-          "selector": "span.m-badge",
-          "left": 275,
-          "right": 415,
-          "width": 141
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 387,
-          "right": 497,
-          "width": 110
-        },
-        {
-          "selector": "div.dk-archive-thumb-wrap",
-          "left": 387,
-          "right": 497,
-          "width": 110
-        },
-        {
-          "selector": "img.dk-archive-thumb",
-          "left": 389,
-          "right": 495,
-          "width": 106
-        },
-        {
-          "selector": "span.dk-archive-arrow",
-          "left": 483,
-          "right": 492,
-          "width": 9
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-4",
-          "left": 248,
-          "right": 402,
-          "width": 154
-        },
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-5",
-          "left": 275,
-          "right": 415,
-          "width": 141
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 387,
-          "right": 497,
-          "width": 110
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 507,
-          "right": 617,
-          "width": 110
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 627,
-          "right": 737,
-          "width": 110
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": 1,
       "spaceGridWidth": 362,
       "spaceCardCount": 4,
@@ -1483,10 +890,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "6 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a.dk-map-pin.dk-map-pin-4\",\"left\":248,\"right\":402,\"width\":154},{\"selector\":\"a.dk-map-pin.dk-map-pin-5\",\"left\":275,\"right\":415,\"width\":141},{\"selector\":\"a.dk-archive-node\",\"left\":387,\"right\":497,\"width\":110},{\"selector\":\"a.dk-archive-node\",\"left\":507,\"right\":617,\"width\":110},{\"selector\":\"a.dk-archive-node\",\"left\":627,\"right\":737,\"width\":110},{\"selector\":\"a.dk-archive-node\",\"left\":747,\"right\":857,\"width\":110}]",
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -1499,10 +903,10 @@
       "requestedRoute": "/id",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/home-id-768.png",
-      "screenshotBytes": 3594124,
+      "screenshotBytes": 3624615,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1105,
+      "hubMode": "live-hub",
+      "settleMs": 1418,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -1511,51 +915,13 @@
       "documentScrollWidth": 768,
       "viewportClientWidth": 768,
       "horizontalOverflowPx": 0,
-      "documentHeight": 7510,
+      "documentHeight": 7620,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 5,
-      "interactiveElementsOutsideViewport": 1,
-      "outsideSamples": [
-        {
-          "selector": "a.dk-archive-node",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        },
-        {
-          "selector": "div.dk-archive-thumb-wrap",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        },
-        {
-          "selector": "img.dk-archive-thumb",
-          "left": 749,
-          "right": 855,
-          "width": 106
-        },
-        {
-          "selector": "span.m-badge",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        },
-        {
-          "selector": "strong.dk-archive-title",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a.dk-archive-node",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": 2,
       "spaceGridWidth": 740,
       "spaceCardCount": 4,
@@ -1598,10 +964,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "1 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a.dk-archive-node\",\"left\":747,\"right\":857,\"width\":110}]",
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -1614,194 +977,19 @@
       "requestedRoute": "/id",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/home-id-1440.png",
-      "screenshotBytes": 3967310,
+      "screenshotBytes": 3906446,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1108,
+      "hubMode": "live-hub",
+      "settleMs": 1570,
       "stableSamples": 3,
-      "sawLoadingFallback": false,
+      "sawLoadingFallback": true,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/id",
       "htmlLang": "id",
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 4590,
-      "htmlOverflowX": "hidden",
-      "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1599,
-          "right": 1633,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        }
-      ],
-      "spaceGridColumns": 4,
-      "spaceGridWidth": 1332,
-      "spaceCardCount": 4,
-      "statusWords": [
-        "NYATA",
-        "NYATA",
-        "DEMO",
-        "NYATA"
-      ],
-      "stateBranch": "ready",
-      "alertCount": 0,
-      "alertTexts": [],
-      "emptyPanelCount": 0,
-      "spinnerCount": 0,
-      "landmarks": {
-        "h1": 1,
-        "h1Text": "MOONWITNESS",
-        "main": 1,
-        "primaryNav": 1,
-        "navTotal": 3,
-        "banner": 1,
-        "headerTotal": 5,
-        "footer": 1
-      },
-      "activeLinks": [
-        {
-          "text": "HOME",
-          "href": "/id",
-          "visible": true
-        },
-        {
-          "text": "HOME",
-          "href": "/id",
-          "visible": false
-        }
-      ],
-      "title": "Moonwitness — radio larut malam",
-      "consoleErrors": [
-        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
-      ],
-      "consoleWarningCount": 0,
-      "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1636,\"width\":81},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1599,\"right\":1633,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1636,\"width\":81}]",
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
-    },
-    {
-      "kind": "geometry",
-      "pass": "matrix",
-      "screen": "home",
-      "screenTitle": "Lighthouse / Dock home (UI-P01)",
-      "locale": "id",
-      "width": 1920,
-      "height": 1080,
-      "requestedRoute": "/id",
-      "httpStatus": 200,
-      "screenshot": "docs/audit/screens/home-id-1920.png",
-      "screenshotBytes": 4199482,
-      "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1093,
-      "stableSamples": 3,
-      "sawLoadingFallback": false,
-      "stillLoading": false,
-      "url": "http://127.0.0.1:3101/id",
-      "htmlLang": "id",
-      "documentScrollWidth": 1920,
-      "viewportClientWidth": 1920,
-      "horizontalOverflowPx": 0,
-      "documentHeight": 4395,
+      "documentHeight": 4440,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -1850,9 +1038,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -1865,10 +1051,10 @@
       "requestedRoute": "/en/reader",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/reader-en-390.png",
-      "screenshotBytes": 459867,
+      "screenshotBytes": 450481,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1148,
+      "hubMode": "live-hub",
+      "settleMs": 1038,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -1877,7 +1063,7 @@
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 3324,
+      "documentHeight": 3253,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -1916,74 +1102,9 @@
         }
       ],
       "title": "Corpus Reader — Moonwitness",
-      "consoleErrors": [],
-      "consoleWarningCount": 0,
-      "failedRequests": [],
-      "failures": []
-    },
-    {
-      "kind": "geometry",
-      "pass": "matrix",
-      "screen": "reader",
-      "screenTitle": "Corpus Reader (UI-P05)",
-      "locale": "en",
-      "width": 768,
-      "height": 1024,
-      "requestedRoute": "/en/reader",
-      "httpStatus": 200,
-      "screenshot": "docs/audit/screens/reader-en-768.png",
-      "screenshotBytes": 579343,
-      "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1071,
-      "stableSamples": 3,
-      "sawLoadingFallback": true,
-      "stillLoading": false,
-      "url": "http://127.0.0.1:3101/en/reader",
-      "htmlLang": "en",
-      "documentScrollWidth": 768,
-      "viewportClientWidth": 768,
-      "horizontalOverflowPx": 0,
-      "documentHeight": 2464,
-      "htmlOverflowX": "hidden",
-      "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 0,
-      "interactiveElementsOutsideViewport": 0,
-      "outsideSamples": [],
-      "interactiveOutsideSamples": [],
-      "spaceGridColumns": null,
-      "spaceGridWidth": null,
-      "spaceCardCount": 0,
-      "statusWords": [],
-      "stateBranch": "ready",
-      "alertCount": 0,
-      "alertTexts": [],
-      "emptyPanelCount": 0,
-      "spinnerCount": 0,
-      "landmarks": {
-        "h1": 1,
-        "h1Text": "Corpus Reader",
-        "main": 1,
-        "primaryNav": 1,
-        "navTotal": 5,
-        "banner": 1,
-        "headerTotal": 6,
-        "footer": 1
-      },
-      "activeLinks": [
-        {
-          "text": "READER",
-          "href": "/en/reader",
-          "visible": false
-        },
-        {
-          "text": "READER",
-          "href": "/en/reader",
-          "visible": false
-        }
+      "consoleErrors": [
+        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
       ],
-      "title": "Corpus Reader — Moonwitness",
-      "consoleErrors": [],
       "consoleWarningCount": 0,
       "failedRequests": [],
       "failures": []
@@ -1999,186 +1120,19 @@
       "requestedRoute": "/en/reader",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/reader-en-1440.png",
-      "screenshotBytes": 719899,
+      "screenshotBytes": 661263,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1095,
+      "hubMode": "live-hub",
+      "settleMs": 921,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/en/reader",
       "htmlLang": "en",
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 1473,
-      "htmlOverflowX": "hidden",
-      "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "spaceGridColumns": null,
-      "spaceGridWidth": null,
-      "spaceCardCount": 0,
-      "statusWords": [],
-      "stateBranch": "ready",
-      "alertCount": 0,
-      "alertTexts": [],
-      "emptyPanelCount": 0,
-      "spinnerCount": 0,
-      "landmarks": {
-        "h1": 1,
-        "h1Text": "Corpus Reader",
-        "main": 1,
-        "primaryNav": 1,
-        "navTotal": 5,
-        "banner": 1,
-        "headerTotal": 6,
-        "footer": 1
-      },
-      "activeLinks": [
-        {
-          "text": "READER",
-          "href": "/en/reader",
-          "visible": true
-        },
-        {
-          "text": "READER",
-          "href": "/en/reader",
-          "visible": false
-        }
-      ],
-      "title": "Corpus Reader — Moonwitness",
-      "consoleErrors": [],
-      "consoleWarningCount": 0,
-      "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1629,\"width\":74},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1629,\"width\":74}]"
-      ]
-    },
-    {
-      "kind": "geometry",
-      "pass": "matrix",
-      "screen": "reader",
-      "screenTitle": "Corpus Reader (UI-P05)",
-      "locale": "en",
-      "width": 1920,
-      "height": 1080,
-      "requestedRoute": "/en/reader",
-      "httpStatus": 200,
-      "screenshot": "docs/audit/screens/reader-en-1920.png",
-      "screenshotBytes": 813155,
-      "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1087,
-      "stableSamples": 3,
-      "sawLoadingFallback": false,
-      "stillLoading": false,
-      "url": "http://127.0.0.1:3101/en/reader",
-      "htmlLang": "en",
-      "documentScrollWidth": 1920,
-      "viewportClientWidth": 1920,
-      "horizontalOverflowPx": 0,
-      "documentHeight": 1268,
+      "documentHeight": 1279,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -2217,7 +1171,78 @@
         }
       ],
       "title": "Corpus Reader — Moonwitness",
-      "consoleErrors": [],
+      "consoleErrors": [
+        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
+      ],
+      "consoleWarningCount": 0,
+      "failedRequests": [],
+      "failures": []
+    },
+    {
+      "kind": "geometry",
+      "pass": "matrix",
+      "screen": "reader",
+      "screenTitle": "Corpus Reader (UI-P05)",
+      "locale": "en",
+      "width": 1920,
+      "height": 1080,
+      "requestedRoute": "/en/reader",
+      "httpStatus": 200,
+      "screenshot": "docs/audit/screens/reader-en-1920.png",
+      "screenshotBytes": 813122,
+      "screenshotMode": "fullPage",
+      "hubMode": "live-hub",
+      "settleMs": 839,
+      "stableSamples": 3,
+      "sawLoadingFallback": false,
+      "stillLoading": false,
+      "url": "http://127.0.0.1:3101/en/reader",
+      "htmlLang": "en",
+      "documentScrollWidth": 1920,
+      "viewportClientWidth": 1920,
+      "horizontalOverflowPx": 0,
+      "documentHeight": 1279,
+      "htmlOverflowX": "hidden",
+      "bodyOverflowX": "hidden",
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
+      "spaceGridColumns": null,
+      "spaceGridWidth": null,
+      "spaceCardCount": 0,
+      "statusWords": [],
+      "stateBranch": "ready",
+      "alertCount": 0,
+      "alertTexts": [],
+      "emptyPanelCount": 0,
+      "spinnerCount": 0,
+      "landmarks": {
+        "h1": 1,
+        "h1Text": "Corpus Reader",
+        "main": 1,
+        "primaryNav": 1,
+        "navTotal": 5,
+        "banner": 1,
+        "headerTotal": 6,
+        "footer": 1
+      },
+      "activeLinks": [
+        {
+          "text": "READER",
+          "href": "/en/reader",
+          "visible": true
+        },
+        {
+          "text": "READER",
+          "href": "/en/reader",
+          "visible": false
+        }
+      ],
+      "title": "Corpus Reader — Moonwitness",
+      "consoleErrors": [
+        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
+      ],
       "consoleWarningCount": 0,
       "failedRequests": [],
       "failures": []
@@ -2233,10 +1258,10 @@
       "requestedRoute": "/id/reader",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/reader-id-390.png",
-      "screenshotBytes": 467541,
+      "screenshotBytes": 464575,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1079,
+      "hubMode": "live-hub",
+      "settleMs": 851,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -2245,7 +1270,7 @@
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 3390,
+      "documentHeight": 3307,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -2284,7 +1309,9 @@
         }
       ],
       "title": "Corpus Reader — Moonwitness",
-      "consoleErrors": [],
+      "consoleErrors": [
+        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
+      ],
       "consoleWarningCount": 0,
       "failedRequests": [],
       "failures": []
@@ -2300,19 +1327,19 @@
       "requestedRoute": "/id/reader",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/reader-id-768.png",
-      "screenshotBytes": 621483,
+      "screenshotBytes": 618227,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1071,
+      "hubMode": "live-hub",
+      "settleMs": 893,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/id/reader",
       "htmlLang": "id",
       "documentScrollWidth": 768,
       "viewportClientWidth": 768,
       "horizontalOverflowPx": 0,
-      "documentHeight": 2562,
+      "documentHeight": 2556,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -2351,179 +1378,12 @@
         }
       ],
       "title": "Corpus Reader — Moonwitness",
-      "consoleErrors": [],
-      "consoleWarningCount": 0,
-      "failedRequests": [],
-      "failures": []
-    },
-    {
-      "kind": "geometry",
-      "pass": "matrix",
-      "screen": "reader",
-      "screenTitle": "Corpus Reader (UI-P05)",
-      "locale": "id",
-      "width": 1440,
-      "height": 900,
-      "requestedRoute": "/id/reader",
-      "httpStatus": 200,
-      "screenshot": "docs/audit/screens/reader-id-1440.png",
-      "screenshotBytes": 741135,
-      "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1090,
-      "stableSamples": 3,
-      "sawLoadingFallback": true,
-      "stillLoading": false,
-      "url": "http://127.0.0.1:3101/id/reader",
-      "htmlLang": "id",
-      "documentScrollWidth": 1440,
-      "viewportClientWidth": 1440,
-      "horizontalOverflowPx": 0,
-      "documentHeight": 1480,
-      "htmlOverflowX": "hidden",
-      "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1599,
-          "right": 1633,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        }
-      ],
-      "spaceGridColumns": null,
-      "spaceGridWidth": null,
-      "spaceCardCount": 0,
-      "statusWords": [],
-      "stateBranch": "ready",
-      "alertCount": 0,
-      "alertTexts": [],
-      "emptyPanelCount": 0,
-      "spinnerCount": 0,
-      "landmarks": {
-        "h1": 1,
-        "h1Text": "Corpus Reader",
-        "main": 1,
-        "primaryNav": 1,
-        "navTotal": 5,
-        "banner": 1,
-        "headerTotal": 6,
-        "footer": 1
-      },
-      "activeLinks": [
-        {
-          "text": "READER",
-          "href": "/id/reader",
-          "visible": true
-        },
-        {
-          "text": "READER",
-          "href": "/id/reader",
-          "visible": false
-        }
-      ],
-      "title": "Corpus Reader — Moonwitness",
       "consoleErrors": [
         "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1636,\"width\":81},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1599,\"right\":1633,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1636,\"width\":81}]"
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -2536,10 +1396,10 @@
       "requestedRoute": "/id/reader",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/reader-id-1920.png",
-      "screenshotBytes": 825701,
+      "screenshotBytes": 825784,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 844,
+      "hubMode": "live-hub",
+      "settleMs": 860,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -2548,7 +1408,7 @@
       "documentScrollWidth": 1920,
       "viewportClientWidth": 1920,
       "horizontalOverflowPx": 0,
-      "documentHeight": 1285,
+      "documentHeight": 1296,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -2587,124 +1447,6 @@
         }
       ],
       "title": "Corpus Reader — Moonwitness",
-      "consoleErrors": [
-        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
-      ],
-      "consoleWarningCount": 0,
-      "failedRequests": [],
-      "failures": []
-    },
-    {
-      "kind": "geometry",
-      "pass": "matrix",
-      "screen": "terms",
-      "screenTitle": "UNILEX terms index (UI-P06)",
-      "locale": "en",
-      "width": 390,
-      "height": 844,
-      "requestedRoute": "/en/terms",
-      "httpStatus": 200,
-      "screenshot": "docs/audit/screens/terms-en-390.png",
-      "screenshotBytes": 670610,
-      "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 833,
-      "stableSamples": 3,
-      "sawLoadingFallback": false,
-      "stillLoading": false,
-      "url": "http://127.0.0.1:3101/en/terms",
-      "htmlLang": "en",
-      "documentScrollWidth": 390,
-      "viewportClientWidth": 390,
-      "horizontalOverflowPx": 0,
-      "documentHeight": 6419,
-      "htmlOverflowX": "hidden",
-      "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 68,
-      "interactiveElementsOutsideViewport": 0,
-      "outsideSamples": [
-        {
-          "selector": "table.m-table",
-          "left": 27,
-          "right": 704,
-          "width": 677
-        },
-        {
-          "selector": "thead",
-          "left": 27,
-          "right": 704,
-          "width": 677
-        },
-        {
-          "selector": "tr",
-          "left": 27,
-          "right": 704,
-          "width": 677
-        },
-        {
-          "selector": "th",
-          "left": 387,
-          "right": 488,
-          "width": 102
-        },
-        {
-          "selector": "th",
-          "left": 488,
-          "right": 551,
-          "width": 62
-        },
-        {
-          "selector": "th",
-          "left": 551,
-          "right": 620,
-          "width": 69
-        },
-        {
-          "selector": "th",
-          "left": 620,
-          "right": 704,
-          "width": 84
-        },
-        {
-          "selector": "tbody",
-          "left": 27,
-          "right": 704,
-          "width": 677
-        }
-      ],
-      "interactiveOutsideSamples": [],
-      "spaceGridColumns": null,
-      "spaceGridWidth": null,
-      "spaceCardCount": 0,
-      "statusWords": [],
-      "stateBranch": "empty",
-      "alertCount": 0,
-      "alertTexts": [],
-      "emptyPanelCount": 1,
-      "spinnerCount": 0,
-      "landmarks": {
-        "h1": 1,
-        "h1Text": "UNILEX Terms",
-        "main": 1,
-        "primaryNav": 1,
-        "navTotal": 4,
-        "banner": 1,
-        "headerTotal": 5,
-        "footer": 1
-      },
-      "activeLinks": [
-        {
-          "text": "TERMS",
-          "href": "/en/terms",
-          "visible": false
-        },
-        {
-          "text": "TERMS",
-          "href": "/en/terms",
-          "visible": false
-        }
-      ],
-      "title": "UNILEX Terms — Moonwitness",
       "consoleErrors": [
         "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
       ],
@@ -2723,10 +1465,10 @@
       "requestedRoute": "/en/terms",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/terms-en-768.png",
-      "screenshotBytes": 850175,
+      "screenshotBytes": 850202,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1080,
+      "hubMode": "live-hub",
+      "settleMs": 895,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -2774,7 +1516,9 @@
         }
       ],
       "title": "UNILEX Terms — Moonwitness",
-      "consoleErrors": [],
+      "consoleErrors": [
+        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
+      ],
       "consoleWarningCount": 0,
       "failedRequests": [],
       "failures": []
@@ -2790,10 +1534,10 @@
       "requestedRoute": "/en/terms",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/terms-en-1440.png",
-      "screenshotBytes": 1044093,
+      "screenshotBytes": 1064776,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 861,
+      "hubMode": "live-hub",
+      "settleMs": 868,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -2802,111 +1546,13 @@
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 4512,
+      "documentHeight": 4318,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": null,
       "spaceGridWidth": null,
       "spaceCardCount": 0,
@@ -2944,9 +1590,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1629,\"width\":74},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1629,\"width\":74}]"
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -2959,10 +1603,10 @@
       "requestedRoute": "/en/terms",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/terms-en-1920.png",
-      "screenshotBytes": 1354984,
+      "screenshotBytes": 1354511,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 872,
+      "hubMode": "live-hub",
+      "settleMs": 871,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -2971,7 +1615,7 @@
       "documentScrollWidth": 1920,
       "viewportClientWidth": 1920,
       "horizontalOverflowPx": 0,
-      "documentHeight": 4307,
+      "documentHeight": 4318,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -3028,19 +1672,19 @@
       "requestedRoute": "/id/terms",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/terms-id-390.png",
-      "screenshotBytes": 717185,
+      "screenshotBytes": 693408,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1113,
+      "hubMode": "live-hub",
+      "settleMs": 931,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/id/terms",
       "htmlLang": "id",
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 6503,
+      "documentHeight": 6419,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 68,
@@ -3146,10 +1790,10 @@
       "requestedRoute": "/id/terms",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/terms-id-768.png",
-      "screenshotBytes": 894886,
+      "screenshotBytes": 891935,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 817,
+      "hubMode": "live-hub",
+      "settleMs": 1048,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -3158,7 +1802,7 @@
       "documentScrollWidth": 768,
       "viewportClientWidth": 768,
       "horizontalOverflowPx": 0,
-      "documentHeight": 4728,
+      "documentHeight": 4722,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -3215,10 +1859,10 @@
       "requestedRoute": "/id/terms",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/terms-id-1440.png",
-      "screenshotBytes": 1155058,
+      "screenshotBytes": 1027078,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 821,
+      "hubMode": "live-hub",
+      "settleMs": 884,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -3227,111 +1871,13 @@
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 4502,
+      "documentHeight": 4351,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1599,
-          "right": 1633,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1636,
-          "width": 81
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": null,
       "spaceGridWidth": null,
       "spaceCardCount": 0,
@@ -3369,9 +1915,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1636,\"width\":81},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1599,\"right\":1633,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1636,\"width\":81}]"
-      ]
+      "failures": []
     },
     {
       "kind": "geometry",
@@ -3384,10 +1928,10 @@
       "requestedRoute": "/id/terms",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/terms-id-1920.png",
-      "screenshotBytes": 1354280,
+      "screenshotBytes": 1354543,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 834,
+      "hubMode": "live-hub",
+      "settleMs": 1307,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -3396,7 +1940,7 @@
       "documentScrollWidth": 1920,
       "viewportClientWidth": 1920,
       "horizontalOverflowPx": 0,
-      "documentHeight": 4307,
+      "documentHeight": 4318,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -3453,19 +1997,19 @@
       "requestedRoute": "/en/terms/P001",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/term-detail-en-390.png",
-      "screenshotBytes": 362306,
+      "screenshotBytes": 353066,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1114,
+      "hubMode": "live-hub",
+      "settleMs": 1107,
       "stableSamples": 3,
-      "sawLoadingFallback": false,
+      "sawLoadingFallback": true,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/en/terms/P001",
       "htmlLang": "en",
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 2505,
+      "documentHeight": 2434,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -3504,7 +2048,9 @@
         }
       ],
       "title": "UNILEX Term — Moonwitness",
-      "consoleErrors": [],
+      "consoleErrors": [
+        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
+      ],
       "consoleWarningCount": 0,
       "failedRequests": [],
       "failures": []
@@ -3520,10 +2066,10 @@
       "requestedRoute": "/en/terms/P001",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/term-detail-en-768.png",
-      "screenshotBytes": 423492,
+      "screenshotBytes": 423463,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1100,
+      "hubMode": "live-hub",
+      "settleMs": 855,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -3571,179 +2117,12 @@
         }
       ],
       "title": "UNILEX Term — Moonwitness",
-      "consoleErrors": [],
-      "consoleWarningCount": 0,
-      "failedRequests": [],
-      "failures": []
-    },
-    {
-      "kind": "geometry",
-      "pass": "term-detail",
-      "screen": "term-detail",
-      "screenTitle": "UNILEX term detail (UI-P06)",
-      "locale": "en",
-      "width": 1440,
-      "height": 900,
-      "requestedRoute": "/en/terms/P001",
-      "httpStatus": 200,
-      "screenshot": "docs/audit/screens/term-detail-en-1440.png",
-      "screenshotBytes": 592402,
-      "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 822,
-      "stableSamples": 3,
-      "sawLoadingFallback": false,
-      "stillLoading": false,
-      "url": "http://127.0.0.1:3101/en/terms/P001",
-      "htmlLang": "en",
-      "documentScrollWidth": 1440,
-      "viewportClientWidth": 1440,
-      "horizontalOverflowPx": 0,
-      "documentHeight": 1265,
-      "htmlOverflowX": "hidden",
-      "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "spaceGridColumns": null,
-      "spaceGridWidth": null,
-      "spaceCardCount": 0,
-      "statusWords": [],
-      "stateBranch": "ready",
-      "alertCount": 0,
-      "alertTexts": [],
-      "emptyPanelCount": 0,
-      "spinnerCount": 0,
-      "landmarks": {
-        "h1": 1,
-        "h1Text": "A-L-L-A-H Command Center · A-L-L-A-H Command Center",
-        "main": 1,
-        "primaryNav": 1,
-        "navTotal": 4,
-        "banner": 1,
-        "headerTotal": 5,
-        "footer": 1
-      },
-      "activeLinks": [
-        {
-          "text": "TERMS",
-          "href": "/en/terms",
-          "visible": true
-        },
-        {
-          "text": "TERMS",
-          "href": "/en/terms",
-          "visible": false
-        }
-      ],
-      "title": "UNILEX Term — Moonwitness",
       "consoleErrors": [
         "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1629,\"width\":74},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1629,\"width\":74}]"
-      ]
+      "failures": []
     }
   ],
   "reducedMotion": [
@@ -3753,24 +2132,24 @@
       "screen": "constellation",
       "screenTitle": "Constellation ontology (UI-P06)",
       "locale": "en",
-      "width": 390,
-      "height": 844,
+      "width": 1440,
+      "height": 900,
       "requestedRoute": "/en/constellation",
       "httpStatus": 200,
-      "screenshot": "docs/audit/screens/constellation-en-reduce-390.png",
-      "screenshotBytes": 1850973,
+      "screenshot": "docs/audit/screens/constellation-en-reduce-1440.png",
+      "screenshotBytes": 2444904,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1067,
+      "hubMode": "live-hub",
+      "settleMs": 977,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/en/constellation",
       "htmlLang": "en",
-      "documentScrollWidth": 390,
-      "viewportClientWidth": 390,
+      "documentScrollWidth": 1440,
+      "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 16827,
+      "documentHeight": 8267,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -3800,180 +2179,6 @@
         {
           "text": "CONSTELLATION",
           "href": "/en/constellation",
-          "visible": false
-        },
-        {
-          "text": "CONSTELLATION",
-          "href": "/en/constellation",
-          "visible": false
-        }
-      ],
-      "title": "Constellation — Moonwitness",
-      "motion": {
-        "matchedReducedMotionQuery": true,
-        "elementsScanned": 978,
-        "violationCount": 0,
-        "violations": [],
-        "runningAnimations": 0,
-        "runningLongerThanLimit": 0,
-        "spinnerCount": 0
-      },
-      "consoleErrors": [],
-      "consoleWarningCount": 0,
-      "failedRequests": [],
-      "failures": []
-    },
-    {
-      "kind": "motion",
-      "pass": "reduced-motion",
-      "screen": "constellation",
-      "screenTitle": "Constellation ontology (UI-P06)",
-      "locale": "en",
-      "width": 1440,
-      "height": 900,
-      "requestedRoute": "/en/constellation",
-      "httpStatus": 200,
-      "screenshot": "docs/audit/screens/constellation-en-reduce-1440.png",
-      "screenshotBytes": 2497457,
-      "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1044,
-      "stableSamples": 3,
-      "sawLoadingFallback": true,
-      "stillLoading": false,
-      "url": "http://127.0.0.1:3101/en/constellation",
-      "htmlLang": "en",
-      "documentScrollWidth": 1440,
-      "viewportClientWidth": 1440,
-      "horizontalOverflowPx": 0,
-      "documentHeight": 8461,
-      "htmlOverflowX": "hidden",
-      "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "spaceGridColumns": null,
-      "spaceGridWidth": null,
-      "spaceCardCount": 0,
-      "statusWords": [],
-      "stateBranch": "ready",
-      "alertCount": 0,
-      "alertTexts": [],
-      "emptyPanelCount": 0,
-      "spinnerCount": 0,
-      "landmarks": {
-        "h1": 1,
-        "h1Text": "Constellation",
-        "main": 1,
-        "primaryNav": 1,
-        "navTotal": 4,
-        "banner": 1,
-        "headerTotal": 8,
-        "footer": 1
-      },
-      "activeLinks": [
-        {
-          "text": "CONSTELLATION",
-          "href": "/en/constellation",
           "visible": true
         },
         {
@@ -3997,9 +2202,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1629,\"width\":74},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1629,\"width\":74}]"
-      ]
+      "failures": []
     },
     {
       "kind": "motion",
@@ -4012,111 +2215,25 @@
       "requestedRoute": "/en",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/home-en-reduce-390.png",
-      "screenshotBytes": 2513969,
+      "screenshotBytes": 2577633,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1080,
+      "hubMode": "live-hub",
+      "settleMs": 1124,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/en",
       "htmlLang": "en",
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 10287,
+      "documentHeight": 10567,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 30,
-      "interactiveElementsOutsideViewport": 6,
-      "outsideSamples": [
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-4",
-          "left": 248,
-          "right": 402,
-          "width": 154
-        },
-        {
-          "selector": "span.m-badge",
-          "left": 248,
-          "right": 402,
-          "width": 154
-        },
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-5",
-          "left": 275,
-          "right": 415,
-          "width": 141
-        },
-        {
-          "selector": "span.m-badge",
-          "left": 275,
-          "right": 415,
-          "width": 141
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 387,
-          "right": 497,
-          "width": 110
-        },
-        {
-          "selector": "div.dk-archive-thumb-wrap",
-          "left": 387,
-          "right": 497,
-          "width": 110
-        },
-        {
-          "selector": "img.dk-archive-thumb",
-          "left": 389,
-          "right": 495,
-          "width": 106
-        },
-        {
-          "selector": "span.dk-archive-arrow",
-          "left": 483,
-          "right": 492,
-          "width": 9
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-4",
-          "left": 248,
-          "right": 402,
-          "width": 154
-        },
-        {
-          "selector": "a.dk-map-pin.dk-map-pin-5",
-          "left": 275,
-          "right": 415,
-          "width": 141
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 387,
-          "right": 497,
-          "width": 110
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 507,
-          "right": 617,
-          "width": 110
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 627,
-          "right": 737,
-          "width": 110
-        },
-        {
-          "selector": "a.dk-archive-node",
-          "left": 747,
-          "right": 857,
-          "width": 110
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": 1,
       "spaceGridWidth": 362,
       "spaceCardCount": 4,
@@ -4168,10 +2285,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "6 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a.dk-map-pin.dk-map-pin-4\",\"left\":248,\"right\":402,\"width\":154},{\"selector\":\"a.dk-map-pin.dk-map-pin-5\",\"left\":275,\"right\":415,\"width\":141},{\"selector\":\"a.dk-archive-node\",\"left\":387,\"right\":497,\"width\":110},{\"selector\":\"a.dk-archive-node\",\"left\":507,\"right\":617,\"width\":110},{\"selector\":\"a.dk-archive-node\",\"left\":627,\"right\":737,\"width\":110},{\"selector\":\"a.dk-archive-node\",\"left\":747,\"right\":857,\"width\":110}]",
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
+      "failures": []
     },
     {
       "kind": "motion",
@@ -4184,10 +2298,10 @@
       "requestedRoute": "/en",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/home-en-reduce-1440.png",
-      "screenshotBytes": 3935462,
+      "screenshotBytes": 3857211,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1092,
+      "hubMode": "live-hub",
+      "settleMs": 1160,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -4196,111 +2310,13 @@
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 4564,
+      "documentHeight": 4370,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": 4,
       "spaceGridWidth": 1332,
       "spaceCardCount": 4,
@@ -4340,7 +2356,7 @@
       "title": "Moonwitness — late-night radio",
       "motion": {
         "matchedReducedMotionQuery": true,
-        "elementsScanned": 841,
+        "elementsScanned": 840,
         "violationCount": 0,
         "violations": [],
         "runningAnimations": 0,
@@ -4352,10 +2368,7 @@
       ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1629,\"width\":74},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1629,\"width\":74}]",
-        "home rendered the \"ready\" branch; this run forced the hub offline, so the honest branch is \"offline\""
-      ]
+      "failures": []
     },
     {
       "kind": "motion",
@@ -4368,10 +2381,10 @@
       "requestedRoute": "/en/reader",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/reader-en-reduce-390.png",
-      "screenshotBytes": 459674,
+      "screenshotBytes": 450742,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1064,
+      "hubMode": "live-hub",
+      "settleMs": 1153,
       "stableSamples": 3,
       "sawLoadingFallback": false,
       "stillLoading": false,
@@ -4380,7 +2393,7 @@
       "documentScrollWidth": 390,
       "viewportClientWidth": 390,
       "horizontalOverflowPx": 0,
-      "documentHeight": 3324,
+      "documentHeight": 3253,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
       "elementsOutsideViewport": 0,
@@ -4421,7 +2434,7 @@
       "title": "Corpus Reader — Moonwitness",
       "motion": {
         "matchedReducedMotionQuery": true,
-        "elementsScanned": 271,
+        "elementsScanned": 269,
         "violationCount": 0,
         "violations": [],
         "runningAnimations": 0,
@@ -4444,123 +2457,25 @@
       "requestedRoute": "/en/reader",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/reader-en-reduce-1440.png",
-      "screenshotBytes": 719928,
+      "screenshotBytes": 660997,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1081,
+      "hubMode": "live-hub",
+      "settleMs": 1086,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/en/reader",
       "htmlLang": "en",
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 1473,
+      "documentHeight": 1279,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": null,
       "spaceGridWidth": null,
       "spaceCardCount": 0,
@@ -4602,138 +2517,7 @@
         "runningLongerThanLimit": 0,
         "spinnerCount": 0
       },
-      "consoleErrors": [
-        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
-      ],
-      "consoleWarningCount": 0,
-      "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1629,\"width\":74},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1629,\"width\":74}]"
-      ]
-    },
-    {
-      "kind": "motion",
-      "pass": "reduced-motion",
-      "screen": "terms",
-      "screenTitle": "UNILEX terms index (UI-P06)",
-      "locale": "en",
-      "width": 390,
-      "height": 844,
-      "requestedRoute": "/en/terms",
-      "httpStatus": 200,
-      "screenshot": "docs/audit/screens/terms-en-reduce-390.png",
-      "screenshotBytes": 670677,
-      "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 825,
-      "stableSamples": 3,
-      "sawLoadingFallback": false,
-      "stillLoading": false,
-      "url": "http://127.0.0.1:3101/en/terms",
-      "htmlLang": "en",
-      "documentScrollWidth": 390,
-      "viewportClientWidth": 390,
-      "horizontalOverflowPx": 0,
-      "documentHeight": 6419,
-      "htmlOverflowX": "hidden",
-      "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 68,
-      "interactiveElementsOutsideViewport": 0,
-      "outsideSamples": [
-        {
-          "selector": "table.m-table",
-          "left": 27,
-          "right": 704,
-          "width": 677
-        },
-        {
-          "selector": "thead",
-          "left": 27,
-          "right": 704,
-          "width": 677
-        },
-        {
-          "selector": "tr",
-          "left": 27,
-          "right": 704,
-          "width": 677
-        },
-        {
-          "selector": "th",
-          "left": 387,
-          "right": 488,
-          "width": 102
-        },
-        {
-          "selector": "th",
-          "left": 488,
-          "right": 551,
-          "width": 62
-        },
-        {
-          "selector": "th",
-          "left": 551,
-          "right": 620,
-          "width": 69
-        },
-        {
-          "selector": "th",
-          "left": 620,
-          "right": 704,
-          "width": 84
-        },
-        {
-          "selector": "tbody",
-          "left": 27,
-          "right": 704,
-          "width": 677
-        }
-      ],
-      "interactiveOutsideSamples": [],
-      "spaceGridColumns": null,
-      "spaceGridWidth": null,
-      "spaceCardCount": 0,
-      "statusWords": [],
-      "stateBranch": "empty",
-      "alertCount": 0,
-      "alertTexts": [],
-      "emptyPanelCount": 1,
-      "spinnerCount": 0,
-      "landmarks": {
-        "h1": 1,
-        "h1Text": "UNILEX Terms",
-        "main": 1,
-        "primaryNav": 1,
-        "navTotal": 4,
-        "banner": 1,
-        "headerTotal": 5,
-        "footer": 1
-      },
-      "activeLinks": [
-        {
-          "text": "TERMS",
-          "href": "/en/terms",
-          "visible": false
-        },
-        {
-          "text": "TERMS",
-          "href": "/en/terms",
-          "visible": false
-        }
-      ],
-      "title": "UNILEX Terms — Moonwitness",
-      "motion": {
-        "matchedReducedMotionQuery": true,
-        "elementsScanned": 631,
-        "violationCount": 0,
-        "violations": [],
-        "runningAnimations": 0,
-        "runningLongerThanLimit": 0,
-        "spinnerCount": 0
-      },
-      "consoleErrors": [
-        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
-      ],
+      "consoleErrors": [],
       "consoleWarningCount": 0,
       "failedRequests": [],
       "failures": []
@@ -4749,123 +2533,25 @@
       "requestedRoute": "/en/terms",
       "httpStatus": 200,
       "screenshot": "docs/audit/screens/terms-en-reduce-1440.png",
-      "screenshotBytes": 1044093,
+      "screenshotBytes": 1064727,
       "screenshotMode": "fullPage",
-      "hubMode": "offline-forced",
-      "settleMs": 1084,
+      "hubMode": "live-hub",
+      "settleMs": 836,
       "stableSamples": 3,
-      "sawLoadingFallback": true,
+      "sawLoadingFallback": false,
       "stillLoading": false,
       "url": "http://127.0.0.1:3101/en/terms",
       "htmlLang": "en",
       "documentScrollWidth": 1440,
       "viewportClientWidth": 1440,
       "horizontalOverflowPx": 0,
-      "documentHeight": 4512,
+      "documentHeight": 4318,
       "htmlOverflowX": "hidden",
       "bodyOverflowX": "hidden",
-      "elementsOutsideViewport": 20,
-      "interactiveElementsOutsideViewport": 8,
-      "outsideSamples": [
-        {
-          "selector": "nav.dk-nav",
-          "left": 244,
-          "right": 1539,
-          "width": 1296
-        },
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "div.m-row",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "nav.dk-locale-switcher",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
-      "interactiveOutsideSamples": [
-        {
-          "selector": "a",
-          "left": 1416,
-          "right": 1464,
-          "width": 48
-        },
-        {
-          "selector": "a",
-          "left": 1487,
-          "right": 1541,
-          "width": 54
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1595,
-          "right": 1629,
-          "width": 34
-        },
-        {
-          "selector": "button.inline-flex.items-center",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.dk-icon-btn",
-          "left": 1555,
-          "right": 1589,
-          "width": 34
-        },
-        {
-          "selector": "a.m-btn",
-          "left": 1555,
-          "right": 1629,
-          "width": 74
-        }
-      ],
+      "elementsOutsideViewport": 0,
+      "interactiveElementsOutsideViewport": 0,
+      "outsideSamples": [],
+      "interactiveOutsideSamples": [],
       "spaceGridColumns": null,
       "spaceGridWidth": null,
       "spaceCardCount": 0,
@@ -4907,12 +2593,12 @@
         "runningLongerThanLimit": 0,
         "spinnerCount": 0
       },
-      "consoleErrors": [],
+      "consoleErrors": [
+        "pageerror: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math"
+      ],
       "consoleWarningCount": 0,
       "failedRequests": [],
-      "failures": [
-        "8 interactive element(s) sit outside the viewport and are clipped: [{\"selector\":\"a\",\"left\":1416,\"right\":1464,\"width\":48},{\"selector\":\"a\",\"left\":1487,\"right\":1541,\"width\":54},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1595,\"right\":1629,\"width\":34},{\"selector\":\"button.inline-flex.items-center\",\"left\":1555,\"right\":1629,\"width\":74},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.dk-icon-btn\",\"left\":1555,\"right\":1589,\"width\":34},{\"selector\":\"a.m-btn\",\"left\":1555,\"right\":1629,\"width\":74}]"
-      ]
+      "failures": []
     }
   ],
   "keyboard": {
@@ -4920,7 +2606,7 @@
     "route": "/en",
     "drawerViewport": "390x844",
     "desktopViewport": "1440x900",
-    "settleMs": 1086,
+    "settleMs": 1124,
     "stateBranch": "ready",
     "tabStopsToTrigger": 8,
     "enterActivationAttempts": 1,

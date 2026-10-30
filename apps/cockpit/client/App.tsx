@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, type ReactNode } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback, type ReactNode } from 'react'
 import Hls from 'hls.js'
 import { Tabs, type TabItem, type TerminalLine } from '@moonwitness/moonui'
 import { triggerHaptic } from '@moonwitness/moonui/client'
@@ -17,6 +17,18 @@ import { useCockpitLocale } from './hooks/useCockpitLocale'
 import { useCockpitSync } from './hooks/useCockpitSync'
 import { useCockpitActions } from './hooks/useCockpitActions'
 import { useTodoProgress } from './hooks/useTodoProgress'
+import { useReducedMotion } from './hooks/useReducedMotion'
+import {
+  classifyPlayRejection,
+  cycleChannelIndex,
+  hlsErrorToken,
+  isActiveStatus,
+  mediaElementErrorToken,
+  pipAvailability,
+  planChannelPlayback,
+  statusFromElementEvent,
+  type MediaStatusCode,
+} from './hooks/useMediaTransport'
 import type {
   ChannelItem,
   ChannelMediaType,
@@ -148,12 +160,22 @@ export function App(): ReactNode {
   // Media Player State
   const [channels, setChannels] = useState<ChannelItem[]>(DEFAULT_CHANNELS)
   const [activeChannelIndex, setActiveChannelIndex] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(false)
+  // The transport is a state machine, not a boolean: 'blocked', 'unsupported-hls'
+  // and 'error' are all "not playing" but mean very different things, and a
+  // monitoring surface must not collapse them into one word.
+  const [transport, setTransport] = useState<{ code: MediaStatusCode; detail: string | null }>({
+    code: 'stopped',
+    detail: null,
+  })
+  const isPlaying = isActiveStatus(transport.code)
   const [isMuted, setIsMuted] = useState(false)
   const [volume, setVolume] = useState(0.4)
   const [channelCategory, setChannelCategory] = useState<'all' | 'bgm' | 'radio' | 'iptv'>('all')
   const [channelSearch, setChannelSearch] = useState('')
   const [nowPlayingTrack, setNowPlayingTrack] = useState<{ artist: string | null; title: string } | null>(null)
+  // The <video> surface only exists while the media tab is mounted; IPTV must
+  // (re)plan once it appears instead of silently doing nothing.
+  const [videoSurface, setVideoSurface] = useState(false)
 
   // Custom channel input form
   const [customName, setCustomName] = useState('')
@@ -162,6 +184,8 @@ export function App(): ReactNode {
   const [customGenre, setCustomGenre] = useState('')
 
   const previewFrameRef = useRef<HTMLIFrameElement>(null)
+  // One owner per surface. The audio element is created imperatively and never
+  // rendered, so unmounting the media tab cannot orphan a playing stream.
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const hlsRef = useRef<Hls | null>(null)
@@ -170,13 +194,24 @@ export function App(): ReactNode {
   volumeRef.current = volume
   const isMutedRef = useRef(isMuted)
   isMutedRef.current = isMuted
+  // Copy must not restart playback when the operator switches locale.
+  const copyRef = useRef(copy)
+  copyRef.current = copy
 
   const currentChannel = channels[activeChannelIndex] ?? DEFAULT_CHANNELS[0]
 
+  // The media tab mounts and unmounts the only <video>. Attaching through a
+  // callback ref keeps one owner and re-plans playback the moment it appears.
+  const attachVideo = useCallback((el: HTMLVideoElement | null) => {
+    videoRef.current = el
+    setVideoSurface(Boolean(el))
+  }, [])
+
   // Data sync hook
-  const { config, serviceStates, setServiceStates, logs, setLogs, clock, uptime, portStatus, progressPayload, progressLive } =
+  const { config, serviceStates, setServiceStates, logs, setLogs, clock, uptime, portStatus, rackSource, progressPayload, progressLive } =
     useCockpitSync(setChannels)
   const progress = useTodoProgress({ progressPayload, progressLive })
+  const reducedMotion = useReducedMotion()
 
   // Actions hook
   const {
@@ -231,83 +266,171 @@ export function App(): ReactNode {
     })
   }
 
-  // Playback Engine: Synchronizes current channel with HTML5 Audio / Video + HLS.js
+  // Playback Engine: maps the active channel onto exactly one media surface and
+  // records the honest reason when it cannot. Every early exit sets a code —
+  // the previous engine's missing branches left the UI showing "playing"
+  // over a stream that was never started.
   useEffect(() => {
     const ch = channels[activeChannelIndex] ?? DEFAULT_CHANNELS[0]
     if (!ch) return
 
-    if (hlsRef.current) {
-      hlsRef.current.destroy()
+    let disposed = false
+    let detachElement: (() => void) | null = null
+    let unlock: (() => void) | null = null
+    let hls: Hls | null = null
+
+    const setStatus = (code: MediaStatusCode, detail: string | null = null) => {
+      if (!disposed) setTransport({ code, detail })
+    }
+
+    // Releasing a surface stops it and drops its source; pausing alone leaves a
+    // live stream buffering forever and the next channel racing it for output.
+    const release = (el: HTMLMediaElement | null) => {
+      if (!el) return
+      el.pause()
+      el.removeAttribute('src')
+      el.load()
+    }
+
+    const cleanup = () => {
+      disposed = true
+      if (hls) {
+        hls.destroy()
+        hls = null
+      }
       hlsRef.current = null
+      if (detachElement) {
+        detachElement()
+        detachElement = null
+      }
+      if (unlock) {
+        window.removeEventListener('click', unlock)
+        window.removeEventListener('keydown', unlock)
+        unlock = null
+      }
     }
 
-    if (ch.type === 'iptv') {
-      if (audioRef.current) {
-        audioRef.current.pause()
-      }
+    const video = videoRef.current
+    const isVideo = ch.type === 'iptv'
 
-      const video = videoRef.current
-      if (video) {
-        video.volume = volumeRef.current
-        video.muted = isMutedRef.current
-
-        if (ch.streamUrl.includes('.m3u8')) {
-          if (Hls.isSupported()) {
-            const hls = new Hls({ enableWorker: true, lowLatencyMode: true })
-            hls.loadSource(ch.streamUrl)
-            hls.attachMedia(video)
-            hlsRef.current = hls
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-              void video.play().then(() => setIsPlaying(true)).catch(() => {})
-            })
-          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = ch.streamUrl
-            void video.play().then(() => setIsPlaying(true)).catch(() => {})
-          }
-        } else {
-          video.src = ch.streamUrl
-          void video.play().then(() => setIsPlaying(true)).catch(() => {})
-        }
-      }
+    if (isVideo) {
+      release(audioRef.current)
     } else {
-      if (videoRef.current) {
-        videoRef.current.pause()
-      }
+      release(video)
+    }
 
-      if (!audioRef.current) {
-        audioRef.current = new Audio()
-      }
-      const audio = audioRef.current
-      audio.src = ch.streamUrl
-      audio.loop = ch.type === 'bgm'
-      audio.volume = volumeRef.current
-      audio.muted = isMutedRef.current
+    if (isVideo && !video) {
+      // The media tab owns the only <video>; the top-bar rack still shows the
+      // channel, so this has to be labelled instead of silently skipped.
+      setStatus('no-video-surface', 'PLAN:AWAITING_VIDEO_SURFACE')
+      return cleanup
+    }
 
-      const startAudio = () => {
-        audio
+    const plan = planChannelPlayback(ch, {
+      hlsSupported: Hls.isSupported(),
+      nativeHls: Boolean(video?.canPlayType('application/vnd.apple.mpegurl')),
+    })
+
+    if (plan === 'unsupported-hls') {
+      setStatus('unsupported-hls', 'PLAN:BOTH_HLS_PATHS_UNAVAILABLE')
+      return cleanup
+    }
+
+    let el: HTMLMediaElement
+    if (isVideo && video) {
+      el = video
+    } else {
+      if (!audioRef.current) audioRef.current = new Audio()
+      el = audioRef.current
+    }
+
+    el.loop = ch.type === 'bgm'
+    el.volume = volumeRef.current
+    el.muted = isMutedRef.current
+
+    const onPlaying = () => setStatus(statusFromElementEvent('playing'))
+    const onPause = () => setStatus(statusFromElementEvent('pause'))
+    const onWaiting = () => setStatus(statusFromElementEvent('waiting'))
+    const onEnded = () => setStatus(statusFromElementEvent('ended'))
+    const onError = () => {
+      const token = mediaElementErrorToken(el.error?.code)
+      setStatus('error', token ? `MEDIA_ERROR:${token}` : 'MEDIA_ERROR:UNREPORTED')
+    }
+
+    el.addEventListener('playing', onPlaying)
+    el.addEventListener('pause', onPause)
+    el.addEventListener('waiting', onWaiting)
+    el.addEventListener('ended', onEnded)
+    el.addEventListener('error', onError)
+    detachElement = () => {
+      el.removeEventListener('playing', onPlaying)
+      el.removeEventListener('pause', onPause)
+      el.removeEventListener('waiting', onWaiting)
+      el.removeEventListener('ended', onEnded)
+      el.removeEventListener('error', onError)
+    }
+
+    const requestPlay = () => {
+      setStatus('loading')
+      void el
+        .play()
+        .then(() => setStatus('playing'))
+        .catch((err: unknown) => {
+          const kind = classifyPlayRejection(err)
+          if (kind === 'aborted') {
+            // Superseded by a newer play/pause/src change: not a failure.
+            setStatus('paused', 'PLAY_SUPERSEDED')
+            return
+          }
+          if (kind !== 'blocked') {
+            setStatus('error', 'PLAY_REJECTED')
+            return
+          }
+          // Autoplay policy: say so, and arm exactly one gesture-driven retry.
+          setStatus('blocked', 'PLAY_NOT_ALLOWED')
+          unlock = () => {
+            void el
+              .play()
+              .then(() => setStatus('playing'))
+              .catch((retryErr: unknown) => {
+                setStatus(classifyPlayRejection(retryErr) === 'blocked' ? 'blocked' : 'error', 'RETRY_REJECTED')
+              })
+            window.removeEventListener('click', unlock)
+            window.removeEventListener('keydown', unlock)
+            unlock = null
+          }
+          window.addEventListener('click', unlock, { once: true })
+          window.addEventListener('keydown', unlock, { once: true })
+        })
+    }
+
+    if (plan === 'iptv-hls') {
+      const instance = new Hls({ enableWorker: true, lowLatencyMode: true })
+      hls = instance
+      hlsRef.current = instance
+      instance.on(Hls.Events.MANIFEST_PARSED, () => {
+        setStatus('loading')
+        void el
           .play()
-          .then(() => setIsPlaying(true))
-          .catch(() => {
-            const unlock = () => {
-              void audio.play().then(() => setIsPlaying(true)).catch(() => {})
-              window.removeEventListener('click', unlock)
-              window.removeEventListener('keydown', unlock)
-            }
-            window.addEventListener('click', unlock, { once: true })
-            window.addEventListener('keydown', unlock, { once: true })
+          .then(() => setStatus('playing'))
+          .catch((err: unknown) => {
+            setStatus(classifyPlayRejection(err) === 'blocked' ? 'blocked' : 'error', 'PLAY_NOT_ALLOWED')
           })
-      }
-
-      startAudio()
+      })
+      instance.on(Hls.Events.ERROR, (_event, data) => {
+        if (!data.fatal) return
+        setStatus('error', `HLS_ERROR:${hlsErrorToken(data.details, true)}`)
+      })
+      instance.loadSource(ch.streamUrl)
+      instance.attachMedia(el as HTMLVideoElement)
+      setStatus('loading')
+    } else {
+      el.src = ch.streamUrl
+      requestPlay()
     }
 
-    return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy()
-        hlsRef.current = null
-      }
-    }
-  }, [activeChannelIndex, channels])
+    return cleanup
+  }, [activeChannelIndex, channels, videoSurface])
 
   // Volume & Mute Sync
   useEffect(() => {
@@ -323,54 +446,65 @@ export function App(): ReactNode {
 
   const togglePlayPause = () => {
     triggerHaptic('switch')
-    const ch = currentChannel
-    if (ch.type === 'iptv') {
-      const v = videoRef.current
-      if (!v) return
-      if (isPlaying) {
-        v.pause()
-        setIsPlaying(false)
-      } else {
-        void v.play().then(() => setIsPlaying(true))
-      }
-    } else {
-      const a = audioRef.current
-      if (!a) return
-      if (isPlaying) {
-        a.pause()
-        setIsPlaying(false)
-      } else {
-        void a.play().then(() => setIsPlaying(true))
-      }
+    // The element is the truth; the code is only its description.
+    const el: HTMLMediaElement | null =
+      currentChannel.type === 'iptv' ? videoRef.current : audioRef.current
+    if (!el) {
+      setTransport({
+        code: currentChannel.type === 'iptv' ? 'no-video-surface' : 'stopped',
+        detail: 'NO_SURFACE_MOUNTED',
+      })
+      return
     }
+    if (!el.paused) {
+      el.pause()
+      setTransport({ code: 'paused', detail: null })
+      return
+    }
+    setTransport({ code: 'loading', detail: null })
+    void el
+      .play()
+      .then(() => setTransport({ code: 'playing', detail: null }))
+      .catch((err: unknown) => {
+        const kind = classifyPlayRejection(err)
+        setTransport({
+          code: kind === 'blocked' ? 'blocked' : kind === 'aborted' ? 'paused' : 'error',
+          detail: kind === 'blocked' ? 'PLAY_NOT_ALLOWED' : kind === 'aborted' ? 'PLAY_SUPERSEDED' : 'PLAY_REJECTED',
+        })
+      })
   }
 
   const selectChannel = (index: number) => {
+    if (index < 0 || index >= channels.length) return
     triggerHaptic('tuning')
+    // Optimistically claiming PLAYING here used to hide the fact that a
+    // rejected autoplay or an unsupported HLS URL had not started anything.
+    setTransport({ code: 'loading', detail: null })
     setActiveChannelIndex(index)
-    setIsPlaying(true)
   }
 
   const nextChannel = () => {
-    const nextIdx = (activeChannelIndex + 1) % channels.length
-    selectChannel(nextIdx)
+    selectChannel(cycleChannelIndex(activeChannelIndex, channels.length, 1))
   }
 
   const prevChannel = () => {
-    const prevIdx = (activeChannelIndex - 1 + channels.length) % channels.length
-    selectChannel(prevIdx)
+    selectChannel(cycleChannelIndex(activeChannelIndex, channels.length, -1))
   }
 
-  const togglePip = async () => {
-    if (!videoRef.current || !document.pictureInPictureEnabled) return
+  const togglePip = async (): Promise<'ok' | 'unsupported' | 'no-surface' | 'failed'> => {
+    const { enabled } = pipAvailability(typeof document === 'undefined' ? undefined : document)
+    if (!enabled) return 'unsupported'
+    const video = videoRef.current
+    if (!video) return 'no-surface'
     try {
       if (document.pictureInPictureElement) {
         await document.exitPictureInPicture()
-      } else {
-        await videoRef.current.requestPictureInPicture()
+        return 'ok'
       }
+      await video.requestPictureInPicture()
+      return 'ok'
     } catch {
-      /* PiP not permitted */
+      return 'failed'
     }
   }
 

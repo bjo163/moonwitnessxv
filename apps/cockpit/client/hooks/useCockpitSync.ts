@@ -2,6 +2,13 @@ import { useState, useEffect, useRef } from 'react'
 import type { AppConfig, ChannelItem, LogEntry, ProgressPayload, ServiceState } from '../types'
 import { setCockpitToken } from '../lib/cockpit-token'
 
+/**
+ * Where the channel rack currently on screen came from.
+ * 'builtin-fallback' is a real, visible state: the server rack could not be
+ * read, so custom channels added earlier are not in this list.
+ */
+export type RackSource = 'pending' | 'server' | 'builtin-fallback'
+
 export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => ChannelItem[]) => void) {
   const [config, setConfig] = useState<AppConfig | null>(null)
   const [serviceStates, setServiceStates] = useState<Record<string, ServiceState>>({})
@@ -15,6 +22,7 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
   // Live listener truth per tag from /api/status: a port occupied by `pnpm dev`
   // must not be shown as free just because the cockpit did not spawn it.
   const [portStatus, setPortStatus] = useState<Record<string, boolean>>({})
+  const [rackSource, setRackSource] = useState<RackSource>('pending')
   // Wall-clock time at which the cockpit process started, derived once from the
   // first /api/status snapshot so the displayed uptime can tick locally without
   // re-polling the server every second.
@@ -62,10 +70,18 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
           const chData = (await chRes.json()) as ChannelItem[]
           if (Array.isArray(chData) && chData.length > 0) {
             setChannels(() => chData)
+            setRackSource('server')
+          } else {
+            // An empty or malformed array is still a failed rack read: the
+            // built-in list is what the operator is looking at.
+            setRackSource('builtin-fallback')
           }
+        } else {
+          setRackSource('builtin-fallback')
         }
       } catch (err) {
         console.error('Failed to load initial cockpit data:', err)
+        setRackSource('builtin-fallback')
       }
     })()
   }, [setChannels])
@@ -133,6 +149,7 @@ export function useCockpitSync(setChannels: (fn: (prev: ChannelItem[]) => Channe
     clock,
     uptime,
     portStatus,
+    rackSource,
     progressPayload,
     progressLive,
   }

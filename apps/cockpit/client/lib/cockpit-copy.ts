@@ -83,11 +83,54 @@ export interface CockpitCopyCatalog {
   errorEmptyName: string
   successChannelAdded: string
 
+  // Media transport (UI2-P18d): every code the transport can actually be in.
+  // There is deliberately no "NOMINAL"-style catch-all: an unknown state says
+  // "unknown", because a monitoring surface must not upgrade silence to health.
+  mediaTransportLabel: string
+  statusPlaying: string
+  statusPaused: string
+  statusLoading: string
+  statusBuffering: string
+  statusStopped: string
+  statusBlocked: string
+  statusUnsupported: string
+  statusError: string
+  statusNoSurface: string
+  statusUnknown: string
+  mediaNoReason: string
+  mediaBlockedHint: string
+  visualizerRole: string
+  visualizerReduced: string
+  playlistLabel: string
+  kindFilterLabel: string
+  channelSearchPlaceholder: string
+  noChannelsMatch: string
+  rackBuiltInOnly: string
+  btnPrevChannel: string
+  btnNextChannel: string
+  btnPlay: string
+  btnStop: string
+  btnMuted: string
+  btnVolume: string
+  btnPip: string
+  titlePrevChannel: string
+  titleNextChannel: string
+  titlePlayPause: string
+  titleMute: string
+  titlePip: string
+  pipUnavailable: string
+
   // Tuner
   tunerTitle: string
+  tunerShow: string
+  tunerHide: string
+  tunerPseudoNote: string
+  tunerActiveBand: string
+  bandAM: string
   bandFM: string
   bandSW1: string
   bandSW2: string
+  bandSW3: string
 
   // Ports
   portsTitle: string
@@ -127,6 +170,19 @@ export interface CockpitCopyCatalog {
   groupOptionalResearch: string
   groupRelease: string
   groupEcosystem: string
+  groupUnmapped: string
+  // UI2-P20b/d: delivery truth, not a single live/polling boolean.
+  progressFeedReconnecting: string
+  progressFeedPollAfterDrop: string
+  progressFeedUnavailable: string
+  progressErrorLabel: string
+  progressRowsCapped: string
+  progressAbsoluteFlips: string
+  progressFlipsClosed: string
+  progressFlipsReopened: string
+  progressPercentIsRegister: string
+  progressCountMismatch: string
+  progressKeyboardHint: string
   openBlockersHeader: string
   progressSourceNote: string
   progressLiveBadge: string
@@ -292,11 +348,53 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     errorEmptyName: 'Stream name cannot be empty.',
     successChannelAdded: 'Channel successfully added to rack.',
 
+    // Media transport — one label per state the engine can really be in.
+    mediaTransportLabel: 'Transport',
+    statusPlaying: 'PLAYING',
+    statusPaused: 'PAUSED',
+    statusLoading: 'LOADING STREAM',
+    statusBuffering: 'BUFFERING',
+    statusStopped: 'PLAYBACK STOPPED',
+    statusBlocked: 'AUTOPLAY BLOCKED',
+    statusUnsupported: 'HLS NOT SUPPORTED HERE',
+    statusError: 'STREAM ERROR',
+    statusNoSurface: 'VIDEO SURFACE NOT MOUNTED',
+    statusUnknown: 'STATE UNKNOWN',
+    mediaNoReason: 'no reason reported by the player',
+    mediaBlockedHint: 'Press PLAY once to grant this tab audio or video.',
+    visualizerRole: 'Decorative level meter — the cockpit does not decode this stream for analysis',
+    visualizerReduced: 'Animation paused for reduced motion',
+    playlistLabel: 'Playlist',
+    kindFilterLabel: 'Kind',
+    channelSearchPlaceholder: 'Search stations, genre, or country…',
+    noChannelsMatch: 'No channel matches this filter; clear it to see the rack.',
+    rackBuiltInOnly: 'Rack fetch failed — showing the built-in rack only.',
+    btnPrevChannel: 'PREV',
+    btnNextChannel: 'NEXT',
+    btnPlay: 'PLAY',
+    btnStop: 'STOP',
+    btnMuted: 'MUTED',
+    btnVolume: 'VOLUME',
+    btnPip: 'PIP',
+    titlePrevChannel: 'Previous channel ([)',
+    titleNextChannel: 'Next channel (])',
+    titlePlayPause: 'Play or pause (Space)',
+    titleMute: 'Mute or unmute (M)',
+    titlePip: 'Picture-in-picture (P)',
+    pipUnavailable: 'Picture-in-picture is not available in this browser',
+
     // Tuner
     tunerTitle: 'Analog Frequency Tuner',
+    tunerShow: 'SHOW TUNER',
+    tunerHide: 'HIDE TUNER',
+    tunerPseudoNote:
+      'Illustrative pseudo-frequency: derived from the channel id, not a real broadcast tuning.',
+    tunerActiveBand: 'Active band',
+    bandAM: 'Medium Wave / AM',
     bandFM: 'FM Band',
     bandSW1: 'Shortwave 1',
     bandSW2: 'Shortwave 2',
+    bandSW3: 'Shortwave 3',
 
     // Ports
     portsTitle: 'Monorepo Service Network Ports',
@@ -336,6 +434,19 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     groupOptionalResearch: 'G5 — OPTIONAL RESEARCH',
     groupRelease: 'G6 — RELEASE',
     groupEcosystem: 'G7 — ECOSYSTEM',
+    groupUnmapped: 'G? — UNMAPPED',
+    progressFeedReconnecting: 'STREAM RECONNECTING',
+    progressFeedPollAfterDrop: 'POLLING AFTER STREAM DROP',
+    progressFeedUnavailable: 'PUSH FEED UNAVAILABLE',
+    progressErrorLabel: 'REGISTER READ ERROR',
+    progressRowsCapped: 'Task list is a server-capped sample; the totals above are the full register.',
+    progressAbsoluteFlips: 'CHECKBOX FLIPS THIS PROCESS',
+    progressFlipsClosed: 'checked',
+    progressFlipsReopened: 'unchecked',
+    progressPercentIsRegister:
+      "Percentage is the register's own done/total ratio — never modelled or rounded forward.",
+    progressCountMismatch: 'Sampled rows differ from the register total.',
+    progressKeyboardHint: 'Use Tab and the arrow keys to move between filter and row controls.',
     openBlockersHeader: 'OPEN P0 BLOCKERS',
     progressSourceNote: 'SOURCE: TODO.md · READ-ONLY PROJECTION · NOT A TASK REGISTER',
     progressLiveBadge: 'LIVE',
@@ -397,7 +508,7 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     shortcutPlayPause: 'Play/Pause Audio',
     shortcutMute: 'Toggle Mute',
     shortcutChannel: 'Prev/Next Channel',
-    shortcutPorts: 'Jump to Ports',
+    shortcutPorts: 'Picture-in-Picture (video channels)',
     shortcutTabs: 'Switch Tab 1-6',
     shortcutHelp: 'Help & Shortcuts Guide',
     runtimeInfo: 'LOCAL WORKSPACE COCKPIT v1.0.0 // MOONWITNESS XV',
@@ -500,11 +611,54 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     errorEmptyName: 'Nama siaran tidak boleh kosong.',
     successChannelAdded: 'Saluran berhasil ditambahkan ke rak.',
 
+    // Media transport — mirrors the English states one-for-one.
+    mediaTransportLabel: 'Transpor',
+    statusPlaying: 'SEDANG DIPUTAR',
+    statusPaused: 'DIJEDA',
+    statusLoading: 'MEMUAT SIARAN',
+    statusBuffering: 'MENYIMPAN BUFFER',
+    statusStopped: 'PUTARAN DIHENTIKAN',
+    statusBlocked: 'PUTAR OTOMATIS DIBLOKIR',
+    statusUnsupported: 'HLS TIDAK DUKUNG DI SINI',
+    statusError: 'SIARAN BERMASALAH',
+    statusNoSurface: 'LAYAR VIDEO BELUM TERPASANG',
+    statusUnknown: 'STATUS TIDAK DIKETAHUI',
+    mediaNoReason: 'tidak ada alasan dari pemutar',
+    mediaBlockedHint: 'Tekan PUTAR sekali untuk mengizinkan audio atau video di tab ini.',
+    visualizerRole:
+      'Meter level dekoratif — kokpit tidak mengurai siaran ini untuk dianalisis',
+    visualizerReduced: 'Animasi dijeda karena mode gerak minimal',
+    playlistLabel: 'Daftar Putar',
+    kindFilterLabel: 'Jenis',
+    channelSearchPlaceholder: 'Cari stasiun, genre, atau negara…',
+    noChannelsMatch: 'Tidak ada saluran yang cocok; kosongkan penyaring untuk melihat rak.',
+    rackBuiltInOnly: 'Gagal memuat rak — hanya menampilkan rak bawaan.',
+    btnPrevChannel: 'SEBELUMNYA',
+    btnNextChannel: 'BERIKUTNYA',
+    btnPlay: 'PUTAR',
+    btnStop: 'HENTI',
+    btnMuted: 'BISU',
+    btnVolume: 'VOLUME',
+    btnPip: 'PIP',
+    titlePrevChannel: 'Saluran sebelumnya ([)',
+    titleNextChannel: 'Saluran berikutnya (])',
+    titlePlayPause: 'Putar atau jeda (Spasi)',
+    titleMute: 'Bisukan atau aktifkan suara (M)',
+    titlePip: 'Gambar-dalam-gambar (P)',
+    pipUnavailable: 'Gambar-dalam-gambar tidak tersedia di peramban ini',
+
     // Tuner
     tunerTitle: 'Tuner Frekuensi Analog',
+    tunerShow: 'TAMPILKAN TUNER',
+    tunerHide: 'SEMBUNYIKAN TUNER',
+    tunerPseudoNote:
+      'Frekuensi semu untuk ilustrasi: diturunkan dari id saluran, bukan penalaan siaran nyata.',
+    tunerActiveBand: 'Pita aktif',
+    bandAM: 'Gelombang Medium / AM',
     bandFM: 'Pita FM',
     bandSW1: 'Gelombang Pendek 1',
     bandSW2: 'Gelombang Pendek 2',
+    bandSW3: 'Gelombang Pendek 3',
 
     // Ports
     portsTitle: 'Port Jaringan Servis Repositori',
@@ -544,10 +698,24 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     groupOptionalResearch: 'G5 — RISET OPSIONAL',
     groupRelease: 'G6 — RILIS',
     groupEcosystem: 'G7 — EKOSISTEM',
+    groupUnmapped: 'G? — BELUM TERPETA',
+    progressFeedReconnecting: 'SIARAN ULANG SAMBUNGAN',
+    progressFeedPollAfterDrop: 'POLING SETELAH STREAM TERPUTUS',
+    progressFeedUnavailable: 'KIRIM DORONG TIDAK TERSEDIA',
+    progressErrorLabel: 'GALAT BACA REGISTER',
+    progressRowsCapped:
+      'Daftar tugas adalah sampel yang dibatasi server; jumlah di atas adalah register utuh.',
+    progressAbsoluteFlips: 'PERUBAHAN KOTAK SELAMA PROSES INI',
+    progressFlipsClosed: 'dicentang',
+    progressFlipsReopened: 'dibatalkan sentusnya',
+    progressPercentIsRegister:
+      'Persentase adalah rasio selesai/total dari register itu sendiri — tidak pernah direkayasa atau dibulatkan ke depan.',
+    progressCountMismatch: 'Jumlah baris sampel berbeda dari total register.',
+    progressKeyboardHint: 'Gunakan Tab dan tombol panah untuk berpindah antar penyaring dan kendali baris.',
     openBlockersHeader: 'BLOKIR P0 TERBUKA',
     progressSourceNote: 'SUMBER: TODO.md · PROYEKSI HANYA-BACA · BUKAN REGISTER TUGAS',
     progressLiveBadge: 'LANGSUNG',
-    progressPollingBadge: 'POLLING',
+    progressPollingBadge: 'DIPOLE BERKALA',
     progressSessionSuffix: 'SESI INI',
     progressLastDelivery: 'PENGIRIMAN TERAKHIR',
     progressEmptyTitle: 'Tidak ada baris daftar tugas terbaca',
@@ -605,7 +773,7 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     shortcutPlayPause: 'Putar/Jeda Audio',
     shortcutMute: 'Bisukan/Nyalakan',
     shortcutChannel: 'Saluran Sblm/Brkt',
-    shortcutPorts: 'Ke Tab Port',
+    shortcutPorts: 'Gambar-dalam-Gambar (saluran video)',
     shortcutTabs: 'Beralih Tab 1-6',
     shortcutHelp: 'Panduan Bantuan & Pintasan',
     runtimeInfo: 'KONSOL REPOSITORI LOKAL v1.0.0 // MOONWITNESS XV',
