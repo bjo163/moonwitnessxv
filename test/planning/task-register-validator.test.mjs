@@ -20,30 +20,7 @@ const docs = [
 
 test('positive: accepts unique TODO IDs, task/milestone/range dependencies, and valid local/external links', () => {
   const result = validateTaskRegister({ todoMarkdown: todo, markdownFiles: docs, root });
-  assert.deepEqual(result, { ok: true, taskCount: 4, aggregates: { total: 4, checked: 1, unchecked: 3, milestoneCount: 2, milestones: ['M01', 'M02'] }, errors: [] });
-});
-
-test('positive: aggregate allowlist matches derived totals', () => {
-  const allowlist = { total: 4, checked: 1, unchecked: 3, milestoneCount: 2, milestones: ['M01', 'M02'] };
-  const result = validateTaskRegister({ todoMarkdown: todo, markdownFiles: docs, root, aggregateAllowlist: allowlist });
-  assert.equal(result.ok, true);
-  assert.equal(result.aggregates.total, 4);
-  assert.equal(result.aggregates.checked, 1);
-  assert.equal(result.aggregates.unchecked, 3);
-});
-
-test('negative: aggregate allowlist mismatch reports error', () => {
-  const allowlist = { total: 999, checked: 1, unchecked: 3 };
-  const result = validateTaskRegister({ todoMarkdown: todo, markdownFiles: docs, root, aggregateAllowlist: allowlist });
-  assert.equal(result.ok, false);
-  assert.ok(result.errors.some(e => e.code === 'AGGREGATE_MISMATCH' && e.message.includes('total')));
-});
-
-test('negative: milestone list mismatch reports error', () => {
-  const allowlist = { total: 4, checked: 1, unchecked: 3, milestoneCount: 2, milestones: ['M01', 'M99'] };
-  const result = validateTaskRegister({ todoMarkdown: todo, markdownFiles: docs, root, aggregateAllowlist: allowlist });
-  assert.equal(result.ok, false);
-  assert.ok(result.errors.some(e => e.code === 'AGGREGATE_MISMATCH' && e.message.includes('milestones')));
+  assert.deepEqual(result, { ok: true, taskCount: 4, errors: [] });
 });
 
 test('negative: reports malformed/duplicate IDs, missing dependencies, cycles, and broken local paths/fragments', () => {

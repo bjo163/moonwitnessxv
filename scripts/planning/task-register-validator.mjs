@@ -150,61 +150,17 @@ function validateLinks(markdownFiles, root, errors) {
   }
 }
 
-function computeAggregates(tasks) {
-  const milestones = new Set();
-  let checked = 0;
-  let unchecked = 0;
-  for (const task of tasks) {
-    milestones.add(task.id.slice(0, task.id.indexOf('-')));
-    if (task.checked) checked += 1;
-    else unchecked += 1;
-  }
-  return {
-    total: tasks.length,
-    checked,
-    unchecked,
-    milestones: [...milestones].sort(),
-    milestoneCount: milestones.size,
-  };
-}
-
-function validateAggregates(aggregates, allowlist, errors, file) {
-  if (!allowlist) return;
-  const checks = [
-    ['total', aggregates.total],
-    ['checked', aggregates.checked],
-    ['unchecked', aggregates.unchecked],
-    ['milestoneCount', aggregates.milestoneCount],
-  ];
-  for (const [key, actual] of checks) {
-    if (key in allowlist && allowlist[key] !== actual) {
-      errors.push(diagnostic('AGGREGATE_MISMATCH', file, 1, `${key}: expected ${allowlist[key]}, got ${actual}`));
-    }
-  }
-  if (allowlist.milestones) {
-    const expected = [...allowlist.milestones].sort();
-    const actual = aggregates.milestones;
-    if (JSON.stringify(expected) !== JSON.stringify(actual)) {
-      errors.push(diagnostic('AGGREGATE_MISMATCH', file, 1, `milestones: expected ${expected.join(',')}, got ${actual.join(',')}`));
-    }
-  }
-}
-
 /**
  * Read-only validator contract: task IDs are `Mdd-dd`; dependencies accept task IDs,
  * milestone IDs, and same-milestone `Mdd-dd..dd` ranges. Supplied inline Markdown
  * links must resolve inside root; anchors are checked against GitHub-style heading
  * slugs when the target content is available. External http(s)/mailto/data URLs pass.
- * Aggregate allowlist compares derived totals (total/checked/unchecked/milestones)
- * with explicit expectations. Diagnostics carry code, source path, line and
- * explanation; the function never writes.
+ * Diagnostics carry code, source path, line and explanation; the function never writes.
  */
-export function validateTaskRegister({ todoMarkdown, todoPath = 'TODO.md', markdownFiles = [], root = process.cwd(), aggregateAllowlist = null }) {
+export function validateTaskRegister({ todoMarkdown, todoPath = 'TODO.md', markdownFiles = [], root = process.cwd() }) {
   const errors = [];
   const tasks = parseTaskRows(todoMarkdown, todoPath, errors);
   validateDependencies(tasks, errors, todoPath);
   validateLinks(markdownFiles, root, errors);
-  const aggregates = computeAggregates(tasks);
-  validateAggregates(aggregates, aggregateAllowlist, errors, todoPath);
-  return { ok: errors.length === 0, taskCount: tasks.length, aggregates, errors };
+  return { ok: errors.length === 0, taskCount: tasks.length, errors };
 }

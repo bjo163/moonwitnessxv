@@ -1,17 +1,14 @@
 # Domain A — Engineering Excellence (32)
 
 Subdomain allocation: Reliability 7; Security & Privacy 5; Architecture & Contracts 5; Performance 4; UI/UX & Accessibility 3; Testing & CI 4; Operations 3; Documentation/DX 1. All are PROPOSED additions, not implemented work. In every body, VERIFIED applies only to the cited artifact or observed discrepancy; behavior not examined remains UNKNOWN; recommendations are PROPOSED or EXPERIMENTAL. No defect is claimed unless evidence explicitly says verified. Scores are planning judgments; see ROADMAP_QA.md.
-**ADR applicability:** Each candidate remains PROPOSED; the [item-by-item ADR applicability register](ADR_APPLICABILITY.md) identifies current boundaries and conditions requiring a future owner-reviewed ADR.
 
 Identity convention: the heading supplies ID/title; this file supplies the primary domain; the first identity phrases give subdomain/type. Identity lines include priority, difficulty, effort, confidence, risk, domain/common score, owner and proposed V5 wave. Trailing tags are suggested labels. The suggested wave is not a TODO milestone. Implementation maturity for all entries is PROPOSED.
 
 ## ENG-001 — Reconcile repository task and milestone counts
 
-**Canonical TODO task:** [M46-01](../../../TODO.md) — TODO is sole status source; `ENG-001` is only the V5 reference ID.
-
 1. **Identity:** Reliability; documentation correction; P1 / Easy / S / confidence High / risk Low; domain 82, common 80; owner: repository docs; V5-W0; labels docs, planning, evidence.
 2. **Executive:** Reconcile published task totals with TODO’s authoritative register and correct stale aggregate claims.
-3. **Research-capture state:** README then reported 43 milestones/362 IDs, GRANULARITY_AUDIT 311 and TODO 46/393. At the authorized V5 registration snapshot on 2026-10-30, TODO was 51/493 (334 checked, 159 unchecked). HEAD ad96dbf3ae98731e7c10972d7f0600b809398e9d (snapshot historis, 2026-10-30) is 51/493 (335 checked, 158 unchecked) after M20-06 closed; all 100 V5 candidate tasks remain unchecked. HEAD ca395d1 (2026-10-30) is 52/499 (347 checked, 152 unchecked). Aggregate claims reconciled in this pass: GRANULARITY_AUDIT, TASK_ROLE_CLASSIFICATION, AUDIT.md, README.md.
+3. **Current state:** README reports 43 milestones/362 IDs, GRANULARITY_AUDIT 311, TODO 46/393.
 4. **Problem:** Readers cannot tell which count is current, although TODO owns status.
 5. **Evidence:** VERIFIED R01, R02, R14; values must be re-read at execution.
 6. **Value:** Reduces planning errors and prevents stale totals entering governance decisions.
@@ -34,34 +31,30 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-002 — Add a read-only task-register consistency check
 
-**Canonical TODO task:** [M46-02](../../../TODO.md) — TODO is sole status source; `ENG-002` is only the V5 reference ID.
-
 1. **Identity:** Reliability; planning automation; P2 / Medium / M / confidence Medium / risk Low; domain 74, common 70; owner: scripts/planning; V5-W1; tooling, docs.
-2. **Executive:** Extend the existing read-only task-register validator to compare TODO-derived counts with active aggregate references.
-3. **Current state:** M29-03/M29-04 already validate task syntax, malformed/duplicate IDs, dependencies and cycles; the count-to-reference comparison is the remaining gap.
+2. **Executive:** Add a read-only check that flags stale aggregate counts and malformed task IDs without owning task status.
+3. **Current state:** TODO is authoritative; aggregate docs conflict; a task-lease checker already exists.
 4. **Problem:** Manual count edits can reintroduce the same drift.
 5. **Evidence:** VERIFIED R02/R14; scripts/planning/task-lease-contract-check.mjs is present (R17).
 6. **Value:** Makes a narrow integrity rule repeatable without inventing a dispatcher.
-7. **Solution:** Add a count-to-reference check to the existing validator, with explicit treatment for dated historical totals.
-8. **Architecture:** Extend `scripts/planning/task-register-validator.mjs`; do not add a second TODO parser or status owner.
-9. **Microtasks:** Inventory active aggregate references; define historical exemptions; extend the existing fixtures; report mismatches read-only.
-10. **Acceptance:** The existing validator reports correct counts and flags stale active references; existing syntax/duplicate checks remain the sole implementation; files are never rewritten.
+7. **Solution:** Parse documented TODO syntax and compare derived totals with an explicit allowlist of active references.
+8. **Architecture:** Small script under scripts/planning; no writes, network access, or status mutation.
+9. **Microtasks:** Document syntax; define false-positive cases; implement parser; add fixtures; wire only after owner review.
+10. **Acceptance:** Correct fixture counts; duplicate IDs fail; files are never rewritten.
 11. **DoD:** Parser fixtures and usage docs reviewed; no task lease/status file added.
 12. **Tests:** Unit fixtures for tables, duplicate IDs and historical sections.
-13. **Dependencies:** Blocked by ENG-001; enables its count reconciliation; related ENG-032.
+13. **Dependencies:** Blocked by ENG-001; enables planning checks; related ENG-032.
 14. **Risks:** Parser may misread archived sections; scope to current register.
 15. **Metrics:** Exact fixture precision/recall on documented syntax.
 16. **Estimate:** 2–4 days; no runtime cost.
 17. **Rollback:** Remove script/invocation; source documents remain valid.
 18. **Synergy:** Improves governance across all five domains.
-19. **Anti-overlap:** Not a dispatcher, lease, TODO replacement, CI approval system, duplicate parser, or duplicate malformed/duplicate-ID check.
+19. **Anti-overlap:** Not a dispatcher, lease, TODO replacement, or CI approval system.
 20. **Outcome:** Deterministic, read-only consistency signal.
 21. **Future:** Extend to further docs only after fixtures exist.
 22. **Closure evidence:** Fixture output, no-write assertion, and reviewed command wiring.
 
 ## ENG-003 — Align M38–M40 maturity statements to evidence
-
-**Canonical TODO task:** [M46-03](../../../TODO.md) — TODO is sole status source; `ENG-003` is only the V5 reference ID.
 
 1. **Identity:** Reliability; service maturity reconciliation; P1 / Medium / M / confidence High / risk Medium; domain 84, common 80; owner: architecture docs; V5-W0; architecture, evidence.
 2. **Executive:** Publish one evidence-linked maturity description for SKYLINK, ECHOLOG and ORBIT.
@@ -88,8 +81,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-004 — Verify LUMEN runtime maturity claims
 
-**Canonical TODO task:** [M46-04](../../../TODO.md) — TODO is sole status source; `ENG-004` is only the V5 reference ID.
-
 1. **Identity:** Reliability; runtime readiness audit; P2 / Medium / M / confidence Medium / risk Medium; domain 72, common 72; owner: LUMEN; V5-W0; runtime, audit.
 2. **Executive:** Determine whether the worker scaffold’s lifecycle documentation matches executable and deployment state.
 3. **Current state:** Worker source/contracts/tests exist; app registry says no dev server; production readiness is unknown.
@@ -114,8 +105,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Source map, authorized command evidence if any, and UNKNOWN list.
 
 ## ENG-005 — Resolve source pins to immutable full references
-
-**Canonical TODO task:** [M46-05](../../../TODO.md) — TODO is sole status source; `ENG-005` is only the V5 reference ID.
 
 1. **Identity:** Reliability; source-integrity maintenance; P1 / Medium / M / confidence Medium / risk High; domain 83, common 79; owner: corpus/provenance; V5-W0; sources, provenance.
 2. **Executive:** Verify and normalize historical source pins to full immutable references without importing content.
@@ -142,8 +131,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-006 — Specify and test a stable API error envelope
 
-**Canonical TODO task:** [M46-06](../../../TODO.md) — TODO is sole status source; `ENG-006` is only the V5 reference ID.
-
 1. **Identity:** Reliability; API failure contract; P2 / Medium / M / confidence Low / risk Medium; domain 68, common 68; owner: ARSY API; V5-W1; api, contracts.
 2. **Executive:** Check whether selected ARSY routes emit incompatible client errors; define a bounded contract only if a mismatch exists.
 3. **Current state:** Fastify API and route tests exist; no inconsistency was reproduced here.
@@ -156,7 +143,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Tests cover error status/fields; no stack or private source leaks.
 11. **DoD:** API owner approves compatibility and migration.
 12. **Tests:** Route schema and client compatibility fixtures.
-13. **Dependencies:** —; enables ENG-012; related ENG-007.
+13. **Dependencies:** —; enables ENG-007/012.
 14. **Risks:** Normalization can break clients or expose internals; preserve intentional distinctions.
 15. **Metrics:** Route conformance and unexpected shape changes.
 16. **Estimate:** 3–7 days if gap exists; otherwise close with no-go evidence.
@@ -168,8 +155,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Inventory, fixtures and owner decision.
 
 ## ENG-007 — Define readiness semantics for health endpoints
-
-**Canonical TODO task:** [M46-07](../../../TODO.md) — TODO is sole status source; `ENG-007` is only the V5 reference ID.
 
 1. **Identity:** Reliability; health contract; P2 / Medium / S / confidence Low / risk Medium; domain 66, common 67; owner: service owners; V5-W1; operations, api.
 2. **Executive:** Compare liveness/readiness responses and specify bounded semantics.
@@ -183,7 +168,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Tests distinguish liveness from readiness and omit secrets/topology.
 11. **DoD:** Owners approve states; probes remain bounded.
 12. **Tests:** Unit route tests for ready, degraded, timeout and shutdown.
-13. **Dependencies:** —; related ENG-029/003.
+13. **Dependencies:** —; enables ENG-029; related ENG-003.
 14. **Risks:** Deep probes amplify outages; keep liveness cheap.
 15. **Metrics:** False-ready and false-unready cases in fixture matrix.
 16. **Estimate:** 2–4 days; no recurring cost.
@@ -195,8 +180,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Contract, tests and owner-approved table.
 
 ## ENG-008 — Audit log fields for privacy-safe diagnostics
-
-**Canonical TODO task:** [M46-08](../../../TODO.md) — TODO is sole status source; `ENG-008` is only the V5 reference ID.
 
 1. **Identity:** Security/Privacy; data-minimizing logs; P1 / Medium / M / confidence Medium / risk High; domain 81, common 80; owner: service/security; V5-W1; privacy, logging.
 2. **Executive:** Inventory representative logs for sensitive payloads and define safe structured fields.
@@ -210,7 +193,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Synthetic secrets/private strings never appear; required correlation fields remain.
 11. **DoD:** Privacy/security review; no real private data used.
 12. **Tests:** Unit captures for normal and error paths.
-13. **Dependencies:** No task blocker for synthetic log fixtures; security-owner review is a start condition. Real/private logs remain out of scope and require the applicable M16/M18/M19 owner gates; related ONT-017.
+13. **Dependencies:** Reconcile M16/M18/M19; related ONT-017.
 14. **Risks:** Over-redaction harms diagnosis; under-redaction exposes data; review both.
 15. **Metrics:** Secret fixture leakage = 0; useful fields retained.
 16. **Estimate:** 4–8 days for a bounded service set.
@@ -222,8 +205,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Inventory, synthetic output and reviewer sign-off.
 
 ## ENG-009 — Enforce least-privilege AI tool manifests
-
-**Canonical TODO task:** [M46-09](../../../TODO.md) — TODO is sole status source; `ENG-009` is only the V5 reference ID.
 
 1. **Identity:** Security/Privacy; AI tool authorization; P1 / Hard / L / confidence Medium / risk High; domain 84, common 80; owner: AI Gateway; V5-W1; ai, security.
 2. **Executive:** Define an inspectable tool allowlist and prove denied tools cannot execute.
@@ -237,7 +218,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Unknown tool and missing grant are denied before handler; approval is attributable and replay-safe.
 11. **DoD:** Security review and negative tests in owning package.
 12. **Tests:** Offline fake-tool tests; no production credentials.
-13. **Dependencies:** —; enables FUT-001–004 and FUT-006; related FUT-005/007.
+13. **Dependencies:** —; enables FUT-001–007.
 14. **Risks:** Stale grants/confused deputy; bind principal and action, log minimal evidence.
 15. **Metrics:** Unauthorized fixture calls reaching handlers = 0.
 16. **Estimate:** 8–15 days; no external model spend required.
@@ -249,8 +230,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Manifest, denial results and approval fixtures.
 
 ## ENG-010 — Inventory browser security headers and CSP safely
-
-**Canonical TODO task:** [M46-10](../../../TODO.md) — TODO is sole status source; `ENG-010` is only the V5 reference ID.
 
 1. **Identity:** Security/Privacy; web hardening review; P2 / Medium / M / confidence Medium / risk Medium; domain 73, common 71; owner: web apps; V5-W1; web, security.
 2. **Executive:** Assess current headers and propose report-only CSP for a bounded route set.
@@ -277,8 +256,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-011 — Produce dependency provenance and license inventory
 
-**Canonical TODO task:** [M46-11](../../../TODO.md) — TODO is sole status source; `ENG-011` is only the V5 reference ID.
-
 1. **Identity:** Security/Privacy; software supply chain; P2 / Medium / M / confidence Medium / risk Medium; domain 75, common 68; owner: release engineering; V5-W1; dependencies, supply-chain.
 2. **Executive:** Generate a point-in-time inventory of dependencies, licenses and provenance metadata.
 3. **Current state:** pnpm workspace/lockfile exist; no inventory was generated in this task.
@@ -303,8 +280,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Sample artifact, lockfile comparison, review.
 
 ## ENG-012 — Add adversarial contract tests for AI input boundaries
-
-**Canonical TODO task:** [M46-12](../../../TODO.md) — TODO is sole status source; `ENG-012` is only the V5 reference ID.
 
 1. **Identity:** Security/Privacy; AI trust tests; P1 / Hard / L / confidence Medium / risk High; domain 83, common 78; owner: AI Gateway; V5-W1; ai, testing, security.
 2. **Executive:** Test prompt injection, malformed output and citation spoofing against the existing bounded AI route.
@@ -331,8 +306,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-013 — Document API compatibility and deprecation rules
 
-**Canonical TODO task:** [M46-13](../../../TODO.md) — TODO is sole status source; `ENG-013` is only the V5 reference ID.
-
 1. **Identity:** Architecture/Contracts; API lifecycle; P2 / Medium / S / confidence Medium / risk Low; domain 70, common 71; owner: ARSY API; V5-W1; api, docs.
 2. **Executive:** Define how route/schema changes are versioned, announced and retired.
 3. **Current state:** API versions and generated clients exist; TODO records SDK consistency work.
@@ -357,8 +330,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Approved policy and examples.
 
 ## ENG-014 — Check generated API schemas against route contracts
-
-**Canonical TODO task:** [M46-14](../../../TODO.md) — TODO is sole status source; `ENG-014` is only the V5 reference ID.
 
 1. **Identity:** Architecture/Contracts; schema conformance; P2 / Hard / L / confidence Medium / risk Medium; domain 77, common 69; owner: API tooling; V5-W1; api, ci.
 2. **Executive:** Add a focused check that published schemas agree with selected Fastify route schemas.
@@ -385,8 +356,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-015 — Add package ownership metadata to workspace inventory
 
-**Canonical TODO task:** [M46-15](../../../TODO.md) — TODO is sole status source; `ENG-015` is only the V5 reference ID.
-
 1. **Identity:** Architecture/Contracts; ownership map; P2 / Medium / M / confidence Medium / risk Low; domain 73, common 70; owner: workspace maintainers; V5-W1; monorepo, architecture.
 2. **Executive:** Make package ownership and allowed dependency direction easy to inspect.
 3. **Current state:** BLUEPRINT, APPS, manifests and lint rules carry overlapping boundary information.
@@ -405,14 +374,12 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 3–6 days.
 17. **Rollback:** Remove generated view; dependencies unchanged.
 18. **Synergy:** Prevents duplication in all domains.
-19. **Anti-overlap:** This is the canonical package-owner inventory; downstream onboarding maps link to it instead of recreating its owner table. Not a service registry or new architecture authority.
+19. **Anti-overlap:** Not a service registry or new architecture authority.
 20. **Outcome:** Inspectable ownership map aligned to accepted docs.
 21. **Future:** Guide import linting only if approved.
 22. **Closure evidence:** Inventory, fixture output and owner review.
 
 ## ENG-016 — Define stable serialization for provenance records
-
-**Canonical TODO task:** [M46-16](../../../TODO.md) — TODO is sole status source; `ENG-016` is only the V5 reference ID.
 
 1. **Identity:** Architecture/Contracts; provenance serialization; P2 / Hard / L / confidence Medium / risk Medium; domain 76, common 69; owner: corpus/research; V5-W1; provenance, data-contract.
 2. **Executive:** Specify deterministic serialization/versioning for source provenance records used in audit artifacts.
@@ -439,8 +406,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-017 — Validate application environment configuration at startup
 
-**Canonical TODO task:** [M46-17](../../../TODO.md) — TODO is sole status source; `ENG-017` is only the V5 reference ID.
-
 1. **Identity:** Architecture/Contracts; configuration safety; P2 / Medium / M / confidence Low / risk Medium; domain 70, common 65; owner: app maintainers; V5-W1; config, reliability.
 2. **Executive:** Audit selected app environment parsing and propose fail-fast checks for required values.
 3. **Current state:** Apps have separate manifests/config; no missing-variable failure was reproduced.
@@ -465,8 +430,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Variable matrix, tests and safe output capture.
 
 ## ENG-018 — Establish a representative corpus ingestion benchmark
-
-**Canonical TODO task:** [M46-18](../../../TODO.md) — TODO is sole status source; `ENG-018` is only the V5 reference ID.
 
 1. **Identity:** Performance; corpus throughput baseline; P2 / Medium / M / confidence Low / risk Low; domain 67, common 66; owner: corpus package; V5-W1; performance, research.
 2. **Executive:** Measure ingestion throughput and memory on an authorized synthetic fixture.
@@ -493,8 +456,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-019 — Bound object streaming memory and cancellation
 
-**Canonical TODO task:** [M46-19](../../../TODO.md) — TODO is sole status source; `ENG-019` is only the V5 reference ID.
-
 1. **Identity:** Performance; object stream bounds; P2 / Hard / L / confidence Low / risk Medium; domain 69, common 66; owner: ECHOLOG; V5-W1; echolog, performance.
 2. **Executive:** Measure streaming memory, client cancellation and timeout behavior for bounded objects.
 3. **Current state:** ECHOLOG routes/tests exist; object-store availability varies by environment.
@@ -519,8 +480,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Fixture results, measurements and owner decision.
 
 ## ENG-020 — Measure graph query fan-out and enforce safe limits
-
-**Canonical TODO task:** [M46-20](../../../TODO.md) — TODO is sole status source; `ENG-020` is only the V5 reference ID.
 
 1. **Identity:** Performance; graph complexity bounds; P2 / Hard / L / confidence Low / risk Medium; domain 72, common 69; owner: MoonQL graph/ontology; V5-W1; graph, performance.
 2. **Executive:** Characterize query cost on synthetic graphs and define fan-out/time limits if needed.
@@ -547,8 +506,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-021 — Add route bundle-size budgets to selected web apps
 
-**Canonical TODO task:** [M46-21](../../../TODO.md) — TODO is sole status source; `ENG-021` is only the V5 reference ID.
-
 1. **Identity:** Performance; web payload baseline; P2 / Medium / M / confidence Low / risk Low; domain 66, common 66; owner: web app maintainer; V5-W1; web, performance.
 2. **Executive:** Measure and optionally gate initial bundle size for one representative app.
 3. **Current state:** Multiple web apps/UI packages exist; no size regression is claimed.
@@ -573,8 +530,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Reports, rationale and CI fixture.
 
 ## ENG-022 — Audit keyboard and zoom access in Orbit operations
-
-**Canonical TODO task:** [M46-22](../../../TODO.md) — TODO is sole status source; `ENG-022` is only the V5 reference ID.
 
 1. **Identity:** UI/Accessibility; Orbit operational UI; P2 / Medium / M / confidence Low / risk Medium; domain 68, common 65; owner: Orbit; V5-W1; accessibility, orbit.
 2. **Executive:** Assess keyboard, focus, contrast and zoom on selected Orbit operator flow.
@@ -601,8 +556,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-023 — Audit accessible names in Sentinel review controls
 
-**Canonical TODO task:** [M46-23](../../../TODO.md) — TODO is sole status source; `ENG-023` is only the V5 reference ID.
-
 1. **Identity:** UI/Accessibility; Sentinel review interface; P2 / Medium / M / confidence Low / risk Medium; domain 67, common 65; owner: Sentinel; V5-W1; accessibility, sentinel.
 2. **Executive:** Verify selected review controls expose labels, focus and keyboard behavior.
 3. **Current state:** Sentinel contract tests exist; UI conformance was not reviewed.
@@ -627,8 +580,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Test output, manual checklist and reviewer feedback.
 
 ## ENG-024 — Audit focus and reduced-motion behavior in Cockpit navigation
-
-**Canonical TODO task:** [M46-24](../../../TODO.md) — TODO is sole status source; `ENG-024` is only the V5 reference ID.
 
 1. **Identity:** UI/Accessibility; Cockpit navigation; P2 / Medium / M / confidence Low / risk Medium; domain 66, common 65; owner: Cockpit; V5-W1; accessibility, cockpit.
 2. **Executive:** Check focus restoration and reduced motion through a bounded navigation sequence.
@@ -655,8 +606,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-025 — Make shared test fixtures deterministic and isolated
 
-**Canonical TODO task:** [M46-25](../../../TODO.md) — TODO is sole status source; `ENG-025` is only the V5 reference ID.
-
 1. **Identity:** Testing/CI; fixture reliability; P2 / Medium / M / confidence Low / risk Medium; domain 72, common 65; owner: test infrastructure; V5-W1; tests, reliability.
 2. **Executive:** Audit fixtures for hidden time, randomness, environment and mutable state.
 3. **Current state:** Many packages have contract tests; no flakiness claim from this review.
@@ -669,7 +618,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Repeated fixture runs are identical and leave no shared state.
 11. **DoD:** Supported Node runs deterministic; cleanup verified.
 12. **Tests:** Repeat-in-process and isolated-worker checks.
-13. **Dependencies:** —; related ENG-026.
+13. **Dependencies:** —; enables ENG-026.
 14. **Risks:** Excess abstraction; require two real consumers before extraction.
 15. **Metrics:** Output variance and leaked-state cases.
 16. **Estimate:** 4–8 days.
@@ -681,8 +630,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Repeat outputs and cleanup assertions.
 
 ## ENG-026 — Verify authorization denial matrices for selected routes
-
-**Canonical TODO task:** [M46-26](../../../TODO.md) — TODO is sole status source; `ENG-026` is only the V5 reference ID.
 
 1. **Identity:** Testing/CI; route authorization regression; P1 / Hard / L / confidence Medium / risk High; domain 82, common 74; owner: ARSY/security; V5-W1; authz, tests.
 2. **Executive:** Build a matrix for one route family with anonymous, allowed, denied and malformed principals.
@@ -696,7 +643,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Denial causes zero protected-store calls; allowed fixture succeeds; no private fields leak.
 11. **DoD:** Security owner signs route scope/roles.
 12. **Tests:** Route tests with fake store and exact denial matrix.
-13. **Dependencies:** No task blocker; security-owner approval of the selected synthetic route scope is a start condition; related ENG-008.
+13. **Dependencies:** M19 overlap review; related ENG-008.
 14. **Risks:** Role assumptions may be stale; use accepted ADR and current contract.
 15. **Metrics:** Matrix cells covered; protected calls on deny = 0.
 16. **Estimate:** 5–10 days.
@@ -708,8 +655,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Route rationale, matrix output and review.
 
 ## ENG-027 — Report flaky tests from observed CI history
-
-**Canonical TODO task:** [M46-27](../../../TODO.md) — TODO is sole status source; `ENG-027` is only the V5 reference ID.
 
 1. **Identity:** Testing/CI; flaky-test diagnosis; P2 / Medium / M / confidence Low / risk Low; domain 67, common 66; owner: CI maintainers; V5-W1; ci, quality.
 2. **Executive:** Determine whether repeated CI failures are flaky before adding retries/quarantines.
@@ -736,8 +681,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-028 — Document the supported focused validation matrix
 
-**Canonical TODO task:** [M46-28](../../../TODO.md) — TODO is sole status source; `ENG-028` is only the V5 reference ID.
-
 1. **Identity:** Testing/CI; command discoverability; P2 / Medium / S / confidence Medium / risk Low; domain 71, common 68; owner: DX; V5-W1; developer-experience, ci.
 2. **Executive:** Map package validation commands to changed-file scopes and prerequisites.
 3. **Current state:** Diagnostic guide discovers commands; package scripts exist.
@@ -762,8 +705,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Manifest comparison and owner review.
 
 ## ENG-029 — Instrument worker lifecycle state transitions
-
-**Canonical TODO task:** [M46-29](../../../TODO.md) — TODO is sole status source; `ENG-029` is only the V5 reference ID.
 
 1. **Identity:** Operations; worker observability; P2 / Medium / M / confidence Low / risk Medium; domain 69, common 65; owner: LUMEN; V5-W1; observability, runtime.
 2. **Executive:** Add privacy-safe lifecycle events only if ENG-004 confirms an executable worker.
@@ -790,8 +731,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-030 — Correlate requests across one existing boundary
 
-**Canonical TODO task:** [M46-30](../../../TODO.md) — TODO is sole status source; `ENG-030` is only the V5 reference ID.
-
 1. **Identity:** Operations; request trace correlation; P2 / Hard / L / confidence Low / risk Medium; domain 70, common 63; owner: ARSY plus one consumer; V5-W1; observability, api.
 2. **Executive:** Determine whether one request can be traced across ARSY and a consumer without exposing identifiers.
 3. **Current state:** Multiple service boundaries exist; no trace baseline was taken.
@@ -817,8 +756,6 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ENG-031 — Report recurring service cost by bounded workload
 
-**Canonical TODO task:** [M46-31](../../../TODO.md) — TODO is sole status source; `ENG-031` is only the V5 reference ID.
-
 1. **Identity:** Operations; operational cost visibility; P2 / Medium / M / confidence Low / risk Low; domain 66, common 66; owner: operations; V5-W1; operations, cost.
 2. **Executive:** Measure cost drivers for one existing workload before capacity changes.
 3. **Current state:** No cost baseline was independently collected.
@@ -837,14 +774,12 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 3–6 days plus data access.
 17. **Rollback:** Remove analysis if data rights/method are invalid.
 18. **Synergy:** Informs scale and pricing research.
-19. **Anti-overlap:** Supplies one aggregate operating-cost baseline; ECO-006 owns per-workflow scenarios and support assumptions using that baseline. Not revenue analytics or payment processing.
+19. **Anti-overlap:** Not revenue analytics or payment processing.
 20. **Outcome:** Transparent operational baseline.
 21. **Future:** Repeat after workload changes.
 22. **Closure evidence:** Inputs, formula, exclusions and approval.
 
 ## ENG-032 — Create a package-owner onboarding map
-
-**Canonical TODO task:** [M46-32](../../../TODO.md) — TODO is sole status source; `ENG-032` is only the V5 reference ID.
 
 1. **Identity:** Documentation/DX; contributor onboarding; P2 / Easy / S / confidence Medium / risk Low; domain 72, common 68; owner: documentation; V5-W1; docs, onboarding.
 2. **Executive:** Give contributors a route from task ownership to package, contract and diagnostics.
@@ -864,7 +799,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 1–2 days.
 17. **Rollback:** Remove page and references.
 18. **Synergy:** Helps all contributors follow shared evidence rules.
-19. **Anti-overlap:** Builds contributor paths and links from ENG-015's owner inventory; does not reproduce or maintain a second owner table, README, or governance system.
+19. **Anti-overlap:** Not a duplicate README or governance system.
 20. **Outcome:** Maintained entry map to authoritative material.
 21. **Future:** Add examples after approval.
 22. **Closure evidence:** Link-check output and owner review.

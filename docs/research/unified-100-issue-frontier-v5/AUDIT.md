@@ -45,14 +45,14 @@ Aplikasi yang tercantum dalam dokumen/source meliputi ARSY (Hub/API), Cockpit, D
 
 ### Konflik dokumentasi yang terverifikasi
 
-1. **Konflik jumlah pada capture riset awal:** README menyebut 43 milestone/362 ID, GRANULARITY_AUDIT 311, dan TODO 46 milestone/393 ID. Sesudahnya, root README diselaraskan ke TODO dan granularity audit diberi label snapshot historis; pada pendaftaran 30 Oktober, keduanya mencatat 51 milestone/493 ID. Konflik awal adalah temuan historis, bukan kondisi agregat aktif yang belum diperbaiki. ENG-001 tetap unchecked sampai rekonsiliasi repository-wide dan closure evidence diselesaikan.
+1. **Jumlah task berbeda.** README menyebut 43 milestone/362 ID; GRANULARITY_AUDIT menyebut 311; TODO menyebut 46 milestone/393 ID unik. Kebijakan repo memberi TODO kewenangan status. Ini inkonsistensi dokumentasi, bukan bukti defect eksekusi.
 2. **Bahasa kematangan M38–M40 berbeda.** README menyebut implementation gate terbuka; TODO menandai M38 (14/14), M39 (12/12), dan M40 (10/10) selesai; APPS/dokumen layanan memberi deskripsi lain. Root guidance menyebut SKYLINK baru health skeleton dan ECHOLOG layanan stateless. Bukti saling berbeda; tidak ada kesimpulan readiness.
 3. **Resolusi source pin belum diketahui.** M06-01 mencatat pin repo. Lookup connector untuk bjo163/allah-hub mendapat 404; beberapa ref singkat c0a8f1e72b4d912a dan 5d820b17fa11c039 tidak ditemukan sebagai commit. Ini hanya membuktikan kegagalan lookup tersebut; repo/objek belum tentu tidak ada. Jangan ubah pin lama atau gunakan konten sebelum memperoleh ref penuh dan status hak.
 4. **LUMEN scaffold bukan bukti runtime.** Dokumen menyebut worker scaffold/kontrak; registry app menyatakan dev=false; test worker lokal tersedia. Ini mendukung klarifikasi kematangan, bukan kesimpulan worker rusak.
 
 ### Pekerjaan TODO terbuka yang tidak digantikan paket ini
 
-Tabel unchecked TODO berisi 65 baris pada capture riset awal. Pada snapshot pra-pendaftaran yang lebih baru di HEAD 8cfe3e5 (2026-10-30), pembacaan ulang TODO menunjukkan 59 terbuka; setelah 100 baris M46–M50 didaftarkan jumlahnya 159. Angka capture sebelumnya adalah snapshot historis, bukan status sekarang. Kelompoknya meliputi M04 backup off-host; M16 consent/redaction/label epistemik; M17 draft/hak media; M18 publikasi/cache revoke; M19 hak riset publik; M20 kontrol sumber/reviewer/admin HQ; M23 mandat manusia; M27 release gates; M28 kompatibilitas deployment; M32 komunitas; M33 media privat; M35 buyer/payment; M36 metering fisik; M44 host/deployment proof; dan M45 rebuild Empire Web. TODO saat ini tetap sumber judul/status yang berwenang; baca ulang sebelum membuat kandidat.
+Tabel unchecked TODO berisi 65 baris terbuka saat pemeriksaan sebelum penulisan. Kelompoknya meliputi M04 backup off-host; M16 consent/redaction/label epistemik; M17 draft/hak media; M18 publikasi/cache revoke; M19 hak riset publik; M20 kontrol sumber/reviewer/admin HQ; M23 mandat manusia; M27 release gates; M28 kompatibilitas deployment; M32 komunitas; M33 media privat; M35 buyer/payment; M36 metering fisik; M44 host/deployment proof; dan M45 rebuild Empire Web. TODO saat ini tetap sumber judul/status yang berwenang; baca ulang sebelum membuat kandidat.
 
 Kandidat V5 tidak dimaksudkan untuk menutup atau menggantikan pekerjaan tersebut. Tidak ada usulan implementasi baru untuk withdrawal testimony, otoritas publikasi/revocation, reviewer grant store, gate hak media, checklist release/deployment, MVP komunitas, ledger pembayaran, pemilik data meter fisik, atau rebuild halaman Empire Web.
 
@@ -68,7 +68,7 @@ Kandidat V5 tidak dimaksudkan untuk menutup atau menggantikan pekerjaan tersebut
 
 Audit ini tidak mereproduksi defect runtime, kerentanan yang dapat dieksploitasi, kegagalan CI, regresi performa, kegagalan aksesibilitas, atau outage produksi. Bukti M27/M44/M45 yang tertulis di TODO berasal dari packet terkait dan tidak dijalankan ulang di sini. Karena itu usulan engineering berfokus pada inventaris yang bisa diverifikasi, regression contract, dan pengukuran terkontrol; usulan tersebut bukan klaim bug yang terkonfirmasi.
 
-Panduan keamanan berasal dari SECURITY.md, keputusan yang diterima, NIST dan OWASP. Connector mengembalikan satu issue (#10) serta sepuluh record PR untuk query riset; state PR tidak tersedia pada hasil yang tersimpan, sehingga status open/closed tidak disimpulkan. Ini tidak cukup untuk audit duplikasi atau kerentanan global. Tidak ada dugaan kerentanan yang dipublikasikan.
+Panduan keamanan berasal dari SECURITY.md, keputusan yang diterima, NIST dan OWASP. Pencarian issue connector menampilkan issue governance terbuka #10 dan tidak menampilkan open PR pada view yang dicari; cakupan itu tidak cukup untuk audit duplikasi atau kerentanan global. Tidak ada dugaan kerentanan yang dipublikasikan.
 
 ## Riset frontier
 
@@ -90,34 +90,11 @@ Repositori memiliki paket corpus, ontology, graph, witness dan research serta ga
 
 TEI P5 dapat menginformasikan representasi witness/varian tekstual; PROV-O dapat menginformasikan pemetaan provenance; prinsip FAIR menginformasikan stewardship tetapi tidak menggantikan privasi, hak cipta atau consent. Entitas dan edge graph mencatat klaim teratribusi; keduanya bukan bukti mandiri.
 
-## Visi lintas-ekosistem (Laporan 08)
-
-**Tujuan inti (inference dari [Master Vision](../../../docs/vision/MASTER_VISION_NARRATIVE_XV.md), [Blueprint](../../../BLUEPRINT.md), dan arsitektur repository):** menyediakan ekosistem riset, media, pengetahuan dan pengalaman komunitas yang dapat berkembang sambil menjaga provenance, consent, atribusi, keselamatan dan keputusan manusia.
-
-**Arah jangka panjang yang diusulkan:** gunakan fondasi sumber/corpus, istilah, graph, riset dan pembaca untuk pengalaman belajar dan eksplorasi; gunakan aplikasi media/creative dan komunitas hanya melalui kontrak yang disetujui; uji nilai ekonomi dan kemanusiaan melalui discovery terpisah sebelum operasi. Kemampuan frontier tetap prototipe sampai manfaat, biaya, risiko dan pemilik dapat dibuktikan.
-
-**Identitas produk:** MoonWitness XV adalah satu monorepo dan program terpadu dengan aplikasi domain yang berbagi fondasi; nama ekosistem bukan izin membangun aplikasi atau service baru.
-
-**Kemampuan bersama dan pemilik:**
-
-| Kemampuan | Pemilik/kontrak |
-|---|---|
-| Identitas, API dan data lintas domain | ARSY sebagai Hub canonical; paket MoonQL adalah pemilik domain sesuai batasnya. |
-| Radio dan channel communication | Domain SIGNAL/RADIO yang sudah ada; SKYLINK tetap D18 bounded control plane, bukan Hub atau pemilik identity/SQL. |
-| Object storage dan attachment | ECHOLOG D19 sesuai ADR-0007; tanpa tabel sendiri dan tanpa keputusan hak. |
-| UI dan bahasa | MoonUI serta katalog/paket aplikasi yang sudah ada; ikuti Master Design. |
-| Corpus, witness, ontology, research dan graph | Paket owner yang sudah ada; klaim tetap bersumber, teratribusi dan dapat berstatus unknown/contested. |
-| Ekonomi dan charity | WORKS/M35 dan HARBOR/M32 adalah batas perencanaan; buyer/operator/ledger belum dianggap siap. |
-
-**Batas aplikasi:** ARSY mempertahankan API/data owner tunggal; Dock, Headquarters, Cockpit, Sentinel, AI Gateway, SKYLINK, ECHOLOG, ORBIT, LUMEN Runtime dan Empire Web mengikuti tanggung jawab pada inventory. Penyebutan aplikasi tidak menyatakan deployed atau production-ready.
-
-**Evolusi strategis:** (1) buktikan reliability, security, restore, provenance, privacy dan hak; (2) selesaikan kebutuhan corpus/reader dan kontrol manusia; (3) jalankan prototipe terbatas dengan data sintetis/berizin dan kondisi no-go; (4) validasi nilai pengguna, buyer atau kebutuhan program; (5) perluas hanya dengan pemilik, biaya, hukum, safeguarding, release dan rollback evidence yang jelas. Ini usulan, bukan pengganti TODO gates.
-
 ## Peta gap ke kandidat
 
 | Status terlihat | Kapabilitas yang diinginkan | Gap/bukti | Kandidat |
 |---|---|---|---|
-| Capture awal menemukan angka agregat yang berbeda. | Klaim jumlah bertanggal dan ditautkan ke TODO authoritative; audit lama dibedakan sebagai historis. | README kini mencatat 51/493; granularity audit menyatakan snapshot lama; pencarian penuh tetap bagian acceptance ENG-001. | ENG-001/002 |
+| Angka README/TODO/audit granularitas berbeda. | Satu hitungan terdokumentasi dengan benar. | Konflik dokumen terverifikasi; TODO berwenang. | ENG-001/002 |
 | Deskripsi M38–M40 berbeda. | Pernyataan kematangan terikat bukti/ref tepat. | Konflik status terverifikasi; runtime belum dicek ulang. | ENG-003/004 |
 | Lookup beberapa source pin gagal. | Inventaris referensi immutable yang dapat di-resolve. | Kegagalan lookup terverifikasi; akar masalah UNKNOWN. | ENG-005, ONT-001 |
 | Paket provenance/research ada; pemetaan lintas format belum dikaji penuh. | Keputusan interoperabilitas berdasarkan prototipe kecil. | Peluang, belum ada alasan adopsi. | FUT-015, ONT-006 |
@@ -125,11 +102,3 @@ TEI P5 dapat menginformasikan representasi witness/varian tekstual; PROV-O dapat
 | Kebutuhan komunitas dan dampak belum dibuktikan. | Discovery dan governance dengan consent. | M32 terbuka; tidak ada penerima manfaat yang diklaim. | CHAR-001–010 |
 | Ada kontrak kelas klaim/sitasi. | Peneliti dapat menelusuri sumber, versi dan atribusi. | Kontrak parsial; audit ilmiah end-to-end belum ada. | ONT-001–020 |
 
-
-
-## Addendum — TODO registration, 2026-10-30
-
-At the pre-edit snapshot, branch dev was at HEAD 8cfe3e5d4b37ae252fd78c865903312aa869dfd4; TODO held 46 milestones, 393 task IDs, 334 checked and 59 unchecked. This authorized documentation update registered all 100 candidates as unchecked leaf tasks M46–M50, producing 51 milestones, 493 IDs, 334 checked and 159 unchecked. Existing IDs and checkbox states were verified unchanged. The task packets and matrix provide the one-to-one crosswalk. No GitHub issue/PR, code, branch or history mutation was made. No application test, build, migration, deployment or service was run; only static document consistency checks were performed.
-
-
-Snapshot pendaftaran: branch dev di HEAD 1db6a4c69ca71b4c27823117c9fa5f929405a36a, TODO 51 milestone/493 ID (334 checked/159 unchecked). Commit tersebut memuat pendaftaran TODO. Pada HEAD ad96dbf3ae98731e7c10972d7f0600b809398e9d (snapshot historis, 2026-10-30), TODO menjadi 335 checked/158 unchecked setelah M20-06 ditutup; semua 100 kandidat V5 tetap unchecked. Pada HEAD ca395d1 (2026-10-30), TODO berisi 52 milestone, 499 ID, 347 checked, 152 unchecked. Packet dan indeks pendukung berada di working tree. Ini catatan status dokumen, bukan klaim release atau hasil test dari pass ini.
