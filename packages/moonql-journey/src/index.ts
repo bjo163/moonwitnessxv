@@ -19,6 +19,7 @@ import {
 } from './seed.js'
 
 export * from './seed.js'
+export * from './consent-scope.js'
 export * from './real-world-action-metrics.js'
 
 /**
