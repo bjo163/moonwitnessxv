@@ -108,6 +108,13 @@ test('unprefixed API and framework asset traffic keeps its original path', () =>
   assert.match(config.matcher[0], /_next\//)
 })
 
+test('every dock response pins HTTPS with HSTS', () => {
+  for (const path of ['/id', '/en', '/fr', '/api/on-air']) {
+    const response = middleware(request(path))
+    assert.equal(response.headers.get('strict-transport-security'), 'max-age=15552000', path)
+  }
+})
+
 test('localized embed routes retain embed framing policy on the rewritten destination', () => {
   process.env.EMBED_ORIGINS = 'https://partner.example'
   try {

@@ -62,6 +62,9 @@ export function securityHeaders(ancestors: string[] = ["'none'"], options: { dev
         // purpose, and the player says so instead of failing silently.
         `media-src 'self' https:; frame-ancestors ${list.join(' ')}; base-uri 'self'; form-action 'self'`,
     },
+    // Coolify's proxy answers plain HTTP with a 302, not a browser-pinned redirect,
+    // so each HTTPS-only surface has to pin itself. 180 days matches empire's nginx.
+    { key: 'strict-transport-security', value: 'max-age=15552000' },
     { key: 'x-content-type-options', value: 'nosniff' },
     { key: 'referrer-policy', value: 'strict-origin-when-cross-origin' },
     ...(strict ? [{ key: 'x-frame-options', value: 'DENY' }] : []),
