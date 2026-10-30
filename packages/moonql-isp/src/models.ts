@@ -232,6 +232,13 @@ export const models = {
       summary: str({ maxLength: 240 }),
       openedAt: ts(),
       resolvedAt: ts({ null: true }),
+      // The alert leg is durable because the process that sends it can restart:
+      // an open incident the operator was never told about must come back as
+      // pending, not as silently notified.
+      notifyState: sel(['none', 'pending', 'sent', 'failed'], { default: 'pending', index: true }),
+      notifyAttempts: int({ default: 0 }),
+      notifiedAt: ts({ null: true }),
+      notifyDetail: str({ maxLength: 200, null: true }),
     },
     indexes: [['tenantRef', 'status', 'openedAt']],
   }),

@@ -69,6 +69,51 @@ Message-Authenticator handling is the RADIUS/UDP hardening lever for CVE-2024-35
 conversation, and it trusts a peer only when its certificate chains to the
 configured CA bundle and the leaf is in date when the port opens.
 
+## Monitoring measures and the alert leg
+
+Read-only health observation lives in the `isp` addon (`packages/moonql-isp/src/probes.ts`,
+`monitoring.ts`), not in the Go protocol runtime: a probe is a question about a
+management address, and the runtime owns protocol listeners only.
+
+- **Registered targets only.** The sweep reads `isp_monitor_targets` filtered to
+  `enabled: true`, at most 200 rows per tick, and aims each measure at the address the
+  operator stored for their own node. There is no discovery, no port sweep, no subnet
+  walk and no router configuration write; pausing a target leaves its last measurement
+  on the row untouched rather than rewriting it as a fresh state.
+- **Three measures, and only two that can answer here.** `http-read` treats a 2xx as
+  `healthy`, any other status as `degraded` (an answer at all means the node is up; a
+  wrong answer is a sick service) and a transport failure as `unreachable`. `icmp`
+  needs the platform ping helper, because a Node process cannot open a raw socket.
+  `snmp-read` is reported as `unknown`: an SNMP read requires a community string, and
+  D20 is exactly the place this platform forbids a device credential.
+- **`unknown` is not a verdict.** A measurement this runtime could not perform — no
+  ICMP helper, no credential source, an address the measure cannot express, an
+  unregistered probe kind — never opens an incident and never pages anyone. Freshness
+  is reported independently of incident state: `checkedAt` and `status` are written for
+  every attempted target, and the health view derives `fresh`/`stale`/`never-checked`
+  from the target's own `freshnessSeconds`, which is deliberately separate from the
+  sweep cadence.
+- **Incidents are tenant- and node-scoped.** `unreachable` opens a `critical` incident
+  and `degraded` a `major` one, keyed on `tenantRef` plus `nodeRef`; a repeat tick does
+  not open a second incident for the same open problem, and a healthy tick resolves
+  exactly that incident. Nothing in another tenant's scope is read or written.
+- **Alerting is the D18 leg, and it stays outside D20.** `CronDef.run` sees the orm but
+  never a channel, so the sweep only records facts. `apps/arsy/src/lib/isp-alerts.ts`
+  and the route-less `isp-alerts` module own delivery: one intent per incident through
+  the channel manager, `notifyState`/`notifyAttempts`/`notifiedAt`/`notifyDetail` written
+  back on the incident row, and the attempt count capped at three before the row is
+  marked `failed`. A messenger that refuses leaves the row `pending`, so a restart does
+  not silence an operator who was never told; a missing destination is treated as an
+  unconfigured operator choice and burns no attempt. Only incidents still `open` are
+  revisited, so an incident that recovered before delivery is not announced after the
+  fact. SKYLINK has no idempotency key, so deduplication is this module's single
+  serialized queue plus the row state — no second WhatsApp client exists anywhere in
+  the path.
+
+Synthetic fixtures in the tests use injected fetch and ping dependencies and a fake
+messenger; no test contacts a network target or a real chat provider, and live delivery
+remains gated by M38.
+
 ## Source feature migration
 
 `docs/research/mwx-isp-into-xv-migration-matrix.md` maps the accepted MWX-ISP feature checklist at the pinned source SHA. Reuse the Go protocol pipeline and compatible reference dictionaries after dependency/security review. Translate persistence and business APIs into MoonQL/ARSY. Rebuild the operator surface with MoonUI. Do not migrate source database rows or runtime secrets.

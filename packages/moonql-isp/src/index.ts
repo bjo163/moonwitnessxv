@@ -12,9 +12,12 @@ import {
 } from '@moonwitness/moonql'
 import { hashRadiusPassword, verifyRadiusPassword } from './credentials.js'
 import { models, SERVICE_CAPABILITIES } from './models.js'
+import { sweepMonitorTargets } from './monitoring.js'
 
 export { hashRadiusPassword, verifyRadiusPassword } from './credentials.js'
 export { models } from './models.js'
+export { sweepMonitorTargets, type SweepDeps, type SweepSummary } from './monitoring.js'
+export { probeTarget, monitoringUrl, type Measure, type ProbeDeps, type ProbeOutcome } from './probes.js'
 
 const repo = (ctx: EndpointCtx, model: string): ModelRepo => ctx.orm.model(model) as ModelRepo
 const stringOf = (value: unknown): string => (typeof value === 'string' ? value : '')
@@ -490,6 +493,9 @@ const isp = defineAddon({
           tenantRef: String(nas.tenantRef),
           nasRef: String(nas.id),
           nasId: String(nas.nasId),
+          // The runtime aims dynamic authorisation at this address; the protocol
+          // peer that sent the packet is not always the management address.
+          nasAddress: String(nas.address),
           radsecEnabled: nas.radsecEnabled === true,
           secretRef: stringOf(nas.secretRef),
         }
@@ -580,14 +586,17 @@ const isp = defineAddon({
           sessionSeconds: Number(body.sessionSeconds),
         }
         const events = repo(ctx, 'isp_accounting_events')
+        // `eventAt` is deliberately not part of the identity check: the runtime stamps
+        // it with its own receive clock, so a retransmitted packet carries a new value
+        // for the same event. The first observation wins.
+        const sameEvent = (old: Row): boolean =>
+          old.tenantRef === event.tenantRef && old.sessionKey === event.sessionKey && old.nasRef === event.nasRef &&
+          old.username === event.username && old.eventType === event.eventType &&
+          old.inputOctets === event.inputOctets && old.outputOctets === event.outputOctets &&
+          old.sessionSeconds === event.sessionSeconds
         const prior = await events.search({ limit: 1, where: { eventKey: event.eventKey } })
         if (prior.rows[0]) {
-          const old = prior.rows[0]
-          if (old.tenantRef !== event.tenantRef || old.sessionKey !== event.sessionKey || old.nasRef !== event.nasRef ||
-              old.username !== event.username || old.eventType !== event.eventType || old.eventAt !== event.eventAt ||
-              old.inputOctets !== event.inputOctets || old.outputOctets !== event.outputOctets || old.sessionSeconds !== event.sessionSeconds) {
-            throw conflict('Accounting idempotency key was already used for a different event')
-          }
+          if (!sameEvent(prior.rows[0])) throw conflict('Accounting idempotency key was already used for a different event')
         } else {
           try {
             await events.create(event)
@@ -595,11 +604,7 @@ const isp = defineAddon({
             const raced = await events.search({ limit: 1, where: { eventKey: event.eventKey } })
             const old = raced.rows[0]
             if (!old) throw err
-            if (old.tenantRef !== event.tenantRef || old.sessionKey !== event.sessionKey || old.nasRef !== event.nasRef ||
-                old.username !== event.username || old.eventType !== event.eventType || old.eventAt !== event.eventAt ||
-                old.inputOctets !== event.inputOctets || old.outputOctets !== event.outputOctets || old.sessionSeconds !== event.sessionSeconds) {
-              throw conflict('Accounting idempotency key was already used for a different event')
-            }
+            if (!sameEvent(old)) throw conflict('Accounting idempotency key was already used for a different event')
           }
         }
         await createAccountingSession(ctx, {
@@ -619,12 +624,18 @@ const isp = defineAddon({
         if (!nas) return []
         const pending = await repo(ctx, 'isp_session_actions').search({ limit: 500, where: { tenantRef: nas.tenantRef } })
         const sessions = repo(ctx, 'isp_sessions')
-        const rows: Row[] = []
+        const users = repo(ctx, 'isp_radius_users')
+        const rows: Record<string, unknown>[] = []
         for (const action of pending.rows) {
           const retryable = action.state === 'pending' || (action.state === 'timeout' && Number(action.attempts) < 3)
           if (!retryable) continue
           const found = await sessions.search({ limit: 1, where: { id: action.sessionRef, tenantRef: nas.tenantRef, nasRef: nas.id } })
-          if (found.rows[0]) rows.push(action)
+          const session = found.rows[0]
+          if (!session) continue
+          // RFC 5176 identifies the session by Acct-Session-Id plus User-Name, so the
+          // runtime needs both alongside the action it must deliver.
+          const owner = await users.search({ limit: 1, where: { id: session.radiusUserRef, tenantRef: nas.tenantRef } })
+          rows.push({ ...action, sessionKey: String(session.sessionKey), username: stringOf(owner.rows[0]?.username) })
         }
         return rows
       },
@@ -667,6 +678,16 @@ const isp = defineAddon({
       },
     },
   },
+  cron: [
+    {
+      // Freshness is only meaningful while somebody actually looks, so the sweep
+      // cadence and the per-target freshness window are separate numbers on
+      // purpose: an operator who widens a window does not slow down the checks.
+      name: 'monitor-sweep',
+      every: '2m',
+      run: async ({ orm, budgetMs }) => sweepMonitorTargets(orm, { budgetMs }),
+    },
+  ],
 })
 
 export default isp
