@@ -1,0 +1,540 @@
+{
+  "kind": "m46-15-package-ownership",
+  "derived": true,
+  "source": "workspace manifests + authoritative docs",
+  "rows": [
+    {
+      "workspace": "packages/cli",
+      "package": "@moonwitness/cli",
+      "ownerBoundary": "docs/architecture/APPS.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/types"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/core",
+      "package": "@moonwitness/core",
+      "ownerBoundary": "docs/decisions/ADR-0006-skylink-communication-surface.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 1
+    },
+    {
+      "workspace": "packages/denpa",
+      "package": "@moonwitness/denpa",
+      "ownerBoundary": "docs/decisions/M02-02-domain-assignments.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core"
+      ],
+      "externalDependencies": 3
+    },
+    {
+      "workspace": "packages/echolog-core",
+      "package": "@moonwitness/echolog-core",
+      "ownerBoundary": "docs/decisions/M02-02-domain-assignments.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/eslint-config",
+      "package": "@moonwitness/eslint-config",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 0
+    },
+    {
+      "workspace": "packages/governance",
+      "package": "@moonwitness/governance",
+      "ownerBoundary": "docs/architecture/ORBIT.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/lumen",
+      "package": "@moonwitness/lumen",
+      "ownerBoundary": "docs/architecture/APPS.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql",
+      "package": "@moonwitness/moonql",
+      "ownerBoundary": "docs/architecture/ECHOLOG.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/core"
+      ],
+      "externalDependencies": 6
+    },
+    {
+      "workspace": "packages/moonql-actors",
+      "package": "@moonwitness/moonql-actors",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-apikeys",
+      "package": "@moonwitness/moonql-apikeys",
+      "ownerBoundary": "docs/decisions/M02-02-domain-assignments.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql",
+        "packages/moonql-auth"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-auth",
+      "package": "@moonwitness/moonql-auth",
+      "ownerBoundary": "docs/decisions/M02-02-domain-assignments.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-base",
+      "package": "@moonwitness/moonql-base",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-client",
+      "package": "@moonwitness/moonql-client",
+      "ownerBoundary": "docs/decisions/M34-02-moonlab-hq-desk-decision.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-corpus",
+      "package": "@moonwitness/moonql-corpus",
+      "ownerBoundary": "docs/decisions/M20-02-role-scoped-review-queue.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-graph",
+      "package": "@moonwitness/moonql-graph",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql",
+        "packages/moonql-ontology"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-isp",
+      "package": "@moonwitness/moonql-isp",
+      "ownerBoundary": "docs/architecture/ISP_NETWORK.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-journey",
+      "package": "@moonwitness/moonql-journey",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-monitor",
+      "package": "@moonwitness/moonql-monitor",
+      "ownerBoundary": "docs/decisions/M20-02-role-scoped-review-queue.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-ontology",
+      "package": "@moonwitness/moonql-ontology",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-ops",
+      "package": "@moonwitness/moonql-ops",
+      "ownerBoundary": "docs/decisions/M02-02-domain-assignments.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-playlog",
+      "package": "@moonwitness/moonql-playlog",
+      "ownerBoundary": "docs/decisions/M02-02-domain-assignments.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-research",
+      "package": "@moonwitness/moonql-research",
+      "ownerBoundary": "docs/decisions/M20-02-role-scoped-review-queue.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-schedule",
+      "package": "@moonwitness/moonql-schedule",
+      "ownerBoundary": "docs/decisions/M02-02-domain-assignments.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-settings",
+      "package": "@moonwitness/moonql-settings",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-stations",
+      "package": "@moonwitness/moonql-stations",
+      "ownerBoundary": "docs/decisions/M02-02-domain-assignments.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-unilex",
+      "package": "@moonwitness/moonql-unilex",
+      "ownerBoundary": "docs/planning/PACKAGE_OWNER_ONBOARDING.md",
+      "boundaryKind": "planning contract",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonql-witness",
+      "package": "@moonwitness/witness",
+      "ownerBoundary": "docs/decisions/M02-02-domain-assignments.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql",
+        "packages/moonql-auth",
+        "packages/moonql-base"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/moonui",
+      "package": "@moonwitness/moonui",
+      "ownerBoundary": "docs/decisions/ADR-0014-moonui-skin-contract.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core"
+      ],
+      "externalDependencies": 4
+    },
+    {
+      "workspace": "packages/review-grants",
+      "package": "@moonwitness/review-grants",
+      "ownerBoundary": "docs/planning/PACKAGE_OWNER_ONBOARDING.md",
+      "boundaryKind": "planning contract",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/skylink-core",
+      "package": "@moonwitness/skylink-core",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/skylink-store",
+      "package": "@moonwitness/skylink-store",
+      "ownerBoundary": "docs/architecture/ECHOLOG.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 5
+    },
+    {
+      "workspace": "packages/skylink-telegram",
+      "package": "@moonwitness/skylink-telegram",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [
+        "packages/skylink-core",
+        "packages/skylink-store"
+      ],
+      "externalDependencies": 4
+    },
+    {
+      "workspace": "packages/skylink-whatsapp",
+      "package": "@moonwitness/skylink-whatsapp",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 5
+    },
+    {
+      "workspace": "packages/testing",
+      "package": "@moonwitness/testing",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/types"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "packages/types",
+      "package": "@moonwitness/types",
+      "ownerBoundary": "docs/decisions/M20-02-role-scoped-review-queue.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [],
+      "externalDependencies": 1
+    },
+    {
+      "workspace": "packages/web-config",
+      "package": "@moonwitness/web-config",
+      "ownerBoundary": "docs/decisions/M34-02-moonlab-hq-desk-decision.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core"
+      ],
+      "externalDependencies": 2
+    },
+    {
+      "workspace": "apps/aigateway",
+      "package": "@moonwitness/aigateway",
+      "ownerBoundary": "docs/architecture/SECURITY.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/core"
+      ],
+      "externalDependencies": 5
+    },
+    {
+      "workspace": "apps/arsy",
+      "package": "@moonwitness/arsy",
+      "ownerBoundary": "docs/architecture/APPS.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "apps/aigateway",
+        "packages/cli",
+        "packages/core",
+        "packages/denpa",
+        "packages/moonql",
+        "packages/moonql-actors",
+        "packages/moonql-apikeys",
+        "packages/moonql-auth",
+        "packages/moonql-base",
+        "packages/moonql-client",
+        "packages/moonql-corpus",
+        "packages/moonql-graph",
+        "packages/moonql-isp",
+        "packages/moonql-journey",
+        "packages/moonql-monitor",
+        "packages/moonql-ontology",
+        "packages/moonql-ops",
+        "packages/moonql-playlog",
+        "packages/moonql-research",
+        "packages/moonql-schedule",
+        "packages/moonql-settings",
+        "packages/moonql-stations",
+        "packages/moonql-unilex",
+        "packages/moonui",
+        "apps/sentinel",
+        "packages/skylink-whatsapp",
+        "packages/testing",
+        "packages/moonql-witness"
+      ],
+      "externalDependencies": 12
+    },
+    {
+      "workspace": "apps/cockpit",
+      "package": "@moonwitness/cockpit",
+      "ownerBoundary": "docs/architecture/SECURITY.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql-client",
+        "packages/moonui"
+      ],
+      "externalDependencies": 12
+    },
+    {
+      "workspace": "apps/dock",
+      "package": "@moonwitness/dock",
+      "ownerBoundary": "docs/decisions/ADR-0011-lighthouse-dock-runtime.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql-client",
+        "packages/moonui",
+        "packages/web-config"
+      ],
+      "externalDependencies": 7
+    },
+    {
+      "workspace": "apps/echolog",
+      "package": "@moonwitness/echolog",
+      "ownerBoundary": "docs/architecture/APPS.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/echolog-core",
+        "packages/moonql",
+        "packages/moonql-auth",
+        "packages/moonui"
+      ],
+      "externalDependencies": 14
+    },
+    {
+      "workspace": "apps/empire-web",
+      "package": "@moonwitness/empire-web",
+      "ownerBoundary": "docs/architecture/APPS.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/moonui"
+      ],
+      "externalDependencies": 7
+    },
+    {
+      "workspace": "apps/headquarters",
+      "package": "@moonwitness/headquarters",
+      "ownerBoundary": "docs/decisions/M02-01-disambiguation-registry.md",
+      "boundaryKind": "accepted ADR",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql-client",
+        "packages/moonui",
+        "packages/web-config"
+      ],
+      "externalDependencies": 7
+    },
+    {
+      "workspace": "apps/isp-console",
+      "package": "@moonwitness/isp-console",
+      "ownerBoundary": "docs/architecture/APPS.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql-client",
+        "packages/moonui",
+        "packages/web-config"
+      ],
+      "externalDependencies": 7
+    },
+    {
+      "workspace": "apps/lumen-runtime",
+      "package": "@moonwitness/lumen-runtime",
+      "ownerBoundary": "docs/architecture/APPS.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/lumen"
+      ],
+      "externalDependencies": 3
+    },
+    {
+      "workspace": "apps/orbit",
+      "package": "@moonwitness/orbit",
+      "ownerBoundary": "docs/architecture/APPS.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql-client",
+        "packages/moonui",
+        "packages/web-config"
+      ],
+      "externalDependencies": 10
+    },
+    {
+      "workspace": "apps/sentinel",
+      "package": "@moonwitness/sentinel",
+      "ownerBoundary": "UNKNOWN",
+      "boundaryKind": "UNDOCUMENTED",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql-client"
+      ],
+      "externalDependencies": 3
+    },
+    {
+      "workspace": "apps/skylink",
+      "package": "@moonwitness/skylink",
+      "ownerBoundary": "docs/architecture/APPS.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/moonql",
+        "packages/moonql-auth",
+        "packages/moonui",
+        "packages/skylink-core",
+        "packages/skylink-store",
+        "packages/skylink-telegram"
+      ],
+      "externalDependencies": 12
+    }
+  ]
+}
