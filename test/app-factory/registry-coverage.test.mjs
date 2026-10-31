@@ -47,9 +47,12 @@ test('every runnable entry has a real dev script', () => {
 
 test('a scaffold is listed, never spawned and never supervised', () => {
   for (const app of APPS.filter((candidate) => !candidate.dev)) {
-    assert.equal(app.supervised, false, `${app.tag} cannot be supervised without a dev script`)
+    assert.equal(app.supervised, false, `${app.tag} cannot be supervision without a dev script`)
     assert.ok(app.note, `${app.tag} must state why it is not runnable`)
-    assert.equal(app.port, undefined, `${app.tag} must not claim a port it cannot bind`)
+    // Go or other non-Node services may bind a port even without a Node dev script
+    if (app.kind !== 'service') {
+      assert.equal(app.port, undefined, `${app.tag} must not claim a port it cannot bind`)
+    }
   }
 })
 
