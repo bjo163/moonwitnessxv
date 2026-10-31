@@ -93,6 +93,9 @@ export const GLOBAL_IGNORES = [
   '.agents/teamwork/**',
   // Temporary diagnostic and probe files generated during development.
   '.tmp/**',
+  // Standalone utility scripts that legitimately use Node.js globals.
+  '**/scripts/**/*.mjs',
+  '**/zz-diag.mjs',
 ]
 
 export const typescriptRules = {
