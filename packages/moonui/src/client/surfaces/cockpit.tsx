@@ -261,13 +261,13 @@ export function CockpitTopBar({
             {copy.startAllRefused.replace('{count}', String(startAllSummary.refused))}
           </Badge>
         ) : null}
-        <Button variant="primary" size="sm" disabled={isStartingAll} onClick={startAll}>
+        <Button variant="primary" size="sm" disabled={isStartingAll} onClick={() => { startAll() }}>
           {isStartingAll ? '…' : copy.startAll}
         </Button>
-        <Button variant="danger" size="sm" onClick={stopAll}>
+        <Button variant="danger" size="sm" onClick={() => { stopAll() }}>
           {copy.stopAll}
         </Button>
-        <Button variant="accent" size="sm" disabled={isFreeingPorts} onClick={freePorts}>
+        <Button variant="accent" size="sm" disabled={isFreeingPorts} onClick={() => { freePorts() }}>
           {isFreeingPorts ? '...' : copy.freePorts}
         </Button>
         <Button
