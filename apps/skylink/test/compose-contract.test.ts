@@ -41,7 +41,9 @@ void test('compose: every service, including SKYLINK, has a healthcheck', () => 
 void test('compose: SKYLINK has a loopback-published port, healthcheck, and no shared WhatsApp session', () => {
   const skylink = services.get('skylink')
   assert.ok(skylink, 'SKYLINK is a Compose service')
-  assert.match(skylink, /profiles:\s*\["skylink"\]/, 'the optional service does not block the default stack')
+  // Skylink now starts automatically with graceful health-only fallback when
+  // SKYLINK_SERVICE_KEY is not configured, so the profiles requirement is removed.
+  assert.doesNotMatch(skylink, /profiles:\s*\["skylink"\]/, 'SKYLINK starts automatically, not as an optional profile')
   assert.match(skylink, /dockerfile:\s*Dockerfile\.skylink/)
   assert.match(skylink, /127\.0\.0\.1:3005:3005/)
   assert.match(skylink, /healthcheck:[\s\S]*?127\.0\.0\.1:3005\/health/)
