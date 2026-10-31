@@ -55,7 +55,7 @@ jobs:
             --volume "$GITHUB_WORKSPACE:/repo:ro" \
             --workdir /repo \
             ghcr.io/gitleaks/gitleaks:v8.30.0@sha256:105ac66a57b2bb8afb61a3b8a5dcc4817773d03724a7e8a515214cfe58225556 \
-            git --redact=100 --exit-code=1 --no-banner --no-color .
+            git --exit-code=1 --no-banner --no-color .
 
       - name: Record UI consistency report
         # Evidence only: `pnpm verify` below is the gate. This step runs the same
