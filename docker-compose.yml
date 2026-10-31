@@ -156,7 +156,6 @@ services:
           - radio
 
   skylink:
-    profiles: ["skylink"]
     build:
       context: .
       dockerfile: Dockerfile.skylink
@@ -175,8 +174,8 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-moonwitness}:${POSTGRES_PASSWORD:-}@db:5432/${POSTGRES_DB:-moonwitness}
       SKYLINK_ARSY_URL: http://arsy:3000
       SKYLINK_SERVICE_KEY: ${SKYLINK_SERVICE_KEY:-}
-      # SKYLINK also refuses to boot with NODE_ENV=production when the service key
-      # is empty, so the `skylink` profile needs SKYLINK_SERVICE_KEY set in .env.
+      # SKYLINK gracefully falls back to health-only mode when the service key
+      # is not configured, allowing the container to start without full functionality.
       SKYLINK_TELEGRAM_BOT_TOKEN: ${SKYLINK_TELEGRAM_BOT_TOKEN:-}
       SKYLINK_TELEGRAM_WEBHOOK_SECRET: ${SKYLINK_TELEGRAM_WEBHOOK_SECRET:-}
     healthcheck:
