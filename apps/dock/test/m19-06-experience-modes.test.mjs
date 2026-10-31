@@ -5,8 +5,8 @@ import { URL } from 'node:url'
 
 const layout = readFileSync(new URL('../src/layouts/site.tsx', import.meta.url), 'utf8')
 const dockCss = readFileSync(new URL('../src/app/globals.css', import.meta.url), 'utf8')
-const cockpitEntry = readFileSync(new URL('../../cockpit/client/main.tsx', import.meta.url), 'utf8')
-const cockpitCss = readFileSync(new URL('../../cockpit/client/cockpit-layout.css', import.meta.url), 'utf8')
+const cockpitEntry = readFileSync(new URL('../../../tools/cockpit/client/main.tsx', import.meta.url), 'utf8')
+const cockpitCss = readFileSync(new URL('../../../tools/cockpit/client/cockpit-layout.css', import.meta.url), 'utf8')
 
 test('M19-06 maps only the existing Dock routes to their accepted experience tokens', () => {
   assert.match(layout, /unlocalizedPath\.startsWith\('\/reader'\)[\s\S]*\? 'reader'/)
