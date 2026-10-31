@@ -22,6 +22,7 @@ export {
   type Breadcrumb,
   type CardVariant,
 } from './layout.js'
+export { AppShell, type AppShellProps } from './shell.js'
 export {
   ChartList,
   DataTable,
