@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from './cn.js'
-import { IconBookOpen, IconCompass, IconMoon } from './icons/index.js'
+import { IconBookOpen, IconCompass, IconEmpireMark, IconMoon } from './icons/index.js'
 import { LinkButton } from './form.js'
 
 /**
@@ -11,18 +11,23 @@ export interface SiteLink {
   id?: string
   href: string
   label: string
+  lang?: string
 }
 
 export interface SiteBrandCopy {
   name: string
   tagline: string
   homeHref: string
+  mark?: 'moon' | 'empire'
 }
 
 export function SiteBrand({ brand, footer = false }: { brand: SiteBrandCopy; footer?: boolean }): ReactNode {
+  const Mark = brand.mark === 'empire' ? IconEmpireMark : IconMoon
   return (
     <a className={footer ? 'su-brand su-brand--footer' : 'su-brand'} href={brand.homeHref}>
-      <IconMoon className="su-brand__moon" size={30} strokeWidth={1.4} />
+      <span className="su-brand__mark-wrap" data-mark={brand.mark ?? 'moon'}>
+        <Mark className="su-brand__mark" size={30} strokeWidth={1.4} />
+      </span>
       <span className="su-brand__text">
         <b>{brand.name}</b>
         <small>{brand.tagline}</small>
@@ -127,6 +132,34 @@ export function SiteFooter({ copy }: { copy: SiteFooterCopy }): ReactNode {
         <span className="su-footer__meta">{copy.meta[5]}</span>
       </div>
     </footer>
+  )
+}
+
+export interface SiteNotFoundCopy {
+  lang: string
+  eyebrow: string
+  title: string
+  description?: string
+  descriptionLang?: string
+  linksLabel: string
+  links: SiteLink[]
+}
+
+/** Shared not-found anatomy; each surface supplies only localized words and destinations. */
+export function SiteNotFound({ copy }: { copy: SiteNotFoundCopy }): ReactNode {
+  return (
+    <main className="su-not-found" lang={copy.lang} aria-labelledby="su-not-found-title">
+      <p className="su-not-found__eyebrow">{copy.eyebrow}</p>
+      <h1 id="su-not-found-title">{copy.title}</h1>
+      {copy.description ? <p className="su-not-found__description" lang={copy.descriptionLang}>{copy.description}</p> : null}
+      <nav className="su-not-found__links" aria-label={copy.linksLabel}>
+        {copy.links.map((link) => (
+          <a key={link.href} className="m-btn" data-variant="ghost" href={link.href} lang={link.lang}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
+    </main>
   )
 }
 

@@ -89,7 +89,7 @@ for (const file of files) {
     if (fragment) assert.ok(readFileSync(target, 'utf8').includes(`id="${fragment}"`), `${file}: missing anchor ${href}`)
   }
 }
-assert.match(readFileSync(join(out, 'index.html'), 'utf8'), /<html lang="en" data-skin="zine">/)
+assert.match(readFileSync(join(out, 'index.html'), 'utf8'), /<html lang="en" data-skin="empire">/)
 assert.equal(existsSync(join(out, 'fr.html')), false)
 console.info(`PASS: navigation destinations and anchors across ${files.length} exported HTML files; unsupported locales are not exported.`)
 

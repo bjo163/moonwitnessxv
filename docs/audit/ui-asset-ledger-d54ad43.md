@@ -1,11 +1,11 @@
 # UI asset ledger — production surface @ `d54ad43` baseline
 
 **Scope:** `todo-ui.md` leaf **UI-F14** (icon/vector pipeline: title/ARIA, no external scripts, license + content hash) and acceptance gate **QA-01** (source/license ledger for every production asset).
-**Anchor:** task baseline `d54ad43` (verified an ancestor of the working `dev` HEAD `76ecdc5`; `git merge-base --is-ancestor d54ad43 HEAD` → true). Hashes below were recomputed against the tree at collection time, not copied from an earlier audit.
+**Anchor:** task baseline `d54ad43` (verified an ancestor of the pre-change `dev` HEAD `db4e83f`). Hashes below were recomputed against the tree at collection time, not copied from an earlier audit.
 **Enforcer:** `node scripts/check-ui-assets.mjs` (`pnpm ui:assets`), which parses the table in §2 as its source of truth.
 **Rights vocabulary:** reused from the ratified [M06-06 classification](../decisions/M06-06-rights-classification.md) — `RIGHTS_UNKNOWN` may not be served on public endpoints or committed as raw media bytes.
 
-> **Headline result: QA-01 is RED.** 33 files are served from app public dirs. 3 are accounted for (owner-authored vectors). **30 are `RIGHTS_UNKNOWN` (UNRESOLVED) and are nonetheless live in production**, which the M06-06 invariant gate already forbids. The pipeline does not paper over this; it fails on it.
+> **Historical headline result at the original scan: QA-01 was RED.** 33 files were served from app public dirs. 3 were accounted for (owner-authored vectors); **30 were `RIGHTS_UNKNOWN` (UNRESOLVED) and live in production**. The scan universe was extended on 2026-10-31 to include Empire's public artwork and framework favicon; the current table contains 39 rows. The original baseline remains historical.
 
 ---
 
@@ -19,6 +19,8 @@
 | `apps/headquarters/public/` | Headquarters (Next.js static root) | `apps/headquarters/src/app/(admin)/page.tsx:43,51,59,67,119` |
 | `apps/cockpit/public/` | Cockpit node server | `apps/cockpit/src/server.ts:21` candidate root, `:93` `favicon.svg`, `:104` `bgm.mp3` |
 | `apps/cockpit/client/public/` | Vite `publicDir` (`root` = `apps/cockpit/client`) | `apps/cockpit/vite.config.mjs:9`; `apps/cockpit/src/server.ts:105` fallback `../client/public/bgm.mp3` |
+| `apps/empire-web/public/` | Empire Web (Next.js static root) | Five approved Story Universe WebP files; approval scope is recorded in the app artwork manifest |
+| `apps/empire-web/src/app/icon.svg` | Empire Web (Next.js metadata icon) | Framework-served favicon source, included as an explicit scan file |
 
 **OUT, with reason:**
 
@@ -28,13 +30,19 @@
 
 ---
 
-## 2. Ledger of served assets (33 rows)
+## 2. Ledger of served assets (39 rows)
 
 Legend — **Status**: `CLEARED` = authorship established and use inside this product documented (does **not** mean openly licensed); `UNRESOLVED — EXCLUDED-FROM-PRODUCTION` = no rights evidence, must be pulled from the served dir.
 **License (SPDX)**: `NOASSERTION` is SPDX's reserved value for "no license determined" — it is an absence of claim, never a grant.
 
 | Asset path | SHA-256 | Bytes | Author / origin | License (SPDX) | Consent | Status |
 |---|---|---|---|---|---|---|
+| `apps/empire-web/public/story-universe/home-mooncity.webp` | `06172c0819af0bacb8735339dbcc33b24a7a44f55640006db0a2b72d6a7134c3` | 310642 | AI-generated for MoonWitness XV; see `apps/empire-web/docs/story-universe/contracts/generated_artwork_manifest.json` for approval and scope | NOASSERTION | Not applicable — fictional generated illustration; no identified real person | CLEARED |
+| `apps/empire-web/public/story-universe/library-guardian.webp` | `45e3727ca1b3a086ca6e6f7be5f6034b94533824e226c55e9e59c8f5040c1506` | 254828 | AI-generated for MoonWitness XV; see `apps/empire-web/docs/story-universe/contracts/generated_artwork_manifest.json` for approval and scope | NOASSERTION | Not applicable — fictional generated illustration; no identified real person | CLEARED |
+| `apps/empire-web/public/story-universe/reader-poster.webp` | `d945df57c68310e95a0bd8054c0c7d270fa09136248175b1e56433d2ecf39939` | 270472 | AI-generated for MoonWitness XV; see `apps/empire-web/docs/story-universe/contracts/generated_artwork_manifest.json` for approval and scope | NOASSERTION | Not applicable — fictional generated illustration; no identified real person | CLEARED |
+| `apps/empire-web/public/story-universe/codex-guardian.webp` | `806577d44ede0a2e179704264cb80e7198c9d8c51a1eb99776963f0f84d4fc47` | 102216 | AI-generated for MoonWitness XV; see `apps/empire-web/docs/story-universe/contracts/generated_artwork_manifest.json` for approval and scope | NOASSERTION | Not applicable — fictional generated illustration; no identified real person | CLEARED |
+| `apps/empire-web/public/story-universe/moon-academy.webp` | `6b2672751021e632f49421734fd5f07cf45bb40862f81f12f9fb1a0fd2c999d3` | 193172 | AI-generated for MoonWitness XV; see `apps/empire-web/docs/story-universe/contracts/generated_artwork_manifest.json` for approval and scope | NOASSERTION | Not applicable — fictional generated illustration; no identified real person | CLEARED |
+| `apps/empire-web/src/app/icon.svg` | `fb8c998eb5b547ce21799b6714f09ba653efd876c0175aee8ddbbee4171742f7` | 844 | Original Empire orbital mark created in-repo for MoonWitness XV; geometry and palette align with the shared Empire skin | NOASSERTION | Not applicable — abstract vector; no person depicted | CLEARED |
 | `apps/dock/public/icon.svg` | `c8f5b26f53820d99c2e24a6ea43d581c6e33d089f9620d810306b49815e94722` | 402 | bjo163 (repo owner) — in-repo original vector; added `0e0b3b8` 2026-10-26 | NOASSERTION | Not applicable — no person depicted | CLEARED |
 | `apps/cockpit/public/favicon.svg` | `02d2f9f3dd8f33bf5402cc453789ac00a194cba1eed2b380b188671b5755c76d` | 794 | bjo163 (repo owner) — in-repo original vector; added `3178a4c` | NOASSERTION | Not applicable — no person depicted | CLEARED |
 | `apps/cockpit/client/public/favicon.svg` | `02d2f9f3dd8f33bf5402cc453789ac00a194cba1eed2b380b188671b5755c76d` | 794 | bjo163 (repo owner) — byte-identical duplicate of `apps/cockpit/public/favicon.svg` | NOASSERTION | Not applicable — no person depicted | CLEARED |
@@ -164,7 +172,7 @@ A green run is claimed **only** for the fixture (B), never for the product tree.
 1. **30 raster + audio assets:** obtain per-file author + licence (or replace with original work). Until then they violate M06-06's `RIGHTS_UNKNOWN` invariant and should be pulled from `public/art/` (Dock/HQ) and `public/bgm.mp3` (Cockpit), with CSS/`<Card variant="art">` slots switched to MoonUI tokens or an original vector.
 2. **`apps/cockpit/**/favicon.svg`:** add `role="img" aria-label="Moonwitness Cockpit"` (or `<title>`) — one line, and delete the duplicate so only the Vite `publicDir` copy is served.
 3. **`packages/moonui/src/client/s-meter.tsx:82`:** decide name vs decorative for the inline SVG.
-4. **Register the gate** as `ui:assets` and add it to CI so no further unprovenanced binary can land silently.
+4. **Gate status:** the root `ui:assets` command is registered and now scans Empire's public artwork plus its framework favicon. The full gate still reports 30 legacy rights blockers and two Cockpit SVG naming violations, so it is not safe to make this failing whole-repository gate a required CI check yet. Empire's six current served assets pass their hash, ledger, and SVG checks in the latest observed scan.
 5. **Optional future hardening:** the gate flags base64 payloads as unaccounted; if a legitimate embedded font/asset is ever approved, add it as a ledger row with a digest instead of relaxing the rule.
 
 ## 6. Evidence commands

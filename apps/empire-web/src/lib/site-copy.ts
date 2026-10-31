@@ -1,4 +1,4 @@
-import type { SiteFooterCopy } from '@moonwitness/moonui'
+import type { SiteFooterCopy, SiteNotFoundCopy } from '@moonwitness/moonui'
 import type { SiteHeaderCopy } from '@moonwitness/moonui/client'
 import { text, type StoryLocale } from './story-universe'
 
@@ -11,12 +11,31 @@ const local = (locale: string, path: string) => `/${locale}${path === '/' ? '' :
 
 export type SiteSection = 'home' | 'stories' | 'characters' | 'ggs'
 
+export const empireNotFoundCopy: SiteNotFoundCopy = {
+  lang: 'en',
+  eyebrow: '404 · TRANSMISSION NOT FOUND',
+  title: 'Nothing here yet.',
+  description: 'Halaman ini belum tersedia.',
+  descriptionLang: 'id',
+  linksLabel: 'Choose a home page',
+  links: [
+    { href: '/id', label: 'Beranda Indonesia', lang: 'id' },
+    { href: '/en', label: 'English home', lang: 'en' },
+  ],
+}
+
+export const empireGlobalNotFoundCopy: SiteNotFoundCopy = {
+  ...empireNotFoundCopy,
+  title: 'Page not found',
+}
+
 const brandHome = (locale: StoryLocale) => local(locale, '/')
 
 const brand = (locale: StoryLocale) => ({
   name: 'A-L-L-A-H.COM',
   tagline: 'EMPIRE OF THE LIGHT',
   homeHref: brandHome(locale),
+  mark: 'empire' as const,
 })
 
 export function siteHeaderProps(

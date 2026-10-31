@@ -59,7 +59,7 @@ test('the Empire app no longer carries a private skin', () => {
 })
 
 test('both route families pin their skin on the html element', () => {
-  assert.match(read('src/app/(entry)/layout.tsx'), /<html[^>]*data-skin="zine"/)
+  assert.match(read('src/app/(entry)/layout.tsx'), /<html[^>]*data-skin="empire"/)
   assert.match(read('src/app/(localized)/[locale]/layout.tsx'), /<html[^>]*data-skin="empire"/)
 })
 

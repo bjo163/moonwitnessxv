@@ -197,6 +197,20 @@ export function IconEye(props: IconProps): ReactNode {
   )
 }
 
+/** Empire brand mark: a quiet orbit around a four-point light and signal point. */
+export function IconEmpireMark(props: IconProps): ReactNode {
+  return svg(
+    <>
+      <circle cx="12" cy="12" r="9.2" strokeOpacity=".46" />
+      <ellipse cx="12" cy="12" rx="9.2" ry="4.2" transform="rotate(-34 12 12)" strokeDasharray=".8 1.7" strokeOpacity=".72" />
+      <path d="M12 1.5v2.2m0 16.6v2.2M1.5 12h2.2m16.6 0h2.2" strokeWidth="1.2" strokeOpacity=".72" />
+      <path d="m12 5.4 1.85 4.75 4.75 1.85-4.75 1.85L12 18.6l-1.85-4.75L5.4 12l4.75-1.85L12 5.4Z" fill="var(--brand)" stroke="var(--brand)" strokeWidth=".65" />
+      <circle cx="17.9" cy="7.2" r="1.1" fill="var(--brand-2)" stroke="var(--bg)" strokeWidth=".7" />
+    </>,
+    props,
+  )
+}
+
 export function IconMoon(props: IconProps): ReactNode {
   return svg(<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />, props)
 }

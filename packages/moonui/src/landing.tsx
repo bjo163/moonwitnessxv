@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { LiveDot } from './data.js'
+import { EmpireOrbitArtwork } from './empire.js'
 import { LinkButton } from './form.js'
 import { SiteFooter, type SiteFooterCopy } from './site.js'
 
@@ -91,15 +92,9 @@ export function LandingPage({
             </p>
           </div>
           <div className="emp-orbit-art" aria-hidden="true">
-            <div className="emp-orbit-outer">
-              <div className="emp-orbit-inner">
-                <div className="emp-moon" />
-              </div>
-            </div>
+            <EmpireOrbitArtwork />
             <span className="emp-art-text emp-art-top">{copy.art.top}</span>
             <span className="emp-art-text emp-art-bottom">{copy.art.bottom}</span>
-            <div className="emp-trace emp-trace-one" />
-            <div className="emp-trace emp-trace-two" />
             <span className="emp-art-id">{copy.art.mark}</span>
           </div>
           <span className="emp-hero-index" aria-hidden="true">{copy.art.index}</span>

@@ -85,7 +85,17 @@ test('Story Universe routes stay localized, static, and publication-gated', () =
   assert.match(universe, /IconMoon/, 'the chrome draws with MoonUI icons')
   assert.doesNotMatch(universe, /data-theme="empire-story"/)
   assert.match(read('src/app/(localized)/[locale]/layout.tsx'), /data-skin="empire"/)
-  assert.match(read('src/app/(entry)/layout.tsx'), /data-skin="zine"/)
+  assert.match(read('src/app/(entry)/layout.tsx'), /data-skin="empire"/)
+  assert.match(read('src/app/global-not-found.tsx'), /data-skin="empire"/)
+  for (const file of [
+    'src/app/global-not-found.tsx',
+    'src/app/(entry)/not-found.tsx',
+    'src/app/(localized)/[locale]/not-found.tsx',
+  ]) {
+    const route = read(file)
+    assert.match(route, /SiteNotFound/, `${file}: not-found anatomy belongs to MoonUI`)
+    assert.doesNotMatch(route, /<main/, `${file}: route files pass copy, they do not rebuild the shared view`)
+  }
   assert.match(universe, /aria-pressed/, 'tabs and panels expose their state')
   assert.match(universe, /setActive/)
   assert.match(universe, /aria-expanded=\{menuOpen\}/)

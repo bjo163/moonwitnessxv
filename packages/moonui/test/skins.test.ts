@@ -345,6 +345,21 @@ describe('moon.css — the skin blocks honour the contract', () => {
     }
   })
 
+  it('keeps dark skin blocks identical to the shared TypeScript palettes', () => {
+    for (const skinName of SKINS) {
+      const declared = declarations(`:root[data-skin='${skinName}']`)
+      const values = new Map(
+        [...declared.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/g)].map((match) => [match[1], match[2].trim().toLowerCase().replace(/\s+/g, '')]),
+      )
+      for (const property of PALETTE_ROLE_PROPERTIES) {
+        const expected = String(skin(skinName)[roleKey(property) as keyof (typeof MOON_SKINS)['zine']])
+          .toLowerCase()
+          .replace(/\s+/g, '')
+        assert.equal(values.get(property), expected, `moon.css ${skinName} ${property} drifted from MOON_SKINS.${skinName}`)
+      }
+    }
+  })
+
   it('routes the danger and accent variants through roles', () => {
     assert.match(CSS, /\.m-btn\[data-variant="danger"\]\s*\{\s*background:\s*var\(--danger\)/)
     assert.match(CSS, /\.m-btn\[data-variant="accent"\]\s*\{[\s\S]*?color:\s*var\(--on-brand\)/)
@@ -368,6 +383,22 @@ describe('moon.css — the skin blocks honour the contract', () => {
     for (const property of [...ROLE_PROPERTIES, ...ALIAS_PROPERTIES]) {
       assert.ok(zineLight.includes(property), `zine-light block is missing ${property}`)
       assert.ok(empireLight.includes(property), `empire-light block is missing ${property}`)
+    }
+  })
+
+  it('keeps light skin blocks identical to the shared TypeScript palettes', () => {
+    for (const skinName of SKINS) {
+      const declared = declarations(`:root[data-skin='${skinName}'][data-brightness='light']`)
+      const values = new Map(
+        [...declared.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/g)].map((match) => [match[1], match[2].trim().toLowerCase().replace(/\s+/g, '')]),
+      )
+      const palette = MOON_BRIGHTNESSES.light[skinName]
+      for (const property of PALETTE_ROLE_PROPERTIES) {
+        const expected = String(palette[roleKey(property) as keyof typeof palette])
+          .toLowerCase()
+          .replace(/\s+/g, '')
+        assert.equal(values.get(property), expected, `moon.css ${skinName}-light ${property} drifted from MOON_BRIGHTNESSES.light.${skinName}`)
+      }
     }
   })
 

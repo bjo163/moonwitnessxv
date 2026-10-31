@@ -49,6 +49,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "ui:check": "node scripts/check-ui-consistency.mjs",
+    "ui:assets": "node scripts/check-ui-assets.mjs",
     "apps": "node scripts/list-apps.mjs",
     "verify": "pnpm build && pnpm ui:check && pnpm lint && pnpm gen:sdk:check && pnpm test && pnpm build:web",
     "release": "node scripts/release.mjs",

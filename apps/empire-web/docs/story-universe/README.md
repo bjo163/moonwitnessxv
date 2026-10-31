@@ -11,7 +11,8 @@ This app-local folder is the **single editing location** for the five-page visua
 4. [contracts/asset_manifest.json](contracts/asset_manifest.json) — SHA-256 and names of the five PNG originals.
 5. [contracts/generated_artwork_manifest.json](contracts/generated_artwork_manifest.json) — checksums and scoped publication approval for the five new, AI-generated WebP illustrations.
 6. [AI_LOCAL_IMPLEMENTATION_PROMPT.md](prompts/AI_LOCAL_IMPLEMENTATION_PROMPT.md) — execution prompt for local AI.
-7. [MoonUI integration bridge](../../../../packages/moonui/docs/EMPIRE_STORY_UNIVERSE_BRIDGE.md) — shared package stays unchanged; Empire consumes its existing primitives in a scoped app theme.
+7. [MoonUI integration bridge](../../../../packages/moonui/docs/EMPIRE_STORY_UNIVERSE_BRIDGE.md) — the shared package owns reusable layout, styling and vector primitives; Empire supplies route data and artwork.
+8. [Empire visual system](../../../../docs/design/EMPIRE_VISUAL_SYSTEM.md) — mark, orbital artwork, shared 404, palette roles and asset gates.
 
 ## The five PNG originals
 
@@ -37,16 +38,16 @@ git push origin dev
 Each PNG is checked against the SHA-256 manifest and allowed filename list; a mismatch causes failure. Read script help using `--help`. The files should stay inside `docs/` (not `public/`) until publication is approved.
 
 ## Architecture boundaries and status
-- `apps/empire-web` remains an isolated static pilot per accepted ADR-0012. Canonical LIGHTHOUSE remains Dock. A separate Vercel production deployment is authorized in the ADR-0012 addendum; no backend, auth, DB, custom domain, DNS, or changes to the existing `empire-of-the-light` Vercel project.
+- `apps/empire-web` is a static, backend-free Empire site at `a-l-l-a-h.com` under [ADR-0016](../../../../docs/decisions/ADR-0016-public-domain-map.md); Dock remains the canonical LIGHTHOUSE runtime under ADR-0011. Coolify serves the indexable canonical domain. Vercel is preview-only, keeps `noindex, nofollow`, and has no custom domain. No backend, auth, database, DNS or existing `empire-of-the-light` Vercel project change is implied by this visual work.
 - Content, posters, scripture and source quotes require **human editorial/source/rights review** before publication. The mockup pictures are references, **not functioning pages**.
 - "LIVE NOW", visitor counters, planned releases, and fake links from generated mockups MUST NOT be copied as real data.
 - All 5 mockups differ: HOME, LIBRARY, READER, CODEX, GGS. Avoid repetitive dashboard templates.
 - Visual debt and actual screenshots need to be assessed at 390 / 768 / 1122 / 1440 / 1920px. Preserve RTL verified Arabic as real text.
 - No new branch for ordinary local work. Align with the existing dev→main CI gates and canonical TODO, which are not rewritten by this bundle.
 
-**Implementation status (local working tree):** all five conceptual page surfaces now exist in the bilingual static pilot: home, searchable/filterable library, interactive AngelWithShotgun reader, character codex, and fictional GGS learning page. The app uses MoonUI CSS, buttons, and vector icons, and since ADR-0014 it consumes the shared **`empire` skin** (`data-skin="empire"` on `<html>`, role tokens only — no private palette); the entry route `/` keeps the default `zine` skin. CSS-drawn artwork (moons, skylines, silhouettes) remains app-owned illustration rather than palette. The project owner approved the five original AI-generated WebP illustrations for public deployment on 2026-10-29 (Asia/Jakarta); exact file checksums and this narrow approval are recorded in `contracts/generated_artwork_manifest.json`. That approval covers those five WebP files only. The five PNG screenshots remain private design references outside `public/` and the exported app. The generated art follows their composition and mood, but is not a copy of the source imagery and does not make the pages pixel-exact. Routes remain noindex. Editorial copy, religious/source claims, broader rights review, full visual comparison, and final human acceptance remain open.
+**Implementation status (working tree):** all five conceptual page surfaces exist in the bilingual static site: home, searchable/filterable library, interactive AngelWithShotgun reader, character codex, and fictional GGS learning page. MoonUI owns the shared components, component styling, vector mark and orbit artwork; Empire provides route copy and art URLs. Every Empire route, including `/`, selects the `empire` skin, whose colors come from shared MoonUI roles. The project owner approved the five original AI-generated WebP illustrations for public deployment on 2026-10-29 (Asia/Jakarta); exact checksums and the narrow approval scope are recorded in `contracts/generated_artwork_manifest.json`. That approval covers those five WebP files only. The five PNG screenshots remain private design references outside `public/` and the exported app. The 19 additional artwork slots remain pending because image generation is blocked on credits and require their own provenance, review, and publication approval. `a-l-l-a-h.com` is indexable by ADR-0016; Vercel preview remains noindex. Editorial/source review and final human acceptance remain open.
 
-**Release scope:** the project owner separately authorized an isolated Vercel production deployment for this static pilot. The canonical Lighthouse runtime remains Dock; this project must use a new Vercel project rooted at `apps/empire-web`, must not change the existing `empire-of-the-light` Vercel project or domains, and must keep `noindex, nofollow` until editorial/source/security review is complete.
+**Release scope:** ADR-0016 assigns `a-l-l-a-h.com` to Empire on Coolify and permits indexing there. Vercel is preview-only and must retain `noindex, nofollow`; it has no custom domain. Dock remains the canonical LIGHTHOUSE runtime. Follow [release evidence requirements](../../../../docs/architecture/RELEASE.md) before making any deployment claim.
 
 ### Local visual implementation checkpoint
 
@@ -85,7 +86,7 @@ Measured at 1122×1402 in **both locales** (`en` and `id`), all five pages, delt
 3. **Footer height per page.** The mockups disagree (home 88+56, library 78+55, reader 43+28, codex 73+51, GGS 78+59). One SiteFooter component serves all five, with --footer-main-h / --footer-bar-h tokens set per page so each mockup's own numbers are met.
 4. **Non-uniform grids.** The mockups' trait/thumbs columns are uneven (e.g. codex traits 178/184/172/179/174/191). The app uses a uniform grid and the harness asserts only the outer edges there.
 5. **Mockup copy.** Reproduced verbatim under the owner decision; every statement is registered in CLAIMS.md. The Qur'an panel is **withheld** (rights), LIVE NOW / JOIN TODAY carry a story-time caption, and 50+ STORIES & IDEAS remains an unsupported metric the owner accepted.
-6. **/ stays zine.** out/index.html is asserted to be data-skin="zine"; the entry picker keeps the dual-skin contract (ADR-0014). The six information pages moved to the empire chrome.
+6. **/ uses the Empire skin.** The root entry and localized pages share the `data-skin="empire"` role palette and brand mark; `zine` remains MoonWitness's default for surfaces that do not select Empire. The six information pages use the same Empire chrome.
 
 7. **Social marks are drawn, not linked.** The four icons match the mockup; they carry `aria-hidden` and no `href` until a real account exists (CLAIMS.md row 7).
 

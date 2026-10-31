@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { SiteNotFound } from '@moonwitness/moonui'
+import { empireGlobalNotFoundCopy } from '../lib/site-copy'
 import '@moonwitness/moonui/moon.css'
 import './globals.css'
 export const metadata: Metadata = {
@@ -6,11 +8,5 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 export default function GlobalNotFound() {
-  return <html lang="en"><body>
-    <main className="emp-not-found">
-      <p>404 · TRANSMISSION NOT FOUND</p><h1>Page not found</h1>
-      <p lang="id">Halaman ini belum tersedia.</p>
-      <a className="m-btn" data-variant="ghost" href="/id" lang="id">Beranda Indonesia</a><a className="m-btn" data-variant="ghost" href="/en">English home</a>
-    </main>
-  </body></html>
+  return <html lang="en" data-skin="empire"><body className="emp-body"><SiteNotFound copy={empireGlobalNotFoundCopy} /></body></html>
 }
