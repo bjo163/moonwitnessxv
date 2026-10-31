@@ -367,26 +367,6 @@
       "removalTask": "M19-36"
     },
     {
-      "path": "apps/isp-console/src/app/globals.css",
-      "owner": "isp-console",
-      "mode": "stylesheet",
-      "selectors": [
-        ".isp-table"
-      ],
-      "reason": "component-level class pending removal once the surface consumes the MoonUI primitive",
-      "removalTask": "M19-36"
-    },
-    {
-      "path": "apps/isp-console/src/ui/Dashboard.tsx",
-      "owner": "isp-console",
-      "mode": "view",
-      "exports": [
-        "Dashboard"
-      ],
-      "reason": "app-local component pending promotion into @moonwitness/moonui",
-      "removalTask": "M19-36"
-    },
-    {
       "path": "apps/orbit/src/components/OrbitNodeInspector.tsx",
       "owner": "orbit",
       "mode": "view",

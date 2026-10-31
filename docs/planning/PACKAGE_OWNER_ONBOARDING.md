@@ -39,11 +39,10 @@ must obey. Commands are `pnpm --filter <name> <script>` from the repo root.
 | `apps/echolog` (`@moonwitness/echolog`) | `test` | [ECHOLOG](../architecture/ECHOLOG.md) — D19 object storage; owns no tables, is not a SQL owner (ADR-0007) |
 | `apps/lumen-runtime` (`@moonwitness/lumen-runtime`) | `test` | [LUMEN](../architecture/LUMEN.md) · [contracts](../architecture/LUMEN_CONTRACTS.md) |
 | `apps/empire-web` (`@moonwitness/empire-web`) | `test` | [APPS](../architecture/APPS.md) |
-| `apps/isp-console` (`@moonwitness/isp-console`) | `test` | [ISP network](../architecture/ISP_NETWORK.md) |
 | `packages/core` (`@moonwitness/core`) | `test` | [BLUEPRINT](../../BLUEPRINT.md) |
 | `packages/governance` (`@moonwitness/governance`) | `test` | [governance docs](../governance) |
 | `packages/moonql-journey` (`@moonwitness/moonql-journey`) | `test` (builds first, tests read `dist/`) | [M23 milestone](../milestones/M23.md) |
-| `packages/moonql-unilex`, `packages/moonql-isp`, `packages/moonql-*` addons without a `test` script | covered by the root `test` script and their app's suite | [moonql boundaries](../../.agents/skills/moonwitness-monorepo-boundaries/SKILL.md) |
+| `packages/moonql-unilex`, `packages/moonql-*` addons without a `test` script | covered by the root `test` script and their app's suite | [moonql boundaries](../../.agents/skills/moonwitness-monorepo-boundaries/SKILL.md) |
 | `packages/moonui` (`@moonwitness/moonui`) | `test` | [shared UI gate](../../scripts/check-ui-consistency.mjs) (ADR-0017) and [exceptions ledger](../design/moonui-exceptions.json) |
 | `packages/skylink-core`, `skylink-store`, `skylink-telegram`, `skylink-whatsapp` | `test` where present | [APPS](../architecture/APPS.md) |
 | `packages/review-grants` (`@moonwitness/review-grants`) | `test` | [D08 authority proposal](../design/D08-release-authority-proposal.md) |

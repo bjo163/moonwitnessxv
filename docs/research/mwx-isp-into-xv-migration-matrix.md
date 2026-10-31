@@ -1,5 +1,7 @@
 # MWX-ISP → MoonWitness XV migration matrix
 
+> **WITHDRAWN 2026-10-31** — do not execute. The ISP vertical was removed by [ADR-0019](../decisions/ADR-0019-withdraw-isp-vertical.md). This file is retained as history; its checker script no longer exists.
+
 **Source baseline:** `Z:\project\mwx-isp`, commit `ab8a512b468c4a9b979418f8b05720a58651ebfe`, `dev`. The source worktree has uncommitted EAP/TEAP changes; this matrix does not include them. Feature names/statuses come from that commit's `docs/feature-checklist.md`. No database rows, production secrets, environment files or customer content are imported.
 
 The source checklist has 32 feature IDs: TR-F001–TR-F024 and TR-F026–TR-F033. **TR-F025 is absent** from the source checklist and is not inferred here.

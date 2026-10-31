@@ -1,6 +1,8 @@
 # ADR-0018 — ISP & Network Operations in MoonWitness XV
 
-**Status: ACCEPTED — owner authorization by the explicit implementation request, 30 October 2026.** This records an architecture decision; it is not implementation, production or deployment evidence.
+**Status: SUPERSEDED by [ADR-0019](ADR-0019-withdraw-isp-vertical.md), 31 October 2026. The D20 domain and both ISP applications are removed; this document is retained as history and authorises nothing.**
+
+**Original status: ACCEPTED — owner authorization by the explicit implementation request, 30 October 2026.** This records an architecture decision; it is not implementation, production or deployment evidence.
 
 ## Context
 

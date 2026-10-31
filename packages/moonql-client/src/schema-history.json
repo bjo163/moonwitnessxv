@@ -63,5 +63,10 @@
     "apiVersion": "5.0.0",
     "schemaHash": "8e4766a359111b98",
     "date": "2026-10-30T05:52:22.011Z"
+  },
+  {
+    "apiVersion": "6.0.0",
+    "schemaHash": "ba903b2848300dff",
+    "date": "2026-10-31T13:33:45.988Z"
   }
 ]

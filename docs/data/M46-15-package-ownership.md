@@ -21,7 +21,6 @@ the linked document stays the authority, and `UNKNOWN` is reported instead of a 
 | packages/moonql-client | @moonwitness/moonql-client | `docs/decisions/M34-02-moonlab-hq-desk-decision.md` · accepted ADR | packages/core |
 | packages/moonql-corpus | @moonwitness/moonql-corpus | `docs/decisions/M20-02-role-scoped-review-queue.md` · accepted ADR | packages/core, packages/moonql |
 | packages/moonql-graph | @moonwitness/moonql-graph | UNKNOWN | packages/core, packages/moonql, packages/moonql-ontology |
-| packages/moonql-isp | @moonwitness/moonql-isp | `docs/architecture/ISP_NETWORK.md` · architecture contract | packages/core, packages/moonql |
 | packages/moonql-journey | @moonwitness/moonql-journey | UNKNOWN | packages/core, packages/moonql |
 | packages/moonql-monitor | @moonwitness/moonql-monitor | `docs/decisions/M20-02-role-scoped-review-queue.md` · accepted ADR | packages/core, packages/moonql |
 | packages/moonql-ontology | @moonwitness/moonql-ontology | UNKNOWN | packages/core, packages/moonql |
@@ -43,13 +42,12 @@ the linked document stays the authority, and `UNKNOWN` is reported instead of a 
 | packages/types | @moonwitness/types | `docs/decisions/M20-02-role-scoped-review-queue.md` · accepted ADR | — |
 | packages/web-config | @moonwitness/web-config | `docs/decisions/M34-02-moonlab-hq-desk-decision.md` · accepted ADR | packages/core |
 | apps/aigateway | @moonwitness/aigateway | `docs/architecture/SECURITY.md` · architecture contract | packages/core |
-| apps/arsy | @moonwitness/arsy | `docs/architecture/APPS.md` · architecture contract | apps/aigateway, packages/cli, packages/core, packages/denpa, packages/moonql, packages/moonql-actors, packages/moonql-apikeys, packages/moonql-auth, packages/moonql-base, packages/moonql-client, packages/moonql-corpus, packages/moonql-graph, packages/moonql-isp, packages/moonql-journey, packages/moonql-monitor, packages/moonql-ontology, packages/moonql-ops, packages/moonql-playlog, packages/moonql-research, packages/moonql-schedule, packages/moonql-settings, packages/moonql-stations, packages/moonql-unilex, packages/moonui, apps/sentinel, packages/skylink-whatsapp, packages/testing, packages/moonql-witness |
+| apps/arsy | @moonwitness/arsy | `docs/architecture/APPS.md` · architecture contract | apps/aigateway, packages/cli, packages/core, packages/denpa, packages/moonql, packages/moonql-actors, packages/moonql-apikeys, packages/moonql-auth, packages/moonql-base, packages/moonql-client, packages/moonql-corpus, packages/moonql-graph, packages/moonql-journey, packages/moonql-monitor, packages/moonql-ontology, packages/moonql-ops, packages/moonql-playlog, packages/moonql-research, packages/moonql-schedule, packages/moonql-settings, packages/moonql-stations, packages/moonql-unilex, packages/moonui, apps/sentinel, packages/skylink-whatsapp, packages/testing, packages/moonql-witness |
 | apps/cockpit | @moonwitness/cockpit | `docs/architecture/SECURITY.md` · architecture contract | packages/core, packages/moonql-client, packages/moonui |
 | apps/dock | @moonwitness/dock | `docs/decisions/ADR-0011-lighthouse-dock-runtime.md` · accepted ADR | packages/core, packages/moonql-client, packages/moonui, packages/web-config |
 | apps/echolog | @moonwitness/echolog | `docs/architecture/APPS.md` · architecture contract | packages/echolog-core, packages/moonql, packages/moonql-auth, packages/moonui |
 | apps/empire-web | @moonwitness/empire-web | `docs/architecture/APPS.md` · architecture contract | packages/moonui |
 | apps/headquarters | @moonwitness/headquarters | `docs/decisions/M02-01-disambiguation-registry.md` · accepted ADR | packages/core, packages/moonql-client, packages/moonui, packages/web-config |
-| apps/isp-console | @moonwitness/isp-console | `docs/architecture/APPS.md` · architecture contract | packages/core, packages/moonql-client, packages/moonui, packages/web-config |
 | apps/lumen-runtime | @moonwitness/lumen-runtime | `docs/architecture/APPS.md` · architecture contract | packages/lumen |
 | apps/orbit | @moonwitness/orbit | `docs/architecture/APPS.md` · architecture contract | packages/core, packages/moonql-client, packages/moonui, packages/web-config |
 | apps/sentinel | @moonwitness/sentinel | UNKNOWN | packages/core, packages/moonql-client |

@@ -25,3 +25,6 @@ available.
 - Reference design mockups (`docs/design/mockups-xv`) are reference-only and never shipped as product art; a per-asset rights ledger is required first ([ADR-0009](docs/decisions/ADR-0009-public-ui-reference-adoption.md)).
 - The `promote` job now tags and publishes a GitHub Release for each verified commit that reaches `main`; the workflow never rewrites `CHANGELOG.md` or `package.json`.
 - Protected `main` with the required exact CI status check while preserving verified automatic fast-forward promotion.
+
+### Removed
+- The ISP & Network Operations vertical (D20) is withdrawn by [ADR-0019](docs/decisions/ADR-0019-withdraw-isp-vertical.md), superseding [ADR-0018](docs/decisions/ADR-0018-isp-network-operations.md). `apps/isp-console`, `apps/isp-radius`, `packages/moonql-isp`, the `isp-alerts` ARSY module, two M51 governance scripts and two planning tests are removed. The workspace drops to 11 apps and 35 packages, ports 3008/3009 retire, and Compose drops to 10 services. Existing `isp_*` tables are left orphaned on purpose: MoonQL auto-sync never drops tables, so no data is destroyed by this change. The published API major advances from 5.0.0 to 6.0.0 because ten `/isp/**` and `/isp-radius/**` endpoints disappear.

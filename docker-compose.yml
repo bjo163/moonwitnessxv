@@ -416,35 +416,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-
-
-  # ISP RADIUS protocol runtime (M51-04/08): Go service for RADIUS/RadSec.
-  # Listeners bind to loopback only until an operator-approved access tier exists.
-  isp-radius:
-    build:
-      context: .
-      dockerfile: Dockerfile.isp-radius
-    image: moonwitness-isp-radius
-    container_name: moonwitness-isp-radius
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:1812:1812/udp"
-      - "127.0.0.1:1813:1813/udp"
-      - "127.0.0.1:2083:2083/tcp"
-      - "127.0.0.1:3009:3009/tcp"
-    depends_on:
-      arsy:
-        condition: service_healthy
-    environment:
-      ARSY_API_URL: http://arsy:3000
-      RADIUS_LISTEN: 0.0.0.0
-      RADSEC_LISTEN: 0.0.0.0
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3009/health || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
 volumes:
   # No backup sidecar: dumps are produced manually with scripts/db-backup.sh,
   # and `db` still mounts this volume read-only for the rollback recipe.

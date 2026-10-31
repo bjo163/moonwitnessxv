@@ -89,7 +89,6 @@ COPY --from=build /repo/packages/moonql-journey/dist packages/moonql-journey/dis
 COPY --from=build /repo/packages/moonql-actors/dist packages/moonql-actors/dist
 COPY --from=build /repo/packages/moonql-graph/dist packages/moonql-graph/dist
 COPY --from=build /repo/packages/moonql-research/dist packages/moonql-research/dist
-COPY --from=build /repo/packages/moonql-isp/dist packages/moonql-isp/dist
 COPY --from=build /repo/packages/moonql-witness/dist packages/moonql-witness/dist
 COPY --from=build /repo/packages/skylink-whatsapp/dist packages/skylink-whatsapp/dist
 COPY --from=build /repo/packages/denpa/dist packages/denpa/dist

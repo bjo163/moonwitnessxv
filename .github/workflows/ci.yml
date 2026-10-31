@@ -72,10 +72,6 @@ jobs:
           path: ui-consistency.json
           if-no-files-found: warn
 
-
-      - name: Run Go RADIUS runtime tests
-        working-directory: apps/isp-radius
-        run: go test ./...
       - name: Run Monorepo Verification (build, lint, gen:sdk:check, test, build:web)
         run: pnpm verify
 

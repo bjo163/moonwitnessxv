@@ -115,17 +115,6 @@ export const DEFAULT_CONFIG: MoondeckConfig = {
       healthEndpoint: `http://localhost:${PORTS.empireWeb}`,
     },
     {
-      tag: 'isp-console',
-      name: 'Empire WORKS ISP Operations',
-      pkg: '@moonwitness/isp-console',
-      port: PORTS.ispConsole,
-      color: '#f59e0b',
-      icon: 'IC',
-      description: 'Private bilingual operator console for D20 ISP and network operations',
-      url: `http://localhost:${PORTS.ispConsole}`,
-      healthEndpoint: `http://localhost:${PORTS.ispConsole}`,
-    },
-    {
       tag: 'sentinel',
       name: 'Sentinel Worker',
       pkg: '@moonwitness/sentinel',

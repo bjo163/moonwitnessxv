@@ -1,6 +1,8 @@
 # ISP & Network Operations — D20
 
-**Status:** Accepted boundary under [ADR-0018](../decisions/ADR-0018-isp-network-operations.md); implementation and production use remain gated by M51 evidence.
+**Status: WITHDRAWN (ADR-0019, 31 October 2026).** This document is retained as the record of the withdrawn boundary; it authorises nothing and no code in this repository implements it.
+
+**Original status:** Accepted boundary under [ADR-0018](../decisions/ADR-0018-isp-network-operations.md); implementation and production use remain gated by M51 evidence.
 
 ## Owners
 

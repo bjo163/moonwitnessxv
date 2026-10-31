@@ -152,17 +152,6 @@
       "externalDependencies": 2
     },
     {
-      "workspace": "packages/moonql-isp",
-      "package": "@moonwitness/moonql-isp",
-      "ownerBoundary": "docs/architecture/ISP_NETWORK.md",
-      "boundaryKind": "architecture contract",
-      "dependsOnWorkspaces": [
-        "packages/core",
-        "packages/moonql"
-      ],
-      "externalDependencies": 2
-    },
-    {
       "workspace": "packages/moonql-journey",
       "package": "@moonwitness/moonql-journey",
       "ownerBoundary": "UNKNOWN",
@@ -394,7 +383,6 @@
         "packages/moonql-client",
         "packages/moonql-corpus",
         "packages/moonql-graph",
-        "packages/moonql-isp",
         "packages/moonql-journey",
         "packages/moonql-monitor",
         "packages/moonql-ontology",
@@ -466,19 +454,6 @@
       "package": "@moonwitness/headquarters",
       "ownerBoundary": "docs/decisions/M02-01-disambiguation-registry.md",
       "boundaryKind": "accepted ADR",
-      "dependsOnWorkspaces": [
-        "packages/core",
-        "packages/moonql-client",
-        "packages/moonui",
-        "packages/web-config"
-      ],
-      "externalDependencies": 7
-    },
-    {
-      "workspace": "apps/isp-console",
-      "package": "@moonwitness/isp-console",
-      "ownerBoundary": "docs/architecture/APPS.md",
-      "boundaryKind": "architecture contract",
       "dependsOnWorkspaces": [
         "packages/core",
         "packages/moonql-client",
