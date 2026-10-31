@@ -402,18 +402,6 @@
       "externalDependencies": 12
     },
     {
-      "workspace": "apps/cockpit",
-      "package": "@moonwitness/cockpit",
-      "ownerBoundary": "docs/architecture/SECURITY.md",
-      "boundaryKind": "architecture contract",
-      "dependsOnWorkspaces": [
-        "packages/core",
-        "packages/moonql-client",
-        "packages/moonui"
-      ],
-      "externalDependencies": 12
-    },
-    {
       "workspace": "apps/dock",
       "package": "@moonwitness/dock",
       "ownerBoundary": "docs/decisions/ADR-0011-lighthouse-dock-runtime.md",
@@ -508,6 +496,18 @@
         "packages/skylink-core",
         "packages/skylink-store",
         "packages/skylink-telegram"
+      ],
+      "externalDependencies": 12
+    },
+    {
+      "workspace": "tools/cockpit",
+      "package": "@moonwitness/cockpit",
+      "ownerBoundary": "docs/architecture/SECURITY.md",
+      "boundaryKind": "architecture contract",
+      "dependsOnWorkspaces": [
+        "packages/core",
+        "packages/moonql-client",
+        "packages/moonui"
       ],
       "externalDependencies": 12
     }

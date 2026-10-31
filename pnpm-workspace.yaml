@@ -1,6 +1,9 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+  # Non-product runnables (local operator tooling) live here so `apps/` keeps
+  # meaning "deployable product surface".
+  - 'tools/*'
 
 # Satu sumber versi untuk perkakas yang dipakai di seluruh workspace. Paket
 # Individual menulis `catalog:` alih-alih menyalin angka versi, sehingga

@@ -115,7 +115,7 @@ export interface FlipTotals {
   reopened: number
 }
 
-/** Mirrors apps/cockpit/src/progressTracker.ts ProgressPayload. */
+/** Mirrors tools/cockpit/src/progressTracker.ts ProgressPayload. */
 export interface ProgressPayload {
   generatedAt: string
   total: number

@@ -409,11 +409,17 @@ test('M40-09: the BFF route is read-only, cache-free and maps denial to 401', ()
   assert.deepEqual(readdirSync(join(appRoot, 'src/app/api/ops/state')), ['route.ts'])
 })
 
-test('M40-09: deployment contract — one registered port and shared config rules', () => {
+test('M40-09: deployment contract — parked, so no registered port and shared config rules', () => {
   const registry = read('scripts/apps.registry.mjs', repoRoot)
-  assert.match(registry, /tag: 'orbit',[\s\S]{0,120}port: 3007/)
+  // Parked 2026-10-31: the entry stays so `pnpm apps` states the absence, but a
+  // parked app claims no port and is never spawned or supervised.
+  const orbitEntry = /tag: 'orbit',([\s\S]{0,900}?)\r?\n {2}\},/.exec(registry)?.[1] ?? ''
+  assert.ok(orbitEntry, 'the registry still lists orbit so its absence is stated')
+  assert.match(orbitEntry, /dev: false/, 'a parked app is never spawned')
+  assert.match(orbitEntry, /supervised: false/, 'a parked app is never supervised')
+  assert.equal(/\bport:/.test(orbitEntry), false, 'a parked app must not claim a port')
   const core = read('packages/core/src/workspace.ts', repoRoot)
-  assert.match(core, /orbit: 3007/)
+  assert.equal(/orbit: 3007/.test(core), false, 'port 3007 is retired from the shared port contract')
 
   const nextConfig = read('next.config.mjs')
   assert.ok(nextConfig.includes("from '@moonwitness/web-config'"), 'headers come from the shared owner')

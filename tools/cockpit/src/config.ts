@@ -91,17 +91,6 @@ export const DEFAULT_CONFIG: MoondeckConfig = {
       healthEndpoint: `http://localhost:${PORTS.echolog}/health`,
     },
     {
-      tag: 'orbit',
-      name: 'ORBIT Spatial Ops',
-      pkg: '@moonwitness/orbit',
-      port: PORTS.orbit,
-      color: '#a855f7',
-      icon: 'OR',
-      description: 'Spatial 3D/2D operations frontend on simulated fixtures (M40)',
-      url: `http://localhost:${PORTS.orbit}`,
-      healthEndpoint: `http://localhost:${PORTS.orbit}`,
-    },
-    {
       tag: 'empire-web',
       name: 'A-L-L-A-H.COM Empire Gateway',
       pkg: '@moonwitness/empire-web',
@@ -138,8 +127,8 @@ export async function loadMoondeckConfig(customPath?: string): Promise<MoondeckC
         resolve(process.cwd(), 'moondeck.config.ts'),
         resolve(process.cwd(), 'moondeck.config.js'),
         resolve(process.cwd(), 'moondeck.config.mjs'),
-        resolve(process.cwd(), 'apps/cockpit/src/moondeck.config.ts'),
-        resolve(process.cwd(), 'apps/cockpit/dist/moondeck.config.js'),
+        resolve(process.cwd(), 'tools/cockpit/src/moondeck.config.ts'),
+        resolve(process.cwd(), 'tools/cockpit/dist/moondeck.config.js'),
       ]
 
   for (const file of candidates) {

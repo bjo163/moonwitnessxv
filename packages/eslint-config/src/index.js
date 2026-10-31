@@ -186,7 +186,7 @@ export function createMoonwitnessConfig(options = {}) {
 
     // 2. React Hooks (Dock, HQ, MoonUI, Cockpit and ECHOLOG operator clients)
     {
-      files: ['apps/dock/**/*.tsx', 'apps/headquarters/**/*.tsx', 'packages/moonui/**/*.tsx', 'apps/cockpit/client/**/*.tsx', 'apps/echolog/client/**/*.tsx', 'apps/skylink/client/**/*.tsx', 'apps/orbit/**/*.tsx', 'apps/empire-web/**/*.tsx'],
+      files: ['apps/dock/**/*.tsx', 'apps/headquarters/**/*.tsx', 'packages/moonui/**/*.tsx', 'tools/cockpit/client/**/*.tsx', 'apps/echolog/client/**/*.tsx', 'apps/skylink/client/**/*.tsx', 'apps/orbit/**/*.tsx', 'apps/empire-web/**/*.tsx'],
       plugins: {
         'react-hooks': reactHooks,
         '@moonwitness': moonwitnessPlugin,
@@ -199,7 +199,7 @@ export function createMoonwitnessConfig(options = {}) {
 
     // 2b. Shared-first UI (ADR-0017) — MoonUI owns every primitive
     {
-      files: ['apps/**/*.tsx'],
+      files: ['apps/**/*.tsx', 'tools/**/*.tsx'],
       plugins: { '@moonwitness': moonwitnessPlugin },
       rules: {
         '@moonwitness/shared-ui-only': [
@@ -218,6 +218,7 @@ export function createMoonwitnessConfig(options = {}) {
     {
       files: [
         'apps/**/*.{ts,tsx}',
+        'tools/**/*.{ts,tsx}',
         'packages/moonql-*/**/*.{ts,tsx}',
         'packages/denpa/**/*.{ts,tsx}',
         'packages/skylink-whatsapp/**/*.{ts,tsx}',
@@ -276,6 +277,7 @@ export function createMoonwitnessConfig(options = {}) {
     {
       files: [
         'apps/**/*.{ts,tsx}',
+        'tools/**/*.{ts,tsx}',
         'packages/moonql-client/**/*.{ts,tsx}',
         'packages/moonui/**/*.{ts,tsx}',
         'packages/moonql-base/**/*.{ts,tsx}',

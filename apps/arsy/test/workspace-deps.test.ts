@@ -29,7 +29,7 @@ function sourceFiles(dir: string): string[] {
 
 function workspaceMembers(): string[] {
   const members: string[] = []
-  for (const group of ['apps', 'packages']) {
+  for (const group of ['apps', 'packages', 'tools']) {
     const base = join(repoRoot, group)
     if (!existsSync(base)) continue
     for (const entry of readdirSync(base)) {

@@ -342,7 +342,8 @@ function readText(full) {
 function discoverApps(root) {
   const discovered = new Map()
   for (const app of APPS) {
-    const dir = join(root, 'apps', app.tag)
+    // Local tooling lives in tools/; every other entry is a product app in apps/.
+    const dir = join(root, app.root ?? 'apps', app.tag)
     if (existsSync(dir)) discovered.set(app.tag, dir)
   }
   let entries = []

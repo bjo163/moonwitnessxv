@@ -231,7 +231,7 @@ Each service must have unit tests covering:
 - ECHOLOG health routes: `apps/echolog/src/server.ts` (lines 39-70)
 - SKYLINK health route: `apps/skylink/src/server.ts` (lines 76-80)
 - AIGateway health route: `apps/aigateway/src/server.ts` (lines 31-40)
-- Cockpit health route: `apps/cockpit/src/server.ts` (lines 211-216)
+- Cockpit health route: `tools/cockpit/src/server.ts` (lines 211-216)
 
 ## Unresolved items
 

@@ -143,7 +143,7 @@ The requested domain is **not verified as owned, configured, SSL-issued or live*
 
 ### 3.1 Local development registry (code evidence; NOT DNS)
 
-`apps/arsy:3000`, `apps/dock:3001`, `apps/headquarters:3002`, `apps/aigateway:3003`, `apps/cockpit:3004`, `apps/skylink:3005`, `apps/echolog:3006`, `apps/orbit:3007`; Sentinel is a worker with no public port; LUMEN Runtime is a scaffold with `dev:false`. **Single source of truth:** `scripts/apps.registry.mjs`.
+`apps/arsy:3000`, `apps/dock:3001`, `apps/headquarters:3002`, `apps/aigateway:3003`, `tools/cockpit:3004`, `apps/skylink:3005`, `apps/echolog:3006`; Sentinel is a worker with no public port; LUMEN Runtime is a scaffold with `dev:false`. ORBIT is parked. **Single source of truth:** `scripts/apps.registry.mjs`.
 
 ---
 

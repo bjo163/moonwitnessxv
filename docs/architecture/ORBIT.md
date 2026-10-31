@@ -2,6 +2,8 @@
 
 **Decision:** accepted frontend boundary in [ADR-0004](../decisions/ADR-0004-empire-surfaces.md) · **Implementation:** planned under [M40](../../TODO.md#m40--orbit-spatial-agent-operations-frontend); not shipped.
 
+**Operational status: PARKED (31 October 2026).** The app and its tests remain in `apps/orbit`, but nothing spawns, supervises, builds or deploys it: the dev registry entry is `dev:false`, port 3007 is retired, and the Compose service was removed. Unpark only when M40 is scheduled; see [APPS](APPS.md).
+
 ## Purpose
 
 ORBIT is a standalone 3D-first, accessible 2D-fallback frontend for observing and navigating agent operations: workstations, agents, task lifecycle, work queues, tool/activity traces, and blocked/approval-required work. The experience should feel like a coherent futuristic spatial workspace, not a decorative dashboard whose animation pretends to be execution.

@@ -43,7 +43,6 @@ the linked document stays the authority, and `UNKNOWN` is reported instead of a 
 | packages/web-config | @moonwitness/web-config | `docs/decisions/M34-02-moonlab-hq-desk-decision.md` · accepted ADR | packages/core |
 | apps/aigateway | @moonwitness/aigateway | `docs/architecture/SECURITY.md` · architecture contract | packages/core |
 | apps/arsy | @moonwitness/arsy | `docs/architecture/APPS.md` · architecture contract | apps/aigateway, packages/cli, packages/core, packages/denpa, packages/moonql, packages/moonql-actors, packages/moonql-apikeys, packages/moonql-auth, packages/moonql-base, packages/moonql-client, packages/moonql-corpus, packages/moonql-graph, packages/moonql-journey, packages/moonql-monitor, packages/moonql-ontology, packages/moonql-ops, packages/moonql-playlog, packages/moonql-research, packages/moonql-schedule, packages/moonql-settings, packages/moonql-stations, packages/moonql-unilex, packages/moonui, apps/sentinel, packages/skylink-whatsapp, packages/testing, packages/moonql-witness |
-| apps/cockpit | @moonwitness/cockpit | `docs/architecture/SECURITY.md` · architecture contract | packages/core, packages/moonql-client, packages/moonui |
 | apps/dock | @moonwitness/dock | `docs/decisions/ADR-0011-lighthouse-dock-runtime.md` · accepted ADR | packages/core, packages/moonql-client, packages/moonui, packages/web-config |
 | apps/echolog | @moonwitness/echolog | `docs/architecture/APPS.md` · architecture contract | packages/echolog-core, packages/moonql, packages/moonql-auth, packages/moonui |
 | apps/empire-web | @moonwitness/empire-web | `docs/architecture/APPS.md` · architecture contract | packages/moonui |
@@ -52,6 +51,7 @@ the linked document stays the authority, and `UNKNOWN` is reported instead of a 
 | apps/orbit | @moonwitness/orbit | `docs/architecture/APPS.md` · architecture contract | packages/core, packages/moonql-client, packages/moonui, packages/web-config |
 | apps/sentinel | @moonwitness/sentinel | UNKNOWN | packages/core, packages/moonql-client |
 | apps/skylink | @moonwitness/skylink | `docs/architecture/APPS.md` · architecture contract | packages/moonql, packages/moonql-auth, packages/moonui, packages/skylink-core, packages/skylink-store, packages/skylink-telegram |
+| tools/cockpit | @moonwitness/cockpit | `docs/architecture/SECURITY.md` · architecture contract | packages/core, packages/moonql-client, packages/moonui |
 
 ## Exceptions: workspaces with no documented owner
 

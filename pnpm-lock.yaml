@@ -185,55 +185,6 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
-  apps/cockpit:
-    dependencies:
-      '@fastify/cors':
-        specifier: ^10.0.1
-        version: 10.1.0
-      '@moonwitness/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@moonwitness/moonql-client':
-        specifier: workspace:*
-        version: link:../../packages/moonql-client
-      '@moonwitness/moonui':
-        specifier: workspace:*
-        version: link:../../packages/moonui
-      fastify:
-        specifier: ^5.2.1
-        version: 5.12.7
-      hls.js:
-        specifier: ^1.7.3
-        version: 1.7.3
-      react:
-        specifier: ^19.3.1
-        version: 19.3.1
-      react-dom:
-        specifier: ^19.3.1
-        version: 19.3.1(react@19.3.1)
-    devDependencies:
-      '@types/node':
-        specifier: ^22.10.5
-        version: 22.20.5
-      '@types/react':
-        specifier: ^19.3.0
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: ^19.3.0
-        version: 19.3.0(@types/react@19.3.0)
-      '@vitejs/plugin-react':
-        specifier: ^6.1.2
-        version: 6.1.2(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
-      tsx:
-        specifier: ^4.19.2
-        version: 4.23.15
-      typescript:
-        specifier: ^5.7.3
-        version: 5.9.3
-      vite:
-        specifier: ^8.3.5
-        version: 8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
-
   apps/dock:
     dependencies:
       '@moonwitness/core':
@@ -1063,6 +1014,55 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
+
+  tools/cockpit:
+    dependencies:
+      '@fastify/cors':
+        specifier: ^10.0.1
+        version: 10.1.0
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@moonwitness/moonql-client':
+        specifier: workspace:*
+        version: link:../../packages/moonql-client
+      '@moonwitness/moonui':
+        specifier: workspace:*
+        version: link:../../packages/moonui
+      fastify:
+        specifier: ^5.2.1
+        version: 5.12.7
+      hls.js:
+        specifier: ^1.7.3
+        version: 1.7.3
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: ^6.1.2
+        version: 6.1.2(vite@8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.15
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
 
 packages:
 

@@ -29,7 +29,7 @@
 |---|---|---|---|---|---|---|---|
 | [x] | **UI2-G01** | P0 | D2 | — | Tooling owner | `eslint config; relevant tsconfig; scripts/git-hooks; tests` | Fix 10 exact-SHA CI lint errors (project-service test membership x5, Node globals x2, git hook rules x3); do not disable lint. **DoD:** pnpm lint passes, exact error ledger resolved. **[evidence](docs/audit/ui2-g01-lint-25bd536.md)** |
 | [ ] | **UI2-G02** | P0 | D3 | G01 | Source/rights owner | `apps/dock/src/app/reader/compare/page.tsx; tests; D08 packet` | Verify source rights gate, QS 2:82 edition grants and D08 public denial rules before expanding Reader or HQ publishing. **DoD:** rights-negative tests and rights ledger; M19-19 remains open until true D08 projection. |
-| [ ] | **UI2-G03** | P1 | D2 | G01 | Operator security | `apps/cockpit/client/components/CockpitPreviewView.tsx; test/` | Audit local Cockpit iframe URL security/origin policy, shortcuts and kill/free-port confirmations. **DoD:** documented allowlist/user consent; negative URL and destructive-action tests. |
+| [ ] | **UI2-G03** | P1 | D2 | G01 | Operator security | `tools/cockpit/client/components/CockpitPreviewView.tsx; test/` | Audit local Cockpit iframe URL security/origin policy, shortcuts and kill/free-port confirmations. **DoD:** documented allowlist/user consent; negative URL and destructive-action tests. |
 | [x] | **UI2-G04** | P1 | D2 | G01 | UI integrator | `todo-ui.md; docs/audit/; ADR-0009` | Reconcile UI-F05/F06/F07, F08/F09, F10/F11 predecessor anomalies without rewriting checked history. **DoD:** scoped statuses/evidence; no retroactive completion inferred. **[reconciliation](docs/audit/ui2-g04-predecessor-reconciliation-fe8e84c.md)** — per-row verdicts for all twelve unchecked rows (the literal gate scope is F05–F11; F12–F20 are labelled extended inventory): **one** DONE-VERIFIED (F16, now ticked with a 14/14 test run), **ten** PARTIAL with named remainders, F20 PARTIAL-weighted NOT DONE. No tick was inferred; it found and reported three checked rows whose evidence links do not carry their own wording (F09 names five components that exist nowhere, F06 delivered font families not a scale, F07 measured 4 widths on 1 route), plus two false statements in older audit docs — `pnpm ui:assets` is not in `package.json`, and the committed `docs/audit/screens/geometry.json` records `recordsWithFailures: 20` with a `hubMode` its own code path could not have produced. |
 | [ ] | **UI2-G05** | P1 | D3 | G01 | MoonUI integrator | `packages/moonui/; Dock globals.css; Cockpit layout CSS; HQ globals.css` | Establish per-app shell and token/no-clipping contract for Dock, Cockpit, HQ; allow distinct UX by role. **DoD:** ui:check zero; source of truth documented; no second nav. **Dock lane done** — [shell contract + measured no-clipping evidence](docs/audit/ui2-g05-shell-contract-47b89f4.md); Cockpit and HQ layout CSS have no contract yet, so the row stays open. |
 | [ ] | **UI2-G06** | P1 | D2 | G05 | Dock/UI owner | `apps/dock/src/ui/components/states.tsx; route-specific files` | Make existing loading/empty/error/ready states consistent per route; prefer Dock PanelState and MoonUI feedback. **DoD:** negative state tests; truthful status labels. |
@@ -94,7 +94,7 @@ Every screen row below denotes one **existing screen**, not a new application. O
 **Exit gate:** existing route genuinely usable; id/en where appropriate; no invented service/data counts; actual permission/rights behavior; keyboard/reduced motion; 390/768/1440/1920 geometry + screenshots when runner approved; focused tests, result SHA, rollback. Closing a UI2-P task does **not** close its Mxx parent.
 
 ### UI-II 18 — Cockpit · Media Rack + IPTV + Analog Tuner
-**Status:** NOT STARTED in UI-II · **Parent:** ADR-0008 / M19-30 · **Owner:** `apps/cockpit` · **Depends:** UI2-G05 · **Code scope:** `client/components/CockpitMediaView.tsx; CockpitTunerSection.tsx; client/hooks/*`.
+**Status:** NOT STARTED in UI-II · **Parent:** ADR-0008 / M19-30 · **Owner:** `tools/cockpit` · **Depends:** UI2-G05 · **Code scope:** `client/components/CockpitMediaView.tsx; CockpitTunerSection.tsx; client/hooks/*`.
 - [ ] **UI2-P18a** · P0 · D1: Map BGM/radio/IPTV channel types and HLS/picture-in-picture lifecycle, no channel provider claims beyond code.
 - [ ] **UI2-P18b** · P1 · D2: Design primary visualizer/player with playlist and optional analog tuner; show tuner frequencies as illustrative pseudo-frequency.
 - [ ] **UI2-P18c** · P1 · D3: Preserve Space/M/[ ]/P transport shortcuts and top-bar mini rack, device mute/volume and active channel consistency.
@@ -103,7 +103,7 @@ Every screen row below denotes one **existing screen**, not a new application. O
 **Exit gate:** existing route genuinely usable; id/en where appropriate; no invented service/data counts; actual permission/rights behavior; keyboard/reduced motion; 390/768/1440/1920 geometry + screenshots when runner approved; focused tests, result SHA, rollback. Closing a UI2-P task does **not** close its Mxx parent.
 
 ### UI-II 19 — Cockpit · In-App Web Preview
-**Status:** NOT STARTED in UI-II · **Parent:** ADR-0008 / M19-30 · **Owner:** `apps/cockpit` · **Depends:** UI2-G03,UI2-G05 · **Code scope:** `client/components/CockpitPreviewView.tsx; client/App.tsx integration-owner only`.
+**Status:** NOT STARTED in UI-II · **Parent:** ADR-0008 / M19-30 · **Owner:** `tools/cockpit` · **Depends:** UI2-G03,UI2-G05 · **Code scope:** `client/components/CockpitPreviewView.tsx; client/App.tsx integration-owner only`.
 - [ ] **UI2-P19a** · P0 · D1: Inventory existing URL bar, Go/Reload, local shortcut endpoints and iframe behavior.
 - [ ] **UI2-P19b** · P1 · D2: Define allowlist/user-initiated arbitrary URL policy and iframe error/blocked-origin/failure semantics; no silent fetch.
 - [ ] **UI2-P19c** · P1 · D3: Keep browser-like split preview primary; do not duplicate the Dock public navigation inside iframe wrapper.
@@ -112,7 +112,7 @@ Every screen row below denotes one **existing screen**, not a new application. O
 **Exit gate:** existing route genuinely usable; id/en where appropriate; no invented service/data counts; actual permission/rights behavior; keyboard/reduced motion; 390/768/1440/1920 geometry + screenshots when runner approved; focused tests, result SHA, rollback. Closing a UI2-P task does **not** close its Mxx parent.
 
 ### UI-II 20 — Cockpit · Mission Progress + TODO register
-**Status:** NOT STARTED in UI-II · **Parent:** ADR-0008 / M19-30 · **Owner:** `apps/cockpit` · **Depends:** UI2-G03,UI2-G05 · **Code scope:** `client/components/CockpitProgressView.tsx; client/hooks/useTodoProgress.ts; src/progressTracker.ts read-only contract`.
+**Status:** NOT STARTED in UI-II · **Parent:** ADR-0008 / M19-30 · **Owner:** `tools/cockpit` · **Depends:** UI2-G03,UI2-G05 · **Code scope:** `client/components/CockpitProgressView.tsx; client/hooks/useTodoProgress.ts; src/progressTracker.ts read-only contract`.
 - [ ] **UI2-P20a** · P0 · D1: Trace read-only TODO.md parser and provenance of tasks, priority/groups/history and SSE delivery.
 - [ ] **UI2-P20b** · P1 · D2: Keep actual source status with row filters, recent flips, reconnect vs poll status; no synthetic percentage.
 - [ ] **UI2-P20c** · P1 · D3: Ensure long task titles, unknown groups, task count discrepancies and no data/error are understandable.
@@ -148,7 +148,7 @@ Every screen row below denotes one **existing screen**, not a new application. O
 |---|---|---|---|
 | A — CI/security | G01, G02 review, G03 preview audit | ESLint config, test tsconfigs, Git-hook scripts | G01 first; zero blanket disables; no concurrent CI file owner |
 | B — Dock Public | P13/P14 after shared shell; P15/P16/P17 in distinct files | `apps/dock/src/app/globals.css`, Dock locale catalogs and shell owned by **one Dock integrator** | data/rights owner signs P17 and public withheld states |
-| C — Cockpit | P18 Media, P19 Preview, P20 Progress each isolated components | `apps/cockpit/client/App.tsx`, TopBar, `cockpit-layout.css` owned by **one Cockpit integrator** | preview-origin security review before new URL behavior; log/port/tuner semantics unchanged |
+| C — Cockpit | P18 Media, P19 Preview, P20 Progress each isolated components | `tools/cockpit/client/App.tsx`, TopBar, `cockpit-layout.css` owned by **one Cockpit integrator** | preview-origin security review before new URL behavior; log/port/tuner semantics unchanged |
 | D — Headquarters | P21 schema editor, P22 World Monitor | HQ layout, auth session, `src/app/globals.css`, shared field registry assigned to **one HQ integrator** | never bypass session or change schema owner |
 | E — Shared MoonUI/i18n | G05/G06/G10 | `packages/moonui/**`, shared tokens, cross-app catalogs only the **design-system integrator** | no same-file edits by B/C/D during lease |
 | F — QA/design | G07/G08/G12/G14 | harness + evidence docs, no production files | findings submitted as patch proposals to app owner |

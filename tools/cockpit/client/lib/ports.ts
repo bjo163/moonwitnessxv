@@ -11,7 +11,7 @@ export interface PortRow {
 
 /**
  * Derived from /api/config, which is the single source of truth for port
- * ownership (packages/core PORTS mirrored into apps/cockpit/src/config.ts).
+ * ownership (packages/core PORTS mirrored into tools/cockpit/src/config.ts).
  * A static port table here once drifted from that truth; nothing may re-add one.
  * "Bound" means an actual listener was probed on that port, so a service started
  * by `pnpm dev` reads as bound even though the cockpit does not manage it.

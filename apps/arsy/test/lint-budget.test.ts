@@ -21,7 +21,7 @@ const ROOT = fileURLToPath(new URL('../../..', import.meta.url))
 /** every hand-written source file the lint gate covers */
 function sourceFiles(): string[] {
   const out: string[] = []
-  for (const group of ['apps', 'packages']) {
+  for (const group of ['apps', 'packages', 'tools']) {
     const base = join(ROOT, group)
     for (const entry of readdirSync(base, { withFileTypes: true })) {
       if (!entry.isDirectory() || entry.name === 'node_modules') continue

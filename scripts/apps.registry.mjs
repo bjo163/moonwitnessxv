@@ -77,6 +77,8 @@ export const APPS = [
   {
     tag: 'cockpit',
     pkg: '@moonwitness/cockpit',
+    // Local operator tooling, not a deployable product surface: it lives in tools/.
+    root: 'tools',
     port: 3004,
     kind: 'web',
     dev: true,
@@ -124,16 +126,17 @@ export const APPS = [
   {
     tag: 'orbit',
     pkg: '@moonwitness/orbit',
-    port: 3007,
     kind: 'web',
-    dev: true,
-    supervised: true,
+    // Parked: the app and its tests stay in apps/orbit, but nothing spawns or
+    // deploys it until M40 is scheduled again. Same treatment as lumen-runtime.
+    dev: false,
+    supervised: false,
     name: 'ORBIT · Spatial Agent Operations',
-    desc: 'Spatial 3D/2D agent operations frontend (simulated fixtures, ARSY read-only)',
-    url: 'http://localhost:3007',
-    health: '/',
-    keys: ['9', 'o'],
+    desc: 'Spatial 3D/2D agent operations frontend (fixtures, ARSY read-only); parked',
+    url: null,
+    keys: [],
     color: 'cyan',
+    note: 'parked (M40 unscheduled): run manually with `pnpm --filter @moonwitness/orbit dev`',
   },
   {
     tag: 'empire-web',

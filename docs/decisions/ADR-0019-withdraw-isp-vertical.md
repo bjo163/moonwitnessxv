@@ -27,6 +27,7 @@ This is the failure mode the repository already names elsewhere: a surface maint
 - The published `_schema` loses 15 models and the `/isp/**` and `/isp-radius/**` endpoints. `packages/moonql-client/src/generated.ts` must be regenerated; Headquarters' schema-driven sidebar loses the ISP group without a page change.
 - Radius password hashing/verification helpers and the fake-NAS protocol tests no longer exist. No code with those properties remains, so ADR-0018's acceptance conditions are void rather than satisfied — they must never be cited as completed evidence.
 - `TODO.md` M51 keeps all eight rows and their original checkboxes. Checked rows retain their pinned SHAs; `M51-05` and `M51-08` stay unchecked. The milestone header records the withdrawal so no task in it is started.
+- **31 October 2026 (later in the same release):** the Cockpit moved to `tools/cockpit` and the ORBIT Compose service was removed, so the shipped tree is 10 app workspaces under `apps/` plus `tools/cockpit`, 35 packages, and 9 Compose services. The counts in this section describe this ADR's own step, not the final tree.
 
 ## Verification
 

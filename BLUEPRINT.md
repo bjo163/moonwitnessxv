@@ -86,7 +86,7 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 
 ## 2A — Global ecosystem surfaces and implementation reality (proposal, 26 October 2026)
 
-**Historical inventory at source SHA `bb3aed0`:** six app workspaces were present then. Current `dev` has eight app directories: `apps/arsy`, `apps/dock`, `apps/headquarters`, `apps/cockpit`, `apps/aigateway`, `apps/sentinel`, `apps/skylink`, and `apps/echolog`. Directory presence is not production certification; check current SHA-specific evidence for integration, deployment, localization, and restore.
+**Historical inventory at source SHA `bb3aed0`:** six app workspaces were present then. Current `dev` has ten app directories under `apps/`: `arsy`, `dock`, `headquarters`, `aigateway`, `sentinel`, `skylink`, `echolog`, `orbit` (parked, not spawned or deployed), `empire-web` and `lumen-runtime`; the local technician Cockpit is tooling rather than a product surface and lives in `tools/cockpit`. Directory presence is not production certification; check current SHA-specific evidence for integration, deployment, localization, and restore.
 
 ### 2A.1 Branding and proposed future apps (not shipped)
 
@@ -100,7 +100,7 @@ Use progressive disclosure: search/read first; sources before analysis; reviewer
 | WORKS | Proposed \`apps/works\` | Catalog, offers, CRM, work delivery, invoicing and revenue operations | Proposed; no independent payments bank or D00 |
 | HELIOGRID | Conditional \`apps/heliogrid\` | Read-only energy site/meters, PV, battery/UPS/maintenance analytics | Proposed **only after** measured pilot; not an energy generator |
 | HEADQUARTERS / 100CENTER | \`apps/headquarters\` | Review, publication veto, rights, finance oversight and audit | Existing UI, new governance flows not certified |
-| COCKPIT | \`apps/cockpit\` | Developer process/log/preview supervisor | Existing local application, not public admin or production energy controller |
+| COCKPIT | \`tools/cockpit\` | Developer process/log/preview supervisor | Existing local application, not public admin or production energy controller |
 | AI Gateway / Sentinel | \`apps/aigateway\`, \`apps/sentinel\` | Internal bounded model routing / source collection | Existing workers/services, not public AI/monitoring authority |
 | ARSY / SIGNAL | `apps/arsy` / `@moonwitness/arsy` | ONE Fastify/MoonQL API, data authority and existing Radio domain | Runtime/package move, integration and rollback evidence at `dbc5f01`; M28-15 deployment compatibility evidence remains open |
 | **SKYLINK** | `apps/skylink` (M38) | REST + WebSocket control plane and provider adapters are present; ARSY integration, operator UI and e2e release proof remain open (M38-12..14) | Accepted ADR-0006; bounded service, not a second Hub; owns D18 only |

@@ -34,7 +34,7 @@ must obey. Commands are `pnpm --filter <name> <script>` from the repo root.
 | `apps/aigateway` (`@moonwitness/aigateway`) | `test` | [AI candidate evidence](../architecture/M21-02-ai-candidate-evidence.md) |
 | `apps/orbit` (`@moonwitness/orbit`) | `test` | [ORBIT](../architecture/ORBIT.md) |
 | `apps/sentinel` (`@moonwitness/sentinel`) | `test` | [DEV_PROCESSES](../architecture/DEV_PROCESSES.md) |
-| `apps/cockpit` (`@moonwitness/cockpit`) | `test` | [DEV_PROCESSES](../architecture/DEV_PROCESSES.md) |
+| `tools/cockpit` (`@moonwitness/cockpit`) | `test` | [DEV_PROCESSES](../architecture/DEV_PROCESSES.md) |
 | `apps/skylink` (`@moonwitness/skylink`) | `test` | [APPS](../architecture/APPS.md) — SKYLINK is not a second Hub and owns no identity, catalog or third SQL store (ADR-0006) |
 | `apps/echolog` (`@moonwitness/echolog`) | `test` | [ECHOLOG](../architecture/ECHOLOG.md) — D19 object storage; owns no tables, is not a SQL owner (ADR-0007) |
 | `apps/lumen-runtime` (`@moonwitness/lumen-runtime`) | `test` | [LUMEN](../architecture/LUMEN.md) · [contracts](../architecture/LUMEN_CONTRACTS.md) |

@@ -43,8 +43,8 @@ function findPublicDir(): string {
   const candidates = [
     resolve(current, '../dist/client'),
     resolve(current, '../../dist/client'),
-    resolve(process.cwd(), 'apps/cockpit/dist/client'),
-    resolve(process.cwd(), 'apps/cockpit/public'),
+    resolve(process.cwd(), 'tools/cockpit/dist/client'),
+    resolve(process.cwd(), 'tools/cockpit/public'),
     resolve(process.cwd(), 'public'),
     resolve(current, '../public'),
   ]
@@ -103,7 +103,7 @@ export function createCockpitServer(
 
   const publicDir = findPublicDir()
   // Deliberately not `resolve(publicDir, '../../..')`: when the Vite bundle wins
-  // the lookup that lands on `apps/`, so the ledger read a different file than
+  // the lookup that lands on `tools/`, so the ledger read a different file than
   // ProcessSupervisor writes. Both now derive the root the same way.
   const repoRoot = findRepoRoot()
   const errorLogFile = join(repoRoot, 'dev-errors.log')
@@ -162,7 +162,7 @@ export function createCockpitServer(
     const candidates = [
       join(publicDir, 'cockpit.css'),
       resolve(publicDir, '../public/cockpit.css'),
-      resolve(process.cwd(), 'apps/cockpit/public/cockpit.css'),
+      resolve(process.cwd(), 'tools/cockpit/public/cockpit.css'),
     ]
     for (const c of candidates) {
       if (existsSync(c)) return reply.type('text/css; charset=utf-8').send(readFileSync(c, 'utf8'))
@@ -174,7 +174,7 @@ export function createCockpitServer(
     const candidates = [
       join(publicDir, 'cockpit.js'),
       resolve(publicDir, '../public/cockpit.js'),
-      resolve(process.cwd(), 'apps/cockpit/public/cockpit.js'),
+      resolve(process.cwd(), 'tools/cockpit/public/cockpit.js'),
     ]
     for (const c of candidates) {
       if (existsSync(c)) return reply.type('application/javascript; charset=utf-8').send(readFileSync(c, 'utf8'))
@@ -196,8 +196,8 @@ export function createCockpitServer(
     const candidates = [
       join(publicDir, 'bgm.mp3'),
       resolve(publicDir, '../client/public/bgm.mp3'),
-      resolve(process.cwd(), 'apps/cockpit/client/public/bgm.mp3'),
-      resolve(process.cwd(), 'apps/cockpit/public/bgm.mp3'),
+      resolve(process.cwd(), 'tools/cockpit/client/public/bgm.mp3'),
+      resolve(process.cwd(), 'tools/cockpit/public/bgm.mp3'),
     ]
     for (const c of candidates) {
       if (existsSync(c)) {

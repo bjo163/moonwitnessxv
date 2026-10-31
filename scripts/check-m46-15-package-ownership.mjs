@@ -59,7 +59,7 @@ const docSet = (root) => {
 
 const workspaces = (root) => {
   const found = []
-  for (const group of ['packages', 'apps']) {
+  for (const group of ['packages', 'apps', 'tools']) {
     const base = join(root, group)
     if (!existsSync(base)) continue
     for (const dir of readdirSync(base).sort()) {

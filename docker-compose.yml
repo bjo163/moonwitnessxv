@@ -342,34 +342,6 @@ services:
       retries: 5
       start_period: 30s
 
-  # ORBIT frontend, built from the shared web image. ORBIT ships no public/
-  # directory, which is why Dockerfile.web creates one before the runtime copy.
-  orbit:
-    build:
-      context: .
-      dockerfile: Dockerfile.web
-      args:
-        APP: orbit
-        APP_PORT: "3007"
-    image: moonwitness-orbit
-    container_name: moonwitness-orbit
-    restart: unless-stopped
-    depends_on:
-      arsy:
-        condition: service_healthy
-    ports:
-      - "127.0.0.1:3007:3007"
-    environment:
-      NODE_ENV: production
-      RADIO_API_URL: http://arsy:3000${API_PREFIX:-/api/v1}
-      SITE_NAME: ${SITE_NAME:-Moonwitness}
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3007/').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
   # SENTINEL worker: a poller with no HTTP surface, so the probe can only prove
   # the worker process is alive. It makes no readiness claim — a heartbeat file or
   # metrics endpoint is the follow-up if this must gate a deployment.

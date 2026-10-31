@@ -4,7 +4,7 @@
   "note": "App-local UI debt under ADR-0017. This ledger may only shrink: every entry names a removal task, and RATCHET in scripts/check-ui-consistency.mjs is the ceiling.",
   "entries": [
     {
-      "path": "apps/cockpit/client/components/CockpitMediaView.tsx",
+      "path": "tools/cockpit/client/components/CockpitMediaView.tsx",
       "owner": "cockpit",
       "mode": "view",
       "exports": [
@@ -14,7 +14,7 @@
       "removalTask": "M19-36"
     },
     {
-      "path": "apps/cockpit/client/components/CockpitProgressView.tsx",
+      "path": "tools/cockpit/client/components/CockpitProgressView.tsx",
       "owner": "cockpit",
       "mode": "view",
       "exports": [

@@ -13,7 +13,7 @@ export const SITE_NAME = 'Moonwitness'
 export const API_PREFIX = '/api/v1'
 
 /** Fixed dev/preview ports; `apps/arsy/test/env-contract.test.ts` keeps this equal to the dev registry. */
-export const PORTS = { hub: 3000, dock: 3001, headquarters: 3002, aigateway: 3003, cockpit: 3004, skylink: 3005, echolog: 3006, orbit: 3007, empireWeb: 3010 } as const
+export const PORTS = { hub: 3000, dock: 3001, headquarters: 3002, aigateway: 3003, cockpit: 3004, skylink: 3005, echolog: 3006, empireWeb: 3010 } as const
 
 /** Loopback origin of the hub itself, without the API prefix: what host-side plugins dial. */
 export const HUB_ORIGIN_DEFAULT = `http://127.0.0.1:${PORTS.hub}`
@@ -35,9 +35,6 @@ export const SKYLINK_URL_DEFAULT = `http://127.0.0.1:${PORTS.skylink}`
 
 /** Default loopback origin for ECHOLOG clients. */
 export const ECHOLOG_URL_DEFAULT = `http://127.0.0.1:${PORTS.echolog}`
-
-/** Default loopback origin of the ORBIT spatial frontend. */
-export const ORBIT_URL_DEFAULT = `http://127.0.0.1:${PORTS.orbit}`
 
 /**
  * Both loopback spellings of the cockpit window. A CSP frame-ancestors list and

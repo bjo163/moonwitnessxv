@@ -54,13 +54,13 @@ function lockfileImporters(): string[] {
   const body = end >= 0 ? rest.slice(0, end) : rest
   // `m[0]` carries the two-space indent, so trim it: these paths are compared
   // against the workspace directories and pasted into COPY assertions.
-  return [...body.matchAll(/^ {2}(?:apps|packages)\/[\w-]+(?=:$)/gm)].map((m) => m[0].trim())
+  return [...body.matchAll(/^ {2}(?:apps|packages|tools)\/[\w-]+(?=:$)/gm)].map((m) => m[0].trim())
 }
 
-/** Every `apps/*` and `packages/*` directory that actually has a manifest. */
+/** Every `apps/*`, `packages/*` and `tools/*` directory that actually has a manifest. */
 function membersOnDisk(): string[] {
   const out: string[] = []
-  for (const group of ['apps', 'packages']) {
+  for (const group of ['apps', 'packages', 'tools']) {
     for (const entry of readdirSync(`${ROOT}/${group}`, { withFileTypes: true })) {
       if (!entry.isDirectory()) continue
       if (existsSync(`${ROOT}/${group}/${entry.name}/package.json`)) out.push(`${group}/${entry.name}`)
@@ -102,8 +102,8 @@ test('docker: the install stages derive the member manifests', () => {
       assert.ok(text, `${file} has a ${stage} stage`)
       assert.ok(text!.includes('COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./'), `${file} ${stage} must install from the root manifests`)
       assert.match(text!, /--mount=type=bind,source=\.,target=\/ctx/, `${file} ${stage} must bind-mount the context to reach member manifests`)
-      assert.match(text!, /find apps packages -mindepth 2 -maxdepth 2 -name package\.json/, `${file} ${stage} must derive the manifest set`)
-      assert.doesNotMatch(text!, /^COPY (?:apps|packages)\/[\w-]+\/package\.json/m, `${file} ${stage} enumerates member manifests again — derive them`)
+      assert.match(text!, /find apps packages tools -mindepth 2 -maxdepth 2 -name package\.json/, `${file} ${stage} must derive the manifest set`)
+      assert.doesNotMatch(text!, /^COPY (?:apps|packages|tools)\/[\w-]+\/package\.json/m, `${file} ${stage} enumerates member manifests again — derive them`)
     }
   }
 })
@@ -208,8 +208,8 @@ test('docker: each service image copies the dist of its declared workspace depen
     for (const stage of ['deps', 'prod-deps']) {
       const text = byStage.get(stage)
       assert.ok(text, `${file} has a ${stage} stage`)
-      assert.match(text!, /find apps packages -mindepth 2 -maxdepth 2 -name package\.json/, `${file} ${stage} must derive the manifest set`)
-      assert.doesNotMatch(text!, /^COPY (?:apps|packages)\/[\w-]+\/package\.json/m, `${file} ${stage} enumerates member manifests again — derive them`)
+      assert.match(text!, /find apps packages tools -mindepth 2 -maxdepth 2 -name package\.json/, `${file} ${stage} must derive the manifest set`)
+      assert.doesNotMatch(text!, /^COPY (?:apps|packages|tools)\/[\w-]+\/package\.json/m, `${file} ${stage} enumerates member manifests again — derive them`)
     }
 
     const manifest = JSON.parse(readRepoText(`apps/${app}/package.json`)) as {

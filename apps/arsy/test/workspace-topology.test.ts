@@ -39,7 +39,7 @@ interface Manifest {
 
 /** Every workspace member: dir (`packages/core`), manifest, parsed once. */
 const members: { dir: string; pkg: Manifest }[] = []
-for (const group of ['apps', 'packages']) {
+for (const group of ['apps', 'packages', 'tools']) {
   for (const entry of readdirSync(join(ROOT, group), { withFileTypes: true })) {
     if (!entry.isDirectory()) continue
     const dir = `${group}/${entry.name}`
@@ -122,7 +122,8 @@ test('topology: a tsc -b member references every workspace dependency it declare
       continue
     }
     const refs = [...readRepoText(relative(ROOT, tsconfigPath)).matchAll(/"path":\s*"([^"]+)"/g)].map((m) => m[1]!)
-    const prefix = dir.startsWith('apps/') ? '../../packages/' : '../'
+    // apps/* and tools/* sit two levels deep; packages/* sits one.
+    const prefix = dir.startsWith('packages/') ? '../' : '../../packages/'
     for (const dep of Object.keys(pkg.dependencies ?? {})) {
       if (!dep.startsWith('@moonwitness/')) continue
       const target = byName.get(dep)

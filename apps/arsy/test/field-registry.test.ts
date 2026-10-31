@@ -117,7 +117,7 @@ test('moonui centralizes UI and punk-zine primitives across dock, headquarters, 
     'apps/headquarters/src/app/login/page.tsx',
     'apps/headquarters/src/app/(admin)/page.tsx',
     'apps/headquarters/src/app/(admin)/world-monitor/page.tsx',
-    'apps/cockpit/client/App.tsx',
+    'tools/cockpit/client/App.tsx',
   ]
   for (const file of surfaces) {
     assert.match(source(file), /from '@moonwitness\/moonui'/, `${file} must consume @moonwitness/moonui`)
@@ -126,7 +126,7 @@ test('moonui centralizes UI and punk-zine primitives across dock, headquarters, 
   // Local app stylesheets must not re-declare shared primitives
   const dockCss = source('apps/dock/src/app/globals.css')
   const hqCss = source('apps/headquarters/src/app/globals.css')
-  const cockpitCss = source('apps/cockpit/client/cockpit-layout.css')
+  const cockpitCss = source('tools/cockpit/client/cockpit-layout.css')
   for (const forbidden of [
     /\.dk-btn-/,
     /\.dk-pager\b/,

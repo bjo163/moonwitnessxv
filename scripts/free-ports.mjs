@@ -2,7 +2,8 @@
 /**
  * Dev runner escape hatch: frees every port the registry declares
  * (hub :3000, dock :3001, HQ :3002, ai gateway :3003, cockpit :3004,
- * SKYLINK :3005, ECHOLOG :3006, ORBIT :3007) and the repo's leftover dev processes.
+ * SKYLINK :3005, ECHOLOG :3006, empire-web :3010) and the repo's leftover dev
+ * processes. A parked app claims no port, so nothing is freed for it.
  *
  * The list comes from `scripts/apps.registry.mjs` — the same module `pnpm dev`
  * spawns from — so a new app cannot be forgotten here again (ORBIT was).

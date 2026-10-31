@@ -1,5 +1,7 @@
 # @moonwitness/orbit — Spatial Agent Operations
 
+> **PARKED (31 October 2026).** The code and tests stay here, but nothing spawns, supervises, builds or deploys this app: it is `dev:false` in `scripts/apps.registry.mjs`, port 3007 is retired, and `docker-compose.yml` has no `orbit` service. Run it manually with `pnpm --filter @moonwitness/orbit dev` when M40 resumes.
+
 **ORBIT** is the standalone 3D-first, accessible 2D-fallback operations frontend within MoonWitness XV for observing and navigating agent operations, workstations, queues, and task lifecycles.
 
 ## Architecture and Boundaries
@@ -8,7 +10,7 @@ Pursuant to [ADR-0004](../../docs/decisions/ADR-0004-empire-surfaces.md) and [do
 
 - **Owner:** `apps/orbit` (`@moonwitness/orbit`).
 - **Domain:** Pure frontend observation surface. **Zero** database tables, zero SQL ownership, zero identity services, zero background task execution engines, zero AI model routers.
-- **Port:** Dev port **3007** (`ORBIT_PORT=3007`, `http://localhost:3007`).
+- **Port:** 3007 for a manual `pnpm --filter @moonwitness/orbit dev` only (`http://localhost:3007`); the port is not reserved and is absent from `PORTS`.
 - **Data Source:** Read-only operational projections from canonical ARSY endpoints.
 - **Offline / Standalone Fallback:** Deterministic local fixtures marked `SIMULATED` with explicit `OFFLINE` indicators when ARSY is unreachable.
 - **Accessibility:** 100% operable via 2D fallback view without WebGL, colour perception, hover, or sound.
@@ -59,8 +61,8 @@ locale as the page, so `<html lang>` always matches the copy it labels.
 
 ## Deployment
 
-ORBIT is registered once, in `scripts/apps.registry.mjs` (`tag: 'orbit'`, port
-3007), alongside the other surfaces; the port is not re-declared per file. It
+ORBIT is registered once, in `scripts/apps.registry.mjs` as `dev: false` with no
+port; adding a port back is part of unparking. It
 builds independently — `pnpm --filter @moonwitness/orbit build` — and is not a
 service in the shared `docker-compose.yml` database path: it opens no SQL
 connection, owns no table, and runs no migration. Removing or rolling back ORBIT
