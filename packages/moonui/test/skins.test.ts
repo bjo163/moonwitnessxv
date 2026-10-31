@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { MOON_COLORS, MOON_SKINS } from '../dist/tokens.js'
+import { MOON_COLORS, MOON_SKINS, MOON_BRIGHTNESSES } from '../dist/tokens.js'
 
 /**
  * ADR-0014 — MoonUI dual-skin contract.
@@ -244,6 +244,61 @@ describe('MOON_SKINS — legibility across both skins', () => {
   })
 })
 
+describe('MOON_BRIGHTNESSES — four combinations (2 skins × 2 brightness)', () => {
+  const BRIGHTNESSES = ['dark', 'light'] as const
+  type BrightnessName = (typeof BRIGHTNESSES)[number]
+
+  function palette(skin: SkinName, brightness: BrightnessName) {
+    return MOON_BRIGHTNESSES[brightness][skin]
+  }
+
+  for (const brightness of BRIGHTNESSES) {
+    for (const skinName of SKINS) {
+      it(`meets AA for text roles in "${skinName}-${brightness}"`, () => {
+        const p = palette(skinName, brightness)
+        const pairs: Array<[string, string, string]> = [
+          ['fg on bg', p.fg, p.bg],
+          ['fg on bg-1', p.fg, p.bg1],
+          ['fg-muted on bg', p.fgMuted, p.bg],
+          ['brand on bg', p.brand, p.bg],
+          ['on-brand on brand', p.onBrand, p.brand],
+        ]
+        for (const [label, foreground, background] of pairs) {
+          assert.ok(contrast(foreground, background) >= 4.5, `${skinName}-${brightness}: ${label} is ${contrast(foreground, background).toFixed(2)}:1, expected >= 4.5`)
+        }
+      })
+
+      it(`keeps focus ring and hairlines visible in "${skinName}-${brightness}"`, () => {
+        const p = palette(skinName, brightness)
+        assert.ok(contrast(p.focus, p.bg) >= 3, `${skinName}-${brightness}: focus ring is ${contrast(p.focus, p.bg).toFixed(2)}:1, expected >= 3`)
+        assert.ok(contrast(p.rule, p.bg) >= 1.5, `${skinName}-${brightness}: hairline is ${contrast(p.rule, p.bg).toFixed(2)}:1, expected >= 1.5`)
+      })
+    }
+  }
+
+  it('keeps dark palettes identical to MOON_SKINS', () => {
+    for (const skinName of SKINS) {
+      const darkPalette = MOON_BRIGHTNESSES.dark[skinName]
+      const skinPalette = MOON_SKINS[skinName]
+      for (const key of Object.keys(skinPalette) as Array<keyof typeof skinPalette>) {
+        assert.equal(darkPalette[key], skinPalette[key], `MOON_BRIGHTNESSES.dark.${skinName}.${key} drifted from MOON_SKINS.${skinName}.${key}`)
+      }
+    }
+  })
+
+  it('light palettes differ from dark palettes in every skin', () => {
+    for (const skinName of SKINS) {
+      const dark = MOON_BRIGHTNESSES.dark[skinName]
+      const light = MOON_BRIGHTNESSES.light[skinName]
+      let differences = 0
+      for (const key of Object.keys(dark) as Array<keyof typeof dark>) {
+        if (dark[key] !== light[key]) differences++
+      }
+      assert.ok(differences > 0, `${skinName}: light palette should differ from dark`)
+    }
+  })
+})
+
 describe('moon.css — the skin blocks honour the contract', () => {
   it('declares the default skin and the empire skin', () => {
     assert.match(CSS, /:root,\s*\n:root\[data-skin='zine'\]\s*\{/)
@@ -293,5 +348,37 @@ describe('moon.css — the skin blocks honour the contract', () => {
   it('routes the danger and accent variants through roles', () => {
     assert.match(CSS, /\.m-btn\[data-variant="danger"\]\s*\{\s*background:\s*var\(--danger\)/)
     assert.match(CSS, /\.m-btn\[data-variant="accent"\]\s*\{[\s\S]*?color:\s*var\(--on-brand\)/)
+  })
+
+  it('declares light palette blocks for both skins', () => {
+    assert.match(CSS, /:root\[data-skin='zine'\]\[data-brightness='light'\]\s*\{/)
+    assert.match(CSS, /:root\[data-skin='empire'\]\[data-brightness='light'\]\s*\{/)
+  })
+
+  it('light palette blocks declare color-scheme: light', () => {
+    const zineLight = declarations(":root[data-skin='zine'][data-brightness='light']")
+    const empireLight = declarations(":root[data-skin='empire'][data-brightness='light']")
+    assert.match(zineLight, /color-scheme:\s*light/)
+    assert.match(empireLight, /color-scheme:\s*light/)
+  })
+
+  it('light palette blocks declare all role properties', () => {
+    const zineLight = declaredProperties(":root[data-skin='zine'][data-brightness='light']")
+    const empireLight = declaredProperties(":root[data-skin='empire'][data-brightness='light']")
+    for (const property of [...ROLE_PROPERTIES, ...ALIAS_PROPERTIES]) {
+      assert.ok(zineLight.includes(property), `zine-light block is missing ${property}`)
+      assert.ok(empireLight.includes(property), `empire-light block is missing ${property}`)
+    }
+  })
+
+  it('light palette blocks do not declare geometry or fonts', () => {
+    const zineLight = declaredProperties(":root[data-skin='zine'][data-brightness='light']")
+    const empireLight = declaredProperties(":root[data-skin='empire'][data-brightness='light']")
+    for (const geometry of FORBIDDEN_PROPERTIES) {
+      assert.ok(!zineLight.includes(geometry), `zine-light block may not override ${geometry}`)
+      assert.ok(!empireLight.includes(geometry), `empire-light block may not override ${geometry}`)
+    }
+    assert.ok(!zineLight.some((p) => p.startsWith('--font-')), 'zine-light block may not override font stacks')
+    assert.ok(!empireLight.some((p) => p.startsWith('--font-')), 'empire-light block may not override font stacks')
   })
 })

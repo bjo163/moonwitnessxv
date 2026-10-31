@@ -133,13 +133,129 @@
   --ok-glow: rgba(127, 174, 136, 0.24);
 }
 
-/* The Empire field replaces the pink/cyan haze with a warm gold vignette. */
-:root[data-skin='empire'] body {
+/* ---------- Brightness: Light mode palettes ---------- */
+:root[data-skin='zine'][data-brightness='light'] {
+  color-scheme: light;
+  --bg: #f7f4ec;
+  --bg-1: #ede8dc;
+  --bg-2: #e3ddd0;
+  --night: #f0ebe0;
+  --paper: #f5f0e6;
+  --fg: #07060b;
+  --fg-muted: #4a4557;
+  --fg-subtle: rgba(7, 6, 11, 0.55);
+  --rule: rgba(7, 6, 11, 0.22);
+  --rule-soft: rgba(7, 6, 11, 0.13);
+  --rule-strong: rgba(7, 6, 11, 0.45);
+  --brand: #7a6300;
+  --brand-soft: rgba(122, 99, 0, 0.45);
+  --on-brand: #f7f4ec;
+  --brand-2: #d4005a;
+  --brand-2-hover: #b3004d;
+  --brand-2-strong: #d4005a;
+  --signal: #0099b3;
+  --info: #1a8cd8;
+  --success: #00b35c;
+  --danger: #d4163f;
+  --moon: #7a3bb3;
+  --focus: #0099b3;
+  --edge-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+  --edge-shadow-sm: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  --ink: var(--bg);
+  --surface: var(--bg-1);
+  --surface-2: var(--bg-2);
+  --accent: var(--brand);
+  --pink: var(--brand-2);
+  --hot: var(--danger);
+  --cyan: var(--signal);
+  --blue: var(--info);
+  --ok: var(--success);
+  --muted: var(--fg-muted);
+  --chalk: rgba(7, 6, 11, 0.88);
+  --chalk-dim: rgba(7, 6, 11, 0.28);
+  --hair: var(--rule-soft);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
+  --line: 2px solid var(--chalk);
+  --shadow: var(--edge-shadow);
+  --shadow-sm: var(--edge-shadow-sm);
+  --shadow-pink: 3px 3px 0 var(--brand-2);
+  --shadow-accent: 3px 3px 0 var(--brand);
+  --pink-glow: rgba(212, 0, 90, 0.3);
+  --cyan-glow: rgba(0, 153, 179, 0.3);
+  --accent-glow: rgba(122, 99, 0, 0.3);
+  --ok-glow: rgba(0, 179, 92, 0.3);
+}
+
+:root[data-skin='empire'][data-brightness='light'] {
+  color-scheme: light;
+  --bg: #f1ede5;
+  --bg-1: #e8e3da;
+  --bg-2: #dfd9cf;
+  --night: #ebe6dd;
+  --paper: #f0ebe3;
+  --fg: #090b0d;
+  --fg-muted: #5a5650;
+  --fg-subtle: #6b655c;
+  --rule: #a89880;
+  --rule-soft: #c4b8a8;
+  --rule-strong: #7a6a52;
+  --brand: #6b5537;
+  --brand-soft: #8a6f4a;
+  --on-brand: #f1ede5;
+  --brand-2: #b31826;
+  --brand-2-hover: #991420;
+  --brand-2-strong: #8a121c;
+  --signal: #6b7f8f;
+  --info: #5a7489;
+  --success: #6a9472;
+  --danger: #d44a58;
+  --moon: #b5b3ab;
+  --focus: #8a6f4a;
+  --edge-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  --edge-shadow-sm: 0 0 0 rgba(0, 0, 0, 0);
+  --ink: var(--bg);
+  --surface: var(--bg-1);
+  --surface-2: var(--bg-2);
+  --accent: var(--brand);
+  --pink: var(--brand-2);
+  --hot: var(--danger);
+  --cyan: var(--signal);
+  --blue: var(--info);
+  --ok: var(--success);
+  --muted: var(--fg-muted);
+  --chalk: rgba(9, 11, 13, 0.9);
+  --chalk-dim: rgba(9, 11, 13, 0.3);
+  --hair: var(--rule-soft);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
+  --line: 2px solid var(--chalk);
+  --shadow: var(--edge-shadow);
+  --shadow-sm: var(--edge-shadow-sm);
+  --shadow-pink: 0 0 0 rgba(0, 0, 0, 0);
+  --shadow-accent: 0 0 0 rgba(0, 0, 0, 0);
+  --pink-glow: rgba(179, 24, 38, 0.2);
+  --cyan-glow: rgba(107, 127, 143, 0.15);
+  --accent-glow: rgba(107, 85, 55, 0.2);
+  --ok-glow: rgba(106, 148, 114, 0.18);
+}
+
+/* Light mode body backgrounds — softer gradients for light palettes */
+:root[data-skin='zine'][data-brightness='light'] body {
   background-color: var(--bg);
   background-image:
-    radial-gradient(ellipse at 70% 12%, rgba(197, 165, 120, 0.1), transparent 46%),
-    radial-gradient(ellipse at 20% 88%, rgba(219, 30, 49, 0.06), transparent 52%),
-    radial-gradient(rgba(241, 237, 229, 0.04) 1px, transparent 1px);
+    radial-gradient(circle at 15% 10%, rgba(212, 0, 90, 0.08), transparent 35%),
+    radial-gradient(circle at 82% 18%, rgba(0, 153, 179, 0.07), transparent 38%),
+    radial-gradient(rgba(7, 6, 11, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 20px 20px;
+}
+
+:root[data-skin='empire'][data-brightness='light'] body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 70% 12%, rgba(139, 111, 71, 0.08), transparent 46%),
+    radial-gradient(ellipse at 20% 88%, rgba(179, 24, 38, 0.05), transparent 52%),
+    radial-gradient(rgba(9, 11, 13, 0.03) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 22px 22px;
 }
 
@@ -3345,3 +3461,30 @@ pre,
   font-size: 12px;
 }
 
+
+/* ---------- Brightness Toggle ---------- */
+.m-brightness-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 2px solid var(--fg);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.m-brightness-toggle:hover {
+  background: var(--surface-2);
+  border-color: var(--accent);
+}
+
+.m-brightness-toggle:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}

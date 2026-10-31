@@ -126,3 +126,9 @@ export {
   type BandConfig,
   type TunedStation,
 } from './analog-tuner.js'
+
+export {
+  BrightnessToggle,
+  BRIGHTNESS_INIT_SCRIPT,
+  type BrightnessToggleProps,
+} from './brightness-toggle.js'

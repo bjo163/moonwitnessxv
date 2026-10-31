@@ -119,6 +119,76 @@ export const MOON_SKINS = {
   },
 } as const satisfies Record<MoonSkinName, MoonSkin>
 
+/**
+ * Brightness modifiers (ADR-0014 amendment).
+ *
+ * Brightness is a separate axis from skin. Each skin (zine, empire) has a dark
+ * palette (the default) and a light palette. The light palette inverts bg/fg and
+ * adjusts accent colors for contrast on light backgrounds.
+ *
+ * `data-brightness="light"` on `<html>` selects the light palette for the active skin.
+ */
+export type MoonBrightnessName = 'dark' | 'light'
+
+export const MOON_BRIGHTNESSES = {
+  dark: {
+    zine: MOON_SKINS.zine,
+    empire: MOON_SKINS.empire,
+  },
+  light: {
+    zine: {
+      bg: '#f7f4ec',
+      bg1: '#ede8dc',
+      bg2: '#e3ddd0',
+      night: '#f0ebe0',
+      paper: '#f5f0e6',
+      fg: '#07060b',
+      fgMuted: '#4a4557',
+      fgSubtle: 'rgba(7, 6, 11, 0.55)',
+      rule: 'rgba(7, 6, 11, 0.22)',
+      ruleSoft: 'rgba(7, 6, 11, 0.13)',
+      ruleStrong: 'rgba(7, 6, 11, 0.45)',
+      brand: '#7a6300',
+      brandSoft: 'rgba(122, 99, 0, 0.45)',
+      onBrand: '#f7f4ec',
+      brand2: '#d4005a',
+      brand2Hover: '#b3004d',
+      brand2Strong: '#d4005a',
+      signal: '#0099b3',
+      info: '#1a8cd8',
+      success: '#00b35c',
+      danger: '#d4163f',
+      moon: '#7a3bb3',
+      focus: '#0099b3',
+    },
+    empire: {
+      bg: '#f1ede5',
+      bg1: '#e8e3da',
+      bg2: '#dfd9cf',
+      night: '#ebe6dd',
+      paper: '#f0ebe3',
+      fg: '#090b0d',
+      fgMuted: '#5a5650',
+      fgSubtle: '#6b655c',
+      rule: '#a89880',
+      ruleSoft: '#c4b8a8',
+      ruleStrong: '#7a6a52',
+      brand: '#6b5537',
+      brandSoft: '#8a6f4a',
+      onBrand: '#f1ede5',
+      brand2: '#b31826',
+      brand2Hover: '#991420',
+      brand2Strong: '#8a121c',
+      signal: '#6b7f8f',
+      info: '#5a7489',
+      success: '#6a9472',
+      danger: '#d44a58',
+      moon: '#b5b3ab',
+      focus: '#8a6f4a',
+    },
+  },
+} as const satisfies Record<MoonBrightnessName, Record<MoonSkinName, MoonSkin>>
+
 export const MOON_FONTS = {
   sans: '"Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif',
   display: '"Impact", "Anton", "Arial Black", "Franklin Gothic Heavy", sans-serif',
