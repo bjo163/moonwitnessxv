@@ -11,8 +11,16 @@ async function main(): Promise<void> {
     if (!hasServiceKey) {
       console.warn('SKYLINK starting in health-only mode: SKYLINK_SERVICE_KEY is not configured. API endpoints will reject requests.')
     }
-    const store = config.databaseUrl ? createSkylinkStore(config.databaseUrl) : null
-    if (store) await migrateSkylinkStore(store)
+    let store = null
+    if (config.databaseUrl) {
+      try {
+        store = createSkylinkStore(config.databaseUrl)
+        await migrateSkylinkStore(store)
+      } catch (error) {
+        console.warn(`SKYLINK database connection failed: ${error instanceof Error ? error.message : String(error)}. Falling back to health-only mode.`)
+        store = null
+      }
+    }
     if (config.telegramBotToken && !store) {
       throw new Error('D18 store is required when the Telegram provider is configured.')
     }
