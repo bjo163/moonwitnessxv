@@ -154,14 +154,16 @@ export const APPS = [
     pkg: '@moonwitness/isp-radius',
     port: 3009,
     kind: 'service',
-    dev: true,
-    supervised: true,
+    // Go RADIUS runtime; not a Node.js package. Listed for port tracking only.
+    dev: false,
+    supervised: false,
     name: 'ISP RADIUS Service',
     desc: 'Go RADIUS and RadSec protocol runtime backed by ARSY D20',
     url: 'http://localhost:3009/health',
     health: '/health',
     keys: [],
     color: 'green',
+    note: 'Go service, not a Node.js app; run via `go run ./cmd/isp-radius`',
   },
   {
     tag: 'empire-web',
