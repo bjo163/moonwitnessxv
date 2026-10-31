@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { StatStrip } from './layout.js'
 import { SectionHeading } from './section-heading.js'
+import { StoryCard } from './story-card.js'
 import { PageActions, SiteFooter, type SiteFooterCopy } from './site.js'
 import {
   IconBookOpen,
@@ -170,34 +171,31 @@ export function StoryHomePage({
           {copy.cards.map((card, index) => {
             const Icon = CARD_ICONS[index] ?? IconBookOpen
             return (
-              <article className="su-home__card" key={card.index}>
-                <img
-                  className="su-home__card-art"
-                  src={cardArtwork[index]}
-                  alt=""
-                  aria-hidden="true"
-                  width={560}
-                  height={900}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="su-home__card-shade" aria-hidden="true" />
-                <p className="su-home__card-index">
-                  <span>{card.index}</span>
-                  <span>{card.eyebrow}</span>
-                </p>
-                <div className="su-home__card-body">
-                  <h2>{card.title}</h2>
-                  <p className="su-home__card-tagline">{card.tagline}</p>
-                  <p className="su-home__card-text">{card.body}</p>
-                </div>
-                <a className="su-home__card-cta" href={hrefFor(CARD_LINKS[index] ?? '/stories')}>
-                  <span>
-                    {card.cta} <span aria-hidden="true">→</span>
-                  </span>
-                  <Icon size={26} strokeWidth={1.1} aria-hidden="true" />
-                </a>
-              </article>
+              <StoryCard
+                key={card.index}
+                className="su-home__card"
+                artwork={cardArtwork[index]}
+                artworkClassName="su-home__card-art"
+                shadeClassName="su-home__card-shade"
+                indexClassName="su-home__card-index"
+                bodyClassName="su-home__card-body"
+                actionClassName="su-home__card-cta"
+                index={card.index}
+                eyebrow={card.eyebrow}
+                title={card.title}
+                href={hrefFor(CARD_LINKS[index] ?? '/stories')}
+                action={(
+                  <>
+                    <span>
+                      {card.cta} <span aria-hidden="true">→</span>
+                    </span>
+                    <Icon size={26} strokeWidth={1.1} aria-hidden="true" />
+                  </>
+                )}
+              >
+                <p className="su-home__card-tagline">{card.tagline}</p>
+                <p className="su-home__card-text">{card.body}</p>
+              </StoryCard>
             )
           })}
         </section>

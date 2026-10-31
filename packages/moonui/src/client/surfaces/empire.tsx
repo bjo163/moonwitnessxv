@@ -4,6 +4,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { EmptyState } from '../../data.js'
 import { IconBookOpen, IconCompass, IconCrosshair, IconSearch, IconSparkles } from '../../icons/index.js'
 import { PageActions, SiteFooter, type SiteFooterCopy } from '../../site.js'
+import { StoryCard } from '../../story-card.js'
 import { StatStrip } from '../../layout.js'
 
 /**
@@ -204,25 +205,27 @@ export function StoryLibraryPage({
             <EmptyState title={copy.emptyTitle} hint={copy.emptyHint} />
           ) : null}
           {filtered.map((card) => (
-            <article className="su-lib__card" key={card.id}>
-              <img className="su-lib__card-art" src={card.artwork} alt="" aria-hidden="true" width={560} height={900} loading="lazy" decoding="async" />
-              <div className="su-lib__card-shade" aria-hidden="true" />
-              <p className="su-lib__card-index">
-                <span>{card.index}</span>
-                <span>{card.eyebrow}</span>
+            <StoryCard
+              key={card.id}
+              className="su-lib__card"
+              artwork={card.artwork}
+              artworkClassName="su-lib__card-art"
+              shadeClassName="su-lib__card-shade"
+              indexClassName="su-lib__card-index"
+              bodyClassName="su-lib__card-body"
+              actionClassName="su-lib__card-cta"
+              index={card.index}
+              eyebrow={card.eyebrow}
+              title={card.title}
+              href={hrefFor(card.href)}
+              action={<span>{copy.cardsCta} <span aria-hidden="true">→</span></span>}
+            >
+              <p className="su-lib__card-tagline">{card.tagline}</p>
+              <p className="su-lib__card-text">{card.body}</p>
+              <p className="su-lib__badges">
+                {card.badges.map((badge) => <span key={badge.label} data-tone={badge.tone}>{badge.label}</span>)}
               </p>
-              <div className="su-lib__card-body">
-                <h2>{card.title}</h2>
-                <p className="su-lib__card-tagline">{card.tagline}</p>
-                <p className="su-lib__card-text">{card.body}</p>
-                <p className="su-lib__badges">
-                  {card.badges.map((badge) => <span key={badge.label} data-tone={badge.tone}>{badge.label}</span>)}
-                </p>
-              </div>
-              <a className="su-lib__card-cta" href={hrefFor(card.href)}>
-                <span>{copy.cardsCta} <span aria-hidden="true">→</span></span>
-              </a>
-            </article>
+            </StoryCard>
           ))}
         </section>
 
