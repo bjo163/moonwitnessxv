@@ -982,38 +982,2151 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [x] | **M46-01** — Reconcile repository task and milestone counts | P1 | D2 | — | Owner: repository docs; effort: S (0.5–1 day; no infrastructure cost.). Deliverable: Reconcile published task totals with TODO’s authoritative register and correct stale aggregate claims. Scope: Parse TODO; compare cited totals; correct references; link TODO as authority. Acceptance: All active aggregate statements match TODO or are labeled historical with date and scope. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-01.md) · candidate ENG-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD ca395d1:** reconciled 5 docs (GRANULARITY_AUDIT, TASK_ROLE_CLASSIFICATION, AUDIT.md, README.md, ISSUES_ENGINEERING.md) — labeled ad96dbf snapshot as historical, added current counts 52 milestones / 499 IDs / 347 checked / 152 unchecked. TODO.md unchanged (DoD: no checkbox or task text changed). |
-| - [x] | **M46-02** — Add a read-only task-register consistency check | P2 | D3 | M46-01 | Owner: scripts/planning; effort: M (2–4 days; no runtime cost.). Deliverable: Add a read-only check that flags stale aggregate counts and malformed task IDs without owning task status. Scope: Document syntax; define false-positive cases; implement parser; add fixtures; wire only after owner review. Acceptance: Correct fixture counts; duplicate IDs fail; files are never rewritten. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-02.md) · candidate ENG-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 409d3f1:** extended scripts/planning/task-register-validator.mjs with computeAggregates() and validateAggregates() — compares derived totals (total/checked/unchecked/milestones) against docs/data/M46-02-aggregate-allowlist.json. Added 3 new tests (allowlist match, count mismatch, milestone mismatch); all 5 tests pass. No task lease/status file added; parser is read-only. |
-| - [x] | **M46-03** — Align M38–M40 maturity statements to evidence | P1 | D3 | — | Owner: architecture docs; effort: M (3–6 days including review.). Deliverable: Publish one evidence-linked maturity description for SKYLINK, ECHOLOG and ORBIT. Scope: Re-read rows; collect repo evidence; request owner evidence; correct prose; list unresolved items. Acceptance: No deployed claim without exact deployment evidence; root service boundaries remain intact. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-03.md) · candidate ENG-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 980155e:** created docs/planning/M38-M40-maturity-alignment.md consolidating evidence from SKYLINK.md (ADR-0006 accepted, M38-07 health skeleton exists → ACCEPTED PARTIAL), ECHOLOG.md (ADR-0007 Amendment 1, M39-09/10/11 closed with exact SHA, M39-12 e2e proof completed 2026-10-27 → IMPLEMENTATION IN PROGRESS), and ORBIT.md (ADR-0004 accepted, no app code → ACCEPTED NOT STARTED). Replaces generic "PLANNED" labels with precise evidence-backed status. |
-| - [x] | **M46-04** — Verify LUMEN runtime maturity claims | P2 | D3 | M46-03 | Owner: LUMEN; effort: M (3–5 days; no deployment.). Deliverable: Determine whether the worker scaffold’s lifecycle documentation matches executable and deployment state. Scope: Trace entrypoints; map start/stop; inspect registry; classify executable paths; write go/no-go. Acceptance: Each claimed capability has a reproducible command or is marked scaffold/unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-04.md) · candidate ENG-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD b3429d6:** created docs/audit/M46-04-lumen-runtime-maturity.md auditing LUMEN worker scaffold against docs/architecture/LUMEN.md. Found misalignment: architecture claims "implementation not present" but executable code exists (worker.ts 253 lines, agent-loop.ts 364 lines, index.ts 290 lines, contracts.test.mjs 113 lines). Classified: IMPLEMENTED (worker lifecycle, agent loop, type system, contract tests), SCAFFOLD (adapters, telemetry — code exists but unverified), UNKNOWN (deployment, real ARSY integration, end-to-end approval — no executable evidence). Go for unit-level contracts, no-go for production deployment. |
-| - [ ] | **M46-05** — Resolve source pins to immutable full references | P1 | D3 | — | Owner: corpus/provenance; effort: M (2–6 days plus external access.). Deliverable: Verify and normalize historical source pins to full immutable references without importing content. Scope: Retry exact refs; capture SHA; compare tree identity; record unresolved entries; require rights review before use. Acceptance: Resolved pins have full SHA/evidence; unresolved pins say UNKNOWN; no content imported. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-05.md) · candidate ENG-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-06** — Specify and test a stable API error envelope | P2 | D3 | — | Owner: ARSY API; effort: M (3–7 days if gap exists; otherwise close with no-go evidence.). Deliverable: Check whether selected ARSY routes emit incompatible client errors; define a bounded contract only if a mismatch exists. Scope: Select routes; collect schemas; compare payloads; document exceptions; implement minimal shape if justified. Acceptance: Tests cover error status/fields; no stack or private source leaks. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-06.md) · candidate ENG-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [x] | **M46-07** — Define readiness semantics for health endpoints | P2 | D3 | — | Owner: service owners; effort: S (2–4 days; no recurring cost.). Deliverable: Compare liveness/readiness responses and specify bounded semantics. Scope: Inventory routes; classify dependencies; propose schema; test dependency failure/timeout; document meaning. Acceptance: Tests distinguish liveness from readiness and omit secrets/topology. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-07.md) · candidate ENG-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 0093313:** created docs/architecture/HEALTH_ENDPOINT_SEMANTICS.md defining bounded liveness/readiness semantics. Inventoried 5 services: ARSY and ECHOLOG have both probes, SKYLINK/Cockpit/AIGateway have liveness only. Proposed standard schema with security constraints (no secrets/topology). Identified gaps: SKYLINK needs readiness (P1), Cockpit/AIGateway need readiness (P2). Documented 4-phase migration path and testing requirements. |
-| - [ ] | **M46-08** — Audit log fields for privacy-safe diagnostics | P1 | D3 | M16,M18,M19 | Owner: service/security; effort: M (4–8 days for a bounded service set.). Deliverable: Inventory representative logs for sensitive payloads and define safe structured fields. Scope: Agree sensitive fields; inspect callsites; create synthetic fixtures; add redaction tests; document retention. Acceptance: Synthetic secrets/private strings never appear; required correlation fields remain. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-08.md) · candidate ENG-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-09** — Enforce least-privilege AI tool manifests | P1 | D4 | — | Owner: AI Gateway; effort: L (8–15 days; no external model spend required.). Deliverable: Define an inspectable tool allowlist and prove denied tools cannot execute. Scope: Inventory tools; classify effects; define schema; test denied/unknown/approval paths; document revocation. Acceptance: Unknown tool and missing grant are denied before handler; approval is attributable and replay-safe. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-09.md) · candidate ENG-009: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-10** — Inventory browser security headers and CSP safely | P2 | D3 | M44-08,M44 | Owner: web apps; effort: M (4–8 days; report endpoint cost unknown.). Deliverable: Assess current headers and propose report-only CSP for a bounded route set. Scope: Inspect helper; map sources; design report-only policy; test fixtures; capture authorized staging violations. Acceptance: No selected route break; inline exceptions have written rationale. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-10.md) · candidate ENG-010: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-11** — Produce dependency provenance and license inventory | P2 | D3 | M27 | Owner: release engineering; effort: M (3–6 days; recurring tool cost TBD.). Deliverable: Generate a point-in-time inventory of dependencies, licenses and provenance metadata. Scope: Select format; generate sample; validate URLs/versions/licenses; mark unknowns; review size/secrets. Acceptance: Inventory matches lockfile package set; unknown metadata remains unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-11.md) · candidate ENG-011: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-12** — Add adversarial contract tests for AI input boundaries | P1 | D4 | M46-06 | Owner: AI Gateway; effort: L (5–10 days; no model spend.). Deliverable: Test prompt injection, malformed output and citation spoofing against the existing bounded AI route. Scope: Define threat cases; craft fixtures; assert parse/deny; add encoding variants; list untested behaviors. Acceptance: Untrusted text never authorizes tools; invalid citations are rejected or marked unresolved. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-12.md) · candidate ENG-012: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [x] | **M46-13** — Document API compatibility and deprecation rules | P2 | D3 | — | Owner: ARSY API; effort: S (1–3 days.). Deliverable: Define how route/schema changes are versioned, announced and retired. Scope: Inventory markers; agree terms; document cases; link checks; review consumers. Acceptance: Three sample changes classify consistently and map to a check or explicit gap. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-13.md) · candidate ENG-013: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 79cb99d:** created docs/architecture/API_COMPATIBILITY_POLICY.md defining URL path versioning scheme (/api/v<N>/), change classification (ADDITIVE, BREAKING, CORRECTIVE), 3-phase deprecation process (announcement, migration window 90 days, removal), sample classifications, consumer review requirements, owner responsibilities, and rollback procedures. Policy approved by owner authority. |
-| - [ ] | **M46-14** — Check generated API schemas against route contracts | P2 | D4 | M46-13 | Owner: API tooling; effort: L (6–12 days; CI time to measure.). Deliverable: Add a focused check that published schemas agree with selected Fastify route schemas. Scope: Find canonical schemas; compare output; normalize; add fixtures; wire focused check. Acceptance: Intentional change updates canonical source/artifact; stale artifact fails. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-14.md) · candidate ENG-014: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [x] | **M46-15** — Add package ownership metadata to workspace inventory | P2 | D3 | — | Owner: workspace maintainers; effort: M (3–6 days.). Deliverable: Make package ownership and allowed dependency direction easy to inspect. Scope: Identify owners; map directions; test derivability; render table; document exceptions. Acceptance: Every package has owner/boundary link or UNKNOWN; no duplicate canonical owner implied. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-15.md) · candidate ENG-015: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at this working tree:** scripts/check-m46-15-package-ownership.mjs derives docs/data/M46-15-package-ownership.json and .md from each workspace manifest plus the first authoritative document that states an ownership relation about it. Observed run: 48 workspaces, 36 documented, 12 UNKNOWN, audit clean, exit 0. test/governance/m46-15-package-ownership.test.mjs passes 6 of 6 (link resolves, one package name one owner, UNKNOWN is a finding not a failure, fabricated link rejected, a passing mention does not become a claim, every internal dependency edge points at an inventoried workspace, repeated derivation identical). **Limits:** this is a derived view, not a new owner registry - the linked document stays the authority; dependency direction is reported as observed manifest edges, not as permission, so the allowed-direction question is still answered by the cited boundary document; the 12 UNKNOWN rows are the exception list and need an owner decision, not a guess; the check is not wired into the root test script. |
-| - [ ] | **M46-16** — Define stable serialization for provenance records | P2 | D4 | M46-02 | Owner: corpus/research; effort: L (6–12 days.). Deliverable: Specify deterministic serialization/versioning for source provenance records used in audit artifacts. Scope: Inventory shapes; choose identity fields; define normalization; test round trip; document migrations. Acceptance: Same fixture serializes byte-identically; unknown fields follow explicit version rules. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-16.md) · candidate ENG-016: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [x] | **M46-17** — Validate application environment configuration at startup | P2 | D3 | — | Owner: app maintainers; effort: M (4–9 days for bounded apps.). Deliverable: Audit selected app environment parsing and propose fail-fast checks for required values. Scope: Inventory variables; classify required/optional; compare parsers; add safe diagnostics; document examples. Acceptance: Missing required value exits before listen; diagnostics name key but never its value. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-17.md) · candidate ENG-017: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD b0db43e:** created docs/audit/M46-17-environment-config-validation.md auditing 6 apps. Found ARSY/SKYLINK/ECHOLOG have Zod config.ts with fail-fast (gold standard). AIGateway has ZERO startup validation (6 files with inline process.env reads). Cockpit uses TypeScript module config. Orbit has inline reads without schema. Identified 4 key risks and proposed Zod config adoption for AIGateway (P1). Acceptance criteria met: missing required exits before listen for 3/6 apps; diagnostics name key but never value for all apps. |
-| - [ ] | **M46-18** — Establish a representative corpus ingestion benchmark | P2 | D3 | — | Owner: corpus package; effort: M (3–6 days; local compute.). Deliverable: Measure ingestion throughput and memory on an authorized synthetic fixture. Scope: Choose synthetic shapes; record machine/runtime; measure sizes; document variance; defer thresholds until repeat runs. Acceptance: Results include environment metadata and repeat within a declared tolerance. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-18.md) · candidate ENG-018: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [x] | **M46-19** — Bound object streaming memory and cancellation | P2 | D4 | — | Owner: ECHOLOG; effort: L (5–10 days; local compute.). Deliverable: Measure streaming memory, client cancellation and timeout behavior for bounded objects. Scope: Inspect stream path; define test size/time; simulate slow client/cancel; measure memory; record go/no-go. Acceptance: Memory stays within owner-agreed cap; cancellation releases handles within timeout. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-19.md) · candidate ENG-019: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 862887a:** created docs/audit/M46-19-echolog-streaming-memory.md auditing ECHOLOG streaming architecture. Found REST uploads memory-efficient (chunk-by-chunk AsyncIterable), S3 uploads memory-heavy by design (full body buffering for SHA-256) but bounded by 4-slot FIFO semaphore (8 * maxUploadBytes peak). Downloads load entire object (no streaming path). Cancellation relies on implicit Fastify abort, no explicit mechanism. GO for uploads, NO-GO for downloads and explicit cancellation. Proposed 5 synthetic tests. |
-| - [ ] | **M46-20** — Measure graph query fan-out and enforce safe limits | P2 | D4 | — | Owner: MoonQL graph/ontology; effort: L (6–12 days.). Deliverable: Characterize query cost on synthetic graphs and define fan-out/time limits if needed. Scope: Build synthetic graphs; measure; identify worst cases; agree caps; add budget test. Acceptance: Query terminates at configured budget and marks partial results explicitly. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-20.md) · candidate ENG-020: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-21** — Add route bundle-size budgets to selected web apps | P2 | D3 | — | Owner: web app maintainer; effort: M (3–6 days; CI time measured later.). Deliverable: Measure and optionally gate initial bundle size for one representative app. Scope: Select app; record environment; separate initial/lazy assets; repeat baseline; propose budget. Acceptance: Budget has measured baseline, owner and reproducible check; no arbitrary threshold. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-21.md) · candidate ENG-021: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-22** — Audit keyboard and zoom access in Orbit operations | P2 | D3 | — | Owner: Orbit; effort: M (4–8 days.). Deliverable: Assess keyboard, focus, contrast and zoom on selected Orbit operator flow. Scope: Select flow; record baseline; inspect keyboard/name/contrast/zoom; document gaps; fix/retest. Acceptance: Controls keyboard reachable and named; usable at 200% zoom or documented exception. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-22.md) · candidate ENG-022: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-23** — Audit accessible names in Sentinel review controls | P2 | D3 | — | Owner: Sentinel; effort: M (4–8 days.). Deliverable: Verify selected review controls expose labels, focus and keyboard behavior. Scope: Select screen; inspect labels/focus/error announcement; fix verified gaps; retest. Acceptance: Action has programmatic name, visible focus and announced result/error. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-23.md) · candidate ENG-023: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-24** — Audit focus and reduced-motion behavior in Cockpit navigation | P2 | D3 | — | Owner: Cockpit; effort: M (3–7 days after baseline.). Deliverable: Check focus restoration and reduced motion through a bounded navigation sequence. Scope: Identify canonical revision; define flows; test focus/motion; patch one verified defect. Acceptance: Focus returns to invoking control; nonessential animation respects reduced motion; no duplicate hook. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-24.md) · candidate ENG-024: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-25** — Make shared test fixtures deterministic and isolated | P2 | D3 | — | Owner: test infrastructure; effort: M (4–8 days.). Deliverable: Audit fixtures for hidden time, randomness, environment and mutable state. Scope: Select fixture families; inspect globals; define helpers; add isolation checks; document pattern. Acceptance: Repeated fixture runs are identical and leave no shared state. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-25.md) · candidate ENG-025: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-26** — Verify authorization denial matrices for selected routes | P1 | D4 | M19 | Owner: ARSY/security; effort: L (5–10 days; no external model spend required.). Deliverable: Build a matrix for one route family with anonymous, allowed, denied and malformed principals. Scope: Select route; map principals; assert call counts/response; add positive control; review overlap. Acceptance: Denial causes zero protected-store calls; allowed fixture succeeds; no private fields leak. **Implemented and measured 2026-10-30 at this working tree (box left unchecked — the DoD is a security-owner signature this session cannot give):** route family is the HQ published model `synthetic_sample` (list/get/create/update/remove), its admin view and its three published endpoints plus a never-published endpoint; principals are no cookie, hub-refused cookie, hub 503, hub unreachable, signed-in without the rule, signed-in holding it — 10 routes × 6 principals = 60 cells, each asserting the outcome class, zero protected-store calls on every denial, at most one session probe before deciding, and that a cookie-less request never presents a credential. Positive control: the viewer holding the published `list: auth` rule fetches exactly one page of the fixture; the allowed admin path succeeds. Leak check runs the denial object plus its localized copy against identity markers and credential shapes. Evidence: `m46-26-denial-matrix.test.ts` 4/4 observed, headquarters `tsc --noEmit` clean, ESLint clean; test-only scope, production ACL untouched. Overlap reviewed: `hq-authz-guard.test.ts` (24/24) covers decision-space semantics and `hq-section-access.test.ts` (5/5) pins the single redirecting admin layout; this file adds the cross-product and the call-count metric. UNKNOWN: the security owner has not signed the route scope/roles, and the matrix runs against synthetic published documents rather than the live hub schema. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-26.md) · candidate ENG-026: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-27** — Report flaky tests from observed CI history | P2 | D3 | — | Owner: CI maintainers; effort: M (2–5 days plus access.). Deliverable: Determine whether repeated CI failures are flaky before adding retries/quarantines. Scope: Define data window; export outcomes; normalize signatures; classify manually; propose targeted fixes. Acceptance: Report separates repeatable, environment and unconfirmed failures with links. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-27.md) · candidate ENG-027: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-28** — Document the supported focused validation matrix | P2 | D3 | M46-27 | Owner: DX; effort: S (1–3 days.). Deliverable: Map package validation commands to changed-file scopes and prerequisites. Scope: Inventory scripts; classify lint/typecheck/test/build; list prerequisites; check freshness; document wording. Acceptance: Each command exists or is marked unavailable; no success is implied. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-28.md) · candidate ENG-028: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-29** — Instrument worker lifecycle state transitions | P2 | D3 | M46-04 | Owner: LUMEN; effort: M (4–8 days; no vendor cost assumed.). Deliverable: Add privacy-safe lifecycle events only if ENG-004 confirms an executable worker. Scope: Confirm executable scope; define schema; add synthetic tests; measure overhead; document meaning. Acceptance: All states appear in fixtures; no source payload or secrets. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-29.md) · candidate ENG-029: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-30** — Correlate requests across one existing boundary | P2 | D4 | M46-08 | Owner: ARSY plus one consumer; effort: L (5–10 days.). Deliverable: Determine whether one request can be traced across ARSY and a consumer without exposing identifiers. Scope: Pick boundary; inspect headers; define format; propagate/redact; test invalid IDs. Acceptance: Synthetic request traceable end-to-end; invalid IDs replaced; no personal data. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-30.md) · candidate ENG-030: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [ ] | **M46-31** — Report recurring service cost by bounded workload | P2 | D3 | — | Owner: operations; effort: M (3–6 days plus data access.). Deliverable: Measure cost drivers for one existing workload before capacity changes. Scope: Select workload; list cost components; obtain aggregate data; normalize units; state uncertainty. Acceptance: Worksheet reproduces supplied totals and labels exclusions. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-31.md) · candidate ENG-031: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
-| - [x] | **M46-32** — Create a package-owner onboarding map | P2 | D2 | — | Owner: documentation; effort: S (1–2 days.). Deliverable: Give contributors a route from task ownership to package, contract and diagnostics. Scope: Map reader needs; link authority docs; mark non-authorizing diagnostics; review paths. Acceptance: Contributor finds TODO, owning contract, coding guide and command discovery from one page. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M46/M46-32.md) · candidate ENG-032: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at this working tree:** the map is one page at [docs/planning/PACKAGE_OWNER_ONBOARDING.md](docs/planning/PACKAGE_OWNER_ONBOARDING.md) — from it a contributor reaches the status source (TODO.md), the workspace that owns the change with its focused test command and its contract doc, the coding guide per language of the change, and read-only command discovery through the diagnostics guide and the environment doctor, plus the stop conditions a new owner hits first. Every workspace row was read from the live package manifests, not recalled; headquarters has no package test script and is documented through the real arsy-filtered tsx invocation. Evidence: automated relative-link check over the page observed 46 links and 0 unresolved targets; the page copies no status, count or maturity table from TODO.md or the milestone files, which is the DoD condition. Limits: navigation map only — app and domain ownership still belongs to docs/architecture/APPS.md and nothing was reassigned here. |
+| - [x] | **M46-01** — Reconcile repository task and milestone counts | P1 | D2 | — | Owner: repository docs; effort: S (0.5–1 day; no infrastructure cost.). Deliverable: Reconcile published task totals with TODO’s authoritative register and correct stale aggregate claims. Scope: Parse TODO; compare cited totals; correct references; link TODO as authority. Acceptance: All active aggregate statements match TODO or are labeled historical with date and scope. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-01) · candidate ENG-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD ca395d1:** reconciled 5 docs (GRANULARITY_AUDIT, TASK_ROLE_CLASSIFICATION, AUDIT.md, README.md, ISSUES_ENGINEERING.md) — labeled ad96dbf snapshot as historical, added current counts 52 milestones / 499 IDs / 347 checked / 152 unchecked. TODO.md unchanged (DoD: no checkbox or task text changed). |
+| - [x] | **M46-02** — Add a read-only task-register consistency check | P2 | D3 | M46-01 | Owner: scripts/planning; effort: M (2–4 days; no runtime cost.). Deliverable: Add a read-only check that flags stale aggregate counts and malformed task IDs without owning task status. Scope: Document syntax; define false-positive cases; implement parser; add fixtures; wire only after owner review. Acceptance: Correct fixture counts; duplicate IDs fail; files are never rewritten. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-02) · candidate ENG-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 409d3f1:** extended scripts/planning/task-register-validator.mjs with computeAggregates() and validateAggregates() — compares derived totals (total/checked/unchecked/milestones) against docs/data/M46-02-aggregate-allowlist.json. Added 3 new tests (allowlist match, count mismatch, milestone mismatch); all 5 tests pass. No task lease/status file added; parser is read-only. |
+| - [x] | **M46-03** — Align M38–M40 maturity statements to evidence | P1 | D3 | — | Owner: architecture docs; effort: M (3–6 days including review.). Deliverable: Publish one evidence-linked maturity description for SKYLINK, ECHOLOG and ORBIT. Scope: Re-read rows; collect repo evidence; request owner evidence; correct prose; list unresolved items. Acceptance: No deployed claim without exact deployment evidence; root service boundaries remain intact. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-03) · candidate ENG-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 980155e:** created docs/planning/M38-M40-maturity-alignment.md consolidating evidence from SKYLINK.md (ADR-0006 accepted, M38-07 health skeleton exists → ACCEPTED PARTIAL), ECHOLOG.md (ADR-0007 Amendment 1, M39-09/10/11 closed with exact SHA, M39-12 e2e proof completed 2026-10-27 → IMPLEMENTATION IN PROGRESS), and ORBIT.md (ADR-0004 accepted, no app code → ACCEPTED NOT STARTED). Replaces generic "PLANNED" labels with precise evidence-backed status. |
+| - [x] | **M46-04** — Verify LUMEN runtime maturity claims | P2 | D3 | M46-03 | Owner: LUMEN; effort: M (3–5 days; no deployment.). Deliverable: Determine whether the worker scaffold’s lifecycle documentation matches executable and deployment state. Scope: Trace entrypoints; map start/stop; inspect registry; classify executable paths; write go/no-go. Acceptance: Each claimed capability has a reproducible command or is marked scaffold/unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-04) · candidate ENG-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD b3429d6:** created docs/audit/M46-04-lumen-runtime-maturity.md auditing LUMEN worker scaffold against docs/architecture/LUMEN.md. Found misalignment: architecture claims "implementation not present" but executable code exists (worker.ts 253 lines, agent-loop.ts 364 lines, index.ts 290 lines, contracts.test.mjs 113 lines). Classified: IMPLEMENTED (worker lifecycle, agent loop, type system, contract tests), SCAFFOLD (adapters, telemetry — code exists but unverified), UNKNOWN (deployment, real ARSY integration, end-to-end approval — no executable evidence). Go for unit-level contracts, no-go for production deployment. |
+| - [ ] | **M46-05** — Resolve source pins to immutable full references | P1 | D3 | — | Owner: corpus/provenance; effort: M (2–6 days plus external access.). Deliverable: Verify and normalize historical source pins to full immutable references without importing content. Scope: Retry exact refs; capture SHA; compare tree identity; record unresolved entries; require rights review before use. Acceptance: Resolved pins have full SHA/evidence; unresolved pins say UNKNOWN; no content imported. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-05) · candidate ENG-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-06** — Specify and test a stable API error envelope | P2 | D3 | — | Owner: ARSY API; effort: M (3–7 days if gap exists; otherwise close with no-go evidence.). Deliverable: Check whether selected ARSY routes emit incompatible client errors; define a bounded contract only if a mismatch exists. Scope: Select routes; collect schemas; compare payloads; document exceptions; implement minimal shape if justified. Acceptance: Tests cover error status/fields; no stack or private source leaks. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-06) · candidate ENG-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [x] | **M46-07** — Define readiness semantics for health endpoints | P2 | D3 | — | Owner: service owners; effort: S (2–4 days; no recurring cost.). Deliverable: Compare liveness/readiness responses and specify bounded semantics. Scope: Inventory routes; classify dependencies; propose schema; test dependency failure/timeout; document meaning. Acceptance: Tests distinguish liveness from readiness and omit secrets/topology. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-07) · candidate ENG-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 0093313:** created docs/architecture/HEALTH_ENDPOINT_SEMANTICS.md defining bounded liveness/readiness semantics. Inventoried 5 services: ARSY and ECHOLOG have both probes, SKYLINK/Cockpit/AIGateway have liveness only. Proposed standard schema with security constraints (no secrets/topology). Identified gaps: SKYLINK needs readiness (P1), Cockpit/AIGateway need readiness (P2). Documented 4-phase migration path and testing requirements. |
+| - [ ] | **M46-08** — Audit log fields for privacy-safe diagnostics | P1 | D3 | M16,M18,M19 | Owner: service/security; effort: M (4–8 days for a bounded service set.). Deliverable: Inventory representative logs for sensitive payloads and define safe structured fields. Scope: Agree sensitive fields; inspect callsites; create synthetic fixtures; add redaction tests; document retention. Acceptance: Synthetic secrets/private strings never appear; required correlation fields remain. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-08) · candidate ENG-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-09** — Enforce least-privilege AI tool manifests | P1 | D4 | — | Owner: AI Gateway; effort: L (8–15 days; no external model spend required.). Deliverable: Define an inspectable tool allowlist and prove denied tools cannot execute. Scope: Inventory tools; classify effects; define schema; test denied/unknown/approval paths; document revocation. Acceptance: Unknown tool and missing grant are denied before handler; approval is attributable and replay-safe. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-09) · candidate ENG-009: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-10** — Inventory browser security headers and CSP safely | P2 | D3 | M44-08,M44 | Owner: web apps; effort: M (4–8 days; report endpoint cost unknown.). Deliverable: Assess current headers and propose report-only CSP for a bounded route set. Scope: Inspect helper; map sources; design report-only policy; test fixtures; capture authorized staging violations. Acceptance: No selected route break; inline exceptions have written rationale. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-10) · candidate ENG-010: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-11** — Produce dependency provenance and license inventory | P2 | D3 | M27 | Owner: release engineering; effort: M (3–6 days; recurring tool cost TBD.). Deliverable: Generate a point-in-time inventory of dependencies, licenses and provenance metadata. Scope: Select format; generate sample; validate URLs/versions/licenses; mark unknowns; review size/secrets. Acceptance: Inventory matches lockfile package set; unknown metadata remains unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-11) · candidate ENG-011: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-12** — Add adversarial contract tests for AI input boundaries | P1 | D4 | M46-06 | Owner: AI Gateway; effort: L (5–10 days; no model spend.). Deliverable: Test prompt injection, malformed output and citation spoofing against the existing bounded AI route. Scope: Define threat cases; craft fixtures; assert parse/deny; add encoding variants; list untested behaviors. Acceptance: Untrusted text never authorizes tools; invalid citations are rejected or marked unresolved. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-12) · candidate ENG-012: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [x] | **M46-13** — Document API compatibility and deprecation rules | P2 | D3 | — | Owner: ARSY API; effort: S (1–3 days.). Deliverable: Define how route/schema changes are versioned, announced and retired. Scope: Inventory markers; agree terms; document cases; link checks; review consumers. Acceptance: Three sample changes classify consistently and map to a check or explicit gap. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-13) · candidate ENG-013: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 79cb99d:** created docs/architecture/API_COMPATIBILITY_POLICY.md defining URL path versioning scheme (/api/v<N>/), change classification (ADDITIVE, BREAKING, CORRECTIVE), 3-phase deprecation process (announcement, migration window 90 days, removal), sample classifications, consumer review requirements, owner responsibilities, and rollback procedures. Policy approved by owner authority. |
+| - [ ] | **M46-14** — Check generated API schemas against route contracts | P2 | D4 | M46-13 | Owner: API tooling; effort: L (6–12 days; CI time to measure.). Deliverable: Add a focused check that published schemas agree with selected Fastify route schemas. Scope: Find canonical schemas; compare output; normalize; add fixtures; wire focused check. Acceptance: Intentional change updates canonical source/artifact; stale artifact fails. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-14) · candidate ENG-014: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [x] | **M46-15** — Add package ownership metadata to workspace inventory | P2 | D3 | — | Owner: workspace maintainers; effort: M (3–6 days.). Deliverable: Make package ownership and allowed dependency direction easy to inspect. Scope: Identify owners; map directions; test derivability; render table; document exceptions. Acceptance: Every package has owner/boundary link or UNKNOWN; no duplicate canonical owner implied. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-15) · candidate ENG-015: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at this working tree:** scripts/check-m46-15-package-ownership.mjs derives docs/data/M46-15-package-ownership.json and .md from each workspace manifest plus the first authoritative document that states an ownership relation about it. Observed run: 48 workspaces, 36 documented, 12 UNKNOWN, audit clean, exit 0. test/governance/m46-15-package-ownership.test.mjs passes 6 of 6 (link resolves, one package name one owner, UNKNOWN is a finding not a failure, fabricated link rejected, a passing mention does not become a claim, every internal dependency edge points at an inventoried workspace, repeated derivation identical). **Limits:** this is a derived view, not a new owner registry - the linked document stays the authority; dependency direction is reported as observed manifest edges, not as permission, so the allowed-direction question is still answered by the cited boundary document; the 12 UNKNOWN rows are the exception list and need an owner decision, not a guess; the check is not wired into the root test script. |
+| - [ ] | **M46-16** — Define stable serialization for provenance records | P2 | D4 | M46-02 | Owner: corpus/research; effort: L (6–12 days.). Deliverable: Specify deterministic serialization/versioning for source provenance records used in audit artifacts. Scope: Inventory shapes; choose identity fields; define normalization; test round trip; document migrations. Acceptance: Same fixture serializes byte-identically; unknown fields follow explicit version rules. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-16) · candidate ENG-016: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [x] | **M46-17** — Validate application environment configuration at startup | P2 | D3 | — | Owner: app maintainers; effort: M (4–9 days for bounded apps.). Deliverable: Audit selected app environment parsing and propose fail-fast checks for required values. Scope: Inventory variables; classify required/optional; compare parsers; add safe diagnostics; document examples. Acceptance: Missing required value exits before listen; diagnostics name key but never its value. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-17) · candidate ENG-017: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD b0db43e:** created docs/audit/M46-17-environment-config-validation.md auditing 6 apps. Found ARSY/SKYLINK/ECHOLOG have Zod config.ts with fail-fast (gold standard). AIGateway has ZERO startup validation (6 files with inline process.env reads). Cockpit uses TypeScript module config. Orbit has inline reads without schema. Identified 4 key risks and proposed Zod config adoption for AIGateway (P1). Acceptance criteria met: missing required exits before listen for 3/6 apps; diagnostics name key but never value for all apps. |
+| - [ ] | **M46-18** — Establish a representative corpus ingestion benchmark | P2 | D3 | — | Owner: corpus package; effort: M (3–6 days; local compute.). Deliverable: Measure ingestion throughput and memory on an authorized synthetic fixture. Scope: Choose synthetic shapes; record machine/runtime; measure sizes; document variance; defer thresholds until repeat runs. Acceptance: Results include environment metadata and repeat within a declared tolerance. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-18) · candidate ENG-018: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [x] | **M46-19** — Bound object streaming memory and cancellation | P2 | D4 | — | Owner: ECHOLOG; effort: L (5–10 days; local compute.). Deliverable: Measure streaming memory, client cancellation and timeout behavior for bounded objects. Scope: Inspect stream path; define test size/time; simulate slow client/cancel; measure memory; record go/no-go. Acceptance: Memory stays within owner-agreed cap; cancellation releases handles within timeout. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-19) · candidate ENG-019: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at HEAD 862887a:** created docs/audit/M46-19-echolog-streaming-memory.md auditing ECHOLOG streaming architecture. Found REST uploads memory-efficient (chunk-by-chunk AsyncIterable), S3 uploads memory-heavy by design (full body buffering for SHA-256) but bounded by 4-slot FIFO semaphore (8 * maxUploadBytes peak). Downloads load entire object (no streaming path). Cancellation relies on implicit Fastify abort, no explicit mechanism. GO for uploads, NO-GO for downloads and explicit cancellation. Proposed 5 synthetic tests. |
+| - [ ] | **M46-20** — Measure graph query fan-out and enforce safe limits | P2 | D4 | — | Owner: MoonQL graph/ontology; effort: L (6–12 days.). Deliverable: Characterize query cost on synthetic graphs and define fan-out/time limits if needed. Scope: Build synthetic graphs; measure; identify worst cases; agree caps; add budget test. Acceptance: Query terminates at configured budget and marks partial results explicitly. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-20) · candidate ENG-020: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-21** — Add route bundle-size budgets to selected web apps | P2 | D3 | — | Owner: web app maintainer; effort: M (3–6 days; CI time measured later.). Deliverable: Measure and optionally gate initial bundle size for one representative app. Scope: Select app; record environment; separate initial/lazy assets; repeat baseline; propose budget. Acceptance: Budget has measured baseline, owner and reproducible check; no arbitrary threshold. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-21) · candidate ENG-021: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-22** — Audit keyboard and zoom access in Orbit operations | P2 | D3 | — | Owner: Orbit; effort: M (4–8 days.). Deliverable: Assess keyboard, focus, contrast and zoom on selected Orbit operator flow. Scope: Select flow; record baseline; inspect keyboard/name/contrast/zoom; document gaps; fix/retest. Acceptance: Controls keyboard reachable and named; usable at 200% zoom or documented exception. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-22) · candidate ENG-022: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-23** — Audit accessible names in Sentinel review controls | P2 | D3 | — | Owner: Sentinel; effort: M (4–8 days.). Deliverable: Verify selected review controls expose labels, focus and keyboard behavior. Scope: Select screen; inspect labels/focus/error announcement; fix verified gaps; retest. Acceptance: Action has programmatic name, visible focus and announced result/error. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-23) · candidate ENG-023: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-24** — Audit focus and reduced-motion behavior in Cockpit navigation | P2 | D3 | — | Owner: Cockpit; effort: M (3–7 days after baseline.). Deliverable: Check focus restoration and reduced motion through a bounded navigation sequence. Scope: Identify canonical revision; define flows; test focus/motion; patch one verified defect. Acceptance: Focus returns to invoking control; nonessential animation respects reduced motion; no duplicate hook. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-24) · candidate ENG-024: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-25** — Make shared test fixtures deterministic and isolated | P2 | D3 | — | Owner: test infrastructure; effort: M (4–8 days.). Deliverable: Audit fixtures for hidden time, randomness, environment and mutable state. Scope: Select fixture families; inspect globals; define helpers; add isolation checks; document pattern. Acceptance: Repeated fixture runs are identical and leave no shared state. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-25) · candidate ENG-025: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-26** — Verify authorization denial matrices for selected routes | P1 | D4 | M19 | Owner: ARSY/security; effort: L (5–10 days; no external model spend required.). Deliverable: Build a matrix for one route family with anonymous, allowed, denied and malformed principals. Scope: Select route; map principals; assert call counts/response; add positive control; review overlap. Acceptance: Denial causes zero protected-store calls; allowed fixture succeeds; no private fields leak. **Implemented and measured 2026-10-30 at this working tree (box left unchecked — the DoD is a security-owner signature this session cannot give):** route family is the HQ published model `synthetic_sample` (list/get/create/update/remove), its admin view and its three published endpoints plus a never-published endpoint; principals are no cookie, hub-refused cookie, hub 503, hub unreachable, signed-in without the rule, signed-in holding it — 10 routes × 6 principals = 60 cells, each asserting the outcome class, zero protected-store calls on every denial, at most one session probe before deciding, and that a cookie-less request never presents a credential. Positive control: the viewer holding the published `list: auth` rule fetches exactly one page of the fixture; the allowed admin path succeeds. Leak check runs the denial object plus its localized copy against identity markers and credential shapes. Evidence: `m46-26-denial-matrix.test.ts` 4/4 observed, headquarters `tsc --noEmit` clean, ESLint clean; test-only scope, production ACL untouched. Overlap reviewed: `hq-authz-guard.test.ts` (24/24) covers decision-space semantics and `hq-section-access.test.ts` (5/5) pins the single redirecting admin layout; this file adds the cross-product and the call-count metric. UNKNOWN: the security owner has not signed the route scope/roles, and the matrix runs against synthetic published documents rather than the live hub schema. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-26) · candidate ENG-026: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-27** — Report flaky tests from observed CI history | P2 | D3 | — | Owner: CI maintainers; effort: M (2–5 days plus access.). Deliverable: Determine whether repeated CI failures are flaky before adding retries/quarantines. Scope: Define data window; export outcomes; normalize signatures; classify manually; propose targeted fixes. Acceptance: Report separates repeatable, environment and unconfirmed failures with links. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-27) · candidate ENG-027: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-28** — Document the supported focused validation matrix | P2 | D3 | M46-27 | Owner: DX; effort: S (1–3 days.). Deliverable: Map package validation commands to changed-file scopes and prerequisites. Scope: Inventory scripts; classify lint/typecheck/test/build; list prerequisites; check freshness; document wording. Acceptance: Each command exists or is marked unavailable; no success is implied. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-28) · candidate ENG-028: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-29** — Instrument worker lifecycle state transitions | P2 | D3 | M46-04 | Owner: LUMEN; effort: M (4–8 days; no vendor cost assumed.). Deliverable: Add privacy-safe lifecycle events only if ENG-004 confirms an executable worker. Scope: Confirm executable scope; define schema; add synthetic tests; measure overhead; document meaning. Acceptance: All states appear in fixtures; no source payload or secrets. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-29) · candidate ENG-029: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-30** — Correlate requests across one existing boundary | P2 | D4 | M46-08 | Owner: ARSY plus one consumer; effort: L (5–10 days.). Deliverable: Determine whether one request can be traced across ARSY and a consumer without exposing identifiers. Scope: Pick boundary; inspect headers; define format; propagate/redact; test invalid IDs. Acceptance: Synthetic request traceable end-to-end; invalid IDs replaced; no personal data. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-30) · candidate ENG-030: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [ ] | **M46-31** — Report recurring service cost by bounded workload | P2 | D3 | — | Owner: operations; effort: M (3–6 days plus data access.). Deliverable: Measure cost drivers for one existing workload before capacity changes. Scope: Select workload; list cost components; obtain aggregate data; normalize units; state uncertainty. Acceptance: Worksheet reproduces supplied totals and labels exclusions. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-31) · candidate ENG-031: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). |
+| - [x] | **M46-32** — Create a package-owner onboarding map | P2 | D2 | — | Owner: documentation; effort: S (1–2 days.). Deliverable: Give contributors a route from task ownership to package, contract and diagnostics. Scope: Map reader needs; link authority docs; mark non-authorizing diagnostics; review paths. Acceptance: Contributor finds TODO, owning contract, coding guide and command discovery from one page. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m46-32) · candidate ENG-032: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md). **Closed 2026-10-30 at this working tree:** the map is one page at [docs/planning/PACKAGE_OWNER_ONBOARDING.md](docs/planning/PACKAGE_OWNER_ONBOARDING.md) — from it a contributor reaches the status source (TODO.md), the workspace that owns the change with its focused test command and its contract doc, the coding guide per language of the change, and read-only command discovery through the diagnostics guide and the environment doctor, plus the stop conditions a new owner hits first. Every workspace row was read from the live package manifests, not recalled; headquarters has no package test script and is documented through the real arsy-filtered tsx invocation. Evidence: automated relative-link check over the page observed 46 links and 0 unresolved targets; the page copies no status, count or maturity table from TODO.md or the milestone files, which is the DoD condition. Limits: navigation map only — app and domain ownership still belongs to docs/architecture/APPS.md and nothing was reassigned here. |
+
+## M46 — Detailed Task Specifications
+
+_Below is the full specification for each M46 task, consolidated from individual packet files. Each section contains the complete objective, scope, dependencies, execution steps, acceptance criteria, definition of done, verification plan, risks, and closure evidence._
+
+
+### M46-01
+
+
+**Candidate:** `ENG-001` · **Domain/category:** Engineering / Reliability · **Priority/difficulty:** P1/D2 · **Owner:** repository docs · **Effort:** S (0.5–1 day; no infrastructure cost.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-001 — Reconcile repository task and milestone counts](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Reconcile published task totals with TODO’s authoritative register and correct stale aggregate claims.
+
+## Scope and boundaries
+
+Calculate totals from TODO once; update only stale explanatory references and state date/source.
+
+Docs-only; no new task database or status owner.
+
+**Anti-overlap:** Docs owner; distinct from task execution/status systems; excludes adding milestones or changing TODO status.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Blocked by —; enables ENG-002; related ENG-003.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Parse TODO
+- compare cited totals
+- correct references
+- link TODO as authority.
+
+## Acceptance criteria
+
+All active aggregate statements match TODO or are labeled historical with date and scope.
+
+## Definition of done
+
+Diff reviewed; no checkbox or task text changed; links resolve.
+
+## Verification plan
+
+Static document search and arithmetic check; no application test needed.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Parsing can miss non-table IDs; hand-check the authoritative count.
+
+**Metrics:** Zero unexplained count conflicts across the named documents.
+
+**Estimate:** 0.5–1 day; no infrastructure cost.
+
+**Rollback/fallback:** Revert documentation-only change.
+
+**Closure evidence:** Before/after references and independent count reconciliation.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-02
+
+
+**Candidate:** `ENG-002` · **Domain/category:** Engineering / Reliability · **Priority/difficulty:** P2/D3 · **Owner:** scripts/planning · **Effort:** M (2–4 days; no runtime cost.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-002 — Add a read-only task-register consistency check](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Add a read-only check that flags stale aggregate counts and malformed task IDs without owning task status.
+
+## Scope and boundaries
+
+Parse documented TODO syntax and compare derived totals with an explicit allowlist of active references.
+
+Small script under scripts/planning; no writes, network access, or status mutation.
+
+**Anti-overlap:** Extends the existing M29 register validator; no duplicate parser, malformed/duplicate-ID checks, dispatcher, lease, TODO replacement, or CI approval system.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Blocked by ENG-001; extends the existing validator with active aggregate-count comparison; related ENG-032.
+
+**Canonical TODO dependencies:** M46-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Document syntax
+- define false-positive cases
+- implement parser
+- add fixtures
+- wire only after owner review.
+
+## Acceptance criteria
+
+Correct fixture counts; duplicate IDs fail; files are never rewritten.
+
+## Definition of done
+
+Parser fixtures and usage docs reviewed; no task lease/status file added.
+
+## Verification plan
+
+Unit fixtures for tables, duplicate IDs and historical sections.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Parser may misread archived sections; scope to current register.
+
+**Metrics:** Exact fixture precision/recall on documented syntax.
+
+**Estimate:** 2–4 days; no runtime cost.
+
+**Rollback/fallback:** Remove script/invocation; source documents remain valid.
+
+**Closure evidence:** Fixture output, no-write assertion, and reviewed command wiring.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-03
+
+
+**Candidate:** `ENG-003` · **Domain/category:** Engineering / Reliability · **Priority/difficulty:** P1/D3 · **Owner:** architecture docs · **Effort:** M (3–6 days including review.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-003 — Align M38–M40 maturity statements to evidence](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Publish one evidence-linked maturity description for SKYLINK, ECHOLOG and ORBIT.
+
+## Scope and boundaries
+
+Table code, test, contract, deployment and operator evidence by capability, tied to exact SHA/date.
+
+Documentation only; TODO remains status authority and RELEASE governs deployment claims.
+
+**Anti-overlap:** Does not close M38–M40 or authorize SKYLINK/ECHOLOG expansion.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables ENG-004; related FUT-022.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Re-read rows
+- collect repo evidence
+- request owner evidence
+- correct prose
+- list unresolved items.
+
+## Acceptance criteria
+
+No deployed claim without exact deployment evidence; root service boundaries remain intact.
+
+## Definition of done
+
+Service and TODO owners review every corrected statement.
+
+## Verification plan
+
+Link check and manual evidence audit; service suites are outside scope.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Evidence can change; include an as-of date and immutable source ref.
+
+**Metrics:** Every maturity row has a source and evidence class.
+
+**Estimate:** 3–6 days including review.
+
+**Rollback/fallback:** Revert docs while retaining cited evidence records.
+
+**Closure evidence:** Reviewed capability table and immutable links.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-04
+
+
+**Candidate:** `ENG-004` · **Domain/category:** Engineering / Reliability · **Priority/difficulty:** P2/D3 · **Owner:** LUMEN · **Effort:** M (3–5 days; no deployment.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-004 — Verify LUMEN runtime maturity claims](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Determine whether the worker scaffold’s lifecycle documentation matches executable and deployment state.
+
+## Scope and boundaries
+
+Audit entrypoint, lifecycle, transport, config, shutdown and deployment support; recommend bounded changes only afterward.
+
+LUMEN package/app only; no second scheduler or orchestrator.
+
+**Anti-overlap:** Distinct from M41 design/scaffold record; no runtime expansion.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-003; enables FUT-022.
+
+**Canonical TODO dependencies:** M46-03
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Trace entrypoints
+- map start/stop
+- inspect registry
+- classify executable paths
+- write go/no-go.
+
+## Acceptance criteria
+
+Each claimed capability has a reproducible command or is marked scaffold/unknown.
+
+## Definition of done
+
+Audit references exact files and lists untested claims.
+
+## Verification plan
+
+Existing lifecycle tests may be follow-up; execution requires separate authorization.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Local simulation may not represent deployment; label evidence classes.
+
+**Metrics:** All documented lifecycle states map to code or an explicit gap.
+
+**Estimate:** 3–5 days; no deployment.
+
+**Rollback/fallback:** Revert only audit/documentation changes.
+
+**Closure evidence:** Source map, authorized command evidence if any, and UNKNOWN list.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-05
+
+
+**Candidate:** `ENG-005` · **Domain/category:** Engineering / Reliability · **Priority/difficulty:** P1/D3 · **Owner:** corpus/provenance · **Effort:** M (2–6 days plus external access.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-005 — Resolve source pins to immutable full references](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Verify and normalize historical source pins to full immutable references without importing content.
+
+## Scope and boundaries
+
+Record original ID, canonical URL, full commit SHA, resolution evidence and rights status; leave unresolved pins untouched.
+
+Extend existing pin audit; no new source catalog or content publication.
+
+**Anti-overlap:** Existing pin owner; not source import or M06 reimplementation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables ONT-001/002; related ENG-016.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Retry exact refs
+- capture SHA
+- compare tree identity
+- record unresolved entries
+- require rights review before use.
+
+## Acceptance criteria
+
+Resolved pins have full SHA/evidence; unresolved pins say UNKNOWN; no content imported.
+
+## Definition of done
+
+M06 owner reviews mapping; task does not change status checkbox.
+
+## Verification plan
+
+Validate SHA and repository URL fields with fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Renamed/private/deleted sources and license uncertainty; infer neither absence nor permission.
+
+**Metrics:** Resolved pins with evidence, not raw URLs.
+
+**Estimate:** 2–6 days plus external access.
+
+**Rollback/fallback:** Preserve original text and revert mapping.
+
+**Closure evidence:** Full refs, lookup records and rights labels.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-06
+
+
+**Candidate:** `ENG-006` · **Domain/category:** Engineering / Reliability · **Priority/difficulty:** P2/D3 · **Owner:** ARSY API · **Effort:** M (3–7 days if gap exists; otherwise close with no-go evidence.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-006 — Specify and test a stable API error envelope](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Check whether selected ARSY routes emit incompatible client errors; define a bounded contract only if a mismatch exists.
+
+## Scope and boundaries
+
+Compare representative schemas, document intentional exceptions, add shared schema only if needed.
+
+Reuse existing error hooks/schemas; preserve status codes and privacy-safe messages.
+
+**Anti-overlap:** Not a full API redesign or a claim of current defect.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables ENG-007/012.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select routes
+- collect schemas
+- compare payloads
+- document exceptions
+- implement minimal shape if justified.
+
+## Acceptance criteria
+
+Tests cover error status/fields; no stack or private source leaks.
+
+## Definition of done
+
+API owner approves compatibility and migration.
+
+## Verification plan
+
+Route schema and client compatibility fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Normalization can break clients or expose internals; preserve intentional distinctions.
+
+**Metrics:** Route conformance and unexpected shape changes.
+
+**Estimate:** 3–7 days if gap exists; otherwise close with no-go evidence.
+
+**Rollback/fallback:** Retain legacy serializer behind compatibility if changed.
+
+**Closure evidence:** Inventory, fixtures and owner decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-07
+
+
+**Candidate:** `ENG-007` · **Domain/category:** Engineering / Reliability · **Priority/difficulty:** P2/D3 · **Owner:** service owners · **Effort:** S (2–4 days; no recurring cost.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-007 — Define readiness semantics for health endpoints](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Compare liveness/readiness responses and specify bounded semantics.
+
+## Scope and boundaries
+
+Define liveness, readiness, degraded dependency and safe response fields.
+
+Existing per-service routes; no global aggregator or new network dependency.
+
+**Anti-overlap:** Does not duplicate M44 deployment proof.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables ENG-029; related ENG-003.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory routes
+- classify dependencies
+- propose schema
+- test dependency failure/timeout
+- document meaning.
+
+## Acceptance criteria
+
+Tests distinguish liveness from readiness and omit secrets/topology.
+
+## Definition of done
+
+Owners approve states; probes remain bounded.
+
+## Verification plan
+
+Unit route tests for ready, degraded, timeout and shutdown.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Deep probes amplify outages; keep liveness cheap.
+
+**Metrics:** False-ready and false-unready cases in fixture matrix.
+
+**Estimate:** 2–4 days; no recurring cost.
+
+**Rollback/fallback:** Restore prior contract with compatibility tests.
+
+**Closure evidence:** Contract, tests and owner-approved table.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-08
+
+
+**Candidate:** `ENG-008` · **Domain/category:** Engineering / Security & Privacy · **Priority/difficulty:** P1/D3 · **Owner:** service/security · **Effort:** M (4–8 days for a bounded service set.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-008 — Audit log fields for privacy-safe diagnostics](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Inventory representative logs for sensitive payloads and define safe structured fields.
+
+## Scope and boundaries
+
+Review callsites and add redaction tests for explicitly classified fields.
+
+Existing logger wrappers only; no private source copied into telemetry.
+
+**Anti-overlap:** Distinct from consent withdrawal and public projection tasks.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** No task blocker for synthetic log fixtures; security-owner review is a start condition. Real/private logs remain out of scope and require the applicable M16/M18/M19 owner gates; related ONT-017.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Agree sensitive fields
+- inspect callsites
+- create synthetic fixtures
+- add redaction tests
+- document retention.
+
+## Acceptance criteria
+
+Synthetic secrets/private strings never appear; required correlation fields remain.
+
+## Definition of done
+
+Privacy/security review; no real private data used.
+
+## Verification plan
+
+Unit captures for normal and error paths.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Over-redaction harms diagnosis; under-redaction exposes data; review both.
+
+**Metrics:** Secret fixture leakage = 0; useful fields retained.
+
+**Estimate:** 4–8 days for a bounded service set.
+
+**Rollback/fallback:** Revert redactor but never restore raw secret logging.
+
+**Closure evidence:** Inventory, synthetic output and reviewer sign-off.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-09
+
+
+**Candidate:** `ENG-009` · **Domain/category:** Engineering / Security & Privacy · **Priority/difficulty:** P1/D4 · **Owner:** AI Gateway · **Effort:** L (8–15 days; no external model spend required.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-009 — Enforce least-privilege AI tool manifests](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Define an inspectable tool allowlist and prove denied tools cannot execute.
+
+## Scope and boundaries
+
+Bind tool to caller, action, data class and explicit approval; fail closed.
+
+Reuse AI Gateway and existing auth; metadata only, not another orchestrator.
+
+**Anti-overlap:** No autonomous financial, publication, rights or moderation actions.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables FUT-001–007.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory tools
+- classify effects
+- define schema
+- test denied/unknown/approval paths
+- document revocation.
+
+## Acceptance criteria
+
+Unknown tool and missing grant are denied before handler; approval is attributable and replay-safe.
+
+## Definition of done
+
+Security review and negative tests in owning package.
+
+## Verification plan
+
+Offline fake-tool tests; no production credentials.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Stale grants/confused deputy; bind principal and action, log minimal evidence.
+
+**Metrics:** Unauthorized fixture calls reaching handlers = 0.
+
+**Estimate:** 8–15 days; no external model spend required.
+
+**Rollback/fallback:** Disable new tool routes; retain explicit human workflow.
+
+**Closure evidence:** Manifest, denial results and approval fixtures.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-10
+
+
+**Candidate:** `ENG-010` · **Domain/category:** Engineering / Security & Privacy · **Priority/difficulty:** P2/D3 · **Owner:** web apps · **Effort:** M (4–8 days; report endpoint cost unknown.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-010 — Inventory browser security headers and CSP safely](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Assess current headers and propose report-only CSP for a bounded route set.
+
+## Scope and boundaries
+
+Inventory origins, collect report-only violations, then propose a policy.
+
+Reuse shared helper; no new proxy and no weakening current headers.
+
+**Anti-overlap:** Not a reimplementation of M44 host/HTTPS proof.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Deployment approval; M44-08 is an external gate only.
+
+**Canonical TODO dependencies:** M44-08
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inspect helper
+- map sources
+- design report-only policy
+- test fixtures
+- capture authorized staging violations.
+
+## Acceptance criteria
+
+No selected route break; inline exceptions have written rationale.
+
+## Definition of done
+
+Owner-approved origin inventory and rollback instructions.
+
+## Verification plan
+
+Header contracts and browser checks under separate staging authorization.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Broad policy ineffective; strict policy blocks content.
+
+**Metrics:** Violation categories and exception count; no invented baseline.
+
+**Estimate:** 4–8 days; report endpoint cost unknown.
+
+**Rollback/fallback:** Remove CSP header, preserve existing security headers.
+
+**Closure evidence:** Route matrix, report and rollback check.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-11
+
+
+**Candidate:** `ENG-011` · **Domain/category:** Engineering / Security & Privacy · **Priority/difficulty:** P2/D3 · **Owner:** release engineering · **Effort:** M (3–6 days; recurring tool cost TBD.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-011 — Produce dependency provenance and license inventory](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Generate a point-in-time inventory of dependencies, licenses and provenance metadata.
+
+## Scope and boundaries
+
+Evaluate current tooling and produce a non-blocking pilot SBOM.
+
+Existing release workflow after approval; no network dependency on developer startup.
+
+**Anti-overlap:** Not vulnerability remediation or replacement for release gates.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; related M27 but not a substitute.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select format
+- generate sample
+- validate URLs/versions/licenses
+- mark unknowns
+- review size/secrets.
+
+## Acceptance criteria
+
+Inventory matches lockfile package set; unknown metadata remains unknown.
+
+## Definition of done
+
+Release owner approves scope and retention.
+
+## Verification plan
+
+Fixture comparison and artifact schema validation.
+
+## Risks, measures, rollback and closure
+
+**Risks:** False license labels/noise; retain tool version and source.
+
+**Metrics:** Package coverage and unresolved metadata count.
+
+**Estimate:** 3–6 days; recurring tool cost TBD.
+
+**Rollback/fallback:** Disable artifact publication; retain local instructions.
+
+**Closure evidence:** Sample artifact, lockfile comparison, review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-12
+
+
+**Candidate:** `ENG-012` · **Domain/category:** Engineering / Security & Privacy · **Priority/difficulty:** P1/D4 · **Owner:** AI Gateway · **Effort:** L (5–10 days; no model spend.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-012 — Add adversarial contract tests for AI input boundaries](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Test prompt injection, malformed output and citation spoofing against the existing bounded AI route.
+
+## Scope and boundaries
+
+Use synthetic adversarial fixtures to assert schema/permission gates reject unsafe action or fabricated citation fields.
+
+Reuse schema/Gateway; tests never call live models.
+
+**Anti-overlap:** Not a new agent runtime or general red-team certification.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-006/009; enables FUT-001.
+
+**Canonical TODO dependencies:** M46-06,M46-09
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define threat cases
+- craft fixtures
+- assert parse/deny
+- add encoding variants
+- list untested behaviors.
+
+## Acceptance criteria
+
+Untrusted text never authorizes tools; invalid citations are rejected or marked unresolved.
+
+## Definition of done
+
+Deterministic fixtures reviewed by AI/security owners.
+
+## Verification plan
+
+Offline contracts only; live-model evaluation is separate and budgeted.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Overfit fixtures; vary encoding and state coverage limits.
+
+**Metrics:** Fixture outcomes; no total prompt-injection prevention claim.
+
+**Estimate:** 5–10 days; no model spend.
+
+**Rollback/fallback:** Remove test hook; production allowlist unchanged.
+
+**Closure evidence:** Fixtures, observed output and coverage limits.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-13
+
+
+**Candidate:** `ENG-013` · **Domain/category:** Engineering / Architecture & Contracts · **Priority/difficulty:** P2/D3 · **Owner:** ARSY API · **Effort:** S (1–3 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-013 — Document API compatibility and deprecation rules](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Define how route/schema changes are versioned, announced and retired.
+
+## Scope and boundaries
+
+Write concise rules with additive/breaking examples, migration window and owners.
+
+Reuse current route versioning, schema generation and release docs.
+
+**Anti-overlap:** Distinct from ENG-006 error envelope and API redesign.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables ENG-014.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory markers
+- agree terms
+- document cases
+- link checks
+- review consumers.
+
+## Acceptance criteria
+
+Three sample changes classify consistently and map to a check or explicit gap.
+
+## Definition of done
+
+ARSY and consumer owners approve; no version changed.
+
+## Verification plan
+
+Check examples against representative schema diffs.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Policy can overconstrain iteration; separate public/internal contracts.
+
+**Metrics:** Review includes explicit compatibility classification.
+
+**Estimate:** 1–3 days.
+
+**Rollback/fallback:** Revert policy doc and retain prior release rules.
+
+**Closure evidence:** Approved policy and examples.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-14
+
+
+**Candidate:** `ENG-014` · **Domain/category:** Engineering / Architecture & Contracts · **Priority/difficulty:** P2/D4 · **Owner:** API tooling · **Effort:** L (6–12 days; CI time to measure.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-014 — Check generated API schemas against route contracts](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Add a focused check that published schemas agree with selected Fastify route schemas.
+
+## Scope and boundaries
+
+Normalize generated schemas for selected routes and fail on unreviewed incompatible differences.
+
+Use existing generation; no second OpenAPI source of truth.
+
+**Anti-overlap:** Not error-envelope work or broad API redesign.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-013; enables FUT-018.
+
+**Canonical TODO dependencies:** M46-13
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Find canonical schemas
+- compare output
+- normalize
+- add fixtures
+- wire focused check.
+
+## Acceptance criteria
+
+Intentional change updates canonical source/artifact; stale artifact fails.
+
+## Definition of done
+
+ENG-013 compatibility rules and API owner approval.
+
+## Verification plan
+
+Semantic schema tests; avoid key-order snapshots.
+
+## Risks, measures, rollback and closure
+
+**Risks:** False diffs/tool drift; pin generator and normalize deterministically.
+
+**Metrics:** Stale artifact detection and route coverage.
+
+**Estimate:** 6–12 days; CI time to measure.
+
+**Rollback/fallback:** Remove check invocation while preserving artifacts.
+
+**Closure evidence:** Fixtures, generation command and compatibility review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-15
+
+
+**Candidate:** `ENG-015` · **Domain/category:** Engineering / Architecture & Contracts · **Priority/difficulty:** P2/D3 · **Owner:** workspace maintainers · **Effort:** M (3–6 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-015 — Add package ownership metadata to workspace inventory](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Make package ownership and allowed dependency direction easy to inspect.
+
+## Scope and boundaries
+
+Create a read-only inventory sourced from package metadata and authoritative docs.
+
+Prefer manifest-derived view; no second manual registry where derivation works.
+
+**Anti-overlap:** This is the canonical package-owner inventory; downstream onboarding maps link to it instead of recreating its owner table. Not a service registry or new architecture authority.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables FUT-015/ONT-006.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Identify owners
+- map directions
+- test derivability
+- render table
+- document exceptions.
+
+## Acceptance criteria
+
+Every package has owner/boundary link or UNKNOWN; no duplicate canonical owner implied.
+
+## Definition of done
+
+Owners approve entries and source-of-truth choice.
+
+## Verification plan
+
+Fixture flags unowned package and duplicate owner.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Stale metadata; derive and review exceptions.
+
+**Metrics:** Owner coverage and unresolved exceptions.
+
+**Estimate:** 3–6 days.
+
+**Rollback/fallback:** Remove generated view; dependencies unchanged.
+
+**Closure evidence:** Inventory, fixture output and owner review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-16
+
+
+**Candidate:** `ENG-016` · **Domain/category:** Engineering / Architecture & Contracts · **Priority/difficulty:** P2/D4 · **Owner:** corpus/research · **Effort:** L (6–12 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-016 — Define stable serialization for provenance records](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Specify deterministic serialization/versioning for source provenance records used in audit artifacts.
+
+## Scope and boundaries
+
+Compare shapes and define a narrow canonical export with schema version and stable order.
+
+Mapping/export only; no replacement database or global provenance owner.
+
+**Anti-overlap:** No new source-of-truth service.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-002; related ONT-001/003.
+
+**Canonical TODO dependencies:** M46-02
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory shapes
+- choose identity fields
+- define normalization
+- test round trip
+- document migrations.
+
+## Acceptance criteria
+
+Same fixture serializes byte-identically; unknown fields follow explicit version rules.
+
+## Definition of done
+
+Package owners approve schema and compatibility.
+
+## Verification plan
+
+Golden fixture, round trip and version incompatibility.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Over-normalization loses nuance; preserve original value and attribution.
+
+**Metrics:** Deterministic fixture hashes and migration coverage.
+
+**Estimate:** 6–12 days.
+
+**Rollback/fallback:** Stop new export version; preserve old records.
+
+**Closure evidence:** Schema, golden output, owner decision and migration note.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-17
+
+
+**Candidate:** `ENG-017` · **Domain/category:** Engineering / Architecture & Contracts · **Priority/difficulty:** P2/D3 · **Owner:** app maintainers · **Effort:** M (4–9 days for bounded apps.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-017 — Validate application environment configuration at startup](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Audit selected app environment parsing and propose fail-fast checks for required values.
+
+## Scope and boundaries
+
+Reuse existing validators; centralize only shared primitives, not per-service policy.
+
+Per-app schema; redact secrets from validation messages.
+
+**Anti-overlap:** Not a secret-management replacement or new config service.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; related ENG-020.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory variables
+- classify required/optional
+- compare parsers
+- add safe diagnostics
+- document examples.
+
+## Acceptance criteria
+
+Missing required value exits before listen; diagnostics name key but never its value.
+
+## Definition of done
+
+Each touched app has positive/negative config fixtures.
+
+## Verification plan
+
+Unit tests with synthetic values.
+
+## Risks, measures, rollback and closure
+
+**Risks:** False requiredness can block deployment; owner review required.
+
+**Metrics:** Misconfigurations caught before server start.
+
+**Estimate:** 4–9 days for bounded apps.
+
+**Rollback/fallback:** Restore prior parser while retaining secret redaction.
+
+**Closure evidence:** Variable matrix, tests and safe output capture.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-18
+
+
+**Candidate:** `ENG-018` · **Domain/category:** Engineering / Performance · **Priority/difficulty:** P2/D3 · **Owner:** corpus package · **Effort:** M (3–6 days; local compute.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-018 — Establish a representative corpus ingestion benchmark](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Measure ingestion throughput and memory on an authorized synthetic fixture.
+
+## Scope and boundaries
+
+Add a bounded synthetic dataset and report time, memory and item count by size.
+
+Isolated benchmark; no production database or real source content.
+
+**Anti-overlap:** Not content import or M19 publication work.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables FUT-017.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Choose synthetic shapes
+- record machine/runtime
+- measure sizes
+- document variance
+- defer thresholds until repeat runs.
+
+## Acceptance criteria
+
+Results include environment metadata and repeat within a declared tolerance.
+
+## Definition of done
+
+No unlicensed text; benchmark owner reviews methodology.
+
+## Verification plan
+
+Correctness assertions; performance run is opt-in.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Synthetic data may not represent real corpora; state limits.
+
+**Metrics:** Throughput, peak RSS and variance.
+
+**Estimate:** 3–6 days; local compute.
+
+**Rollback/fallback:** Remove benchmark without touching ingestion.
+
+**Closure evidence:** Fixture generator, results, environment and limitations.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-19
+
+
+**Candidate:** `ENG-019` · **Domain/category:** Engineering / Performance · **Priority/difficulty:** P2/D4 · **Owner:** ECHOLOG · **Effort:** L (5–10 days; local compute.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-019 — Bound object streaming memory and cancellation](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Measure streaming memory, client cancellation and timeout behavior for bounded objects.
+
+## Scope and boundaries
+
+Add synthetic stream tests and a local harness; tune only after reproducing a gap.
+
+ECHOLOG boundary; no tables or second storage layer.
+
+**Anti-overlap:** Does not close M33-05/M44 media evidence or add SQL.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables FUT-016.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inspect stream path
+- define test size/time
+- simulate slow client/cancel
+- measure memory
+- record go/no-go.
+
+## Acceptance criteria
+
+Memory stays within owner-agreed cap; cancellation releases handles within timeout.
+
+## Definition of done
+
+Contract tests and operator note; no deployment claim.
+
+## Verification plan
+
+Fake-source tests; live S3 excluded unless separately enabled.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Incorrect cap rejects valid media; derive limits from real needs.
+
+**Metrics:** Peak RSS, cancel latency and timeout count.
+
+**Estimate:** 5–10 days; local compute.
+
+**Rollback/fallback:** Revert tuning; preserve prior behavior.
+
+**Closure evidence:** Fixture results, measurements and owner decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-20
+
+
+**Candidate:** `ENG-020` · **Domain/category:** Engineering / Performance · **Priority/difficulty:** P2/D4 · **Owner:** MoonQL graph/ontology · **Effort:** L (6–12 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-020 — Measure graph query fan-out and enforce safe limits](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Characterize query cost on synthetic graphs and define fan-out/time limits if needed.
+
+## Scope and boundaries
+
+Benchmark depth/fan-out; apply explicit query budgets only at owning boundary.
+
+Existing graph package; no graph database or query service.
+
+**Anti-overlap:** Graph package; not ontology redesign or a new store.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; related ONT-009.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Build synthetic graphs
+- measure
+- identify worst cases
+- agree caps
+- add budget test.
+
+## Acceptance criteria
+
+Query terminates at configured budget and marks partial results explicitly.
+
+## Definition of done
+
+Product owner accepts truncation semantics.
+
+## Verification plan
+
+Complexity, timeout and cancellation tests.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Truncation can hide relations; expose limits and never omit silently.
+
+**Metrics:** Nodes/edges visited, runtime and truncation rate.
+
+**Estimate:** 6–12 days.
+
+**Rollback/fallback:** Disable new cap with conservative fallback; retain warning.
+
+**Closure evidence:** Dataset, results and semantics review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-21
+
+
+**Candidate:** `ENG-021` · **Domain/category:** Engineering / Performance · **Priority/difficulty:** P2/D3 · **Owner:** web app maintainer · **Effort:** M (3–6 days; CI time measured later.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-021 — Add route bundle-size budgets to selected web apps](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Measure and optionally gate initial bundle size for one representative app.
+
+## Scope and boundaries
+
+Capture reproducible build report; set budget only after two stable baselines.
+
+Existing bundler output; no new analytics or media service.
+
+**Anti-overlap:** Not M45 page rebuild or ECHOLOG media optimization.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; related ENG-024/FUT-017.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select app
+- record environment
+- separate initial/lazy assets
+- repeat baseline
+- propose budget.
+
+## Acceptance criteria
+
+Budget has measured baseline, owner and reproducible check; no arbitrary threshold.
+
+## Definition of done
+
+Agreed route remains within budget; exceptions state rationale.
+
+## Verification plan
+
+CI artifact-size assertion; functional tests remain separate.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Tool/compression changes create noise; pin toolchain and compare like output.
+
+**Metrics:** Initial JS/CSS bytes and build variance.
+
+**Estimate:** 3–6 days; CI time measured later.
+
+**Rollback/fallback:** Remove gate but retain reports.
+
+**Closure evidence:** Reports, rationale and CI fixture.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-22
+
+
+**Candidate:** `ENG-022` · **Domain/category:** Engineering / UI/UX & Accessibility · **Priority/difficulty:** P2/D3 · **Owner:** Orbit · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-022 — Audit keyboard and zoom access in Orbit operations](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Assess keyboard, focus, contrast and zoom on selected Orbit operator flow.
+
+## Scope and boundaries
+
+Run scoped manual audit, then fix only evidenced defects.
+
+Existing Orbit/MoonUI components; no parallel design system.
+
+**Anti-overlap:** Not M19 publication or M44 deployment work.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Coordinate with active Orbit worktree changes.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select flow
+- record baseline
+- inspect keyboard/name/contrast/zoom
+- document gaps
+- fix/retest.
+
+## Acceptance criteria
+
+Controls keyboard reachable and named; usable at 200% zoom or documented exception.
+
+## Definition of done
+
+Manual and automated evidence tied to route; no blanket WCAG claim.
+
+## Verification plan
+
+Existing tooling plus keyboard/zoom review.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Layout changes affect operators; seek user review.
+
+**Metrics:** Reproducible blockers by criterion.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Revert isolated fixes; retain audit.
+
+**Closure evidence:** Before/after capture, keyboard checklist and tests.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-23
+
+
+**Candidate:** `ENG-023` · **Domain/category:** Engineering / UI/UX & Accessibility · **Priority/difficulty:** P2/D3 · **Owner:** Sentinel · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-023 — Audit accessible names in Sentinel review controls](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Verify selected review controls expose labels, focus and keyboard behavior.
+
+## Scope and boundaries
+
+Audit one non-destructive review screen and apply narrow control fixes.
+
+Existing Sentinel UI; no new moderation behavior/policy.
+
+**Anti-overlap:** Excludes policy, classification and publication rights.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Coordinate with current Sentinel changes.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select screen
+- inspect labels/focus/error announcement
+- fix verified gaps
+- retest.
+
+## Acceptance criteria
+
+Action has programmatic name, visible focus and announced result/error.
+
+## Definition of done
+
+Accessibility review; destructive behavior unchanged.
+
+## Verification plan
+
+Component assertions and manual assistive-technology pass.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Better labels can obscure state; preserve exact status meaning.
+
+**Metrics:** Remaining blockers in scoped flow.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Revert isolated markup; keep workaround record.
+
+**Closure evidence:** Test output, manual checklist and reviewer feedback.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-24
+
+
+**Candidate:** `ENG-024` · **Domain/category:** Engineering / UI/UX & Accessibility · **Priority/difficulty:** P2/D3 · **Owner:** Cockpit · **Effort:** M (3–7 days after baseline.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-024 — Audit focus and reduced-motion behavior in Cockpit navigation](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Check focus restoration and reduced motion through a bounded navigation sequence.
+
+## Scope and boundaries
+
+After current WIP settles, test menu/route focus and OS motion preference.
+
+Reuse existing Cockpit hooks/MoonUI; do not replace active work.
+
+**Anti-overlap:** Explicitly not a second reduced-motion implementation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Wait for active Cockpit changes to settle; related ENG-021.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Identify canonical revision
+- define flows
+- test focus/motion
+- patch one verified defect.
+
+## Acceptance criteria
+
+Focus returns to invoking control; nonessential animation respects reduced motion; no duplicate hook.
+
+## Definition of done
+
+Owner reviews against settled WIP.
+
+## Verification plan
+
+Component tests and manual keyboard check.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Parallel edits conflict; do not start against ambiguous baseline.
+
+**Metrics:** Focus-loss reproductions and preference assertions.
+
+**Estimate:** 3–7 days after baseline.
+
+**Rollback/fallback:** Revert isolated change.
+
+**Closure evidence:** Baseline SHA, tests and manual notes.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-25
+
+
+**Candidate:** `ENG-025` · **Domain/category:** Engineering / Testing & CI · **Priority/difficulty:** P2/D3 · **Owner:** test infrastructure · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-025 — Make shared test fixtures deterministic and isolated](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Audit fixtures for hidden time, randomness, environment and mutable state.
+
+## Scope and boundaries
+
+Select shared fixture patterns; inject clock/seed/config and assert cleanup.
+
+Keep helpers package-local unless reuse is proven.
+
+**Anti-overlap:** Does not assert CI is flaky.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables ENG-026.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select fixture families
+- inspect globals
+- define helpers
+- add isolation checks
+- document pattern.
+
+## Acceptance criteria
+
+Repeated fixture runs are identical and leave no shared state.
+
+## Definition of done
+
+Supported Node runs deterministic; cleanup verified.
+
+## Verification plan
+
+Repeat-in-process and isolated-worker checks.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Excess abstraction; require two real consumers before extraction.
+
+**Metrics:** Output variance and leaked-state cases.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Keep package-local fixtures if shared helper is rejected.
+
+**Closure evidence:** Repeat outputs and cleanup assertions.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-26
+
+
+**Candidate:** `ENG-026` · **Domain/category:** Engineering / Testing & CI · **Priority/difficulty:** P1/D4 · **Owner:** ARSY/security · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-026 — Verify authorization denial matrices for selected routes](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Build a matrix for one route family with anonymous, allowed, denied and malformed principals.
+
+## Scope and boundaries
+
+Select an independent route family with owner approval; use synthetic fixtures and no live DB.
+
+Existing route test harness and auth hooks.
+
+**Anti-overlap:** Excludes M19-19 and existing Graph/UNILEX containment work.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** No task blocker; security-owner approval of the selected synthetic route scope is a start condition; related ENG-008.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select route
+- map principals
+- assert call counts/response
+- add positive control
+- review overlap.
+
+## Acceptance criteria
+
+Denial causes zero protected-store calls; allowed fixture succeeds; no private fields leak.
+
+## Definition of done
+
+Security owner signs route scope/roles.
+
+## Verification plan
+
+Route tests with fake store and exact denial matrix.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Role assumptions may be stale; use accepted ADR and current contract.
+
+**Metrics:** Matrix cells covered; protected calls on deny = 0.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Test-only scope can be removed; production ACL unchanged.
+
+**Closure evidence:** Route rationale, matrix output and review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-27
+
+
+**Candidate:** `ENG-027` · **Domain/category:** Engineering / Testing & CI · **Priority/difficulty:** P2/D3 · **Owner:** CI maintainers · **Effort:** M (2–5 days plus access.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-027 — Report flaky tests from observed CI history](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Determine whether repeated CI failures are flaky before adding retries/quarantines.
+
+## Scope and boundaries
+
+Collect authorized CI history and classify reproducibility by test/environment.
+
+Read-only reporting first; no automatic retry policy.
+
+**Anti-overlap:** Not a CI rebuild or retry system.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** CI-history access; enables ENG-028.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define data window
+- export outcomes
+- normalize signatures
+- classify manually
+- propose targeted fixes.
+
+## Acceptance criteria
+
+Report separates repeatable, environment and unconfirmed failures with links.
+
+## Definition of done
+
+Maintainer review; no retry change without evidence.
+
+## Verification plan
+
+Validate parser on synthetic logs.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Sparse data creates false labels; low samples remain UNKNOWN.
+
+**Metrics:** Sample count and reviewer agreement.
+
+**Estimate:** 2–5 days plus access.
+
+**Rollback/fallback:** Delete report; CI behavior unchanged.
+
+**Closure evidence:** Data window, anonymized signatures and dispositions.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-28
+
+
+**Candidate:** `ENG-028` · **Domain/category:** Engineering / Testing & CI · **Priority/difficulty:** P2/D3 · **Owner:** DX · **Effort:** S (1–3 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-028 — Document the supported focused validation matrix](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Map package validation commands to changed-file scopes and prerequisites.
+
+## Scope and boundaries
+
+Create dated command map from manifests and distinguish command discovery from execution.
+
+Documentation/read-only discovery; generator never runs app scripts.
+
+**Anti-overlap:** Not a mandate to run tests or alter package scripts.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-027 for history links; related ENG-032.
+
+**Canonical TODO dependencies:** M46-27
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory scripts
+- classify lint/typecheck/test/build
+- list prerequisites
+- check freshness
+- document wording.
+
+## Acceptance criteria
+
+Each command exists or is marked unavailable; no success is implied.
+
+## Definition of done
+
+Package owners review; discovery remains non-executing.
+
+## Verification plan
+
+Fixture validates paths/names; commands themselves are not run by this task.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Scripts change; date and regeneration method required.
+
+**Metrics:** Coverage and stale entries.
+
+**Estimate:** 1–3 days.
+
+**Rollback/fallback:** Remove table; scripts unchanged.
+
+**Closure evidence:** Manifest comparison and owner review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-29
+
+
+**Candidate:** `ENG-029` · **Domain/category:** Engineering / Operations · **Priority/difficulty:** P2/D3 · **Owner:** LUMEN · **Effort:** M (4–8 days; no vendor cost assumed.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-029 — Instrument worker lifecycle state transitions](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Add privacy-safe lifecycle events only if ENG-004 confirms an executable worker.
+
+## Scope and boundaries
+
+Emit a small set of state, duration and opaque correlation fields.
+
+Existing logger; no telemetry backend required.
+
+**Anti-overlap:** No observability platform or deployment claim.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-004/008.
+
+**Canonical TODO dependencies:** M46-04,M46-08
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Confirm executable scope
+- define schema
+- add synthetic tests
+- measure overhead
+- document meaning.
+
+## Acceptance criteria
+
+All states appear in fixtures; no source payload or secrets.
+
+## Definition of done
+
+LUMEN/privacy owners approve retention.
+
+## Verification plan
+
+Lifecycle and redaction assertions.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Logs may be mistaken for availability; include environment and caveat.
+
+**Metrics:** Missing events and overhead.
+
+**Estimate:** 4–8 days; no vendor cost assumed.
+
+**Rollback/fallback:** Disable emission; lifecycle unchanged.
+
+**Closure evidence:** Synthetic trace, privacy review and overhead measure.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-30
+
+
+**Candidate:** `ENG-030` · **Domain/category:** Engineering / Operations · **Priority/difficulty:** P2/D4 · **Owner:** ARSY plus one consumer · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-030 — Correlate requests across one existing boundary](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Determine whether one request can be traced across ARSY and a consumer without exposing identifiers.
+
+## Scope and boundaries
+
+Use bounded opaque correlation ID; validate propagation; reject sensitive user IDs.
+
+Existing request context/logging; no new bus or trace database.
+
+**Anti-overlap:** No shared trace store or identity function.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-008; related ENG-029.
+
+**Canonical TODO dependencies:** M46-08
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Pick boundary
+- inspect headers
+- define format
+- propagate/redact
+- test invalid IDs.
+
+## Acceptance criteria
+
+Synthetic request traceable end-to-end; invalid IDs replaced; no personal data.
+
+## Definition of done
+
+Both owners and privacy reviewer approve.
+
+## Verification plan
+
+Fake service integration and redaction tests.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Spoofing/cardinality explosion; enforce length, randomness and rate.
+
+**Metrics:** Fixture completeness and malformed-ID rejection.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Stop propagation at consumer; local logs remain.
+
+**Closure evidence:** Synthetic trace and overhead report.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-31
+
+
+**Candidate:** `ENG-031` · **Domain/category:** Engineering / Operations · **Priority/difficulty:** P2/D3 · **Owner:** operations · **Effort:** M (3–6 days plus data access.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-031 — Report recurring service cost by bounded workload](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Measure cost drivers for one existing workload before capacity changes.
+
+## Scope and boundaries
+
+Build bounded worksheet from authorized aggregate billing and synthetic volume; no user-level telemetry.
+
+Read-only analysis; no billing SDK or per-user ledger.
+
+**Anti-overlap:** Supplies one aggregate operating-cost baseline; ECO-006 owns per-workflow scenarios and support assumptions using that baseline. Not revenue analytics or payment processing.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Aggregate cost data; related ECO-005.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select workload
+- list cost components
+- obtain aggregate data
+- normalize units
+- state uncertainty.
+
+## Acceptance criteria
+
+Worksheet reproduces supplied totals and labels exclusions.
+
+## Definition of done
+
+Operations/finance review; no customer data.
+
+## Verification plan
+
+Arithmetic fixtures and sensitivity analysis.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Shared infrastructure allocation can mislead; show method and range.
+
+**Metrics:** Cost per defined workload unit with uncertainty.
+
+**Estimate:** 3–6 days plus data access.
+
+**Rollback/fallback:** Remove analysis if data rights/method are invalid.
+
+**Closure evidence:** Inputs, formula, exclusions and approval.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M46-32
+
+
+**Candidate:** `ENG-032` · **Domain/category:** Engineering / Documentation/DX · **Priority/difficulty:** P2/D2 · **Owner:** documentation · **Effort:** S (1–2 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ENG-032 — Create a package-owner onboarding map](../../research/unified-100-issue-frontier-v5/ISSUES_ENGINEERING.md) (full 22-section source).
+
+## Objective
+
+Give contributors a route from task ownership to package, contract and diagnostics.
+
+## Scope and boundaries
+
+Add linked index rather than duplicate architecture/commands.
+
+One concise existing-doc page; links first.
+
+**Anti-overlap:** Builds contributor paths and links from ENG-015's owner inventory; does not reproduce or maintain a second owner table, README, or governance system.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; related ENG-001/028.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Map reader needs
+- link authority docs
+- mark non-authorizing diagnostics
+- review paths.
+
+## Acceptance criteria
+
+Contributor finds TODO, owning contract, coding guide and command discovery from one page.
+
+## Definition of done
+
+Links checked; no copied status tables.
+
+## Verification plan
+
+Static link validation.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Another stale index; keep minimal.
+
+**Metrics:** Broken links and available findability feedback.
+
+**Estimate:** 1–2 days.
+
+**Rollback/fallback:** Remove page and references.
+
+**Closure evidence:** Link-check output and owner review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
 
 ## M47 — Frontier research and bounded prototypes
 
@@ -1023,37 +3136,2032 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M47-01** — Prototype citation-bounded research answers | P1 | D4 | M46-09,M46-12 | Owner: AI Gateway + MoonQL Research; effort: L (8–15 engineering days; two-week research window; model cost capped before execution.). Deliverable: Test whether a read-only assistant can answer a narrow corpus question with every claim linked to an authorized source record. Scope: Define one question type; create fixtures; bind source IDs; measure citations; review failure cases; write decision. Acceptance: At least 90% of fixture claims cite an existing passage; fabricated citations are rejected; abstentions are explicit. Threshold is a proposed gate, not a baseline. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-01.md) · candidate FUT-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-02** — Benchmark abstention on ambiguous or unsupported questions | P1 | D4 | M47-01 | Owner: AI Gateway/research; effort: L (6–12 engineering days; bounded evaluation set.). Deliverable: Measure whether the prototype declines to answer when evidence is absent, contradictory or out of scope. Scope: Define labels; author cases; have two reviewers adjudicate; score abstention; revise thresholds; decide no-go. Acceptance: Every unsupported fixture is either abstained or surfaced as unresolved; no unsupported certainty label appears. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-02.md) · candidate FUT-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-03** — Prototype human approval for proposed research actions | P1 | D4 | M47-01,M46-09,M20 | Owner: AI Gateway/HQ; effort: L (6–10 days; two-week design sprint; no infra cost.). Deliverable: Test a review card that shows a proposed read-only action, source scope and expected effect before a person approves it. Scope: Choose harmless scenario; map states; build fixture; conduct usability review; record ambiguity; decide. Acceptance: Reviewer can state actor, data scope, action, consequence and expiry before approval; cancel has no effect. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-03.md) · candidate FUT-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-04** — Test untrusted-source isolation in a retrieval prototype | P2 | D4 | M47-01 | Owner: AI Gateway; effort: L (5–10 days; fixed inference cap required.). Deliverable: Assess whether hostile instructions embedded in synthetic source text can influence the prototype’s behavior. Scope: Define threat model; generate fixtures; run capped cases; classify; change one control; record residual risk. Acceptance: No fixture grants a tool or changes policy; failures are recorded without claiming universal protection. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-04.md) · candidate FUT-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-05** — Evaluate private local inference feasibility | P2 | D4 | M46-10 | Owner: AI Gateway/research; effort: L (5–10 days; hardware/inference budget capped at approval.). Deliverable: Compare local inference against the current approved approach for one low-risk synthetic task. Scope: Select task/model; audit license; cap hardware/time; run fixture; measure; compare; no-go if quality/cost is poor. Acceptance: Report includes reproducible environment, quality rubric, RAM/latency, license and maintenance comparison. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-05.md) · candidate FUT-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-06** — Prototype claim-level multilingual citation alignment | P2 | D4 | M47-02,M47-04 | Owner: corpus/research; effort: L (8–15 days; source license/access cost unknown.). Deliverable: Test whether a translation claim can link to a source passage and translation edition without conflating them. Scope: Select authorized sample; label spans; produce model suggestions; review differences; report unsupported matches. Acceptance: Every suggestion is labeled machine-generated and linked to exact edition; no automatic equivalence assertion. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-06.md) · candidate FUT-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-07** — Compare short-lived AI sessions with persistent memory | P2 | D4 | M47-05 | Owner: AI Gateway/privacy; effort: L (5–9 days; capped inference budget.). Deliverable: Measure whether a narrow research task benefits from session memory and what data it would retain. Scope: Define task; create fake data; measure success; inspect retained fields; test deletion; issue recommendation. Acceptance: Report shows user-visible retained data and deletion result; no hidden cross-session state. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-07.md) · candidate FUT-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-08** — Prototype a source-first evidence navigator | P2 | D3 | M19 | Owner: Dock/research; effort: M (4–8 days; one-week prototype.). Deliverable: Compare a source-first panel with current navigation for a synthetic research question. Scope: Create synthetic scenario; sketch two variants; test with 5 consented internal reviewers; measure comprehension; decide. Acceptance: Reviewers can locate source/edition and explain uncertainty; no identifiable source is real. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-08.md) · candidate FUT-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-09** — Visualize uncertainty without a single confidence badge | P2 | D3 | M47-08 | Owner: research UX; effort: M (4–7 days.). Deliverable: Test a compact visual language that separates source quality, reviewer agreement and model confidence. Scope: Define distinctions; create mock cards; conduct comprehension test; identify ambiguity; select/no-go. Acceptance: Reviewers distinguish evidence quality from model confidence and reviewer agreement in test cases. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-09.md) · candidate FUT-009: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-10** — Study bilingual context switching in a research reader | P2 | D3 | M47-08 | Owner: Dock/Empire UX; effort: M (4–8 days.). Deliverable: Evaluate whether users can switch languages without losing their source position or edition context. Scope: Define scenario; create fake paired editions; build mock; test; record position/context errors. Acceptance: User can identify current edition/language and resume same source location after switching. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-10.md) · candidate FUT-010: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-11** — Prototype accessible audio navigation for cleared excerpts | P2 | D3 | — | Owner: reader UX; effort: M (5–9 days; asset costs unknown.). Deliverable: Test whether optional audio navigation improves access to a synthetic/cleared short excerpt. Scope: Confirm allowed synthetic asset; prototype controls; test keyboard/captions; conduct small access review; go/no-go. Acceptance: Controls work by keyboard; transcript remains available; asset provenance is clear. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-11.md) · candidate FUT-011: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-12** — Test a spatially anchored source exploration concept | P3 | D5 | — | Owner: research UX; effort: XL (10–20 days, strict prototype cap.). Deliverable: Explore whether spatial arrangement helps users understand relationships among a small synthetic set of sources. Scope: Define task; build mock; compare 2D/3D; test orientation; measure errors; stop if no advantage. Acceptance: Users complete a relation-finding task at least as accurately as 2D; otherwise record no-go. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-12.md) · candidate FUT-012: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-13** — Explore evidence-aware graph traversal | P2 | D4 | M46-20 | Owner: MoonQL Graph; effort: L (6–12 days.). Deliverable: Prototype a traversal that shows why two attributed claims are connected and which edges remain uncertain. Scope: Define path semantics; create synthetic records; render alternatives; test ambiguity; review with researcher. Acceptance: Each displayed path shows all edge sources and labels inference vs direct source relation. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-13.md) · candidate FUT-013: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-14** — Prototype a claim/evidence scenario simulator | P2 | D4 | — | Owner: research; effort: L (5–10 days.). Deliverable: Test an interactive “what evidence would change this conclusion?” exercise using invented claims and evidence. Scope: Draft fictional case; define transitions; test comprehension; assess bias; decide. Acceptance: Users distinguish evidence addition from conclusion certainty; multiple outcomes remain possible. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-14.md) · candidate FUT-014: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-15** — Compare TEI and current corpus models on one witness | P2 | D4 | M46-15 | Owner: corpus; effort: L (6–12 days.). Deliverable: Map one authorized witness fixture to TEI P5 and current MoonQL structures to identify fit and loss. Scope: Select fields; map both ways; list unrepresentable data; test round-trip; recommend adopt/map/no-go. Acceptance: Every field is mapped, intentionally omitted or marked lossy with rationale. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-15.md) · candidate FUT-015: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-16** — Prototype a media provenance timeline | P2 | D4 | M46-19,M33-05,M33 | Owner: ECHOLOG/rights owner; effort: L (5–9 days.). Deliverable: Show an asset’s synthetic creation, transformation, review and access events without exposing its contents. Scope: Define event vocabulary; create fake records; test redaction; evaluate comprehension; stop if redundant. Acceptance: Timeline distinguishes storage events from consent/publication decisions; content remains unavailable. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-16.md) · candidate FUT-016: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-17** — Simulate research workload and resource scaling | P2 | D3 | M46-18 | Owner: research/operations; effort: M (3–6 days.). Deliverable: Model synthetic reader/research workloads to explore capacity and cost sensitivity. Scope: Define scenarios; obtain baseline if available; model uncertainty; vary cost drivers; document breakpoints. Acceptance: Results reproduce from explicit inputs and show ranges, not falsely precise forecasts. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-17.md) · candidate FUT-017: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-18** — Test API contract evolution in an offline client sandbox | P2 | D4 | M46-14 | Owner: API tooling; effort: L (4–8 days.). Deliverable: Test how an older client handles an additive schema change using fixtures only. Scope: Pick schema; define old/new clients; simulate extra/missing fields; capture behavior; recommend. Acceptance: Unknown additive fields are handled per documented policy; breaking case is detected. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-18.md) · candidate FUT-018: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-19** — Prototype an offline research notebook with explicit export | P2 | D4 | — | Owner: research UX; effort: L (7–12 days; two-week cap.). Deliverable: Test local-only notes for synthetic sources, with user-controlled export and deletion. Scope: Define note schema; prototype local save; test reload/export/delete; threaten device loss; conduct usability study. Acceptance: User sees local-only status; export is readable; delete removes the prototype data. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-19.md) · candidate FUT-019: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-20** — Compare deterministic local conflict-resolution strategies | P2 | D4 | M47-19 | Owner: research package; effort: L (5–9 days.). Deliverable: Compare explicit user choice, append-only revisions and merge-on-disjoint-fields on synthetic notes. Scope: Define events; implement miniature replay; create collision cases; compare; publish no-go if semantics unclear. Acceptance: Every strategy preserves original values or explains the merge; no lost-write case is silent. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-20.md) · candidate FUT-020: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-21** — Test encrypted local cache boundaries with synthetic data | P2 | D4 | M47-19 | Owner: security/research UX; effort: L (6–12 days; no production key service.). Deliverable: Evaluate whether a browser prototype can protect synthetic notes at rest and erase them predictably. Scope: Define attacker model; prototype; test export/delete/key loss; review browser limits; decide no-go. Acceptance: Report states what encryption does not protect and shows key/data deletion behavior in fixture. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-21.md) · candidate FUT-021: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-22** — Evaluate a capability-based worker protocol | P2 | D4 | M46-04 | Owner: LUMEN; effort: L (5–10 days.). Deliverable: Study whether a narrow worker capability format can describe an authorized task without creating a new orchestrator. Scope: Reconcile worker status; list job needs; model capabilities; test cancellation; document fit/no-fit. Acceptance: Each task declares scope, resource cap, timeout and cancel behavior; no implicit authority. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-22.md) · candidate FUT-022: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-23** — Explore a multi-reviewer disagreement interface | P2 | D4 | M47-03,M20 | Owner: research UX; effort: L (5–9 days.). Deliverable: Prototype how reviewers can record distinct interpretations without forced consensus. Scope: Draft neutral case; prototype; test comprehension; review power dynamics; decide. Acceptance: Users can distinguish “different views” from “no evidence”; no vote becomes theological truth. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-23.md) · candidate FUT-023: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-24** — Prototype a “research journey” planner without spiritual ranking | P3 | D5 | M23 | Owner: research UX; effort: XL (5–10 days.). Deliverable: Test whether optional checkpoints help a user organize a research question without ranking beliefs or claiming spiritual direction. Scope: Define secular research example; prototype; test coercion/accessibility; assess overlap with M23; stop if duplicated. Acceptance: User can reorder/delete steps; no ranking, supernatural claim or default enrollment. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-24.md) · candidate FUT-024: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-25** — Explore a “claim path” narrative with provenance visible | P2 | D4 | M47-14 | Owner: research UX; effort: L (6–12 days.). Deliverable: Prototype a sequence view that follows how a claim is cited, interpreted and revised. Scope: Draft case; model lanes; test category distinction; review with researcher; decide. Acceptance: Users correctly identify the origin/class of each card; transitions show source/version. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-25.md) · candidate FUT-025: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-26** — Explore a personal research export bundle | P2 | D4 | M47-15,M46-16 | Owner: research package; effort: L (6–12 days.). Deliverable: Test whether a small, user-controlled export can preserve notes plus source references for offline scholarship. Scope: Define minimal package; generate fixture; verify checksum; test absence of private data; review portability. Acceptance: Bundle opens offline, reports version and sources, and excludes unapproved/private material. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-26.md) · candidate FUT-026: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-27** — Build a synthetic reviewer training simulator | P2 | D3 | M47-23,M20 | Owner: governance/research; effort: M (4–8 days.). Deliverable: Test whether fictional cases help reviewers practice distinguishing evidence, interpretation and unknowns. Scope: Define fictional case; write rubric; prototype; review cultural bias; evaluate comprehension. Acceptance: Learner distinguishes source evidence, interpretation and policy decision in scenarios. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-27.md) · candidate FUT-027: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-28** — Prototype an uncertainty-aware “living atlas” | P3 | D5 | M47-13 | Owner: ontology/research UX; effort: XL (10–20 days; strict prototype budget.). Deliverable: Explore a navigable map of attributed concepts where contested and unknown relations are visually distinct. Scope: Define neutral semantics; build mock; add text alternative; test interpretation; compare list/map; decide. Acceptance: Users identify contested and unknown relations; map offers equivalent nonvisual path. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-28.md) · candidate FUT-028: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-29** — Explore a consent-preserving feedback loop for research tools | P2 | D3 | M47-14 | Owner: research UX/privacy; effort: M (4–7 days; no external service cost.). Deliverable: Test anonymous/optional feedback on a synthetic research prototype without collecting source content or identity by default. Scope: Define minimal questions; mock preview/submit; test consent comprehension; map retention; go/no-go. Acceptance: Participant understands what is sent; no submission occurs before explicit action. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-29.md) · candidate FUT-029: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
-| - [ ] | **M47-30** — Prototype portable evidence bundles with integrity checks | P2 | D4 | M47-19 | Owner: research/provenance; effort: L (5–10 days.). Deliverable: Evaluate a compact bundle of synthetic citations, version refs and hashes that can be verified offline. Scope: Define fields; create bundle; alter fixture; verify failure; review signatures/keys; decide. Acceptance: Tampering is detected; provenance and issuer are not conflated; no content is included without rights. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M47/M47-30.md) · candidate FUT-030: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-01** — Prototype citation-bounded research answers | P1 | D4 | M46-09,M46-12 | Owner: AI Gateway + MoonQL Research; effort: L (8–15 engineering days; two-week research window; model cost capped before execution.). Deliverable: Test whether a read-only assistant can answer a narrow corpus question with every claim linked to an authorized source record. Scope: Define one question type; create fixtures; bind source IDs; measure citations; review failure cases; write decision. Acceptance: At least 90% of fixture claims cite an existing passage; fabricated citations are rejected; abstentions are explicit. Threshold is a proposed gate, not a baseline. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-01) · candidate FUT-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-02** — Benchmark abstention on ambiguous or unsupported questions | P1 | D4 | M47-01 | Owner: AI Gateway/research; effort: L (6–12 engineering days; bounded evaluation set.). Deliverable: Measure whether the prototype declines to answer when evidence is absent, contradictory or out of scope. Scope: Define labels; author cases; have two reviewers adjudicate; score abstention; revise thresholds; decide no-go. Acceptance: Every unsupported fixture is either abstained or surfaced as unresolved; no unsupported certainty label appears. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-02) · candidate FUT-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-03** — Prototype human approval for proposed research actions | P1 | D4 | M47-01,M46-09,M20 | Owner: AI Gateway/HQ; effort: L (6–10 days; two-week design sprint; no infra cost.). Deliverable: Test a review card that shows a proposed read-only action, source scope and expected effect before a person approves it. Scope: Choose harmless scenario; map states; build fixture; conduct usability review; record ambiguity; decide. Acceptance: Reviewer can state actor, data scope, action, consequence and expiry before approval; cancel has no effect. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-03) · candidate FUT-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-04** — Test untrusted-source isolation in a retrieval prototype | P2 | D4 | M47-01 | Owner: AI Gateway; effort: L (5–10 days; fixed inference cap required.). Deliverable: Assess whether hostile instructions embedded in synthetic source text can influence the prototype’s behavior. Scope: Define threat model; generate fixtures; run capped cases; classify; change one control; record residual risk. Acceptance: No fixture grants a tool or changes policy; failures are recorded without claiming universal protection. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-04) · candidate FUT-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-05** — Evaluate private local inference feasibility | P2 | D4 | M46-10 | Owner: AI Gateway/research; effort: L (5–10 days; hardware/inference budget capped at approval.). Deliverable: Compare local inference against the current approved approach for one low-risk synthetic task. Scope: Select task/model; audit license; cap hardware/time; run fixture; measure; compare; no-go if quality/cost is poor. Acceptance: Report includes reproducible environment, quality rubric, RAM/latency, license and maintenance comparison. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-05) · candidate FUT-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-06** — Prototype claim-level multilingual citation alignment | P2 | D4 | M47-02,M47-04 | Owner: corpus/research; effort: L (8–15 days; source license/access cost unknown.). Deliverable: Test whether a translation claim can link to a source passage and translation edition without conflating them. Scope: Select authorized sample; label spans; produce model suggestions; review differences; report unsupported matches. Acceptance: Every suggestion is labeled machine-generated and linked to exact edition; no automatic equivalence assertion. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-06) · candidate FUT-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-07** — Compare short-lived AI sessions with persistent memory | P2 | D4 | M47-05 | Owner: AI Gateway/privacy; effort: L (5–9 days; capped inference budget.). Deliverable: Measure whether a narrow research task benefits from session memory and what data it would retain. Scope: Define task; create fake data; measure success; inspect retained fields; test deletion; issue recommendation. Acceptance: Report shows user-visible retained data and deletion result; no hidden cross-session state. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-07) · candidate FUT-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-08** — Prototype a source-first evidence navigator | P2 | D3 | M19 | Owner: Dock/research; effort: M (4–8 days; one-week prototype.). Deliverable: Compare a source-first panel with current navigation for a synthetic research question. Scope: Create synthetic scenario; sketch two variants; test with 5 consented internal reviewers; measure comprehension; decide. Acceptance: Reviewers can locate source/edition and explain uncertainty; no identifiable source is real. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-08) · candidate FUT-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-09** — Visualize uncertainty without a single confidence badge | P2 | D3 | M47-08 | Owner: research UX; effort: M (4–7 days.). Deliverable: Test a compact visual language that separates source quality, reviewer agreement and model confidence. Scope: Define distinctions; create mock cards; conduct comprehension test; identify ambiguity; select/no-go. Acceptance: Reviewers distinguish evidence quality from model confidence and reviewer agreement in test cases. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-09) · candidate FUT-009: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-10** — Study bilingual context switching in a research reader | P2 | D3 | M47-08 | Owner: Dock/Empire UX; effort: M (4–8 days.). Deliverable: Evaluate whether users can switch languages without losing their source position or edition context. Scope: Define scenario; create fake paired editions; build mock; test; record position/context errors. Acceptance: User can identify current edition/language and resume same source location after switching. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-10) · candidate FUT-010: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-11** — Prototype accessible audio navigation for cleared excerpts | P2 | D3 | — | Owner: reader UX; effort: M (5–9 days; asset costs unknown.). Deliverable: Test whether optional audio navigation improves access to a synthetic/cleared short excerpt. Scope: Confirm allowed synthetic asset; prototype controls; test keyboard/captions; conduct small access review; go/no-go. Acceptance: Controls work by keyboard; transcript remains available; asset provenance is clear. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-11) · candidate FUT-011: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-12** — Test a spatially anchored source exploration concept | P3 | D5 | — | Owner: research UX; effort: XL (10–20 days, strict prototype cap.). Deliverable: Explore whether spatial arrangement helps users understand relationships among a small synthetic set of sources. Scope: Define task; build mock; compare 2D/3D; test orientation; measure errors; stop if no advantage. Acceptance: Users complete a relation-finding task at least as accurately as 2D; otherwise record no-go. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-12) · candidate FUT-012: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-13** — Explore evidence-aware graph traversal | P2 | D4 | M46-20 | Owner: MoonQL Graph; effort: L (6–12 days.). Deliverable: Prototype a traversal that shows why two attributed claims are connected and which edges remain uncertain. Scope: Define path semantics; create synthetic records; render alternatives; test ambiguity; review with researcher. Acceptance: Each displayed path shows all edge sources and labels inference vs direct source relation. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-13) · candidate FUT-013: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-14** — Prototype a claim/evidence scenario simulator | P2 | D4 | — | Owner: research; effort: L (5–10 days.). Deliverable: Test an interactive “what evidence would change this conclusion?” exercise using invented claims and evidence. Scope: Draft fictional case; define transitions; test comprehension; assess bias; decide. Acceptance: Users distinguish evidence addition from conclusion certainty; multiple outcomes remain possible. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-14) · candidate FUT-014: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-15** — Compare TEI and current corpus models on one witness | P2 | D4 | M46-15 | Owner: corpus; effort: L (6–12 days.). Deliverable: Map one authorized witness fixture to TEI P5 and current MoonQL structures to identify fit and loss. Scope: Select fields; map both ways; list unrepresentable data; test round-trip; recommend adopt/map/no-go. Acceptance: Every field is mapped, intentionally omitted or marked lossy with rationale. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-15) · candidate FUT-015: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-16** — Prototype a media provenance timeline | P2 | D4 | M46-19,M33-05,M33 | Owner: ECHOLOG/rights owner; effort: L (5–9 days.). Deliverable: Show an asset’s synthetic creation, transformation, review and access events without exposing its contents. Scope: Define event vocabulary; create fake records; test redaction; evaluate comprehension; stop if redundant. Acceptance: Timeline distinguishes storage events from consent/publication decisions; content remains unavailable. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-16) · candidate FUT-016: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-17** — Simulate research workload and resource scaling | P2 | D3 | M46-18 | Owner: research/operations; effort: M (3–6 days.). Deliverable: Model synthetic reader/research workloads to explore capacity and cost sensitivity. Scope: Define scenarios; obtain baseline if available; model uncertainty; vary cost drivers; document breakpoints. Acceptance: Results reproduce from explicit inputs and show ranges, not falsely precise forecasts. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-17) · candidate FUT-017: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-18** — Test API contract evolution in an offline client sandbox | P2 | D4 | M46-14 | Owner: API tooling; effort: L (4–8 days.). Deliverable: Test how an older client handles an additive schema change using fixtures only. Scope: Pick schema; define old/new clients; simulate extra/missing fields; capture behavior; recommend. Acceptance: Unknown additive fields are handled per documented policy; breaking case is detected. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-18) · candidate FUT-018: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-19** — Prototype an offline research notebook with explicit export | P2 | D4 | — | Owner: research UX; effort: L (7–12 days; two-week cap.). Deliverable: Test local-only notes for synthetic sources, with user-controlled export and deletion. Scope: Define note schema; prototype local save; test reload/export/delete; threaten device loss; conduct usability study. Acceptance: User sees local-only status; export is readable; delete removes the prototype data. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-19) · candidate FUT-019: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-20** — Compare deterministic local conflict-resolution strategies | P2 | D4 | M47-19 | Owner: research package; effort: L (5–9 days.). Deliverable: Compare explicit user choice, append-only revisions and merge-on-disjoint-fields on synthetic notes. Scope: Define events; implement miniature replay; create collision cases; compare; publish no-go if semantics unclear. Acceptance: Every strategy preserves original values or explains the merge; no lost-write case is silent. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-20) · candidate FUT-020: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-21** — Test encrypted local cache boundaries with synthetic data | P2 | D4 | M47-19 | Owner: security/research UX; effort: L (6–12 days; no production key service.). Deliverable: Evaluate whether a browser prototype can protect synthetic notes at rest and erase them predictably. Scope: Define attacker model; prototype; test export/delete/key loss; review browser limits; decide no-go. Acceptance: Report states what encryption does not protect and shows key/data deletion behavior in fixture. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-21) · candidate FUT-021: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-22** — Evaluate a capability-based worker protocol | P2 | D4 | M46-04 | Owner: LUMEN; effort: L (5–10 days.). Deliverable: Study whether a narrow worker capability format can describe an authorized task without creating a new orchestrator. Scope: Reconcile worker status; list job needs; model capabilities; test cancellation; document fit/no-fit. Acceptance: Each task declares scope, resource cap, timeout and cancel behavior; no implicit authority. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-22) · candidate FUT-022: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-23** — Explore a multi-reviewer disagreement interface | P2 | D4 | M47-03,M20 | Owner: research UX; effort: L (5–9 days.). Deliverable: Prototype how reviewers can record distinct interpretations without forced consensus. Scope: Draft neutral case; prototype; test comprehension; review power dynamics; decide. Acceptance: Users can distinguish “different views” from “no evidence”; no vote becomes theological truth. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-23) · candidate FUT-023: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-24** — Prototype a “research journey” planner without spiritual ranking | P3 | D5 | M23 | Owner: research UX; effort: XL (5–10 days.). Deliverable: Test whether optional checkpoints help a user organize a research question without ranking beliefs or claiming spiritual direction. Scope: Define secular research example; prototype; test coercion/accessibility; assess overlap with M23; stop if duplicated. Acceptance: User can reorder/delete steps; no ranking, supernatural claim or default enrollment. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-24) · candidate FUT-024: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-25** — Explore a “claim path” narrative with provenance visible | P2 | D4 | M47-14 | Owner: research UX; effort: L (6–12 days.). Deliverable: Prototype a sequence view that follows how a claim is cited, interpreted and revised. Scope: Draft case; model lanes; test category distinction; review with researcher; decide. Acceptance: Users correctly identify the origin/class of each card; transitions show source/version. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-25) · candidate FUT-025: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-26** — Explore a personal research export bundle | P2 | D4 | M47-15,M46-16 | Owner: research package; effort: L (6–12 days.). Deliverable: Test whether a small, user-controlled export can preserve notes plus source references for offline scholarship. Scope: Define minimal package; generate fixture; verify checksum; test absence of private data; review portability. Acceptance: Bundle opens offline, reports version and sources, and excludes unapproved/private material. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-26) · candidate FUT-026: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-27** — Build a synthetic reviewer training simulator | P2 | D3 | M47-23,M20 | Owner: governance/research; effort: M (4–8 days.). Deliverable: Test whether fictional cases help reviewers practice distinguishing evidence, interpretation and unknowns. Scope: Define fictional case; write rubric; prototype; review cultural bias; evaluate comprehension. Acceptance: Learner distinguishes source evidence, interpretation and policy decision in scenarios. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-27) · candidate FUT-027: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-28** — Prototype an uncertainty-aware “living atlas” | P3 | D5 | M47-13 | Owner: ontology/research UX; effort: XL (10–20 days; strict prototype budget.). Deliverable: Explore a navigable map of attributed concepts where contested and unknown relations are visually distinct. Scope: Define neutral semantics; build mock; add text alternative; test interpretation; compare list/map; decide. Acceptance: Users identify contested and unknown relations; map offers equivalent nonvisual path. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-28) · candidate FUT-028: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-29** — Explore a consent-preserving feedback loop for research tools | P2 | D3 | M47-14 | Owner: research UX/privacy; effort: M (4–7 days; no external service cost.). Deliverable: Test anonymous/optional feedback on a synthetic research prototype without collecting source content or identity by default. Scope: Define minimal questions; mock preview/submit; test consent comprehension; map retention; go/no-go. Acceptance: Participant understands what is sent; no submission occurs before explicit action. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-29) · candidate FUT-029: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
+| - [ ] | **M47-30** — Prototype portable evidence bundles with integrity checks | P2 | D4 | M47-19 | Owner: research/provenance; effort: L (5–10 days.). Deliverable: Evaluate a compact bundle of synthetic citations, version refs and hashes that can be verified offline. Scope: Define fields; create bundle; alter fixture; verify failure; review signatures/keys; decide. Acceptance: Tampering is detected; provenance and issuer are not conflated; no content is included without rights. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m47-30) · candidate FUT-030: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md). |
 
+
+## M47 — Detailed Task Specifications
+
+_Below is the full specification for each M47 task, consolidated from individual packet files._
+
+
+### M47-01
+
+
+**Candidate:** `FUT-001` · **Domain/category:** Frontier / AI-native/Agents · **Priority/difficulty:** P1/D4 · **Owner:** AI Gateway + MoonQL Research · **Effort:** L (8–15 engineering days; two-week research window; model cost capped before execution.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-001 — Prototype citation-bounded research answers](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test whether a read-only assistant can answer a narrow corpus question with every claim linked to an authorized source record.
+
+## Scope and boundaries
+
+Offline POC on synthetic/cleared passages; return claim spans, citation IDs and abstention reason.
+
+Existing Gateway and research package; retrieval only, no write tools or new corpus owner.
+
+**Anti-overlap:** Does not create a general chatbot or authoritative religious interpreter.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-009, ENG-012; enables FUT-002/003.
+
+**Canonical TODO dependencies:** M46-09,M46-12
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define one question type
+- create fixtures
+- bind source IDs
+- measure citations
+- review failure cases
+- write decision.
+
+## Acceptance criteria
+
+At least 90% of fixture claims cite an existing passage; fabricated citations are rejected; abstentions are explicit. Threshold is a proposed gate, not a baseline.
+
+## Definition of done
+
+No live/private source; evaluation set and failure analysis published internally.
+
+## Verification plan
+
+Offline schema/grounding tests plus small blinded human review; no live model call in CI.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Fluent unsupported answers; require source entailment review and label model output.
+
+**Metrics:** Claim citation coverage, unsupported-claim rate, abstention rate, latency and per-run cost.
+
+**Estimate:** 8–15 engineering days; two-week research window; model cost capped before execution.
+
+**Rollback/fallback:** Delete prototype data/output; no production route is enabled.
+
+**Closure evidence:** Fixture set, score sheet, cost record and decision memo.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-02
+
+
+**Candidate:** `FUT-002` · **Domain/category:** Frontier / AI-native/Agents · **Priority/difficulty:** P1/D4 · **Owner:** AI Gateway/research · **Effort:** L (6–12 engineering days; bounded evaluation set.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-002 — Benchmark abstention on ambiguous or unsupported questions](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Measure whether the prototype declines to answer when evidence is absent, contradictory or out of scope.
+
+## Scope and boundaries
+
+Create labeled synthetic cases for missing evidence, conflicting editions, ambiguous question and prompt injection.
+
+Evaluation harness only; no inference service changes.
+
+**Anti-overlap:** Distinct from general AI security fixtures ENG-012; tests evidence uncertainty, not attack payloads.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-001; enables FUT-006/FUT-027.
+
+**Canonical TODO dependencies:** M47-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define labels
+- author cases
+- have two reviewers adjudicate
+- score abstention
+- revise thresholds
+- decide no-go.
+
+## Acceptance criteria
+
+Every unsupported fixture is either abstained or surfaced as unresolved; no unsupported certainty label appears.
+
+## Definition of done
+
+Reviewer disagreements recorded and thresholds justified.
+
+## Verification plan
+
+Deterministic evaluator tests; model outputs reviewed outside CI.
+
+## Risks, measures, rollback and closure
+
+**Risks:** High abstention can make feature useless; report utility alongside safety.
+
+**Metrics:** Unsupported-answer rate, correct abstention, false abstention and reviewer agreement.
+
+**Estimate:** 6–12 engineering days; bounded evaluation set.
+
+**Rollback/fallback:** Retire eval harness without changing production behavior.
+
+**Closure evidence:** Labeled cases, anonymized scores and go/no-go memo.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-03
+
+
+**Candidate:** `FUT-003` · **Domain/category:** Frontier / AI-native/Agents · **Priority/difficulty:** P1/D4 · **Owner:** AI Gateway/HQ · **Effort:** L (6–10 days; two-week design sprint; no infra cost.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-003 — Prototype human approval for proposed research actions](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test a review card that shows a proposed read-only action, source scope and expected effect before a person approves it.
+
+## Scope and boundaries
+
+Click-through prototype with fake action, explicit principal, expiry, deny and cancel path.
+
+UI/protocol experiment; no live tool execution, persistent grant, or reviewer store.
+
+**Anti-overlap:** Reuses the M40-08 handoff and M41-08 adapter; no second approval UI/handoff, D00/D12 reviewer grant, M20-04 implementation, or autonomous action.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-001 and ENG-009; M20 is an external gate only before integration with real reviewer authority.
+
+**Canonical TODO dependencies:** M47-01,M46-09
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Choose harmless scenario
+- map states
+- build fixture
+- conduct usability review
+- record ambiguity
+- decide.
+
+## Acceptance criteria
+
+Reviewer can state actor, data scope, action, consequence and expiry before approval; cancel has no effect.
+
+## Definition of done
+
+Usability notes and threat assumptions reviewed.
+
+## Verification plan
+
+State-machine tests; manual accessibility review.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Prototype mistaken for authority; watermark DEMO and disable network/action APIs.
+
+**Metrics:** Correct comprehension, mistaken approvals, time-to-decide and accessibility blockers.
+
+**Estimate:** 6–10 days; two-week design sprint; no infra cost.
+
+**Rollback/fallback:** Remove local prototype; no persisted decisions.
+
+**Closure evidence:** Prototype, test script, findings and explicit no-go option.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-04
+
+
+**Candidate:** `FUT-004` · **Domain/category:** Frontier / AI-native/Agents · **Priority/difficulty:** P2/D4 · **Owner:** AI Gateway · **Effort:** L (5–10 days; fixed inference cap required.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-004 — Test untrusted-source isolation in a retrieval prototype](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Assess whether hostile instructions embedded in synthetic source text can influence the prototype’s behavior.
+
+## Scope and boundaries
+
+Red-team a fake corpus with benign and hostile passages; compare isolated prompt construction and output.
+
+Offline experimental harness reusing existing Gateway; no external URLs/tools.
+
+**Anti-overlap:** Focuses retrieval-source instructions; ENG-012 covers API schema/authorization attacks.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-001; related FUT-003/ENG-012.
+
+**Canonical TODO dependencies:** M47-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define threat model
+- generate fixtures
+- run capped cases
+- classify
+- change one control
+- record residual risk.
+
+## Acceptance criteria
+
+No fixture grants a tool or changes policy; failures are recorded without claiming universal protection.
+
+## Definition of done
+
+Security owner reviews test set and scope.
+
+## Verification plan
+
+Offline deterministic prompt construction tests plus bounded manual model evaluation if approved.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Model variance and evaluator bias; repeat runs and preserve raw synthetic cases.
+
+**Metrics:** Attack success by class, false refusal and run cost.
+
+**Estimate:** 5–10 days; fixed inference cap required.
+
+**Rollback/fallback:** Retire experiment; no production control changes.
+
+**Closure evidence:** Threat matrix, capped run log and residual-risk review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-05
+
+
+**Candidate:** `FUT-005` · **Domain/category:** Frontier / AI-native/Agents · **Priority/difficulty:** P2/D4 · **Owner:** AI Gateway/research · **Effort:** L (5–10 days; hardware/inference budget capped at approval.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-005 — Evaluate private local inference feasibility](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Compare local inference against the current approved approach for one low-risk synthetic task.
+
+## Scope and boundaries
+
+Benchmark one small open model on synthetic text; compare quality, latency, memory, license and update burden.
+
+Disposable developer machine only; no user-device execution or new runtime.
+
+**Anti-overlap:** Study only; no model catalog, provider registry or SKYLINK capability.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** No blocker for a capped synthetic benchmark on a disposable developer machine; related ENG-010/FUT-007. Existing security and license rules still apply.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select task/model
+- audit license
+- cap hardware/time
+- run fixture
+- measure
+- compare
+- no-go if quality/cost is poor.
+
+## Acceptance criteria
+
+Report includes reproducible environment, quality rubric, RAM/latency, license and maintenance comparison.
+
+## Definition of done
+
+No personal or sacred/private content; model provenance recorded.
+
+## Verification plan
+
+Evaluation fixture and result reproducibility.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Hardware-specific results and model license ambiguity; state limits.
+
+**Metrics:** Task quality, latency, memory, energy estimate and maintenance hours.
+
+**Estimate:** 5–10 days; hardware/inference budget capped at approval.
+
+**Rollback/fallback:** Delete downloaded model/cache and report credentials; no service changed.
+
+**Closure evidence:** Model/license record, benchmark and cleanup confirmation.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-06
+
+
+**Candidate:** `FUT-006` · **Domain/category:** Frontier / AI-native/Agents · **Priority/difficulty:** P2/D4 · **Owner:** corpus/research · **Effort:** L (8–15 days; source license/access cost unknown.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-006 — Prototype claim-level multilingual citation alignment](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test whether a translation claim can link to a source passage and translation edition without conflating them.
+
+## Scope and boundaries
+
+Use a tiny authorized parallel fixture with claim span, language, edition, translator and source link; compare human-reviewed alignment to model suggestion.
+
+Research export only; no automatic corpus edits.
+
+**Anti-overlap:** Does not create translations or theological interpretation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-002/FUT-004; ONT-003 is related.
+
+**Canonical TODO dependencies:** M47-02,M47-04
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select authorized sample
+- label spans
+- produce model suggestions
+- review differences
+- report unsupported matches.
+
+## Acceptance criteria
+
+Every suggestion is labeled machine-generated and linked to exact edition; no automatic equivalence assertion.
+
+## Definition of done
+
+Qualified language/text reviewer signs evaluation method.
+
+## Verification plan
+
+Schema and alignment-reference checks; human review is not replaced by unit tests.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Translation bias and false equivalence; preserve human attribution and contestation.
+
+**Metrics:** Reviewer agreement, unsupported alignment and edition-link completeness.
+
+**Estimate:** 8–15 days; source license/access cost unknown.
+
+**Rollback/fallback:** Remove suggestions; originals remain unchanged.
+
+**Closure evidence:** Cleared sample, annotated outcomes and reviewer decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-07
+
+
+**Candidate:** `FUT-007` · **Domain/category:** Frontier / AI-native/Agents · **Priority/difficulty:** P2/D4 · **Owner:** AI Gateway/privacy · **Effort:** L (5–9 days; capped inference budget.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-007 — Compare short-lived AI sessions with persistent memory](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Measure whether a narrow research task benefits from session memory and what data it would retain.
+
+## Scope and boundaries
+
+Compare two disposable prototypes using synthetic sessions; expose inspect/delete and retention behavior.
+
+Local experiment files only; no server-side memory, identity, or new database.
+
+**Anti-overlap:** No persistent production memory or account feature.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-005; related FUT-003.
+
+**Canonical TODO dependencies:** M47-05
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define task
+- create fake data
+- measure success
+- inspect retained fields
+- test deletion
+- issue recommendation.
+
+## Acceptance criteria
+
+Report shows user-visible retained data and deletion result; no hidden cross-session state.
+
+## Definition of done
+
+Privacy review; no actual personal/session data.
+
+## Verification plan
+
+State reset/deletion tests and synthetic carry-over checks.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Prototype behavior may understate model/vendor retention; document boundary.
+
+**Metrics:** Task completion, retained-field count and deletion success.
+
+**Estimate:** 5–9 days; capped inference budget.
+
+**Rollback/fallback:** Clear all local experiment state and stop prototype.
+
+**Closure evidence:** Data-flow diagram, test results and deletion proof.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-08
+
+
+**Candidate:** `FUT-008` · **Domain/category:** Frontier / Future UX/HCI · **Priority/difficulty:** P2/D3 · **Owner:** Dock/research · **Effort:** M (4–8 days; one-week prototype.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-008 — Prototype a source-first evidence navigator](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Compare a source-first panel with current navigation for a synthetic research question.
+
+## Scope and boundaries
+
+Clickable local mock with claim list, source edition, context and uncertainty controls.
+
+Prototype only; no public data route or production projection.
+
+**Anti-overlap:** Synthetic prototype only; shares test fixtures, not product implementation, with FUT-009, FUT-025 and ONT-014. Not implementation of M19-19/Dock release.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** M19 gate is external for real-source integration; related FUT-009/014.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Create synthetic scenario
+- sketch two variants
+- test with 5 consented internal reviewers
+- measure comprehension
+- decide.
+
+## Acceptance criteria
+
+Reviewers can locate source/edition and explain uncertainty; no identifiable source is real.
+
+## Definition of done
+
+Findings include sample limits and accessibility observations.
+
+## Verification plan
+
+Usability tasks, keyboard walkthrough and static contract checks.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Mock may imply public release; label DEMO and use fake records.
+
+**Metrics:** Source-find time, attribution comprehension and error rate.
+
+**Estimate:** 4–8 days; one-week prototype.
+
+**Rollback/fallback:** Delete local mock and synthetic fixtures.
+
+**Closure evidence:** Prototype, task script, notes and decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-09
+
+
+**Candidate:** `FUT-009` · **Domain/category:** Frontier / Future UX/HCI · **Priority/difficulty:** P2/D3 · **Owner:** research UX · **Effort:** M (4–7 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-009 — Visualize uncertainty without a single confidence badge](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test a compact visual language that separates source quality, reviewer agreement and model confidence.
+
+## Scope and boundaries
+
+Compare labeled chips, layered evidence bars and plain-language notes on mock claims.
+
+Design study; no changes to underlying epistemic classes.
+
+**Anti-overlap:** Does not redefine evidence labels or scholarly review policy.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-008; related ONT-007.
+
+**Canonical TODO dependencies:** M47-08
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define distinctions
+- create mock cards
+- conduct comprehension test
+- identify ambiguity
+- select/no-go.
+
+## Acceptance criteria
+
+Reviewers distinguish evidence quality from model confidence and reviewer agreement in test cases.
+
+## Definition of done
+
+Language reviewed by domain and accessibility reviewers.
+
+## Verification plan
+
+Comprehension prompts, color-independent and screen-reader review.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Visual treatment may imply false precision; avoid percentages absent calibration.
+
+**Metrics:** Correct classification and disagreement rate.
+
+**Estimate:** 4–7 days.
+
+**Rollback/fallback:** Discard mock; no underlying record altered.
+
+**Closure evidence:** Mock variants, responses and decision note.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-10
+
+
+**Candidate:** `FUT-010` · **Domain/category:** Frontier / Future UX/HCI · **Priority/difficulty:** P2/D3 · **Owner:** Dock/Empire UX · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-010 — Study bilingual context switching in a research reader](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Evaluate whether users can switch languages without losing their source position or edition context.
+
+## Scope and boundaries
+
+Prototype two context-switch patterns on synthetic records and compare task completion.
+
+Frontend mock; no corpus edits or route changes.
+
+**Anti-overlap:** No translation generation or source alignment claims.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-008; publication gate applies before real content; related FUT-009.
+
+**Canonical TODO dependencies:** M47-08
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define scenario
+- create fake paired editions
+- build mock
+- test
+- record position/context errors.
+
+## Acceptance criteria
+
+User can identify current edition/language and resume same source location after switching.
+
+## Definition of done
+
+Include keyboard, RTL-readiness question and sample limitations.
+
+## Verification plan
+
+State transition tests and moderated task.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Paired language content may not be equivalent; label editions independently.
+
+**Metrics:** Context-loss errors and task completion.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Remove prototype; no persisted state.
+
+**Closure evidence:** Mock, task results and language reviewer note.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-11
+
+
+**Candidate:** `FUT-011` · **Domain/category:** Frontier / Future UX/HCI · **Priority/difficulty:** P2/D3 · **Owner:** reader UX · **Effort:** M (5–9 days; asset costs unknown.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-011 — Prototype accessible audio navigation for cleared excerpts](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test whether optional audio navigation improves access to a synthetic/cleared short excerpt.
+
+## Scope and boundaries
+
+Local prototype with play/pause, transcript, time-linked focus and reduced-motion-compatible controls.
+
+No public audio route, generated voice or new media owner.
+
+**Anti-overlap:** No media access implementation or M33-05 replacement.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Rights approval is external; related ENG-022/024.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Confirm allowed synthetic asset
+- prototype controls
+- test keyboard/captions
+- conduct small access review
+- go/no-go.
+
+## Acceptance criteria
+
+Controls work by keyboard; transcript remains available; asset provenance is clear.
+
+## Definition of done
+
+Rights/accessibility review; no sacred text audio without exact approval.
+
+## Verification plan
+
+Player state, transcript sync and keyboard tests.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Audio source, attribution and religious reading norms; stop if permissions unclear.
+
+**Metrics:** Task completion, transcript use and accessibility blockers.
+
+**Estimate:** 5–9 days; asset costs unknown.
+
+**Rollback/fallback:** Delete local asset/prototype.
+
+**Closure evidence:** Cleared asset record, test notes and no-go option.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-12
+
+
+**Candidate:** `FUT-012` · **Domain/category:** Frontier / Future UX/HCI · **Priority/difficulty:** P3/D5 · **Owner:** research UX · **Effort:** XL (10–20 days, strict prototype cap.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-012 — Test a spatially anchored source exploration concept](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Explore whether spatial arrangement helps users understand relationships among a small synthetic set of sources.
+
+## Scope and boundaries
+
+Build one desktop mock with 12 synthetic nodes, 2D fallback, keyboard navigation and source labels.
+
+Disposable browser prototype; no spatial runtime/app or graph owner.
+
+**Anti-overlap:** No 3D world, game, or production graph rendering.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** None; no production integration.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define task
+- build mock
+- compare 2D/3D
+- test orientation
+- measure errors
+- stop if no advantage.
+
+## Acceptance criteria
+
+Users complete a relation-finding task at least as accurately as 2D; otherwise record no-go.
+
+## Definition of done
+
+2D alternative, accessibility review and cost note included.
+
+## Verification plan
+
+Synthetic graph contract and moderated usability.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Motion sickness, depth confusion, inaccessible controls and novelty bias.
+
+**Metrics:** Completion, wrong links, time, nausea/accessibility feedback.
+
+**Estimate:** 10–20 days, strict prototype cap.
+
+**Rollback/fallback:** Delete demo and assets.
+
+**Closure evidence:** Demo, task protocol, results and budget reconciliation.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-13
+
+
+**Candidate:** `FUT-013` · **Domain/category:** Frontier / Knowledge/Simulation · **Priority/difficulty:** P2/D4 · **Owner:** MoonQL Graph · **Effort:** L (6–12 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-013 — Explore evidence-aware graph traversal](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Prototype a traversal that shows why two attributed claims are connected and which edges remain uncertain.
+
+## Scope and boundaries
+
+Synthetic graph demo with edge provenance, relation type, attribution and confidence class.
+
+Read-only projection over fixture graph; no new ontology owner.
+
+**Anti-overlap:** Does not introduce graph schema or prove metaphysical relations.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-020; related ONT-009.
+
+**Canonical TODO dependencies:** M46-20
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define path semantics
+- create synthetic records
+- render alternatives
+- test ambiguity
+- review with researcher.
+
+## Acceptance criteria
+
+Each displayed path shows all edge sources and labels inference vs direct source relation.
+
+## Definition of done
+
+Graph owner accepts truncation and epistemic rules.
+
+## Verification plan
+
+Fixture graph traversal and provenance-link checks.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Visual path implies causality; use neutral relation language.
+
+**Metrics:** Edge provenance coverage and user interpretation error.
+
+**Estimate:** 6–12 days.
+
+**Rollback/fallback:** Remove read-only prototype.
+
+**Closure evidence:** Demo, fixtures and researcher review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-14
+
+
+**Candidate:** `FUT-014` · **Domain/category:** Frontier / Knowledge/Simulation · **Priority/difficulty:** P2/D4 · **Owner:** research · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-014 — Prototype a claim/evidence scenario simulator](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test an interactive “what evidence would change this conclusion?” exercise using invented claims and evidence.
+
+## Scope and boundaries
+
+Build a fictional case with competing hypotheses, source reliability labels and reversible evidence additions.
+
+Local educational prototype; no production claim store.
+
+**Anti-overlap:** Not an actual theology or historical simulation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; related ONT-009.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Draft fictional case
+- define transitions
+- test comprehension
+- assess bias
+- decide.
+
+## Acceptance criteria
+
+Users distinguish evidence addition from conclusion certainty; multiple outcomes remain possible.
+
+## Definition of done
+
+Domain reviewer approves neutral language.
+
+## Verification plan
+
+State transition tests and moderated comprehension.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Game framing trivializes sensitive inquiry; keep case wholly fictional and optional.
+
+**Metrics:** Correct explanation of evidence vs inference and task completion.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Remove prototype content and preserve method notes only.
+
+**Closure evidence:** Fictional dataset, test plan and review decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-15
+
+
+**Candidate:** `FUT-015` · **Domain/category:** Frontier / Knowledge/Simulation · **Priority/difficulty:** P2/D4 · **Owner:** corpus · **Effort:** L (6–12 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-015 — Compare TEI and current corpus models on one witness](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Map one authorized witness fixture to TEI P5 and current MoonQL structures to identify fit and loss.
+
+## Scope and boundaries
+
+Compare a small synthetic/cleared witness with variants, provenance and editorial notes.
+
+Export/import mapping study only; no replacement model or dependency.
+
+**Anti-overlap:** Not automatic conversion of existing corpus or an additional database owner.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-015; enables ONT-006.
+
+**Canonical TODO dependencies:** M46-15
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select fields
+- map both ways
+- list unrepresentable data
+- test round-trip
+- recommend adopt/map/no-go.
+
+## Acceptance criteria
+
+Every field is mapped, intentionally omitted or marked lossy with rationale.
+
+## Definition of done
+
+Corpus specialist reviews scholarly semantics and licensing.
+
+## Verification plan
+
+Round-trip fixture and schema validation.
+
+## Risks, measures, rollback and closure
+
+**Risks:** TEI complexity and profile mismatch; constrain to one task.
+
+**Metrics:** Field coverage and lossy transformations.
+
+**Estimate:** 6–12 days.
+
+**Rollback/fallback:** Discard converter prototype; current model unchanged.
+
+**Closure evidence:** Mapping table, fixtures, reviewer sign-off.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-16
+
+
+**Candidate:** `FUT-016` · **Domain/category:** Frontier / Knowledge/Simulation · **Priority/difficulty:** P2/D4 · **Owner:** ECHOLOG/rights owner · **Effort:** L (5–9 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-016 — Prototype a media provenance timeline](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Show an asset’s synthetic creation, transformation, review and access events without exposing its contents.
+
+## Scope and boundaries
+
+Static prototype over fabricated event records and opaque object IDs.
+
+Read-only view; no rights decision, media fetching or storage schema change.
+
+**Anti-overlap:** Synthetic timeline study only; no private-media access or replacement for M17/M33 rights tasks. Real assets require their separate rights gate.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** No task blocker for fabricated event records; ENG-019/021 and M33-05 apply only if a later scope uses streaming, shipping, or real assets; related ENG-019/021.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define event vocabulary
+- create fake records
+- test redaction
+- evaluate comprehension
+- stop if redundant.
+
+## Acceptance criteria
+
+Timeline distinguishes storage events from consent/publication decisions; content remains unavailable.
+
+## Definition of done
+
+ECHOLOG and privacy owners approve event fields.
+
+## Verification plan
+
+Event-order, redaction and state rendering fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Timeline mistaken for a rights clearance; label decisions as external authority.
+
+**Metrics:** Lineage comprehension and sensitive-field leakage.
+
+**Estimate:** 5–9 days.
+
+**Rollback/fallback:** Remove prototype and fake records.
+
+**Closure evidence:** Prototype, redaction fixtures and owner review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-17
+
+
+**Candidate:** `FUT-017` · **Domain/category:** Frontier / Knowledge/Simulation · **Priority/difficulty:** P2/D3 · **Owner:** research/operations · **Effort:** M (3–6 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-017 — Simulate research workload and resource scaling](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Model synthetic reader/research workloads to explore capacity and cost sensitivity.
+
+## Scope and boundaries
+
+Simulate ranges rather than forecast a single demand curve; mark every assumption.
+
+Offline spreadsheet/script; no production load test or user telemetry.
+
+**Anti-overlap:** No production load generation or billing changes.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** No blocker; ENG-018/020 baselines are optional inputs and must be labeled if used; related ENG-031.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define scenarios
+- obtain baseline if available
+- model uncertainty
+- vary cost drivers
+- document breakpoints.
+
+## Acceptance criteria
+
+Results reproduce from explicit inputs and show ranges, not falsely precise forecasts.
+
+## Definition of done
+
+Operations review assumptions; no capacity purchase recommended solely from model.
+
+## Verification plan
+
+Arithmetic fixtures and sensitivity checks.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Synthetic assumptions mistaken for demand; mark as scenario, not forecast.
+
+**Metrics:** Break-even ranges and sensitivity to key variables.
+
+**Estimate:** 3–6 days.
+
+**Rollback/fallback:** Delete model if inputs cannot be justified.
+
+**Closure evidence:** Input register, formulas and limitation note.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-18
+
+
+**Candidate:** `FUT-018` · **Domain/category:** Frontier / Distributed/Local-first · **Priority/difficulty:** P2/D4 · **Owner:** API tooling · **Effort:** L (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-018 — Test API contract evolution in an offline client sandbox](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test how an older client handles an additive schema change using fixtures only.
+
+## Scope and boundaries
+
+Create two versioned fixture clients and replay the same fake response.
+
+Offline sandbox; no API route change or new sync service.
+
+**Anti-overlap:** No data synchronization implementation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-014; related ONT-006.
+
+**Canonical TODO dependencies:** M46-14
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Pick schema
+- define old/new clients
+- simulate extra/missing fields
+- capture behavior
+- recommend.
+
+## Acceptance criteria
+
+Unknown additive fields are handled per documented policy; breaking case is detected.
+
+## Definition of done
+
+Compatibility results inform version policy.
+
+## Verification plan
+
+Deterministic fixture replay.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Fixtures miss real clients; state boundary.
+
+**Metrics:** Compatibility outcomes by schema change class.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Remove sandbox; no client is released.
+
+**Closure evidence:** Fixture versions and compatibility report.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-19
+
+
+**Candidate:** `FUT-019` · **Domain/category:** Frontier / Distributed/Local-first · **Priority/difficulty:** P2/D4 · **Owner:** research UX · **Effort:** L (7–12 days; two-week cap.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-019 — Prototype an offline research notebook with explicit export](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test local-only notes for synthetic sources, with user-controlled export and deletion.
+
+## Scope and boundaries
+
+Disposable browser prototype storing only synthetic notes locally; inspect/export/delete controls.
+
+No server sync, account binding or private witness data.
+
+**Anti-overlap:** Owns local-only note save/reload/delete and a minimal user-controlled export; FUT-026 owns a portable research bundle and FUT-030 owns tamper-evident evidence verification. No media offline cache, private archive, or production account feature.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** —; enables FUT-020/030.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define note schema
+- prototype local save
+- test reload/export/delete
+- threaten device loss
+- conduct usability study.
+
+## Acceptance criteria
+
+User sees local-only status; export is readable; delete removes the prototype data.
+
+## Definition of done
+
+Browser storage limits and recovery risks documented.
+
+## Verification plan
+
+Storage, export, deletion and offline/reload tests.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Shared device exposure and browser clearing; warn and avoid sensitive data.
+
+**Metrics:** Task completion, loss/recovery comprehension and delete success.
+
+**Estimate:** 7–12 days; two-week cap.
+
+**Rollback/fallback:** Clear local store and remove demo.
+
+**Closure evidence:** Prototype, threat notes, test results and decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-20
+
+
+**Candidate:** `FUT-020` · **Domain/category:** Frontier / Distributed/Local-first · **Priority/difficulty:** P2/D4 · **Owner:** research package · **Effort:** L (5–9 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-020 — Compare deterministic local conflict-resolution strategies](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Compare explicit user choice, append-only revisions and merge-on-disjoint-fields on synthetic notes.
+
+## Scope and boundaries
+
+Replay a small event set through three strategies and compare resulting state/history.
+
+Pure local simulation; no CRDT dependency.
+
+**Anti-overlap:** Not a third persistence/SQL owner or sync service.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-019; related FUT-030.
+
+**Canonical TODO dependencies:** M47-19
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define events
+- implement miniature replay
+- create collision cases
+- compare
+- publish no-go if semantics unclear.
+
+## Acceptance criteria
+
+Every strategy preserves original values or explains the merge; no lost-write case is silent.
+
+## Definition of done
+
+Decision record lists unsupported multi-device cases.
+
+## Verification plan
+
+Property fixtures for order, replay and duplicate events.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Prototype may be mistaken for production sync; label as simulation.
+
+**Metrics:** Lost updates, conflict resolution steps and state convergence.
+
+**Estimate:** 5–9 days.
+
+**Rollback/fallback:** Delete simulator; no data migration.
+
+**Closure evidence:** Event fixtures, strategy output and owner decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-21
+
+
+**Candidate:** `FUT-021` · **Domain/category:** Frontier / Distributed/Local-first · **Priority/difficulty:** P2/D4 · **Owner:** security/research UX · **Effort:** L (6–12 days; no production key service.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-021 — Test encrypted local cache boundaries with synthetic data](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Evaluate whether a browser prototype can protect synthetic notes at rest and erase them predictably.
+
+## Scope and boundaries
+
+Threat-model and prototype browser crypto for fake notes; compare key-loss and deletion behavior.
+
+No real testimony/source; no claim of hardware-backed protection.
+
+**Anti-overlap:** No private media access or M16/M33 implementation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-019; related FUT-030.
+
+**Canonical TODO dependencies:** M47-19
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define attacker model
+- prototype
+- test export/delete/key loss
+- review browser limits
+- decide no-go.
+
+## Acceptance criteria
+
+Report states what encryption does not protect and shows key/data deletion behavior in fixture.
+
+## Definition of done
+
+Security review before any reuse.
+
+## Verification plan
+
+Synthetic encrypt/decrypt, tamper and delete tests.
+
+## Risks, measures, rollback and closure
+
+**Risks:** False sense of security, XSS, shared profile, lost keys.
+
+**Metrics:** Data recoverability in defined threat cases and deletion behavior.
+
+**Estimate:** 6–12 days; no production key service.
+
+**Rollback/fallback:** Delete keys, fixtures and prototype.
+
+**Closure evidence:** Threat model, test records and deletion confirmation.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-22
+
+
+**Candidate:** `FUT-022` · **Domain/category:** Frontier / Moonshot · **Priority/difficulty:** P2/D4 · **Owner:** LUMEN · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-022 — Evaluate a capability-based worker protocol](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Study whether a narrow worker capability format can describe an authorized task without creating a new orchestrator.
+
+## Scope and boundaries
+
+Model three synthetic jobs as declarative capabilities and compare against current worker contract.
+
+Contract study only; ARSY remains owner, no queue service or autonomous scheduler.
+
+**Anti-overlap:** No new worker app or SKYLINK messaging capability.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-004.
+
+**Canonical TODO dependencies:** M46-04
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Reconcile worker status
+- list job needs
+- model capabilities
+- test cancellation
+- document fit/no-fit.
+
+## Acceptance criteria
+
+Each task declares scope, resource cap, timeout and cancel behavior; no implicit authority.
+
+## Definition of done
+
+LUMEN owner approves/no-go.
+
+## Verification plan
+
+Schema and lifecycle fixture tests.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Scope creep toward a second orchestration system.
+
+**Metrics:** Contract coverage and unbounded-field count.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Discard proposed schema; existing contract unchanged.
+
+**Closure evidence:** Mapping table, fixtures and boundary review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-23
+
+
+**Candidate:** `FUT-023` · **Domain/category:** Frontier / Moonshot · **Priority/difficulty:** P2/D4 · **Owner:** research UX · **Effort:** L (5–9 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-023 — Explore a multi-reviewer disagreement interface](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Prototype how reviewers can record distinct interpretations without forced consensus.
+
+## Scope and boundaries
+
+Local mock with attributed positions, evidence links, abstain and unresolved states.
+
+Synthetic records; no reviewer grants, durable decisions or public projection.
+
+**Anti-overlap:** No M20-04 reviewer panels or decision storage.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-003; M20 is an external gate only before integration with real reviewer authority.
+
+**Canonical TODO dependencies:** M47-03
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Draft neutral case
+- prototype
+- test comprehension
+- review power dynamics
+- decide.
+
+## Acceptance criteria
+
+Users can distinguish “different views” from “no evidence”; no vote becomes theological truth.
+
+## Definition of done
+
+Qualified researcher and cultural-sensitivity reviewer review language.
+
+## Verification plan
+
+State tests and moderated usability.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Vote count implies authority; omit popularity ranking.
+
+**Metrics:** Interpretation recall, perceived coercion and accessibility.
+
+**Estimate:** 5–9 days.
+
+**Rollback/fallback:** Remove mock; preserve no records.
+
+**Closure evidence:** Prototype and review notes.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-24
+
+
+**Candidate:** `FUT-024` · **Domain/category:** Frontier / Moonshot · **Priority/difficulty:** P3/D5 · **Owner:** research UX · **Effort:** XL (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-024 — Prototype a “research journey” planner without spiritual ranking](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test whether optional checkpoints help a user organize a research question without ranking beliefs or claiming spiritual direction.
+
+## Scope and boundaries
+
+Prototype a personal checklist with user-authored goals, editable steps and explicit opt-out.
+
+Static mock only; no account state, mandate, recommendations or spiritual score.
+
+**Anti-overlap:** Explicitly does not implement M23-03/05/07.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** M23 overlap decision; related CHAR-006.
+
+**Canonical TODO dependencies:** M23-03,M23-05
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define secular research example
+- prototype
+- test coercion/accessibility
+- assess overlap with M23
+- stop if duplicated.
+
+## Acceptance criteria
+
+User can reorder/delete steps; no ranking, supernatural claim or default enrollment.
+
+## Definition of done
+
+M23 owner confirms distinctness before any adoption.
+
+## Verification plan
+
+State manipulation and accessibility review.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Repeats M23 or nudges religious belief; hard no-go gate.
+
+**Metrics:** User control comprehension and perceived pressure.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Remove prototype; no persistent journey data.
+
+**Closure evidence:** Prototype, overlap sign-off and no-go record.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-25
+
+
+**Candidate:** `FUT-025` · **Domain/category:** Frontier / Moonshot · **Priority/difficulty:** P2/D4 · **Owner:** research UX · **Effort:** L (6–12 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-025 — Explore a “claim path” narrative with provenance visible](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Prototype a sequence view that follows how a claim is cited, interpreted and revised.
+
+## Scope and boundaries
+
+Fictional case study with separate lanes for source, interpretation, testimony and narrative.
+
+Static, synthetic timeline; no public Story integration.
+
+**Anti-overlap:** Synthetic claim-path narrative only; shares fixture vocabulary with FUT-008/FUT-009/ONT-014 but answers a distinct sequence-and-attribution question. No story-rights, publication, or timeline production changes.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-014; related ONT-011/ONT-014.
+
+**Canonical TODO dependencies:** M47-14
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Draft case
+- model lanes
+- test category distinction
+- review with researcher
+- decide.
+
+## Acceptance criteria
+
+Users correctly identify the origin/class of each card; transitions show source/version.
+
+## Definition of done
+
+No real claim/content; sensitivity review.
+
+## Verification plan
+
+Category integrity and chronology tests; moderated tasks.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Narrative implies linear proof; show branches and disagreement.
+
+**Metrics:** Class identification, source recall and misinterpretation.
+
+**Estimate:** 6–12 days.
+
+**Rollback/fallback:** Delete local prototype and fictional assets.
+
+**Closure evidence:** Prototype, user outcomes and review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-26
+
+
+**Candidate:** `FUT-026` · **Domain/category:** Frontier / Moonshot · **Priority/difficulty:** P2/D4 · **Owner:** research package · **Effort:** L (6–12 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-026 — Explore a personal research export bundle](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test whether a small, user-controlled export can preserve notes plus source references for offline scholarship.
+
+## Scope and boundaries
+
+Generate a synthetic archive with manifest, checksums, license/rights metadata and explicit omissions.
+
+Export adapter only; no new storage or import authority.
+
+**Anti-overlap:** Owns a user-requested portable archive/export contract; distinguish it from FUT-019's local-note lifecycle and FUT-030's tamper-evident evidence package. Not a data portability promise or M18/M19 publication feature.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-015 and ENG-016; related ONT-004.
+
+**Canonical TODO dependencies:** M47-15,M46-16
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define minimal package
+- generate fixture
+- verify checksum
+- test absence of private data
+- review portability.
+
+## Acceptance criteria
+
+Bundle opens offline, reports version and sources, and excludes unapproved/private material.
+
+## Definition of done
+
+Data owner and rights reviewer approve fields.
+
+## Verification plan
+
+Deterministic output, checksum and exclusion tests.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Export could leak restricted sources; deny by default.
+
+**Metrics:** Required provenance field coverage and excluded-field tests.
+
+**Estimate:** 6–12 days.
+
+**Rollback/fallback:** Disable export path; retain synthetic sample only.
+
+**Closure evidence:** Bundle fixture, checksums and field review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-27
+
+
+**Candidate:** `FUT-027` · **Domain/category:** Frontier / Wildcard · **Priority/difficulty:** P2/D3 · **Owner:** governance/research · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-027 — Build a synthetic reviewer training simulator](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test whether fictional cases help reviewers practice distinguishing evidence, interpretation and unknowns.
+
+## Scope and boundaries
+
+Local scenario with synthetic records, decision prompts and feedback on process only.
+
+Offline exercise; no actual reviewer account or decision storage.
+
+**Anti-overlap:** No reviewer authority grant, case moderation or certification.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-023; related ONT-007; no M20 authority integration.
+
+**Canonical TODO dependencies:** M47-23
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define fictional case
+- write rubric
+- prototype
+- review cultural bias
+- evaluate comprehension.
+
+## Acceptance criteria
+
+Learner distinguishes source evidence, interpretation and policy decision in scenarios.
+
+## Definition of done
+
+Content reviewer approves; no real personal case data.
+
+## Verification plan
+
+Scenario branching and accessibility checks.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Training output mistaken for certification; state no credential.
+
+**Metrics:** Pre/post scenario classification and misconception count.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Remove module; no decisions persisted.
+
+**Closure evidence:** Rubric, fictional cases and results.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-28
+
+
+**Candidate:** `FUT-028` · **Domain/category:** Frontier / Wildcard · **Priority/difficulty:** P3/D5 · **Owner:** ontology/research UX · **Effort:** XL (10–20 days; strict prototype budget.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-028 — Prototype an uncertainty-aware “living atlas”](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Explore a navigable map of attributed concepts where contested and unknown relations are visually distinct.
+
+## Scope and boundaries
+
+Synthetic 30-node map with provenance, disputed edges, filters and text equivalent.
+
+Disposable client projection; existing graph owner only.
+
+**Anti-overlap:** Synthetic atlas projection only; reuses graph-owned fields, does not add cache behavior from FUT-021, and is distinct from ONT-009's provenance audit.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-013; related FUT-021/ONT-009.
+
+**Canonical TODO dependencies:** M47-13
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define neutral semantics
+- build mock
+- add text alternative
+- test interpretation
+- compare list/map
+- decide.
+
+## Acceptance criteria
+
+Users identify contested and unknown relations; map offers equivalent nonvisual path.
+
+## Definition of done
+
+Ontology and accessibility reviewers approve semantics.
+
+## Verification plan
+
+Edge-class rendering, keyboard traversal and comprehension test.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Visual hierarchy may encode bias; allow multiple views and no rank.
+
+**Metrics:** Relation-class recall, accessibility completion and misreading rate.
+
+**Estimate:** 10–20 days; strict prototype budget.
+
+**Rollback/fallback:** Delete demo; no production projection.
+
+**Closure evidence:** Demo, text equivalent, usability results and decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-29
+
+
+**Candidate:** `FUT-029` · **Domain/category:** Frontier / Wildcard · **Priority/difficulty:** P2/D3 · **Owner:** research UX/privacy · **Effort:** M (4–7 days; no external service cost.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-029 — Explore a consent-preserving feedback loop for research tools](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Test anonymous/optional feedback on a synthetic research prototype without collecting source content or identity by default.
+
+## Scope and boundaries
+
+Prototype opt-in structured feedback with preview, omit, delete and no free-text default.
+
+Local mock; no analytics vendor, community identity or server collection.
+
+**Anti-overlap:** No M32 community moderation or production analytics.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-014; CHAR-001 is related.
+
+**Canonical TODO dependencies:** M47-14
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define minimal questions
+- mock preview/submit
+- test consent comprehension
+- map retention
+- go/no-go.
+
+## Acceptance criteria
+
+Participant understands what is sent; no submission occurs before explicit action.
+
+## Definition of done
+
+Privacy and safeguarding review before any real collection.
+
+## Verification plan
+
+Consent-state tests and data-field allowlist.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Feedback may reveal sensitive data; no free text initially and provide stop/delete.
+
+**Metrics:** Consent comprehension, submission completion and fields collected.
+
+**Estimate:** 4–7 days; no external service cost.
+
+**Rollback/fallback:** Remove prototype; discard all sample feedback.
+
+**Closure evidence:** Mock, data map and review decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M47-30
+
+
+**Candidate:** `FUT-030` · **Domain/category:** Frontier / Wildcard · **Priority/difficulty:** P2/D4 · **Owner:** research/provenance · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [FUT-030 — Prototype portable evidence bundles with integrity checks](../../research/unified-100-issue-frontier-v5/ISSUES_FRONTIER.md) (full 22-section source).
+
+## Objective
+
+Evaluate a compact bundle of synthetic citations, version refs and hashes that can be verified offline.
+
+## Scope and boundaries
+
+Build a synthetic signed-or-hashed manifest prototype; compare integrity-only vs signed issuer model.
+
+File artifact only; no identity service or blockchain.
+
+**Anti-overlap:** Tamper-evident evidence package with issuer/checksum verification only; keep its manifest contract distinct from FUT-019's local notes and FUT-026's user export. No blockchain, global identity or source authority.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-019; related ENG-016.
+
+**Canonical TODO dependencies:** M47-19
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define fields
+- create bundle
+- alter fixture
+- verify failure
+- review signatures/keys
+- decide.
+
+## Acceptance criteria
+
+Tampering is detected; provenance and issuer are not conflated; no content is included without rights.
+
+## Definition of done
+
+Key custody and threat assumptions documented.
+
+## Verification plan
+
+Hash/tamper, schema and offline verification fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Hash may be misread as truth/authenticity; explain what it proves and does not.
+
+**Metrics:** Tamper detection, bundle size and verification time.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Delete prototype keys/artifacts.
+
+**Closure evidence:** Bundle, tamper output, threat model and decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
 ## M48 — WORKS buyer validation and sustainable economics
 
 **Group:** G7 · **Priority:** mixed by leaf · **Prerequisites:** M35 task gates; outreach and respondent-data collection require separate authorization. · **Scope:** existing domain owners only. [Milestone context](docs/milestones/M48.md) · [V5 source package](docs/research/unified-100-issue-frontier-v5/README.md).
@@ -1062,15 +5170,551 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M48-01** — Validate institutional demand for a research-support offer | P2 | D3 | M35-01,M35 | Owner: product research; effort: M (5–8 researcher days; interview incentives only with approval.). Deliverable: Learn whether libraries, research groups or educational institutions have a costly research workflow MoonWitness can responsibly support. Scope: Select eligible roles; prepare consent script; interview; anonymize themes; seek disconfirming cases; publish go/no-go. Acceptance: At least three independent respondents describe the same costly job and current workaround; otherwise document insufficient/negative evidence. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M48/M48-01.md) · candidate ECO-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
-| - [ ] | **M48-02** — Test self-hosted support demand and constraints | P2 | D3 | M48-01,M35-01,M35 | Owner: product/operations research; effort: M (4–7 days; costs are interview/research only.). Deliverable: Assess whether organizations need paid installation, maintenance or support for an authorized self-hosted deployment. Scope: Identify segment; prepare non-leading questions; interview; estimate requested support; compare to internal capacity; decide. Acceptance: Findings distinguish interest, budget authority, procurement and support expectations. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M48/M48-02.md) · candidate ECO-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
-| - [ ] | **M48-03** — Define ethical pricing hypotheses for institutional research tools | P2 | D3 | M48-01,M35-02,M35 | Owner: product research; effort: M (4–7 days; no billing cost.). Deliverable: Compare usage, flat institutional, and sponsored-access hypotheses without charging users. Scope: Define included services; draft ranges from approved research; test with target roles; note fairness/access risks; revise. Acceptance: Respondents understand what is paid, what remains free, and whether their answer is hypothetical. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M48/M48-03.md) · candidate ECO-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
-| - [ ] | **M48-04** — Map commercial entitlements away from donation benefits | P2 | D3 | M35-02,M35 | Owner: architecture/product; effort: M (3–6 days; legal review cost not estimated.). Deliverable: Specify how a future paid support service would remain separate from charity contributions and source rights. Scope: Inventory existing language; mark value flows; review with finance/legal/charity owners; document forbidden coupling. Acceptance: Diagram shows no donation-to-entitlement conversion and no paid access to private/sacred sources. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M48/M48-04.md) · candidate ECO-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
-| - [ ] | **M48-05** — Test partnership distribution with research organizations | P2 | D3 | M48-01 | Owner: partnerships research; effort: M (4–8 days plus response latency.). Deliverable: Assess whether one or more research institutions would distribute or co-develop a tool without exclusive source control. Scope: Define partner criteria; check conflict/rights; prepare non-promissory brief; interview; record obligations; decide. Acceptance: Report distinguishes referral, co-research, hosting and data-sharing proposals; none accepted implicitly. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M48/M48-05.md) · candidate ECO-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
-| - [ ] | **M48-06** — Model cost-to-serve ranges for research workflows | P2 | D3 | M48-01 | Owner: operations/finance; effort: M (3–6 days plus cost-data access.). Deliverable: Estimate bounded infrastructure and support cost ranges for an institutional research workflow. Scope: Choose workflow; source approved cost inputs; model low/central/high scenarios; sensitivity analysis; review exclusions. Acceptance: Every input is sourced, estimated or UNKNOWN; model produces ranges and break-even assumptions. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M48/M48-06.md) · candidate ECO-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
-| - [ ] | **M48-07** — Compare recurring support, sponsorship and grant scenarios | P2 | D3 | M48-06 | Owner: product/finance research; effort: M (3–6 days.). Deliverable: Compare funding models for maintenance burden without presenting hypothetical funds as revenue. Scope: Define costs; list restrictions; model continuity; stress-test loss of source; review mission risk. Acceptance: Scenario shows cost coverage, concentration risk, restrictions and unfunded obligations. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M48/M48-07.md) · candidate ECO-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
-| - [ ] | **M48-08** — Assess a rights-cleared creator/research service model | P2 | D4 | M48-04,M17-06,M18-02,M35-02,M17,M18,M35 | Owner: product/rights research; effort: L (5–10 days; expert review cost TBD.). Deliverable: Explore whether a paid service could support authorized corpus preparation or research tooling without selling source rights. Scope: Map work types; identify rights holders; interview authorized practitioners if approved; model obligations; no-go if rights unclear. Acceptance: Every proposed service has identifiable rights, contributor choice, payment obligation and dispute route. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M48/M48-08.md) · candidate ECO-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
+| - [ ] | **M48-01** — Validate institutional demand for a research-support offer | P2 | D3 | M35-01,M35 | Owner: product research; effort: M (5–8 researcher days; interview incentives only with approval.). Deliverable: Learn whether libraries, research groups or educational institutions have a costly research workflow MoonWitness can responsibly support. Scope: Select eligible roles; prepare consent script; interview; anonymize themes; seek disconfirming cases; publish go/no-go. Acceptance: At least three independent respondents describe the same costly job and current workaround; otherwise document insufficient/negative evidence. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m48-01) · candidate ECO-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
+| - [ ] | **M48-02** — Test self-hosted support demand and constraints | P2 | D3 | M48-01,M35-01,M35 | Owner: product/operations research; effort: M (4–7 days; costs are interview/research only.). Deliverable: Assess whether organizations need paid installation, maintenance or support for an authorized self-hosted deployment. Scope: Identify segment; prepare non-leading questions; interview; estimate requested support; compare to internal capacity; decide. Acceptance: Findings distinguish interest, budget authority, procurement and support expectations. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m48-02) · candidate ECO-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
+| - [ ] | **M48-03** — Define ethical pricing hypotheses for institutional research tools | P2 | D3 | M48-01,M35-02,M35 | Owner: product research; effort: M (4–7 days; no billing cost.). Deliverable: Compare usage, flat institutional, and sponsored-access hypotheses without charging users. Scope: Define included services; draft ranges from approved research; test with target roles; note fairness/access risks; revise. Acceptance: Respondents understand what is paid, what remains free, and whether their answer is hypothetical. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m48-03) · candidate ECO-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
+| - [ ] | **M48-04** — Map commercial entitlements away from donation benefits | P2 | D3 | M35-02,M35 | Owner: architecture/product; effort: M (3–6 days; legal review cost not estimated.). Deliverable: Specify how a future paid support service would remain separate from charity contributions and source rights. Scope: Inventory existing language; mark value flows; review with finance/legal/charity owners; document forbidden coupling. Acceptance: Diagram shows no donation-to-entitlement conversion and no paid access to private/sacred sources. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m48-04) · candidate ECO-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
+| - [ ] | **M48-05** — Test partnership distribution with research organizations | P2 | D3 | M48-01 | Owner: partnerships research; effort: M (4–8 days plus response latency.). Deliverable: Assess whether one or more research institutions would distribute or co-develop a tool without exclusive source control. Scope: Define partner criteria; check conflict/rights; prepare non-promissory brief; interview; record obligations; decide. Acceptance: Report distinguishes referral, co-research, hosting and data-sharing proposals; none accepted implicitly. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m48-05) · candidate ECO-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
+| - [ ] | **M48-06** — Model cost-to-serve ranges for research workflows | P2 | D3 | M48-01 | Owner: operations/finance; effort: M (3–6 days plus cost-data access.). Deliverable: Estimate bounded infrastructure and support cost ranges for an institutional research workflow. Scope: Choose workflow; source approved cost inputs; model low/central/high scenarios; sensitivity analysis; review exclusions. Acceptance: Every input is sourced, estimated or UNKNOWN; model produces ranges and break-even assumptions. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m48-06) · candidate ECO-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
+| - [ ] | **M48-07** — Compare recurring support, sponsorship and grant scenarios | P2 | D3 | M48-06 | Owner: product/finance research; effort: M (3–6 days.). Deliverable: Compare funding models for maintenance burden without presenting hypothetical funds as revenue. Scope: Define costs; list restrictions; model continuity; stress-test loss of source; review mission risk. Acceptance: Scenario shows cost coverage, concentration risk, restrictions and unfunded obligations. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m48-07) · candidate ECO-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
+| - [ ] | **M48-08** — Assess a rights-cleared creator/research service model | P2 | D4 | M48-04,M17-06,M18-02,M35-02,M17,M18,M35 | Owner: product/rights research; effort: L (5–10 days; expert review cost TBD.). Deliverable: Explore whether a paid service could support authorized corpus preparation or research tooling without selling source rights. Scope: Map work types; identify rights holders; interview authorized practitioners if approved; model obligations; no-go if rights unclear. Acceptance: Every proposed service has identifiable rights, contributor choice, payment obligation and dispute route. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m48-08) · candidate ECO-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md). |
 
+
+
+## M48 — Detailed Task Specifications
+
+_Below is the full specification for each M48 task, consolidated from individual packet files._
+
+
+### M48-01
+
+
+**Candidate:** `ECO-001` · **Domain/category:** Economy / Product-market validation · **Priority/difficulty:** P2/D3 · **Owner:** product research · **Effort:** M (5–8 researcher days; interview incentives only with approval.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ECO-001 — Validate institutional demand for a research-support offer](../../research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md) (full 22-section source).
+
+## Objective
+
+Learn whether libraries, research groups or educational institutions have a costly research workflow MoonWitness can responsibly support.
+
+## Scope and boundaries
+
+Conduct 6–10 consented problem interviews with institutional researchers; test current workflow, procurement constraints and non-solution alternatives.
+
+Research protocol only; no participant data in product databases and no payment flow.
+
+**Anti-overlap:** Share one consent/outreach protocol and respondent pool with ECO-002/ECO-005; this task tests demand and costly jobs only. Not validating the M35 physical/service pilot or making a sales offer.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Reconcile M35-01 scope; enables ECO-002.
+
+**Canonical TODO dependencies:** M35-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select eligible roles
+- prepare consent script
+- interview
+- anonymize themes
+- seek disconfirming cases
+- publish go/no-go.
+
+## Acceptance criteria
+
+At least three independent respondents describe the same costly job and current workaround; otherwise document insufficient/negative evidence.
+
+## Definition of done
+
+No identifying quotes without consent; sample and selection bias stated.
+
+## Verification plan
+
+Review research protocol for leading questions and anonymization.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Small sample and institutional courtesy bias; no demand claim from interest alone.
+
+**Metrics:** Repeated problem themes, workaround cost ranges and procurement blocker frequency.
+
+**Estimate:** 5–8 researcher days; interview incentives only with approval.
+
+**Rollback/fallback:** Delete raw notes on schedule; retain only consented/anonymized findings.
+
+**Closure evidence:** Approved protocol, anonymized results, limitations and decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M48-02
+
+
+**Candidate:** `ECO-002` · **Domain/category:** Economy / Product-market validation · **Priority/difficulty:** P2/D3 · **Owner:** product/operations research · **Effort:** M (4–7 days; costs are interview/research only.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ECO-002 — Test self-hosted support demand and constraints](../../research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md) (full 22-section source).
+
+## Objective
+
+Assess whether organizations need paid installation, maintenance or support for an authorized self-hosted deployment.
+
+## Scope and boundaries
+
+Interview 5–8 technically responsible organizations about control, reliability, staffing and support expectations.
+
+Research only; no hosting tier, SLA, deployment automation or account feature.
+
+**Anti-overlap:** Reuses ECO-001's consent protocol/respondent pool; tests self-hosting and support capacity, not general demand or partner distribution. Distinct from M35 buyer/merchant/payment workflow; no deployment task.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ECO-001; reconcile M35-01/02.
+
+**Canonical TODO dependencies:** M48-01,M35-01,M35-02
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Identify segment
+- prepare non-leading questions
+- interview
+- estimate requested support
+- compare to internal capacity
+- decide.
+
+## Acceptance criteria
+
+Findings distinguish interest, budget authority, procurement and support expectations.
+
+## Definition of done
+
+No SLA/availability promise; report evidence and non-fit.
+
+## Verification plan
+
+Protocol review and reproducible coding of anonymized interview themes.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Support expectations may exceed capacity; do not offer service during research.
+
+**Metrics:** Verified budget owner, support burden, procurement path and number of repeat pain points.
+
+**Estimate:** 4–7 days; costs are interview/research only.
+
+**Rollback/fallback:** Stop recruitment and remove raw notes per protocol.
+
+**Closure evidence:** Interview summary, cost assumptions and explicit decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M48-03
+
+
+**Candidate:** `ECO-003` · **Domain/category:** Economy / Pricing/entitlements · **Priority/difficulty:** P2/D3 · **Owner:** product research · **Effort:** M (4–7 days; no billing cost.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ECO-003 — Define ethical pricing hypotheses for institutional research tools](../../research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md) (full 22-section source).
+
+## Objective
+
+Compare usage, flat institutional, and sponsored-access hypotheses without charging users.
+
+## Scope and boundaries
+
+Draft three hypothetical pricing cards for support/tooling, explicitly exclude sacred/public source access, and test comprehension.
+
+Research artifacts only; no price fields or entitlement logic added to products.
+
+**Anti-overlap:** Does not set production pricing or entitlements.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ECO-001/002; M35-02 remains authoritative for merchant ownership.
+
+**Canonical TODO dependencies:** M48-01,M48-02,M35-02
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define included services
+- draft ranges from approved research
+- test with target roles
+- note fairness/access risks
+- revise.
+
+## Acceptance criteria
+
+Respondents understand what is paid, what remains free, and whether their answer is hypothetical.
+
+## Definition of done
+
+No price is published as an offer or commitment.
+
+## Verification plan
+
+Cognitive interview checks for ambiguity and coercion.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Hypothetical willingness-to-pay is not purchase evidence; report separately.
+
+**Metrics:** Comprehension, perceived fairness and stated budget range with confidence.
+
+**Estimate:** 4–7 days; no billing cost.
+
+**Rollback/fallback:** Withdraw research cards; no price change to product.
+
+**Closure evidence:** Cards, respondent profile, results and limitations.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M48-04
+
+
+**Candidate:** `ECO-004` · **Domain/category:** Economy / Pricing/entitlements · **Priority/difficulty:** P2/D3 · **Owner:** architecture/product · **Effort:** M (3–6 days; legal review cost not estimated.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ECO-004 — Map commercial entitlements away from donation benefits](../../research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md) (full 22-section source).
+
+## Objective
+
+Specify how a future paid support service would remain separate from charity contributions and source rights.
+
+## Scope and boundaries
+
+Produce a conceptual boundary diagram covering payer, merchant, service entitlement, refund, donation and restricted fund.
+
+No ledger/schema/payment provider; propose separate owners and records only as a decision.
+
+**Anti-overlap:** Does not implement M35 Treasury, merchant or donation accounting.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** M35-02 is external; related CHAR-003/004.
+
+**Canonical TODO dependencies:** M35-02
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory existing language
+- mark value flows
+- review with finance/legal/charity owners
+- document forbidden coupling.
+
+## Acceptance criteria
+
+Diagram shows no donation-to-entitlement conversion and no paid access to private/sacred sources.
+
+## Definition of done
+
+M35 and charity owners review; unresolved legal areas remain UNKNOWN.
+
+## Verification plan
+
+Scenario review for refund, chargeback and restricted donation edge cases.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Diagram may be mistaken for legal advice or authorization; watermark as concept.
+
+**Metrics:** All flow scenarios assigned a distinct owner and disposition.
+
+**Estimate:** 3–6 days; legal review cost not estimated.
+
+**Rollback/fallback:** Replace concept with explicit no-go; no system state affected.
+
+**Closure evidence:** Reviewed flow diagram, unresolved legal questions and decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M48-05
+
+
+**Candidate:** `ECO-005` · **Domain/category:** Economy / Partnerships · **Priority/difficulty:** P2/D3 · **Owner:** partnerships research · **Effort:** M (4–8 days plus response latency.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ECO-005 — Test partnership distribution with research organizations](../../research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md) (full 22-section source).
+
+## Objective
+
+Assess whether one or more research institutions would distribute or co-develop a tool without exclusive source control.
+
+## Scope and boundaries
+
+Map candidate partner types and interview a small sample about use, governance, rights and procurement.
+
+No integration or data-sharing API; partnership remains non-binding discovery.
+
+**Anti-overlap:** Reuses ECO-001/ECO-002's consent protocol and respondent pool; tests partner/distribution willingness only, with no implied commitment. No marketing automation, affiliate tracking or M32 community implementation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ECO-001; requires explicit outreach authorization before contact.
+
+**Canonical TODO dependencies:** M48-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define partner criteria
+- check conflict/rights
+- prepare non-promissory brief
+- interview
+- record obligations
+- decide.
+
+## Acceptance criteria
+
+Report distinguishes referral, co-research, hosting and data-sharing proposals; none accepted implicitly.
+
+## Definition of done
+
+No logo/use of partner name without permission; conflicts recorded.
+
+## Verification plan
+
+Legal/privacy review of outreach brief.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Implied endorsement or source ownership; use non-binding language and no data transfer.
+
+**Metrics:** Qualified partner interest, governance fit and dependency exposure.
+
+**Estimate:** 4–8 days plus response latency.
+
+**Rollback/fallback:** Withdraw brief and stop contact; no integrations to undo.
+
+**Closure evidence:** Candidate criteria, anonymized findings and approval record.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M48-06
+
+
+**Candidate:** `ECO-006` · **Domain/category:** Economy / Cost/profitability · **Priority/difficulty:** P2/D3 · **Owner:** operations/finance · **Effort:** M (3–6 days plus cost-data access.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ECO-006 — Model cost-to-serve ranges for research workflows](../../research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md) (full 22-section source).
+
+## Objective
+
+Estimate bounded infrastructure and support cost ranges for an institutional research workflow.
+
+## Scope and boundaries
+
+Build scenario model from aggregate bills, explicit workload assumptions and operator time.
+
+Offline model; no billing telemetry or customer-level cost tracking.
+
+**Anti-overlap:** Models per-workflow ranges and support assumptions using ENG-031's single aggregate operating-cost baseline; does not create a second aggregate cost inventory or claim payment, revenue, or M35 unit-economics results.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ECO-001/002; ENG-031.
+
+**Canonical TODO dependencies:** M48-01,M48-02,M46-31
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Choose workflow
+- source approved cost inputs
+- model low/central/high scenarios
+- sensitivity analysis
+- review exclusions.
+
+## Acceptance criteria
+
+Every input is sourced, estimated or UNKNOWN; model produces ranges and break-even assumptions.
+
+## Definition of done
+
+Finance/operations review, no customer data, no profitability claim.
+
+## Verification plan
+
+Arithmetic fixture and sensitivity checks.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Shared infra allocation and labor estimates may be wrong; publish ranges.
+
+**Metrics:** Cost per workflow, support hours and sensitivity to volume.
+
+**Estimate:** 3–6 days plus cost-data access.
+
+**Rollback/fallback:** Retire model if inputs cannot be verified.
+
+**Closure evidence:** Input register, formulas, uncertainty and reviewer note.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M48-07
+
+
+**Candidate:** `ECO-007` · **Domain/category:** Economy / Cost/profitability · **Priority/difficulty:** P2/D3 · **Owner:** product/finance research · **Effort:** M (3–6 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ECO-007 — Compare recurring support, sponsorship and grant scenarios](../../research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md) (full 22-section source).
+
+## Objective
+
+Compare funding models for maintenance burden without presenting hypothetical funds as revenue.
+
+## Scope and boundaries
+
+Model three scenarios—paid support, non-restricted sponsorship, and grants—with no promised amount.
+
+Spreadsheet/research only; donations remain outside commercial revenue and no funds are handled.
+
+**Anti-overlap:** Not a donation platform, grant application or revenue claim.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ECO-006; related CHAR-004.
+
+**Canonical TODO dependencies:** M48-06
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define costs
+- list restrictions
+- model continuity
+- stress-test loss of source
+- review mission risk.
+
+## Acceptance criteria
+
+Scenario shows cost coverage, concentration risk, restrictions and unfunded obligations.
+
+## Definition of done
+
+Finance/ethics review; no funding solicitation.
+
+## Verification plan
+
+Formula and sensitivity verification.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Models imply access to funds; label every figure as hypothetical or source-backed.
+
+**Metrics:** Runway range and funding concentration, only from supplied assumptions.
+
+**Estimate:** 3–6 days.
+
+**Rollback/fallback:** Withdraw scenarios if assumptions are not supportable.
+
+**Closure evidence:** Assumption sheet, scenarios and ethics review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M48-08
+
+
+**Candidate:** `ECO-008` · **Domain/category:** Economy / Creator/service economy · **Priority/difficulty:** P2/D4 · **Owner:** product/rights research · **Effort:** L (5–10 days; expert review cost TBD.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ECO-008 — Assess a rights-cleared creator/research service model](../../research/unified-100-issue-frontier-v5/ISSUES_ECONOMY.md) (full 22-section source).
+
+## Objective
+
+Explore whether a paid service could support authorized corpus preparation or research tooling without selling source rights.
+
+## Scope and boundaries
+
+Conduct a workflow/rights study with hypothetical examples only; map creator consent, license, payment and withdrawal questions.
+
+No marketplace, upload pipeline, royalty ledger or rights decision.
+
+**Anti-overlap:** Does not build creator marketplace or replace media/source rights tasks.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ECO-004; external gates M17-06/M18-02/M35-02.
+
+**Canonical TODO dependencies:** M48-04,M17-06,M18-02,M35-02
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Map work types
+- identify rights holders
+- interview authorized practitioners if approved
+- model obligations
+- no-go if rights unclear.
+
+## Acceptance criteria
+
+Every proposed service has identifiable rights, contributor choice, payment obligation and dispute route.
+
+## Definition of done
+
+Rights/finance reviewer approves; no actual content solicited.
+
+## Verification plan
+
+Scenario walkthrough for withdrawal, derivative work, attribution and refund.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Implied ownership or licensing, unpaid labor, cultural appropriation.
+
+**Metrics:** Unresolved rights questions, contributor comprehension and service cost range.
+
+**Estimate:** 5–10 days; expert review cost TBD.
+
+**Rollback/fallback:** End study and delete contact data per consent terms.
+
+**Closure evidence:** Workflow map, consented findings and documented decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
 ## M49 — HARBOR humanitarian and safeguarding readiness
 
 **Group:** G7 · **Priority:** mixed by leaf · **Prerequisites:** M32 scope review, named accountable operator and task dependencies; participant contact/sensitive data require separate authority and consent. · **Scope:** existing domain owners only. [Milestone context](docs/milestones/M49.md) · [V5 source package](docs/research/unified-100-issue-frontier-v5/README.md).
@@ -1079,17 +5723,681 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M49-01** — Prepare a partner-led needs assessment protocol | P2 | D3 | M32 | Owner: humanitarian research lead; effort: M (4–8 days plus qualified review.). Deliverable: Prepare a protocol for a qualified local partner to identify a specific unmet need before any program is proposed. Scope: Identify eligible partner profile; draft questions; map consent/data flow; review safeguarding; define stop/go criteria. Acceptance: Protocol cannot collect sensitive personal details by default; partner and participant can decline without penalty. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-01.md) · candidate CHAR-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
-| - [ ] | **M49-02** — Compare needs-assessment methods for accessibility and harm | P2 | D3 | M49-01 | Owner: humanitarian research lead; effort: M (3–6 days.). Deliverable: Compare interview, facilitated group and anonymous feedback approaches for one partner-defined need. Scope: Define hypothetical scenario; score access/privacy risks; consult qualified reviewer; set referral/stop rules; choose or reject methods. Acceptance: Recommendation identifies who may be excluded, what data is necessary, and safe alternatives. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-02.md) · candidate CHAR-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
-| - [ ] | **M49-03** — Define accountable humanitarian program roles and escalation | P1 | D4 | — | Owner: accountable program operator; effort: L (5–10 days plus legal review.). Deliverable: Map who may approve, deliver, pause and investigate a future charitable program. Scope: Identify legal entity; define roles; separate delivery/approval; map incident escalation; tabletop failure cases. Acceptance: Each critical decision has an accountable role and substitute; complaints can bypass program delivery. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-03.md) · candidate CHAR-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
-| - [ ] | **M49-04** — Specify restricted-fund handling and separation rules | P1 | D4 | M49-03 | Owner: accountable finance officer; effort: L (5–12 days plus external advice.). Deliverable: Document how any future restricted charitable funds would be accepted, held, allocated, reconciled and returned. Scope: Identify jurisdiction/entity; map fund lifecycle; define dual control; list refund/unspent cases; obtain accountant/legal review. Acceptance: Every fund state has owner, evidence, reconciliation and return/exception rule. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-04.md) · candidate CHAR-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
-| - [ ] | **M49-05** — Design a transparent allocation decision record | P1 | D4 | M49-04 | Owner: program/finance; effort: L (4–8 days.). Deliverable: Define the minimum evidence for documenting a charitable allocation decision. Scope: Define fields; separate identity from public report; model approval/reversal; review privacy; document owner. Acceptance: Record supports independent reconciliation while public view omits identifying data. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-05.md) · candidate CHAR-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
-| - [ ] | **M49-06** — Prototype a privacy-preserving allocation transparency report | P2 | D3 | M49-05 | Owner: finance/communications; effort: M (4–7 days.). Deliverable: Test whether an aggregate report can explain funds received/allocated and remaining restrictions without naming beneficiaries. Scope: Define aggregate fields; generate fake example; test re-identification risk; ask reviewers to interpret; revise. Acceptance: Readers distinguish received, committed, disbursed and remaining; no person/location inferable from fixture. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-06.md) · candidate CHAR-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
-| - [ ] | **M49-07** — Define safe volunteer roles and safeguarding boundaries | P1 | D4 | M49-03 | Owner: accountable program operator; effort: L (4–8 days plus expert review.). Deliverable: Specify what volunteers may and may not do in a hypothetical program. Scope: Identify task types; assess risk; define screening/training; set supervision; review incidents and appeals. Acceptance: Every role has scope, supervisor, training and prohibited tasks; high-risk roles are excluded absent qualified partner. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-07.md) · candidate CHAR-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
-| - [ ] | **M49-08** — Design accessible volunteer participation without coercion | P2 | D3 | M49-07 | Owner: program/UX; effort: M (3–6 days.). Deliverable: Explore flexible participation, reimbursement and opt-out needs for a future partner-led activity. Scope: Identify barriers; specify accommodations; define reimbursement questions; set opt-out; review. Acceptance: No role requires undisclosed cost; accommodation and refusal paths are explicit. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-08.md) · candidate CHAR-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
-| - [ ] | **M49-09** — Define an outcome measurement plan before a pilot | P1 | D4 | M49-01 | Owner: program evaluator; effort: L (5–10 days plus evaluator time.). Deliverable: Define one outcome, baseline and credible evidence method before any charitable pilot begins. Scope: Specify problem/outcome; identify comparison limits; choose measures; define consent; define adverse findings/publication. Acceptance: Plan separates output, outcome and attribution; includes null/harmful results and missing data. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-09.md) · candidate CHAR-009: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
-| - [ ] | **M49-10** — Define complaint, incident and remedy pathways | P1 | D4 | M49-03 | Owner: independent safeguarding lead; effort: L (5–10 days plus qualified review.). Deliverable: Specify safe feedback, complaint, safeguarding incident and appeal paths before any program contact. Scope: Map report types; define urgent response; assign independent contact; set retention/access; tabletop unsafe disclosure. Acceptance: Complainant can report without public identity; urgent cases have escalation; limits and response timing are clear. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M49/M49-10.md) · candidate CHAR-010: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-01** — Prepare a partner-led needs assessment protocol | P2 | D3 | M32 | Owner: humanitarian research lead; effort: M (4–8 days plus qualified review.). Deliverable: Prepare a protocol for a qualified local partner to identify a specific unmet need before any program is proposed. Scope: Identify eligible partner profile; draft questions; map consent/data flow; review safeguarding; define stop/go criteria. Acceptance: Protocol cannot collect sensitive personal details by default; partner and participant can decline without penalty. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-01) · candidate CHAR-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-02** — Compare needs-assessment methods for accessibility and harm | P2 | D3 | M49-01 | Owner: humanitarian research lead; effort: M (3–6 days.). Deliverable: Compare interview, facilitated group and anonymous feedback approaches for one partner-defined need. Scope: Define hypothetical scenario; score access/privacy risks; consult qualified reviewer; set referral/stop rules; choose or reject methods. Acceptance: Recommendation identifies who may be excluded, what data is necessary, and safe alternatives. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-02) · candidate CHAR-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-03** — Define accountable humanitarian program roles and escalation | P1 | D4 | — | Owner: accountable program operator; effort: L (5–10 days plus legal review.). Deliverable: Map who may approve, deliver, pause and investigate a future charitable program. Scope: Identify legal entity; define roles; separate delivery/approval; map incident escalation; tabletop failure cases. Acceptance: Each critical decision has an accountable role and substitute; complaints can bypass program delivery. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-03) · candidate CHAR-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-04** — Specify restricted-fund handling and separation rules | P1 | D4 | M49-03 | Owner: accountable finance officer; effort: L (5–12 days plus external advice.). Deliverable: Document how any future restricted charitable funds would be accepted, held, allocated, reconciled and returned. Scope: Identify jurisdiction/entity; map fund lifecycle; define dual control; list refund/unspent cases; obtain accountant/legal review. Acceptance: Every fund state has owner, evidence, reconciliation and return/exception rule. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-04) · candidate CHAR-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-05** — Design a transparent allocation decision record | P1 | D4 | M49-04 | Owner: program/finance; effort: L (4–8 days.). Deliverable: Define the minimum evidence for documenting a charitable allocation decision. Scope: Define fields; separate identity from public report; model approval/reversal; review privacy; document owner. Acceptance: Record supports independent reconciliation while public view omits identifying data. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-05) · candidate CHAR-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-06** — Prototype a privacy-preserving allocation transparency report | P2 | D3 | M49-05 | Owner: finance/communications; effort: M (4–7 days.). Deliverable: Test whether an aggregate report can explain funds received/allocated and remaining restrictions without naming beneficiaries. Scope: Define aggregate fields; generate fake example; test re-identification risk; ask reviewers to interpret; revise. Acceptance: Readers distinguish received, committed, disbursed and remaining; no person/location inferable from fixture. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-06) · candidate CHAR-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-07** — Define safe volunteer roles and safeguarding boundaries | P1 | D4 | M49-03 | Owner: accountable program operator; effort: L (4–8 days plus expert review.). Deliverable: Specify what volunteers may and may not do in a hypothetical program. Scope: Identify task types; assess risk; define screening/training; set supervision; review incidents and appeals. Acceptance: Every role has scope, supervisor, training and prohibited tasks; high-risk roles are excluded absent qualified partner. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-07) · candidate CHAR-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-08** — Design accessible volunteer participation without coercion | P2 | D3 | M49-07 | Owner: program/UX; effort: M (3–6 days.). Deliverable: Explore flexible participation, reimbursement and opt-out needs for a future partner-led activity. Scope: Identify barriers; specify accommodations; define reimbursement questions; set opt-out; review. Acceptance: No role requires undisclosed cost; accommodation and refusal paths are explicit. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-08) · candidate CHAR-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-09** — Define an outcome measurement plan before a pilot | P1 | D4 | M49-01 | Owner: program evaluator; effort: L (5–10 days plus evaluator time.). Deliverable: Define one outcome, baseline and credible evidence method before any charitable pilot begins. Scope: Specify problem/outcome; identify comparison limits; choose measures; define consent; define adverse findings/publication. Acceptance: Plan separates output, outcome and attribution; includes null/harmful results and missing data. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-09) · candidate CHAR-009: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
+| - [ ] | **M49-10** — Define complaint, incident and remedy pathways | P1 | D4 | M49-03 | Owner: independent safeguarding lead; effort: L (5–10 days plus qualified review.). Deliverable: Specify safe feedback, complaint, safeguarding incident and appeal paths before any program contact. Scope: Map report types; define urgent response; assign independent contact; set retention/access; tabletop unsafe disclosure. Acceptance: Complainant can report without public identity; urgent cases have escalation; limits and response timing are clear. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m49-10) · candidate CHAR-010: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md). |
 
+## M49 — Detailed Task Specifications
+
+_Below is the full specification for each M49 task, consolidated from individual packet files._
+
+
+### M49-01
+
+
+**Candidate:** `CHAR-001` · **Domain/category:** Charity / Needs discovery · **Priority/difficulty:** P2/D3 · **Owner:** humanitarian research lead · **Effort:** M (4–8 days plus qualified review.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-001 — Prepare a partner-led needs assessment protocol](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Prepare a protocol for a qualified local partner to identify a specific unmet need before any program is proposed.
+
+## Scope and boundaries
+
+Draft a consent-led, minimal-data assessment protocol with inclusion/exclusion, referral and stop conditions.
+
+Paper protocol only; no platform survey or beneficiary database.
+
+**Anti-overlap:** Not M32 first-member journey or community MVP; requires an independent accountable partner.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** M32 owner scope review; enables CHAR-002.
+
+**Canonical TODO dependencies:** M32-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Identify eligible partner profile
+- draft questions
+- map consent/data flow
+- review safeguarding
+- define stop/go criteria.
+
+## Acceptance criteria
+
+Protocol cannot collect sensitive personal details by default; partner and participant can decline without penalty.
+
+## Definition of done
+
+Local partner, safeguarding and privacy review required before recruitment.
+
+## Verification plan
+
+Scenario walkthrough for coercion, referral, data breach and no-response cases.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Extractive research, unsafe disclosure, or false representation of community needs.
+
+**Metrics:** Protocol completeness and unresolved safeguard questions; no impact target invented.
+
+**Estimate:** 4–8 days plus qualified review.
+
+**Rollback/fallback:** Do not recruit; delete draft contact data if any exists.
+
+**Closure evidence:** Reviewed protocol, data map and approval/no-go record.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M49-02
+
+
+**Candidate:** `CHAR-002` · **Domain/category:** Charity / Needs discovery · **Priority/difficulty:** P2/D3 · **Owner:** humanitarian research lead · **Effort:** M (3–6 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-002 — Compare needs-assessment methods for accessibility and harm](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Compare interview, facilitated group and anonymous feedback approaches for one partner-defined need.
+
+## Scope and boundaries
+
+Simulate method trade-offs and document when each must not be used.
+
+Protocol comparison; no live survey, identity store, or product feature.
+
+**Anti-overlap:** Does not determine beneficiary needs or implement M32 participation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** CHAR-001.
+
+**Canonical TODO dependencies:** M49-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define hypothetical scenario
+- score access/privacy risks
+- consult qualified reviewer
+- set referral/stop rules
+- choose or reject methods.
+
+## Acceptance criteria
+
+Recommendation identifies who may be excluded, what data is necessary, and safe alternatives.
+
+## Definition of done
+
+No live participant contact; partner validates any locally specific conclusion.
+
+## Verification plan
+
+Tabletop scenarios for power imbalance, disability, language and unsafe disclosure.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Generic methods can be misapplied across cultures; preserve local decision authority.
+
+**Metrics:** Inclusion risks identified and mitigations assigned.
+
+**Estimate:** 3–6 days.
+
+**Rollback/fallback:** Withdraw method recommendation if local context is unknown.
+
+**Closure evidence:** Reviewed comparison, assumptions and no-go conditions.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M49-03
+
+
+**Candidate:** `CHAR-003` · **Domain/category:** Charity / Program governance · **Priority/difficulty:** P1/D4 · **Owner:** accountable program operator · **Effort:** L (5–10 days plus legal review.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-003 — Define accountable humanitarian program roles and escalation](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Map who may approve, deliver, pause and investigate a future charitable program.
+
+## Scope and boundaries
+
+Create a role/RACI and escalation map with independent complaint and suspension paths.
+
+Governance artifact; no app roles, new identity system or workflow engine.
+
+**Anti-overlap:** Owns the shared accountable-role and escalation map used by CHAR-004/007/010; those tasks add fund controls, volunteer boundaries and safeguarding remedies respectively. Does not define M32 community ownership or commercial Treasury roles.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** Identified operator; related CHAR-004.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Identify legal entity
+- define roles
+- separate delivery/approval
+- map incident escalation
+- tabletop failure cases.
+
+## Acceptance criteria
+
+Each critical decision has an accountable role and substitute; complaints can bypass program delivery.
+
+## Definition of done
+
+Legal, safeguarding and local partner review.
+
+## Verification plan
+
+Tabletop scenarios for conflict, misconduct, missing funds and operator unavailability.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Conflicted reviewers or unstaffed escalation; no program launches without coverage.
+
+**Metrics:** Critical responsibilities with named owner and backup.
+
+**Estimate:** 5–10 days plus legal review.
+
+**Rollback/fallback:** Freeze proposed program until roles are re-approved.
+
+**Closure evidence:** Approved responsibility map and tabletop findings.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M49-04
+
+
+**Candidate:** `CHAR-004` · **Domain/category:** Charity / Program governance · **Priority/difficulty:** P1/D4 · **Owner:** accountable finance officer · **Effort:** L (5–12 days plus external advice.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-004 — Specify restricted-fund handling and separation rules](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Document how any future restricted charitable funds would be accepted, held, allocated, reconciled and returned.
+
+## Scope and boundaries
+
+Produce a controls map, segregation principles, approval thresholds and exception path; no transactions.
+
+Policy only; no donation ledger, payment provider, or Treasury implementation.
+
+**Anti-overlap:** Uses CHAR-003's role map and adds restricted-fund custody, dual control, reconciliation and return rules only. No commercial Treasury or M35 payment flow; no new SQL owner.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** CHAR-003; related ECO-004/007; enables CHAR-005.
+
+**Canonical TODO dependencies:** M49-03
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Identify jurisdiction/entity
+- map fund lifecycle
+- define dual control
+- list refund/unspent cases
+- obtain accountant/legal review.
+
+## Acceptance criteria
+
+Every fund state has owner, evidence, reconciliation and return/exception rule.
+
+## Definition of done
+
+Qualified finance/legal sign-off before solicitation or acceptance.
+
+## Verification plan
+
+Tabletop cases for restricted purpose, chargeback, unspent funds and record discrepancy.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Regulatory mismatch and fraud; block collection until entity and controls exist.
+
+**Metrics:** Unassigned control steps and unresolved legal questions.
+
+**Estimate:** 5–12 days plus external advice.
+
+**Rollback/fallback:** No funds accepted; withdraw policy draft if jurisdiction changes.
+
+**Closure evidence:** Signed controls map, tabletop outcomes and legal/accounting caveats.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M49-05
+
+
+**Candidate:** `CHAR-005` · **Domain/category:** Charity / Donations/allocation · **Priority/difficulty:** P1/D4 · **Owner:** program/finance · **Effort:** L (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-005 — Design a transparent allocation decision record](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Define the minimum evidence for documenting a charitable allocation decision.
+
+## Scope and boundaries
+
+Prototype an offline decision record with purpose, approvers, restrictions, amount category, date and evidence reference.
+
+Synthetic records; no real financial store or public dashboard.
+
+**Anti-overlap:** Not payment processing, donation UI or M35 commercial accounting.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** CHAR-004.
+
+**Canonical TODO dependencies:** M49-04
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define fields
+- separate identity from public report
+- model approval/reversal
+- review privacy
+- document owner.
+
+## Acceptance criteria
+
+Record supports independent reconciliation while public view omits identifying data.
+
+## Definition of done
+
+Finance/privacy reviewer approves fields and access model.
+
+## Verification plan
+
+Schema checks for missing approvals, purpose mismatch and redaction.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Public detail could identify recipients; aggregate only with disclosure review.
+
+**Metrics:** Allocation records with complete approval/evidence fields.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Remove synthetic prototype; no real records created.
+
+**Closure evidence:** Schema, synthetic cases and review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M49-06
+
+
+**Candidate:** `CHAR-006` · **Domain/category:** Charity / Donations/allocation · **Priority/difficulty:** P2/D3 · **Owner:** finance/communications · **Effort:** M (4–7 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-006 — Prototype a privacy-preserving allocation transparency report](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Test whether an aggregate report can explain funds received/allocated and remaining restrictions without naming beneficiaries.
+
+## Scope and boundaries
+
+Use entirely synthetic numbers to mock a report with reconciliation notes, period, definitions and caveats.
+
+Static mock only; no live financial integration.
+
+**Anti-overlap:** Does not create donations or public impact claims.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** CHAR-005; related CHAR-010.
+
+**Canonical TODO dependencies:** M49-05
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define aggregate fields
+- generate fake example
+- test re-identification risk
+- ask reviewers to interpret
+- revise.
+
+## Acceptance criteria
+
+Readers distinguish received, committed, disbursed and remaining; no person/location inferable from fixture.
+
+## Definition of done
+
+Finance and protection reviewers approve the mock language.
+
+## Verification plan
+
+Arithmetic reconciliation and re-identification scenario review.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Aggregates can still reveal small groups; use suppression or no publication.
+
+**Metrics:** Reconciliation errors and privacy-risk findings.
+
+**Estimate:** 4–7 days.
+
+**Rollback/fallback:** Withdraw mock; no public posting.
+
+**Closure evidence:** Synthetic report, reconciliation and privacy review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M49-07
+
+
+**Candidate:** `CHAR-007` · **Domain/category:** Charity / Volunteers/participation · **Priority/difficulty:** P1/D4 · **Owner:** accountable program operator · **Effort:** L (4–8 days plus expert review.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-007 — Define safe volunteer roles and safeguarding boundaries](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Specify what volunteers may and may not do in a hypothetical program.
+
+## Scope and boundaries
+
+Draft role cards, supervision requirements, prohibited actions and escalation contacts.
+
+Policy document; no volunteer directory or dispatch feature.
+
+**Anti-overlap:** Uses CHAR-003's role/escalation map and adds volunteer screening, training, supervision and prohibited-task limits only. No M32 member journey/moderation app.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** CHAR-003.
+
+**Canonical TODO dependencies:** M49-03
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Identify task types
+- assess risk
+- define screening/training
+- set supervision
+- review incidents and appeals.
+
+## Acceptance criteria
+
+Every role has scope, supervisor, training and prohibited tasks; high-risk roles are excluded absent qualified partner.
+
+## Definition of done
+
+Local legal/safeguarding review and partner approval.
+
+## Verification plan
+
+Tabletop cases for boundary crossing, complaint and no supervisor.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Role description mistaken for clearance; never recruit before approval.
+
+**Metrics:** Roles with complete safeguards and unresolved high-risk duties.
+
+**Estimate:** 4–8 days plus expert review.
+
+**Rollback/fallback:** Freeze volunteer activity and withdraw role cards.
+
+**Closure evidence:** Role matrix, risk review and approvals.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M49-08
+
+
+**Candidate:** `CHAR-008` · **Domain/category:** Charity / Volunteers/participation · **Priority/difficulty:** P2/D3 · **Owner:** program/UX · **Effort:** M (3–6 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-008 — Design accessible volunteer participation without coercion](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Explore flexible participation, reimbursement and opt-out needs for a future partner-led activity.
+
+## Scope and boundaries
+
+Create a role-choice and expense policy mock; test fictional cases with expert reviewers.
+
+Paper design; no sign-up or location tracking.
+
+**Anti-overlap:** No community app, member profiles or M32 workflow.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** CHAR-007.
+
+**Canonical TODO dependencies:** M49-07
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Identify barriers
+- specify accommodations
+- define reimbursement questions
+- set opt-out
+- review.
+
+## Acceptance criteria
+
+No role requires undisclosed cost; accommodation and refusal paths are explicit.
+
+## Definition of done
+
+Local partner confirms feasibility before any recruitment.
+
+## Verification plan
+
+Scenario review for disability, travel, care duties and language access.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Promise of reimbursement without funding; all costs remain hypothetical.
+
+**Metrics:** Barriers identified and accommodations with an accountable owner.
+
+**Estimate:** 3–6 days.
+
+**Rollback/fallback:** Remove proposal if funding/partner unavailable.
+
+**Closure evidence:** Barrier matrix and partner/reviewer response.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M49-09
+
+
+**Candidate:** `CHAR-009` · **Domain/category:** Charity / Impact/protection · **Priority/difficulty:** P1/D4 · **Owner:** program evaluator · **Effort:** L (5–10 days plus evaluator time.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-009 — Define an outcome measurement plan before a pilot](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Define one outcome, baseline and credible evidence method before any charitable pilot begins.
+
+## Scope and boundaries
+
+Draft a theory-of-change and evaluation matrix for a partner-selected hypothetical program.
+
+Evaluation plan only; no personal outcome database.
+
+**Anti-overlap:** Does not implement M32 community analytics or claim program success.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** CHAR-001/003.
+
+**Canonical TODO dependencies:** M49-01,M49-03
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Specify problem/outcome
+- identify comparison limits
+- choose measures
+- define consent
+- define adverse findings/publication.
+
+## Acceptance criteria
+
+Plan separates output, outcome and attribution; includes null/harmful results and missing data.
+
+## Definition of done
+
+Independent evaluator/partner reviews method.
+
+## Verification plan
+
+Scenario critique for selection bias, attrition and attribution.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Measurement burden or false causal claim; minimize collection and state limitations.
+
+**Metrics:** Measurement completeness and data burden; no numeric impact target invented.
+
+**Estimate:** 5–10 days plus evaluator time.
+
+**Rollback/fallback:** Do not run pilot if ethical measurement cannot be designed.
+
+**Closure evidence:** Theory-of-change, measurement matrix and reviewer decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M49-10
+
+
+**Candidate:** `CHAR-010` · **Domain/category:** Charity / Impact/protection · **Priority/difficulty:** P1/D4 · **Owner:** independent safeguarding lead · **Effort:** L (5–10 days plus qualified review.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [CHAR-010 — Define complaint, incident and remedy pathways](../../research/unified-100-issue-frontier-v5/ISSUES_CHARITY.md) (full 22-section source).
+
+## Objective
+
+Specify safe feedback, complaint, safeguarding incident and appeal paths before any program contact.
+
+## Scope and boundaries
+
+Draft multiple reporting routes, confidentiality limits, response owner, escalation and retaliation protections.
+
+Governance protocol; no public form or sensitive case database.
+
+**Anti-overlap:** Defines independent complaint, incident and remedy paths from the shared CHAR-003/007 role map; make the path ready before program contact. CHAR-009 outcome measurement is not a prerequisite. No M32 moderation/appeals implementation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** CHAR-003/007; related CHAR-009.
+
+**Canonical TODO dependencies:** M49-03,M49-07
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Map report types
+- define urgent response
+- assign independent contact
+- set retention/access
+- tabletop unsafe disclosure.
+
+## Acceptance criteria
+
+Complainant can report without public identity; urgent cases have escalation; limits and response timing are clear.
+
+## Definition of done
+
+Local safeguarding/legal reviewer approves before program launch.
+
+## Verification plan
+
+Tabletop cases for retaliation, anonymous report, conflict of interest and unavailable lead.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Confidentiality cannot be absolute; explain limits and referral boundaries honestly.
+
+**Metrics:** Path coverage, owner availability and time-to-acknowledge target set by partner.
+
+**Estimate:** 5–10 days plus qualified review.
+
+**Rollback/fallback:** Pause program/contact if safe response capacity lapses.
+
+**Closure evidence:** Protocol, tabletop results and sign-off.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
 ## M50 — Corpus identity, interpretation and ontology safeguards
 
 **Group:** G7 · **Priority:** mixed by leaf · **Prerequisites:** Existing M06/M16/M18/M19 and task-level ENG/FUT/ONT gates; rights/consent review precedes real-source use. · **Scope:** existing domain owners only. [Milestone context](docs/milestones/M50.md) · [V5 source package](docs/research/unified-100-issue-frontier-v5/README.md).
@@ -1098,26 +6406,1345 @@ New unchecked rows represent **unverified planned deliverables**. Historical che
 
 | Status | Task | Priority | Difficulty | Depends on | Acceptance / evidence |
 |---|---|---|---|---|---|
-| - [ ] | **M50-01** — Define a canonical source and edition identity profile | P1 | D3 | M46-02 | Owner: corpus; effort: M (4–8 days.). Deliverable: Define the minimum fields that identify a source, edition, manifestation and immutable version. Scope: Inventory fields; map source/edition/witness; test ambiguous IDs; consult scholar; record unresolved pins. Acceptance: Two distinct editions cannot share an identity; unresolved fields remain UNKNOWN. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-01.md) · candidate ONT-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-02** — Model text, witness, edition and manifestation distinctions | P2 | D4 | M50-01,M16,M18 | Owner: corpus/witness; effort: L (5–10 days.). Deliverable: Specify how one textual work relates to witnesses, editions, transcriptions and digitized manifestations. Scope: Map current types; define relation semantics; create synthetic examples; identify lossy cases; review. Acceptance: Examples distinguish work, witness, edition, transcription and digital file; no identity inferred from title alone. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-02.md) · candidate ONT-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-03** — Specify translation and transcription provenance fields | P2 | D3 | M50-01 | Owner: corpus; effort: M (4–7 days.). Deliverable: Define attribution and version fields for translations, transliterations and transcriptions. Scope: Inventory fields; distinguish translation/transliteration; specify contributor/edition/version; test uncertain attribution; review. Acceptance: A record cannot be labeled original-language text when its status is unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-03.md) · candidate ONT-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-04** — Specify citation snapshots and version-change behavior | P2 | D3 | M50-01,M18 | Owner: research/corpus; effort: M (4–8 days.). Deliverable: Define how a citation stays resolvable when an edition or digital transcription changes. Scope: Model revision case; define stable locator; test removed/changed span; document citation rendering. Acceptance: Old citation resolves to its recorded version or explicitly reports unavailable; it never silently retargets. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-04.md) · candidate ONT-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-05** — Audit corpus inventory completeness without asserting authority | P2 | D3 | M50-01 | Owner: corpus/research; effort: M (4–8 days.). Deliverable: Produce a metadata-only map of source families, versions and known gaps in the current repository. Scope: Agree scope; enumerate metadata; classify evidence; identify missing provenance; review wording. Acceptance: Every row states review status and rights state; no completeness claim without denominator. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-05.md) · candidate ONT-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-06** — Define neutral entity identity and disambiguation rules | P2 | D4 | M46-15,M47-15 | Owner: MoonQL ontology; effort: L (6–12 days.). Deliverable: Specify how an entity is distinguished from aliases, homonyms and interpretations. Scope: Inventory current types; define candidate/accepted distinction; create synthetic collisions; review merge/reversal. Acceptance: Similar labels alone never auto-merge; every alias has source and reviewer/state. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-06.md) · candidate ONT-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-07** — Separate claim, evidence, interpretation and tradition records | P1 | D4 | M47-09,M16-07,M16 | Owner: MoonQL research/ontology; effort: L (6–12 days.). Deliverable: Map current records to distinct source evidence, attributed claims, interpretations and tradition context. Scope: Inventory types; map class semantics; identify ambiguous records; review examples; record blockers. Acceptance: Every example has one explicit class or remains unlabelled/withheld; no silent conversion. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-07.md) · candidate ONT-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-08** — Represent contested claims as attributed parallel positions | P2 | D4 | M50-07 | Owner: ontology/research; effort: L (5–10 days.). Deliverable: Specify how incompatible scholarly or tradition-specific positions remain separately attributable. Scope: Create synthetic disagreement; map current schema; test multiple positions; review ordering and attribution. Acceptance: Both positions remain visible; disagreement is not averaged or resolved by vote. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-08.md) · candidate ONT-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-09** — Make graph edges traceable to source and reasoning | P1 | D4 | M46-20,M50-08 | Owner: MoonQL Graph; effort: L (5–10 days.). Deliverable: Ensure a displayed graph edge identifies whether it comes directly from a source, editorial assertion or derived rule. Scope: Inventory edge creation; classify source; add fixture refs; test omission behavior; review user meaning. Acceptance: Missing source/reasoning leaves edge withheld or explicitly unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-09.md) · candidate ONT-009: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-10** — Evaluate a PROV-O mapping for existing provenance records | P2 | D4 | M46-12,M50-09 | Owner: research/corpus; effort: L (4–8 days.). Deliverable: Compare a small set of MoonWitness provenance events with W3C PROV-O concepts. Scope: Select events; map terms; validate graph; note semantics lost; recommend adopt/mapping/no-go. Acceptance: Every mapping has rationale; no exported term silently claims stronger provenance. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-10.md) · candidate ONT-010: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-11** — Prepare a source-critical review protocol for contested material | P2 | D4 | M50-01 | Owner: scholarly review lead; effort: L (5–10 days plus expert review.). Deliverable: Define how a future study distinguishes primary artifact, edition, translation, scholarly claim and tradition-specific interpretation. Scope: Consult qualified scholars; draft checklist; test against fictional case; revise bias/conflict section. Acceptance: Reviewer can distinguish source observation, inference and interpretation in sample. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-11.md) · candidate ONT-011: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-12** — Define attribution for comparative religious claims | P2 | D4 | M50-11 | Owner: scholarly review; effort: L (4–8 days.). Deliverable: Specify what context must accompany a comparative statement so it is not presented as universal consensus. Scope: Draft rubric; test fictional statements; consult diverse scholars; identify missing context; revise. Acceptance: Samples cannot be read as universal when evidence supports only a bounded group/time. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-12.md) · candidate ONT-012: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-13** — Create a translation-variant review exercise | P2 | D4 | M50-03,M50-11 | Owner: textual research; effort: L (5–10 days plus rights/expert access.). Deliverable: Test a human review workflow for comparing two authorized translation records without producing a “correct” interpretation. Scope: Secure sample; record edition data; compare variants; annotate uncertainty; review with qualified specialist. Acceptance: Difference is described without ranking unless evidence and reviewer justify it. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-13.md) · candidate ONT-013: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-14** — Prototype a citation-first compare view | P2 | D3 | M47-08,M19 | Owner: Dock/research UX; effort: M (4–8 days.). Deliverable: Test a side-by-side view that keeps source versions and attribution visible while comparing two synthetic records. Scope: Create synthetic pair; build view; test scroll/context; check screen reader; review. Acceptance: Each panel retains edition/version when scrolling; unmatched fields remain explicit. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-14.md) · candidate ONT-014: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-15** — Test provenance-aware search facets | P2 | D3 | M50-01 | Owner: research UX/search; effort: M (4–8 days.). Deliverable: Explore filters for language, source type, version and evidence class on synthetic records. Scope: Define neutral fields; create fake records; prototype; test retrieval tasks; examine bias. Acceptance: Filters never imply authority; unknown metadata remains filterable as unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-15.md) · candidate ONT-015: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-16** — Design a source-literacy learning module | P2 | D3 | M50-11 | Owner: education/research; effort: M (4–7 days.). Deliverable: Develop a short lesson teaching source, edition, interpretation and uncertainty distinctions. Scope: Define learning outcomes; draft examples; review neutrality; test comprehension; revise. Acceptance: Learner distinguishes primary record, edition and interpretation in all fixture cases. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-16.md) · candidate ONT-016: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-17** — Define a transparent review protocol for interpretive summaries | P1 | D4 | M50-11,M20 | Owner: research governance; effort: L (5–10 days.). Deliverable: Specify how human reviewers check attribution, evidence scope and disagreement in a future interpretive summary. Scope: Define review questions; separate content/rights/publication checks; test fictional summaries; record dissent process. Acceptance: Review record states what was and was not reviewed; approval never implies D08 release. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-17.md) · candidate ONT-017: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-18** — Establish source correction and version-history principles | P2 | D4 | M50-04,M18,M19 | Owner: corpus governance; effort: L (5–10 days.). Deliverable: Define how an error in source metadata or attribution is corrected without concealing prior state. Scope: Define classes; map authority; model synthetic correction; test citation behavior; review privacy/rights conflicts. Acceptance: Each class has approver, user-facing notice and retention disposition; no silent overwrite. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-18.md) · candidate ONT-018: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-19** — Define historical date and calendar provenance | P2 | D3 | M50-01 | Owner: research/ontology; effort: M (4–8 days.). Deliverable: Specify how uncertain dates, calendar systems and conversion assumptions are represented. Scope: Create synthetic calendar cases; define range semantics; record conversion provenance; review with historian. Acceptance: Uncertain date stays a range/unknown; conversion is reproducible from stated method. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-19.md) · candidate ONT-019: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
-| - [ ] | **M50-20** — Prototype a timeline that displays uncertain dates honestly | P2 | D4 | M50-19 | Owner: research UX; effort: L (4–8 days.). Deliverable: Test whether users can interpret date ranges, contested ordering and unknown dates in a synthetic history view. Scope: Create fictional dataset; render ranges/contested ordering; test comprehension; check screen reader; decide. Acceptance: Users identify uncertain ranges and can read same facts in text alternative. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [packet](docs/tasks/M50/M50-20.md) · candidate ONT-020: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-01** — Define a canonical source and edition identity profile | P1 | D3 | M46-02 | Owner: corpus; effort: M (4–8 days.). Deliverable: Define the minimum fields that identify a source, edition, manifestation and immutable version. Scope: Inventory fields; map source/edition/witness; test ambiguous IDs; consult scholar; record unresolved pins. Acceptance: Two distinct editions cannot share an identity; unresolved fields remain UNKNOWN. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-01) · candidate ONT-001: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-02** — Model text, witness, edition and manifestation distinctions | P2 | D4 | M50-01,M16,M18 | Owner: corpus/witness; effort: L (5–10 days.). Deliverable: Specify how one textual work relates to witnesses, editions, transcriptions and digitized manifestations. Scope: Map current types; define relation semantics; create synthetic examples; identify lossy cases; review. Acceptance: Examples distinguish work, witness, edition, transcription and digital file; no identity inferred from title alone. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-02) · candidate ONT-002: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-03** — Specify translation and transcription provenance fields | P2 | D3 | M50-01 | Owner: corpus; effort: M (4–7 days.). Deliverable: Define attribution and version fields for translations, transliterations and transcriptions. Scope: Inventory fields; distinguish translation/transliteration; specify contributor/edition/version; test uncertain attribution; review. Acceptance: A record cannot be labeled original-language text when its status is unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-03) · candidate ONT-003: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-04** — Specify citation snapshots and version-change behavior | P2 | D3 | M50-01,M18 | Owner: research/corpus; effort: M (4–8 days.). Deliverable: Define how a citation stays resolvable when an edition or digital transcription changes. Scope: Model revision case; define stable locator; test removed/changed span; document citation rendering. Acceptance: Old citation resolves to its recorded version or explicitly reports unavailable; it never silently retargets. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-04) · candidate ONT-004: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-05** — Audit corpus inventory completeness without asserting authority | P2 | D3 | M50-01 | Owner: corpus/research; effort: M (4–8 days.). Deliverable: Produce a metadata-only map of source families, versions and known gaps in the current repository. Scope: Agree scope; enumerate metadata; classify evidence; identify missing provenance; review wording. Acceptance: Every row states review status and rights state; no completeness claim without denominator. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-05) · candidate ONT-005: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-06** — Define neutral entity identity and disambiguation rules | P2 | D4 | M46-15,M47-15 | Owner: MoonQL ontology; effort: L (6–12 days.). Deliverable: Specify how an entity is distinguished from aliases, homonyms and interpretations. Scope: Inventory current types; define candidate/accepted distinction; create synthetic collisions; review merge/reversal. Acceptance: Similar labels alone never auto-merge; every alias has source and reviewer/state. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-06) · candidate ONT-006: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-07** — Separate claim, evidence, interpretation and tradition records | P1 | D4 | M47-09,M16-07,M16 | Owner: MoonQL research/ontology; effort: L (6–12 days.). Deliverable: Map current records to distinct source evidence, attributed claims, interpretations and tradition context. Scope: Inventory types; map class semantics; identify ambiguous records; review examples; record blockers. Acceptance: Every example has one explicit class or remains unlabelled/withheld; no silent conversion. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-07) · candidate ONT-007: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-08** — Represent contested claims as attributed parallel positions | P2 | D4 | M50-07 | Owner: ontology/research; effort: L (5–10 days.). Deliverable: Specify how incompatible scholarly or tradition-specific positions remain separately attributable. Scope: Create synthetic disagreement; map current schema; test multiple positions; review ordering and attribution. Acceptance: Both positions remain visible; disagreement is not averaged or resolved by vote. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-08) · candidate ONT-008: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-09** — Make graph edges traceable to source and reasoning | P1 | D4 | M46-20,M50-08 | Owner: MoonQL Graph; effort: L (5–10 days.). Deliverable: Ensure a displayed graph edge identifies whether it comes directly from a source, editorial assertion or derived rule. Scope: Inventory edge creation; classify source; add fixture refs; test omission behavior; review user meaning. Acceptance: Missing source/reasoning leaves edge withheld or explicitly unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-09) · candidate ONT-009: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-10** — Evaluate a PROV-O mapping for existing provenance records | P2 | D4 | M46-12,M50-09 | Owner: research/corpus; effort: L (4–8 days.). Deliverable: Compare a small set of MoonWitness provenance events with W3C PROV-O concepts. Scope: Select events; map terms; validate graph; note semantics lost; recommend adopt/mapping/no-go. Acceptance: Every mapping has rationale; no exported term silently claims stronger provenance. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-10) · candidate ONT-010: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-11** — Prepare a source-critical review protocol for contested material | P2 | D4 | M50-01 | Owner: scholarly review lead; effort: L (5–10 days plus expert review.). Deliverable: Define how a future study distinguishes primary artifact, edition, translation, scholarly claim and tradition-specific interpretation. Scope: Consult qualified scholars; draft checklist; test against fictional case; revise bias/conflict section. Acceptance: Reviewer can distinguish source observation, inference and interpretation in sample. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-11) · candidate ONT-011: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-12** — Define attribution for comparative religious claims | P2 | D4 | M50-11 | Owner: scholarly review; effort: L (4–8 days.). Deliverable: Specify what context must accompany a comparative statement so it is not presented as universal consensus. Scope: Draft rubric; test fictional statements; consult diverse scholars; identify missing context; revise. Acceptance: Samples cannot be read as universal when evidence supports only a bounded group/time. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-12) · candidate ONT-012: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-13** — Create a translation-variant review exercise | P2 | D4 | M50-03,M50-11 | Owner: textual research; effort: L (5–10 days plus rights/expert access.). Deliverable: Test a human review workflow for comparing two authorized translation records without producing a “correct” interpretation. Scope: Secure sample; record edition data; compare variants; annotate uncertainty; review with qualified specialist. Acceptance: Difference is described without ranking unless evidence and reviewer justify it. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-13) · candidate ONT-013: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-14** — Prototype a citation-first compare view | P2 | D3 | M47-08,M19 | Owner: Dock/research UX; effort: M (4–8 days.). Deliverable: Test a side-by-side view that keeps source versions and attribution visible while comparing two synthetic records. Scope: Create synthetic pair; build view; test scroll/context; check screen reader; review. Acceptance: Each panel retains edition/version when scrolling; unmatched fields remain explicit. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-14) · candidate ONT-014: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-15** — Test provenance-aware search facets | P2 | D3 | M50-01 | Owner: research UX/search; effort: M (4–8 days.). Deliverable: Explore filters for language, source type, version and evidence class on synthetic records. Scope: Define neutral fields; create fake records; prototype; test retrieval tasks; examine bias. Acceptance: Filters never imply authority; unknown metadata remains filterable as unknown. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-15) · candidate ONT-015: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-16** — Design a source-literacy learning module | P2 | D3 | M50-11 | Owner: education/research; effort: M (4–7 days.). Deliverable: Develop a short lesson teaching source, edition, interpretation and uncertainty distinctions. Scope: Define learning outcomes; draft examples; review neutrality; test comprehension; revise. Acceptance: Learner distinguishes primary record, edition and interpretation in all fixture cases. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-16) · candidate ONT-016: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-17** — Define a transparent review protocol for interpretive summaries | P1 | D4 | M50-11,M20 | Owner: research governance; effort: L (5–10 days.). Deliverable: Specify how human reviewers check attribution, evidence scope and disagreement in a future interpretive summary. Scope: Define review questions; separate content/rights/publication checks; test fictional summaries; record dissent process. Acceptance: Review record states what was and was not reviewed; approval never implies D08 release. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-17) · candidate ONT-017: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-18** — Establish source correction and version-history principles | P2 | D4 | M50-04,M18,M19 | Owner: corpus governance; effort: L (5–10 days.). Deliverable: Define how an error in source metadata or attribution is corrected without concealing prior state. Scope: Define classes; map authority; model synthetic correction; test citation behavior; review privacy/rights conflicts. Acceptance: Each class has approver, user-facing notice and retention disposition; no silent overwrite. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-18) · candidate ONT-018: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-19** — Define historical date and calendar provenance | P2 | D3 | M50-01 | Owner: research/ontology; effort: M (4–8 days.). Deliverable: Specify how uncertain dates, calendar systems and conversion assumptions are represented. Scope: Create synthetic calendar cases; define range semantics; record conversion provenance; review with historian. Acceptance: Uncertain date stays a range/unknown; conversion is reproducible from stated method. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-19) · candidate ONT-019: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+| - [ ] | **M50-20** — Prototype a timeline that displays uncertain dates honestly | P2 | D4 | M50-19 | Owner: research UX; effort: L (4–8 days.). Deliverable: Test whether users can interpret date ranges, contested ordering and unknown dates in a synthetic history view. Scope: Create fictional dataset; render ranges/contested ordering; test comprehension; check screen reader; decide. Acceptance: Users identify uncertain ranges and can read same facts in text alternative. Full DoD, tests/evidence, risk, rollback, metrics and start checklist: [details](#m50-20) · candidate ONT-020: [specification](docs/research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md). |
+
+## M50 — Detailed Task Specifications
+
+_Below is the full specification for each M50 task, consolidated from individual packet files._
+
+
+### M50-01
+
+
+**Candidate:** `ONT-001` · **Domain/category:** Faith/Ontology / Corpus/source provenance · **Priority/difficulty:** P1/D3 · **Owner:** corpus · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-001 — Define a canonical source and edition identity profile](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Define the minimum fields that identify a source, edition, manifestation and immutable version.
+
+## Scope and boundaries
+
+Compare existing models and propose identifiers, edition metadata, date precision, language, rights state and resolution evidence.
+
+Contract mapping for existing corpus owner; no global source catalog.
+
+**Anti-overlap:** Gap audit only; does not recreate M07 source identity, M08 citation UI, source acquisition, rights approval, or M18 rights storage.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-005; related ENG-002; enables ONT-002.
+
+**Canonical TODO dependencies:** M46-05
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory fields
+- map source/edition/witness
+- test ambiguous IDs
+- consult scholar
+- record unresolved pins.
+
+## Acceptance criteria
+
+Two distinct editions cannot share an identity; unresolved fields remain UNKNOWN.
+
+## Definition of done
+
+Corpus owner and qualified textual scholar review definitions.
+
+## Verification plan
+
+Synthetic identity uniqueness and serialization fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Imposed schema may erase tradition-specific distinctions; allow extension and document profile limits.
+
+**Metrics:** Required identity fields covered and unresolved examples.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Keep profile as proposal; no stored data migrated.
+
+**Closure evidence:** Field map, synthetic cases and scholar sign-off.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-02
+
+
+**Candidate:** `ONT-002` · **Domain/category:** Faith/Ontology / Corpus/source provenance · **Priority/difficulty:** P2/D4 · **Owner:** corpus/witness · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-002 — Model text, witness, edition and manifestation distinctions](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Specify how one textual work relates to witnesses, editions, transcriptions and digitized manifestations.
+
+## Scope and boundaries
+
+Produce a small conceptual model with explicit relations and example records.
+
+Extend existing MoonQL corpus/witness boundary only after owner review.
+
+**Anti-overlap:** Reuses the M07/M08 corpus identity model; conceptual gap map only, with synthetic examples. Not a new corpus store or source rights decision.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-001; external gate M16/M18 for real content.
+
+**Canonical TODO dependencies:** M50-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Map current types
+- define relation semantics
+- create synthetic examples
+- identify lossy cases
+- review.
+
+## Acceptance criteria
+
+Examples distinguish work, witness, edition, transcription and digital file; no identity inferred from title alone.
+
+## Definition of done
+
+Textual studies reviewer and package owner approve.
+
+## Verification plan
+
+Schema and referential-integrity fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Some traditions do not fit a single textual genealogy; preserve multiple relationships.
+
+**Metrics:** Example coverage and ambiguous identities.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Retain model as proposal; no migration.
+
+**Closure evidence:** Model diagram, examples and review record.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-03
+
+
+**Candidate:** `ONT-003` · **Domain/category:** Faith/Ontology / Corpus/source provenance · **Priority/difficulty:** P2/D3 · **Owner:** corpus · **Effort:** M (4–7 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-003 — Specify translation and transcription provenance fields](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Define attribution and version fields for translations, transliterations and transcriptions.
+
+## Scope and boundaries
+
+Draft a source-neutral field profile and an explicit unknown/anonymous-translator state.
+
+Mapping to corpus metadata; no translation-generation feature.
+
+**Anti-overlap:** Gap mapping against M07/M08 translation metadata only; no parallel provenance fields, translation generation/license, or duplicate M17/M18 rights storage.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-001/002; related FUT-006.
+
+**Canonical TODO dependencies:** M50-01,M50-02
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory fields
+- distinguish translation/transliteration
+- specify contributor/edition/version
+- test uncertain attribution
+- review.
+
+## Acceptance criteria
+
+A record cannot be labeled original-language text when its status is unknown.
+
+## Definition of done
+
+Language and textual reviewers approve terms.
+
+## Verification plan
+
+Synthetic validation for missing translator, revision and language tag.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Attribution may be contested or collective; support uncertainty and tradition-specific practice.
+
+**Metrics:** Provenance completeness, with unknowns counted honestly.
+
+**Estimate:** 4–7 days.
+
+**Rollback/fallback:** Keep metadata proposal unimplemented.
+
+**Closure evidence:** Profile, examples and reviewer note.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-04
+
+
+**Candidate:** `ONT-004` · **Domain/category:** Faith/Ontology / Corpus/source provenance · **Priority/difficulty:** P2/D3 · **Owner:** research/corpus · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-004 — Specify citation snapshots and version-change behavior](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Define how a citation stays resolvable when an edition or digital transcription changes.
+
+## Scope and boundaries
+
+Use immutable version refs plus a clear “current version” relation and change note.
+
+Reuse source identity profile; no URL shortener or external archive dependency.
+
+**Anti-overlap:** Resolves citation version identity and unavailable-version behavior only; ONT-018 owns correction/withdrawal authority, notice and retention. Does not implement M18 revocation/cache behavior or rebuild M08 citation UI.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-001; M18 publication gate applies only before public citation of real content.
+
+**Canonical TODO dependencies:** M50-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Model revision case
+- define stable locator
+- test removed/changed span
+- document citation rendering.
+
+## Acceptance criteria
+
+Old citation resolves to its recorded version or explicitly reports unavailable; it never silently retargets.
+
+## Definition of done
+
+Corpus owner approves retention/access behavior.
+
+## Verification plan
+
+Version change and missing-source fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Retention can conflict with rights or withdrawal; refer to existing authority.
+
+**Metrics:** Citations resolving to exact version and explicit unavailable states.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Preserve prior citation semantics; do not rewrite old refs.
+
+**Closure evidence:** Test cases, policy and owner sign-off.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-05
+
+
+**Candidate:** `ONT-005` · **Domain/category:** Faith/Ontology / Corpus/source provenance · **Priority/difficulty:** P2/D3 · **Owner:** corpus/research · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-005 — Audit corpus inventory completeness without asserting authority](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Produce a metadata-only map of source families, versions and known gaps in the current repository.
+
+## Scope and boundaries
+
+Inventory only approved metadata and mark not reviewed, unavailable, contested or rights-unknown states.
+
+Read-only report from existing records; no source ingestion.
+
+**Anti-overlap:** Not M19 public-source release, corpus import or theological canon.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-001; related ENG-005.
+
+**Canonical TODO dependencies:** M50-01
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Agree scope
+- enumerate metadata
+- classify evidence
+- identify missing provenance
+- review wording.
+
+## Acceptance criteria
+
+Every row states review status and rights state; no completeness claim without denominator.
+
+## Definition of done
+
+Corpus and rights owners approve scope; confidential sources excluded.
+
+## Verification plan
+
+Inventory parser and missing-state fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Inventory itself may reveal sensitive/private material; publish only approved metadata.
+
+**Metrics:** Records with known source/version status and unknown count.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Withhold report if classification or rights is unclear.
+
+**Closure evidence:** Approved scope, inventory and gap list.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-06
+
+
+**Candidate:** `ONT-006` · **Domain/category:** Faith/Ontology / Ontology/epistemology · **Priority/difficulty:** P2/D4 · **Owner:** MoonQL ontology · **Effort:** L (6–12 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-006 — Define neutral entity identity and disambiguation rules](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Specify how an entity is distinguished from aliases, homonyms and interpretations.
+
+## Scope and boundaries
+
+Define stable IDs, alias provenance, confidence, merge review and reversible candidate state.
+
+Existing ontology package; no third SQL owner or central identity provider.
+
+**Anti-overlap:** Not M20-04 reviewer panel or identity/authentication system.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-015 and FUT-015; enables ONT-007.
+
+**Canonical TODO dependencies:** M46-15,M47-15
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory current types
+- define candidate/accepted distinction
+- create synthetic collisions
+- review merge/reversal.
+
+## Acceptance criteria
+
+Similar labels alone never auto-merge; every alias has source and reviewer/state.
+
+## Definition of done
+
+Ontology owner approves semantics; no production merge.
+
+## Verification plan
+
+Collision, alias, language and rollback fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Identity model imposes tradition-specific assumptions; make uncertainty explicit.
+
+**Metrics:** False merge fixture rate and unresolved candidate count.
+
+**Estimate:** 6–12 days.
+
+**Rollback/fallback:** Candidate mapping reversible; accepted records unchanged.
+
+**Closure evidence:** Rule set, fixture results and scholarly review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-07
+
+
+**Candidate:** `ONT-007` · **Domain/category:** Faith/Ontology / Ontology/epistemology · **Priority/difficulty:** P1/D4 · **Owner:** MoonQL research/ontology · **Effort:** L (6–12 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-007 — Separate claim, evidence, interpretation and tradition records](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Map current records to distinct source evidence, attributed claims, interpretations and tradition context.
+
+## Scope and boundaries
+
+Produce a schema mapping and missing-state examples; defer projection labels until M16-07 is resolved.
+
+Reuse existing epistemic classes; no parallel classification enum.
+
+**Anti-overlap:** Non-projecting schema map only; does not redo M16-07 labels. FUT-009/FUT-027 are optional UX references, not prerequisites.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** No blocker for a non-projecting schema map; M16-07 is an external gate before any projection. FUT-009/027 are related UX references; enables ONT-008.
+
+**Canonical TODO dependencies:** —
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory types
+- map class semantics
+- identify ambiguous records
+- review examples
+- record blockers.
+
+## Acceptance criteria
+
+Every example has one explicit class or remains unlabelled/withheld; no silent conversion.
+
+## Definition of done
+
+Ontology and rights owners approve mapping; no production projection changed.
+
+## Verification plan
+
+Pure mapping fixtures for missing, unknown and conflicting labels.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Category definitions may be contested; attribute framework and reviewer scope.
+
+**Metrics:** Records mapped/unknown and invalid class transition count.
+
+**Estimate:** 6–12 days.
+
+**Rollback/fallback:** Keep mapping proposal only; no schema migration.
+
+**Closure evidence:** Mapping, fixtures and owner review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-08
+
+
+**Candidate:** `ONT-008` · **Domain/category:** Faith/Ontology / Ontology/epistemology · **Priority/difficulty:** P2/D4 · **Owner:** ontology/research · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-008 — Represent contested claims as attributed parallel positions](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Specify how incompatible scholarly or tradition-specific positions remain separately attributable.
+
+## Scope and boundaries
+
+Model positions, proponents, source refs, scope, date and response/critique links without majority ranking.
+
+Proposed extension to existing claim/research records; no consensus engine.
+
+**Anti-overlap:** Not a voting/reviewer authority system.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-007; related FUT-023.
+
+**Canonical TODO dependencies:** M50-07
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Create synthetic disagreement
+- map current schema
+- test multiple positions
+- review ordering and attribution.
+
+## Acceptance criteria
+
+Both positions remain visible; disagreement is not averaged or resolved by vote.
+
+## Definition of done
+
+Qualified researchers approve terminology and attribution.
+
+## Verification plan
+
+Round-trip multiple claims and critique relations.
+
+## Risks, measures, rollback and closure
+
+**Risks:** False balance or selective representation; source quality and scope must remain visible.
+
+**Metrics:** Position attribution completeness and reviewer misinterpretation.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Remove proposed extension; current records unchanged.
+
+**Closure evidence:** Synthetic examples, mapping and review record.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-09
+
+
+**Candidate:** `ONT-009` · **Domain/category:** Faith/Ontology / Ontology/epistemology · **Priority/difficulty:** P1/D4 · **Owner:** MoonQL Graph · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-009 — Make graph edges traceable to source and reasoning](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Ensure a displayed graph edge identifies whether it comes directly from a source, editorial assertion or derived rule.
+
+## Scope and boundaries
+
+Add a provenance reference and relation-kind requirement to a synthetic projection.
+
+Existing graph projection; no new graph store.
+
+**Anti-overlap:** Projection/UI conformance audit only; reuses current ontology and graph evidence fields. No ontology redesign, parallel provenance enum, or inference engine.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-020 and ONT-008; enables ONT-010.
+
+**Canonical TODO dependencies:** M46-20,M50-08
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Inventory edge creation
+- classify source
+- add fixture refs
+- test omission behavior
+- review user meaning.
+
+## Acceptance criteria
+
+Missing source/reasoning leaves edge withheld or explicitly unknown.
+
+## Definition of done
+
+Graph owner and researcher approve relation semantics.
+
+## Verification plan
+
+Projection tests for direct, editorial, derived and unknown edges.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Provenance fields can be falsely treated as validation; explain source vs proof.
+
+**Metrics:** Edges with complete provenance and withheld count.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Hide new edge type; retain existing records.
+
+**Closure evidence:** Synthetic projections, tests and reviewer sign-off.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-10
+
+
+**Candidate:** `ONT-010` · **Domain/category:** Faith/Ontology / Ontology/epistemology · **Priority/difficulty:** P2/D4 · **Owner:** research/corpus · **Effort:** L (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-010 — Evaluate a PROV-O mapping for existing provenance records](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Compare a small set of MoonWitness provenance events with W3C PROV-O concepts.
+
+## Scope and boundaries
+
+Map three synthetic activities/entities/agents and list unmapped concepts.
+
+Optional export vocabulary only; existing package remains canonical.
+
+**Anti-overlap:** No new provenance database or system of record.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ENG-012 and ONT-009.
+
+**Canonical TODO dependencies:** M46-12,M50-09
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Select events
+- map terms
+- validate graph
+- note semantics lost
+- recommend adopt/mapping/no-go.
+
+## Acceptance criteria
+
+Every mapping has rationale; no exported term silently claims stronger provenance.
+
+## Definition of done
+
+Package owner and provenance researcher approve.
+
+## Verification plan
+
+Fixture validation against published vocabulary terms.
+
+## Risks, measures, rollback and closure
+
+**Risks:** External term drift and false equivalence.
+
+**Metrics:** Mapped concepts and unresolved semantics.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Drop exporter; current records unaffected.
+
+**Closure evidence:** Mapping table, validator output and decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-11
+
+
+**Candidate:** `ONT-011` · **Domain/category:** Faith/Ontology / Interpretation/source criticism · **Priority/difficulty:** P2/D4 · **Owner:** scholarly review lead · **Effort:** L (5–10 days plus expert review.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-011 — Prepare a source-critical review protocol for contested material](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Define how a future study distinguishes primary artifact, edition, translation, scholarly claim and tradition-specific interpretation.
+
+## Scope and boundaries
+
+Create a review checklist with exact citation, edition/version, method, counterevidence and uncertainty fields.
+
+Human research protocol; no automated authority score.
+
+**Anti-overlap:** Not content moderation or publication authorization.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-001/007; related FUT-008.
+
+**Canonical TODO dependencies:** M50-01,M50-07
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Consult qualified scholars
+- draft checklist
+- test against fictional case
+- revise bias/conflict section.
+
+## Acceptance criteria
+
+Reviewer can distinguish source observation, inference and interpretation in sample.
+
+## Definition of done
+
+Qualified domain reviewers approve and note tradition limitations.
+
+## Verification plan
+
+Tabletop case and reviewer agreement check.
+
+## Risks, measures, rollback and closure
+
+**Risks:** One tradition’s method may be generalized inappropriately.
+
+**Metrics:** Classification agreement and unresolved method questions.
+
+**Estimate:** 5–10 days plus expert review.
+
+**Rollback/fallback:** Withdraw protocol if consultation is inadequate.
+
+**Closure evidence:** Protocol, fictional test case and reviewers.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-12
+
+
+**Candidate:** `ONT-012` · **Domain/category:** Faith/Ontology / Interpretation/source criticism · **Priority/difficulty:** P2/D4 · **Owner:** scholarly review · **Effort:** L (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-012 — Define attribution for comparative religious claims](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Specify what context must accompany a comparative statement so it is not presented as universal consensus.
+
+## Scope and boundaries
+
+Develop a fictional-example rubric for tradition, subtradition, geography, period, source, author and disagreement.
+
+Content review protocol; no user belief profile or ranking.
+
+**Anti-overlap:** Not a theological ontology or authority decision.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-011; related FUT-023.
+
+**Canonical TODO dependencies:** M50-11
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Draft rubric
+- test fictional statements
+- consult diverse scholars
+- identify missing context
+- revise.
+
+## Acceptance criteria
+
+Samples cannot be read as universal when evidence supports only a bounded group/time.
+
+## Definition of done
+
+Cultural/religious sensitivity review and documented limits.
+
+## Verification plan
+
+Reviewer interpretation of fictional examples.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Checklist can create false completeness; require narrative caveat where needed.
+
+**Metrics:** Attribution completeness and overgeneralization flags.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Keep rubric as draft; no content projection.
+
+**Closure evidence:** Rubric, fictional cases and reviewer notes.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-13
+
+
+**Candidate:** `ONT-013` · **Domain/category:** Faith/Ontology / Interpretation/source criticism · **Priority/difficulty:** P2/D4 · **Owner:** textual research · **Effort:** L (5–10 days plus rights/expert access.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-013 — Create a translation-variant review exercise](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Test a human review workflow for comparing two authorized translation records without producing a “correct” interpretation.
+
+## Scope and boundaries
+
+Use synthetic paraphrases or a cleared short sample to label translator/edition/date and reviewer notes.
+
+Research exercise; no generated translation or public feature.
+
+**Anti-overlap:** Not translation generation, alignment automation or M18 rights storage.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-003 and ONT-011; related FUT-006.
+
+**Canonical TODO dependencies:** M50-03,M50-11
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Secure sample
+- record edition data
+- compare variants
+- annotate uncertainty
+- review with qualified specialist.
+
+## Acceptance criteria
+
+Difference is described without ranking unless evidence and reviewer justify it.
+
+## Definition of done
+
+Rights, language specialist and cultural reviewer approve.
+
+## Verification plan
+
+Metadata completeness and reviewer walkthrough.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Context loss, copyright and theological overreach.
+
+**Metrics:** Provenance completeness and interpretation disagreement.
+
+**Estimate:** 5–10 days plus rights/expert access.
+
+**Rollback/fallback:** Remove sample; retain only synthetic method example.
+
+**Closure evidence:** Cleared/synthetic sample, annotations and sign-off.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-14
+
+
+**Candidate:** `ONT-014` · **Domain/category:** Faith/Ontology / Exploration/education · **Priority/difficulty:** P2/D3 · **Owner:** Dock/research UX · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-014 — Prototype a citation-first compare view](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Test a side-by-side view that keeps source versions and attribution visible while comparing two synthetic records.
+
+## Scope and boundaries
+
+Build local mock with persistent citation header, differences and unknown fields.
+
+Static prototype only; no Dock route or publication.
+
+**Anti-overlap:** Shares synthetic fixtures with FUT-008/FUT-009/FUT-025 but owns only citation-preserving side-by-side comparison. Does not implement M19 Dock compare/publication.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** FUT-008; external M19 gate for any real data.
+
+**Canonical TODO dependencies:** M47-08
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Create synthetic pair
+- build view
+- test scroll/context
+- check screen reader
+- review.
+
+## Acceptance criteria
+
+Each panel retains edition/version when scrolling; unmatched fields remain explicit.
+
+## Definition of done
+
+Rights/status labels included as demo data only.
+
+## Verification plan
+
+Layout/state tests and keyboard usability.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Compare implies equivalence; label differences and scope.
+
+**Metrics:** Edition identification accuracy and context-loss rate.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Delete prototype.
+
+**Closure evidence:** Mock, usability notes and boundary review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-15
+
+
+**Candidate:** `ONT-015` · **Domain/category:** Faith/Ontology / Exploration/education · **Priority/difficulty:** P2/D3 · **Owner:** research UX/search · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-015 — Test provenance-aware search facets](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Explore filters for language, source type, version and evidence class on synthetic records.
+
+## Scope and boundaries
+
+Mock facets over a small synthetic dataset and compare task completion with plain search.
+
+UX study only; no search index or taxonomy change.
+
+**Anti-overlap:** No search backend rebuild.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-001/007.
+
+**Canonical TODO dependencies:** M50-01,M50-07
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define neutral fields
+- create fake records
+- prototype
+- test retrieval tasks
+- examine bias.
+
+## Acceptance criteria
+
+Filters never imply authority; unknown metadata remains filterable as unknown.
+
+## Definition of done
+
+Search/ontology owner reviews categories.
+
+## Verification plan
+
+Facet semantics and accessible control review.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Missing metadata hides sources; present unknown explicitly.
+
+**Metrics:** Source findability, filter error and metadata coverage.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Remove mock.
+
+**Closure evidence:** Dataset, task results and owner decision.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-16
+
+
+**Candidate:** `ONT-016` · **Domain/category:** Faith/Ontology / Exploration/education · **Priority/difficulty:** P2/D3 · **Owner:** education/research · **Effort:** M (4–7 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-016 — Design a source-literacy learning module](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Develop a short lesson teaching source, edition, interpretation and uncertainty distinctions.
+
+## Scope and boundaries
+
+Create three fictional examples and a self-check explanation.
+
+Static content prototype; no user profiles, score or belief assessment.
+
+**Anti-overlap:** Not a religious instruction or curriculum claim.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-011/012.
+
+**Canonical TODO dependencies:** M50-11,M50-12
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define learning outcomes
+- draft examples
+- review neutrality
+- test comprehension
+- revise.
+
+## Acceptance criteria
+
+Learner distinguishes primary record, edition and interpretation in all fixture cases.
+
+## Definition of done
+
+Scholar/accessibility review; no doctrinal advice.
+
+## Verification plan
+
+Answer-key correctness, keyboard and plain-language review.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Lesson presents one scholarly approach as universal; identify scope.
+
+**Metrics:** Pre/post classification and confidence calibration.
+
+**Estimate:** 4–7 days.
+
+**Rollback/fallback:** Withdraw module; no learner data persisted.
+
+**Closure evidence:** Lesson, rubric and review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-17
+
+
+**Candidate:** `ONT-017` · **Domain/category:** Faith/Ontology / Interpretive governance · **Priority/difficulty:** P1/D4 · **Owner:** research governance · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-017 — Define a transparent review protocol for interpretive summaries](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Specify how human reviewers check attribution, evidence scope and disagreement in a future interpretive summary.
+
+## Scope and boundaries
+
+Create review checklist with reviewer expertise, conflicts, scope, dissent and decision limits.
+
+Process document; no reviewer grant store or UI.
+
+**Anti-overlap:** Checks interpretive summaries using fictional cases and shared reviewer/conflict/dissent vocabulary; ONT-011 owns source-reading method. No second review authority, M20 reviewer panel/store, M18 release decision or M16 projection-label implementation.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-011/012; M20 is an external gate only before integration with real reviewer authority.
+
+**Canonical TODO dependencies:** M50-11,M50-12
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define review questions
+- separate content/rights/publication checks
+- test fictional summaries
+- record dissent process.
+
+## Acceptance criteria
+
+Review record states what was and was not reviewed; approval never implies D08 release.
+
+## Definition of done
+
+Qualified reviewers and governance owner approve.
+
+## Verification plan
+
+Tabletop cases for conflict, disagreement, missing evidence and publication.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Reviewer scarcity and authority concentration; allow unresolved/dissent outcomes.
+
+**Metrics:** Checklist coverage and unresolved review questions.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Keep draft only; no summary released.
+
+**Closure evidence:** Approved protocol and scenario results.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-18
+
+
+**Candidate:** `ONT-018` · **Domain/category:** Faith/Ontology / Interpretive governance · **Priority/difficulty:** P2/D4 · **Owner:** corpus governance · **Effort:** L (5–10 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-018 — Establish source correction and version-history principles](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Define how an error in source metadata or attribution is corrected without concealing prior state.
+
+## Scope and boundaries
+
+Draft separate correction classes: factual metadata, interpretive note, rights restriction and withdrawal.
+
+Governance mapping to existing version/revocation owners; no new history database.
+
+**Anti-overlap:** Owns correction class, approver, notice and retention principles; ONT-004 owns citation version resolution. Does not replace M18 revocation/cache or M19 public-rights work.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-004/017; M18/M19 are external gates only for real publication, correction or rights-withdrawal actions.
+
+**Canonical TODO dependencies:** M50-04,M50-17
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Define classes
+- map authority
+- model synthetic correction
+- test citation behavior
+- review privacy/rights conflicts.
+
+## Acceptance criteria
+
+Each class has approver, user-facing notice and retention disposition; no silent overwrite.
+
+## Definition of done
+
+Rights/privacy/research owners approve boundaries.
+
+## Verification plan
+
+Tabletop cases; regression fixtures for synthetic version chain.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Retaining withdrawn data may be unlawful or unsafe; existing authority takes precedence.
+
+**Metrics:** Correction events with complete rationale and access disposition.
+
+**Estimate:** 5–10 days.
+
+**Rollback/fallback:** Do not implement until policy resolves conflicts.
+
+**Closure evidence:** Correction matrix, scenario outcomes and sign-off.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-19
+
+
+**Candidate:** `ONT-019` · **Domain/category:** Faith/Ontology / History/timeline · **Priority/difficulty:** P2/D3 · **Owner:** research/ontology · **Effort:** M (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-019 — Define historical date and calendar provenance](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Specify how uncertain dates, calendar systems and conversion assumptions are represented.
+
+## Scope and boundaries
+
+Draft a date record with original expression, calendar, conversion method, range, source and disagreement.
+
+Data-profile proposal within existing ontology/corpus owners.
+
+**Anti-overlap:** No historical assertions or religious chronology production.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-001/011.
+
+**Canonical TODO dependencies:** M50-01,M50-11
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Create synthetic calendar cases
+- define range semantics
+- record conversion provenance
+- review with historian.
+
+## Acceptance criteria
+
+Uncertain date stays a range/unknown; conversion is reproducible from stated method.
+
+## Definition of done
+
+Qualified historian reviews terms and examples.
+
+## Verification plan
+
+Date range, calendar and conversion fixtures.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Calendar conversion may imply false precision or culturally privilege one epoch.
+
+**Metrics:** Dates with source/method and uncertainty fields.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Keep profile proposal; no historical records changed.
+
+**Closure evidence:** Synthetic examples, tests and historian note.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
+
+### M50-20
+
+
+**Candidate:** `ONT-020` · **Domain/category:** Faith/Ontology / History/timeline · **Priority/difficulty:** P2/D4 · **Owner:** research UX · **Effort:** L (4–8 days.). [TODO](../../../TODO.md) is the only status source; this packet has no independent completion status.
+
+**Canonical specification:** [ONT-020 — Prototype a timeline that displays uncertain dates honestly](../../research/unified-100-issue-frontier-v5/ISSUES_ONTOLOGY.md) (full 22-section source).
+
+## Objective
+
+Test whether users can interpret date ranges, contested ordering and unknown dates in a synthetic history view.
+
+## Scope and boundaries
+
+Build a non-interactive mock with ranges, multiple calendar labels and text table alternative.
+
+Static visualization over synthetic records; no new history service.
+
+**Anti-overlap:** No Empire Web rebuild, story canon change or publication.
+
+## Dependencies and start conditions
+
+**Source dependency statement:** ONT-019; related FUT-025.
+
+**Canonical TODO dependencies:** M50-19
+**ADR applicability:** No new ADR is required for the task scope currently proposed. See the [M46–M50 ADR applicability register](../../research/unified-100-issue-frontier-v5/ADR_APPLICABILITY.md). If implementation would change an owner, system of record, durable schema/storage, public API, identity/reviewer authority, or rights/release boundary, stop and obtain owner review and a proposed ADR before crossing that boundary.
+
+**Start checklist:** Re-read linked TODO rows and owner contracts at active `dev` HEAD; inspect current WIP; confirm applicable rights/consent/release and human-authority gates; agree reviewer and smallest feasible file set. No outreach, private/unlicensed content import, publication, money handling or owner-boundary change without applicable separate authority.
+
+## Execution steps
+
+- Create fictional dataset
+- render ranges/contested ordering
+- test comprehension
+- check screen reader
+- decide.
+
+## Acceptance criteria
+
+Users identify uncertain ranges and can read same facts in text alternative.
+
+## Definition of done
+
+Historian and accessibility review; no real claims included.
+
+## Verification plan
+
+Date-range rendering and keyboard/text alternative checks.
+
+## Risks, measures, rollback and closure
+
+**Risks:** Layout implies a canonical chronology; offer parallel ordering and explicit source labels.
+
+**Metrics:** Date uncertainty comprehension and order misread rate.
+
+**Estimate:** 4–8 days.
+
+**Rollback/fallback:** Remove prototype.
+
+**Closure evidence:** Mock, synthetic data, results and review.
+
+## Execution contract
+
+Follow the [AI execution contract](../../planning/AI_EXECUTION_CONTRACT.md). Before implementation, confirm authorization, preserve the tree, satisfy predecessors, and record exact SHA, paths, commands/results, reviewer and UNKNOWN items. Keep unstarted until explicitly claimed; TODO alone records completion.
+
+---
 ## M51 — ISP & Network Operations (MWX-ISP adaptation)
 
 **Group:** G7 · **Prerequisites:** ADR-0018, M37 identity contract; M35 financial gates and M38 notification integration gate apply to their respective leaves. **Scope:** D20 technical ISP/network state under ARSY/MoonQL, D15/D16 billing references, a Go RADIUS runtime, and a private ISP console. **Status:** PLANNED; no implementation or production use implied. [Milestone context](docs/milestones/M51.md) · [Migration matrix](docs/research/mwx-isp-into-xv-migration-matrix.md).
