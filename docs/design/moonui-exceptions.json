@@ -301,22 +301,6 @@
       "removalTask": "M19-36"
     },
     {
-      "path": "apps/empire-web/src/app/globals.css",
-      "owner": "empire-web",
-      "mode": "stylesheet",
-      "selectors": [
-        ".su-footer__nav",
-        ".su-home__card",
-        ".su-info__card",
-        ".su-lib__card",
-        ".su-lib__tab",
-        ".su-lib__tabs",
-        ".su-reader__pager"
-      ],
-      "reason": "component-level class pending removal once the surface consumes the MoonUI primitive",
-      "removalTask": "M19-36"
-    },
-    {
       "path": "apps/headquarters/src/ui/client/EventStream.tsx",
       "owner": "headquarters",
       "mode": "view",
