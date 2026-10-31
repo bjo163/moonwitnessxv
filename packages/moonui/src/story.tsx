@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { StatStrip } from './layout.js'
+import { SectionHeading } from './section-heading.js'
 import { PageActions, SiteFooter, type SiteFooterCopy } from './site.js'
 import {
   IconBookOpen,
@@ -203,12 +204,11 @@ export function StoryHomePage({
 
         <section className="su-home__foundation">
           <div className="su-home__foundation-head">
-            <p className="su-eyebrow">{copy.foundationEyebrow}</p>
-            <h2>
+            <SectionHeading eyebrow={copy.foundationEyebrow}>
               {copy.foundationTitle[0]}
               <br />
               {copy.foundationTitle[1]}
-            </h2>
+            </SectionHeading>
             <span className="su-home__dash" aria-hidden="true" />
           </div>
           {copy.principles.map((principle, index) => (
@@ -326,12 +326,11 @@ export function StoryGgsPage({
             className="su-ggs__reflection"
             style={{ '--m-surface-art': `url(${artwork.reflection})` } as CSSProperties}
           >
-            <p className="su-eyebrow su-ggs__eyebrow">{copy.reflectionEyebrow}</p>
-            <h2>
+            <SectionHeading eyebrow={copy.reflectionEyebrow} eyebrowClassName="su-ggs__eyebrow">
               {copy.reflectionTitle[0]}
               <br />
               {copy.reflectionTitle[1]}
-            </h2>
+            </SectionHeading>
             <blockquote>{copy.reflectionQuote}</blockquote>
           </article>
         </section>

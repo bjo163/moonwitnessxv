@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { PageActions, SiteFooter, type SiteFooterCopy } from './site.js'
+import { SectionHeading } from './section-heading.js'
 import {
   IconBookOpen,
   IconCrosshair,
@@ -109,10 +110,13 @@ export function StoryCodexPage({
           />
           <div className="su-codex__shade" aria-hidden="true" />
           <div className="su-codex__featured-copy">
-            <p className="su-eyebrow su-codex__eyebrow">{copy.featuredEyebrow}</p>
-            <h2 className="su-codex__featured-title">
+            <SectionHeading
+              eyebrow={copy.featuredEyebrow}
+              eyebrowClassName="su-codex__eyebrow"
+              titleClassName="su-codex__featured-title"
+            >
               <span>{copy.featuredTitle[0]}</span> <span className="su-codex__title-red">{copy.featuredTitle[1]}</span>
-            </h2>
+            </SectionHeading>
             <p className="su-codex__featured-lead">{copy.featuredLead}</p>
             <p className="su-codex__body">{copy.featuredBody}</p>
             <PageActions
