@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from 'react'
 import { EmptyState } from '../../data.js'
-import { IconBookOpen, IconCompass, IconCrosshair, IconMoon, IconSearch, IconSparkles } from '../../icons/index.js'
+import { IconBookOpen, IconCompass, IconCrosshair, IconSearch, IconSparkles } from '../../icons/index.js'
 import { PageActions, SiteFooter, type SiteFooterCopy } from '../../site.js'
 import { StatStrip } from '../../layout.js'
 
@@ -72,7 +72,7 @@ export type StoryReaderCopy = {
   chapter: string
   synopsisTitle: string
   synopsis: string
-  meta: Array<{ title: string; body: string }>
+  meta: Array<{ kind: 'theme' | 'world' | 'tone'; title: string; body: string }>
   wisdomTitle: string
   wisdomLead: string
   wisdomNote: string
@@ -88,6 +88,7 @@ export type StoryReaderCopy = {
 }
 
 const TAB_ICONS = [IconCompass, IconCrosshair, IconSparkles, IconBookOpen]
+const META_ICONS = { theme: IconCrosshair, world: IconCompass, tone: IconSparkles }
 
 /** The locale-prefixed base the page's links hang off, e.g. `/id`. */
 const joinHref = (basePath: string, path: string) => `${basePath}${path === '/' ? '' : path}`
@@ -322,15 +323,18 @@ export function StoryReaderPage({
             </section>
 
             <div className="su-reader__meta">
-              {copy.meta.map((item, index) => (
-                <article key={item.title}>
-                  <span aria-hidden="true">
-                    {index === 0 ? <span className="su-reader__glyph">◎</span> : index === 1 ? <IconMoon size={16} /> : <span className="su-reader__glyph">❦</span>}
-                  </span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </article>
-              ))}
+              {copy.meta.map((item) => {
+                const Icon = META_ICONS[item.kind]
+                return (
+                  <article key={item.title}>
+                    <span aria-hidden="true">
+                      <Icon size={16} strokeWidth={1.5} />
+                    </span>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </article>
+                )
+              })}
             </div>
 
             <div className="su-reader__pager">

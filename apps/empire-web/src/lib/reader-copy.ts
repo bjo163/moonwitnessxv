@@ -23,7 +23,7 @@ type ReaderCopy = {
   pages: string
   synopsisTitle: string
   synopsis: string
-  meta: Array<{ title: string; body: string }>
+  meta: Array<{ kind: 'theme' | 'world' | 'tone'; title: string; body: string }>
   wisdomTitle: string
   wisdomLead: string
   wisdomNote: string
@@ -57,9 +57,9 @@ export const readerCopy: Record<StoryLocale, ReaderCopy> = {
     synopsisTitle: 'SYNOPSIS',
     synopsis: 'In a world where the bombs are getting closer every day, a lone guardian walks through the ruins, not to seek war, but to protect what still matters. AngelWithShotgun follows a journey of faith, responsibility, and quiet resistance — where every step is a prayer for a more humane world.',
     meta: [
-      { title: 'CORE THEME', body: 'Protection, responsibility, and hope in a collapsing world.' },
-      { title: 'STORY WORLD', body: 'MOONWITNESS XV — World 02, AngelWithShotgun' },
-      { title: 'TONE', body: 'Vigilant, spiritual, reflective, human-centered.' },
+      { kind: 'theme', title: 'CORE THEME', body: 'Protection, responsibility, and hope in a collapsing world.' },
+      { kind: 'world', title: 'STORY WORLD', body: 'MOONWITNESS XV — World 02, AngelWithShotgun' },
+      { kind: 'tone', title: 'TONE', body: 'Vigilant, spiritual, reflective, human-centered.' },
     ],
     wisdomTitle: 'WISDOM & REFLECTION',
     wisdomLead: 'STRENGTH IS A TRUST, NOT A PURPOSE. REAL POWER PROTECTS LIFE, DEFENDS THE OPPRESSED, AND KEEPS THE DOOR OPEN FOR A MORE HUMANE TOMORROW.',
@@ -97,9 +97,9 @@ export const readerCopy: Record<StoryLocale, ReaderCopy> = {
     synopsisTitle: 'SINOPSIS',
     synopsis: 'Di dunia yang bomnya semakin dekat setiap hari, seorang penjaga berjalan melalui reruntuhan, bukan untuk mencari perang, melainkan untuk melindungi yang masih berarti. AngelWithShotgun mengikuti perjalanan iman, tanggung jawab, dan perlawanan yang tenang — setiap langkah adalah doa untuk dunia yang lebih manusiawi.',
     meta: [
-      { title: 'TEMA UTAMA', body: 'Perlindungan, tanggung jawab, dan harapan di dunia yang runtuh.' },
-      { title: 'DUNIA CERITA', body: 'MOONWITNESS XV — Dunia 02, AngelWithShotgun' },
-      { title: 'NADA', body: 'Waspada, spiritual, reflektif, berpusat pada manusia.' },
+      { kind: 'theme', title: 'TEMA UTAMA', body: 'Perlindungan, tanggung jawab, dan harapan di dunia yang runtuh.' },
+      { kind: 'world', title: 'DUNIA CERITA', body: 'MOONWITNESS XV — Dunia 02, AngelWithShotgun' },
+      { kind: 'tone', title: 'NADA', body: 'Waspada, spiritual, reflektif, berpusat pada manusia.' },
     ],
     wisdomTitle: 'HIKMAH & RENUNGAN',
     wisdomLead: 'KEKUATAN ADALAH AMANAH, BUKAN TUJUAN. KEKUATAN SEJATI MELINDUNGI KEHIDUPAN, MEMBELA YANG TERTINDAS, DAN MEMBUKA JALAN MENUJU HARI ESOK YANG LEBIH MANUSIAWI.',
