@@ -91,6 +91,8 @@ export const GLOBAL_IGNORES = [
   // content (gitignored at .gitignore:19). They are not repository source and
   // must not be linted.
   '.agents/teamwork/**',
+  // Temporary diagnostic and probe files generated during development.
+  '.tmp/**',
 ]
 
 export const typescriptRules = {
