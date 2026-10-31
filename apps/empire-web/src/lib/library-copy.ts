@@ -39,6 +39,9 @@ type LibraryCopy = {
   statusDraft: string
   statusProposed: string
   cardsCta: string
+  /** Shown when a filter or search leaves no card; the grid is never blank. */
+  emptyTitle: string
+  emptyHint: string
   statsTitle: [string, string]
   stats: Array<{ value: string; label: string }>
   statsQuote: string
@@ -71,6 +74,8 @@ export const libraryCopy: Record<StoryLocale, LibraryCopy> = {
     statusDraft: 'Draft',
     statusProposed: 'Proposed',
     cardsCta: 'ENTER STORY WORLD',
+    emptyTitle: 'No stories match this filter',
+    emptyHint: 'Clear the search or choose another category to see the catalogue again.',
     statsTitle: ['A UNIVERSE', 'OF MEANINGFUL STORIES'],
     stats: [
       { value: '4', label: 'STORY WORLDS' },
@@ -106,6 +111,8 @@ export const libraryCopy: Record<StoryLocale, LibraryCopy> = {
     statusDraft: 'Draf',
     statusProposed: 'Diusulkan',
     cardsCta: 'MASUK DUNIA CERITA',
+    emptyTitle: 'Tidak ada cerita yang cocok',
+    emptyHint: 'Kosongkan pencarian atau pilih kategori lain untuk melihat katalog kembali.',
     statsTitle: ['SEMESTA CERITA', 'YANG BERMAKNA'],
     stats: [
       { value: '4', label: 'DUNIA CERITA' },

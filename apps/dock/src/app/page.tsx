@@ -1,17 +1,17 @@
-import { Card, CardBody, LinkButton, Tape, Chevron } from '@moonwitness/moonui'
+import { Card, CardBody, LinkButton, SpaceGrid, Tape, Chevron } from '@moonwitness/moonui'
 import { formatLocaleNumber } from '@moonwitness/core'
 import { headers } from 'next/headers'
 import { homePayload } from '@/data/queries/program'
 import { Player } from '@/ui/client/Player'
 import { LiveTicker } from '@/ui/client/LiveTicker'
 import { Hero } from '@/ui/components/shell'
-import { SpaceGrid } from '@/ui/components/spaces'
+import { dockSpaces } from '@/ui/components/spaces-data'
 import {
   ArchiveTimeline,
   ChartBars,
   CrewConstellation,
   NowPlayingCard,
-  StationGrid,
+  StationDirectoryGrid,
   WeekGrid,
   ZineFeatureTrio,
   ZineSkaPosterSection,
@@ -47,7 +47,7 @@ export default async function HomePage() {
   const copy = getLandingCopy(locale)
   const payload = await homePayload()
   if (!payload.liveDataAvailable) {
-    return <div className="dk-home-stack"><OfflineLanding copy={copy} /><SpaceGrid locale={locale} /></div>
+    return <div className="dk-home-stack"><OfflineLanding copy={copy} /><SpaceGrid heading={copy.spacesHeading} headingId="dk-spaces-title" spaces={dockSpaces(locale)} /></div>
   }
   const live = payload.stations.find((station) => station.id === payload.now?.stationId) ?? payload.stations[0]
 
@@ -55,7 +55,7 @@ export default async function HomePage() {
     <div className="dk-home-stack">
       <Hero counts={{ stations: payload.counts.stations, countries: payload.counts.countries }} nowTitle={payload.now?.title} locale={locale} />
 
-      <SpaceGrid locale={locale} />
+      <SpaceGrid heading={copy.spacesHeading} headingId="dk-spaces-title" spaces={dockSpaces(locale)} />
 
       <ZineFeatureTrio
         now={payload.now}
@@ -103,7 +103,7 @@ export default async function HomePage() {
             />
           </div>
 
-          <StationGrid stations={payload.stations} locale={locale} />
+          <StationDirectoryGrid stations={payload.stations} locale={locale} />
 
           <div className="m-grid m-grid-2">
             <ChartBars title={copy.signalsPerCountry} rows={payload.perCountry} empty={copy.noCountryData} />

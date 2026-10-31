@@ -16,8 +16,9 @@ test('M40-04: isWebGLAvailable fails safe to false in server/test environments w
 })
 
 test('M40-04: OrbitWebGLFallback component exists and enforces accessible 2D layout', () => {
-  const fallbackPath = resolve(appRoot, 'src/components/OrbitWebGLFallback.tsx')
-  assert.ok(existsSync(fallbackPath), 'OrbitWebGLFallback.tsx must exist')
+  // ADR-0017: the 2D fallback is MoonUI's `WebGLFallbackView`.
+  const fallbackPath = resolve(appRoot, '../../packages/moonui/src/surfaces/orbit.tsx')
+  assert.ok(existsSync(fallbackPath), 'the 2D fallback view must live in MoonUI')
 
   const content = readFileSync(fallbackPath, 'utf8')
   assert.ok(content.includes('webglFallbackActive'), 'Must render fallback title badge')
@@ -34,8 +35,8 @@ test('M40-04: View mode switcher supports both 3D spatial and 2D accessible mode
   const wsContent = readFileSync(workspacePath, 'utf8')
 
   assert.ok(vpContent.includes("viewMode === 'accessible'"), 'Viewport must branch on accessible view mode')
-  assert.ok(vpContent.includes('OrbitWebGLFallback'), 'Viewport must render fallback when in 2D mode')
-  assert.ok(vpContent.includes('orbit-view-mode-btn'), 'Viewport must render accessible view mode switcher')
+  assert.ok(vpContent.includes('WebGLFallbackView'), 'Viewport must render fallback when in 2D mode')
+  assert.ok(vpContent.includes('onViewModeChange'), 'Viewport must render the accessible view mode switcher')
   assert.ok(wsContent.includes('setViewMode'), 'Workspace must manage viewMode state')
 })
 

@@ -1,18 +1,22 @@
 import { useState, useEffect, useRef, useMemo, useCallback, type ReactNode } from 'react'
 import Hls from 'hls.js'
-import { Tabs, type TabItem, type TerminalLine } from '@moonwitness/moonui'
-import { triggerHaptic } from '@moonwitness/moonui/client'
-import { CockpitTopBar } from './components/CockpitTopBar'
-import { CockpitSidebar } from './components/CockpitSidebar'
-import { CockpitLogsView } from './components/CockpitLogsView'
-import { CockpitPreviewView } from './components/CockpitPreviewView'
+import {
+  Button,
+  CockpitFooter,
+  CockpitLedgerView,
+  CockpitLogsView,
+  CockpitPortsView,
+  CockpitPreviewView,
+  CockpitSidebar,
+  Tabs,
+  type TabItem,
+  type TerminalLine,
+} from '@moonwitness/moonui'
+import { AlertDialog, CockpitTopBar, KbdLegend, Modal, triggerHaptic } from '@moonwitness/moonui/client'
 import { CockpitMediaView } from './components/CockpitMediaView'
-import { CockpitPortsView } from './components/CockpitPortsView'
-import { CockpitLedgerView } from './components/CockpitLedgerView'
 import { CockpitProgressView } from './components/CockpitProgressView'
-import { CockpitFooter } from './components/CockpitFooter'
-import { CockpitConfirmModal } from './components/CockpitConfirmModal'
-import { CockpitHelpModal } from './components/CockpitHelpModal'
+import { buildPortRows, previewShortcuts } from './lib/ports'
+import { COCKPIT_LOCALE_OPTIONS, asCockpitLocale } from './lib/cockpit-copy'
 import { useCockpitLocale } from './hooks/useCockpitLocale'
 import { useCockpitSync } from './hooks/useCockpitSync'
 import { useCockpitActions } from './hooks/useCockpitActions'
@@ -683,10 +687,10 @@ export function App(): ReactNode {
         togglePlayPause={togglePlayPause}
         nextChannel={nextChannel}
         isMuted={isMuted}
-        setIsMuted={setIsMuted}
+        toggleMuted={() => setIsMuted((prev) => !prev)}
         volume={volume}
         setVolume={setVolume}
-        setActiveTab={setActiveTab}
+        openMediaTab={() => setActiveTab('media')}
         startAll={startAll}
         isStartingAll={isStartingAll}
         startAllSummary={startAllSummary}
@@ -698,17 +702,18 @@ export function App(): ReactNode {
         }}
         isFreeingPorts={isFreeingPorts}
         crtShader={crtShader}
-        setCrtShader={setCrtShader}
+        toggleCrtShader={() => setCrtShader((prev) => !prev)}
         progressPercent={progress.payload?.percent ?? null}
         locale={locale}
-        setLocale={setLocale}
+        localeOptions={COCKPIT_LOCALE_OPTIONS}
+        setLocale={(next) => setLocale(asCockpitLocale(next))}
         copy={copy}
         onOpenHelp={() => setIsHelpOpen(true)}
       />
 
       <div className="cockpit-body">
         <CockpitSidebar
-          config={config}
+          services={config?.services ?? []}
           serviceStates={serviceStates}
           controlService={controlService}
           openPreview={openPreview}
@@ -730,7 +735,7 @@ export function App(): ReactNode {
 
           {activeTab === 'logs' ? (
             <CockpitLogsView
-              config={config}
+              services={config?.services ?? []}
               filterTag={filterTag}
               setFilterTag={setFilterTag}
               searchTerm={searchTerm}
@@ -739,7 +744,7 @@ export function App(): ReactNode {
               setShowErrorsOnly={setShowErrorsOnly}
               autoScroll={autoScroll}
               setAutoScroll={setAutoScroll}
-              setLogs={setLogs}
+              onClearLogs={() => setLogs([])}
               logLines={logLines}
               copy={copy}
             />
@@ -747,11 +752,11 @@ export function App(): ReactNode {
 
           {activeTab === 'preview' ? (
             <CockpitPreviewView
-              config={config}
+              shortcuts={previewShortcuts(config)}
               previewUrl={previewUrl}
               setPreviewUrl={setPreviewUrl}
               openPreview={openPreview}
-              previewFrameRef={previewFrameRef}
+              frameRef={previewFrameRef}
               copy={copy}
             />
           ) : null}
@@ -803,9 +808,7 @@ export function App(): ReactNode {
 
           {activeTab === 'ports' ? (
             <CockpitPortsView
-              config={config}
-              serviceStates={serviceStates}
-              portStatus={portStatus}
+              rows={buildPortRows(config, serviceStates, portStatus)}
               openPreview={openPreview}
               copy={copy}
             />
@@ -835,24 +838,47 @@ export function App(): ReactNode {
         onOpenHelp={() => setIsHelpOpen(true)}
       />
 
-      <CockpitHelpModal
+      <Modal
         isOpen={isHelpOpen}
-        copy={copy}
         onClose={() => setIsHelpOpen(false)}
-      />
+        title={copy.helpTitle}
+        maxWidth="md"
+        footer={
+          <div className="flex justify-end w-full">
+            <Button variant="accent" size="sm" onClick={() => setIsHelpOpen(false)}>
+              {copy.closeHelp}
+            </Button>
+          </div>
+        }
+      >
+        <p className="m-muted" style={{ marginTop: 0 }}>
+          {copy.helpSubtitle}
+        </p>
+        <KbdLegend
+          items={[
+            { key: 'Space', label: copy.shortcutPlayPause },
+            { key: 'M', label: copy.shortcutMute },
+            { key: '[ / ]', label: copy.shortcutChannel },
+            { key: '1 - 6', label: copy.shortcutTabs },
+            { key: 'P', label: copy.shortcutPorts },
+            { key: '?', label: copy.shortcutHelp },
+            { key: 'Esc', label: copy.closeHelp },
+          ]}
+        />
+      </Modal>
 
-      <CockpitConfirmModal
+      <AlertDialog
         isOpen={Boolean(confirmModal?.isOpen)}
-        isDestructive={confirmModal?.isDestructive ?? false}
-        irreversibleNote={copy.confirmIrreversible}
+        tone={confirmModal?.isDestructive ? 'danger' : 'accent'}
         title={confirmModal?.title ?? ''}
-        description={confirmModal?.description ?? ''}
+        message={confirmModal?.description ?? ''}
+        note={confirmModal?.isDestructive ? copy.confirmIrreversible : undefined}
         confirmLabel={copy.confirmBtn}
         cancelLabel={copy.cancelBtn}
         onConfirm={() => {
           confirmModal?.onConfirm()
         }}
-        onCancel={() => setConfirmModal(null)}
+        onClose={() => setConfirmModal(null)}
       />
     </div>
   )

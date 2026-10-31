@@ -1,10 +1,13 @@
 # Domain D — Charity and Humanitarian Impact (10)
 
 Subdomain allocation: needs/impact discovery 2; program operations/governance 2; donations/allocation/transparency 2; volunteers/participation 2; impact/protection/accountability 2. All proposals are PROPOSED research/governance preparation, not implemented services. In every body, VERIFIED applies only to cited references; local need, beneficiary, partner, donation, disbursement and impact remain UNKNOWN; recommendations are PROPOSED. M32 community validation and M35/M36 operating gates remain separate and authoritative.
+**ADR applicability:** Each candidate remains PROPOSED; the [item-by-item ADR applicability register](ADR_APPLICABILITY.md) identifies current boundaries and conditions requiring a future owner-reviewed ADR.
 
 Identity convention: the heading supplies ID/title; this file supplies the primary domain; the first identity phrases give subdomain/type. Identity lines include priority, difficulty, effort, confidence, risk, domain/common score, owner and proposed V5 wave. Trailing tags are suggested labels. The suggested wave is not a TODO milestone. Implementation maturity for all entries is PROPOSED.
 
 ## CHAR-001 — Prepare a partner-led needs assessment protocol
+
+**Canonical TODO task:** [M49-01](../../../TODO.md) — TODO is sole status source; `CHAR-001` is only the V5 reference ID.
 
 1. **Identity:** Charity; beneficiary needs discovery; P2 / Medium / M / confidence Low / risk High; domain 65, common 69; owner: humanitarian research lead; V5-W3; needs, safeguarding.
 2. **Executive:** Prepare a protocol for a qualified local partner to identify a specific unmet need before any program is proposed.
@@ -31,6 +34,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## CHAR-002 — Compare needs-assessment methods for accessibility and harm
 
+**Canonical TODO task:** [M49-02](../../../TODO.md) — TODO is sole status source; `CHAR-002` is only the V5 reference ID.
+
 1. **Identity:** Charity; beneficiary needs discovery; P2 / Medium / M / confidence Low / risk High; domain 63, common 65; owner: humanitarian research lead; V5-W3; research, inclusion.
 2. **Executive:** Compare interview, facilitated group and anonymous feedback approaches for one partner-defined need.
 3. **Current state:** No method or population has been approved.
@@ -56,6 +61,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## CHAR-003 — Define accountable humanitarian program roles and escalation
 
+**Canonical TODO task:** [M49-03](../../../TODO.md) — TODO is sole status source; `CHAR-003` is only the V5 reference ID.
+
 1. **Identity:** Charity; program operations/governance; P1 / Hard / L / confidence Medium / risk High; domain 80, common 77; owner: accountable program operator; V5-W3; governance, safeguarding.
 2. **Executive:** Map who may approve, deliver, pause and investigate a future charitable program.
 3. **Current state:** No accountable charitable operator or program was verified.
@@ -74,12 +81,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 5–10 days plus legal review.
 17. **Rollback:** Freeze proposed program until roles are re-approved.
 18. **Synergy:** Creates a prerequisite for trustworthy charity participation.
-19. **Anti-overlap:** Does not define M32 community ownership or commercial Treasury roles.
+19. **Anti-overlap:** Owns the shared accountable-role and escalation map used by CHAR-004/007/010; those tasks add fund controls, volunteer boundaries and safeguarding remedies respectively. Does not define M32 community ownership or commercial Treasury roles.
 20. **Outcome:** Readiness role map or explicit no-go.
 21. **Future:** Revisit per program and jurisdiction.
 22. **Closure evidence:** Approved responsibility map and tabletop findings.
 
 ## CHAR-004 — Specify restricted-fund handling and separation rules
+
+**Canonical TODO task:** [M49-04](../../../TODO.md) — TODO is sole status source; `CHAR-004` is only the V5 reference ID.
 
 1. **Identity:** Charity; program operations/governance; P1 / Hard / L / confidence Medium / risk Critical; domain 85, common 75; owner: accountable finance officer; V5-W3; finance, controls.
 2. **Executive:** Document how any future restricted charitable funds would be accepted, held, allocated, reconciled and returned.
@@ -99,12 +108,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 5–12 days plus external advice.
 17. **Rollback:** No funds accepted; withdraw policy draft if jurisdiction changes.
 18. **Synergy:** Enables accountable charity while protecting commercial separation.
-19. **Anti-overlap:** No commercial Treasury or M35 payment flow; no new SQL owner.
+19. **Anti-overlap:** Uses CHAR-003's role map and adds restricted-fund custody, dual control, reconciliation and return rules only. No commercial Treasury or M35 payment flow; no new SQL owner.
 20. **Outcome:** Approved controls prerequisite or no-go.
 21. **Future:** Software follows audited process, not vice versa.
 22. **Closure evidence:** Signed controls map, tabletop outcomes and legal/accounting caveats.
 
 ## CHAR-005 — Design a transparent allocation decision record
+
+**Canonical TODO task:** [M49-05](../../../TODO.md) — TODO is sole status source; `CHAR-005` is only the V5 reference ID.
 
 1. **Identity:** Charity; donations/allocation; P1 / Hard / L / confidence Medium / risk High; domain 78, common 73; owner: program/finance; V5-W3; allocation, audit.
 2. **Executive:** Define the minimum evidence for documenting a charitable allocation decision.
@@ -131,6 +142,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## CHAR-006 — Prototype a privacy-preserving allocation transparency report
 
+**Canonical TODO task:** [M49-06](../../../TODO.md) — TODO is sole status source; `CHAR-006` is only the V5 reference ID.
+
 1. **Identity:** Charity; donations/transparency; P2 / Medium / M / confidence Low / risk High; domain 71, common 65; owner: finance/communications; V5-W3; transparency, privacy.
 2. **Executive:** Test whether an aggregate report can explain funds received/allocated and remaining restrictions without naming beneficiaries.
 3. **Current state:** No funds or impact data verified; no report should imply otherwise.
@@ -156,6 +169,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## CHAR-007 — Define safe volunteer roles and safeguarding boundaries
 
+**Canonical TODO task:** [M49-07](../../../TODO.md) — TODO is sole status source; `CHAR-007` is only the V5 reference ID.
+
 1. **Identity:** Charity; volunteer participation; P1 / Hard / L / confidence Medium / risk High; domain 78, common 74; owner: accountable program operator; V5-W3; volunteers, safeguarding.
 2. **Executive:** Specify what volunteers may and may not do in a hypothetical program.
 3. **Current state:** No volunteer program or partner was verified.
@@ -174,12 +189,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 4–8 days plus expert review.
 17. **Rollback:** Freeze volunteer activity and withdraw role cards.
 18. **Synergy:** Supports safe community participation.
-19. **Anti-overlap:** No M32 member journey/moderation app.
+19. **Anti-overlap:** Uses CHAR-003's role/escalation map and adds volunteer screening, training, supervision and prohibited-task limits only. No M32 member journey/moderation app.
 20. **Outcome:** Approved role framework or no-go.
 21. **Future:** Pilot only with named partner and supervision.
 22. **Closure evidence:** Role matrix, risk review and approvals.
 
 ## CHAR-008 — Design accessible volunteer participation without coercion
+
+**Canonical TODO task:** [M49-08](../../../TODO.md) — TODO is sole status source; `CHAR-008` is only the V5 reference ID.
 
 1. **Identity:** Charity; volunteer/community participation; P2 / Medium / M / confidence Low / risk Medium; domain 69, common 63; owner: program/UX; V5-W3; inclusion, volunteers.
 2. **Executive:** Explore flexible participation, reimbursement and opt-out needs for a future partner-led activity.
@@ -206,6 +223,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## CHAR-009 — Define an outcome measurement plan before a pilot
 
+**Canonical TODO task:** [M49-09](../../../TODO.md) — TODO is sole status source; `CHAR-009` is only the V5 reference ID.
+
 1. **Identity:** Charity; impact measurement; P1 / Hard / L / confidence Medium / risk High; domain 80, common 73; owner: program evaluator; V5-W3; evaluation, impact.
 2. **Executive:** Define one outcome, baseline and credible evidence method before any charitable pilot begins.
 3. **Current state:** No program outcomes or beneficiaries verified.
@@ -231,6 +250,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## CHAR-010 — Define complaint, incident and remedy pathways
 
+**Canonical TODO task:** [M49-10](../../../TODO.md) — TODO is sole status source; `CHAR-010` is only the V5 reference ID.
+
 1. **Identity:** Charity; protection/accountability; P1 / Hard / L / confidence Medium / risk Critical; domain 86, common 72; owner: independent safeguarding lead; V5-W3; accountability, protection.
 2. **Executive:** Specify safe feedback, complaint, safeguarding incident and appeal paths before any program contact.
 3. **Current state:** No charitable program, complaint mechanism or responsible safeguarding lead was verified.
@@ -243,13 +264,13 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Complainant can report without public identity; urgent cases have escalation; limits and response timing are clear.
 11. **DoD:** Local safeguarding/legal reviewer approves before program launch.
 12. **Tests:** Tabletop cases for retaliation, anonymous report, conflict of interest and unavailable lead.
-13. **Dependencies:** CHAR-003/007/009.
+13. **Dependencies:** CHAR-003/007; related CHAR-009.
 14. **Risks:** Confidentiality cannot be absolute; explain limits and referral boundaries honestly.
 15. **Metrics:** Path coverage, owner availability and time-to-acknowledge target set by partner.
 16. **Estimate:** 5–10 days plus qualified review.
 17. **Rollback:** Pause program/contact if safe response capacity lapses.
 18. **Synergy:** Protects participants, volunteers and institutional trust.
-19. **Anti-overlap:** No M32 moderation/appeals implementation; this is program safeguarding governance.
+19. **Anti-overlap:** Defines independent complaint, incident and remedy paths from the shared CHAR-003/007 role map; make the path ready before program contact. CHAR-009 outcome measurement is not a prerequisite. No M32 moderation/appeals implementation.
 20. **Outcome:** Approved accountability mechanism or program no-go.
 21. **Future:** Audit mechanism with independent user feedback.
 22. **Closure evidence:** Protocol, tabletop results and sign-off.

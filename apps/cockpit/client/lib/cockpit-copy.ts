@@ -16,6 +16,16 @@ export interface CockpitCopyCatalog {
   quickPlayerUnmute: string
   quickPlayerVolume: string
   selectLanguage: string
+  /** The four telemetry readouts and the state word beside the live dot. */
+  telemetrySysClock: string
+  telemetryUptime: string
+  telemetryStatus: string
+  telemetryTodo: string
+  supervised: string
+  /** Short rack controls: the bar has no room for a word. */
+  rackButton: string
+  muteButton: string
+  volumeButton: string
 
   // Sidebar
   microservices: string
@@ -282,6 +292,14 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     quickPlayerUnmute: 'Unmute audio',
     quickPlayerVolume: 'Volume',
     selectLanguage: 'Select interface language',
+    telemetrySysClock: 'SYS CLOCK',
+    telemetryUptime: 'UPTIME',
+    telemetryStatus: 'STATUS',
+    telemetryTodo: 'TODO',
+    supervised: 'SUPERVISED',
+    rackButton: 'RACK',
+    muteButton: 'MUTE',
+    volumeButton: 'VOL',
 
     // Sidebar
     microservices: 'MICROSERVICES',
@@ -544,6 +562,14 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
     quickPlayerUnmute: 'Nyalakan audio',
     quickPlayerVolume: 'Volume',
     selectLanguage: 'Pilih bahasa antarmuka',
+    telemetrySysClock: 'JAM SYS',
+    telemetryUptime: 'WAKTU JALAN',
+    telemetryStatus: 'STATUS',
+    telemetryTodo: 'TUGAS',
+    supervised: 'DIAWASI',
+    rackButton: 'RACK',
+    muteButton: 'BISU',
+    volumeButton: 'VOL',
 
     // Sidebar
     microservices: 'MIKROSERVIS',
@@ -796,4 +822,18 @@ export const COCKPIT_COPY: Record<CockpitLocale, CockpitCopyCatalog> = {
 
 export const getCockpitCopy = (locale: CockpitLocale = 'en'): CockpitCopyCatalog => {
   return COCKPIT_COPY[locale] ?? COCKPIT_COPY.en
+}
+
+/**
+ * The segmented language control's options: each language is offered under its
+ * own name, which is the same word in both locales.
+ */
+export const COCKPIT_LOCALE_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: 'id', label: 'ID' },
+  { value: 'en', label: 'EN' },
+]
+
+/** A shared control hands back a string; the vocabulary stays this app's. */
+export function asCockpitLocale(value: string): CockpitLocale {
+  return value === 'id' ? 'id' : 'en'
 }

@@ -17,6 +17,8 @@
 | `apps/orbit` / `@moonwitness/orbit` | ORBIT spatial operations frontend (M40) | Frontend shell exists and runs on **simulated fixtures** at local port 3007; independent frontend/build/deploy boundary; not a backend service and owns no domain/schema. M40 implementation gates remain open. |
 | `apps/empire-web` / `@moonwitness/empire-web` | Isolated A-L-L-A-H.COM static gateway pilot | Bilingual static frontend at local port 3010; pilot only, no backend, identity, private data or canonical LIGHTHOUSE runtime ownership. Deployment and domain remain unapproved. |
 | `apps/lumen-runtime` / `@moonwitness/lumen-runtime` | Internal LUMEN worker process (M41; ADR-0010 accepted) | Scaffold only: tests exist, **no dev server and no HTTP surface**; registered in `scripts/apps.registry.mjs` with `dev:false` so its absence is stated, not silent. No public task API, database, identity, model routing or canonical state ownership. |
+| `apps/isp-radius` / `@moonwitness/isp-radius` | D20 RADIUS/RadSec protocol runtime (M51; ADR-0018) | Go worker adapter to ARSY; no SQL, business REST hub or login. Implementation and fake-NAS gates remain open. |
+| `apps/isp-console` / `@moonwitness/isp-console` | Private D20 operator frontend (M51; ADR-0018) | Next.js + MoonUI BFF using D00 sessions and tenant grants; no public Dock route or direct database/API credential. Implementation remains open. |
 
 Runnability (dev server / worker / scaffold) and port assignment live in one place: [`scripts/apps.registry.mjs`](../../scripts/apps.registry.mjs). `pnpm apps` prints it, `scripts/dev.mjs` spawns it, `scripts/free-ports.mjs` frees it, and the Cockpit supervises the subset marked `supervised: true`. See [Dev processes](DEV_PROCESSES.md).
 
@@ -30,4 +32,5 @@ ORBIT is an independent frontend within this monorepo, not a separate backend. I
 - Do not expose ARSY service credentials to browser code; cookie presence or a hidden route is not authorization.
 - Only verified runtime events can be labelled live. Fixtures are `SIMULATED`; stale/offline/unknown/denied states remain explicit.
 - SKYLINK (D18) is the accepted messaging-service exception; ECHOLOG (D19) is a bounded stateless-storage exception. ORBIT is not a service exception.
+- D20 is an ARSY/MoonQL domain. `apps/isp-radius` is a protocol adapter with no SQL owner; `apps/isp-console` is a frontend and owns no canonical data.
 - Any eventual separate GitHub repository for ORBIT requires a separately reviewed extraction plan; M40 delivers only a frontend inside XV.

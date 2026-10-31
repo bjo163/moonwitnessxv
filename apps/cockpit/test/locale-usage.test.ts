@@ -16,6 +16,12 @@ import { getCockpitCopy } from '../client/lib/cockpit-copy.js'
 
 const CLIENT_DIR = fileURLToPath(new URL('../client', import.meta.url))
 const CATALOG_FILE = join(CLIENT_DIR, 'lib', 'cockpit-copy.ts')
+/**
+ * ADR-0017 moved Cockpit's views into the design system, so a key can be rendered
+ * from `packages/moonui/src` as well as from this app. Scanning only the app would
+ * call a promoted label dead.
+ */
+const MOONUI_SRC_DIR = fileURLToPath(new URL('../../../packages/moonui/src', import.meta.url))
 
 /** Keys that are legitimately not referenced from a component (none today). */
 const ALLOW_UNUSED = new Set<string>([])
@@ -35,6 +41,14 @@ const EXTRA_ENFORCED = new Set<string>([
   'colOpen',
   'colTotal',
   'colProgress',
+  'telemetrySysClock',
+  'telemetryUptime',
+  'telemetryStatus',
+  'telemetryTodo',
+  'supervised',
+  'rackButton',
+  'muteButton',
+  'volumeButton',
   'groupFoundation',
   'groupSource',
   'groupResearch',
@@ -68,7 +82,7 @@ function sourceFiles(dir: string, out: string[] = []): string[] {
 }
 
 void test('Cockpit Locale Catalog: every key is actually rendered somewhere', () => {
-  const sources = sourceFiles(CLIENT_DIR)
+  const sources = [...sourceFiles(CLIENT_DIR), ...sourceFiles(MOONUI_SRC_DIR)]
     .map((file) => readFileSync(file, 'utf8'))
     .join('\n')
   const catalog = getCockpitCopy('en') as unknown as Record<string, string>

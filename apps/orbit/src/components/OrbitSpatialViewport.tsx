@@ -6,9 +6,8 @@ import type { OrbitOperationalState } from '../fixtures/simulated-operations'
 import type { Locale } from '@moonwitness/core'
 import type { OrbitCopyKey } from '../lib/orbit-copy'
 import { OrbitNodeInspector } from './OrbitNodeInspector'
-import { OrbitWebGLFallback } from './OrbitWebGLFallback'
 import { isWebGLAvailable } from './spatial/WebGLDetector'
-import { Badge } from '@moonwitness/moonui'
+import { Badge, Button, Spinner, WebGLFallbackView } from '@moonwitness/moonui'
 
 export interface OrbitSpatialViewportProps {
   data: OrbitOperationalState
@@ -58,7 +57,7 @@ export function OrbitSpatialViewport({
       ssr: false,
       loading: () => (
         <div className="orbit-spatial-loading" role="status" aria-live="polite">
-          <div className="orbit-spatial-spinner" />
+          <Spinner />
           <span className="orbit-spatial-loading-text">{copy.spatialLoading}</span>
         </div>
       ),
@@ -80,14 +79,14 @@ export function OrbitSpatialViewport({
 
           {/* Interactive View Switcher */}
           {onViewModeChange && isWebGLSupported && (
-            <button
-              type="button"
-              className="orbit-view-mode-btn"
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => onViewModeChange(viewMode === 'spatial' ? 'accessible' : 'spatial')}
               aria-label={copy.viewModeToggleLabel}
             >
               {viewMode === 'spatial' ? copy.switchTo2DView : copy.switchTo3DView}
-            </button>
+            </Button>
           )}
         </div>
 
@@ -95,35 +94,39 @@ export function OrbitSpatialViewport({
         <div className="orbit-quick-select-bar" role="toolbar" aria-label={copy.quickSelectLabel}>
           <span className="orbit-quick-select-label">{copy.quickSelectLabel}:</span>
           {data.workstations.map((ws) => (
-            <button
+            <Button
               key={ws.id}
-              type="button"
-              className={`orbit-quick-select-btn ${selectedNodeId === ws.id ? 'active' : ''}`}
+              variant={selectedNodeId === ws.id ? 'accent' : 'ghost'}
+              size="sm"
               onClick={() => handleSelectNode(selectedNodeId === ws.id ? null : ws.id)}
               aria-pressed={selectedNodeId === ws.id}
             >
               {ws.id.replace('ws-', '')}
-            </button>
+            </Button>
           ))}
           {data.agents.map((ag) => (
-            <button
+            <Button
               key={ag.id}
-              type="button"
-              className={`orbit-quick-select-btn agent ${selectedNodeId === ag.id ? 'active' : ''}`}
+              variant={selectedNodeId === ag.id ? 'cyan' : 'ghost'}
+              size="sm"
               onClick={() => handleSelectNode(selectedNodeId === ag.id ? null : ag.id)}
               aria-pressed={selectedNodeId === ag.id}
             >
               {ag.id.replace('agent-', '')}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
 
       <div className="orbit-spatial-canvas-container">
         {is2DOnly ? (
-          <OrbitWebGLFallback
-            data={data}
+          <WebGLFallbackView
             copy={copy}
+            counts={{
+              workstations: data.workstations.length,
+              agents: data.agents.length,
+              tasks: data.taskQueue.length,
+            }}
             isUserSelected2D={isWebGLSupported && viewMode === 'accessible'}
             onSwitchTo3D={() => onViewModeChange?.('spatial')}
           />

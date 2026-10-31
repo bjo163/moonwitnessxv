@@ -65,7 +65,7 @@ for (const width of [390, 1440]) {
         await expect(nav).toBeVisible()
       } else {
         await expect(nav).toBeHidden()
-        const menu = page.locator('.su-mobile-menu-button')
+        const menu = page.locator('.su-menu-trigger')
         await expect(menu).toBeVisible()
         await menu.click()
         await expect(nav).toBeVisible()

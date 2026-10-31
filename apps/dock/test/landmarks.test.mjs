@@ -235,18 +235,18 @@ test('M19-18: SiteLayout definition provides the single canonical set of landmar
 
   const analysis = analyzeTsxFile(siteLayoutPath)
 
-  assert.ok(analysis.jsxTags.includes('SiteHeader'), 'SiteLayout must include SiteHeader')
+  assert.ok(analysis.jsxTags.includes('DockSiteHeader'), 'SiteLayout must include DockSiteHeader')
   assert.ok(analysis.jsxTags.includes('main'), 'SiteLayout must include <main>')
-  assert.ok(analysis.jsxTags.includes('SiteFooter'), 'SiteLayout must include SiteFooter')
+  assert.ok(analysis.jsxTags.includes('DockFooter'), 'SiteLayout must include DockFooter')
 
-  // Inspect SiteHeader and SiteFooter definitions
+  // Inspect DockSiteHeader and DockFooter definitions
   const shellPath = path.join(uiComponentsDir, 'shell.tsx')
   assert.ok(fs.existsSync(shellPath), 'shell.tsx component file must exist')
 
   const shellAnalysis = analyzeTsxFile(shellPath)
-  assert.ok(shellAnalysis.jsxTags.includes('header'), 'SiteHeader must render <header className="dk-header">')
-  assert.ok(shellAnalysis.jsxTags.includes('footer'), 'SiteFooter must render <footer className="dk-footer">')
-  assert.ok(shellAnalysis.renderedElementIds.includes('join-crew'), 'SiteFooter must define id="join-crew"')
+  assert.ok(shellAnalysis.jsxTags.includes('header'), 'DockSiteHeader must render <header className="dk-header">')
+  assert.ok(shellAnalysis.jsxTags.includes('footer'), 'DockFooter must render <footer className="dk-footer">')
+  assert.ok(shellAnalysis.renderedElementIds.includes('join-crew'), 'DockFooter must define id="join-crew"')
 })
 
 test('M19-18: Rendered pages inside RootLayout have exactly one <header>, one top-level <main>, and one <footer>', () => {

@@ -13,8 +13,10 @@ const shellSource = fs.readFileSync(
 )
 
 test('home renders the four-space entry on both the live and the offline branch', () => {
-  assert.match(homeSource, /import \{ SpaceGrid \} from '@\/ui\/components\/spaces'/)
-  const renders = (homeSource.match(/<SpaceGrid locale=\{locale\} \/>/g) ?? []).length
+  // ADR-0017: the grid is MoonUI's; the route/copy data is Dock's.
+  assert.match(homeSource, /import \{[^}]*\bSpaceGrid\b[^}]*\} from '@moonwitness\/moonui'/)
+  assert.match(homeSource, /import \{ dockSpaces \} from '@\/ui\/components\/spaces-data'/)
+  const renders = (homeSource.match(/<SpaceGrid heading=\{copy\.spacesHeading\} headingId="dk-spaces-title" spaces=\{dockSpaces\(locale\)\} \/>/g) ?? []).length
   assert.equal(renders, 2, 'an offline hub must still publish the four real routes')
 })
 

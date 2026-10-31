@@ -40,7 +40,7 @@ export function TerminalViewer({
           : line.timestamp
 
         return (
-          <div key={line.id} className={cn('m-terminal-line', `m-terminal-${line.level}`)}>
+          <div key={line.id} className="m-terminal-line" data-level={line.level}>
             <span className="m-terminal-time">{time}</span>
             <span className="m-terminal-tag">{line.tag.toUpperCase()}</span>
             <span className="m-terminal-msg">{line.message}</span>

@@ -10,7 +10,8 @@ import {
   TextInput,
 } from '@moonwitness/moonui'
 import { AudioVisualizer } from '@moonwitness/moonui/client'
-import { CockpitTunerSection } from './CockpitTunerSection'
+import { CockpitTunerSection } from '@moonwitness/moonui/client'
+import { channelsToStations } from '../lib/tuner'
 import type { ChannelItem, ChannelMediaType } from '../types'
 import type { CockpitCopyCatalog } from '../lib/cockpit-copy'
 
@@ -218,10 +219,13 @@ export function CockpitMediaView({
           }}
         >
           <CockpitTunerSection
-            channels={channels}
-            activeChannelIndex={activeChannelIndex}
+            stations={channelsToStations(channels)}
+            activeIndex={activeChannelIndex}
             isPlaying={isPlaying}
-            selectChannel={selectChannel}
+            onSelectStation={(station) => {
+              const index = channels.findIndex((channel) => channel.id === station.id)
+              if (index !== -1) selectChannel(index)
+            }}
           />
         </div>
 

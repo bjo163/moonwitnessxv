@@ -1,9 +1,7 @@
-import { Badge } from '@moonwitness/moonui'
+import { Badge, LocaleLinks, OrbitShellHeaderView, SectionNav } from '@moonwitness/moonui'
 import { SIMULATED_OPERATIONS } from '../fixtures/simulated-operations.ts'
 import { orbitCopy } from '../lib/orbit-copy'
 import { getRequestLocale } from '../lib/request-locale'
-import { OrbitShellHeader } from '../components/OrbitShellHeader'
-import { OrbitNav } from '../components/OrbitNav'
 import { OrbitOperationsWorkspace } from '../components/OrbitOperationsWorkspace'
 import { fetchOrbitOperationalState } from '../lib/server/arsy-runtime-client.ts'
 
@@ -28,16 +26,41 @@ export default async function OrbitPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <OrbitShellHeader
-        locale={locale}
+      <OrbitShellHeaderView
         copy={copy}
         connectionStatus={state.connectionStatus}
         freshness={state.freshness}
-        lastSyncTimestamp={state.lastSyncTimestamp}
         reviewSurface={activeWorkspaceData.reviewSurface}
+        localeNav={
+          <LocaleLinks
+            current={locale}
+            label={copy.localeSelectorLabel}
+            className="orbit-locale-links"
+            items={[
+              { locale: 'en', href: '?locale=en', label: 'EN' },
+              { locale: 'id', href: '?locale=id', label: 'ID' },
+            ]}
+          />
+        }
       />
 
-      <OrbitNav copy={copy} />
+      <div className="orbit-nav-bar">
+        <SectionNav
+          label="Section Navigation"
+          activeKey="overview"
+          items={[
+            { key: 'overview', label: copy.navOverview, href: '#overview' },
+            { key: 'workstations', label: copy.navWorkstations, href: '#workstations' },
+            { key: 'agent-loops', label: copy.navAgentLoops, href: '#agent-loops' },
+            { key: 'task-queues', label: copy.navTaskQueues, href: '#task-queues' },
+            { key: 'audit-traces', label: copy.navAuditTraces, href: '#audit-traces' },
+          ]}
+        />
+        <div className="orbit-view-controls">
+          <Badge tone="cyan">{copy.viewSpatial}</Badge>
+          <Badge tone="night">{copy.viewAccessible2D}</Badge>
+        </div>
+      </div>
 
       {isOffline && (
         <aside

@@ -1,122 +1,19 @@
 import { Suspense, type ReactNode } from 'react'
-import { Alert, EmptyState, Spinner } from '@moonwitness/moonui'
+import { OutcomePanel, type PanelCopy, type PanelOutcome } from '@moonwitness/moonui'
 
 /**
- * One contract for the four data states so a panel cannot quietly render a
- * "ready" skeleton as if it held content. `loading` announces politely,
- * `error` interrupts as an alert, `empty` states the reason in words.
+ * The view layer of the four data states lives in `@moonwitness/moonui`
+ * (`PanelState`, `OutcomePanel`) under ADR-0017. This module keeps the part that
+ * is not a component: resolving a read into exactly one outcome, and the
+ * streamed boundary that renders it. Neither renders markup of its own.
  */
-export type PanelStateKind = 'loading' | 'empty' | 'error' | 'ready'
-
-export interface PanelStateProps {
-  state: PanelStateKind
-  loadingLabel: string
-  emptyTitle: string
-  emptyHint?: string
-  errorMessage?: string
-  /**
-   * Structural placeholder shown under the loading label — a MoonUI skeleton
-   * only. It carries no data, so a loading panel never dresses a shape up as
-   * a result.
-   */
-  loadingPlaceholder?: ReactNode
-  children: ReactNode
-}
-
-export function PanelState({
-  state,
-  loadingLabel,
-  emptyTitle,
-  emptyHint,
-  errorMessage,
-  loadingPlaceholder,
-  children,
-}: PanelStateProps): ReactNode {
-  if (state === 'loading') {
-    return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="m-stack"
-        style={{ gap: 12 }}
-      >
-        <div
-          className="m-row"
-          style={{ alignItems: 'center', gap: 8, fontSize: 13 }}
-        >
-          <Spinner />
-          <span>{loadingLabel}</span>
-        </div>
-        {loadingPlaceholder ?? null}
-      </div>
-    )
-  }
-
-  if (state === 'error') {
-    return (
-      <div role="alert">
-        <Alert tone="hot">{errorMessage ?? emptyTitle}</Alert>
-      </div>
-    )
-  }
-
-  if (state === 'empty') {
-    return <EmptyState title={emptyTitle} hint={emptyHint} />
-  }
-
-  return <>{children}</>
-}
-
-/**
- * The four localized sentences one panel needs. Every string comes from the
- * states catalogue, so a panel cannot invent its own wording per locale.
- */
-export interface PanelCopy {
-  loadingLabel: string
-  emptyTitle: string
-  emptyHint?: string
-  errorMessage: string
-}
-
-export type PanelOutcome<T> =
-  | { state: 'loading' }
-  | { state: 'error'; message: string }
-  | { state: 'empty' }
-  | { state: 'ready'; value: T }
-
-/**
- * Renders one resolved outcome through `PanelState`. A panel whose read is
- * already awaited by the route (its filter shell needs the same data) uses
- * this directly; the route's own boundary supplies the loading state.
- */
-export function OutcomePanel<T>({
-  outcome,
-  copy,
-  skeleton,
-  children,
-}: {
-  outcome: PanelOutcome<T>
-  copy: PanelCopy
-  skeleton?: ReactNode
-  children: (value: T) => ReactNode
-}): ReactNode {
-  if (outcome.state !== 'ready') {
-    return (
-      <PanelState
-        state={outcome.state}
-        loadingLabel={copy.loadingLabel}
-        emptyTitle={copy.emptyTitle}
-        emptyHint={copy.emptyHint}
-        errorMessage={outcome.state === 'error' ? outcome.message : undefined}
-        loadingPlaceholder={skeleton}
-      >
-        {null}
-      </PanelState>
-    )
-  }
-
-  return <>{children(outcome.value)}</>
-}
+export { OutcomePanel, PanelState } from '@moonwitness/moonui'
+export type {
+  PanelCopy,
+  PanelOutcome,
+  PanelStateKind,
+  PanelStateProps,
+} from '@moonwitness/moonui'
 
 /**
  * Resolves one read into exactly one data state. A rejected read is an error,

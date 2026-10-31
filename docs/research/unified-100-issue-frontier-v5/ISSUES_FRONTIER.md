@@ -1,10 +1,13 @@
 # Domain B — Frontier Innovation (30)
 
 Subdomain allocation: AI-native/agents 7; Future UX/HCI 5; knowledge/simulation/worlds 5; distributed/local-first 4; moonshot inventions 5; wildcard cross-domain 4. All proposals are PROPOSED research or bounded prototypes, not implemented work. In every body, VERIFIED applies only to the cited artifact; behavior not examined remains UNKNOWN; recommendations are PROPOSED/EXPERIMENTAL. Each experiment requires synthetic or explicitly authorized data, a time/resource budget, success and failure criteria, and a recorded go/no-go decision.
+**ADR applicability:** Each candidate remains PROPOSED; the [item-by-item ADR applicability register](ADR_APPLICABILITY.md) identifies current boundaries and conditions requiring a future owner-reviewed ADR.
 
 Identity convention: the heading supplies ID/title; this file supplies the primary domain; the first identity phrases give subdomain/type. Identity lines include priority, difficulty, effort, confidence, risk, domain/common score, owner and proposed V5 wave. Trailing tags are suggested labels. The suggested wave is not a TODO milestone. Implementation maturity for all entries is PROPOSED. Before running any experiment, the owner must set a numeric or categorical success threshold, failure threshold, time cap and cost cap.
 
 ## FUT-001 — Prototype citation-bounded research answers
+
+**Canonical TODO task:** [M47-01](../../../TODO.md) — TODO is sole status source; `FUT-001` is only the V5 reference ID.
 
 1. **Identity:** AI-native; citation-grounded assistant; P1 / Hard / L / confidence Medium / risk High; domain 86, common 80; owner: AI Gateway + MoonQL Research; V5-W2; ai, research, experiment.
 2. **Executive:** Test whether a read-only assistant can answer a narrow corpus question with every claim linked to an authorized source record.
@@ -31,6 +34,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-002 — Benchmark abstention on ambiguous or unsupported questions
 
+**Canonical TODO task:** [M47-02](../../../TODO.md) — TODO is sole status source; `FUT-002` is only the V5 reference ID.
+
 1. **Identity:** AI-native; uncertainty evaluation; P1 / Hard / L / confidence Medium / risk High; domain 84, common 77; owner: AI Gateway/research; V5-W2; ai, evaluation.
 2. **Executive:** Measure whether the prototype declines to answer when evidence is absent, contradictory or out of scope.
 3. **Current state:** Citation-answer experiment is proposed, not implemented.
@@ -43,7 +48,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Every unsupported fixture is either abstained or surfaced as unresolved; no unsupported certainty label appears.
 11. **DoD:** Reviewer disagreements recorded and thresholds justified.
 12. **Tests:** Deterministic evaluator tests; model outputs reviewed outside CI.
-13. **Dependencies:** FUT-001; enables FUT-006/FUT-027.
+13. **Dependencies:** FUT-001; enables FUT-006; related FUT-027.
 14. **Risks:** High abstention can make feature useless; report utility alongside safety.
 15. **Metrics:** Unsupported-answer rate, correct abstention, false abstention and reviewer agreement.
 16. **Estimate:** 6–12 engineering days; bounded evaluation set.
@@ -56,30 +61,34 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-003 — Prototype human approval for proposed research actions
 
+**Canonical TODO task:** [M47-03](../../../TODO.md) — TODO is sole status source; `FUT-003` is only the V5 reference ID.
+
 1. **Identity:** AI-native; human-in-the-loop control; P1 / Hard / L / confidence Medium / risk High; domain 85, common 80; owner: AI Gateway/HQ; V5-W2; ai, governance.
-2. **Executive:** Test a review card that shows a proposed read-only action, source scope and expected effect before a person approves it.
+2. **Executive:** Test whether people understand the existing read-only research handoff when it shows a synthetic proposed action, source scope and expected effect.
 3. **Current state:** Human approval is a project principle; current operational tool set was not audited end-to-end.
 4. **Problem:** A confirm button is not meaningful if scope and consequences are hidden.
 5. **Evidence:** R03/R10; OWASP S02 and official approval guide S03; vendor-specific examples only.
 6. **Value:** Can make future automation understandable and reversible.
-7. **Solution:** Click-through prototype with fake action, explicit principal, expiry, deny and cancel path.
-8. **Architecture:** UI/protocol experiment; no live tool execution, persistent grant, or reviewer store.
-9. **Microtasks:** Choose harmless scenario; map states; build fixture; conduct usability review; record ambiguity; decide.
-10. **Acceptance:** Reviewer can state actor, data scope, action, consequence and expiry before approval; cancel has no effect.
+7. **Solution:** Run a comprehension/usability study over the existing M40-08 read-only handoff using synthetic action payloads; use a paper overlay only if the existing surface cannot display the fields under review.
+8. **Architecture:** Research-only evaluation; no second approval card, handoff, adapter, live tool execution, persistent grant, or reviewer store. M41-08 remains the existing pause/resume adapter.
+9. **Microtasks:** Select a harmless synthetic scenario; map comprehension questions to existing handoff fields; test with consented internal reviewers; record ambiguity; decide.
+10. **Acceptance:** Reviewers can identify actor, data scope, action, consequence and expiry from the existing handoff; cancellation has no effect; no new product UI or authority is created.
 11. **DoD:** Usability notes and threat assumptions reviewed.
 12. **Tests:** State-machine tests; manual accessibility review.
-13. **Dependencies:** FUT-001 and ENG-009; existing M20 reviewer authority remains external gate.
+13. **Dependencies:** FUT-001 and ENG-009; M20 is an external gate only before integration with real reviewer authority.
 14. **Risks:** Prototype mistaken for authority; watermark DEMO and disable network/action APIs.
 15. **Metrics:** Correct comprehension, mistaken approvals, time-to-decide and accessibility blockers.
 16. **Estimate:** 6–10 days; two-week design sprint; no infra cost.
 17. **Rollback:** Remove local prototype; no persisted decisions.
 18. **Synergy:** Can inform responsible research, commerce and community workflows.
-19. **Anti-overlap:** No D00/D12 reviewer grant, M20-04 UI, or autonomous action implementation.
+19. **Anti-overlap:** Reuses the M40-08 handoff and M41-08 adapter; no second approval UI/handoff, D00/D12 reviewer grant, M20-04 implementation, or autonomous action.
 20. **Outcome:** Evidence on whether the review interaction communicates scope.
 21. **Future:** Integrate only after accepted authority contract and separate authorization.
 22. **Closure evidence:** Prototype, test script, findings and explicit no-go option.
 
 ## FUT-004 — Test untrusted-source isolation in a retrieval prototype
+
+**Canonical TODO task:** [M47-04](../../../TODO.md) — TODO is sole status source; `FUT-004` is only the V5 reference ID.
 
 1. **Identity:** AI-native; source injection defense; P2 / Hard / L / confidence Medium / risk High; domain 82, common 71; owner: AI Gateway; V5-W2; ai, security, experiment.
 2. **Executive:** Assess whether hostile instructions embedded in synthetic source text can influence the prototype’s behavior.
@@ -93,7 +102,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** No fixture grants a tool or changes policy; failures are recorded without claiming universal protection.
 11. **DoD:** Security owner reviews test set and scope.
 12. **Tests:** Offline deterministic prompt construction tests plus bounded manual model evaluation if approved.
-13. **Dependencies:** FUT-001/003; related ENG-012.
+13. **Dependencies:** FUT-001; related FUT-003/ENG-012.
 14. **Risks:** Model variance and evaluator bias; repeat runs and preserve raw synthetic cases.
 15. **Metrics:** Attack success by class, false refusal and run cost.
 16. **Estimate:** 5–10 days; fixed inference cap required.
@@ -105,6 +114,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Threat matrix, capped run log and residual-risk review.
 
 ## FUT-005 — Evaluate private local inference feasibility
+
+**Canonical TODO task:** [M47-05](../../../TODO.md) — TODO is sole status source; `FUT-005` is only the V5 reference ID.
 
 1. **Identity:** AI-native; privacy/cost architecture study; P2 / Hard / L / confidence Low / risk Medium; domain 70, common 66; owner: AI Gateway/research; V5-W2; ai, privacy, research.
 2. **Executive:** Compare local inference against the current approved approach for one low-risk synthetic task.
@@ -118,7 +129,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Report includes reproducible environment, quality rubric, RAM/latency, license and maintenance comparison.
 11. **DoD:** No personal or sacred/private content; model provenance recorded.
 12. **Tests:** Evaluation fixture and result reproducibility.
-13. **Dependencies:** ENG-010 cost/security review; related FUT-007.
+13. **Dependencies:** No blocker for a capped synthetic benchmark on a disposable developer machine; related ENG-010/FUT-007. Existing security and license rules still apply.
 14. **Risks:** Hardware-specific results and model license ambiguity; state limits.
 15. **Metrics:** Task quality, latency, memory, energy estimate and maintenance hours.
 16. **Estimate:** 5–10 days; hardware/inference budget capped at approval.
@@ -130,6 +141,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Model/license record, benchmark and cleanup confirmation.
 
 ## FUT-006 — Prototype claim-level multilingual citation alignment
+
+**Canonical TODO task:** [M47-06](../../../TODO.md) — TODO is sole status source; `FUT-006` is only the V5 reference ID.
 
 1. **Identity:** AI-native; cross-language evidence alignment; P2 / Hard / L / confidence Low / risk High; domain 76, common 65; owner: corpus/research; V5-W2; ai, multilingual.
 2. **Executive:** Test whether a translation claim can link to a source passage and translation edition without conflating them.
@@ -156,6 +169,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-007 — Compare short-lived AI sessions with persistent memory
 
+**Canonical TODO task:** [M47-07](../../../TODO.md) — TODO is sole status source; `FUT-007` is only the V5 reference ID.
+
 1. **Identity:** AI-native; memory/privacy experiment; P2 / Hard / L / confidence Low / risk High; domain 72, common 65; owner: AI Gateway/privacy; V5-W2; ai, privacy.
 2. **Executive:** Measure whether a narrow research task benefits from session memory and what data it would retain.
 3. **Current state:** No approved persistent AI memory service was verified.
@@ -181,6 +196,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-008 — Prototype a source-first evidence navigator
 
+**Canonical TODO task:** [M47-08](../../../TODO.md) — TODO is sole status source; `FUT-008` is only the V5 reference ID.
+
 1. **Identity:** Future UX/HCI; research navigation; P2 / Medium / M / confidence Medium / risk Medium; domain 78, common 74; owner: Dock/research; V5-W2; ux, research.
 2. **Executive:** Compare a source-first panel with current navigation for a synthetic research question.
 3. **Current state:** Dock research/compare surfaces are being withheld pending existing rights gates.
@@ -199,12 +216,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 4–8 days; one-week prototype.
 17. **Rollback:** Delete local mock and synthetic fixtures.
 18. **Synergy:** Helps faith/ontology research without changing source authority.
-19. **Anti-overlap:** Research UX prototype; not implementation of M19-19/Dock release.
+19. **Anti-overlap:** Synthetic prototype only; shares test fixtures, not product implementation, with FUT-009, FUT-025 and ONT-014. Not implementation of M19-19/Dock release.
 20. **Outcome:** Interaction decision supported by limited usability evidence.
 21. **Future:** Real source integration only under publication/rights gates.
 22. **Closure evidence:** Prototype, task script, notes and decision.
 
 ## FUT-009 — Visualize uncertainty without a single confidence badge
+
+**Canonical TODO task:** [M47-09](../../../TODO.md) — TODO is sole status source; `FUT-009` is only the V5 reference ID.
 
 1. **Identity:** Future UX/HCI; uncertainty visualization; P2 / Medium / M / confidence Medium / risk Medium; domain 75, common 71; owner: research UX; V5-W2; ux, epistemics.
 2. **Executive:** Test a compact visual language that separates source quality, reviewer agreement and model confidence.
@@ -224,12 +243,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 4–7 days.
 17. **Rollback:** Discard mock; no underlying record altered.
 18. **Synergy:** Benefits all evidence-bearing domains.
-19. **Anti-overlap:** Does not redefine evidence labels or scholarly review policy.
+19. **Anti-overlap:** Owns only the uncertainty-visualization question; shares synthetic fixtures with FUT-008/FUT-025/ONT-014 and does not redefine evidence labels or scholarly review policy.
 20. **Outcome:** Tested vocabulary/visual pattern or documented no-go.
 21. **Future:** Adopt only after ontology and accessibility review.
 22. **Closure evidence:** Mock variants, responses and decision note.
 
 ## FUT-010 — Study bilingual context switching in a research reader
+
+**Canonical TODO task:** [M47-10](../../../TODO.md) — TODO is sole status source; `FUT-010` is only the V5 reference ID.
 
 1. **Identity:** Future UX/HCI; language comparison; P2 / Medium / M / confidence Low / risk Medium; domain 70, common 65; owner: Dock/Empire UX; V5-W2; ux, i18n.
 2. **Executive:** Evaluate whether users can switch languages without losing their source position or edition context.
@@ -256,6 +277,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-011 — Prototype accessible audio navigation for cleared excerpts
 
+**Canonical TODO task:** [M47-11](../../../TODO.md) — TODO is sole status source; `FUT-011` is only the V5 reference ID.
+
 1. **Identity:** Future UX/HCI; multimodal access; P2 / Medium / M / confidence Low / risk High; domain 68, common 67; owner: reader UX; V5-W2; audio, accessibility.
 2. **Executive:** Test whether optional audio navigation improves access to a synthetic/cleared short excerpt.
 3. **Current state:** Media and rights gates exist; no audio feature is verified for this research scope.
@@ -280,6 +303,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Cleared asset record, test notes and no-go option.
 
 ## FUT-012 — Test a spatially anchored source exploration concept
+
+**Canonical TODO task:** [M47-12](../../../TODO.md) — TODO is sole status source; `FUT-012` is only the V5 reference ID.
 
 1. **Identity:** Future UX/HCI; spatial interaction; P3 / Complex / XL / confidence Low / risk High; domain 57, common 53; owner: research UX; V5-W2; spatial, prototype.
 2. **Executive:** Explore whether spatial arrangement helps users understand relationships among a small synthetic set of sources.
@@ -306,6 +331,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-013 — Explore evidence-aware graph traversal
 
+**Canonical TODO task:** [M47-13](../../../TODO.md) — TODO is sole status source; `FUT-013` is only the V5 reference ID.
+
 1. **Identity:** Knowledge/Simulation; graph exploration; P2 / Hard / L / confidence Medium / risk Medium; domain 76, common 69; owner: MoonQL Graph; V5-W2; graph, prototype.
 2. **Executive:** Prototype a traversal that shows why two attributed claims are connected and which edges remain uncertain.
 3. **Current state:** Graph and ontology packages exist; feature behavior not verified.
@@ -330,6 +357,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Demo, fixtures and researcher review.
 
 ## FUT-014 — Prototype a claim/evidence scenario simulator
+
+**Canonical TODO task:** [M47-14](../../../TODO.md) — TODO is sole status source; `FUT-014` is only the V5 reference ID.
 
 1. **Identity:** Knowledge/Simulation; research scenario; P2 / Hard / L / confidence Low / risk Medium; domain 69, common 67; owner: research; V5-W2; simulation, epistemology.
 2. **Executive:** Test an interactive “what evidence would change this conclusion?” exercise using invented claims and evidence.
@@ -356,6 +385,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-015 — Compare TEI and current corpus models on one witness
 
+**Canonical TODO task:** [M47-15](../../../TODO.md) — TODO is sole status source; `FUT-015` is only the V5 reference ID.
+
 1. **Identity:** Knowledge/Simulation; scholarly encoding experiment; P2 / Hard / L / confidence Medium / risk Medium; domain 78, common 70; owner: corpus; V5-W2; tei, interoperability.
 2. **Executive:** Map one authorized witness fixture to TEI P5 and current MoonQL structures to identify fit and loss.
 3. **Current state:** Corpus/witness models exist; no full mapping study was done.
@@ -381,6 +412,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-016 — Prototype a media provenance timeline
 
+**Canonical TODO task:** [M47-16](../../../TODO.md) — TODO is sole status source; `FUT-016` is only the V5 reference ID.
+
 1. **Identity:** Knowledge/Simulation; asset lifecycle visualization; P2 / Hard / L / confidence Low / risk Medium; domain 70, common 63; owner: ECHOLOG/rights owner; V5-W2; media, provenance.
 2. **Executive:** Show an asset’s synthetic creation, transformation, review and access events without exposing its contents.
 3. **Current state:** ECHOLOG owns object storage; rights and private media tasks remain open.
@@ -393,18 +426,20 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Timeline distinguishes storage events from consent/publication decisions; content remains unavailable.
 11. **DoD:** ECHOLOG and privacy owners approve event fields.
 12. **Tests:** Event-order, redaction and state rendering fixtures.
-13. **Dependencies:** ENG-019/021; M33-05 is external.
+13. **Dependencies:** No task blocker for fabricated event records; ENG-019/021 and M33-05 apply only if a later scope uses streaming, shipping, or real assets; related ENG-019/021.
 14. **Risks:** Timeline mistaken for a rights clearance; label decisions as external authority.
 15. **Metrics:** Lineage comprehension and sensitive-field leakage.
 16. **Estimate:** 5–9 days.
 17. **Rollback:** Remove prototype and fake records.
 18. **Synergy:** Supports research audit and media stewardship.
-19. **Anti-overlap:** No private-media access or replacement for M17/M33 rights tasks.
+19. **Anti-overlap:** Synthetic timeline study only; no private-media access or replacement for M17/M33 rights tasks. Real assets require their separate rights gate.
 20. **Outcome:** Decision on lineage view utility.
 21. **Future:** Integration only after event contract approval.
 22. **Closure evidence:** Prototype, redaction fixtures and owner review.
 
 ## FUT-017 — Simulate research workload and resource scaling
+
+**Canonical TODO task:** [M47-17](../../../TODO.md) — TODO is sole status source; `FUT-017` is only the V5 reference ID.
 
 1. **Identity:** Knowledge/Simulation; workload model; P2 / Medium / M / confidence Low / risk Low; domain 65, common 63; owner: research/operations; V5-W2; simulation, capacity.
 2. **Executive:** Model synthetic reader/research workloads to explore capacity and cost sensitivity.
@@ -418,7 +453,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Results reproduce from explicit inputs and show ranges, not falsely precise forecasts.
 11. **DoD:** Operations review assumptions; no capacity purchase recommended solely from model.
 12. **Tests:** Arithmetic fixtures and sensitivity checks.
-13. **Dependencies:** ENG-018/020; related ENG-031.
+13. **Dependencies:** No blocker; ENG-018/020 baselines are optional inputs and must be labeled if used; related ENG-031.
 14. **Risks:** Synthetic assumptions mistaken for demand; mark as scenario, not forecast.
 15. **Metrics:** Break-even ranges and sensitivity to key variables.
 16. **Estimate:** 3–6 days.
@@ -430,6 +465,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Input register, formulas and limitation note.
 
 ## FUT-018 — Test API contract evolution in an offline client sandbox
+
+**Canonical TODO task:** [M47-18](../../../TODO.md) — TODO is sole status source; `FUT-018` is only the V5 reference ID.
 
 1. **Identity:** Distributed/local-first; offline compatibility; P2 / Hard / L / confidence Medium / risk Medium; domain 74, common 66; owner: API tooling; V5-W2; api, compatibility.
 2. **Executive:** Test how an older client handles an additive schema change using fixtures only.
@@ -456,6 +493,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-019 — Prototype an offline research notebook with explicit export
 
+**Canonical TODO task:** [M47-19](../../../TODO.md) — TODO is sole status source; `FUT-019` is only the V5 reference ID.
+
 1. **Identity:** Distributed/local-first; local-first UX; P2 / Hard / L / confidence Medium / risk High; domain 79, common 74; owner: research UX; V5-W2; local-first, privacy.
 2. **Executive:** Test local-only notes for synthetic sources, with user-controlled export and deletion.
 3. **Current state:** Local-first prototypes exist in external research; no MoonWitness notebook feature verified.
@@ -474,12 +513,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 7–12 days; two-week cap.
 17. **Rollback:** Clear local store and remove demo.
 18. **Synergy:** Supports research accessibility and resilience.
-19. **Anti-overlap:** No media offline cache, private archive, or production account feature.
+19. **Anti-overlap:** Owns local-only note save/reload/delete and a minimal user-controlled export; FUT-026 owns a portable research bundle and FUT-030 owns tamper-evident evidence verification. No media offline cache, private archive, or production account feature.
 20. **Outcome:** Local notebook go/no-go evidence.
 21. **Future:** Sync requires conflict, encryption and consent decisions.
 22. **Closure evidence:** Prototype, threat notes, test results and decision.
 
 ## FUT-020 — Compare deterministic local conflict-resolution strategies
+
+**Canonical TODO task:** [M47-20](../../../TODO.md) — TODO is sole status source; `FUT-020` is only the V5 reference ID.
 
 1. **Identity:** Distributed/local-first; sync semantics study; P2 / Hard / L / confidence Low / risk High; domain 72, common 65; owner: research package; V5-W2; local-first, data-contract.
 2. **Executive:** Compare explicit user choice, append-only revisions and merge-on-disjoint-fields on synthetic notes.
@@ -506,6 +547,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-021 — Test encrypted local cache boundaries with synthetic data
 
+**Canonical TODO task:** [M47-21](../../../TODO.md) — TODO is sole status source; `FUT-021` is only the V5 reference ID.
+
 1. **Identity:** Distributed/local-first; local privacy proof; P2 / Hard / L / confidence Low / risk High; domain 74, common 68; owner: security/research UX; V5-W2; local-first, privacy.
 2. **Executive:** Evaluate whether a browser prototype can protect synthetic notes at rest and erase them predictably.
 3. **Current state:** No offline private-source cache was verified.
@@ -530,6 +573,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Threat model, test records and deletion confirmation.
 
 ## FUT-022 — Evaluate a capability-based worker protocol
+
+**Canonical TODO task:** [M47-22](../../../TODO.md) — TODO is sole status source; `FUT-022` is only the V5 reference ID.
 
 1. **Identity:** Moonshot; bounded worker capability; P2 / Hard / L / confidence Low / risk High; domain 70, common 65; owner: LUMEN; V5-W2; runtime, experiment.
 2. **Executive:** Study whether a narrow worker capability format can describe an authorized task without creating a new orchestrator.
@@ -556,6 +601,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-023 — Explore a multi-reviewer disagreement interface
 
+**Canonical TODO task:** [M47-23](../../../TODO.md) — TODO is sole status source; `FUT-023` is only the V5 reference ID.
+
 1. **Identity:** Moonshot; disagreement-aware review; P2 / Hard / L / confidence Low / risk High; domain 75, common 68; owner: research UX; V5-W2; governance, ux.
 2. **Executive:** Prototype how reviewers can record distinct interpretations without forced consensus.
 3. **Current state:** Reviewer authority is governed by ADRs/TODO; no new interface authority is proposed.
@@ -568,7 +615,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Users can distinguish “different views” from “no evidence”; no vote becomes theological truth.
 11. **DoD:** Qualified researcher and cultural-sensitivity reviewer review language.
 12. **Tests:** State tests and moderated usability.
-13. **Dependencies:** FUT-003; M20 reviewer authority is external gate.
+13. **Dependencies:** FUT-003; M20 is an external gate only before integration with real reviewer authority.
 14. **Risks:** Vote count implies authority; omit popularity ranking.
 15. **Metrics:** Interpretation recall, perceived coercion and accessibility.
 16. **Estimate:** 5–9 days.
@@ -580,6 +627,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Prototype and review notes.
 
 ## FUT-024 — Prototype a “research journey” planner without spiritual ranking
+
+**Canonical TODO task:** [M47-24](../../../TODO.md) — TODO is sole status source; `FUT-024` is only the V5 reference ID.
 
 1. **Identity:** Moonshot; guided research path; P3 / Complex / XL / confidence Low / risk High; domain 62, common 53; owner: research UX; V5-W2; journey, experiment.
 2. **Executive:** Test whether optional checkpoints help a user organize a research question without ranking beliefs or claiming spiritual direction.
@@ -606,6 +655,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-025 — Explore a “claim path” narrative with provenance visible
 
+**Canonical TODO task:** [M47-25](../../../TODO.md) — TODO is sole status source; `FUT-025` is only the V5 reference ID.
+
 1. **Identity:** Moonshot; research narrative visualization; P2 / Hard / L / confidence Low / risk Medium; domain 70, common 63; owner: research UX; V5-W2; narrative, provenance.
 2. **Executive:** Prototype a sequence view that follows how a claim is cited, interpreted and revised.
 3. **Current state:** Story/media and research concepts coexist; no merged feature verified.
@@ -618,18 +669,20 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Users correctly identify the origin/class of each card; transitions show source/version.
 11. **DoD:** No real claim/content; sensitivity review.
 12. **Tests:** Category integrity and chronology tests; moderated tasks.
-13. **Dependencies:** FUT-014; related ONT-011; enables ONT-014.
+13. **Dependencies:** FUT-014; related ONT-011/ONT-014.
 14. **Risks:** Narrative implies linear proof; show branches and disagreement.
 15. **Metrics:** Class identification, source recall and misinterpretation.
 16. **Estimate:** 6–12 days.
 17. **Rollback:** Delete local prototype and fictional assets.
 18. **Synergy:** Links knowledge integrity with educational UX.
-19. **Anti-overlap:** No story-rights, publication, or timeline production changes.
+19. **Anti-overlap:** Synthetic claim-path narrative only; shares fixture vocabulary with FUT-008/FUT-009/ONT-014 but answers a distinct sequence-and-attribution question. No story-rights, publication, or timeline production changes.
 20. **Outcome:** Validated narrative pattern or no-go.
 21. **Future:** Real examples only with rights/scholar approval.
 22. **Closure evidence:** Prototype, user outcomes and review.
 
 ## FUT-026 — Explore a personal research export bundle
+
+**Canonical TODO task:** [M47-26](../../../TODO.md) — TODO is sole status source; `FUT-026` is only the V5 reference ID.
 
 1. **Identity:** Moonshot; portable research artifact; P2 / Hard / L / confidence Medium / risk Medium; domain 73, common 66; owner: research package; V5-W2; export, interoperability.
 2. **Executive:** Test whether a small, user-controlled export can preserve notes plus source references for offline scholarship.
@@ -649,12 +702,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 6–12 days.
 17. **Rollback:** Disable export path; retain synthetic sample only.
 18. **Synergy:** Benefits research, ontology and local-first use.
-19. **Anti-overlap:** Not a data portability promise or M18/M19 publication feature.
+19. **Anti-overlap:** Owns a user-requested portable archive/export contract; distinguish it from FUT-019's local-note lifecycle and FUT-030's tamper-evident evidence package. Not a data portability promise or M18/M19 publication feature.
 20. **Outcome:** Export-format decision with privacy review.
 21. **Future:** User-facing export requires rights/access contract.
 22. **Closure evidence:** Bundle fixture, checksums and field review.
 
 ## FUT-027 — Build a synthetic reviewer training simulator
+
+**Canonical TODO task:** [M47-27](../../../TODO.md) — TODO is sole status source; `FUT-027` is only the V5 reference ID.
 
 1. **Identity:** Wildcard; governance education; P2 / Medium / M / confidence Low / risk Medium; domain 67, common 68; owner: governance/research; V5-W2; training, simulation.
 2. **Executive:** Test whether fictional cases help reviewers practice distinguishing evidence, interpretation and unknowns.
@@ -681,6 +736,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-028 — Prototype an uncertainty-aware “living atlas”
 
+**Canonical TODO task:** [M47-28](../../../TODO.md) — TODO is sole status source; `FUT-028` is only the V5 reference ID.
+
 1. **Identity:** Wildcard; exploratory knowledge atlas; P3 / Complex / XL / confidence Low / risk High; domain 61, common 53; owner: ontology/research UX; V5-W2; atlas, moonshot.
 2. **Executive:** Explore a navigable map of attributed concepts where contested and unknown relations are visually distinct.
 3. **Current state:** Graph and ontology packages exist; no atlas experience or user demand verified.
@@ -693,18 +750,20 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Users identify contested and unknown relations; map offers equivalent nonvisual path.
 11. **DoD:** Ontology and accessibility reviewers approve semantics.
 12. **Tests:** Edge-class rendering, keyboard traversal and comprehension test.
-13. **Dependencies:** FUT-013/021; related ONT-009.
+13. **Dependencies:** FUT-013; related FUT-021/ONT-009.
 14. **Risks:** Visual hierarchy may encode bias; allow multiple views and no rank.
 15. **Metrics:** Relation-class recall, accessibility completion and misreading rate.
 16. **Estimate:** 10–20 days; strict prototype budget.
 17. **Rollback:** Delete demo; no production projection.
 18. **Synergy:** May bridge ontology and HCI.
-19. **Anti-overlap:** Not a new ontology, graph schema or public claim map.
+19. **Anti-overlap:** Synthetic atlas projection only; reuses graph-owned fields, does not add cache behavior from FUT-021, and is distinct from ONT-009's provenance audit.
 20. **Outcome:** Invest/no-invest evidence.
 21. **Future:** Real data requires scholarly and rights approval.
 22. **Closure evidence:** Demo, text equivalent, usability results and decision.
 
 ## FUT-029 — Explore a consent-preserving feedback loop for research tools
+
+**Canonical TODO task:** [M47-29](../../../TODO.md) — TODO is sole status source; `FUT-029` is only the V5 reference ID.
 
 1. **Identity:** Wildcard; feedback design; P2 / Medium / M / confidence Low / risk Medium; domain 67, common 65; owner: research UX/privacy; V5-W2; feedback, privacy.
 2. **Executive:** Test anonymous/optional feedback on a synthetic research prototype without collecting source content or identity by default.
@@ -731,6 +790,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## FUT-030 — Prototype portable evidence bundles with integrity checks
 
+**Canonical TODO task:** [M47-30](../../../TODO.md) — TODO is sole status source; `FUT-030` is only the V5 reference ID.
+
 1. **Identity:** Wildcard; portable provenance artifact; P2 / Hard / L / confidence Medium / risk Medium; domain 77, common 66; owner: research/provenance; V5-W2; provenance, archival.
 2. **Executive:** Evaluate a compact bundle of synthetic citations, version refs and hashes that can be verified offline.
 3. **Current state:** Source pins, release manifests and lineage concepts exist; integrated portable evidence was not demonstrated.
@@ -749,7 +810,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 5–10 days.
 17. **Rollback:** Delete prototype keys/artifacts.
 18. **Synergy:** Supports local-first research and provenance.
-19. **Anti-overlap:** No blockchain, global identity or source authority.
+19. **Anti-overlap:** Tamper-evident evidence package with issuer/checksum verification only; keep its manifest contract distinct from FUT-019's local notes and FUT-026's user export. No blockchain, global identity or source authority.
 20. **Outcome:** Portable evidence format go/no-go.
 21. **Future:** Signing only with accountable issuer and key lifecycle.
 22. **Closure evidence:** Bundle, tamper output, threat model and decision.

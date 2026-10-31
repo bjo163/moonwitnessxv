@@ -5,7 +5,7 @@ Actual source: `packages/moonui/moon.css`, `packages/moonui/src`, Dock/HQ/Cockpi
 
 Visual grammar: evidence-first moonpunk zine, brutalist contrast, readable text, licensed original geometric artwork. Skin changes visual recipe but never keyboard handling, ARIA, form meaning, permissions, source identity, publication/rights state, or machine API. Forms have labels, visible errors and loading states; tabs have arrow/Home/End and focus logic; dialogs return focus; one routed shell only; reduced motion, id/en and RTL scripture/source text remain meaningful.
 
-[Behavior bible](docs/design/COMPONENTS.md) · [App surfaces](docs/design/APPS.md) · [Icon/vector pipeline](docs/design/ASSETS.md). Verified with automated test suite in `packages/moonui/test/`.
+[Behavior bible](docs/design/COMPONENTS.md) · [App surfaces](docs/design/APPS.md) · [Icon/vector pipeline](docs/design/ASSETS.md) · [Shared-first ownership (ADR-0017)](docs/decisions/ADR-0017-shared-first-component-ownership.md). Verified with automated test suite in `packages/moonui/test/`. MoonUI is the only component owner; app-local components must be recorded in `docs/design/moonui-exceptions.json` or they fail `pnpm ui:check`.
 
 **Shared Design System semantics — MOONUI (`packages/moonui`; verified M19-32, M30-01, M30-02, M30-03; see [Components Bible](docs/design/COMPONENTS.md)).** `@moonwitness/moonui` is the sole certified design system across all MoonWitness XV surfaces. It provides:
 1. **Zero-Drift Tokens (`tokens.ts` & `moon.css`)**: Typed constants and CSS custom properties enforcing uniform colors, glows, typography, spacing, and brutalist drop shadows across both React SSR and client components.

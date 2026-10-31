@@ -22,7 +22,7 @@ Risiko tersisa adalah alasan mempertahankan status proposed dan batas confidence
 ## Deduplikasi dan rekonsiliasi
 
 1. Membandingkan kandidat dengan 65 entri TODO terbuka, terutama M16–20, M23, M27–28, M32–36, M44–45. Tidak ada kandidat untuk menutup, menggantikan atau mengimplementasikan scope itu.
-2. Mencari pada view connector GitHub yang tersedia. Issue terbuka #10 adalah usulan governance/bukti dan tidak dianggap tugas baru. Sepuluh PR tertutup muncul pada pencarian tertutup; tak ada open PR pada view terbuka. Cakupan pencarian terbatas dan tidak membuktikan semua kandidat unik.
+2. Mencari pada view connector GitHub yang tersedia. Query riset mengembalikan satu issue (#10) dan sepuluh record PR; state PR tidak tersedia pada hasil tersimpan, sehingga status open/closed tidak disimpulkan. Cakupan itu tidak membuktikan semua kandidat unik atau seluruh riwayat. Issue #10 adalah governance/evidence context, bukan kandidat baru.
 3. Membandingkan 100 kandidat berdasarkan pemilik canonical dan otoritas data. Tiap issue mencantumkan ID terkait dan pengecualian. Fondasi bersama (label bukti, evaluasi provenance, aksesibilitas, akuntansi biaya) memiliki satu kandidat utama; pemakai domain menggunakannya ulang.
 4. Mengecek ADR-0006 SKYLINK, ADR-0007 ECHOLOG, batas ARSY Hub, hak/publikasi D01/D06/D08, dan TODO pembayaran/komunitas. Konflik dokumen dicatat, tidak disembunyikan.
 
@@ -56,7 +56,7 @@ Sebelum issue diadopsi, ulangi dedupe terhadap TODO saat ini, seluruh issue/PR t
 | ENG-007 | — | ENG-029, ENG-003 |
 | ENG-008 | OUTSIDE: M16/M18/M19 | ONT-017 |
 | ENG-009 | — | FUT-001–007 |
-| ENG-010 | Deployment approval | FUT-005 |
+| ENG-010 | OUTSIDE: M44-08, Deployment approval | FUT-005 |
 | ENG-011 | — | OUTSIDE: M27 release process |
 | ENG-012 | ENG-006, ENG-009 | FUT-001 |
 | ENG-013 | — | ENG-014 |
@@ -81,36 +81,36 @@ Sebelum issue diadopsi, ulangi dedupe terhadap TODO saat ini, seluruh issue/PR t
 | ENG-032 | — | ENG-001, ENG-028 |
 | FUT-001 | ENG-009, ENG-012 | FUT-002, FUT-003 |
 | FUT-002 | FUT-001 | FUT-006, FUT-027 |
-| FUT-003 | ENG-009, FUT-001 | FUT-004, FUT-007 |
+| FUT-003 | FUT-001, ENG-009, OUTSIDE: M20 | FUT-004, FUT-007 |
 | FUT-004 | FUT-001, FUT-003 | FUT-006 |
 | FUT-005 | ENG-010 | FUT-007 |
 | FUT-006 | FUT-002, FUT-004 | ONT-003 |
-| FUT-007 | FUT-003, FUT-005 | — |
+| FUT-007 | FUT-005 | FUT-003 (related) |
 | FUT-008 | OUTSIDE: M19 gate for real sources | FUT-009, FUT-014 |
 | FUT-009 | FUT-008 | FUT-010, ONT-007 |
-| FUT-010 | FUT-008 | FUT-009 |
+| FUT-010 | FUT-008, OUTSIDE: publication gate before real content | FUT-009 |
 | FUT-011 | Rights approval for any non-synthetic asset | ENG-022, ENG-024 |
 | FUT-012 | — | — |
 | FUT-013 | ENG-020 | ONT-009 |
 | FUT-014 | — | ONT-009 |
 | FUT-015 | ENG-015 | ONT-006 |
-| FUT-016 | ENG-019, ENG-021 | — |
+| FUT-016 | ENG-019, ENG-021, OUTSIDE: M33-05 | — |
 | FUT-017 | ENG-018, ENG-020 | — |
 | FUT-018 | ENG-014 | ONT-006 |
 | FUT-019 | — | FUT-020, FUT-030 |
 | FUT-020 | FUT-019 | FUT-030 |
 | FUT-021 | FUT-019 | FUT-030 |
 | FUT-022 | ENG-004 | — |
-| FUT-023 | FUT-003 | — |
+| FUT-023 | FUT-003, OUTSIDE: M20 | — |
 | FUT-024 | OUTSIDE: M23-03/M23-05 scope review | CHAR-006 |
 | FUT-025 | FUT-014 | ONT-011, ONT-014 |
-| FUT-026 | ENG-016, FUT-015 | ONT-004 |
+| FUT-026 | FUT-015, ENG-016 | ONT-004 |
 | FUT-027 | FUT-023 | ONT-007 |
 | FUT-028 | FUT-013, FUT-021 | ONT-009 |
 | FUT-029 | FUT-014 | CHAR-001 |
 | FUT-030 | FUT-019 | ENG-016 |
 | ECO-001 | OUTSIDE: M35-01 | ECO-002 |
-| ECO-002 | ECO-001 | ECO-003 |
+| ECO-002 | ECO-001, OUTSIDE: M35-01/M35-02 | ECO-003 |
 | ECO-003 | ECO-001, ECO-002, OUTSIDE: M35-02 | ECO-004 |
 | ECO-004 | OUTSIDE: M35-02 | CHAR-003, CHAR-004 |
 | ECO-005 | ECO-001, outreach approval | — |
@@ -193,9 +193,13 @@ Label upaya menunjukkan rentang hari-orang: XS 0,5–1; S 2–4; M 5–10; L 11�
 | Layanan bersama baru menduplikasi ARSY/ECHOLOG/SKYLINK | Batas arsitektur telah dinyatakan. | Gunakan kembali pemilik canonical; tolak pemilik SQL atau identity tambahan. |
 | Biaya operasional melampaui nilai | Baseline biaya belum tersedia. | Eksperimen terbatas, ukur biaya per tugas, gunakan gerbang lanjut/berhenti. |
 
+## Crosswalk kanonik dan urutan mulai
+
+Semua kandidat sudah didaftarkan sebagai unchecked TODO leaves: ENG-001..032 ↔ M46-01..32; FUT-001..030 ↔ M47-01..30; ECO-001..008 ↔ M48-01..08; CHAR-001..010 ↔ M49-01..10; ONT-001..020 ↔ M50-01..20. [Matriks](ISSUE_MASTER_MATRIX.md) mencantumkan ID TODO pada setiap baris. Dependensi graf memakai V5 ID; gunakan kolom TODO ID untuk mengurutkan tugas. Gate pemilik, M21/M32/M35, rights/consent, akses dan otorisasi manusia tetap berlaku. Semua 100 tambahan tetap unchecked.
+
 ## Batch pelaksanaan pertama yang disarankan
 
-Minta maintainer melakukan triase awal dengan membandingkan ENG-001–005 dan ONT-001 terhadap TODO serta keadaan GitHub saat ini. Pekerjaan berisiko rendah terbatas pada rekonsiliasi bukti: cocokkan hitungan persis dengan TODO; selesaikan identifikasi source pin; selaraskan deskripsi kematangan M38–40 dengan bukti code/test/deployment yang persis. Menyusun protokol riset untuk ECO-001 atau CHAR-001 bukan perekrutan peserta atau pelaksanaan tugas; issue tersebut tetap terblokir sampai cakupan M35/M32 dan pemilik akuntabel dikonfirmasi. FUT-001 hanya layak sebagai studi data sintetis setelah batas AI Gateway/tool dikonfirmasi. Tidak ada tugas usulan yang diberi label “aman langsung diterapkan” karena paket ini berada di luar TODO dan pelaksanaan tugas belum diotorisasi.
+Mulai triase dari M46-01..05 (ENG-001..005) dan M50-01 (ONT-001), setelah membaca packet/dependencies dan memeriksa keadaan aktual. Pendaftaran tidak menyatakan tugas aman diterapkan atau mengizinkan implementasi. ECO-001 dan CHAR-001 memerlukan cakupan M35/M32, review operator dan otorisasi sebelum kontak/pengumpulan data. FUT-001 hanya dapat diprototipekan dengan fixture sintetis setelah batas AI Gateway/tool dan M21 disahkan. Semua mulai unchecked; eksekusi mengikuti authorization contract.
 
 ## Sertifikat integritas portofolio
 

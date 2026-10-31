@@ -1,0 +1,22 @@
+feat(isp): accept the D20 boundary and map MWX-ISP features to XV owners for M51-01/M51-02
+
+M51 starts from a source tree that already runs an ISP stack, so the first two
+leaves decide ownership rather than code: which domain keeps each record, which
+source features are in scope at all, and what the adaptation must never
+re-create. ADR-0018 pins the source baseline to one committed SHA and excludes
+the uncommitted work in that tree; the migration matrix maps each accepted
+feature ID to exactly one XV owner and leaves TR-F025 absent.
+
+Two dependency-free checks make the promise testable instead of descriptive.
+scripts/check-m51-01-d20-boundary.mjs asserts the ownership and exclusion
+phrases across 9 canonical indexes (46 needles); scripts/check-isp-migration-matrix.mjs
+validates the matrix rows, single mapping and source pin. Observed: both exit 0
+against HEAD's own tree, test/planning/m51-01-d20-boundary.test.mjs and
+test/planning/m51-02-mwx-isp-migration.test.mjs pass 9 of 9 including negatives
+(an invented SQL owner, a removed exclusion, a missing coverage register, a
+duplicated or invented feature ID), ESLint is clean on both runners, and both
+checks are wired into pnpm test and pnpm verify.
+
+TODO.md: close M51-01 and M51-02 with the observed checker output and the limit
+that they authorize no schema, route, runtime or deployment; M51-03..M51-08
+stay unchecked.

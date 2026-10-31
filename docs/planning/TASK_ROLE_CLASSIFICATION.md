@@ -8,12 +8,12 @@
 
 ## 1. Register Overview & Totals
 
-The MoonWitness XV Master Register consists of **42 milestones** and **360 unique task IDs**:
+At the original M29-01 review baseline, the register contained **42 milestones** and **360 unique task IDs**; those counts are historical.
 - **LEAF Tasks (339):** Discrete, atomic deliverables implemented and evidenced at an exact git SHA with focused positive/negative tests.
 - **UMBRELLA Tasks (21):** Roll-up milestones or composite gates that group multiple constituent microtasks. An umbrella task is **never** claimed as a standalone code implementation leaf. It is only closed when all child leaves pass their respective acceptance criteria and the parent DoD is met.
 
 ```
-Total Unique Tasks : 360
+Historical unique tasks : 360
 ├── LEAF Tasks     : 339 (94.17%)
 └── UMBRELLA Tasks :  21 ( 5.83%)
     ├── M19 (Frontend & A11y)      : 7 (M19-01 .. M19-07)
@@ -22,6 +22,8 @@ Total Unique Tasks : 360
 ```
 
 ---
+
+**TODO at the 2026-10-30 pre-registration snapshot:** 46 milestones, 393 IDs (372 LEAF / 21 UMBRELLA), 334 checked, 59 unchecked. **At V5 registration:** 51 milestones, 493 IDs (472 LEAF / 21 UMBRELLA), 334 checked, 159 unchecked. **At HEAD ad96dbf3ae98731e7c10972d7f0600b809398e9d (historical snapshot, 2026-10-30):** 51 milestones, 493 IDs, 335 checked, 158 unchecked after M20-06 closed; all 100 V5 candidate leaves remain unchecked. **At HEAD ca395d1 (2026-10-30):** 52 milestones, 499 IDs, 347 checked, 152 unchecked. Their role mapping is unchanged. See [TODO](../../TODO.md) and the [crosswalk matrix](../research/unified-100-issue-frontier-v5/ISSUE_MASTER_MATRIX.md).
 
 ## 2. Parent-to-Child Umbrella Mappings
 
@@ -97,6 +99,15 @@ Total Unique Tasks : 360
 | **M39** | G4 ECHOLOG | 12 | None | `M39-01` .. `M39-12` | All LEAF |
 | **M40** | G7 ORBIT | 10 | None | `M40-01` .. `M40-10` | All LEAF |
 | **M41** | G7 LUMEN | 12 | None | `M41-01` .. `M41-12` | All LEAF |
+| **M42** | G7 Empire Story Universe | 2 | None | `M42-01` .. `M42-02` | All LEAF |
+| **M43** | G7 MoonUI skin | 4 | None | `M43-01` .. `M43-04` | All LEAF |
+| **M44** | G7 Domain cutover | 9 | None | `M44-01` .. `M44-09` | All LEAF |
+| **M45** | G7 Story Universe fidelity | 15 | None | `M45-01` .. `M45-15` | All LEAF |
+| **M46** | G7 Engineering candidates | 32 | None | `M46-01` .. `M46-32` | All LEAF; maps to ENG candidate IDs |
+| **M47** | G7 Frontier candidates | 30 | None | `M47-01` .. `M47-30` | All LEAF; maps to FUT candidate IDs |
+| **M48** | G7 WORKS candidates | 8 | None | `M48-01` .. `M48-08` | All LEAF; maps to ECO candidate IDs |
+| **M49** | G7 HARBOR candidates | 10 | None | `M49-01` .. `M49-10` | All LEAF; maps to CHAR candidate IDs |
+| **M50** | G7 Ontology candidates | 20 | None | `M50-01` .. `M50-20` | All LEAF; maps to ONT candidate IDs |
 
 ---
 

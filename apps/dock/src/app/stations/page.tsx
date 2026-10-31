@@ -12,7 +12,7 @@ import {
 import { listStations, type StationPage } from '@/data/queries/catalog'
 import { panelErrorMessage } from '@/data/queries/error'
 import { PAGE_SIZE } from '@/lib/env'
-import { StationGrid } from '@/ui/components/sections'
+import { StationDirectoryGrid } from '@/ui/components/sections'
 import { OutcomePanel, readPanel, type PanelCopy } from '@/ui/components/states'
 import { headers } from 'next/headers'
 import { DOCK_LOCALE_HEADER, dockHrefFor, localeFromMiddlewareHeader } from '@/lib/locale-context.mjs'
@@ -121,7 +121,7 @@ export default async function StationsPage({
       >
         {(stationPage) => (
           <>
-            <StationGrid stations={stationPage.rows} locale={locale} />
+            <StationDirectoryGrid stations={stationPage.rows} locale={locale} />
             <Pagination
               page={stationPage.page}
               pageSize={PAGE_SIZE}

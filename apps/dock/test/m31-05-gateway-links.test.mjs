@@ -34,7 +34,8 @@ const sitemapSource = read(appDir, 'src', 'app', 'sitemap.ts')
 const homeSource = read(appDir, 'src', 'app', 'page.tsx')
 const middlewareSource = read(appDir, 'src', 'middleware.ts')
 const manifestSource = read(appDir, 'src', 'app', 'manifest.ts')
-const localeSwitcherSource = read(appDir, 'src', 'ui', 'components', 'locale-switcher.tsx')
+// ADR-0017: the switcher is part of the shell module now.
+const localeSwitcherSource = read(appDir, 'src', 'ui', 'components', 'shell.tsx')
 const researchPageSource = read(appDir, 'src', 'app', 'research', 'page.tsx')
 const coreLocaleSource = read(repoDir, 'packages', 'core', 'src', 'locale.ts')
 const designSource = read(repoDir, 'docs', 'design', 'M31-02-gateway-journeys.md')
@@ -451,7 +452,7 @@ test('offline landing branch renders localized copy without a live or deployment
 
   assert.match(homeSource, /if \(!payload\.liveDataAvailable\)/, 'the offline branch is gated by the payload flag')
   assert.match(homeSource, /<OfflineLanding copy=\{copy\} \/>/, 'the offline branch renders OfflineLanding')
-  assert.match(homeSource, /<SpaceGrid locale=\{locale\} \/>/, 'the four-space entry survives the outage')
+  assert.match(homeSource, /<SpaceGrid heading=\{copy\.spacesHeading\}[^>]*spaces=\{dockSpaces\(locale\)\} \/>/, 'the four-space entry survives the outage')
   assert.match(homeSource, /const copy = getLandingCopy\(locale\)/, 'copy is resolved for the negotiated locale')
   assert.match(
     homeSource,
@@ -490,7 +491,7 @@ test('the offline fallback keeps the four spaces but never shows live counts as 
   assert.ok(branchStart > -1 && branchEnd > branchStart, 'the offline branch must precede the live rendering path')
   const branch = homeSource.slice(branchStart, branchEnd)
   assert.match(branch, /<OfflineLanding copy=\{copy\} \/>/)
-  assert.match(branch, /<SpaceGrid locale=\{locale\} \/>/)
+  assert.match(branch, /<SpaceGrid heading=\{copy\.spacesHeading\}[^>]*spaces=\{dockSpaces\(locale\)\} \/>/)
 })
 
 /* ------------------------------------------------------------------ */

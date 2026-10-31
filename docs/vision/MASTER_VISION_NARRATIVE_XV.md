@@ -144,7 +144,7 @@ The archive presents a **three-year project legacy**. Dates for reconstructed id
 
 ### 02.1 Engineering capability legacy
 
-Fastify, Next.js/React, Vite, Node.js/TypeScript and JavaScript, PostgreSQL, SQLite/D1, Odoo 17, ORM addons, metadata-driven UI, REST/JSON-RPC, Cloudflare, Docker Compose, GitHub CI, versioning, WhatsApp/Baileys, ISP subscriber/RADIUS/PPPoE, GIS/DCIM, monitoring, desktop Tauri, package design systems and local coding agents. These are **potential building blocks or separately owned products**, not presumed imported implementations.
+Fastify, Next.js/React, Vite, Node.js/TypeScript and JavaScript, PostgreSQL, SQLite/D1, Odoo 17, ORM addons, metadata-driven UI, REST/JSON-RPC, Cloudflare, Docker Compose, GitHub CI, versioning, WhatsApp/Baileys, ISP subscriber/RADIUS/PPPoE, GIS/DCIM, monitoring, desktop Tauri, package design systems and local coding agents. These are **potential building blocks or separately owned products**, not presumed imported implementations. **Accepted adoption:** ADR-0018 brings the owned MWX-ISP feature set into XV as the real D20 connectivity operations capability under Empire WORKS; it does not turn ISP records into Story Universe canon or authorize importing customer data/secrets.
 
 ### 02.2 Decisions that survive historical changes
 

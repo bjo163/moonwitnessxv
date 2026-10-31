@@ -51,9 +51,11 @@ test('the Empire app no longer carries a private skin', () => {
   const css = read('src/app/globals.css')
   assert.doesNotMatch(css, /--eol-/, 'the --eol-* pseudo-skin must be gone')
   assert.doesNotMatch(css, /data-theme/, 'the stylesheet must not select on data-theme')
-  assert.doesNotMatch(read('src/components/story/HomePage.tsx'), /data-theme/, 'components must not set data-theme')
+  assert.doesNotMatch(read('../../packages/moonui/src/story.tsx'), /data-theme/, 'components must not set data-theme')
   assert.doesNotMatch(read('src/components/story/LibraryPage.tsx'), /data-theme/, 'components must not set data-theme')
-  assert.doesNotMatch(read('src/components/site/SiteHeader.tsx'), /data-theme/, 'components must not set data-theme')
+  // ADR-0017: the chrome is MoonUI's, so the guard follows it there.
+  assert.doesNotMatch(read('../../packages/moonui/src/site.tsx'), /data-theme/, 'components must not set data-theme')
+  assert.doesNotMatch(read('../../packages/moonui/src/client/site-header.tsx'), /data-theme/, 'components must not set data-theme')
 })
 
 test('both route families pin their skin on the html element', () => {
@@ -61,14 +63,20 @@ test('both route families pin their skin on the html element', () => {
   assert.match(read('src/app/(localized)/[locale]/layout.tsx'), /<html[^>]*data-skin="empire"/)
 })
 
-test('the Empire stylesheet and pages still keep their artwork', () => {
-  const css = read('src/app/globals.css')
-  // M45 moved the covers from CSS backgrounds into <img> elements; the one
-  // remaining CSS-drawn painting is the GGS reflection panel.
-  assert.match(css, /url\('\/story-universe\/home-mooncity\.webp'\)/, 'the reflection panel keeps its artwork')
+test('the Empire artwork stays app content and reaches the shared view as a prop', () => {
+  // ADR-0017 R3: a picture file is Empire's content, so no design-system file may
+  // name it. The reflection panel is painted by moon.css from the custom property
+  // the view sets, and the URL itself is owned by the app's own copy module.
+  const moonCss = read('../../packages/moonui/moon.css')
+  assert.match(moonCss, /\.su-ggs__reflection::before[^}]*var\(--m-surface-art/, 'the reflection band is drawn by moon.css from a property')
+  assert.match(read('../../packages/moonui/src/story.tsx'), /--m-surface-art.*url\(\$\{artwork\.reflection\}\)/, 'the view forwards the artwork it is given')
+  assert.match(read('src/lib/ggs-copy.ts'), /reflection: '\/story-universe\/home-mooncity\.webp'/, 'ggs copy owns the reflection file')
+  assert.doesNotMatch(moonCss, /url\('\/story-universe\//, 'the design system names no Empire asset')
+  assert.doesNotMatch(read('src/app/globals.css'), /url\('\/story-universe\//, 'the app stylesheet names no artwork either')
   // Components and their copy modules together carry the five approved files.
   const art = [
-    ...['HomePage', 'LibraryPage', 'ReaderPage', 'CodexPage', 'GgsPage'].map((page) => read(`src/components/story/${page}.tsx`)),
+    ...['LibraryPage', 'ReaderPage', 'CodexPage', 'GgsPage'].map((page) => read(`src/components/story/${page}.tsx`)),
+    read('../../packages/moonui/src/story.tsx'),
     ...['home-copy', 'library-copy', 'reader-copy', 'codex-copy', 'ggs-copy'].map((copy) => read(`src/lib/${copy}.ts`)),
   ].join('\n')
   for (const name of ['home-mooncity', 'library-guardian', 'reader-poster', 'codex-guardian', 'moon-academy']) {

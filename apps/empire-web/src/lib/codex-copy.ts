@@ -1,4 +1,11 @@
+import type { StoryCodexArtwork } from '@moonwitness/moonui'
 import type { StoryLocale } from './story-universe'
+
+/** REF-04 artwork. The files ship with Empire; the shared view takes the URLs. */
+export const codexArtwork: StoryCodexArtwork = {
+  hero: '/story-universe/codex-guardian.webp',
+  featured: '/story-universe/reader-poster.webp',
+}
 
 /** Character Codex copy from the REF-04 mockup (M45-11). */
 type CodexCopy = {
@@ -17,6 +24,7 @@ type CodexCopy = {
   featuredCta: string
   featuredSecondary: string
   featuredSide: string
+  traitsLabel: string
   traits: Array<{ title: string; sub: string; body: string }>
   relatedTitle: string
   related: Array<{ name: string; sub: string; body: string; cta: string; art: string }>
@@ -44,6 +52,7 @@ export const codexCopy: Record<StoryLocale, CodexCopy> = {
     featuredCta: 'READ FULL BIO',
     featuredSecondary: 'STORY APPEARANCES',
     featuredSide: 'NOT JUST A FIGHTER BUT A BRIDGE TO A BRIGHTER HUMANITY',
+    traitsLabel: 'Six character dimensions',
     traits: [
       { title: 'ROLE', sub: '// PURPOSE', body: 'Guardian, protector, truth-seeker, and catalyst for a more humane world.' },
       { title: 'SYMBOLISM', sub: '// WHAT THEY REPRESENT', body: 'The enduring human spirit. Carrying both darkness and light, a reminder that even broken people can build a brighter tomorrow.' },
@@ -83,6 +92,7 @@ export const codexCopy: Record<StoryLocale, CodexCopy> = {
     featuredCta: 'BACA BIO LENGKAP',
     featuredSecondary: 'PENAMPILAN CERITA',
     featuredSide: 'BUKAN HANYA PEJUANG TETAPI JEMBATAN MENUJU KEMANUSIAAN LEBIH CERAH',
+    traitsLabel: 'Enam aspek karakter',
     traits: [
       { title: 'PERAN', sub: '// TUJUAN', body: 'Penjaga, pelindung, pencari kebenaran, dan katalis bagi dunia yang lebih manusiawi.' },
       { title: 'SIMBOLISME', sub: '// YANG DIWAKILI', body: 'Semangat manusia yang bertahan. Membawa kegelapan dan cahaya, pengingat bahwa manusia yang terluka pun dapat membangun hari esok yang lebih cerah.' },

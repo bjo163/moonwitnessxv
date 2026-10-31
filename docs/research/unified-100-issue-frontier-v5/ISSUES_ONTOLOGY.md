@@ -1,35 +1,40 @@
 # Domain E — Faith, Religion and Ontology (20)
 
 Subdomain allocation: corpus/sources/provenance 5; ontology/graph/epistemology 5; interpretation/comparative/source criticism 3; exploration/education 3; governance/interpretive integrity 2; narrative/history/timeline 2. All proposals are PROPOSED planning, not implemented ontology/content. In every body, VERIFIED applies only to cited artifacts; theological/historical claims not researched remain UNKNOWN; recommendations are PROPOSED. This review consulted no sacred or primary religious text and makes no doctrinal/historical conclusion. All examples must be synthetic or rights-cleared; M16–20 rights, consent, review and publication gates remain authoritative.
+**ADR applicability:** Each candidate remains PROPOSED; the [item-by-item ADR applicability register](ADR_APPLICABILITY.md) identifies current boundaries and conditions requiring a future owner-reviewed ADR.
 
 Identity convention: the heading supplies ID/title; this file supplies the primary domain; the first identity phrases give subdomain/type. Identity lines include priority, difficulty, effort, confidence, risk, domain/common score, owner and proposed V5 wave. Trailing tags are suggested labels. The suggested wave is not a TODO milestone. Implementation maturity for all entries is PROPOSED.
 
 ## ONT-001 — Define a canonical source and edition identity profile
 
+**Canonical TODO task:** [M50-01](../../../TODO.md) — TODO is sole status source; `ONT-001` is only the V5 reference ID.
+
 1. **Identity:** Faith/Ontology; source provenance; P1 / Medium / M / confidence Medium / risk High; domain 84, common 83; owner: corpus; V5-W0; source, citation.
-2. **Executive:** Define the minimum fields that identify a source, edition, manifestation and immutable version.
+2. **Executive:** Audit whether the existing M07/M08 corpus model distinguishes source, edition, witness/manifestation and immutable version; record only demonstrable gaps.
 3. **Current state:** Source pins and corpus/witness packages exist; selected historical refs could not be resolved by connector.
 4. **Problem:** Citation ambiguity makes it hard to tell which exact artifact supports a claim.
 5. **Evidence:** R13/R17; TEI P5 S08; pin cause/rights remain UNKNOWN.
 6. **Value:** Supports scholarly reproducibility without claiming source authority.
-7. **Solution:** Compare existing models and propose identifiers, edition metadata, date precision, language, rights state and resolution evidence.
-8. **Architecture:** Contract mapping for existing corpus owner; no global source catalog.
-9. **Microtasks:** Inventory fields; map source/edition/witness; test ambiguous IDs; consult scholar; record unresolved pins.
-10. **Acceptance:** Two distinct editions cannot share an identity; unresolved fields remain UNKNOWN.
+7. **Solution:** Produce a field-by-field gap matrix against M07-02 and M08-02/M08-04; propose additions only for a concrete uncovered case.
+8. **Architecture:** Reuse the existing corpus identity and citation contract; no parallel source schema or global catalog.
+9. **Microtasks:** Map current fields to source/edition/witness/manifestation cases; test ambiguous identifiers; consult a qualified scholar; record unresolved pins and gaps.
+10. **Acceptance:** Existing fields either distinguish the reviewed synthetic cases or the matrix names a reproducible gap; no new canonical field is accepted without corpus-owner review.
 11. **DoD:** Corpus owner and qualified textual scholar review definitions.
 12. **Tests:** Synthetic identity uniqueness and serialization fixtures.
-13. **Dependencies:** ENG-002/005; enables ONT-002.
+13. **Dependencies:** ENG-005; related ENG-002; enables ONT-002.
 14. **Risks:** Imposed schema may erase tradition-specific distinctions; allow extension and document profile limits.
 15. **Metrics:** Required identity fields covered and unresolved examples.
 16. **Estimate:** 4–8 days.
 17. **Rollback:** Keep profile as proposal; no stored data migrated.
 18. **Synergy:** Supports AI citations, research exports and history.
-19. **Anti-overlap:** Not source acquisition, rights approval, or M18 rights storage.
+19. **Anti-overlap:** Gap audit only; does not recreate M07 source identity, M08 citation UI, source acquisition, rights approval, or M18 rights storage.
 20. **Outcome:** Reviewed identity profile or no-go.
 21. **Future:** Mappings to external catalogs only after rights/authority review.
 22. **Closure evidence:** Field map, synthetic cases and scholar sign-off.
 
 ## ONT-002 — Model text, witness, edition and manifestation distinctions
+
+**Canonical TODO task:** [M50-02](../../../TODO.md) — TODO is sole status source; `ONT-002` is only the V5 reference ID.
 
 1. **Identity:** Faith/Ontology; corpus provenance; P2 / Hard / L / confidence Medium / risk High; domain 80, common 71; owner: corpus/witness; V5-W1; corpus, ontology.
 2. **Executive:** Specify how one textual work relates to witnesses, editions, transcriptions and digitized manifestations.
@@ -56,16 +61,18 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ONT-003 — Specify translation and transcription provenance fields
 
+**Canonical TODO task:** [M50-03](../../../TODO.md) — TODO is sole status source; `ONT-003` is only the V5 reference ID.
+
 1. **Identity:** Faith/Ontology; source provenance; P2 / Medium / M / confidence Medium / risk High; domain 78, common 73; owner: corpus; V5-W1; translation, provenance.
-2. **Executive:** Define attribution and version fields for translations, transliterations and transcriptions.
+2. **Executive:** Check whether existing M07/M08 translation metadata covers attribution and version needs for translations, transliterations and transcriptions.
 3. **Current state:** Bilingual products exist; no complete translation provenance audit was performed.
 4. **Problem:** Language labels alone do not identify translator, edition, method or revision.
 5. **Evidence:** R17, TEI S08 and FAIR S13; no sacred text was reviewed.
 6. **Value:** Prevents machine or human rendering from being mistaken for a source original.
-7. **Solution:** Draft a source-neutral field profile and an explicit unknown/anonymous-translator state.
-8. **Architecture:** Mapping to corpus metadata; no translation-generation feature.
-9. **Microtasks:** Inventory fields; distinguish translation/transliteration; specify contributor/edition/version; test uncertain attribution; review.
-10. **Acceptance:** A record cannot be labeled original-language text when its status is unknown.
+7. **Solution:** Map the existing language, translator, license, rights and edition fields to the reviewed cases; propose a field only when an uncovered case proves it necessary.
+8. **Architecture:** Gap mapping against existing corpus metadata; no parallel provenance schema or translation-generation feature.
+9. **Microtasks:** Compare current fields; distinguish translation/transliteration/transcription; test anonymous and uncertain attribution; record gaps and owner questions.
+10. **Acceptance:** Unknown attribution remains unknown and no reviewed translation is mislabeled as original-language text; any proposed field is tied to a concrete gap.
 11. **DoD:** Language and textual reviewers approve terms.
 12. **Tests:** Synthetic validation for missing translator, revision and language tag.
 13. **Dependencies:** ONT-001/002; related FUT-006.
@@ -74,12 +81,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 4–7 days.
 17. **Rollback:** Keep metadata proposal unimplemented.
 18. **Synergy:** Supports multilingual reader and research export.
-19. **Anti-overlap:** Does not generate or license translations; distinct from M17/M18 rights storage.
+19. **Anti-overlap:** Does not restate M07/M08 provenance fields, generate or license translations, or duplicate M17/M18 rights storage.
 20. **Outcome:** Reviewed provenance fields.
 21. **Future:** Integrate with specific editions after rights review.
 22. **Closure evidence:** Profile, examples and reviewer note.
 
 ## ONT-004 — Specify citation snapshots and version-change behavior
+
+**Canonical TODO task:** [M50-04](../../../TODO.md) — TODO is sole status source; `ONT-004` is only the V5 reference ID.
 
 1. **Identity:** Faith/Ontology; source citation stability; P2 / Medium / M / confidence Medium / risk Medium; domain 76, common 71; owner: research/corpus; V5-W1; citation, versioning.
 2. **Executive:** Define how a citation stays resolvable when an edition or digital transcription changes.
@@ -87,10 +96,10 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 4. **Problem:** A link that silently points to revised content can make past analysis irreproducible.
 5. **Evidence:** R17, PROV-O S09 and TEI S08.
 6. **Value:** Preserves scholarly audit trails.
-7. **Solution:** Use immutable version refs plus a clear “current version” relation and change note.
+7. **Solution:** Reuse the existing SHA-backed citation/version reference; specify only what the reader sees when that recorded version is no longer retrievable.
 8. **Architecture:** Reuse source identity profile; no URL shortener or external archive dependency.
-9. **Microtasks:** Model revision case; define stable locator; test removed/changed span; document citation rendering.
-10. **Acceptance:** Old citation resolves to its recorded version or explicitly reports unavailable; it never silently retargets.
+9. **Microtasks:** Model a synthetic revision and unavailable-version case; verify the existing citation reference; define the unavailable notice and evidence needed for recovery.
+10. **Acceptance:** A citation remains tied to its recorded SHA/version or explicitly reports that it cannot be retrieved; no silent retargeting or second citation UI is proposed.
 11. **DoD:** Corpus owner approves retention/access behavior.
 12. **Tests:** Version change and missing-source fixtures.
 13. **Dependencies:** ONT-001; M18 publication gate applies to public citations.
@@ -99,12 +108,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 4–8 days.
 17. **Rollback:** Preserve prior citation semantics; do not rewrite old refs.
 18. **Synergy:** Supports history, scholarship and AI evaluation.
-19. **Anti-overlap:** Does not implement M18 revocation/cache behavior.
+19. **Anti-overlap:** Resolves citation version identity and unavailable-version behavior only; ONT-018 owns correction/withdrawal authority, notice and retention. Does not implement M18 revocation/cache behavior or rebuild M08 citation UI.
 20. **Outcome:** Version-stable citation rule.
 21. **Future:** Persistent archive only with rights/legal approval.
 22. **Closure evidence:** Test cases, policy and owner sign-off.
 
 ## ONT-005 — Audit corpus inventory completeness without asserting authority
+
+**Canonical TODO task:** [M50-05](../../../TODO.md) — TODO is sole status source; `ONT-005` is only the V5 reference ID.
 
 1. **Identity:** Faith/Ontology; source inventory; P2 / Medium / M / confidence Low / risk Medium; domain 70, common 65; owner: corpus/research; V5-W1; inventory, research.
 2. **Executive:** Produce a metadata-only map of source families, versions and known gaps in the current repository.
@@ -131,6 +142,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ONT-006 — Define neutral entity identity and disambiguation rules
 
+**Canonical TODO task:** [M50-06](../../../TODO.md) — TODO is sole status source; `ONT-006` is only the V5 reference ID.
+
 1. **Identity:** Faith/Ontology; ontology/entity resolution; P2 / Hard / L / confidence Medium / risk High; domain 81, common 68; owner: MoonQL ontology; V5-W1; ontology, identity.
 2. **Executive:** Specify how an entity is distinguished from aliases, homonyms and interpretations.
 3. **Current state:** Ontology and UNILEX packages contain entity/term concepts; no cross-package audit was done.
@@ -143,7 +156,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Similar labels alone never auto-merge; every alias has source and reviewer/state.
 11. **DoD:** Ontology owner approves semantics; no production merge.
 12. **Tests:** Collision, alias, language and rollback fixtures.
-13. **Dependencies:** ENG-015 and FUT-015; enables ONT-007.
+13. **Dependencies:** ENG-015 and FUT-015; related ONT-007.
 14. **Risks:** Identity model imposes tradition-specific assumptions; make uncertainty explicit.
 15. **Metrics:** False merge fixture rate and unresolved candidate count.
 16. **Estimate:** 6–12 days.
@@ -155,6 +168,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Rule set, fixture results and scholarly review.
 
 ## ONT-007 — Separate claim, evidence, interpretation and tradition records
+
+**Canonical TODO task:** [M50-07](../../../TODO.md) — TODO is sole status source; `ONT-007` is only the V5 reference ID.
 
 1. **Identity:** Faith/Ontology; epistemology model; P1 / Hard / L / confidence Medium / risk High; domain 88, common 80; owner: MoonQL research/ontology; V5-W1; epistemology, provenance.
 2. **Executive:** Map current records to distinct source evidence, attributed claims, interpretations and tradition context.
@@ -168,7 +183,7 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Every example has one explicit class or remains unlabelled/withheld; no silent conversion.
 11. **DoD:** Ontology and rights owners approve mapping; no production projection changed.
 12. **Tests:** Pure mapping fixtures for missing, unknown and conflicting labels.
-13. **Dependencies:** FUT-009/027; external gate M16-07; enables ONT-008.
+13. **Dependencies:** No blocker for the non-projecting schema map; M16-07 remains an external gate before any projection; related FUT-009/027; enables ONT-008.
 14. **Risks:** Category definitions may be contested; attribute framework and reviewer scope.
 15. **Metrics:** Records mapped/unknown and invalid class transition count.
 16. **Estimate:** 6–12 days.
@@ -180,6 +195,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Mapping, fixtures and owner review.
 
 ## ONT-008 — Represent contested claims as attributed parallel positions
+
+**Canonical TODO task:** [M50-08](../../../TODO.md) — TODO is sole status source; `ONT-008` is only the V5 reference ID.
 
 1. **Identity:** Faith/Ontology; epistemology/contestation; P2 / Hard / L / confidence Medium / risk High; domain 82, common 71; owner: ontology/research; V5-W1; contested, attribution.
 2. **Executive:** Specify how incompatible scholarly or tradition-specific positions remain separately attributable.
@@ -206,16 +223,18 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ONT-009 — Make graph edges traceable to source and reasoning
 
+**Canonical TODO task:** [M50-09](../../../TODO.md) — TODO is sole status source; `ONT-009` is only the V5 reference ID.
+
 1. **Identity:** Faith/Ontology; graph provenance; P1 / Hard / L / confidence Medium / risk High; domain 83, common 77; owner: MoonQL Graph; V5-W1; graph, evidence.
 2. **Executive:** Ensure a displayed graph edge identifies whether it comes directly from a source, editorial assertion or derived rule.
 3. **Current state:** Graph/ontology packages exist; cross-projection traceability not audited.
 4. **Problem:** An edge can look like independent proof even when inferred from another record.
 5. **Evidence:** R17 and PROV-O S09; no graph claim reviewed here.
 6. **Value:** Makes knowledge relations inspectable.
-7. **Solution:** Add a provenance reference and relation-kind requirement to a synthetic projection.
-8. **Architecture:** Existing graph projection; no new graph store.
-9. **Microtasks:** Inventory edge creation; classify source; add fixture refs; test omission behavior; review user meaning.
-10. **Acceptance:** Missing source/reasoning leaves edge withheld or explicitly unknown.
+7. **Solution:** Audit a synthetic projection against existing ontology/graph evidence fields and identify any missing distinction between direct source support and editorial/derived relations.
+8. **Architecture:** Reuse current MoonQL ontology and graph contracts; no parallel enum, schema or graph store.
+9. **Microtasks:** Inventory edge creation; map current relation/evidence fields; test direct-source, editorial and derived examples; document only evidenced gaps for owner review.
+10. **Acceptance:** Existing fields let a reader distinguish direct source support from editorial/derived claims, or a concrete gap is recorded; unsupported edges remain withheld or explicitly unknown.
 11. **DoD:** Graph owner and researcher approve relation semantics.
 12. **Tests:** Projection tests for direct, editorial, derived and unknown edges.
 13. **Dependencies:** ENG-020 and ONT-008; enables ONT-010.
@@ -224,12 +243,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 5–10 days.
 17. **Rollback:** Hide new edge type; retain existing records.
 18. **Synergy:** Supports source-first navigation and citation AI.
-19. **Anti-overlap:** No ontology redesign or inference engine.
+19. **Anti-overlap:** Projection/UI conformance audit only; no ontology redesign, parallel provenance enum, or inference engine.
 20. **Outcome:** Traceable edge semantics.
 21. **Future:** Add richer reasoning graph only after evidence.
 22. **Closure evidence:** Synthetic projections, tests and reviewer sign-off.
 
 ## ONT-010 — Evaluate a PROV-O mapping for existing provenance records
+
+**Canonical TODO task:** [M50-10](../../../TODO.md) — TODO is sole status source; `ONT-010` is only the V5 reference ID.
 
 1. **Identity:** Faith/Ontology; provenance interoperability; P2 / Hard / L / confidence Medium / risk Medium; domain 76, common 66; owner: research/corpus; V5-W1; prov-o, interoperability.
 2. **Executive:** Compare a small set of MoonWitness provenance events with W3C PROV-O concepts.
@@ -256,6 +277,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ONT-011 — Prepare a source-critical review protocol for contested material
 
+**Canonical TODO task:** [M50-11](../../../TODO.md) — TODO is sole status source; `ONT-011` is only the V5 reference ID.
+
 1. **Identity:** Faith/Ontology; source criticism; P2 / Hard / L / confidence Low / risk High; domain 77, common 72; owner: scholarly review lead; V5-W2; source-criticism, research.
 2. **Executive:** Define how a future study distinguishes primary artifact, edition, translation, scholarly claim and tradition-specific interpretation.
 3. **Current state:** No primary religious source was reviewed in this planning pass.
@@ -274,12 +297,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 5–10 days plus expert review.
 17. **Rollback:** Withdraw protocol if consultation is inadequate.
 18. **Synergy:** Protects knowledge integrity across ontology/AI experiences.
-19. **Anti-overlap:** Not content moderation or publication authorization.
+19. **Anti-overlap:** Defines source-reading method and researcher competence; ONT-017 separately checks summaries. Share reviewer/conflict/dissent vocabulary without creating a second review authority. Not content moderation or publication authorization.
 20. **Outcome:** Review process or explicit no-go for comparative research.
 21. **Future:** Tradition-specific protocols co-designed with qualified communities.
 22. **Closure evidence:** Protocol, fictional test case and reviewers.
 
 ## ONT-012 — Define attribution for comparative religious claims
+
+**Canonical TODO task:** [M50-12](../../../TODO.md) — TODO is sole status source; `ONT-012` is only the V5 reference ID.
 
 1. **Identity:** Faith/Ontology; comparative studies; P2 / Hard / L / confidence Low / risk High; domain 75, common 69; owner: scholarly review; V5-W2; comparative, attribution.
 2. **Executive:** Specify what context must accompany a comparative statement so it is not presented as universal consensus.
@@ -306,6 +331,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ONT-013 — Create a translation-variant review exercise
 
+**Canonical TODO task:** [M50-13](../../../TODO.md) — TODO is sole status source; `ONT-013` is only the V5 reference ID.
+
 1. **Identity:** Faith/Ontology; source criticism; P2 / Hard / L / confidence Low / risk High; domain 73, common 65; owner: textual research; V5-W2; translation, study.
 2. **Executive:** Test a human review workflow for comparing two authorized translation records without producing a “correct” interpretation.
 3. **Current state:** Translation provenance is not comprehensively documented; no text sample was consulted here.
@@ -331,6 +358,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ONT-014 — Prototype a citation-first compare view
 
+**Canonical TODO task:** [M50-14](../../../TODO.md) — TODO is sole status source; `ONT-014` is only the V5 reference ID.
+
 1. **Identity:** Exploration/Education; source comparison UX; P2 / Medium / M / confidence Medium / risk Medium; domain 75, common 68; owner: Dock/research UX; V5-W2; compare, citation.
 2. **Executive:** Test a side-by-side view that keeps source versions and attribution visible while comparing two synthetic records.
 3. **Current state:** Dock comparison is withheld under existing rights/publication gates.
@@ -349,12 +378,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 4–8 days.
 17. **Rollback:** Delete prototype.
 18. **Synergy:** Supports research and education.
-19. **Anti-overlap:** Does not implement M19 Dock compare/publication.
+19. **Anti-overlap:** Shares synthetic fixtures with FUT-008/FUT-009/FUT-025 but owns only the citation-preserving side-by-side comparison question. Does not implement M19 Dock compare/publication.
 20. **Outcome:** Interaction/no-go decision.
 21. **Future:** Production only after D08 and rights approval.
 22. **Closure evidence:** Mock, usability notes and boundary review.
 
 ## ONT-015 — Test provenance-aware search facets
+
+**Canonical TODO task:** [M50-15](../../../TODO.md) — TODO is sole status source; `ONT-015` is only the V5 reference ID.
 
 1. **Identity:** Exploration/Education; knowledge discovery; P2 / Medium / M / confidence Low / risk Medium; domain 70, common 65; owner: research UX/search; V5-W2; search, provenance.
 2. **Executive:** Explore filters for language, source type, version and evidence class on synthetic records.
@@ -381,6 +412,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ONT-016 — Design a source-literacy learning module
 
+**Canonical TODO task:** [M50-16](../../../TODO.md) — TODO is sole status source; `ONT-016` is only the V5 reference ID.
+
 1. **Identity:** Exploration/Education; research literacy; P2 / Medium / M / confidence Low / risk Low; domain 68, common 63; owner: education/research; V5-W2; education, provenance.
 2. **Executive:** Develop a short lesson teaching source, edition, interpretation and uncertainty distinctions.
 3. **Current state:** No curriculum was evaluated.
@@ -406,6 +439,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ONT-017 — Define a transparent review protocol for interpretive summaries
 
+**Canonical TODO task:** [M50-17](../../../TODO.md) — TODO is sole status source; `ONT-017` is only the V5 reference ID.
+
 1. **Identity:** Governance/Interpretive integrity; scholarly review process; P1 / Hard / L / confidence Medium / risk High; domain 82, common 77; owner: research governance; V5-W2; review, attribution.
 2. **Executive:** Specify how human reviewers check attribution, evidence scope and disagreement in a future interpretive summary.
 3. **Current state:** Project has reviewer and publication gates; no summary protocol was tested in this pass.
@@ -418,18 +453,20 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Review record states what was and was not reviewed; approval never implies D08 release.
 11. **DoD:** Qualified reviewers and governance owner approve.
 12. **Tests:** Tabletop cases for conflict, disagreement, missing evidence and publication.
-13. **Dependencies:** ONT-011/012; M20 authority remains external.
+13. **Dependencies:** ONT-011/012; M20 is an external gate only before integration with real reviewer authority.
 14. **Risks:** Reviewer scarcity and authority concentration; allow unresolved/dissent outcomes.
 15. **Metrics:** Checklist coverage and unresolved review questions.
 16. **Estimate:** 5–10 days.
 17. **Rollback:** Keep draft only; no summary released.
 18. **Synergy:** Supports knowledge integrity and user trust.
-19. **Anti-overlap:** Not M20 reviewer panel/store, M18 release decision or M16 projection label implementation.
+19. **Anti-overlap:** Checks interpretive summaries using fictional cases and shared reviewer/conflict/dissent vocabulary; ONT-011 owns source-reading method. No second review authority, M20 reviewer panel/store, M18 release decision or M16 projection-label implementation.
 20. **Outcome:** Review protocol or explicit no-go.
 21. **Future:** Revisit with representative scholarly participation.
 22. **Closure evidence:** Approved protocol and scenario results.
 
 ## ONT-018 — Establish source correction and version-history principles
+
+**Canonical TODO task:** [M50-18](../../../TODO.md) — TODO is sole status source; `ONT-018` is only the V5 reference ID.
 
 1. **Identity:** Governance/Interpretive integrity; correction process; P2 / Hard / L / confidence Medium / risk High; domain 78, common 68; owner: corpus governance; V5-W2; corrections, integrity.
 2. **Executive:** Define how an error in source metadata or attribution is corrected without concealing prior state.
@@ -443,18 +480,20 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 10. **Acceptance:** Each class has approver, user-facing notice and retention disposition; no silent overwrite.
 11. **DoD:** Rights/privacy/research owners approve boundaries.
 12. **Tests:** Tabletop cases; regression fixtures for synthetic version chain.
-13. **Dependencies:** ONT-004/017; M18/M19 external gates.
+13. **Dependencies:** ONT-004/017; M18/M19 are external gates only for real publication, correction or rights-withdrawal actions.
 14. **Risks:** Retaining withdrawn data may be unlawful or unsafe; existing authority takes precedence.
 15. **Metrics:** Correction events with complete rationale and access disposition.
 16. **Estimate:** 5–10 days.
 17. **Rollback:** Do not implement until policy resolves conflicts.
 18. **Synergy:** Supports provenance, citation stability and trust.
-19. **Anti-overlap:** Does not replace M18 revocation/cache or M19 public rights work.
+19. **Anti-overlap:** Owns correction class, approver, notice and retention principles; ONT-004 owns citation version resolution. Does not replace M18 revocation/cache or M19 public-rights work.
 20. **Outcome:** Correction policy map with unresolved legal cases.
 21. **Future:** Integrate only with accepted data authority.
 22. **Closure evidence:** Correction matrix, scenario outcomes and sign-off.
 
 ## ONT-019 — Define historical date and calendar provenance
+
+**Canonical TODO task:** [M50-19](../../../TODO.md) — TODO is sole status source; `ONT-019` is only the V5 reference ID.
 
 1. **Identity:** Narrative/History; chronology provenance; P2 / Medium / M / confidence Low / risk Medium; domain 70, common 68; owner: research/ontology; V5-W2; chronology, sources.
 2. **Executive:** Specify how uncertain dates, calendar systems and conversion assumptions are represented.
@@ -480,6 +519,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Synthetic examples, tests and historian note.
 
 ## ONT-020 — Prototype a timeline that displays uncertain dates honestly
+
+**Canonical TODO task:** [M50-20](../../../TODO.md) — TODO is sole status source; `ONT-020` is only the V5 reference ID.
 
 1. **Identity:** Narrative/History; uncertainty-aware timeline; P2 / Hard / L / confidence Low / risk Medium; domain 71, common 63; owner: research UX; V5-W2; timeline, visualization.
 2. **Executive:** Test whether users can interpret date ranges, contested ordering and unknown dates in a synthetic history view.

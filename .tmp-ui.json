@@ -1,0 +1,130 @@
+{
+  "ok": true,
+  "ratchet": 69,
+  "scannedFiles": 208,
+  "surfaces": {
+    "apps": [
+      "arsy",
+      "dock",
+      "cockpit",
+      "skylink",
+      "echolog",
+      "orbit",
+      "empire-web",
+      "sentinel",
+      "lumen-runtime",
+      "aigateway",
+      "headquarters"
+    ],
+    "components": 69,
+    "routes": 56,
+    "stylesheets": 7
+  },
+  "violations": [],
+  "ledger": {
+    "path": "docs/design/moonui-exceptions.json",
+    "entries": 65,
+    "debt": [
+      {
+        "check": "C1",
+        "file": "apps/dock/src/ui/components/locale-switcher.tsx",
+        "line": 1,
+        "name": "no-moonui-import"
+      },
+      {
+        "check": "C1",
+        "file": "apps/dock/src/ui/components/provenance.tsx",
+        "line": 1,
+        "name": "no-moonui-import"
+      },
+      {
+        "check": "C1",
+        "file": "apps/headquarters/src/ui/client/LocaleSelector.tsx",
+        "line": 1,
+        "name": "no-moonui-import"
+      },
+      {
+        "check": "C5",
+        "file": "apps/dock/src/ui/components/shell.tsx",
+        "line": 448,
+        "name": "SiteFooter"
+      },
+      {
+        "check": "C5",
+        "file": "apps/dock/src/ui/components/shell.tsx",
+        "line": 218,
+        "name": "SiteHeader"
+      },
+      {
+        "check": "C5",
+        "file": "apps/dock/src/ui/components/sections.tsx",
+        "line": 471,
+        "name": "StationCard"
+      },
+      {
+        "check": "C5",
+        "file": "apps/dock/src/ui/components/sections.tsx",
+        "line": 488,
+        "name": "StationGrid"
+      }
+    ]
+  },
+  "matrix": [
+    {
+      "name": "SiteFooter",
+      "apps": [
+        "dock"
+      ],
+      "sites": [
+        {
+          "app": "dock",
+          "path": "apps/dock/src/ui/components/shell.tsx",
+          "line": 448
+        }
+      ],
+      "reason": "moonui-export"
+    },
+    {
+      "name": "SiteHeader",
+      "apps": [
+        "dock"
+      ],
+      "sites": [
+        {
+          "app": "dock",
+          "path": "apps/dock/src/ui/components/shell.tsx",
+          "line": 218
+        }
+      ],
+      "reason": "moonui-export"
+    },
+    {
+      "name": "StationCard",
+      "apps": [
+        "dock"
+      ],
+      "sites": [
+        {
+          "app": "dock",
+          "path": "apps/dock/src/ui/components/sections.tsx",
+          "line": 471
+        }
+      ],
+      "reason": "moonui-export"
+    },
+    {
+      "name": "StationGrid",
+      "apps": [
+        "dock"
+      ],
+      "sites": [
+        {
+          "app": "dock",
+          "path": "apps/dock/src/ui/components/sections.tsx",
+          "line": 488
+        }
+      ],
+      "reason": "moonui-export"
+    }
+  ]
+}

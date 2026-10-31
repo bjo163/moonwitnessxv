@@ -202,9 +202,17 @@ export interface AlertDialogProps {
   onConfirm: () => void
   title?: ReactNode
   message: ReactNode
+  /**
+   * Consequence the caller must see before confirming — the object key, the
+   * "cannot be undone" clause. Rendered inside the `aria-describedby` target so
+   * it is announced with the question instead of read as an afterthought.
+   */
+  note?: ReactNode
   confirmLabel?: string
   cancelLabel?: string
   tone?: 'danger' | 'accent' | 'ok'
+  /** Disables confirmation while the caller's request is in flight. */
+  busy?: boolean
 }
 
 /**
@@ -220,9 +228,11 @@ export function AlertDialog({
   onConfirm,
   title,
   message,
+  note,
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
   tone = 'danger',
+  busy = false,
 }: AlertDialogProps): ReactNode {
   const messageId = useId()
 
@@ -245,6 +255,7 @@ export function AlertDialog({
             className="m-btn"
             data-variant="ghost"
             data-size="sm"
+            disabled={busy}
           >
             {cancelLabel}
           </button>
@@ -257,6 +268,8 @@ export function AlertDialog({
             className="m-btn"
             data-variant={tone === 'danger' ? 'danger' : tone === 'ok' ? 'cyan' : 'accent'}
             data-size="sm"
+            disabled={busy}
+            aria-busy={busy ? 'true' : undefined}
           >
             {confirmLabel}
           </button>
@@ -265,6 +278,7 @@ export function AlertDialog({
     >
       <div id={messageId} className="text-sm text-[var(--fg)] leading-relaxed">
         {message}
+        {note ? <div className="m-alert-dialog-note">{note}</div> : null}
       </div>
     </Modal>
   )

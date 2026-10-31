@@ -1,0 +1,420 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-30",
+  "note": "App-local UI debt under ADR-0017. This ledger may only shrink: every entry names a removal task, and RATCHET in scripts/check-ui-consistency.mjs is the ceiling.",
+  "entries": [
+    {
+      "path": "apps/cockpit/client/components/CockpitMediaView.tsx",
+      "owner": "cockpit",
+      "mode": "view",
+      "exports": [
+        "CockpitMediaView"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/cockpit/client/components/CockpitProgressView.tsx",
+      "owner": "cockpit",
+      "mode": "view",
+      "exports": [
+        "GroupRollup",
+        "TrendLine",
+        "CockpitProgressView"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/app/globals.css",
+      "owner": "dock",
+      "mode": "stylesheet",
+      "selectors": [
+        ".dk-actors-stat",
+        ".dk-hero-badge",
+        ".dk-icon-btn",
+        ".dk-index-panel",
+        ".dk-mobile-menu-toggle",
+        ".dk-mobile-nav",
+        ".dk-mobile-toggle",
+        ".dk-nav",
+        ".dk-reader-rail-empty",
+        ".dk-trio-card"
+      ],
+      "reason": "component-level class pending removal once the surface consumes the MoonUI primitive",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/client/CitationCopy.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "CitationCopy"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/client/DenpaTransceiver.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "DenpaTransceiver"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/client/GeneratorStudio.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "AvatarConfigurator",
+        "SealConfigurator",
+        "GlyphConfigurator",
+        "PreviewStage",
+        "GeneratorStudio"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/client/LiveTicker.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "LiveTicker"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/client/PatchesExplorer.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "Tally",
+        "PatchesExplorer",
+        "PatchCard"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/client/Player.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "Player"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/client/ResearchExplorer.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "ResearchExplorer"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/client/TimeShiftPlayer.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "TimeShiftPlayer"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/actors.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "TraditionBadge",
+        "StatGrid",
+        "MissionFacts",
+        "MissionCard",
+        "MissionTableView",
+        "RoleRow",
+        "FigureCard",
+        "FigureRegistryView",
+        "EventCard",
+        "ReadingPanel",
+        "AvatarPanel",
+        "FigureDetailView"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/constellation.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "AliasChips",
+        "NodeCard",
+        "EdgeRow",
+        "DecisionRow",
+        "ReviewRubricPanel",
+        "NodeInspector",
+        "NodeSelectionMissing",
+        "ConstellationView"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/graph-relation.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "EntityFacts",
+        "RelationDetailView",
+        "SamePairRow",
+        "RelationAlternativesView",
+        "CandidateRow",
+        "GraphReleasePanel"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/provenance.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "SourceEvidence"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/reader-rail.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "RailGroup",
+        "RailRows",
+        "EditionRow",
+        "ReaderContentsRail",
+        "ReaderRecordRail"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/reader.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "SourceIdentity",
+        "ReaderView"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/sections.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "ZineFeatureTrio",
+        "CrewConstellation",
+        "ArchiveTimeline",
+        "ZineSkaPosterSection",
+        "NowPlayingCard",
+        "StationDirectoryCard",
+        "StationDirectoryGrid",
+        "ChartBars",
+        "WeekGrid"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/shell.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "NAV_LINKS",
+        "INDEX_GROUPS",
+        "IndexDisclosure",
+        "DockLocaleSwitcher",
+        "DockSiteHeader",
+        "DockFooter",
+        "Hero"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/states.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "DataPanel",
+        "DataPanelReader"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/dock/src/ui/components/terms.tsx",
+      "owner": "dock",
+      "mode": "view",
+      "exports": [
+        "FormChips",
+        "SourceList",
+        "IdentityReviewRow",
+        "TermIndexTable",
+        "TermList",
+        "MatchPreviewView",
+        "TermDetailView"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/echolog/client/components/EchologObjectList.tsx",
+      "owner": "echolog",
+      "mode": "container",
+      "exports": [
+        "EchologObjectList"
+      ],
+      "reason": "markup-free adapter: formats the local references into WatchlistRow words and delegates all presentation to MoonUI ObjectWatchlist",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/echolog/client/components/EchologUploadPanel.tsx",
+      "owner": "echolog",
+      "mode": "view",
+      "exports": [
+        "DEFAULT_CONTENT_TYPES",
+        "EchologUploadPanel"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/empire-web/src/app/globals.css",
+      "owner": "empire-web",
+      "mode": "stylesheet",
+      "selectors": [
+        ".su-footer__nav",
+        ".su-home__card",
+        ".su-info__card",
+        ".su-lib__card",
+        ".su-lib__tab",
+        ".su-lib__tabs",
+        ".su-reader__pager"
+      ],
+      "reason": "component-level class pending removal once the surface consumes the MoonUI primitive",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/headquarters/src/ui/client/EventStream.tsx",
+      "owner": "headquarters",
+      "mode": "view",
+      "exports": [
+        "EventStream"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/headquarters/src/ui/client/LocaleSelector.tsx",
+      "owner": "headquarters",
+      "mode": "view",
+      "exports": [
+        "LocaleSelector"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/headquarters/src/ui/client/SideNav.tsx",
+      "owner": "headquarters",
+      "mode": "view",
+      "exports": [
+        "SideNav"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/headquarters/src/ui/client/ThreatRadarMap.tsx",
+      "owner": "headquarters",
+      "mode": "view",
+      "exports": [
+        "ThreatRadarMap"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/headquarters/src/ui/widgets/AccessDenied.tsx",
+      "owner": "headquarters",
+      "mode": "view",
+      "exports": [
+        "AccessDenied"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/isp-console/src/app/globals.css",
+      "owner": "isp-console",
+      "mode": "stylesheet",
+      "selectors": [
+        ".isp-table"
+      ],
+      "reason": "component-level class pending removal once the surface consumes the MoonUI primitive",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/isp-console/src/ui/Dashboard.tsx",
+      "owner": "isp-console",
+      "mode": "view",
+      "exports": [
+        "Dashboard"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/orbit/src/components/OrbitNodeInspector.tsx",
+      "owner": "orbit",
+      "mode": "view",
+      "exports": [
+        "OrbitNodeInspector"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/orbit/src/components/OrbitOperationsWorkspace.tsx",
+      "owner": "orbit",
+      "mode": "view",
+      "exports": [
+        "OrbitOperationsWorkspace"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    },
+    {
+      "path": "apps/orbit/src/components/OrbitSpatialViewport.tsx",
+      "owner": "orbit",
+      "mode": "view",
+      "exports": [
+        "OrbitSpatialViewport"
+      ],
+      "reason": "app-local component pending promotion into @moonwitness/moonui",
+      "removalTask": "M19-36"
+    }
+  ]
+}

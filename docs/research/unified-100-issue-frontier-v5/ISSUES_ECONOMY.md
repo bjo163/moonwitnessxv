@@ -1,10 +1,13 @@
 # Domain C — Economy and Revenue (8)
 
 Subdomain allocation: Product-market validation 2; pricing/payments/entitlements 2; partnerships 1; cost/profitability 2; creator/service economy 1. Every item is PROPOSED discovery/design, not implemented transaction work. In every body, VERIFIED applies only to cited artifacts; unmeasured demand remains UNKNOWN; recommendations are PROPOSED. TODO M35 buyer, merchant, payment-flow and unit-economics work is an explicit boundary; these candidates address distinct institutional/self-hosted/support offers and must be deferred if the M35 owner finds overlap.
+**ADR applicability:** Each candidate remains PROPOSED; the [item-by-item ADR applicability register](ADR_APPLICABILITY.md) identifies current boundaries and conditions requiring a future owner-reviewed ADR.
 
 Identity convention: the heading supplies ID/title; this file supplies the primary domain; the first identity phrases give subdomain/type. Identity lines include priority, difficulty, effort, confidence, risk, domain/common score, owner and proposed V5 wave. Trailing tags are suggested labels. The suggested wave is not a TODO milestone. Implementation maturity for all entries is PROPOSED.
 
 ## ECO-001 — Validate institutional demand for a research-support offer
+
+**Canonical TODO task:** [M48-01](../../../TODO.md) — TODO is sole status source; `ECO-001` is only the V5 reference ID.
 
 1. **Identity:** Economy; monetizable value/market validation; P2 / Medium / M / confidence Low / risk Medium; domain 68, common 70; owner: product research; V5-W3; discovery, institution.
 2. **Executive:** Learn whether libraries, research groups or educational institutions have a costly research workflow MoonWitness can responsibly support.
@@ -24,12 +27,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 5–8 researcher days; interview incentives only with approval.
 17. **Rollback:** Delete raw notes on schedule; retain only consented/anonymized findings.
 18. **Synergy:** Could support knowledge/research sustainability without gating public content.
-19. **Anti-overlap:** Not validating the M35 physical/service pilot or making a sales offer.
+19. **Anti-overlap:** Share one consent/outreach protocol and respondent pool with ECO-002/ECO-005; this task tests demand and costly jobs only. Not validating the M35 physical/service pilot or making a sales offer.
 20. **Outcome:** Evidence to stop, refine or test one institutional offer.
 21. **Future:** Pricing study only if repeated need is established.
 22. **Closure evidence:** Approved protocol, anonymized results, limitations and decision.
 
 ## ECO-002 — Test self-hosted support demand and constraints
+
+**Canonical TODO task:** [M48-02](../../../TODO.md) — TODO is sole status source; `ECO-002` is only the V5 reference ID.
 
 1. **Identity:** Economy; monetizable value/market validation; P2 / Medium / M / confidence Low / risk Medium; domain 66, common 67; owner: product/operations research; V5-W3; self-hosted, discovery.
 2. **Executive:** Assess whether organizations need paid installation, maintenance or support for an authorized self-hosted deployment.
@@ -49,12 +54,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 4–7 days; costs are interview/research only.
 17. **Rollback:** Stop recruitment and remove raw notes per protocol.
 18. **Synergy:** Could support economic resilience without tracking user behavior.
-19. **Anti-overlap:** Distinct from M35 first buyer/merchant/payment workflow; no deployment task.
+19. **Anti-overlap:** Reuses ECO-001's consent protocol/respondent pool; tests self-hosting and support capacity, not general demand or partner distribution. Distinct from M35 buyer/merchant/payment workflow; no deployment task.
 20. **Outcome:** Go/no-go on self-hosted support as a separate value proposition.
 21. **Future:** Business case only after operator capacity and security review.
 22. **Closure evidence:** Interview summary, cost assumptions and explicit decision.
 
 ## ECO-003 — Define ethical pricing hypotheses for institutional research tools
+
+**Canonical TODO task:** [M48-03](../../../TODO.md) — TODO is sole status source; `ECO-003` is only the V5 reference ID.
 
 1. **Identity:** Economy; pricing/entitlement design; P2 / Medium / M / confidence Low / risk Medium; domain 67, common 63; owner: product research; V5-W3; pricing, ethics.
 2. **Executive:** Compare usage, flat institutional, and sponsored-access hypotheses without charging users.
@@ -81,6 +88,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ECO-004 — Map commercial entitlements away from donation benefits
 
+**Canonical TODO task:** [M48-04](../../../TODO.md) — TODO is sole status source; `ECO-004` is only the V5 reference ID.
+
 1. **Identity:** Economy; payment/entitlement boundary study; P2 / Medium / M / confidence Medium / risk High; domain 75, common 71; owner: architecture/product; V5-W3; governance, payments.
 2. **Executive:** Specify how a future paid support service would remain separate from charity contributions and source rights.
 3. **Current state:** No payment/donation feature is active; M35 ownership questions remain open.
@@ -106,6 +115,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 
 ## ECO-005 — Test partnership distribution with research organizations
 
+**Canonical TODO task:** [M48-05](../../../TODO.md) — TODO is sole status source; `ECO-005` is only the V5 reference ID.
+
 1. **Identity:** Economy; growth/partnerships; P2 / Medium / M / confidence Low / risk Medium; domain 65, common 63; owner: partnerships research; V5-W3; partnerships, discovery.
 2. **Executive:** Assess whether one or more research institutions would distribute or co-develop a tool without exclusive source control.
 3. **Current state:** No partner agreement or channel evidence verified.
@@ -124,12 +135,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 4–8 days plus response latency.
 17. **Rollback:** Withdraw brief and stop contact; no integrations to undo.
 18. **Synergy:** Can benefit research distribution and community learning.
-19. **Anti-overlap:** No marketing automation, affiliate tracking or M32 community implementation.
+19. **Anti-overlap:** Reuses ECO-001/ECO-002's consent protocol and respondent pool; tests partner/distribution willingness only, with no implied commitment. No marketing automation, affiliate tracking or M32 community implementation.
 20. **Outcome:** Partner/no-partner recommendation with obligations mapped.
 21. **Future:** Agreement requires legal, rights and governance approval.
 22. **Closure evidence:** Candidate criteria, anonymized findings and approval record.
 
 ## ECO-006 — Model cost-to-serve ranges for research workflows
+
+**Canonical TODO task:** [M48-06](../../../TODO.md) — TODO is sole status source; `ECO-006` is only the V5 reference ID.
 
 1. **Identity:** Economy; revenue intelligence/cost efficiency; P2 / Medium / M / confidence Low / risk Low; domain 72, common 64; owner: operations/finance; V5-W3; costs, modeling.
 2. **Executive:** Estimate bounded infrastructure and support cost ranges for an institutional research workflow.
@@ -149,12 +162,14 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 16. **Estimate:** 3–6 days plus cost-data access.
 17. **Rollback:** Retire model if inputs cannot be verified.
 18. **Synergy:** Connects operational efficiency with product validation.
-19. **Anti-overlap:** No payment, revenue, or M35 unit-economics result.
+19. **Anti-overlap:** Models per-workflow ranges and support assumptions using ENG-031's single aggregate operating-cost baseline; does not create a second aggregate cost inventory or claim payment, revenue, or M35 unit-economics results.
 20. **Outcome:** Cost envelope that can invalidate a pricing hypothesis.
 21. **Future:** Recompute from actual pilot only after separate approval.
 22. **Closure evidence:** Input register, formulas, uncertainty and reviewer note.
 
 ## ECO-007 — Compare recurring support, sponsorship and grant scenarios
+
+**Canonical TODO task:** [M48-07](../../../TODO.md) — TODO is sole status source; `ECO-007` is only the V5 reference ID.
 
 1. **Identity:** Economy; sustainability scenarios; P2 / Medium / M / confidence Low / risk Medium; domain 69, common 63; owner: product/finance research; V5-W3; sustainability, modeling.
 2. **Executive:** Compare funding models for maintenance burden without presenting hypothetical funds as revenue.
@@ -180,6 +195,8 @@ Identity convention: the heading supplies ID/title; this file supplies the prima
 22. **Closure evidence:** Assumption sheet, scenarios and ethics review.
 
 ## ECO-008 — Assess a rights-cleared creator/research service model
+
+**Canonical TODO task:** [M48-08](../../../TODO.md) — TODO is sole status source; `ECO-008` is only the V5 reference ID.
 
 1. **Identity:** Economy; creator/service ecosystem; P2 / Hard / L / confidence Low / risk High; domain 70, common 63; owner: product/rights research; V5-W3; creator, rights.
 2. **Executive:** Explore whether a paid service could support authorized corpus preparation or research tooling without selling source rights.

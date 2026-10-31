@@ -6,6 +6,10 @@ import type { Locale } from '@moonwitness/core'
 import type { OrbitCopyKey } from '../lib/orbit-copy'
 import {
   buildOperationalQueues,
+  distinctAgentStates,
+  distinctTaskPriorities,
+  distinctTaskStatuses,
+  distinctZones,
   filterTaskQueue,
   filterAgentQueue,
   filterWorkstationQueue,
@@ -21,7 +25,7 @@ import {
 } from '../lib/queues/operational-queues'
 import { buildApprovalHandoff } from '../lib/handoff/approval-handoff.ts'
 import { OrbitSpatialViewport } from './OrbitSpatialViewport'
-import { OrbitQueueFilterBar } from './OrbitQueueFilterBar'
+import { QueueFilterBar, type AgentFilter, type TaskFilter, type WorkstationFilter } from '@moonwitness/moonui/client'
 import { Badge } from '@moonwitness/moonui'
 
 export interface OrbitOperationsWorkspaceProps {
@@ -115,17 +119,18 @@ export function OrbitOperationsWorkspace({
   return (
     <>
       {/* Filter Bar — M40-07 */}
-      <OrbitQueueFilterBar
+      <QueueFilterBar
         copy={copy}
-        workstations={workstations}
-        agents={agents}
-        tasks={tasks}
+        statusOptions={distinctTaskStatuses(tasks)}
+        priorityOptions={distinctTaskPriorities(tasks)}
+        stateOptions={distinctAgentStates(agents)}
+        zoneOptions={distinctZones(workstations)}
         taskFilters={taskFilters}
-        onTaskFiltersChange={setTaskFilters}
+        onTaskFiltersChange={setTaskFilters as (filters: TaskFilter) => void}
         agentFilters={agentFilters}
-        onAgentFiltersChange={setAgentFilters}
+        onAgentFiltersChange={setAgentFilters as (filters: AgentFilter) => void}
         workstationFilters={workstationFilters}
-        onWorkstationFiltersChange={setWorkstationFilters}
+        onWorkstationFiltersChange={setWorkstationFilters as (filters: WorkstationFilter) => void}
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         disabled={isRestricted}
@@ -180,8 +185,8 @@ export function OrbitOperationsWorkspace({
 
         <div className="orbit-2d-grid">
           {/* Workstations Panel */}
-          <div className="orbit-panel">
-            <h3 className="orbit-panel-title">{copy.workstationsHeading} ({filteredWorkstations.length})</h3>
+          <div className="orbit-surface">
+            <h3 className="orbit-surface-title">{copy.workstationsHeading} ({filteredWorkstations.length})</h3>
             {!isRestricted && filteredWorkstations.length === 0 && (
               <p className="orbit-empty-state" role="status">{copy.queueEmptyState}</p>
             )}
@@ -218,8 +223,8 @@ export function OrbitOperationsWorkspace({
           </div>
 
           {/* Agent Loops Panel */}
-          <div id="agent-loops" className="orbit-panel">
-            <h3 className="orbit-panel-title">{copy.agentLoopsHeading} ({filteredAgents.length})</h3>
+          <div id="agent-loops" className="orbit-surface">
+            <h3 className="orbit-surface-title">{copy.agentLoopsHeading} ({filteredAgents.length})</h3>
             {!isRestricted && filteredAgents.length === 0 && (
               <p className="orbit-empty-state" role="status">{copy.queueEmptyState}</p>
             )}
@@ -265,8 +270,8 @@ export function OrbitOperationsWorkspace({
           </div>
 
           {/* Task Queues Panel */}
-          <div id="task-queues" className="orbit-panel">
-            <h3 className="orbit-panel-title">{copy.taskQueuesHeading} ({filteredTasks.length})</h3>
+          <div id="task-queues" className="orbit-surface">
+            <h3 className="orbit-surface-title">{copy.taskQueuesHeading} ({filteredTasks.length})</h3>
             {!isRestricted && filteredTasks.length === 0 && (
               <p className="orbit-empty-state" role="status">{copy.queueEmptyState}</p>
             )}
@@ -318,8 +323,8 @@ export function OrbitOperationsWorkspace({
           </div>
 
           {/* Event Traces Panel */}
-          <div id="audit-traces" className="orbit-panel">
-            <h3 className="orbit-panel-title">{copy.auditTracesHeading} ({filteredTraces.length})</h3>
+          <div id="audit-traces" className="orbit-surface">
+            <h3 className="orbit-surface-title">{copy.auditTracesHeading} ({filteredTraces.length})</h3>
             {!isRestricted && filteredTraces.length === 0 && (
               <p className="orbit-empty-state" role="status">{copy.queueNoActivity}</p>
             )}
@@ -350,8 +355,8 @@ export function OrbitOperationsWorkspace({
 
           {/* Activity Feed for Selected Node — M40-07 */}
           {selectedNodeId && (
-            <div className="orbit-panel" id="activity-feed">
-              <h3 className="orbit-panel-title">{copy.queueActivityHeading}</h3>
+            <div className="orbit-surface" id="activity-feed">
+              <h3 className="orbit-surface-title">{copy.queueActivityHeading}</h3>
               <p className="orbit-item-meta">{copy.queueEventOrder}</p>
               <ul className="orbit-list" aria-label={copy.queueActivityHeading}>
                 {(() => {
@@ -414,8 +419,8 @@ export function OrbitOperationsWorkspace({
             const activeTask = assignedAgent ? resolveActiveTask(assignedAgent, queues.taskQueue) : null
             const handoff = buildApprovalHandoff(selectedTask, handoffContext)
             return (
-              <div className="orbit-panel" id="task-inspector">
-                <h3 className="orbit-panel-title">{copy.taskQueuesHeading}</h3>
+              <div className="orbit-surface" id="task-inspector">
+                <h3 className="orbit-surface-title">{copy.taskQueuesHeading}</h3>
                 <p className="orbit-item-title">{selectedTask.title}</p>
                 <p className="orbit-item-meta">{copy.idLabel}: {selectedTask.id}</p>
                 <p className="orbit-item-meta">{copy.queueHandoffStatus}: {selectedTask.status}</p>

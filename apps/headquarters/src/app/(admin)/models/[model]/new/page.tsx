@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation'
-import { PageHeader } from '@moonwitness/moonui'
+import { PageHeader, RecordForm } from '@moonwitness/moonui'
 import { createRecordAction } from '@/data/actions'
 import { isModelName } from '@/data/queries/registry'
 import { optionsFor } from '@/data/queries/records'
 import { getSchema } from '@/data/schema'
 import { guardModel } from '@/lib/authz'
-import type { SelectOption } from '@/data/types'
-import { RecordForm } from '@/ui/widgets/RecordForm'
+import { formFields, type SelectOption } from '@/data/types'
+import { schemaFields } from '@/data/form-fields'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { editorFailureMessage, interpolate, modelViewCopy } from '../../locale-copy'
 import { requestLocale } from '@/lib/request-locale'
@@ -52,12 +52,13 @@ export default async function NewRecordPage({
       />
       {error ? (editorFailureMessage(locale, error) ? <LiveAlert role="alert" tone="hot">{editorFailureMessage(locale, error)}</LiveAlert> : null) : null}
       <RecordForm
-        model={model}
-        meta={meta}
-        mode="create"
-        relationOptions={relationOptions}
+        title={`${copy.create} ${meta.label.toLowerCase()}`}
+        subtitle={copy.fieldsFromSchema.replace('{count}', String(Object.keys(meta.fields).length))}
+        fields={schemaFields(formFields(meta, 'create', {}), relationOptions)}
         action={createRecordAction.bind(null, model)}
-        locale={locale}
+        submitLabel={copy.create}
+        cancelLabel={copy.cancel}
+        cancelHref={`/models/${model}`}
       />
     </div>
   )

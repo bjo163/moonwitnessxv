@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { LibraryPage } from '../../../../components/story/LibraryPage'
+import { StoryLibraryPage } from '@moonwitness/moonui/client'
+import { SiteHeader } from '@moonwitness/moonui/client'
+import { libraryViewProps } from '../../../../components/story/LibraryPage'
+import { siteHeaderProps } from '../../../../lib/site-copy'
 import { isLocale, routeMetadata } from '../../../../lib/seo'
 
 export const dynamicParams = false
@@ -12,5 +15,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function StoriesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (locale !== 'id' && locale !== 'en') notFound()
-  return <LibraryPage locale={locale} />
+  return (
+    <StoryLibraryPage
+      {...libraryViewProps(locale)}
+      header={<SiteHeader {...siteHeaderProps(locale, 'stories')} />}
+    />
+  )
 }

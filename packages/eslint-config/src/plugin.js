@@ -7,6 +7,7 @@
  * - `no-theological-sameas`: Bans asserting automatic theological equivalence (M09-03/04).
  * - `require-rights-veto`: Enforces rights status checks before passage bytes access.
  * - `enforce-token-purity`: Flags hardcoded rogue hex colors violating MoonUI tokens.
+ * - `shared-ui-only`: Bans app-local primitive components and raw interactive markup (ADR-0017).
  */
 
 const ROGUE_HEX_MAP = {
@@ -20,6 +21,20 @@ const ROGUE_HEX_MAP = {
   '#e11d48': 'var(--hot) (#ff1e56)',
   '#10b981': 'var(--ok) (#00e676)',
   '#f59e0b': 'var(--accent) (#ffd400)',
+}
+
+/** Intrinsic elements that already have a MoonUI owner (ADR-0017 R1). */
+const SHARED_INTRINSIC_ELEMENTS = {
+  button: 'Button or LinkButton',
+  input: 'TextInput or Toggle',
+  select: 'SelectInput',
+  textarea: 'Textarea',
+  dialog: 'Modal or AlertDialog',
+  table: 'DataTable',
+}
+
+function normalizeFilename(filename) {
+  return String(filename ?? '').split('\\').join('/')
 }
 
 export const moonwitnessPlugin = {
@@ -113,7 +128,94 @@ export const moonwitnessPlugin = {
         }
       },
     },
+
+    /**
+     * ADR-0017 — MoonUI is the only component owner.
+     *
+     * `ImportBoundary` catches a consumer that hand-rolls markup for a primitive
+     * MoonUI already ships. `LocalPrimitive` catches a consumer that declares a
+     * component whose name MoonUI already owns. Both are scoped by the caller:
+     * `exceptions` carries the ADR-0017 ledger paths, `ignoreBasenames` carries
+     * route shells, which are composition roots rather than components.
+     */
+    'shared-ui-only': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description: 'Require MoonUI primitives instead of app-local components and raw interactive markup.',
+        },
+        messages: {
+          importBoundary:
+            "ADR-0017: use <{{suggestion}}> from '@moonwitness/moonui' instead of a raw <{{tag}}> element.",
+          localPrimitive:
+            "ADR-0017: '{{name}}' is owned by @moonwitness/moonui; import it instead of declaring a local component.",
+        },
+        schema: [
+          {
+            type: 'object',
+            properties: {
+              names: { type: 'array', items: { type: 'string' } },
+              exceptions: { type: 'array', items: { type: 'string' } },
+              ignoreBasenames: { type: 'array', items: { type: 'string' } },
+            },
+            additionalProperties: false,
+          },
+        ],
+      },
+      create(context) {
+        const options = context.options[0] ?? {}
+        const sharedNames = new Set(options.names ?? [])
+        const exceptions = (options.exceptions ?? []).map(normalizeFilename)
+        const ignoreBasenames = options.ignoreBasenames ?? []
+        const filename = normalizeFilename(context.filename ?? context.getFilename?.())
+
+        if (ignoreBasenames.some((basename) => filename.endsWith(`/${basename}`) || filename.endsWith(basename))) {
+          return {}
+        }
+        if (exceptions.some((path) => filename.endsWith(`/${path}`) || filename.endsWith(path))) {
+          return {}
+        }
+
+        const checkName = (node) => {
+          if (!node || node.type !== 'Identifier') return
+          if (!sharedNames.has(node.name)) return
+          context.report({ node, messageId: 'localPrimitive', data: { name: node.name } })
+        }
+
+        return {
+          JSXOpeningElement(node) {
+            if (node.name.type !== 'JSXIdentifier') return
+            const tag = node.name.name
+            const suggestion = SHARED_INTRINSIC_ELEMENTS[tag]
+            if (!suggestion) return
+            // A hidden field is form plumbing: it renders nothing, so it has no
+            // primitive to consolidate (ADR-0017 ImportBoundary).
+            if (tag === 'input') {
+              const typeAttr = node.attributes.find(
+                (attr) =>
+                  attr.type === 'JSXAttribute' &&
+                  attr.name.type === 'JSXIdentifier' &&
+                  attr.name.name === 'type',
+              )
+              const value =
+                typeAttr && typeAttr.value && typeAttr.value.type === 'Literal'
+                  ? typeAttr.value.value
+                  : null
+              if (value === 'hidden') return
+            }
+            context.report({ node: node.name, messageId: 'importBoundary', data: { tag, suggestion } })
+          },
+          FunctionDeclaration(node) {
+            checkName(node.id)
+          },
+          VariableDeclarator(node) {
+            checkName(node.id)
+          },
+        }
+      },
+    },
   },
 }
 
+export { SHARED_INTRINSIC_ELEMENTS }
 export default moonwitnessPlugin

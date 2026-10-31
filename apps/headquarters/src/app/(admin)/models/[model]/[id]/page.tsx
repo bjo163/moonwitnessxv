@@ -1,14 +1,14 @@
 import { notFound } from 'next/navigation'
 import { can, type ModelName } from '@moonwitness/moonql-client'
-import { Button, PageHeader, Panel } from '@moonwitness/moonui'
+import { Button, PageHeader, Panel, RecordForm } from '@moonwitness/moonui'
 import { deleteRecordAction, updateRecordAction } from '@/data/actions'
 import { isModelName } from '@/data/queries/registry'
 import { getRecord, optionsFor } from '@/data/queries/records'
 import { getSchema } from '@/data/schema'
 import { guardModel } from '@/lib/authz'
-import type { SelectOption } from '@/data/types'
+import { formFields, type SelectOption } from '@/data/types'
+import { schemaFields } from '@/data/form-fields'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
-import { RecordForm } from '@/ui/widgets/RecordForm'
 import { editorFailureMessage, editorStatusMessage, modelViewCopy } from '../../locale-copy'
 import { requestLocale } from '@/lib/request-locale'
 import { DELETE_CONFIRM_VALUE, editorCopy, fill } from '@/lib/editor-copy'
@@ -76,13 +76,16 @@ export default async function EditRecordPage({
       {saved ? (editorStatusMessage(locale, saved) ? <LiveAlert role="status" tone="ok">{editorStatusMessage(locale, saved)}</LiveAlert> : null) : null}
       {canUpdate ? (
         <RecordForm
-          model={model}
-          meta={meta}
-          mode="update"
-          values={record}
-          relationOptions={relationOptions}
+          title={`${copy.edit} ${meta.label.toLowerCase()}`}
+          subtitle={copy.fieldsFromSchema.replace(
+            '{count}',
+            String(Object.keys(meta.fields).length),
+          )}
+          fields={schemaFields(formFields(meta, 'update', record), relationOptions)}
           action={updateRecordAction.bind(null, model, id)}
-          locale={locale}
+          submitLabel={copy.saveChanges}
+          cancelLabel={copy.cancel}
+          cancelHref={`/models/${model}/${id}`}
         />
       ) : (
         <LiveAlert role="status" tone="accent">{locale === 'id' ? 'Akun ini dapat membaca data, tetapi tidak dapat mengubahnya; formulir tidak ditampilkan.' : 'This account may read this record but not edit it; the form is not offered.'}</LiveAlert>

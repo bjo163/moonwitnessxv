@@ -12,8 +12,8 @@ export const SITE_NAME = 'Moonwitness'
 /** API mount prefix of the hub (every REST route lives under it). */
 export const API_PREFIX = '/api/v1'
 
-/** Fixed dev/preview ports: hub :3000, public site :3001, command center :3002, ai gateway :3003, cockpit :3004, SKYLINK :3005, ECHOLOG :3006, ORBIT :3007, Empire Web pilot :3010. */
-export const PORTS = { hub: 3000, dock: 3001, headquarters: 3002, aigateway: 3003, cockpit: 3004, skylink: 3005, echolog: 3006, orbit: 3007, empireWeb: 3010 } as const
+/** Fixed dev/preview ports: private ISP console :3008 and RADIUS health/API :3009 follow ORBIT :3007. */
+export const PORTS = { hub: 3000, dock: 3001, headquarters: 3002, aigateway: 3003, cockpit: 3004, skylink: 3005, echolog: 3006, orbit: 3007, ispConsole: 3008, ispRadius: 3009, empireWeb: 3010 } as const
 
 /** Loopback origin of the hub itself, without the API prefix: what host-side plugins dial. */
 export const HUB_ORIGIN_DEFAULT = `http://127.0.0.1:${PORTS.hub}`

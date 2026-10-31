@@ -7,7 +7,10 @@ import { fileURLToPath } from 'node:url'
 const appDir = join(dirname(fileURLToPath(import.meta.url)), '..')
 const read = (relativePath) => readFileSync(join(appDir, relativePath), 'utf8')
 const css = read('src/app/globals.css')
-const spaces = read('src/ui/components/spaces.tsx')
+// ADR-0017: the space card is a MoonUI component, so its markup and focus ring
+// are asserted against the shared package rather than a Dock copy.
+const moonCss = read('../../packages/moonui/moon.css')
+const spaces = read('../../packages/moonui/src/spaces.tsx')
 const reader = read('src/ui/components/reader.tsx')
 const terms = read('src/ui/components/terms.tsx')
 const states = read('src/ui/components/states.tsx')
@@ -35,8 +38,10 @@ function cssRule(source, selector) {
 }
 
 test('space cards and provenance summary have visible keyboard focus', () => {
+  const spaceRule = cssRule(moonCss, '.m-space-card:focus-visible')
+  assert.ok(spaceRule, '.m-space-card:focus-visible must have a focus-visible rule')
+  assert.match(spaceRule, /outline:\s*[^;]+/i, '.m-space-card:focus-visible must show a visible outline')
   for (const selector of [
-    '.dk-space-card:focus-visible',
     '.dk-provenance > summary:focus-visible',
     '.dk-term-index > summary:focus-visible',
   ]) {
@@ -50,7 +55,7 @@ test('space cards remain native anchors without custom keyboard overrides', () =
   const start = spaces.indexOf('export function SpaceCard(')
   const end = spaces.indexOf('export function SpaceGrid(', start)
   const component = spaces.slice(start, end)
-  assert.match(component, /<a className="dk-space-card"[^>]*href=\{href\}>/)
+  assert.match(component, /<a className="m-space-card"[^>]*href=\{href\}>/)
   assert.doesNotMatch(component, /\b(?:onClick|role|tabIndex)\s*=/)
 })
 
@@ -74,8 +79,12 @@ test('term table index remains a native keyboard-operable disclosure', () => {
 })
 
 test('loading and error states announce status while empty term states use locale catalog copy', () => {
-  assert.match(states, /role="status"[\s\S]*?aria-live="polite"/)
-  assert.match(states, /role="alert"/)
+  // ADR-0017: the state renderer is MoonUI's `PanelState`; Dock keeps only the
+  // read resolver and re-exports the shared contract.
+  const moonStates = read('../../packages/moonui/src/states.tsx')
+  assert.match(moonStates, /role="status"[\s\S]*?aria-live="polite"/)
+  assert.match(moonStates, /role="alert"/)
+  assert.match(states, /export \{ OutcomePanel, PanelState \} from '@moonwitness\/moonui'/)
   assert.match(reader, /result\.state === 'rights_blocked'[\s\S]*?<div role="alert">[\s\S]*?<Alert tone="hot">/)
   assert.match(terms, /const states = getStatesCopy\(locale\)/)
   assert.match(terms, /title=\{states\.emptyTermsSearchTitle\}/)

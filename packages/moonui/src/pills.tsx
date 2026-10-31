@@ -24,6 +24,7 @@ export function Pill({
       className={cn('m-pill', className)}
       data-active={active ? 'true' : 'false'}
       data-tone={tone}
+      aria-pressed={active}
       onClick={onClick}
     >
       <span className="m-pill-label">{label}</span>

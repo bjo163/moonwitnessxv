@@ -59,65 +59,6 @@ body,
   gap: 16px;
 }
 
-.echolog-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.echolog-track {
-  margin-bottom: 8px;
-}
-
-.echolog-track-error {
-  color: var(--hot);
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
 .echolog-upload-state {
   margin-bottom: 8px;
-}
-
-.echolog-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.echolog-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.echolog-dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background: rgba(7, 6, 11, 0.78);
-  z-index: 50;
-}
-
-.echolog-dialog {
-  width: min(560px, 100%);
-  box-shadow: var(--shadow);
-}
-
-.echolog-dialog-key {
-  font-family: var(--font-mono);
-  overflow-wrap: anywhere;
-}
-
-.echolog-dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 12px;
 }

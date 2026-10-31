@@ -2,8 +2,18 @@
 
 import { useState } from 'react'
 import type { Locale } from '@moonwitness/core'
+import { LocaleSelect } from '@moonwitness/moonui'
 import { currentRelativeUrl, validateLocalePreference } from '@/lib/locale-preference'
 
+const OPTIONS = [
+  { value: 'id', label: 'Bahasa Indonesia' },
+  { value: 'en', label: 'English' },
+]
+
+/**
+ * ADR-0017: the selector is MoonUI's `LocaleSelect`; this file keeps only the
+ * cookie contract and the reload, and renders no markup of its own.
+ */
 export function LocaleSelector({ locale }: { locale: Locale }) {
   const [selected, setSelected] = useState(locale)
 
@@ -15,13 +25,5 @@ export function LocaleSelector({ locale }: { locale: Locale }) {
     window.location.assign(currentRelativeUrl(window.location))
   }
 
-  return (
-    <label className="m-row" style={{ gap: 6, alignItems: 'center' }}>
-      <span className="m-muted">Language</span>
-      <select aria-label="Language" value={selected} onChange={(event) => changeLocale(event.currentTarget.value)}>
-        <option value="id">Bahasa Indonesia</option>
-        <option value="en">English</option>
-      </select>
-    </label>
-  )
+  return <LocaleSelect label="Language" value={selected} options={OPTIONS} onChange={changeLocale} />
 }

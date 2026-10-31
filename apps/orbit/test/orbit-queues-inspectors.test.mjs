@@ -290,9 +290,10 @@ test('M40-07: distinct filter options are sorted, de-duplicated and projection-d
 })
 
 test('M40-07: queue components exist and honour the accessibility + safe-state contract', () => {
-  const barPath = resolve(appRoot, 'src/components/OrbitQueueFilterBar.tsx')
+  // ADR-0017: the filter bar is MoonUI's `QueueFilterBar`.
+  const barPath = resolve(appRoot, '../../packages/moonui/src/client/surfaces/orbit.tsx')
   const wsPath = resolve(appRoot, 'src/components/OrbitOperationsWorkspace.tsx')
-  assert.ok(existsSync(barPath), 'OrbitQueueFilterBar.tsx must exist')
+  assert.ok(existsSync(barPath), 'the queue filter bar must live in MoonUI')
 
   const bar = readFileSync(barPath, 'utf8')
   const ws = readFileSync(wsPath, 'utf8')
@@ -302,7 +303,10 @@ test('M40-07: queue components exist and honour the accessibility + safe-state c
   assert.ok(bar.includes('aria-expanded='), 'filter expansion must be announced')
   assert.ok(bar.includes('aria-controls="orbit-advanced-filters"'), 'filter toggle controls the advanced filters')
   assert.ok(bar.includes('aria-label={copy.queueFiltersHeading}'), 'filter toggle has a stable accessible name')
-  assert.ok(bar.includes('aria-pressed='), 'filter chips must report pressed state')
+  // ADR-0017: the chip is MoonUI <Pill>; the pressed state is the shared contract.
+  const moonPills = readFileSync(resolve(appRoot, '../../packages/moonui/src/pills.tsx'), 'utf8')
+  assert.ok(bar.includes('Pill'), 'filter chips must consume the MoonUI Pill primitive')
+  assert.ok(moonPills.includes('aria-pressed={active}'), 'MoonUI Pill must report pressed state')
   assert.ok(bar.includes("type=\"search\""), 'search input must use the search type')
   assert.ok(bar.includes('role="group"'), 'chip groups must be labelled')
 
@@ -403,7 +407,7 @@ test('M40-07: new copy keys keep exact en/id parity', () => {
 
   // Every key referenced by the new components must exist in the catalog
   const wsSrc = readFileSync(resolve(appRoot, 'src/components/OrbitOperationsWorkspace.tsx'), 'utf8')
-  const barSrc = readFileSync(resolve(appRoot, 'src/components/OrbitQueueFilterBar.tsx'), 'utf8')
+  const barSrc = readFileSync(resolve(appRoot, '../../packages/moonui/src/client/surfaces/orbit.tsx'), 'utf8')
   const referenced = new Set(
     [...wsSrc.matchAll(/copy\.([a-zA-Z0-9_]+)/g), ...barSrc.matchAll(/copy\.([a-zA-Z0-9_]+)/g)].map(
       (m) => m[1]
@@ -417,10 +421,16 @@ test('M40-07: new copy keys keep exact en/id parity', () => {
 
 test('M40-07: filter styling uses MoonUI tokens only, no rogue hex', () => {
   const css = readFileSync(resolve(appRoot, 'src/app/globals.css'), 'utf8')
-  assert.ok(css.includes('.orbit-queue-filter-bar'), 'filter bar styles must exist')
-  assert.ok(css.includes('.orbit-panel-title'), 'panel title styles must exist')
+  // ADR-0017: the filter bar is rendered by packages/moonui/src/client/surfaces/
+  // orbit.tsx, so its rule belongs to moon.css. The panel title and the empty
+  // state are still produced by Orbit's own ledgered components, so those rules
+  // stay in the app stylesheet until those views move.
+  const moonCss = readFileSync(resolve(appRoot, '../../packages/moonui/moon.css'), 'utf8')
+  assert.ok(moonCss.includes('.orbit-queue-filter-bar'), 'the filter bar is MoonUI-rendered, so its rule lives in moon.css')
+  assert.ok(css.includes('.orbit-surface-title'), 'panel title styles must exist')
   assert.ok(css.includes('.orbit-empty-state'), 'empty state styles must exist')
-  assert.ok(css.includes('.orbit-filter-chip:focus-visible'), 'filter chips need visible focus')
+  // The filter chips are MoonUI <Pill>; the focus ring is the shared contract.
+  assert.ok(moonCss.includes('.m-pill:focus-visible'), 'filter chips need visible focus from MoonUI')
 
   const hexMatches = css.match(/#[0-9a-fA-F]{3,8}\b/g) ?? []
   assert.deepEqual(hexMatches, [], `globals.css must not hardcode hex colors, found ${hexMatches.join(', ')}`)
@@ -432,7 +442,10 @@ test('M40-07: filter styling uses MoonUI tokens only, no rogue hex', () => {
 
   // M40-07 components must stay silent and motion-neutral like the rest of ORBIT
   const forbiddenAudioTerms = ['AudioContext', 'new Audio(', '<audio', 'webkitAudioContext', '.play()']
-  for (const file of ['src/components/OrbitQueueFilterBar.tsx', 'src/components/OrbitOperationsWorkspace.tsx']) {
+  for (const file of [
+    '../../packages/moonui/src/client/surfaces/orbit.tsx',
+    'src/components/OrbitOperationsWorkspace.tsx',
+  ]) {
     const src = readFileSync(resolve(appRoot, file), 'utf8')
     for (const term of forbiddenAudioTerms) {
       assert.equal(src.includes(term), false, `${file} must not contain "${term}"`)

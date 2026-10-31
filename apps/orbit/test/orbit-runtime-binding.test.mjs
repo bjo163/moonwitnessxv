@@ -224,8 +224,9 @@ test('M40-06: fetchOrbitOperationalState sanitizes credentials from live ARSY pa
 })
 
 test('M40-06: OrbitShellHeader component enforces truthful status badges across all states', () => {
-  const headerPath = resolve(appRoot, 'src/components/OrbitShellHeader.tsx')
-  assert.ok(existsSync(headerPath), 'OrbitShellHeader.tsx must exist')
+  // ADR-0017: the header is MoonUI's `OrbitShellHeaderView`.
+  const headerPath = resolve(appRoot, '../../packages/moonui/src/surfaces/orbit.tsx')
+  assert.ok(existsSync(headerPath), 'the Orbit shell header view must live in MoonUI')
 
   const headerSrc = readFileSync(headerPath, 'utf8')
   const pageSrc = readFileSync(resolve(appRoot, 'src/app/page.tsx'), 'utf8')

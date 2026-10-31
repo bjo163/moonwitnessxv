@@ -22,8 +22,7 @@ import { guardEndpoint, guardModel } from '@/lib/authz'
 import { loadSourceRightsInventory } from '@/lib/source-rights-inventory'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
 import { EventStream } from '@/ui/client/EventStream'
-import { AuditFeed, JobTable } from '@/ui/widgets/Feeds'
-import { TierBadge } from '@/ui/widgets/ModelTable'
+import { AuditFeed, JobTable, TierBadge } from '@moonwitness/moonui'
 import { requestLocale } from '@/lib/request-locale'
 import type { Locale } from '@moonwitness/core'
 import type { ModelMeta } from '@moonwitness/moonql-client'
@@ -345,7 +344,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Center Orbital Blue Moon Radar */}
-        <Card className="hq-mc-radar-card">
+        <Card className="hq-radar-stage">
           <img
             src="/art/moon-radar.jpg"
             alt="Moonwitness orbital network connecting ideas, cultures, worlds, publication, stories, and people"

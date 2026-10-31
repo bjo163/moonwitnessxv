@@ -8,6 +8,14 @@ import type { StoryLocale } from './story-universe'
  */
 type ReaderCopy = {
   crumb: [string, string, string]
+  breadcrumbLabel: string
+  pageNavLabel: string
+  thumbGroupLabel: string
+  previousLabel: string
+  nextLabel: string
+  posterAlt: string
+  posterWords: string[]
+  posterWordsLow: string[]
   eyebrow: string
   title: [string, string]
   lead: string
@@ -33,6 +41,14 @@ type ReaderCopy = {
 export const readerCopy: Record<StoryLocale, ReaderCopy> = {
   en: {
     crumb: ['MOONWITNESS XV', 'STORY UNIVERSE PORTAL', 'ANGELWITHSHOTGUN'],
+    breadcrumbLabel: 'Breadcrumb',
+    pageNavLabel: 'Change page',
+    thumbGroupLabel: 'Chapter panels',
+    previousLabel: 'Previous page',
+    nextLabel: 'Next page',
+    posterAlt: 'Concept poster of AngelWithShotgun, rear-view figure',
+    posterWords: ['PROTECT', 'WHAT', 'STILL', 'MATTERS.'],
+    posterWordsLow: ['DIFFERENT', 'PEOPLES', 'SAME MOON', 'BIGGER', 'HUMANITY'],
     eyebrow: 'MOONWITNESS XV · STORY WORLD 02',
     title: ['ANGELWITH', 'SHOTGUN'],
     lead: 'THE BOMBS ARE GETTING CLOSER EVERY DAY',
@@ -65,6 +81,14 @@ export const readerCopy: Record<StoryLocale, ReaderCopy> = {
   },
   id: {
     crumb: ['MOONWITNESS XV', 'PORTAL SEMESTA CERITA', 'ANGELWITHSHOTGUN'],
+    breadcrumbLabel: 'Jejak navigasi',
+    pageNavLabel: 'Pindah halaman',
+    thumbGroupLabel: 'Panel bab',
+    previousLabel: 'Halaman sebelumnya',
+    nextLabel: 'Halaman berikutnya',
+    posterAlt: 'Poster konseptual AngelWithShotgun, sosok dari belakang',
+    posterWords: ['PROTECT', 'WHAT', 'STILL', 'MATTERS.'],
+    posterWordsLow: ['DIFFERENT', 'PEOPLES', 'SAME MOON', 'BIGGER', 'HUMANITY'],
     eyebrow: 'MOONWITNESS XV · DUNIA CERITA 02',
     title: ['ANGELWITH', 'SHOTGUN'],
     lead: 'BOM SEMAKIN DEKAT SETIAP HARI',

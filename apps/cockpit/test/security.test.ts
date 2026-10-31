@@ -110,9 +110,12 @@ void test('C1: client LogEntry uses the server tag field', () => {
 // C1b — the terminal viewer must be fed TerminalLine objects, never strings.
 // Passing strings crashed the whole React tree on the first streamed log line
 // ("blank screen after Start All"), and the client is outside the typecheck gate.
+// ADR-0017: the view lives in MoonUI, so the guard follows it there.
+const MOONUI_SURFACES = join(CLIENT_DIR, '..', '..', '..', 'packages', 'moonui', 'src', 'surfaces', 'cockpit.tsx')
+
 void test('C1b: CockpitLogsView passes TerminalLine objects to TerminalViewer', () => {
-  const view = readFileSync(join(CLIENT_DIR, 'components', 'CockpitLogsView.tsx'), 'utf8')
-  assert.match(view, /import type \{ TerminalLine \} from '@moonwitness\/moonui'/, 'must import the viewer line type')
+  const view = readFileSync(MOONUI_SURFACES, 'utf8')
+  assert.match(view, /TerminalLine/, 'must import the viewer line type')
   assert.equal(/filteredLogs:\s*string\[\]/.test(view), false, 'string[] log lines are exactly what crashed the app')
   assert.match(view, /lines=\{logLines\}/, 'viewer receives the object array')
 
@@ -147,14 +150,14 @@ void test('Ports: /api/status reports portStatus for every configured service', 
 
 // C2 — the Ports/Preview views derive from /api/config instead of a static port table.
 void test('C2: Ports & Preview views hardcode no ports and drop the static maps', () => {
-  const ports = readFileSync(join(CLIENT_DIR, 'components', 'CockpitPortsView.tsx'), 'utf8')
-  const preview = readFileSync(join(CLIENT_DIR, 'components', 'CockpitPreviewView.tsx'), 'utf8')
+  const ports = readFileSync(MOONUI_SURFACES, 'utf8')
+  const preview = readFileSync(join(CLIENT_DIR, 'lib', 'ports.ts'), 'utf8')
   assert.equal(/COCKPIT_PORT_MAP|PREVIEW_SHORTCUTS/.test(ports + preview), false, 'static maps must be gone')
   for (const src of [ports, preview]) {
     assert.equal(/:\d{4}\b/.test(src), false, 'no literal :<port> may remain in a derived view')
   }
-  assert.match(ports, /config\.services/, 'PortsView must render from config.services')
-  assert.match(preview, /config\.services/, 'PreviewView must render from config.services')
+  assert.match(preview, /config\.services/, 'the row and shortcut builders must read config.services')
+  assert.match(preview, /config\.port/, 'the cockpit host row comes from config.port')
 })
 
 // L1 — the legacy vanilla fallback stays a fallback, not a second source of truth.

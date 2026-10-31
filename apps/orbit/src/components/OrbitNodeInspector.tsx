@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Badge, Card, CardHeader, CardBody } from '@moonwitness/moonui'
+import { Badge, Button, Card, CardHeader, CardBody } from '@moonwitness/moonui'
 import type { OrbitOperationalState } from '../fixtures/simulated-operations'
 import type { OrbitCopyKey } from '../lib/orbit-copy'
 import { buildApprovalHandoff } from '../lib/handoff/approval-handoff.ts'
@@ -68,14 +68,9 @@ export function OrbitNodeInspector({
               <span id="inspector-heading" className="orbit-inspector-title">
                 {copy.selectedNodeHeading}
               </span>
-              <button
-                type="button"
-                className="orbit-inspector-close-btn"
-                onClick={onClose}
-                aria-label={copy.closeInspector}
-              >
+              <Button variant="ghost" size="sm" onClick={onClose} aria-label={copy.closeInspector}>
                 ✕
-              </button>
+              </Button>
             </div>
           }
         />
@@ -222,13 +217,9 @@ export function OrbitNodeInspector({
 
             <div className="orbit-inspector-footer">
               <span className="orbit-esc-hint">{copy.escToClose}</span>
-              <button
-                type="button"
-                className="orbit-inspector-clear-btn"
-                onClick={onClose}
-              >
+              <Button variant="ghost" size="sm" onClick={onClose}>
                 {copy.clearSelection}
-              </button>
+              </Button>
             </div>
           </div>
         </CardBody>

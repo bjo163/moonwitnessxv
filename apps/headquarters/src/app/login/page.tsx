@@ -22,7 +22,7 @@ export default async function LoginPage({
 
   return (
     <AuthLayout locale={locale}>
-      <Card variant="shadow" className="hq-shadow-card">
+      <Card variant="shadow" className="hq-shadow-shell">
         <CardBody className="m-stack" style={{ gap: 18, padding: 28 }}>
           <div className="hq-shadow-head">
             <Crown tone="gold" size="lg" />

@@ -1,8 +1,7 @@
-import { Badge, DataTable, LiveDot, PageHeader, Panel, StatCard } from '@moonwitness/moonui'
+import { Badge, DataTable, LiveDot, PageHeader, Panel, StatCard, TierBadge } from '@moonwitness/moonui'
 import { dashboard } from '@/data/queries/ops'
 import { getSchema } from '@/data/schema'
 import { guardEndpoint } from '@/lib/authz'
-import { TierBadge } from '@/ui/widgets/ModelTable'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
 
 const anchor = (method: string, path: string): string =>

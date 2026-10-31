@@ -92,6 +92,84 @@ export function Field({
   )
 }
 
+export function LocaleSelect({
+  label,
+  value,
+  options,
+  onChange,
+  ariaLabel,
+}: {
+  label: string
+  value: string
+  options: Array<{ value: string; label: string }>
+  onChange: (value: string) => void
+  ariaLabel?: string
+}): ReactNode {
+  return (
+    <label className="m-row" style={{ gap: 6, alignItems: 'center' }}>
+      <span className="m-muted">{label}</span>
+      <select
+        aria-label={ariaLabel ?? label}
+        value={value}
+        onChange={(event) => onChange(event.currentTarget.value)}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
+/**
+ * The compact segmented language control a toolbar uses where a `<select>` would
+ * be too wide (ADR-0017: Cockpit drew this twice in raw `<button>`s).
+ *
+ * `aria-pressed` carries the state, so the choice is readable without colour. The
+ * group takes the focus ring because its rounded box clips an outline drawn on a
+ * child, and Space stops bubbling so a page-level Space shortcut (Cockpit's play
+ * toggle) cannot fire while the user is picking a language.
+ */
+export function LocaleToggleGroup({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string
+  value: string
+  options: Array<{ value: string; label: string }>
+  onChange: (value: string) => void
+}): ReactNode {
+  return (
+    <div
+      className="m-locale-toggle"
+      role="group"
+      aria-label={label}
+      onKeyDown={(event) => {
+        if (event.code === 'Space') event.stopPropagation()
+      }}
+    >
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          className="m-locale-toggle-option"
+          aria-pressed={value === option.value}
+          onClick={() => {
+            triggerHaptic('tap')
+            onChange(option.value)
+          }}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export function TextInput({
   className,
   icon,

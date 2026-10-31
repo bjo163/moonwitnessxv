@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ReaderPage } from '../../../../../components/story/ReaderPage'
+import { SiteHeader, StoryReaderPage } from '@moonwitness/moonui/client'
+import { readerViewProps } from '../../../../../components/story/ReaderPage'
+import { siteHeaderProps } from '../../../../../lib/site-copy'
 import { isLocale, routeMetadata } from '../../../../../lib/seo'
 
 export const dynamicParams = false
@@ -12,5 +14,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function AngelStoryPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (locale !== 'id' && locale !== 'en') notFound()
-  return <ReaderPage locale={locale} />
+  return (
+    <StoryReaderPage
+      {...readerViewProps(locale)}
+      header={<SiteHeader {...siteHeaderProps(locale, 'stories')} />}
+    />
+  )
 }

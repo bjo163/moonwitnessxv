@@ -44,5 +44,13 @@
 - [M41 — LUMEN agent framework and internal runtime](M41.md)
 - [M42 — Empire Story Universe visual implementation and isolated Vercel release](M42.md)
 - [M43 — MoonUI dual-skin contract (zine + empire)](M43.md)
+- [M44 — Public domain map and hostname cutover](M44.md)
+- [M45 — Mockup-faithful Story Universe reconstruction](M45.md)
+- [M46 — Engineering excellence and operational reliability](M46.md)
+- [M47 — Frontier research and bounded prototypes](M47.md)
+- [M48 — WORKS buyer validation and sustainable economics](M48.md)
+- [M49 — HARBOR humanitarian and safeguarding readiness](M49.md)
+- [M50 — Corpus identity, interpretation and ontology safeguards](M50.md)
+- [M51 — ISP & Network Operations (MWX-ISP adaptation)](M51.md)
 
-44 milestone identities from M00–M43, including proposals that remain unimplemented. Original IDs and checkboxes remain in [TODO](../../TODO.md).
+52 milestone identities from M00–M51, including proposals that remain unimplemented. Original IDs and checkboxes remain in [TODO](../../TODO.md).

@@ -1,0 +1,13 @@
+feat(isp): land the D20 MoonQL models and tenant-safe ARSY APIs for M51-03
+
+Add @moonwitness/moonql-isp: D20 organization, RADIUS, NAS/network, session
+and accounting models with generic auto-REST disabled, scrypt RADIUS
+credentials, NAS secret references only, and D00-scoped operator and
+isp-radius service grants. Register the addon in ARSY, reconcile the
+isp-radius route family with the accepted contract, and regenerate the SDK
+additively.
+
+Evidence: 9 owning-package model and credential tests, 5 ARSY inject tests
+(tenant isolation, expired and absent grants, private fields off ordinary
+reads, cross-tenant resolve fails closed, browser sessions rejected, audit
+boundary), plus the D20 boundary and migration-matrix checkers.

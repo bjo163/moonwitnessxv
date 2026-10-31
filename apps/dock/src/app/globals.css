@@ -193,9 +193,7 @@ body {
 .dk-nav a:focus-visible,
 .dk-nav-index-trigger:focus-visible,
 .dk-index-link:focus-visible,
-.dk-icon-btn:focus-visible,
-.m-btn:focus-visible,
-.m-brand-link:focus-visible {
+.dk-icon-btn:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
@@ -491,28 +489,6 @@ body {
 }
 .dk-paper-stats {
   min-width: 195px;
-}
-.dk-paper-stat-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 1px dashed rgba(7, 6, 11, 0.25);
-  padding-bottom: 6px;
-}
-.dk-paper-stat-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-.dk-paper-stat-row strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 20px;
-  line-height: 1;
-}
-.dk-paper-stat-row span {
-  font-size: 10px;
-  font-weight: 900;
-  text-transform: uppercase;
 }
 .dk-moon-orbit-tag {
   width: 114px;
@@ -2451,122 +2427,7 @@ body {
   text-transform: uppercase;
 }
 
-/* ---------- UI-XV: four-space entry (ADR-0009) ---------- */
-.dk-space-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--s3);
-}
-
-.dk-space-card {
-  --space-tone: var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 0;
-  padding: 18px;
-  overflow-wrap: anywhere;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--space-tone);
-  color: inherit;
-  text-decoration: none;
-  transition: transform 120ms ease, border-color 120ms ease;
-}
-
-.dk-space-card[data-tone="accent"] {
-  --space-tone: var(--accent);
-}
-
-.dk-space-card[data-tone="cyan"] {
-  --space-tone: var(--cyan);
-}
-
-.dk-space-card[data-tone="pink"] {
-  --space-tone: var(--pink);
-}
-
-.dk-space-card[data-tone="moon"] {
-  --space-tone: var(--moon);
-}
-
-.dk-space-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--chalk-dim);
-}
-
-.dk-space-card:focus-visible {
-  outline: 2px solid var(--cyan);
-  outline-offset: 2px;
-}
-
-.dk-space-icon {
-  color: var(--space-tone);
-  display: inline-flex;
-}
-
-.dk-space-title {
-  font-family: var(--font-display);
-  font-size: 20px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-.dk-space-body {
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--muted);
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-.dk-space-note {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  line-height: 1.4;
-  color: var(--muted);
-  margin: 0;
-}
-
-.dk-space-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: auto;
-  flex-wrap: wrap;
-}
-
-.dk-space-open {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  color: var(--space-tone);
-}
-
-@media (max-width: 1024px) {
-  .dk-space-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 560px) {
-  .dk-space-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (min-width: 1920px) {
-  .dk-space-grid {
-    max-width: 1680px;
-    margin-inline: auto;
-  }
-}
+/* ---------- UI-XV: four-space entry (ADR-0009 taxonomy, MoonUI owns the card) ---------- */
 
 /* ---------- UI-XV: reader provenance disclosure ---------- */
 .dk-reader-block-title {
@@ -2656,7 +2517,6 @@ body {
   }
 
   .dk-station:hover,
-  .dk-space-card:hover,
   .m-btn:hover {
     transform: none !important;
   }

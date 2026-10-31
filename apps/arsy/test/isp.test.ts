@@ -143,11 +143,12 @@ test('D20 grants isolate operator and RADIUS service access by tenant', async (t
 
   const resolved = await call(app, 'post', '/api/v1/isp-radius/nas/resolve', serviceHeaders, { nasId: 'synthetic-nas-a' })
   assert.equal(resolved.statusCode, 200)
-  assert.deepEqual(dataOf<{ resolved: boolean; tenantRef: string; nasId: string; secretRef: string }>(resolved), {
+  assert.deepEqual(dataOf<{ resolved: boolean; tenantRef: string; nasId: string; nasAddress: string; secretRef: string }>(resolved), {
     resolved: true,
     tenantRef: tenantA.id,
     nasRef: nas.id,
     nasId: 'synthetic-nas-a',
+    nasAddress: '192.0.2.10',
     radsecEnabled: false,
     secretRef: 'mounted://synthetic/nas-a',
   })
@@ -206,6 +207,9 @@ test('D20 grants isolate operator and RADIUS service access by tenant', async (t
   assert.equal((await accounting('event-start', 'start', startedAt, 10)).statusCode, 200)
   assert.equal((await accounting('event-start', 'start', startedAt, 10)).statusCode, 200, 'same accounting event is safely idempotent')
   assert.equal((await accounting('event-interim', 'interim', '2026-10-30T03:01:00.000Z', 20)).statusCode, 200)
+  const retransmission = await accounting('event-interim', 'interim', '2026-10-30T03:01:04.000Z', 20)
+  assert.equal(retransmission.statusCode, 200, 'a NAS retransmission stamped with a new receive time stays idempotent')
+  assert.equal(dataOf<{ eventKey: string }>(retransmission).eventKey, 'event-interim')
   const sessionsBeforeStop = await moonql.model('isp_sessions').search({ where: { tenantRef: tenantA.id, sessionKey: 'synthetic-session-a' } })
   const action = await call(app, 'post', `/api/v1/isp/tenants/${tenantA.id}/sessions/${sessionsBeforeStop.rows[0]!.id}/actions`, operatorHeaders, {
     actionKey: 'disconnect-synthetic-1',
@@ -216,6 +220,11 @@ test('D20 grants isolate operator and RADIUS service access by tenant', async (t
   const pendingActions = await call(app, 'get', '/api/v1/isp-radius/session-actions?nasId=synthetic-nas-a', serviceHeaders)
   assert.equal(pendingActions.statusCode, 200)
   assert.equal(dataOf<Array<{ id: string }>>(pendingActions).length, 1, 'the network runtime only sees the persisted pending action')
+  const pendingAction = dataOf<Array<{ sessionKey: string; username: string; action: string; state: string }>>(pendingActions)[0]
+  assert.equal(pendingAction?.sessionKey, 'synthetic-session-a', 'a pending action carries the Acct-Session-Id the runtime must address')
+  assert.equal(pendingAction?.username, 'synthetic-user')
+  assert.equal(pendingAction?.action, 'disconnect')
+  assert.equal(pendingAction?.state, 'pending')
   const actionId = dataOf<{ id: string }>(action).id
   const timeoutResult = await call(app, 'post', '/api/v1/isp-radius/session-actions', serviceHeaders, {
     nasId: 'synthetic-nas-a',

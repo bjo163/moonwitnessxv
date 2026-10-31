@@ -11,10 +11,10 @@ import {
   LiveDot,
   Panel,
   ProgressBar,
+  StatStrip,
   Tape,
   ZineNote,
   Chevron,
-  Glyph,
 } from '@moonwitness/moonui'
 import type { ChartRow, NowPlaying } from '@/data/types'
 import { clock } from '@/lib/time'
@@ -237,21 +237,14 @@ export function CrewConstellation({
 
         <div className="dk-constellation-stats">
           <Card variant="paper" className="dk-paper-stats">
-            <CardBody className="m-stack" style={{ gap: 8, padding: 14 }}>
-              <div className="dk-paper-stat-row">
-                <Glyph code="CR" tone="pink" size="sm" />
-                <div>
-                  <strong>{formatLocaleNumber(counts.stations, locale)}</strong>
-                  <span>{copy.stationCount}</span>
-                </div>
-              </div>
-              <div className="dk-paper-stat-row">
-                <Glyph code="CT" tone="cyan" size="sm" />
-                <div>
-                  <strong>{formatLocaleNumber(counts.countries, locale)}</strong>
-                  <span>{copy.countryCount}</span>
-                </div>
-              </div>
+            <CardBody style={{ padding: 14 }}>
+              <StatStrip
+                orientation="column"
+                items={[
+                  { value: formatLocaleNumber(counts.stations, locale), label: copy.stationCount },
+                  { value: formatLocaleNumber(counts.countries, locale), label: copy.countryCount },
+                ]}
+              />
             </CardBody>
           </Card>
 
@@ -467,7 +460,7 @@ export function NowPlayingCard({ now, live, locale = 'en' }: { now: NowPlaying |
   )
 }
 
-export function StationCard({ station, locale = 'en' }: { station: StationLike; locale?: Locale }): ReactNode {
+export function StationDirectoryCard({ station, locale = 'en' }: { station: StationLike; locale?: Locale }): ReactNode {
   return (
     <a className="dk-station" href={dockHrefFor(locale)(`/stations/${station.id}`)}>
       <div className="m-row" style={{ justifyContent: 'space-between' }}>
@@ -484,12 +477,12 @@ export function StationCard({ station, locale = 'en' }: { station: StationLike; 
   )
 }
 
-export function StationGrid({ stations, locale = 'en' }: { stations: StationLike[]; locale?: Locale }): ReactNode {
+export function StationDirectoryGrid({ stations, locale = 'en' }: { stations: StationLike[]; locale?: Locale }): ReactNode {
   if (!stations.length) return <p className="m-muted">{getLandingCopy(locale).noStations}</p>
   return (
     <div className="dk-grid">
       {stations.map((station) => (
-        <StationCard key={station.id} station={station} locale={locale} />
+        <StationDirectoryCard key={station.id} station={station} locale={locale} />
       ))}
     </div>
   )

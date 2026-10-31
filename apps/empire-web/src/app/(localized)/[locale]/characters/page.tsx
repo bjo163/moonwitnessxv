@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { CodexPage } from '../../../../components/story/CodexPage'
+import { StoryCodexPage } from '@moonwitness/moonui'
+import { SiteHeader } from '@moonwitness/moonui/client'
+import { codexViewProps } from '../../../../components/story/CodexPage'
+import { siteHeaderProps } from '../../../../lib/site-copy'
 import { isLocale, routeMetadata } from '../../../../lib/seo'
 
 export const dynamicParams = false
@@ -12,5 +15,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function CharactersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (locale !== 'id' && locale !== 'en') notFound()
-  return <CodexPage locale={locale} />
+  return (
+    <StoryCodexPage
+      {...codexViewProps(locale)}
+      header={<SiteHeader {...siteHeaderProps(locale, 'characters')} />}
+    />
+  )
 }

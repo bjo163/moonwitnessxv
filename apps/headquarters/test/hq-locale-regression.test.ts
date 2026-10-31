@@ -8,10 +8,15 @@ import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { Locale } from '@moonwitness/core'
 import type { ModelMeta } from '@moonwitness/moonql-client'
+import { formFields } from '@moonwitness/moonql-client'
+import { schemaFields } from '../src/data/form-fields.js'
 
 const testDir = dirname(fileURLToPath(import.meta.url))
 const srcDir = resolve(testDir, '..', 'src')
 const hqCss = readFileSync(resolve(srcDir, 'app', 'globals.css'), 'utf8')
+// ADR-0017 R4: the focus ring on a shared primitive is moon.css's own anatomy, so
+// the guarantee is asserted of its real owner instead of an app override.
+const moonCss = readFileSync(resolve(testDir, '..', '..', '..', 'packages', 'moonui', 'moon.css'), 'utf8')
 const headersFixtureUrl = pathToFileURL(resolve(testDir, 'fixtures', 'next-headers-stub.mjs')).href
 
 registerHooks({
@@ -58,11 +63,10 @@ const meta = {
 } as unknown as ModelMeta
 
 async function modules() {
-  const [{ default: LoginPage }, { AccessDenied }, { RecordForm }, { ModelTable }, { LiveAlert }, copy] = await Promise.all([
+  const [{ default: LoginPage }, { AccessDenied }, { ModelTable, RecordForm }, { LiveAlert }, copy] = await Promise.all([
     import('../src/app/login/page.js'),
     import('../src/ui/widgets/AccessDenied.js'),
-    import('../src/ui/widgets/RecordForm.js'),
-    import('../src/ui/widgets/ModelTable.js'),
+    import('@moonwitness/moonui'),
     import('../src/ui/LiveAlert.js'),
     import('../src/app/(admin)/models/locale-copy.js'),
   ])
@@ -73,8 +77,8 @@ void test('HQ localized login, denial, empty and error states, and model fields 
   const { LoginPage, AccessDenied, RecordForm, ModelTable, LiveAlert, editorFailureMessage, modelViewCopy } = await modules()
 
   assert.match(hqCss, /a:focus-visible/)
-  assert.match(hqCss, /input\.m-input:focus-visible,[\s\S]*?outline:\s*3px solid var\(--accent\)/)
-  assert.match(hqCss, /\.m-toggle input:focus-visible/)
+  assert.match(moonCss, /\.m-btn:focus-visible,[\s\S]*?\.m-input:focus-visible/)
+  assert.match(moonCss, /\.m-toggle input:focus-visible/)
   const reducedMotion = hqCss.match(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{([\s\S]*?)\n\}/)?.[1]
   assert.ok(reducedMotion, 'HQ must define reduced-motion behavior')
   assert.match(reducedMotion, /animation-duration:\s*0\.01ms\s*!important/)
@@ -105,12 +109,14 @@ void test('HQ localized login, denial, empty and error states, and model fields 
     const copy = modelViewCopy(locale)
     const formHtml = renderToStaticMarkup(
       React.createElement(RecordForm, {
-        model: 'SampleRecord',
-        meta,
-        mode: 'create',
+        title: `${copy.create} ${meta.label.toLowerCase()}`,
+        subtitle: copy.fieldsFromSchema.replace('{count}', String(Object.keys(meta.fields).length)),
+        fields: schemaFields(formFields(meta, 'create', {}), {}),
         action: () => undefined,
         error: editorFailureMessage(locale, 'invalid') ?? undefined,
-        locale,
+        submitLabel: copy.create,
+        cancelLabel: copy.cancel,
+        cancelHref: '/models/SampleRecord',
       }),
     )
     assert.match(formHtml, locale === 'en' ? /Create sample record/ : /Buat sample record/)
@@ -121,12 +127,22 @@ void test('HQ localized login, denial, empty and error states, and model fields 
     assert.match(formHtml, locale === 'en' ? />Cancel</ : />Batal</)
 
     const emptyTableHtml = renderToStaticMarkup(
-      React.createElement(ModelTable, { model: 'SampleRecord', meta, rows: [], locale }),
+      React.createElement(ModelTable, {
+        fields: meta.fields,
+        labels: { id: 'id', createdAt: copy.createdAt, actions: copy.actions },
+        empty: copy.noRows.replace('{model}', 'SampleRecord'),
+        rows: [],
+      }),
     )
     assert.ok(emptyTableHtml.includes(copy.noRows.replace('{model}', 'SampleRecord')))
 
     const populatedTableHtml = renderToStaticMarkup(
-      React.createElement(ModelTable, { model: 'SampleRecord', meta, rows: [{ id: 'safe-id', title: 'synthetic value' }], locale }),
+      React.createElement(ModelTable, {
+        fields: meta.fields,
+        labels: { id: 'id', createdAt: copy.createdAt, actions: copy.actions },
+        empty: copy.noRows.replace('{model}', 'SampleRecord'),
+        rows: [{ id: 'safe-id', title: 'synthetic value' }],
+      }),
     )
     assert.match(populatedTableHtml, locale === 'en' ? />Created</ : />Dibuat</)
     assert.match(populatedTableHtml, />title</)

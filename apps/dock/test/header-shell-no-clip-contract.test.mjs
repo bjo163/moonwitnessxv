@@ -207,10 +207,10 @@ async function loadShell() {
   }
 }
 
-const { SiteHeader, NAV_LINKS } = await loadShell()
+const { DockSiteHeader, NAV_LINKS } = await loadShell()
 
 const renderHeader = (initialPath, initialLocale = 'en') =>
-  renderToStaticMarkup(createElement(SiteHeader, { initialPath, initialSearch: '', initialLocale }))
+  renderToStaticMarkup(createElement(DockSiteHeader, { initialPath, initialSearch: '', initialLocale }))
 
 test('UI2-G05 one primary nav source feeds desktop and drawer; the secondary panel is closed at rest', () => {
   const html = renderHeader('/en')

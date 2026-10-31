@@ -6,12 +6,73 @@
  */
 
 import process from 'node:process'
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import reactHooks from 'eslint-plugin-react-hooks'
 import { moonwitnessPlugin } from './plugin.js'
 
 export { moonwitnessPlugin }
+
+const MOONUI_BARRELS = ['packages/moonui/src/index.ts', 'packages/moonui/src/client/index.ts']
+
+/**
+ * Route shells are composition roots, not components (ADR-0017 R2). The list
+ * mirrors `ROUTE_BASENAMES` in scripts/check-ui-consistency.mjs so the two
+ * enforcement layers never disagree about what a composition root is.
+ */
+const ROUTE_SHELL_BASENAMES = [
+  'page.tsx',
+  'layout.tsx',
+  'template.tsx',
+  'error.tsx',
+  'global-error.tsx',
+  'global-not-found.tsx',
+  'loading.tsx',
+  'not-found.tsx',
+  'default.tsx',
+  'route.tsx',
+  'main.tsx',
+  // A Vite app has no route folder: `App` is the single composition root.
+  'App.tsx',
+]
+
+/**
+ * Component names MoonUI already owns. Read from the barrels rather than kept
+ * in a second list, so a new primitive is protected the moment it is exported.
+ */
+function readMoonUiComponentNames(root) {
+  const names = new Set()
+  for (const barrel of MOONUI_BARRELS) {
+    const full = join(root, barrel)
+    if (!existsSync(full)) continue
+    const source = readFileSync(full, 'utf8')
+    for (const match of source.matchAll(/export\s*\{([\s\S]*?)\}/g)) {
+      for (const part of match[1].split(',')) {
+        const cleaned = part.trim()
+        if (!cleaned || cleaned.startsWith('type ')) continue
+        const name = cleaned.split(/\s+as\s+/).pop().trim()
+        if (/^[A-Z]/.test(name)) names.add(name)
+      }
+    }
+    for (const match of source.matchAll(/export\s+(?:async\s+)?function\s+([A-Z][A-Za-z0-9_]*)/g)) names.add(match[1])
+    for (const match of source.matchAll(/export\s+const\s+([A-Z][A-Za-z0-9_]*)/g)) names.add(match[1])
+  }
+  return [...names].sort()
+}
+
+/** Paths the ADR-0017 ledger still tolerates; the list may only shrink. */
+function readLedgerExceptions(root) {
+  const full = join(root, 'docs/design/moonui-exceptions.json')
+  if (!existsSync(full)) return []
+  try {
+    const parsed = JSON.parse(readFileSync(full, 'utf8'))
+    return (parsed.entries ?? []).map((entry) => entry.path).filter(Boolean)
+  } catch {
+    return []
+  }
+}
 
 export const GLOBAL_IGNORES = [
   'node_modules/**',
@@ -88,6 +149,8 @@ export const typescriptRules = {
  */
 export function createMoonwitnessConfig(options = {}) {
   const tsconfigRootDir = options.tsconfigRootDir || process.cwd()
+  const moonUiComponentNames = readMoonUiComponentNames(tsconfigRootDir)
+  const sharedUiExceptions = readLedgerExceptions(tsconfigRootDir)
 
   return tseslint.config(
     { ignores: GLOBAL_IGNORES },
@@ -118,7 +181,7 @@ export function createMoonwitnessConfig(options = {}) {
 
     // 2. React Hooks (Dock, HQ, MoonUI, Cockpit and ECHOLOG operator clients)
     {
-      files: ['apps/dock/**/*.tsx', 'apps/headquarters/**/*.tsx', 'packages/moonui/**/*.tsx', 'apps/cockpit/client/**/*.tsx', 'apps/echolog/client/**/*.tsx', 'apps/skylink/client/**/*.tsx', 'apps/orbit/**/*.tsx'],
+      files: ['apps/dock/**/*.tsx', 'apps/headquarters/**/*.tsx', 'packages/moonui/**/*.tsx', 'apps/cockpit/client/**/*.tsx', 'apps/echolog/client/**/*.tsx', 'apps/skylink/client/**/*.tsx', 'apps/orbit/**/*.tsx', 'apps/empire-web/**/*.tsx'],
       plugins: {
         'react-hooks': reactHooks,
         '@moonwitness': moonwitnessPlugin,
@@ -129,9 +192,31 @@ export function createMoonwitnessConfig(options = {}) {
       },
     },
 
+    // 2b. Shared-first UI (ADR-0017) — MoonUI owns every primitive
+    {
+      files: ['apps/**/*.tsx'],
+      plugins: { '@moonwitness': moonwitnessPlugin },
+      rules: {
+        '@moonwitness/shared-ui-only': [
+          'error',
+          {
+            names: moonUiComponentNames,
+            exceptions: sharedUiExceptions,
+            ignoreBasenames: ROUTE_SHELL_BASENAMES,
+          },
+        ],
+        '@moonwitness/enforce-token-purity': 'error',
+      },
+    },
+
     // 3. Monorepo Architecture Isolation Boundaries
     {
-      files: ['apps/**/*.{ts,tsx}', 'packages/moonql-*/**/*.{ts,tsx}', 'packages/denpa/**/*.{ts,tsx}', 'packages/skylink-whatsapp/**/*.{ts,tsx}'],
+      files: [
+        'apps/**/*.{ts,tsx}',
+        'packages/moonql-*/**/*.{ts,tsx}',
+        'packages/denpa/**/*.{ts,tsx}',
+        'packages/skylink-whatsapp/**/*.{ts,tsx}',
+      ],
       rules: {
         'no-restricted-imports': [
           'error',

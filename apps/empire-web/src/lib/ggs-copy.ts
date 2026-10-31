@@ -1,4 +1,17 @@
+import type { StoryGgsArtwork } from '@moonwitness/moonui'
 import type { StoryLocale } from './story-universe'
+
+/**
+ * REF-05 artwork. The image files ship with Empire, so the view receives the
+ * URLs as props instead of baking a content path into the design system.
+ */
+export const ggsArtwork: StoryGgsArtwork = {
+  hero: '/story-universe/moon-academy.webp',
+  lesson: '/story-universe/home-mooncity.webp',
+  poster: '/story-universe/reader-poster.webp',
+  session: '/story-universe/library-guardian.webp',
+  reflection: '/story-universe/home-mooncity.webp',
+}
 
 /**
  * GGS Full Moon School copy from the REF-05 mockup (M45-11).

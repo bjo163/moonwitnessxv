@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { InfoPage } from '@moonwitness/moonui'
+import { SiteHeader } from '@moonwitness/moonui/client'
 import { pageCopy, sections, type Section } from '../../../../lib/pages'
 import { content, spaceEvidence } from '../../../../lib/copy'
 import type { Locale } from '../../../../lib/copy'
 import { routeMetadata } from '../../../../lib/seo'
-import { InfoPage } from '../../../../components/site/InfoPage'
+import { infoPageProps } from '../../../../components/site/InfoPage'
+import { siteHeaderProps } from '../../../../lib/site-copy'
 
 type Params = { locale: string; section: string }
 export const dynamicParams = false
@@ -26,15 +29,8 @@ export default async function InformationPage({ params }: { params: Promise<Para
   const t = pageCopy[locale]
   const page = t[section]
   return <InfoPage
-    locale={locale}
-    section={section}
-    sections={sections}
-    title={page.title}
-    summary={page.summary}
-    preview={t.preview}
-    home={t.home}
-    navigation={t.navigation}
-    langLabel={locale === 'id' ? 'Switch to English' : 'Ganti ke Bahasa Indonesia'}
+    {...infoPageProps(locale, section)}
+    header={<SiteHeader {...siteHeaderProps(locale, 'stories')} />}
   >
     {page.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
 

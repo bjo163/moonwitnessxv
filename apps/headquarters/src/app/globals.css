@@ -5,10 +5,6 @@
 
 a:focus-visible,
 button:focus-visible,
-input.m-input:focus-visible,
-textarea.m-textarea:focus-visible,
-select.m-select:focus-visible,
-.m-toggle input:focus-visible,
 [role='button']:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
@@ -69,7 +65,7 @@ select.m-select:focus-visible,
   display: flex;
   align-items: center;
 }
-.hq-shadow-card {
+.hq-shadow-shell {
   width: 100%;
 }
 .hq-shadow-head {
@@ -203,7 +199,7 @@ select.m-select:focus-visible,
   gap: 12px;
   align-items: stretch;
 }
-.hq-mc-radar-card {
+.hq-radar-stage {
   position: relative;
   display: grid;
   place-items: center;
@@ -309,12 +305,5 @@ select.m-select:focus-visible,
   }
   .hq-universe-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .m-shell {
-    grid-template-columns: 1fr;
-  }
-  .m-sidebar {
-    border-right: none;
-    border-bottom: 3px solid var(--fg);
   }
 }

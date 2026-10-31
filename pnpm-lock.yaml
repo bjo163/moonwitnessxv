@@ -274,34 +274,6 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
-  apps/empire-web:
-    dependencies:
-      '@moonwitness/moonui':
-        specifier: workspace:*
-        version: link:../../packages/moonui
-      next:
-        specifier: ^16.4.3
-        version: 16.4.3(@playwright/test@1.64.1)(@types/node@22.20.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      react:
-        specifier: ^19.3.1
-        version: 19.3.1
-      react-dom:
-        specifier: ^19.3.1
-        version: 19.3.1(react@19.3.1)
-    devDependencies:
-      '@types/node':
-        specifier: ^22.10.5
-        version: 22.20.5
-      '@types/react':
-        specifier: ^19.0.0
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: ^19.0.0
-        version: 19.3.0(@types/react@19.3.0)
-      typescript:
-        specifier: ^5.7.3
-        version: 5.9.3
-
   apps/echolog:
     dependencies:
       '@moonwitness/echolog-core':
@@ -360,7 +332,72 @@ importers:
         specifier: ^8.3.5
         version: 8.3.5(@types/node@22.20.5)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)
 
+  apps/empire-web:
+    dependencies:
+      '@moonwitness/moonui':
+        specifier: workspace:*
+        version: link:../../packages/moonui
+      next:
+        specifier: ^16.4.3
+        version: 16.4.3(@playwright/test@1.64.1)(@types/node@22.20.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.3.0(@types/react@19.3.0)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
   apps/headquarters:
+    dependencies:
+      '@moonwitness/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@moonwitness/moonql-client':
+        specifier: workspace:*
+        version: link:../../packages/moonql-client
+      '@moonwitness/moonui':
+        specifier: workspace:*
+        version: link:../../packages/moonui
+      '@moonwitness/web-config':
+        specifier: workspace:*
+        version: link:../../packages/web-config
+      next:
+        specifier: ^16.4.3
+        version: 16.4.3(@playwright/test@1.64.1)(@types/node@22.20.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.3.1
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.3.0(@types/react@19.3.0)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  apps/isp-console:
     dependencies:
       '@moonwitness/core':
         specifier: workspace:*
@@ -608,15 +645,6 @@ importers:
         version: 5.9.3
 
   packages/lumen:
-    devDependencies:
-      '@types/node':
-        specifier: ^22.10.5
-        version: 22.20.5
-      typescript:
-        specifier: ^5.7.3
-        version: 5.9.3
-
-  packages/review-grants:
     devDependencies:
       '@types/node':
         specifier: ^22.10.5
@@ -975,6 +1003,15 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.3.1
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  packages/review-grants:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.5
       typescript:
         specifier: ^5.7.3
         version: 5.9.3

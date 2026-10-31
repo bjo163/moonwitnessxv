@@ -50,8 +50,8 @@ try {
 }
 
 const {
-  SiteHeader,
-  SiteFooter,
+  DockSiteHeader,
+  DockFooter,
   isRouteActive,
   getLocalizedNavHref,
   normalizePath,
@@ -61,7 +61,7 @@ const {
 test('header navigation assigns aria-current="page" and dk-nav-active only to the active route', () => {
   // The brand owns HOME; the four primary spaces follow in the agreed order.
   const homeHtml = renderToStaticMarkup(
-    createElement(SiteHeader, {
+    createElement(DockSiteHeader, {
       initialPath: '/id',
       initialSearch: '',
       initialLocale: 'id',
@@ -82,7 +82,7 @@ test('header navigation assigns aria-current="page" and dk-nav-active only to th
 
   // Case 2: Active on English Signals page (/en/stations)
   const stationsHtml = renderToStaticMarkup(
-    createElement(SiteHeader, {
+    createElement(DockSiteHeader, {
       initialPath: '/en/stations',
       initialSearch: '',
       initialLocale: 'en',
@@ -96,7 +96,7 @@ test('header navigation assigns aria-current="page" and dk-nav-active only to th
 
   // Case 3: Active on sub-path (/id/reader/compare matches READER)
   const readerSubHtml = renderToStaticMarkup(
-    createElement(SiteHeader, {
+    createElement(DockSiteHeader, {
       initialPath: '/id/reader/compare',
       initialSearch: '',
       initialLocale: 'id',
@@ -111,7 +111,7 @@ test('header navigation assigns aria-current="page" and dk-nav-active only to th
 
   // Terms uses the EXPLORE label and remains locale-aware.
   const termsHtml = renderToStaticMarkup(
-    createElement(SiteHeader, {
+    createElement(DockSiteHeader, {
       initialPath: '/en/terms',
       initialSearch: '',
       initialLocale: 'en',
@@ -127,7 +127,7 @@ test('header navigation assigns aria-current="page" and dk-nav-active only to th
 test('primary and index routes preserve locale prefix; home section links live in the footer', () => {
   // Indonesian locale
   const idHtml = renderToStaticMarkup(
-    createElement(SiteHeader, {
+    createElement(DockSiteHeader, {
       initialPath: '/id',
       initialSearch: '',
       initialLocale: 'id',
@@ -143,7 +143,7 @@ test('primary and index routes preserve locale prefix; home section links live i
 
   // English locale
   const enHtml = renderToStaticMarkup(
-    createElement(SiteHeader, {
+    createElement(DockSiteHeader, {
       initialPath: '/en/stations',
       initialSearch: '',
       initialLocale: 'en',
@@ -157,8 +157,8 @@ test('primary and index routes preserve locale prefix; home section links live i
   }
   assert.doesNotMatch(enHtml, /class="dk-icon-btn"[^>]*>SRC<|>NET<\/a>/)
 
-  const idFooter = renderToStaticMarkup(createElement(SiteFooter, { initialLocale: 'id' }))
-  const enFooter = renderToStaticMarkup(createElement(SiteFooter, { initialLocale: 'en' }))
+  const idFooter = renderToStaticMarkup(createElement(DockFooter, { initialLocale: 'id' }))
+  const enFooter = renderToStaticMarkup(createElement(DockFooter, { initialLocale: 'en' }))
   assert.match(idFooter, /href="\/id#constellation"[^>]*>KRU<\/a>/)
   assert.match(idFooter, /href="\/id#zine-poster"[^>]*>TENTANG<\/a>/)
   assert.match(enFooter, /href="\/en#constellation"[^>]*>CREW<\/a>/)
@@ -167,7 +167,7 @@ test('primary and index routes preserve locale prefix; home section links live i
 
 test('header Join CTA points directly to in-page footer anchor #join-crew without resetting route', () => {
   const headerHtml = renderToStaticMarkup(
-    createElement(SiteHeader, {
+    createElement(DockSiteHeader, {
       initialPath: '/en/reader',
       initialSearch: '',
       initialLocale: 'en',
@@ -187,8 +187,8 @@ test('header Join CTA points directly to in-page footer anchor #join-crew withou
   assert.doesNotMatch(headerHtml, /href="\/#join-crew"/)
   assert.doesNotMatch(headerHtml, /href="\/en#join-crew"/)
 
-  // SiteFooter has id="join-crew"
-  const footerHtml = renderToStaticMarkup(createElement(SiteFooter, { initialLocale: 'en' }))
+  // DockFooter has id="join-crew"
+  const footerHtml = renderToStaticMarkup(createElement(DockFooter, { initialLocale: 'en' }))
   assert.match(footerHtml, /<footer\s+class="dk-footer"\s+id="join-crew">/)
   // Footer CTA is locale-aware
   assert.match(footerHtml, /href="\/en\/stations"/)
@@ -196,7 +196,7 @@ test('header Join CTA points directly to in-page footer anchor #join-crew withou
 
 test('mobile menu trigger and drawer declare valid ARIA accessibility attributes', () => {
   const html = renderToStaticMarkup(
-    createElement(SiteHeader, {
+    createElement(DockSiteHeader, {
       initialPath: '/id',
       initialSearch: '',
       initialLocale: 'id',

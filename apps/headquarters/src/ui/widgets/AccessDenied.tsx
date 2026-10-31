@@ -1,11 +1,13 @@
-import { Button, PageHeader, Panel } from '@moonwitness/moonui'
+import { AccessDeniedView } from '@moonwitness/moonui'
 import { cookies, headers } from 'next/headers'
 import { resolveLocale } from '@moonwitness/core'
 import { denialCopy, denialMessage, type DenialCopyKey } from '@/lib/denial-copy'
-import { LiveAlert } from '@/ui/LiveAlert'
 
 /**
  * What a guarded page renders instead of privileged content.
+ *
+ * ADR-0017: this file is the container only — it resolves the locale and the
+ * denial code; the screen itself is MoonUI's `AccessDeniedView`.
  *
  * It is deliberately data-free: a denial never shows a partially loaded admin
  * shell, and the only text it can contain is a localized string chosen by a
@@ -26,30 +28,14 @@ export async function AccessDenied({ code }: { code: DenialCopyKey }) {
   if (!message) return null
 
   return (
-    <div className="m-stack">
-      <PageHeader
-        title={message.title}
-        breadcrumbs={[{ label: 'HQ', href: '/' }]}
-        actions={
-          <a className="m-btn" href="/">
-            {copy.back}
-          </a>
-        }
-      />
-      <Panel title={message.title} subtitle="access checked on the server, before any record was read">
-        <div className="m-stack" style={{ gap: 12 }}>
-          <LiveAlert role="alert" tone={code === 'unavailable' ? 'accent' : 'hot'}>{message.body}</LiveAlert>
-          {code === 'unavailable' ? (
-            // no action: a GET form re-reads the current URL, i.e. re-checks
-            // this exact page against the hub once it answers again
-            <form method="get" className="m-row">
-              <Button type="submit" variant="ghost">
-                {copy.retry}
-              </Button>
-            </form>
-          ) : null}
-        </div>
-      </Panel>
-    </div>
+    <AccessDeniedView
+      title={message.title}
+      body={message.body}
+      backHref="/"
+      backLabel={copy.back}
+      retryLabel={copy.retry}
+      canRetry={code === 'unavailable'}
+      subtitle="access checked on the server, before any record was read"
+    />
   )
 }

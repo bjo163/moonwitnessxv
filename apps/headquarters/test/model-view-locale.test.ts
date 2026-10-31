@@ -4,8 +4,9 @@ import { test } from 'node:test'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { ModelMeta } from '@moonwitness/moonql-client'
-import { RecordForm } from '../src/ui/widgets/RecordForm.js'
-import { ModelTable } from '../src/ui/widgets/ModelTable.js'
+import { formFields } from '@moonwitness/moonql-client'
+import { ModelTable, RecordForm } from '@moonwitness/moonui'
+import { schemaFields } from '../src/data/form-fields.js'
 import { editorFailureMessage, editorStatusMessage, modelViewCopy } from '../src/app/(admin)/models/locale-copy.js'
 
 const metadata = {
@@ -46,15 +47,20 @@ void test('model and view chrome has complete Indonesian and English catalogs', 
 })
 
 void test('both locale forms render localized controls while schema field IDs remain stable', () => {
-  const render = (locale: 'en' | 'id') => renderToStaticMarkup(
-    React.createElement(RecordForm, {
-      model: 'SampleRecord',
-      meta: metadata,
-      mode: 'create',
-      action: () => undefined,
-      locale,
-    }),
-  )
+  const render = (locale: 'en' | 'id') => {
+    const copy = modelViewCopy(locale)
+    return renderToStaticMarkup(
+      React.createElement(RecordForm, {
+        title: `${copy.create} ${metadata.label.toLowerCase()}`,
+        subtitle: copy.fieldsFromSchema.replace('{count}', '1'),
+        fields: schemaFields(formFields(metadata, 'create', {}), {}),
+        action: () => undefined,
+        submitLabel: copy.create,
+        cancelLabel: copy.cancel,
+        cancelHref: '/models/SampleRecord',
+      }),
+    )
+  }
   const english = render('en')
   const indonesian = render('id')
 
@@ -69,15 +75,18 @@ void test('both locale forms render localized controls while schema field IDs re
 })
 
 void test('model table localizes chrome but preserves schema column identifiers and permission supplied actions', () => {
-  const render = (locale: 'en' | 'id') => renderToStaticMarkup(
-    React.createElement(ModelTable, {
-      model: 'SampleRecord',
-      meta: metadata,
-      rows: [{ id: 'safe-id', title: 'synthetic' }],
-      rowHref: (row: Record<string, unknown>) => `/models/SampleRecord/${String(row.id)}`,
-      locale,
-    }),
-  )
+  const render = (locale: 'en' | 'id') => {
+    const copy = modelViewCopy(locale)
+    return renderToStaticMarkup(
+      React.createElement(ModelTable, {
+        fields: metadata.fields,
+        labels: { id: 'id', createdAt: copy.createdAt, actions: copy.actions },
+        empty: copy.noRows.replace('{model}', 'SampleRecord'),
+        rows: [{ id: 'safe-id', title: 'synthetic' }],
+        rowHref: (row: Record<string, unknown>) => `/models/SampleRecord/${String(row.id)}`,
+      }),
+    )
+  }
   const english = render('en')
   const indonesian = render('id')
 

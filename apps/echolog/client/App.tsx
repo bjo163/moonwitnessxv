@@ -8,12 +8,12 @@ import {
   Stat,
   TextInput,
 } from '@moonwitness/moonui'
-import { EchologConfirmDialog } from './components/EchologConfirmDialog.js'
-import { EchologDetailPanel } from './components/EchologDetailPanel.js'
+import { AlertDialog } from '@moonwitness/moonui/client'
+import { ObjectDetailPanel } from '@moonwitness/moonui'
 import { EchologObjectList, type WatchRow } from './components/EchologObjectList.js'
 import { EchologUploadPanel, type ConfirmRequest } from './components/EchologUploadPanel.js'
 import { deleteObject, fetchHealth, requestDownloadGrant, runGarbageCollection, fetchObjectMeta, ApiError, type HealthSnapshot } from './lib/api.js'
-import { formatBytes } from './lib/format.js'
+import { formatBytes, formatCountdown, grantRemainingSeconds, retentionWords, scanWords } from './lib/format.js'
 import { isDigest, parseWatchlist, refFromSidecar, removeRef, serializeWatchlist, upsertRef, WATCHLIST_STORAGE_KEY } from './lib/watchlist.js'
 import type { DownloadGrant, GcResult, ObjectRef, ObjectSidecar } from './types.js'
 
@@ -252,11 +252,42 @@ export function App(): ReactNode {
           }
           right={
             <div className="echolog-stack">
-              <EchologDetailPanel
-                sidecar={selectedSidecar}
+              <ObjectDetailPanel
+                stats={
+                  selectedSidecar
+                    ? {
+                        filename: selectedSidecar.filename,
+                        digest: selectedSidecar.digest,
+                        size: formatBytes(selectedSidecar.size),
+                        contentType: selectedSidecar.content_type,
+                        uploader: selectedSidecar.uploader,
+                        createdAt: selectedSidecar.created_at,
+                      }
+                    : null
+                }
+                objectKey={selectedSidecar?.object_key}
+                scan={
+                  selectedSidecar
+                    ? { label: scanWords(selectedSidecar.scan).label, tone: scanWords(selectedSidecar.scan).tone }
+                    : undefined
+                }
+                retention={
+                  selectedSidecar
+                    ? {
+                        label: retentionWords(selectedSidecar, nowMs).label,
+                        tone: retentionWords(selectedSidecar, nowMs).tone,
+                      }
+                    : undefined
+                }
+                legalHold={selectedSidecar?.legal_hold}
+                grant={
+                  grant ? { url: grant.url, expiresAt: grant.expires_at } : null
+                }
+                remaining={grant ? grantRemainingSeconds(grant.expires_at, nowMs) : 0}
+                countdown={
+                  grant ? formatCountdown(grantRemainingSeconds(grant.expires_at, nowMs)) : undefined
+                }
                 metaError={selectedRef?.error ?? null}
-                grant={grant}
-                nowMs={nowMs}
                 deleteError={deleteError}
                 busy={actionBusy}
                 onRefresh={() => void refreshAll()}
@@ -264,7 +295,7 @@ export function App(): ReactNode {
                 onDelete={() => void confirmDelete()}
               />
               <Panel title="Garbage collection" subtitle="Administrator action; held objects are reported, never deleted.">
-                <div className="echolog-row">
+                <div className="m-row">
                   <Button variant="danger" onClick={() => void confirmGc()} disabled={!token || actionBusy}>
                     Run GC
                   </Button>
@@ -284,14 +315,17 @@ export function App(): ReactNode {
       </main>
 
       {pendingConfirm ? (
-        <EchologConfirmDialog
+        <AlertDialog
+          isOpen
+          tone="danger"
           title={pendingConfirm.request.title}
-          objectKey={pendingConfirm.request.objectKey}
-          detail={pendingConfirm.request.detail}
+          message={pendingConfirm.request.detail}
+          note={<code className="m-mono">{pendingConfirm.request.objectKey}</code>}
           confirmLabel={pendingConfirm.request.confirmLabel}
+          cancelLabel="Cancel"
           busy={false}
           onConfirm={() => resolveConfirm(true)}
-          onCancel={() => resolveConfirm(false)}
+          onClose={() => resolveConfirm(false)}
         />
       ) : null}
     </div>

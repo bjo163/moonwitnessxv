@@ -7,6 +7,10 @@ import { dirname, join } from 'node:path'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const globalsCssPath = join(__dirname, '../src/app/globals.css')
 const cssContent = readFileSync(globalsCssPath, 'utf8')
+// ADR-0017: the four-space card and grid are MoonUI components, so their
+// responsive and reduced-motion rules live in the shared stylesheet.
+const moonCssPath = join(__dirname, '../../../packages/moonui/moon.css')
+const moonCssContent = readFileSync(moonCssPath, 'utf8')
 
 /**
  * Helper to extract the contents of a CSS block by tracking curly brace depth.
@@ -92,13 +96,18 @@ test('globals.css defines prefers-reduced-motion media query suppressing animati
     'Must reset transforms on hover to none !important'
   )
   assert.match(
-    cssContent,
-    /\.dk-space-card:hover\s*\{[^}]*transform:\s*translateY\(-2px\)/i,
+    moonCssContent,
+    /\.m-space-card:hover\s*\{[^}]*transform:\s*translateY\(-2px\)/i,
     'Space cards must define the hover transform that reduced motion overrides'
   )
+  const moonReducedMotionBlock = extractMediaBlock(
+    moonCssContent,
+    /@media\s*\(\s*prefers-reduced-motion:\s*reduce\s*\)\s*\{/i
+  )
+  assert.ok(moonReducedMotionBlock, 'MoonUI must publish its own reduced-motion block')
   assert.match(
-    reducedMotionBlock,
-    /\.dk-space-card:hover[\s\S]*?transform:\s*none\s*!important/i,
+    moonReducedMotionBlock,
+    /\.m-space-card:hover[\s\S]*?transform:\s*none\s*!important/i,
     'Reduced motion must suppress the space-card hover transform'
   )
 })
@@ -118,16 +127,17 @@ test('globals.css defines visible keyboard focus-visible outline rules for navig
     'Must define focus-visible outline for .dk-icon-btn'
   )
 
-  // System buttons focus outline
+  // System buttons focus outline — ADR-0017 R4: the ring on a shared primitive is
+  // moon.css's own anatomy, so the guarantee is asserted of its real owner.
   assert.match(
-    cssContent,
+    moonCssContent,
     /\.m-btn:focus-visible/,
     'Must define focus-visible outline for .m-btn'
   )
 
   // Brand logo link focus outline
   assert.match(
-    cssContent,
+    moonCssContent,
     /\.m-brand-link:focus-visible/,
     'Must define focus-visible outline for .m-brand-link'
   )
@@ -196,7 +206,7 @@ test('globals.css defines responsive layout safeguards and horizontal overflow c
 })
 
 test('space cards use the four-to-two-to-one responsive grid without fixed widths', () => {
-  const baseGrid = extractRule(cssContent, '.dk-space-grid')
+  const baseGrid = extractRule(moonCssContent, '.m-space-grid')
   assert.ok(baseGrid, 'Space grid base rule must exist')
   assert.match(
     baseGrid,
@@ -204,23 +214,23 @@ test('space cards use the four-to-two-to-one responsive grid without fixed width
     'Wide layouts must render four flexible columns'
   )
 
-  const tabletBlock = extractMediaBlock(cssContent, /@media\s*\(\s*max-width:\s*1024px\s*\)\s*\{/i)
+  const tabletBlock = extractMediaBlock(moonCssContent, /@media\s*\(\s*max-width:\s*1024px\s*\)\s*\{/i)
   assert.ok(tabletBlock, 'Tablet grid breakpoint must exist')
   assert.match(
-    extractRule(tabletBlock, '.dk-space-grid'),
+    extractRule(tabletBlock, '.m-space-grid'),
     /grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/i,
     'Tablet layouts must render two flexible columns'
   )
 
-  const mobileBlock = extractMediaBlock(cssContent, /@media\s*\(\s*max-width:\s*560px\s*\)\s*\{/i)
+  const mobileBlock = extractMediaBlock(moonCssContent, /@media\s*\(\s*max-width:\s*560px\s*\)\s*\{/i)
   assert.ok(mobileBlock, 'Mobile grid breakpoint must exist')
   assert.match(
-    extractRule(mobileBlock, '.dk-space-grid'),
+    extractRule(mobileBlock, '.m-space-grid'),
     /grid-template-columns:\s*minmax\(0,\s*1fr\)/i,
     'Mobile layouts must render one flexible column'
   )
 
-  const cardRule = extractRule(cssContent, '.dk-space-card')
+  const cardRule = extractRule(moonCssContent, '.m-space-card')
   assert.ok(cardRule, 'Space card rule must exist')
   assert.match(cardRule, /min-width:\s*0/i, 'Cards must be allowed to shrink within the grid')
   assert.match(cardRule, /overflow-wrap:\s*anywhere/i, 'Long card copy must wrap without forcing overflow')

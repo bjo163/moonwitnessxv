@@ -1,4 +1,4 @@
-import type { ReactNode, CSSProperties } from 'react'
+import type { HTMLAttributes, ReactNode, CSSProperties } from 'react'
 import { cn } from './cn.js'
 
 export type CardVariant = 'default' | 'art' | 'outline' | 'ghost' | 'shadow' | 'paper'
@@ -9,19 +9,21 @@ export function Card({
   bgImage,
   className,
   id,
+  style,
 }: {
   children: ReactNode
   variant?: CardVariant
   bgImage?: string
   className?: string
   id?: string
+  style?: CSSProperties
 }): ReactNode {
   return (
     <div
       id={id}
       className={cn('m-card', className)}
       data-variant={variant}
-      style={bgImage ? { backgroundImage: `url(${bgImage})` } : undefined}
+      style={bgImage ? { backgroundImage: `url(${bgImage})`, ...style } : style}
     >
       {children}
     </div>
@@ -131,9 +133,14 @@ export function PageHeader({
 
 export type BadgeTone = 'accent' | 'ok' | 'hot' | 'night' | 'moon' | 'pink' | 'cyan'
 
-export function Badge({ children, tone }: { children: ReactNode; tone?: BadgeTone }): ReactNode {
+/** A status word. `title` is passed through so a badge can carry its own tooltip. */
+export function Badge({
+  children,
+  tone,
+  ...rest
+}: { children: ReactNode; tone?: BadgeTone } & HTMLAttributes<HTMLSpanElement>): ReactNode {
   return (
-    <span className="m-badge" data-tone={tone}>
+    <span className="m-badge" data-tone={tone} {...rest}>
       {children}
     </span>
   )
@@ -149,6 +156,39 @@ export function Stat({ label, value, hint }: { label: ReactNode; value: ReactNod
   )
 }
 
+export interface StatStripItem {
+  value: ReactNode
+  label: ReactNode
+}
+
+/**
+ * Value/label strip. The page owns the band (position, height); the `<b>`/`<span>`
+ * anatomy and its tokens belong to MoonUI. `column` is the stacked form a narrow
+ * paper card needs — the page must not re-declare the anatomy to get it.
+ */
+export function StatStrip({
+  items,
+  className,
+  as: Tag = 'div',
+  orientation = 'row',
+}: {
+  items: StatStripItem[]
+  className?: string
+  as?: 'div' | 'section'
+  orientation?: 'row' | 'column'
+}): ReactNode {
+  return (
+    <Tag className={cn('m-stat-strip', className)} data-orientation={orientation}>
+      {items.map((item, index) => (
+        <div className="m-stat-strip-item" key={`${index}-${String(item.label)}`}>
+          <b>{item.value}</b>
+          <span>{item.label}</span>
+        </div>
+      ))}
+    </Tag>
+  )
+}
+
 export function StatCard({ label, value, hint }: { label: ReactNode; value: ReactNode; hint?: ReactNode }): ReactNode {
   return (
     <Card>
@@ -159,9 +199,25 @@ export function StatCard({ label, value, hint }: { label: ReactNode; value: Reac
   )
 }
 
-export function Alert({ children, tone }: { children: ReactNode; tone?: 'hot' | 'ok' | 'accent' }): ReactNode {
+export function Alert({
+  children,
+  tone,
+  role,
+  live,
+}: {
+  children: ReactNode
+  tone?: 'hot' | 'ok' | 'accent'
+  /** `alert` interrupts, `status` announces politely; omitted means presentational. */
+  role?: 'alert' | 'status'
+  live?: 'polite' | 'assertive'
+}): ReactNode {
   return (
-    <div className="m-alert" data-tone={tone}>
+    <div
+      className="m-alert"
+      data-tone={tone}
+      role={role}
+      aria-live={live ?? (role === 'status' ? 'polite' : undefined)}
+    >
       {children}
     </div>
   )

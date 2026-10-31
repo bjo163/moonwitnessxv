@@ -54,6 +54,94 @@ export function TabBar({ tabs, activeKey }: { tabs: NavItem[]; activeKey?: strin
   )
 }
 
+export interface SectionNavItem {
+  key: string
+  label: string
+  href: string
+}
+
+/**
+ * In-page section navigation: one `<nav>` landmark, anchors with `aria-current`.
+ * Server-safe (no haptics, no state) so a Server Component may render it.
+ */
+export function SectionNav({
+  items,
+  activeKey,
+  label = 'Section',
+  className,
+}: {
+  items: SectionNavItem[]
+  activeKey?: string
+  label?: string
+  className?: string
+}): ReactNode {
+  return (
+    <nav className={cn('m-section-nav', className)} aria-label={label}>
+      <ul className="m-section-nav-list">
+        {items.map((item) => {
+          const current = item.key === activeKey
+          return (
+            <li key={item.key}>
+              <a
+                className="m-section-nav-link"
+                href={item.href}
+                aria-current={current ? 'page' : undefined}
+                data-active={current ? 'true' : 'false'}
+              >
+                {item.label}
+              </a>
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
+  )
+}
+
+export interface LocaleLink {
+  locale: string
+  href: string
+  label: string
+}
+
+/**
+ * Locale switcher that renders real anchors. The surface owns the cookie and the
+ * reload; MoonUI owns the landmark, the current state and the focus ring.
+ */
+export function LocaleLinks({
+  items,
+  current,
+  label,
+  className,
+}: {
+  items: LocaleLink[]
+  current: string
+  label: string
+  className?: string
+}): ReactNode {
+  return (
+    <nav className={cn('m-locale-links', className)} aria-label={label}>
+      {items.map((item, index) => (
+        <span key={item.locale} className="m-locale-links-item">
+          {index > 0 ? (
+            <span className="m-locale-links-sep" aria-hidden="true">
+              |
+            </span>
+          ) : null}
+          <a
+            href={item.href}
+            lang={item.locale}
+            aria-current={current === item.locale ? 'true' : undefined}
+            data-active={current === item.locale ? 'true' : 'false'}
+          >
+            {item.label}
+          </a>
+        </span>
+      ))}
+    </nav>
+  )
+}
+
 export interface TabItem {
   id: string
   label: ReactNode

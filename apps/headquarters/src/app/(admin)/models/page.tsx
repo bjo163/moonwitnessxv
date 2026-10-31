@@ -1,6 +1,5 @@
-import { Badge, DataTable, PageHeader, Panel } from '@moonwitness/moonui'
+import { Badge, DataTable, PageHeader, Panel, TierBadge } from '@moonwitness/moonui'
 import { getSchema } from '@/data/schema'
-import { TierBadge } from '@/ui/widgets/ModelTable'
 import { interpolate, modelViewCopy } from './locale-copy'
 import { requestLocale } from '@/lib/request-locale'
 

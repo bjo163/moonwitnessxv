@@ -77,3 +77,42 @@ export const spaceEvidence: Record<string, { owner: string; sourceRef: string; r
   shadow: { owner: 'MoonWitness XV / proposed SHADOW', sourceRef: 'docs/product/A-L-L-A-H-COM-MASTER-SPEC.md', reviewedAt: '2026-10-29' },
   works: { owner: 'MoonWitness XV / proposed WORKS', sourceRef: 'docs/product/A-L-L-A-H-COM-MASTER-SPEC.md', reviewedAt: '2026-10-29' },
 }
+
+/**
+ * Landing-page strings that the entry shell renders but `content` did not carry:
+ * the hero art labels, the section ordinals, the four starting points and the
+ * notebook card. They read as markup literals because they are copy (ADR-0017
+ * R2/R3): MoonUI's `LandingPage` asks for them instead of spelling them out.
+ */
+export const landingExtras: Record<Locale, {
+  art: { top: string; bottom: string; mark: string; index: string }
+  missionIndex: string
+  discoverTitle: string
+  discover: Array<{ section: 'sources' | 'ecosystem' | 'values' | 'roadmap'; label: string; description: string }>
+  notebook: { date: string; line: string; foot: string }
+}> = {
+  id: {
+    art: { top: 'FROM THE SKY', bottom: 'TO THE CLOUD', mark: 'MW XV · 2026', index: '00 / LIGHTHOUSE' },
+    missionIndex: '01 / MISSION',
+    discoverTitle: 'Mulai menjelajah',
+    discover: [
+      { section: 'sources', label: 'READ', description: 'Kenali sumber dan konteks' },
+      { section: 'ecosystem', label: 'EXPLORE', description: 'Lihat peta ekosistem' },
+      { section: 'values', label: 'CREATE', description: 'Pelajari prinsip berkarya' },
+      { section: 'roadmap', label: 'SIGNAL', description: 'Periksa rencana dan status radio' },
+    ],
+    notebook: { date: '28.10.2026', line: 'NIAT → KARYA → MANFAAT', foot: 'ROCKSOUL / HUMAN STORY' },
+  },
+  en: {
+    art: { top: 'FROM THE SKY', bottom: 'TO THE CLOUD', mark: 'MW XV · 2026', index: '00 / LIGHTHOUSE' },
+    missionIndex: '01 / MISSION',
+    discoverTitle: 'Start exploring',
+    discover: [
+      { section: 'sources', label: 'READ', description: 'Understand sources and context' },
+      { section: 'ecosystem', label: 'EXPLORE', description: 'Browse the ecosystem map' },
+      { section: 'values', label: 'CREATE', description: 'Read our creative principles' },
+      { section: 'roadmap', label: 'SIGNAL', description: 'Check plans and radio status' },
+    ],
+    notebook: { date: '28.10.2026', line: 'INTENT → WORK → BENEFIT', foot: 'ROCKSOUL / HUMAN STORY' },
+  },
+}

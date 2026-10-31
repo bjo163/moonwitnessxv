@@ -134,7 +134,7 @@ export function EchologUploadPanel({
         checked={legalHold}
         onChange={(event) => void toggleLegalHold(event.target.checked)}
       />
-      <div className="echolog-row">
+      <div className="m-row">
         <Button variant="primary" onClick={() => void startUpload()} disabled={!file || !token || phase === 'queued' || phase === 'verifying'}>
           Upload
         </Button>

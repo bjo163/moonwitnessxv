@@ -1,21 +1,7 @@
-import type { ReactNode } from 'react'
-import { Alert } from '@moonwitness/moonui'
-
-type AlertRole = 'alert' | 'status'
-type AlertTone = 'hot' | 'ok' | 'accent'
-
-export function LiveAlert({
-  role,
-  tone,
-  children,
-}: {
-  role: AlertRole
-  tone: AlertTone
-  children: ReactNode
-}): ReactNode {
-  return (
-    <div role={role} aria-live={role === 'status' ? 'polite' : undefined}>
-      <Alert tone={tone}>{children}</Alert>
-    </div>
-  )
-}
+/**
+ * The alert with an explicit live region used to be an HQ component. ADR-0017
+ * folded it into MoonUI's `Alert` (`role` + `aria-live`), so this module keeps
+ * only the old name for the call sites that have not adopted `Alert` yet. It
+ * declares no component of its own.
+ */
+export { Alert as LiveAlert } from '@moonwitness/moonui'

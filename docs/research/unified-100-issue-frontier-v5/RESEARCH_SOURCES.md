@@ -14,8 +14,8 @@ Cakupan aktual: 24 README repositori terkait; 14 sumber teknis/standar/operasion
 
 | Kunci | Sumber | Mendukung | Batas |
 |---|---|---|---|
-| R01 | [README.md](../../../README.md) | Gambaran proyek dan ringkasan tingkat repo. | Angka agregatnya berbeda dari TODO. |
-| R02 | [TODO.md](../../../TODO.md) | Status tugas/milestone dan bukti yang tercatat. | Register dapat berubah; paket ini tidak mengeditnya. |
+| R01 | [README.md](../../../README.md) | Gambaran proyek dan ringkasan tingkat repo. | Nilai yang dibaca bergantung pada snapshot; gunakan TODO untuk status. |
+| R02 | [TODO.md](../../../TODO.md) | Status tugas/milestone dan bukti yang tercatat; diperbarui pada tindak lanjut 30 Oktober untuk mendaftarkan M46–M50. | Register dapat berubah; perubahan ini mempertahankan seluruh checkbox sebelumnya. |
 | R03 | [BLUEPRINT.md](../../../BLUEPRINT.md) | Arsitektur dan batas domain. | Harus dibaca bersama ADR dan implementasi aktual. |
 | R04 | [MASTER_DESIGN.md](../../../MASTER_DESIGN.md) | Semantik UI dan maksud interaksi. | Maksud desain bukan bukti implementasi. |
 | R05 | [APPS.md](../../../docs/architecture/APPS.md) | Daftar aplikasi dan kapabilitas yang dinyatakan. | Beberapa status berbeda dari dokumen lain. |
@@ -27,7 +27,7 @@ Cakupan aktual: 24 README repositori terkait; 14 sumber teknis/standar/operasion
 | R11 | [CONTRIBUTING.md](../../../CONTRIBUTING.md) | Aturan kontribusi, TODO, dan persiapan governance. | Pembuatan issue GitHub tetap terpisah. |
 | R12 | [SECURITY.md](../../../SECURITY.md) | Panduan pelaporan dan publikasi keamanan. | Tidak ada kerentanan yang diuji atau diklaim. |
 | R13 | [Audit source pins M06-01](../../../docs/audit/M06-01-source-repo-pins.md) | Pin repositori sumber dan status review yang tercatat. | Lookup connector atas beberapa ref gagal; penyebab UNKNOWN. |
-| R14 | [GRANULARITY_AUDIT.md](../../../docs/planning/GRANULARITY_AUDIT.md) | Angka perencanaan historis. | Bukan status authority; TODO berwenang. |
+| R14 | [GRANULARITY_AUDIT.md](../../../docs/planning/GRANULARITY_AUDIT.md) | Audit granularitas statis atas snapshot lama (311 ID). | Tidak mencakup M44–M50 dan bukan status authority; TODO berwenang. |
 | R15 | [apps.registry.mjs](../../../scripts/apps.registry.mjs) | Metadata registry aplikasi, termasuk status dev LUMEN. | Metadata bukan bukti runtime/deployment. |
 | R16 | package.json, pnpm-workspace.yaml, lockfile | Batas runtime dan susunan workspace. | Konfigurasi bukan bukti install/build berhasil. |
 | R17 | Source/test aplikasi dan paket yang dirujuk pada issue terkait | Kandidat kepemilikan modul dan batas yang ada. | Pemeriksaan selektif; test tidak dijalankan. |

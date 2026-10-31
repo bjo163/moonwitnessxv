@@ -1,13 +1,19 @@
 import { notFound } from 'next/navigation'
 import { can, type ModelName } from '@moonwitness/moonql-client'
-import { Button, PageHeader, Pagination, Panel, TextInput } from '@moonwitness/moonui'
+import {
+  Button,
+  ModelTable,
+  PageHeader,
+  Pagination,
+  Panel,
+  TextInput,
+} from '@moonwitness/moonui'
 import { deleteRecordAction } from '@/data/actions'
 import { isModelName } from '@/data/queries/registry'
 import { listRecords } from '@/data/queries/records'
 import { getSchema } from '@/data/schema'
 import { guardModel } from '@/lib/authz'
 import { AccessDenied } from '@/ui/widgets/AccessDenied'
-import { ModelTable } from '@/ui/widgets/ModelTable'
 import { editorFailureMessage, editorStatusMessage, interpolate, modelViewCopy } from '../locale-copy'
 import { requestLocale } from '@/lib/request-locale'
 import { DELETE_CONFIRM_VALUE, editorCopy, fill } from '@/lib/editor-copy'
@@ -83,9 +89,9 @@ export default async function ModelRowsPage({
       >
         <div className="m-stack">
           <ModelTable
-            model={model}
-            meta={meta}
-            locale={locale}
+            fields={meta.fields}
+            labels={{ id: 'id', createdAt: copy.createdAt, actions: copy.actions }}
+            empty={copy.noRows.replace('{model}', model)}
             rows={result.rows}
             {...(canUpdate ? { rowHref: (row: Record<string, unknown>) => `/models/${model}/${String(row.id)}` } : {})}
             {...(canDelete

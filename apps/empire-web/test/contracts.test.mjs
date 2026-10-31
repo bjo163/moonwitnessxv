@@ -59,15 +59,20 @@ test('Story Universe routes stay localized, static, and publication-gated', () =
   // not about the CLAIMS note that quotes a banned claim by name.
   const stripComments = (source) => source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
   const universe = [
-    'src/components/story/HomePage.tsx',
+    // ADR-0017: the story page bodies are MoonUI's; the routes and copy stay here.
+    '../../packages/moonui/src/story.tsx',
+    '../../packages/moonui/src/codex.tsx',
+    '../../packages/moonui/src/client/surfaces/empire.tsx',
     'src/components/story/LibraryPage.tsx',
     'src/components/story/ReaderPage.tsx',
     'src/components/story/CodexPage.tsx',
     'src/components/story/GgsPage.tsx',
-    'src/components/story/StatRow.tsx',
-    'src/components/site/SiteHeader.tsx',
-    'src/components/site/SiteFooter.tsx',
     'src/components/site/InfoPage.tsx',
+    // ADR-0017: the chrome moved into MoonUI, so the publication gates scan it
+    // there; the routes and copy still live here.
+    '../../packages/moonui/src/site.tsx',
+    '../../packages/moonui/src/client/site-header.tsx',
+    'src/lib/site-copy.ts',
     // Rendered strings live in the copy modules, so the publication gates scan them too.
     'src/lib/home-copy.ts',
     'src/lib/library-copy.ts',
@@ -117,7 +122,7 @@ test('page artwork is original, distinct, optimized, and separate from private r
     readdirSync(join(app, 'public/story-universe')).filter(name => name.endsWith('.webp')).sort(),
     manifest.assets.map(asset => asset.filename).sort(),
   )
-  const universe = ['src/lib/home-copy.ts', 'src/lib/library-copy.ts', 'src/lib/reader-copy.ts', 'src/lib/codex-copy.ts', 'src/lib/ggs-copy.ts', 'src/components/story/HomePage.tsx', 'src/components/story/LibraryPage.tsx', 'src/components/story/ReaderPage.tsx', 'src/components/story/CodexPage.tsx', 'src/components/story/GgsPage.tsx'].map(read).join('\n')
+  const universe = ['src/lib/home-copy.ts', 'src/lib/library-copy.ts', 'src/lib/reader-copy.ts', 'src/lib/codex-copy.ts', 'src/lib/ggs-copy.ts', '../../packages/moonui/src/story.tsx', 'src/components/story/LibraryPage.tsx', 'src/components/story/ReaderPage.tsx', 'src/components/story/CodexPage.tsx', 'src/components/story/GgsPage.tsx'].map(read).join('\n')
   for (const name of ['home-mooncity', 'library-guardian', 'reader-poster', 'codex-guardian', 'moon-academy']) {
     assert.ok(universe.includes(`${name}.webp`), `${name}: wired to page artwork`)
   }

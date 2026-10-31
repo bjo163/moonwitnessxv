@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "ratchet": 41,
+  "scannedFiles": 175,
+  "surfaces": {
+    "apps": [
+      "arsy",
+      "dock",
+      "cockpit",
+      "skylink",
+      "echolog",
+      "orbit",
+      "isp-console",
+      "isp-radius",
+      "empire-web",
+      "sentinel",
+      "lumen-runtime",
+      "aigateway",
+      "headquarters"
+    ],
+    "components": 47,
+    "routes": 65,
+    "stylesheets": 8
+  },
+  "violations": [],
+  "ledger": {
+    "path": "docs/design/moonui-exceptions.json",
+    "entries": 41,
+    "debt": [
+      {
+        "check": "C1",
+        "file": "apps/dock/src/ui/components/provenance.tsx",
+        "line": 1,
+        "name": "no-moonui-import"
+      }
+    ]
+  },
+  "cssDebt": {
+    "path": "packages/moonui/moon.css",
+    "ceiling": 117,
+    "entries": []
+  },
+  "matrix": []
+}

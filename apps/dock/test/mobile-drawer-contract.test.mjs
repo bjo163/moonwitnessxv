@@ -58,11 +58,11 @@ async function loadShell() {
   }
 }
 
-const { SiteHeader } = await loadShell()
+const { DockSiteHeader } = await loadShell()
 
 const renderHeader = (initialPath, initialLocale = 'en') =>
   renderToStaticMarkup(
-    createElement(SiteHeader, { initialPath, initialSearch: '', initialLocale }),
+    createElement(DockSiteHeader, { initialPath, initialSearch: '', initialLocale }),
   )
 
 // ------------------------------------------------------- keyboard contract ----
