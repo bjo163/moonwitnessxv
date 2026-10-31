@@ -21,6 +21,10 @@ The project owner explicitly authorized an isolated production deployment of thi
 
 The project owner authorized packaging this pilot as an isolated container image and running it on the owner-operated Coolify host. `apps/empire-web` is therefore a service in `docker-compose.yml`, built by `Dockerfile.empire-web` as a static export (`output: 'export'`) served by nginx on the registered port 3010. This carries the same constraints as the Vercel addendum above: Dock remains the canonical LIGHTHOUSE runtime, the pilot stays `noindex, nofollow` (page metadata plus an edge `X-Robots-Tag`), and this addendum authorizes no backend, API, identity, database, analytics, custom domain, DNS change or indexing. The Vercel authorization is unchanged — either hosting path may serve the pilot, never as two index-able origins, and release evidence still belongs to [M42-02](../../TODO.md#m42--empire-story-universe-visual-implementation-and-isolated-vercel-release).
 
+## Owner withdrawal addendum — Vercel project removal (31 October 2026, Asia/Jakarta)
+
+The owner withdrew the Vercel deployment authorization and requested removal of the isolated `a-l-l-a-h-empire-web` project. The project and its deployments were deleted from team `bjo163s-projects`; `apps/empire-web/vercel.json` and the local `apps/empire-web/.vercel` project binding were removed. This supersedes the 29 October Vercel authorization above. Coolify remains the Empire hosting path; Dock remains canonical LIGHTHOUSE. The unrelated `empire-of-the-light` Vercel project, custom-domain assignments, and DNS were not changed. The deleted project's system-generated `*.vercel.app` addresses were removed with it. No Vercel deployment is authorized unless the owner makes a new explicit decision.
+
 ## Rollback
 
 Remove the `empire-web` entry from `scripts/apps.registry.mjs`, its `PORTS.empireWeb` assignment, the workspace, and the pilot documentation. Dock remains the canonical gateway.

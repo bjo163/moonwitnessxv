@@ -2,6 +2,7 @@
 # STORY UNIVERSE — VISUAL BIBLE + UI/UX + NARRATIVE + COMPONENT CONTRACT
 
 > **Status:** DRAFT VISUAL-REFERENCE SPECIFICATION v1.0 · 29 Oktober 2026 (WIB)  
+> **Hosting update (31 Oktober 2026):** the owner withdrew the isolated Vercel authorization and removed its project; Coolify remains the current Empire hosting path. Do not recreate a Vercel deployment without a new explicit decision. See ADR-0012 and ADR-0016.
 > **Target reader:** AI coding lokal, engineer frontend, desainer, copywriter, reviewer UX, QA.  
 > **Input wajib:** 5 PNG referensi di folder `assets/` (identik dengan mockup original yang dipilih user).  
 > **Tujuan:** menerjemahkan **lima gambar mockup** menjadi website yang terasa **semirip mungkin**—struktur, komposisi, menu, ikon, tone, visual, konten, narasi dan perilaku, namun **tidak mengklaim pixel-perfect** bila mockup AI memiliki glyph, angka atau elemen yang tidak konsisten.  
@@ -18,7 +19,7 @@
 2. **Jangan generate lima dashboard yang serupa.** Halaman memiliki fungsi berbeda: (01) portal home, (02) story catalog, (03) story detail + comic reader, (04) character profile/codex, (05) GGS school/lessons.
 3. Bedakan tiga level: `[VISUAL REFERENCE]` = perlu semirip screenshot; `[CANONICAL COPY]` = teks yang boleh dipakai setelah review; `[ILLUSTRATIVE ONLY]` = data mockup yang **bukan** fakta/fitur/tautan aktif.
 4. Kerjakan dalam **existing `apps/empire-web`**, setelah audit perubahan terbaru; reuse MoonUI tokens, icon components, layout patterns. **Jangan mengkloning database, auth, Corpus, SHADOW, atau ARSY**.
-5. Site belum live di Vercel sesuai pemeriksaan terakhir dalam konteks penyusunan; preview harus lulus build/tests/rights gate sebelum ada URL publik. Semua konten baru bisa menggunakan **local fixture + `noindex`** sampai persetujuan publikasi.
+5. Saat dokumen ini disusun pada 29 Oktober, site belum live di Vercel menurut pemeriksaan yang tersedia saat itu. Proyek Vercel sempat dibuat kemudian dan dihapus atas permintaan pemilik pada 31 Oktober; jangan membuat deployment baru tanpa keputusan eksplisit. Konten lokal tetap memakai data terkontrol dan gate hak publikasi.
 6. Gambar `assets/*.png` adalah **screenshot referensi tata letak**. Jangan memakai PNG satu halaman sebagai **background entire site** sehingga teks/tombol tidak selectable, tidak accessible, dan tidak responsif.
 7. **Narasi fiksi vs keyakinan:** ROCKSOUL, MYLUFT, GGS, AngelWithShotgun adalah karakter atau konstruksi naratif MoonWitness. Tidak mengklaim tokoh ini Nabi, Isa literal, malaikat sungguhan, penafsir yang berotoritas, atau memiliki amanat ilahi khusus.
 8. **Hak sumber/teks suci:** teks Arab, transliterasi, terjemahan Al-Qur’an dan tafsir mesti bersumber jelas, diverifikasi, diberi konteks. Render sebagai teks semantik asli dengan `dir="rtl"`, bukan mengandalkan huruf hasil image generation. Jangan mengutip lirik lagu berhak cipta melebihi izin yang dimiliki.
@@ -1042,8 +1043,8 @@ The `dev` branch already contains `apps/empire-web` with static `/`, `/id`, `/en
 - Languages: current `id/en` contract; **do not** add competing locale routing middleware or route rewriting.
 - API: preserve ARSY as shared backend. Static content manifest only for this UI slice; no Supabase/ORM/auth duplication.
 - Source rights: reuse existing sources/privacy pages and explicit publication gating.
-- Canonical homepage ownership: Dock per ADR-0011, `empire-web` local/CI pilot per ADR-0012. Any production decision requires owner approval and revised ADR.
-- Vercel: **do not** deploy unless separately authorized in exact environment; no DNS change. Static export and noindex remain until rights/security review.
+- Canonical homepage ownership: Dock per ADR-0011; Empire is served through Coolify under ADR-0016.
+- Vercel: the isolated project was removed on 31 October 2026. Do not deploy there unless a new explicit owner decision restores that path. No DNS change is included here.
 
 ### 14.2 Proposed paths — adapt to existing route groups
 
@@ -1323,7 +1324,7 @@ No private poster, personal dream file, or unverified translation auto-published
 - [ ] `H07` Verify asset source/provenance/license and human publication decisions.
 - [ ] `H08` Update only real TODO statuses and audit exact SHA evidence.
 - [ ] `H09` Build final spec-to-component traceability report + screenshots.
-- [ ] `H10` Commit to existing authorized dev workflow after tests; promotion to main only under existing CI and owner release policy; **no Vercel/DNS deployment** unless explicitly authorized.
+- [ ] `H10` Commit to existing authorized dev workflow after checks; promotion to main only under existing CI and owner release policy; no Vercel project currently exists and no DNS deployment is included.
 
 ---
 
@@ -1348,7 +1349,7 @@ No private poster, personal dream file, or unverified translation auto-published
 ## 19. REPO REFERENCES + WHAT AI LOCAL MUST OPEN
 
 - `https://github.com/bjo163/moonwitnessxv/tree/dev/apps/empire-web`
-- `apps/empire-web/README.md`, `package.json`, `next.config.mjs`, `vercel.json`, `playwright.config.mjs`.
+- `apps/empire-web/README.md`, `package.json`, `next.config.mjs`, `playwright.config.mjs`; Vercel config was removed on 31 October 2026.
 - `apps/empire-web/src/components/Landing.tsx`, `src/lib/copy.ts`, `src/lib/pages.ts`, `src/app/*` (actual route groups).
 - `packages/moonui/src/icons`, `packages/moonui/src/nav.tsx`, `packages/moonui/src/layout.tsx`, `packages/moonui/src/tokens.ts`, `packages/moonui/moon.css`.
 - Root `BLUEPRINT.md`, `TODO.md`, `docs/decisions/ADR-0011*`, `docs/decisions/ADR-0012*`.
@@ -1377,7 +1378,7 @@ CONTENT RIGHTS / SRC REVIEW:
 CI / TEST COMMANDS + COUNTS + RUN URL:
 ACCESSIBILITY / MOBILE:
 WHAT IS STILL MOCK-ONLY:
-WHAT WAS NOT DEPLOYED (VERCEL / DNS):
+VERCEL WITHDRAWAL / CURRENT RELEASE STATE:
 OPEN BLOCKERS / NEXT ATOMIC TASKS:
 ```
 

@@ -14,7 +14,7 @@
     "productionPublished": false,
     "noIndexRequired": false,
     "noIndexSupersededBy": "ADR-0016",
-    "noIndexNote": "ADR-0016 (2026-10-29) makes the canonical Coolify host indexable; the Vercel preview project keeps noindex through its own X-Robots-Tag header.",
+    "noIndexNote": "ADR-0016 (2026-10-29) permits indexing on the canonical Coolify host; the separate Vercel project and its deployments were removed at the owner's request on 2026-10-31.",
     "localeDefault": "en",
     "locales": [
       "id",
@@ -531,7 +531,7 @@
     "Arabic verses require source and publishing rights",
     "No ghost UI or fake LIVE/schedule",
     "No live deployment without exact URL proof",
-    "Indexable on the canonical host (ADR-0016); the Vercel preview stays noindex",
+    "Indexable on the canonical host (ADR-0016); the former Vercel project was removed on 2026-10-31",
     "Do not modify canonical Dock ownership",
     "No copyrighted anime character artwork",
     "All controls accessible and wired"

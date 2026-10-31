@@ -39,7 +39,7 @@ The owner has now authorized a public site on a custom domain, and has asked for
 
 4. **Indexing.** `a-l-l-a-h.com` and `moonwitness.biz.id` are indexable. The owner accepted the residual risk that editorial copy, religious/source claims and rights review remain open; nothing in the app quotes scripture (GGS renders `RELIGIOUS SOURCE CONTENT WITHHELD`), so indexing publishes fiction and draft-labelled editorial copy, not unverified quotations. Reverting the flip is one commit (`robots.ts`, `sitemap.ts`, the two layouts, `nginx.conf`, and their tests). Every other host stays `noindex` until its own decision.
 
-5. **Single canonical origin.** Coolify serves `a-l-l-a-h.com`. The Vercel project keeps the pilot as a preview-only deployment with its existing `X-Robots-Tag: noindex, nofollow` header and no custom domain, so the same build can never be indexed twice (ADR-0012's rule survives in substance).
+5. **Single canonical origin.** Coolify serves `a-l-l-a-h.com`. At the time of this decision, the Vercel project kept the pilot as a preview-only deployment with `X-Robots-Tag: noindex, nofollow` and no custom domain. The owner later removed that project; see the withdrawal addendum below.
 
 6. **TLS and redirects.** Coolify's Traefik terminates TLS with a per-host Let's Encrypt certificate; no wildcard certificate in this milestone. `www` redirects are configured in exactly one place (Coolify), never in nginx, to avoid redirect loops.
 
@@ -56,7 +56,11 @@ The owner has now authorized a public site on a custom domain, and has asked for
 
 ## Rollback
 
-Repoint a record to its previous target (Coolify auto-domain or the `*.vercel.app` alias) and redeploy the last known-good tag (`v2.20.2`). Reverting the indexing flip is a single commit. Deleting this ADR requires also reverting the domain bindings and the indexing change, in that order.
+Restore the last known-good release (`v2.20.2`) on the applicable host. For Empire, Coolify is the only current hosting target; the former Vercel alias was removed with its project on 31 October 2026 and is not a rollback target. Reverting the indexing flip is a single commit. Deleting this ADR requires also reverting the domain bindings and the indexing change, in that order.
+
+## Owner withdrawal addendum — Vercel project removal (31 October 2026, Asia/Jakarta)
+
+The owner requested removal of the isolated `a-l-l-a-h-empire-web` Vercel project. The project and its deployments were deleted; the deployment configuration and local project link were removed from the repository/worktree. Coolify remains the assigned Empire host and `a-l-l-a-h.com` remains indexable under this ADR. This supersedes §5's former preview-project arrangement and does not change the unrelated `empire-of-the-light` project, custom-domain assignments, or DNS. The deleted project's system-generated `*.vercel.app` addresses were removed with it. A future Vercel deployment requires a new explicit owner decision.
 
 ## Known limits
 

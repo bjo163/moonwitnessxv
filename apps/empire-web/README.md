@@ -1,6 +1,6 @@
-# A-L-L-A-H.COM — Empire Story Universe (isolated Vercel production pilot)
+# A-L-L-A-H.COM — Empire Story Universe static pilot
 
-**Status:** Isolated static pilot. The project owner explicitly authorized a separate Vercel production deployment on 2026-10-29. ADR-0011 still keeps Dock as canonical LIGHTHOUSE; this pilot does not replace or re-route Dock. **No new backend, auth, schema, API secrets, public control plane, custom domain, or DNS change.** Keep `noindex, nofollow` until editorial/source/security review.
+**Current status:** The owner requested removal of the isolated Vercel project on 2026-10-31. Project `a-l-l-a-h-empire-web`, its deployments, the repository's `vercel.json`, and the local `.vercel` project link have been removed. Empire continues on the owner-operated Coolify path under ADR-0016; Dock remains canonical LIGHTHOUSE under ADR-0011. This pilot adds no backend, auth, schema, API secrets, public control plane, custom domain, or DNS change.
 
 Repository: bjo163/moonwitnessxv · apps/empire-web.
 
@@ -18,20 +18,12 @@ pnpm --filter @moonwitness/empire-web dev
 ```
 Local app: http://localhost:3010
 
-## Dedicated Vercel project settings
-- Name: a-l-l-a-h-empire-web
-- Git: bjo163/moonwitnessxv, production branch `main` (the repository's `dev`→`main` promotion is CI-controlled)
-- Framework: Next.js; Root Directory: apps/empire-web
-- Install: `pnpm install --frozen-lockfile`
-- Build: `pnpm --filter @moonwitness/core build && pnpm --filter @moonwitness/moonui build && pnpm --filter @moonwitness/empire-web build`
-- Next: static export; no API server or backend runtime; Node 24.x
-- Do not attach a custom domain or change DNS under this authorization.
-- Keep the existing `empire-of-the-light` Vercel project untouched; use a separate `a-l-l-a-h-empire-web` project for this app.
-- The five generated WebP illustrations are approved for public deployment. The five PNG reference mockups, editorial copy, religious quotations, translations, tafsir, and source claims are not approved by that artwork decision.
-- No secrets required for this static first slice.
+## Hosting status
+
+The former Vercel project and its deployments were removed on 2026-10-31 at the owner's request. The unrelated `empire-of-the-light` Vercel project was left unchanged. Historical release evidence remains in [M42-02](../../docs/tasks/M42/M42-02.md); no active Vercel deployment is authorized. The five generated WebP illustrations have the limited approval recorded in the artwork manifest; that approval does not cover the five PNG reference mockups, editorial copy, religious quotations, translations, tafsir, or source claims.
 
 ## Acceptance gates
-1. Exact SHA CI and Vercel build = READY, with proof.
+1. Preserve the historical exact-SHA CI and Vercel READY evidence in M42-02; use current local/CI checks for later source changes.
 2. Browser routes /, /id, /en; real accessible controls, mobile and keyboard.
 3. Status copy: CODE EXISTS ≠ DEPLOYED; PLANNED has no fake clickthrough.
 4. No PII, private sources, unsafe API endpoints, secrets or invented telemetry.
@@ -83,7 +75,7 @@ pnpm exec playwright test --config apps/empire-web/playwright.config.mjs
 ```
 The Playwright suite covers both locales at 390px and 1440px, keyboard skip navigation, all information-page links and locale round trips, overflow, global 404, JavaScript errors and unexpected external requests. The dedicated CI workflow runs it after the static build; configuring it is not evidence of a passing run.
 
-See `docs/audit/empire-web-static-pilot-2026-10-29.md` for observed local evidence and remaining release gates. The project owner's separate Vercel authorization is recorded in ADR-0012 and M42; it applies only to this isolated static pilot, without a custom domain or DNS change.
+See `docs/audit/empire-web-static-pilot-2026-10-29.md` for observed local evidence and remaining release gates. ADR-0012 and M42 retain the historical Vercel authorization and deployment record; the owner withdrew that authorization and the project was removed on 2026-10-31. Coolify remains the current Empire hosting path.
 
 ## Story Universe design reference (draft)
 

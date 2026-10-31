@@ -32,8 +32,8 @@ test('the pilot is indexable on the canonical host only (ADR-0016)', () => {
     assert.match(read(layout), /index:\s*true/)
   }
   assert.match(read('src/lib/seo.ts'), /SITE_ORIGIN = 'https:\/\/a-l-l-a-h\.com'/)
-  // the preview origin must stay out of the index even though the app says index
-  assert.match(read('vercel.json'), /noindex, nofollow/)
+  // The owner retired Vercel hosting; no project deployment config is kept here.
+  assert.equal(existsSync(join(app, 'vercel.json')), false)
 })
 test('static export has no duplicate API or login', () => {
   assert.match(read('next.config.mjs'), /output:\s*'export'/)

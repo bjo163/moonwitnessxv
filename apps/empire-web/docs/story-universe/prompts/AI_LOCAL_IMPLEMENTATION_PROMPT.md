@@ -19,8 +19,8 @@ Bangun 5 pengalaman visual yang sangat sesuai mockup:
 
 ## BRANCH / RELEASE POLICY
 - Work with current **existing `dev`** per canonical TODO and owner policy; do not create branch unnecessarily. If a branch is mandated by current enforced workflow, record the blocker before altering policy.
-- No new backend/auth/DB/CMS, no DNS change, no real event signups, and no publication of private or unreviewed religious/source content. The project owner's 2026-10-29 ADR-0012 addendum authorizes one isolated production Vercel project for this static pilot only; it does not change `empire-of-the-light`, add a custom domain, or approve editorial content.
-- Keep `apps/empire-web` an isolated static pilot. The ADR-0012 owner addendum supersedes the original local-only deployment restriction for the specifically scoped Vercel release.
+- No new backend/auth/DB/CMS, no DNS change, no real event signups, and no publication of private or unreviewed religious/source content. The owner withdrew Vercel authorization and removed `a-l-l-a-h-empire-web` on 2026-10-31; no Vercel deployment is authorized without a new explicit decision. The unrelated `empire-of-the-light` project remains outside this app's scope.
+- Keep `apps/empire-web` an isolated static pilot. Coolify is the current hosting path under ADR-0016; Vercel configuration and local project binding have been removed.
 - Use actual package manager / versions from current monorepo, don't switch to Vite or TypeScript approach without need.
 
 ## REQUIRED BUILD METHOD

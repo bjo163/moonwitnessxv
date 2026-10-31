@@ -6,8 +6,7 @@ export const dynamic = 'force-static'
 
 /**
  * ADR-0016 — the Coolify apex is the canonical, indexable origin.
- * Crawlers get one allow-all rule plus the sitemap; every non-canonical host
- * (the Vercel preview project) keeps its own `X-Robots-Tag` header instead.
+ * Crawlers get one allow-all rule plus the sitemap for this host.
  */
 export default function robots(): MetadataRoute.Robots {
   return {

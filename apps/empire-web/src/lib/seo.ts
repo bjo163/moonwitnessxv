@@ -3,9 +3,9 @@ import type { Metadata } from 'next'
 /**
  * Canonical origin of the public pilot (ADR-0016).
  *
- * Coolify serves this host from the `empire-web` container. The Vercel project
- * stays preview-only and keeps its own `X-Robots-Tag: noindex, nofollow`
- * header, so the same build can never become a second indexable origin.
+ * Coolify serves the Empire site from the `empire-web` container. The separate
+ * Vercel project and its deployments were removed at the owner's request on
+ * 2026-10-31; Coolify remains the active origin.
  */
 export const SITE_ORIGIN = 'https://a-l-l-a-h.com'
 
