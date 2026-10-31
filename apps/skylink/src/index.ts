@@ -7,6 +7,10 @@ import { createTelegramSkylinkChannel, SkylinkChannelRegistry } from './channels
 async function main(): Promise<void> {
   try {
     const config = loadConfig()
+    const hasServiceKey = Boolean(config.serviceKey)
+    if (!hasServiceKey) {
+      console.warn('SKYLINK starting in health-only mode: SKYLINK_SERVICE_KEY is not configured. API endpoints will reject requests.')
+    }
     const store = config.databaseUrl ? createSkylinkStore(config.databaseUrl) : null
     if (store) await migrateSkylinkStore(store)
     if (config.telegramBotToken && !store) {
@@ -36,7 +40,7 @@ async function main(): Promise<void> {
     const app = createSkylinkServer(config, { store: store?.db, channels, telegram })
     if (store) app.addHook('onClose', async () => store.client.end({ timeout: 5 }))
     await app.listen({ host: config.host, port: config.port })
-    console.info(`SKYLINK service listening on http://${config.host}:${config.port}`)
+    console.info(`SKYLINK service listening on http://${config.host}:${config.port}${hasServiceKey ? '' : ' (health-only mode)'}`)
 
     for (const signal of ['SIGINT', 'SIGTERM'] as const) {
       process.on(signal, () => {

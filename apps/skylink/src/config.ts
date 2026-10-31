@@ -67,8 +67,8 @@ export function parseConfig(
   if (parsed.data.SKYLINK_SERVICE_KEY.length > 0 && parsed.data.SKYLINK_SERVICE_KEY.length < 32) {
     throw new Error('Invalid SKYLINK configuration: SKYLINK_SERVICE_KEY must be at least 32 characters when configured.')
   }
-  if (parsed.data.NODE_ENV === 'production' && (!parsed.data.DATABASE_URL || !parsed.data.SKYLINK_SERVICE_KEY)) {
-    throw new Error('Invalid SKYLINK production configuration: DATABASE_URL and SKYLINK_SERVICE_KEY are required.')
+  if (parsed.data.NODE_ENV === 'production' && !parsed.data.DATABASE_URL) {
+    throw new Error('Invalid SKYLINK production configuration: DATABASE_URL is required.')
   }
   if (Boolean(parsed.data.SKYLINK_TELEGRAM_BOT_TOKEN) !== Boolean(parsed.data.SKYLINK_TELEGRAM_WEBHOOK_SECRET)) {
     throw new Error('Invalid SKYLINK configuration: Telegram bot token and webhook secret must be configured together.')
