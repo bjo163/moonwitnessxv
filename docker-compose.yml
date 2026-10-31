@@ -184,6 +184,10 @@ services:
       timeout: 5s
       retries: 6
       start_period: 20s
+    networks:
+      default:
+        aliases:
+          - skylink
 
   # AI Gateway: OpenAI-compatible router. Providers stay off unless AI_ENABLED=true
   # and a provider key is present; /health answers either way.
